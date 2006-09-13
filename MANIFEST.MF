@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: net.sf.xmm.moviemanager.MovieManager
+Class-Path: lib/drivers/hsqldb-1.7.3.3.jar lib/drivers/mysql-connector-java-3.1.12-bin.jar lib/skinlf.jar lib/oalnf.jar lib/BrowserLauncher2-10rc4.jar lib/jxl.jar lib/MatroskaParser.jar lib/JNative.jar lib/retroweaver-all-1.2.2.jar lib/useful.jar lib/TableLayout.jar
+Created-By: 1.4.2_06 (Sun Microsystems Inc.)

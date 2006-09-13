@@ -1,0 +1,3 @@
+@cd MovieManager
+java -classpath "%CLASSPATH%";.;lib\drivers\hsqldb-1.7.3.3.jar;lib\drivers\mysql-connector-java-3.1.12-bin.jar;lib\skinlf.jar;lib\oalnf.jar;lib\TableLayout.jar;lib\BrowserLauncher2-10rc4.jar;lib\jxl.jar;lib\JNative.jar;lib\retroweaver-all-1.2.2.jar;lib\commons-httpclient-3.0.1.jar;lib\commons-logging-1.1.jar;lib\commons-codec-1.3.jar;lib\log4j-1.2.13.jar;lib\xnap-commons-0.9.5.jar;lib\gettext-commons-0.9.jar net.sf.xmm.moviemanager.MovieManager
+@cd ..

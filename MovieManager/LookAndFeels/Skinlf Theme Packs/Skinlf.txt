@@ -1,0 +1,2 @@
+Here you can add new Skinlf themes.
+Simply put the .zip files into the 'Skinlf Theme Packs' directory.
