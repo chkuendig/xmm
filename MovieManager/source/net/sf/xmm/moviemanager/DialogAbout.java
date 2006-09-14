@@ -3,19 +3,19 @@ package net.sf.xmm.moviemanager;
  * @(#)DialogAbout.java 1.0 24.01.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2, or any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with 
+ *
+ * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Boston, MA 02111.
- * 
+ *
  * Contact: mediterranean@users.sourceforge.net
  **/
 
@@ -44,7 +44,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 public class DialogAbout extends JDialog {
-  
+
     /**
      * The Constructor.
      **/
@@ -57,7 +57,7 @@ public class DialogAbout extends JDialog {
 		    dispose();
 		}
 	    });
-	
+
 	/*Enables dispose when pushing escape*/
 	KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 	Action escapeAction = new AbstractAction()
@@ -69,8 +69,8 @@ public class DialogAbout extends JDialog {
 	    };
 	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
 	getRootPane().getActionMap().put("ESCAPE", escapeAction);
-	
-	
+
+
 	/* Dialog properties...*/
 	setTitle("About");
 	setModal(true);
@@ -95,7 +95,7 @@ public class DialogAbout extends JDialog {
 	JPanel panelDevelopers = new JPanel();
 	panelDevelopers.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Developers "),
 								     BorderFactory.createEmptyBorder(5,5,5,5)));
-	JLabel labelDevelopers = new JLabel("Mediterranean, Bro, squiker",JLabel.CENTER);
+	JLabel labelDevelopers = new JLabel("Mediterranean, Bro, squiker, olba2",JLabel.CENTER);
 	labelDevelopers.setFont(new Font(labelDevelopers.getFont().getName(),Font.PLAIN,labelDevelopers.getFont().getSize()));
 	panelDevelopers.add(labelDevelopers);
 	/* Licenses panel... */
@@ -105,7 +105,7 @@ public class DialogAbout extends JDialog {
 	JLabel labelLicense = new JLabel("Licensed under The GNU General Public License, Version 2 or later",JLabel.CENTER);
 	labelLicense.setFont(new Font(labelLicense.getFont().getName(),Font.PLAIN,labelLicense.getFont().getSize()-2));
 	labelLicense.addMouseListener(new MovieManagerCommandOpenPage("http://www.fsf.org/licenses/info/GPLv2.html"));
-	panelLicenses.add(labelLicense);    
+	panelLicenses.add(labelLicense);
 	/* All stuff together... */
 	JPanel all = new JPanel();
 	all.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
@@ -123,7 +123,7 @@ public class DialogAbout extends JDialog {
 	buttonOk.setActionCommand("About - OK");
 	buttonOk.addActionListener(new CommandDialogDispose(this));
 	panelButtons.add(buttonOk);
-	/* Adds all and buttonsPanel... */    
+	/* Adds all and buttonsPanel... */
 	getContentPane().add(all,BorderLayout.NORTH);
 	getContentPane().add(panelButtons,BorderLayout.SOUTH);
 	/* Packs and sets location... */
