@@ -33,44 +33,48 @@ import net.sf.xmm.moviemanager.models.*;
 
 public class ExtendedTreeCellRenderer
     implements TreeCellRenderer {
-    private static final int COVER_WIDTH = 32;
-    private static final int COVER_HEIGHT = 44;
-    private static final int SMALL_WIDTH = 20;
-    private static final int SMALL_HEIGHT = 20;
-
     private HashMap coverCache = new HashMap();
     private JLabel label = new JLabel();
-    private Icon defaultIconMovie, defaultIconMovieSmall;
-    private Icon defaultIconSerie, defaultIconSerieSmall;
+    private Icon defaultIconMovie;
+    private Icon defaultIconSerie;
     private String folder;
-    private boolean highlightEntireRow;
     private JScrollPane scrollPane;
     private MovieManager mm;
+    private MovieManagerConfig config;
     private Color foreground = UIManager.getColor("Tree.foreground");
     private Color background = UIManager.getColor("Tree.background");
     private Color selectionForeground = UIManager.getColor("Tree.selectionForeground");
     private Color selectionBackground = UIManager.getColor("Tree.selectionBackground");
+    private int lastRowHeight = -1;
+    private boolean lastUseCovers = false;
+    private Image movieImage;
+    private Image serieImage;
 
     /**
      * ExtendedTreeCellRenderer constructor
      *
      * @param mm MovieManager
-     * @param scrollPane JScrollPane containing JTree
-     * @param mode boolean - initial highlightEntireRow setting
+     * @param scrollPane - JScrollPane containing JTree
      */
-    public ExtendedTreeCellRenderer(MovieManager mm, JScrollPane scrollPane, boolean mode) {
+    public ExtendedTreeCellRenderer(MovieManager mm, JScrollPane scrollPane) {
+        this(mm, scrollPane, MovieManager.getConfig());
+    }
+
+    /**
+     * ExtendedTreeCellRenderer constrictor
+     *
+     * @param mm MovieManager
+     * @param scrollPane - JScrollPane containing JTree
+     * @param config MovieManagerConfig
+     */
+    public ExtendedTreeCellRenderer(MovieManager mm, JScrollPane scrollPane, MovieManagerConfig config) {
         this.mm = mm;
         this.scrollPane = scrollPane;
-        this.highlightEntireRow = mode;
+        this.config = config;
 
         // load and scale default images
-        Image movieImage = mm.getImage("/images/movie.png");
-        Image serieImage = mm.getImage("/images/serie.png");
-        this.defaultIconMovie = new ImageIcon(movieImage.getScaledInstance(COVER_WIDTH, COVER_WIDTH, Image.SCALE_SMOOTH)); // use width as height to obtain square default images
-        this.defaultIconSerie = new ImageIcon(serieImage.getScaledInstance(COVER_WIDTH, COVER_WIDTH, Image.SCALE_SMOOTH));
-        this.defaultIconMovieSmall = new ImageIcon(movieImage.getScaledInstance(SMALL_WIDTH, SMALL_HEIGHT, Image.SCALE_SMOOTH));
-        this.defaultIconSerieSmall = new ImageIcon(serieImage.getScaledInstance(SMALL_WIDTH, SMALL_HEIGHT, Image.SCALE_SMOOTH));
-
+        movieImage = mm.getImage("/images/movie.png");
+        serieImage = mm.getImage("/images/serie.png");
         label.setOpaque(true);
     }
 
@@ -87,14 +91,23 @@ public class ExtendedTreeCellRenderer
      * @return specialized JLabel
      */
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        boolean useCovers = mm.getConfig().getUseJTreeCovers();
-        boolean useIcons = mm.getConfig().getUseJTreeIcons();
+        boolean useCovers = config.getUseJTreeCovers();
+        boolean useIcons = config.getUseJTreeIcons();
 
         Object o = ( (DefaultMutableTreeNode) value).getUserObject();
         if (o instanceof ModelEntry) {
             ModelEntry entry = (ModelEntry) o;
 
             // icon
+            int h = config.getMovieListRowHeight();
+            if(h != lastRowHeight || config.getUseJTreeCovers() != lastUseCovers) {
+                int w = config.getUseJTreeCovers() ? h * 32 / 44 : h;  // use height as width to obtain square default images when not showing covers
+                defaultIconMovie = new ImageIcon(movieImage.getScaledInstance(w, h, Image.SCALE_SMOOTH));
+                defaultIconSerie = new ImageIcon(serieImage.getScaledInstance(w, h, Image.SCALE_SMOOTH));
+                lastRowHeight = h;
+                lastUseCovers = config.getUseJTreeCovers();
+                clearCoverCache();
+            }
             Icon icon = null;
             if (useCovers) {
                 if (entry.getCover() != null && entry.getCover().length() > 0) {
@@ -111,7 +124,7 @@ public class ExtendedTreeCellRenderer
                 }
             }
             else if (useIcons) {
-                icon = leaf ? defaultIconMovieSmall : defaultIconSerieSmall;
+                icon = leaf ? defaultIconMovie : defaultIconSerie;
             }
             label.setIcon(icon);
 
@@ -121,14 +134,15 @@ public class ExtendedTreeCellRenderer
             if (useCovers) {
                 Color c = selected ? selectionForeground : foreground;
                 String foreground = " color='#" + Integer.toHexString(c.getRed() * 256 * 256 + c.getGreen() * 256 + c.getBlue()) + "'";
-                label.setText("<html><font size='4'" + foreground + "><b>" + entry.getTitle() + "</b></font><br><font" + foreground + ">" + entry.getDate() + "</font></html>");
+                int fontSize = 3 + h / 40;
+                label.setText("<html><font size='" + fontSize + "'" + foreground + "><b>" + entry.getTitle() + "</b></font><br><font size='" + (fontSize - 1) + "'" + foreground + ">" + entry.getDate() + "</font></html>");
             }
             else {
                 label.setText(entry.getTitle());
             }
 
             // special row highlight
-            if (highlightEntireRow) {
+            if (config.getMovieListHighlightEntireRow()) {
                 Dimension d = label.getUI().getPreferredSize(label); // hmmm... seems to return right size
                 int w = scrollPane.getVisibleRect().width;
                 if (d.width < w) {
@@ -152,22 +166,25 @@ public class ExtendedTreeCellRenderer
      */
     private Icon loadCover(ModelEntry entry) {
         if (folder == null) {
-            folder = MovieManager.getConfig().getCoversFolder();
+            folder = config.getCoversFolder();
             String dirSep = mm.getDirSeparator();
             if (!folder.endsWith(dirSep)) {
                 folder += dirSep;
             }
         }
 
+        int h = config.getMovieListRowHeight();
+        int w = h * 32 / 44; // hardcoded aspect ratio
+
         if (mm.getDatabase() instanceof DatabaseMySQL) {
-            if (MovieManager.getConfig().getStoreCoversLocally() && new File(folder + entry.getCover()).exists()) {
-                return new ImageIcon(mm.getImage(folder + entry.getCover()).getScaledInstance(COVER_WIDTH, COVER_HEIGHT, Image.SCALE_SMOOTH));
+            if (config.getStoreCoversLocally() && new File(folder + entry.getCover()).exists()) {
+                return new ImageIcon(mm.getImage(folder + entry.getCover()).getScaledInstance(w, h, Image.SCALE_SMOOTH));
             }
             else {
                 byte[] coverData = entry.getCoverData();
 
                 if (coverData != null) {
-                    return new ImageIcon(Toolkit.getDefaultToolkit().createImage(coverData).getScaledInstance(COVER_WIDTH, COVER_HEIGHT, Image.SCALE_SMOOTH));
+                    return new ImageIcon(Toolkit.getDefaultToolkit().createImage(coverData).getScaledInstance(w, h, Image.SCALE_SMOOTH));
                 }
                 else {
                     return null;
@@ -176,21 +193,11 @@ public class ExtendedTreeCellRenderer
         }
         else if ( (new File(folder + entry.getCover()).exists())) {
             /* Loads the image... */
-            return new ImageIcon(mm.getImage(folder + entry.getCover()).getScaledInstance(COVER_WIDTH, COVER_HEIGHT, Image.SCALE_SMOOTH));
+            return new ImageIcon(mm.getImage(folder + entry.getCover()).getScaledInstance(w, h, Image.SCALE_SMOOTH));
         }
         else {
             return null;
         }
-    }
-
-    /**
-     * setHighlightMode - choose between ordinary treelabel selection and entire
-     * row
-     *
-     * @param mode boolean - true for entire row
-     */
-    public void setHighlightMode(boolean mode) {
-        highlightEntireRow = mode;
     }
 
     /**

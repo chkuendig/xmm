@@ -1171,7 +1171,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	JScrollPane scrollPane = new JScrollPane();
 	scrollPane.setViewportView(tree);
-        tree.setCellRenderer(new ExtendedTreeCellRenderer(this, scrollPane, config.getMovieListHighlightEntireRow()));
+        tree.setCellRenderer(new ExtendedTreeCellRenderer(this, scrollPane));
 
 	/* All done. */
 	log.debug("Creation of the List done.");
@@ -1885,7 +1885,7 @@ public class MovieManager extends JFrame implements ComponentListener {
     }
 
     public void updateJTreeIcons() {
-       getMoviesList().setRowHeight(config.getUseJTreeCovers() ? 46 : 20);
+       getMoviesList().setRowHeight(config.getMovieListRowHeight() + 2);
        getMoviesList().setShowsRootHandles(config.getUseJTreeCovers() || !config.getUseJTreeIcons()); // show handles in cover mode or no icon mode, otherwise it's hard to recognize series
     }
 
@@ -2653,7 +2653,6 @@ public class MovieManager extends JFrame implements ComponentListener {
 
      public void setMovieListHighlightEntireRow(boolean movieListHighlightEntireRow) {
 	config.setMovieListHighlightEntireRow(movieListHighlightEntireRow);
-	((ExtendedTreeCellRenderer) getMoviesList().getCellRenderer()).setHighlightMode(movieListHighlightEntireRow);
     }
 
 

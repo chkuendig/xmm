@@ -25,6 +25,9 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
+import javax.swing.tree.*;
 
 import org.apache.log4j.*;
 import com.l2fprod.gui.plaf.skin.*;
@@ -32,8 +35,8 @@ import com.oyoaha.swing.plaf.oyoaha.*;
 import net.sf.xmm.moviemanager.commands.*;
 import net.sf.xmm.moviemanager.database.*;
 import net.sf.xmm.moviemanager.extentions.*;
+import net.sf.xmm.moviemanager.models.*;
 import net.sf.xmm.moviemanager.util.*;
-
 
 public class DialogPrefs extends JDialog implements ActionListener, ItemListener {
 
@@ -95,6 +98,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
     private JCheckBox enableStoreCoversLocally;
 
+    private JSlider rowHeightSlider;
+    private JTree exampleTree;
+    private MovieManagerConfig exampleConfig = new MovieManagerConfig();
 
     public DialogPrefs() {
 	/* Dialog creation...*/
@@ -290,7 +296,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    enableSkinlf.addActionListener(this);
 	}
 
-	String [] oyoahaThemePackList =  LookAndFeelManager.getOyoahaThemepackList();
+	String [] oyoahaThemePackList = LookAndFeelManager.getOyoahaThemepackList();
 
 	if (oyoahaThemePackList != null) {
 
@@ -635,7 +641,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	/* Movie List Options  */
 
 	JPanel movieListPanel = new JPanel();
-	movieListPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Miscellaneous "), BorderFactory.createEmptyBorder(15,35,16,1)));
+	movieListPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Miscellaneous "), BorderFactory.createEmptyBorder(0,10,5,10)));
 	movieListPanel.setLayout(new BoxLayout(movieListPanel, BoxLayout.PAGE_AXIS));
 
 	/* Enable rightclick by ctrl key */
@@ -686,8 +692,38 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	movieListPanel.add(enableHighlightEntireRow);
 
-	/*OK panel*/
+        // Rowheight including example
+        JPanel rowHeightPanel = new JPanel();
+        rowHeightPanel.setLayout(new BorderLayout());
+        rowHeightPanel.setMinimumSize(new Dimension(0, 150));
+        rowHeightPanel.setPreferredSize(new Dimension(0, 150));
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
+        root.add(new DefaultMutableTreeNode(new ModelMovie(-1, "Example 1", null, null, "Year")));
+        root.add(new DefaultMutableTreeNode(new ModelMovie(-1, "Example 2", null, null, "Year")));
+        root.add(new DefaultMutableTreeNode(new ModelMovie(-1, "Example 3", null, null, "Year")));
+        exampleTree = new JTree(root);
+        JScrollPane scroller = new JScrollPane(exampleTree);
+        scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        scroller.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        exampleTree.setRootVisible(false);
+        exampleTree.setShowsRootHandles(true);
+        exampleTree.setCellRenderer(new ExtendedTreeCellRenderer(MovieManager.getIt(), scroller, exampleConfig));
+        rowHeightSlider = new JSlider(6, 100, MovieManager.getConfig().getMovieListRowHeight());
+        rowHeightSlider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                updateRowHeightExample();
+            }
+        });
+        JPanel p = new JPanel(new BorderLayout());
+        p.add(new JLabel("Scale"), BorderLayout.WEST);
+        p.add(rowHeightSlider, BorderLayout.CENTER);
+        rowHeightPanel.add(p, BorderLayout.SOUTH);
+        rowHeightPanel.add(scroller, BorderLayout.CENTER);
+        movieListPanel.add(rowHeightPanel);
+        updateRowHeightExample();
 
+	/* OK panel */
 	JPanel okPanel = new JPanel();
 	okPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 	okPanel.setBorder(BorderFactory.createEmptyBorder(0,0,5,5));
@@ -721,6 +757,17 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
 
         updateEnabling();
+    }
+
+    private void updateRowHeightExample() {
+        int rowHeight = rowHeightSlider.getValue();
+        exampleConfig.setMovieListRowHeight(rowHeight);
+        exampleConfig.setUseJTreeIcons(enableUseJTreeIcons.isSelected());
+        exampleConfig.setUseJTreeCovers(enableUseJTreeCovers.isSelected());
+        exampleConfig.setMovieListHighlightEntireRow(enableHighlightEntireRow.isSelected());
+        exampleConfig.setStoreCoversLocally(MovieManager.getConfig().getStoreCoversLocally());
+        exampleTree.setRowHeight(rowHeight + 2);
+        exampleTree.updateUI();
     }
 
     void saveSettings() {
@@ -796,7 +843,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	else
 	    MovieManager.getConfig().setUseJTreeIcons(false);
 
-        /* Icons in JTree */
+        /* Covers in JTree */
         if (enableUseJTreeCovers.isSelected())
           MovieManager.getConfig().setUseJTreeCovers(true);
         else
@@ -805,12 +852,13 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	/* Highlight entire row */
 	if (enableHighlightEntireRow.isSelected()) {
 	    MovieManager.getConfig().setMovieListHighlightEntireRow(true);
-	    ((ExtendedTreeCellRenderer) MovieManager.getIt().getMoviesList().getCellRenderer()).setHighlightMode(true);
 	}
 	else {
 	    MovieManager.getConfig().setMovieListHighlightEntireRow(false);
-	    ((ExtendedTreeCellRenderer) MovieManager.getIt().getMoviesList().getCellRenderer()).setHighlightMode(false);
 	}
+
+        /* Rowheight */
+        MovieManager.getConfig().setMovieListRowHeight(rowHeightSlider.getValue());
 
 	if (enablePreserveCoverRatioEpisodesOnly.isSelected())
 	    MovieManager.getConfig().setPreserveCoverAspectRatio(2);
@@ -1107,6 +1155,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
         if (event.getActionCommand().equals("Enable JTree Icons") || event.getActionCommand().equals("Enable JTree Covers")) {
           updateEnabling();
+          updateRowHeightExample();
         }
 
 	if (event.getActionCommand().equals("Enable LookAndFeel")) {

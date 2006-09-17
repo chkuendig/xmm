@@ -69,10 +69,9 @@ public class MovieManagerConfig  {
     private boolean useRegularSeenIcon = true;
 
     private boolean useJTreeIcons = true;
-
     private boolean useJTreeCovers = true;
 
-    private int movieListRowHeight = 20;
+    private int movieListRowHeight = 44;
 
 
     final private int defaultFrameHeight = 635;
