@@ -127,7 +127,7 @@ public class DialogLists extends JDialog {
 	buttonRemove.setActionCommand("AdditionalInfoFields - Remove");
 	buttonRemove.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+ event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandRemove();
 		}});
 	constraints = new GridBagConstraints();
@@ -154,7 +154,7 @@ public class DialogLists extends JDialog {
 	buttonAdd.setActionCommand("AdditionalInfoFields - Add");
 	buttonAdd.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+ event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandAdd();
 		}});
 	constraints = new GridBagConstraints();
@@ -178,7 +178,7 @@ public class DialogLists extends JDialog {
 	buttonSave.setActionCommand("AdditionalInfoFields - Save");
 	buttonSave.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+ event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandSave();
 		}});
 	panelButtons.add(buttonSave);

@@ -20,9 +20,10 @@
 
 package net.sf.xmm.moviemanager.fileproperties;
 
-import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.util.FileUtil;
+//import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.mediainfodll.MediaInfo;
-import net.sf.xmm.moviemanager.util.LibPathHacker;
+import net.sf.xmm.moviemanager.util.*;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -36,8 +37,8 @@ class FilePropertiesMediaInfo extends FileProperties {
 	
 	log.debug("FilePropertiesMediaInfo:");
 	
- 	File jnative = new File((MovieManager.getFile("lib\\JNative.dll")).getPath());
-	File mediaInfo = new File((MovieManager.getFile("lib\\MediaInfo.dll")).getPath());
+ 	File jnative = new File((FileUtil.getFile("lib\\JNative.dll")).getPath());
+	File mediaInfo = new File((FileUtil.getFile("lib\\MediaInfo.dll")).getPath());
 	
 	if (jnative.exists() && mediaInfo.exists()) {
 	    LibPathHacker.addDir(new File("lib").getAbsolutePath());
@@ -70,7 +71,8 @@ class FilePropertiesMediaInfo extends FileProperties {
 	    MediaInfo mi = new MediaInfo();
 	    
 	    int open = mi.Open(filePath);
-	    
+	    String tmp;
+		
 	    if (open > 0) {
 		String audioCodec = "";
 		String audioChannels = "";
@@ -79,16 +81,19 @@ class FilePropertiesMediaInfo extends FileProperties {
     
 		setContainer(mi.Get(MediaInfo.Stream_General, 0, "Format", MediaInfo.Info_Text, MediaInfo.Info_Name));
 		
-		setDuration((int) (Double.parseDouble(mi.Get(0, 0, "PlayTime", 1, 0))/1000));
+		String dur = mi.Get(0, 0, "PlayTime", 1, 0);
+		
+		if (!"".equals(dur))
+		    setDuration((int) (Double.parseDouble(dur)/1000));
 		
 		String codecName = mi.Get(MediaInfo.Stream_Video, 0, "Codec", MediaInfo.Info_Text, MediaInfo.Info_Name);
-
-		codecName  = findName(MovieManager.getIt().getResourceAsStream("/codecs/FOURCCvideo.txt"), codecName);
+		
+		codecName  = findName(FileUtil.getResourceAsStream("/codecs/FOURCCvideo.txt"), codecName);
 		
 		String library = mi.Get(MediaInfo.Stream_Video, 0, "Encoded_Library", MediaInfo.Info_Text, MediaInfo.Info_Name);
 		
 		if (!library.equals("")) {
-		    String tmp = findName(MovieManager.getIt().getResourceAsStream("/codecs/videoExtended.txt"), library);
+		    tmp = findName(FileUtil.getResourceAsStream("/codecs/videoExtended.txt"), library);
 		    
 		    if (!tmp.equals("")) {
 			codecName = tmp;
@@ -106,8 +111,12 @@ class FilePropertiesMediaInfo extends FileProperties {
 		
 		setVideoRate(mi.Get(MediaInfo.Stream_Video, 0, "FrameRate", MediaInfo.Info_Text, MediaInfo.Info_Name));
 		
-		int audioCount = Integer.parseInt(mi.Get(MediaInfo.Stream_Audio, 0, "StreamCount", MediaInfo.Info_Text, MediaInfo.Info_Name));
+		tmp = mi.Get(MediaInfo.Stream_Audio, 0, "StreamCount", MediaInfo.Info_Text, MediaInfo.Info_Name);
 		
+		int audioCount = 0;
+		
+		if (!"".equals(tmp))
+		    audioCount = Integer.parseInt(tmp);
 		
 		log.debug("audioCount:" + audioCount);
 		
@@ -128,7 +137,7 @@ class FilePropertiesMediaInfo extends FileProperties {
 			}
 			buffer.append(value);
 			
-			value = findName(getResourceAsStream("/codecs/FOURCCaudio.txt"), buffer.toString());
+			value = findName(FileUtil.getResourceAsStream("/codecs/FOURCCaudio.txt"), buffer.toString());
 		    }
 		    
 		    if (!value.equals(""))
@@ -171,7 +180,7 @@ class FilePropertiesMediaInfo extends FileProperties {
 	    mi.Delete();
 	    
 	} catch (Exception e) {
-	    log.error("Exception:" + e.getMessage());
+	    log.error(e.getMessage(), e);
 	}
     }
 }

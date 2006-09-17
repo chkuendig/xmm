@@ -1,4 +1,3 @@
-package net.sf.xmm.moviemanager;
 /**
  * @(#)DialogAbout.java 1.0 24.01.06 (dd.mm.yy)
  *
@@ -18,6 +17,8 @@ package net.sf.xmm.moviemanager;
  *
  * Contact: mediterranean@users.sourceforge.net
  **/
+
+package net.sf.xmm.moviemanager;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.*;

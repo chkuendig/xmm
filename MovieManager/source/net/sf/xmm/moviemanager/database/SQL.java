@@ -162,7 +162,7 @@ class SQL {
 	    
 	}
 	catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	}
 	return systemSettings;
     }

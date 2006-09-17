@@ -20,7 +20,7 @@
 
 package net.sf.xmm.moviemanager.fileproperties;
 
-import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.util.FileUtil;
 
 import org.apache.log4j.Logger;
 
@@ -379,7 +379,7 @@ class FilePropertiesIFO extends FileProperties {
 		    if (!subtitles.equals(""))
 			subtitles += ", ";
 		    
-		    subtitles += findName(MovieManager.getIt().getResourceAsStream("codecs/LanguageCodes.txt"),new String(languageCode));
+		    subtitles += findName(FileUtil.getResourceAsStream("/codecs/LanguageCodes.txt"),new String(languageCode));
 		    offset += 4;
 		}
 		else {
@@ -389,7 +389,7 @@ class FilePropertiesIFO extends FileProperties {
 	    setSubtitles(subtitles);
 	    
 	} catch (Exception e) {
-	    log.error("Exception:" + e.getMessage());
+	    log.error("", e);
 	}
     }
 }

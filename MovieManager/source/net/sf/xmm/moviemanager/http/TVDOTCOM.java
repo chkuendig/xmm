@@ -242,7 +242,7 @@ public class TVDOTCOM {
 	    
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	}
 	
 	byte[] coverData = {-1};
@@ -274,7 +274,7 @@ public class TVDOTCOM {
 // 		coverData = byteStream.toByteArray();
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	    return null;
 	} 
 	/* Returns the data... */
@@ -352,7 +352,7 @@ public class TVDOTCOM {
 	    }
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	    
 	    if (exception == null || !exception.equals("Server redirected too many  times"))
 		exception = e.getMessage();
@@ -434,7 +434,7 @@ public class TVDOTCOM {
 	    }
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	    
 	    if (exception == null || !exception.equals("Server redirected too many  times"))
 		exception = e.getMessage();
@@ -501,7 +501,7 @@ public class TVDOTCOM {
 	    }
 	     
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	     
 	    if (exception == null || !exception.equals("Server redirected too many  times"))
 		exception = e.getMessage();
@@ -583,7 +583,7 @@ public class TVDOTCOM {
 	    }
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	    
 	    if (exception == null || !exception.equals("Server redirected too many  times"))
 		exception = e.getMessage();
@@ -790,7 +790,7 @@ public class TVDOTCOM {
 	    }
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	    
 	    if (exception == null || !exception.equals("Server redirected too many  times"))
 		exception = e.getMessage();

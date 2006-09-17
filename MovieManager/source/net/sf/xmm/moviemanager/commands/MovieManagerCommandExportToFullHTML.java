@@ -529,7 +529,7 @@ public class MovieManagerCommandExportToFullHTML {
 	    writeEnd(writer, filepath);
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	}
     }
     
@@ -586,7 +586,7 @@ public class MovieManagerCommandExportToFullHTML {
 	    writer.close();
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	}
     }
     
@@ -622,7 +622,7 @@ public class MovieManagerCommandExportToFullHTML {
 	    writer.write("</CENTER>\n");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	}
 	
 	return writer;

@@ -167,7 +167,7 @@ public class DialogQuestion extends JDialog  {
 	buttonYes.setActionCommand("Question - Yes");
 	buttonYes.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+ event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    _answer = true;
 		    dispose();
 		}});

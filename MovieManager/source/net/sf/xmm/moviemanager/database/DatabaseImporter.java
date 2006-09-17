@@ -302,7 +302,7 @@ public class DatabaseImporter {
 					    dialogMovieInfo.setCover(((ModelExtremeMovie) movielist.get(i)).cover, coverData);
 					}
 					catch (Exception e) {
-					    log.error("Exception: " + e);
+					    log.error("", e);
 					}
 				    }
 				    else
@@ -400,7 +400,7 @@ public class DatabaseImporter {
 		    }
 		}
 		catch (Exception e) {
-		    log.error("Exception: " + e);
+		    log.error("", e);
 		}
 	    
 		/* Excel spreadsheet */
@@ -422,7 +422,7 @@ public class DatabaseImporter {
 		    }
 		}
 		catch (Exception e) {
-		    log.error("Exception: " + e);
+		    log.error("", e);
 		}
 	    
 		/* extreme movie manager */

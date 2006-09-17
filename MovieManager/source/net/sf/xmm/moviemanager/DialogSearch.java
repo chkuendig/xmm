@@ -609,7 +609,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	try {
 	    SwingUtilities.invokeLater(this);
 	} catch (Exception e) {
-	    log.error("Exception;" + e.getMessage());
+	    log.error("Exception:", e);
 	}
     }
     
@@ -620,119 +620,119 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
     public void run() {
 	
 	SwingWorker worker = new SwingWorker() {
-		    public Object construct() {
-			try {
-			    Thread.currentThread().setPriority(4);
+		public Object construct() {
+		    try {
+			Thread.currentThread().setPriority(4);
 			    
-			    ArrayList tableNames = MovieManager.getIt().getDatabase().getTableNames();
+			ArrayList tableNames = MovieManager.getIt().getDatabase().getTableNames();
 			    
-			    ArrayList generalInfoFields = MovieManager.getIt().getDatabase().getGeneralInfoMovieFieldNames();
-			    generalAliasPanel = new JPanel(new GridLayout(generalInfoFields.size()+1, 3));
+			ArrayList generalInfoFields = MovieManager.getIt().getDatabase().getGeneralInfoMovieFieldNames();
+			generalAliasPanel = new JPanel(new GridLayout(generalInfoFields.size()+1, 3));
 	
-			    JLabel tableName;
-			    JLabel columnName;
-			    JTextField alias;
+			JLabel tableName;
+			JLabel columnName;
+			JTextField alias;
 	
-			    String tmpKey;
+			String tmpKey;
 	
-			    generalAliasPanel.add(new JLabel("Table Name"));   
-			    generalAliasPanel.add(new JLabel("Column Name"));
-			    generalAliasPanel.add(new JLabel("Alias"));
+			generalAliasPanel.add(new JLabel("Table Name"));   
+			generalAliasPanel.add(new JLabel("Column Name"));
+			generalAliasPanel.add(new JLabel("Alias"));
 	
-			    HashMap searchAlias = MovieManager.getConfig().getSearchAlias();
+			HashMap searchAlias = MovieManager.getConfig().getSearchAlias();
 	
-			    for (int i = 0; i < generalInfoFields.size(); i++) {
+			for (int i = 0; i < generalInfoFields.size(); i++) {
 	    
-				tableName = new JLabel((String) tableNames.get(5));
-				columnName = new JLabel((String) generalInfoFields.get(i));
-				alias = new JTextField(10);
+			    tableName = new JLabel((String) tableNames.get(5));
+			    columnName = new JLabel((String) generalInfoFields.get(i));
+			    alias = new JTextField(10);
 	    
-				tmpKey = (((String) tableNames.get(5)).toLowerCase() +"."+ (String) generalInfoFields.get(i)).replaceAll("_", " ");
+			    tmpKey = (((String) tableNames.get(5)).toLowerCase() +"."+ (String) generalInfoFields.get(i)).replaceAll("_", " ");
 	    
-				if (searchAlias.containsKey(tmpKey)) {
-				    alias.setText((String) searchAlias.remove(tmpKey));
-				}
+			    if (searchAlias.containsKey(tmpKey)) {
+				alias.setText((String) searchAlias.remove(tmpKey));
+			    }
 				
-				generalAliasPanel.add(tableName);   
-				generalAliasPanel.add(columnName);
-				generalAliasPanel.add(alias);
+			    generalAliasPanel.add(tableName);   
+			    generalAliasPanel.add(columnName);
+			    generalAliasPanel.add(alias);
 
-				generalInfoFieldsCount++;
-			    }
-			    
-			    ArrayList additionalInfoFields = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
-			    ArrayList extraInfoFields = MovieManager.getIt().getDatabase().getExtraInfoFieldNames();
-	
-			    additionalAliasPanel = new JPanel(new GridLayout(additionalInfoFields.size()+ extraInfoFields.size() +1, 3));
-	
-			    additionalAliasPanel.add(new JLabel("Table Name"));   
-			    additionalAliasPanel.add(new JLabel("Column Name"));
-			    additionalAliasPanel.add(new JLabel("Alias"));
-	
-			    String tmpColumn;
-			    String table = (String) tableNames.get(0);
-
-			    for (int i = 0;i < additionalInfoFields.size(); i++) {
-	    
-				tmpColumn = (String) additionalInfoFields.get(i);
-	    
-				tableName = new JLabel(table);
-				columnName = new JLabel(tmpColumn);
-				alias = new JTextField(10);
-	    
-				if (tmpColumn.equals("SubTitles"))
-				    tmpColumn = tmpColumn.replaceFirst("SubTitles", "Subtitles");
-	    
-				tmpKey = (table.toLowerCase() +"."+ tmpColumn).replaceAll("_", " ");
-	    
-				if (searchAlias.containsKey(tmpKey)) {
-				    alias.setText((String) searchAlias.remove(tmpKey));
-				}
-				
-				additionalAliasPanel.add(tableName);   
-				additionalAliasPanel.add(columnName);
-				additionalAliasPanel.add(alias);
-	    
-				additionalInfoFieldsCount++;
-			    }
-	
-			    for (int i = 0;i < extraInfoFields.size(); i++) {
-	    
-				tableName = new JLabel((String) tableNames.get(2));
-				columnName = new JLabel((String) extraInfoFields.get(i));
-				alias = new JTextField(10);
-	    
-				tmpKey = (((String) tableNames.get(2)).toLowerCase() +"."+ (String) extraInfoFields.get(i)).replaceAll("_", " ");
-	     
-				if (searchAlias.containsKey(tmpKey)) {
-				    alias.setText((String) searchAlias.remove(tmpKey));
-				}
-				
-				additionalAliasPanel.add(tableName);   
-				additionalAliasPanel.add(columnName);
-				additionalAliasPanel.add(alias);
-	    
-				additionalInfoFieldsCount++;
-			    }
-			    
-			    allTabbedPanes.remove(1);
-			    allTabbedPanes.remove(1);
-			    
-			    allTabbedPanes.add("General Info Alias", generalAliasPanel);
-			    allTabbedPanes.add("Additional Info Alias", additionalAliasPanel);
-			    
-			} catch (Exception e) {
-			    return "";
+			    generalInfoFieldsCount++;
 			}
-			
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-				    pack();
-				    setVisible(true);
-				}});
-			
+			    
+			ArrayList additionalInfoFields = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
+			ArrayList extraInfoFields = MovieManager.getIt().getDatabase().getExtraInfoFieldNames();
+	
+			additionalAliasPanel = new JPanel(new GridLayout(additionalInfoFields.size()+ extraInfoFields.size() +1, 3));
+	
+			additionalAliasPanel.add(new JLabel("Table Name"));   
+			additionalAliasPanel.add(new JLabel("Column Name"));
+			additionalAliasPanel.add(new JLabel("Alias"));
+	
+			String tmpColumn;
+			String table = (String) tableNames.get(0);
+
+			for (int i = 0;i < additionalInfoFields.size(); i++) {
+	    
+			    tmpColumn = (String) additionalInfoFields.get(i);
+	    
+			    tableName = new JLabel(table);
+			    columnName = new JLabel(tmpColumn);
+			    alias = new JTextField(10);
+	    
+			    if (tmpColumn.equals("SubTitles"))
+				tmpColumn = tmpColumn.replaceFirst("SubTitles", "Subtitles");
+	    
+			    tmpKey = (table.toLowerCase() +"."+ tmpColumn).replaceAll("_", " ");
+	    
+			    if (searchAlias.containsKey(tmpKey)) {
+				alias.setText((String) searchAlias.remove(tmpKey));
+			    }
+				
+			    additionalAliasPanel.add(tableName);   
+			    additionalAliasPanel.add(columnName);
+			    additionalAliasPanel.add(alias);
+	    
+			    additionalInfoFieldsCount++;
+			}
+	
+			for (int i = 0;i < extraInfoFields.size(); i++) {
+	    
+			    tableName = new JLabel((String) tableNames.get(2));
+			    columnName = new JLabel((String) extraInfoFields.get(i));
+			    alias = new JTextField(10);
+	    
+			    tmpKey = (((String) tableNames.get(2)).toLowerCase() +"."+ (String) extraInfoFields.get(i)).replaceAll("_", " ");
+	     
+			    if (searchAlias.containsKey(tmpKey)) {
+				alias.setText((String) searchAlias.remove(tmpKey));
+			    }
+				
+			    additionalAliasPanel.add(tableName);   
+			    additionalAliasPanel.add(columnName);
+			    additionalAliasPanel.add(alias);
+	    
+			    additionalInfoFieldsCount++;
+			}
+			    
+			allTabbedPanes.remove(1);
+			allTabbedPanes.remove(1);
+			    
+			allTabbedPanes.add("General Info Alias", generalAliasPanel);
+			allTabbedPanes.add("Additional Info Alias", additionalAliasPanel);
+			    
+		    } catch (Exception e) {
 			return "";
 		    }
+			
+		    SwingUtilities.invokeLater(new Runnable() {
+			    public void run() {
+				pack();
+				setVisible(true);
+			    }});
+			
+		    return "";
+		}
 	    };
 	worker.start();
     }

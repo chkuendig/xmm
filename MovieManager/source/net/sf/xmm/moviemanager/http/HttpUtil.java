@@ -215,7 +215,7 @@ class HttpUtil {
 		}
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} 
 	/* Returns the decoded string... */
 	return decoded;
@@ -281,7 +281,7 @@ class HttpUtil {
 	    //urlData = new URL(url);
 	}
 	catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	}
     }
 }

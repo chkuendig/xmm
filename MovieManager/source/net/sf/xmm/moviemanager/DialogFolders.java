@@ -147,7 +147,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	buttonCovers.setActionCommand("Folders - Browse Covers");
 	buttonCovers.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+ event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandBrowse("Select Covers Directory");
 		}});
 	constraints = new GridBagConstraints();
@@ -182,7 +182,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	buttonQueries.setActionCommand("Folders - Browse Queries");
 	buttonQueries.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+ event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandBrowse("Select Queries Directory");
 		}});
 	constraints = new GridBagConstraints();
@@ -475,7 +475,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	buttonSave.setActionCommand("Folders - Save");
 	buttonSave.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+ event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandSave();
 		}});
 	panelButtons.add(buttonSave);

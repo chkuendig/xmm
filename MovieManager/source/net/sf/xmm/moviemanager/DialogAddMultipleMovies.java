@@ -372,7 +372,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	    }
 	}
 	catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	}
 	/* Sets the last path... */
 	MovieManager.getConfig().setLastFileDir(fileChooser.getCurrentDirectory());
@@ -418,28 +418,28 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
     }
   
     public void actionPerformed(ActionEvent event) {
-	log.debug("ActionPerformed: "+event.getActionCommand());
+	log.debug("ActionPerformed: " + event.getActionCommand());
 	
 	if (event.getSource().equals(browseDirectories)) {
-	    log.debug("ActionPerformed: "+event.getActionCommand());
+	    log.debug("ActionPerformed: " + event.getActionCommand());
 	    moviesPath.setText(executeCommandGetMovieDirectory());
 	}
 
 	if (event.getSource().equals(buttonOk)) {
-	    log.debug("ActionPerformed: "+event.getActionCommand());
+	    log.debug("ActionPerformed: " + event.getActionCommand());
 	    executeSave();
 	    moviesPath.setText("");
 	    dispose();
 	}
 	
 	if (event.getSource().equals(buttonCancel)) {
-	    log.debug("ActionPerformed: "+event.getActionCommand());
+	    log.debug("ActionPerformed: " + event.getActionCommand());
 	    moviesPath.setText("");
 	    dispose();
 	}
 	
 	if (event.getSource().equals(buttonAddMovies)) {
-	    log.debug("ActionPerformed: "+event.getActionCommand());
+	    log.debug("ActionPerformed: " + event.getActionCommand());
 	    
 	    if (moviesPath.getText().equals("")) {
 		DialogAlert alert = new DialogAlert("Alert","Please specify a directory path.");

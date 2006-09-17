@@ -192,7 +192,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @param The current database.
      **/
     public boolean setDatabase(Database database, boolean cancelRelativePaths) {
-        _database = database;
+        
 	if (database != null) {
 
 	    boolean databaseUpdateAllowed = false;
@@ -231,8 +231,8 @@ public class MovieManager extends JFrame implements ComponentListener {
 		if (!database.setUp()) {
 		    DialogDatabase.showDatabaseMessage(this, database, null);
 		    getMoviesList().setModel(null);
-            return false;
-        }
+		    return false;
+		}
 	    }
 
 	    if (Thread.currentThread().isInterrupted()) {
@@ -281,7 +281,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 		    if (!database.getErrorMessage().equals("")) {
 			DialogDatabase.showDatabaseMessage(this, database, null);
-            getMoviesList().setModel(null);
+			getMoviesList().setModel(null);
 		    }
 
 		    return false;
@@ -313,21 +313,12 @@ public class MovieManager extends JFrame implements ComponentListener {
 		}
 
 		DefaultListModel moviesList = database.getMoviesList(options);
-
 		ArrayList episodesList = database.getEpisodeList("movieID");
-
 		DefaultTreeModel treeModel = createTreeModel(moviesList, episodesList);
 
 		getMoviesList().setRootVisible(false);
 		//getMoviesList().setLargeModel(true);
-
-		/* Loads the movies list. */
-		getMoviesList().setModel(treeModel);
-
-		/* Updates the entries Label */
-		setAndShowEntries();
-		loadMenuLists(database);
-
+		
 		/* Makes database components visible. */
 		setDatabaseComponentsEnable(true);
 
@@ -343,19 +334,33 @@ public class MovieManager extends JFrame implements ComponentListener {
 			config.setUseRelativeDatabasePath(0);
 		    }
 		}
+		
+		/* Must be set here and not earlier. 
+		   If the database is set at the top and the  method returns because of an error after the database is set, 
+		   a faulty database will then be stored and used */
+		_database = database;
+		
+		/* Loads the movies list. */
+		getMoviesList().setModel(treeModel);
+		
+		/* Updates the entries Label */
+		setAndShowEntries();
+		loadMenuLists(database);
+		
 	    } else {
 		/* Makes database components invisible. */
 		setDatabaseComponentsEnable(false);
 		DialogDatabase.showDatabaseMessage(this, database, null);
 	    }
-
-
 	}
-
+	else
+	    _database = null;
+	
+	
 	if (database != null) {
 	    if (config.getEnableCtrlMouseRightClick())
 		MovieManager.getIt().getMoviesList().updateUI();
-
+	    
 	    /* Selects the first movie in the list and loads its info. */
 	    if (getMoviesList().getModel().getChildCount(getMoviesList().getModel().getRoot()) > 0) {
 		getMoviesList().setSelectionRow(0);
@@ -517,21 +522,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	try {
 	    if (!isApplet()) {
-    		File _logFile;
-
-		/* Deletes old log. */
-		_logFile = new File(getUserDir()+ "Log.txt");
-
-		if (_logFile.exists())
-		    _logFile.delete();
-
-		_outStream = new FileOutputStream(_logFile);
-		_printStream = new PrintStream(_outStream);
-
-		/* Redirect the StdOut and the StdErr. */
-		//System.setOut(_printStream);
-		//System.setErr(_printStream);
-
+    		
 		File laf = new File("LookAndFeels" + File.separator + "lookAndFeels.ini");
 
 		if (!laf.exists()) {
@@ -562,9 +553,9 @@ public class MovieManager extends JFrame implements ComponentListener {
 	    }
 
 	    /* Writes the date. */
-	    log.info("Log Start: "+ new Date(System.currentTimeMillis()));
+	    log.info("Log Start: " + new Date(System.currentTimeMillis()));
 	} catch (Exception e) {
-	    log.error("Exception: "+e.getMessage());
+	    log.error("Exception: " + e.getMessage());
 	}
 	/* Starts other inits. */
 	log.debug("Start setting up the MovieManager.");
@@ -816,7 +807,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	menuTools.add(addMultipleMovies);
 
 	JMenuItem updateIMDbInfo = new JMenuItem("Update IMDb Info",'U');
-	updateIMDbInfo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,ActionEvent.CTRL_MASK));
+	updateIMDbInfo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,ActionEvent.CTRL_MASK));
 	updateIMDbInfo.setActionCommand("Update IMDb Info");
 	updateIMDbInfo.addActionListener(new MovieManagerCommandUpdateIMDBInfo());
 	menuTools.add(updateIMDbInfo);
@@ -1873,7 +1864,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 		_printStream.close();
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: "+e.getMessage());
+	    log.error("Exception: " + e.getMessage());
 	}
 	/* Disposes. */
 	dispose();
@@ -2414,7 +2405,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 			DialogDatabase.updateProgress(progressBar, "Creating connection...");
 
 
-		    log.info("Loading "+ type+ ":" + databasePath);
+		    log.info("Loading " +type+ ":" + databasePath);
 
 		    /* Database path relative to program location */
 		    if (config.getUseRelativeDatabasePath() == 2)
@@ -2653,7 +2644,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
      public void setMovieListHighlightEntireRow(boolean movieListHighlightEntireRow) {
 	config.setMovieListHighlightEntireRow(movieListHighlightEntireRow);
-    }
+	}
 
 
     /* Returns number of entries currently shown in the list */

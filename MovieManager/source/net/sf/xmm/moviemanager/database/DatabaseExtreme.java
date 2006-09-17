@@ -56,7 +56,7 @@ class DatabaseExtreme {
 		setUp = true;
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: "+e.getMessage());
+	    log.error("Exception: " + e.getMessage());
 	    _inicialized = false;
 	}
     }
@@ -71,7 +71,7 @@ class DatabaseExtreme {
 	    _sql.clear();
 	}
 	catch (Exception e) {
-        log.error(e.getMessage());
+	    log.error(e.getMessage());
 	}
 	
 	ArrayList list = new ArrayList(100);

@@ -103,7 +103,7 @@ public class MovieManagerCommandExportToSimpleHTML {
 			 "</html>\n");
 	    writer.close();
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	}
     }
     

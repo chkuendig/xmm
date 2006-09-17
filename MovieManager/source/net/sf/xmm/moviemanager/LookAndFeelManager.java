@@ -83,7 +83,7 @@ public class LookAndFeelManager {
 	    SwingUtilities.updateComponentTreeUI(MovieManager.getIt());
 	    
 	} catch (Exception e) {
-	    log.error("Exception: "+ e.getMessage());
+	    log.error("Exception: " + e.getMessage());
 	    DialogAlert alert = new DialogAlert("Look and Feel error", "Look and feel may not be properly installed.", e.getMessage());
 	    alert.setVisible(true);
 	}
@@ -142,7 +142,7 @@ public class LookAndFeelManager {
 	    }
 	
 	} catch (Exception e) {
-	    log.error("Exception: "+ e);
+	    log.error("", e);
 	}
 	return null;
     }
@@ -197,7 +197,7 @@ public class LookAndFeelManager {
 		return tempList;
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: "+ e);
+	    log.error("", e);
 	}
 	return null;
     }

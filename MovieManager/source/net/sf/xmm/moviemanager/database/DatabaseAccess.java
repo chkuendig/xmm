@@ -62,7 +62,7 @@ public class DatabaseAccess extends Database {
 	    value = _sql.executeUpdate("DELETE FROM [General Info] "+
 				       "WHERE [General Info]![id]="+index+";");
 	} catch (Exception e) {
-	    log.error("Exception: "+ e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -678,7 +678,7 @@ public class DatabaseAccess extends Database {
 	    f.delete();
 	    
 	} catch (Exception e) {
-	    log.error("Exeption:"+e);
+	    log.error("", e);
 	}
     }
     

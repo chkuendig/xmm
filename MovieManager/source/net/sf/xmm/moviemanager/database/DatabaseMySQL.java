@@ -80,7 +80,7 @@ public class DatabaseMySQL extends Database {
 		size = resultSet.getInt(1);
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	    size = -1;
 	} finally {
@@ -88,7 +88,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	return size;
@@ -119,14 +119,14 @@ public class DatabaseMySQL extends Database {
 	    value = _sql.executeUpdate("DELETE FROM General_Info "+
 				       "WHERE General_Info.ID="+index+";");
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of removed rows... */
@@ -143,14 +143,14 @@ public class DatabaseMySQL extends Database {
 				       "WHERE General_Info_Episodes.ID="+index+";");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of removed rows... */
@@ -172,14 +172,14 @@ public class DatabaseMySQL extends Database {
 				       "extra_info, extra_info_episodes, lists"+
 				       ";");
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of altered rows... */
@@ -197,7 +197,7 @@ public class DatabaseMySQL extends Database {
 	    value = _sql.executeUpdate("CREATE DATABASE "+ databaseName+
 				       ";");
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    errorMessage = e.getMessage();
 	    value = 0;
 	} finally {
@@ -205,7 +205,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of altered rows... */
@@ -345,7 +345,7 @@ public class DatabaseMySQL extends Database {
 			       ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    errorMessage = e.getMessage();
 	    value = -1;
 	} finally {
@@ -353,7 +353,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of altered rows... */
@@ -391,7 +391,7 @@ public class DatabaseMySQL extends Database {
 				       ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    errorMessage = e.getMessage();
 	    value = -1;
 	} finally {
@@ -399,7 +399,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of altered rows... */
@@ -418,7 +418,7 @@ public class DatabaseMySQL extends Database {
 				       "ID                    INTEGER AUTO_INCREMENT PRIMARY KEY"+
 				       ");");
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    errorMessage = e.getMessage();
 	    value = -1;
 	} finally {
@@ -426,7 +426,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of altered rows... */
@@ -472,7 +472,7 @@ public class DatabaseMySQL extends Database {
 				       ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    errorMessage = e.getMessage();
 	    value = -1;
 	} finally {
@@ -480,7 +480,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of altered rows... */
@@ -519,7 +519,7 @@ public class DatabaseMySQL extends Database {
 				       ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    errorMessage = e.getMessage();
 	    value = -1;
 	} finally {
@@ -527,7 +527,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of altered rows... */
@@ -547,7 +547,7 @@ public class DatabaseMySQL extends Database {
 				       "ID                    INTEGER AUTO_INCREMENT PRIMARY KEY"+
 				       ");");
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    errorMessage = e.getMessage();
 	    value = -1;
 	} finally {
@@ -555,7 +555,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of altered rows... */
@@ -578,7 +578,7 @@ public class DatabaseMySQL extends Database {
 				       ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    errorMessage = e.getMessage();
 	    value = -1;
 	} finally {
@@ -586,7 +586,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of altered rows... */
@@ -609,7 +609,7 @@ public class DatabaseMySQL extends Database {
 				       ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    errorMessage = e.getMessage();
 	    value = -1;
 	} finally {
@@ -617,7 +617,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of altered rows... */
@@ -639,7 +639,7 @@ public class DatabaseMySQL extends Database {
 				       ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    errorMessage = e.getMessage();
 	    value = -1;
 	} finally {
@@ -647,7 +647,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of altered rows... */
@@ -685,7 +685,7 @@ public class DatabaseMySQL extends Database {
 	    
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    errorMessage = e.getMessage();
 	    value = -1;
 	    
@@ -694,7 +694,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of altered rows... */
@@ -723,7 +723,7 @@ public class DatabaseMySQL extends Database {
 				       ";");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    errorMessage = e.getMessage();
 	    value = -1;
 	} finally {
@@ -731,7 +731,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the number of altered rows... */
@@ -775,14 +775,14 @@ public class DatabaseMySQL extends Database {
 		data = resultSet.getString(columnName);
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	StringTokenizer tokenizer = new StringTokenizer(data, ":");
@@ -822,7 +822,7 @@ public class DatabaseMySQL extends Database {
 					  "WHERE Additional_Info.ID="+index+";");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} 
 	
@@ -844,7 +844,7 @@ public class DatabaseMySQL extends Database {
 					  "WHERE Additional_Info_Episodes.ID="+index+";");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} 
 	
@@ -865,7 +865,7 @@ public class DatabaseMySQL extends Database {
 					  "FROM Extra_Info "+
 					  "WHERE Extra_Info.ID="+index+";");
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	}
 	
@@ -886,7 +886,7 @@ public class DatabaseMySQL extends Database {
 					  "FROM Extra_Info_Episodes "+
 					  "WHERE Extra_Info_Episodes.ID="+index+";");
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} 
 	
@@ -1018,14 +1018,14 @@ public class DatabaseMySQL extends Database {
 		ModelAdditionalInfo.setExtraInfoFieldNames(extraInfoFieldNames);
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the list model... */
@@ -1109,7 +1109,7 @@ public class DatabaseMySQL extends Database {
 	    }
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	    index = -1;
 	} finally {
@@ -1117,7 +1117,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the updated records... */
@@ -1195,13 +1195,13 @@ public class DatabaseMySQL extends Database {
 	    
 	    value = statement.executeUpdate();
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the updated records... */
@@ -1283,14 +1283,14 @@ public class DatabaseMySQL extends Database {
 	    
 	    value = statement.executeUpdate();
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the updated records... */
@@ -1298,7 +1298,7 @@ public class DatabaseMySQL extends Database {
     }
     
     
-/**
+    /**
      * Adds the fields to the general info table and returns the index added
      * Returns -1 if insert failed.
      **/
@@ -1360,7 +1360,7 @@ public class DatabaseMySQL extends Database {
 	    }
       
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	    index = -1;
 	} finally {
@@ -1368,7 +1368,7 @@ public class DatabaseMySQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the updated records... */
@@ -1392,19 +1392,20 @@ public class DatabaseMySQL extends Database {
 	    
 	    value = statement.executeUpdate();
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the updated records... */
 	return value;
     }
+    
     
     /**
      * Sets the fields of movie index to the general info table and returns the number of
@@ -1422,14 +1423,14 @@ public class DatabaseMySQL extends Database {
 	    
 	    value = statement.executeUpdate();
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the updated records... */
@@ -1496,14 +1497,14 @@ public class DatabaseMySQL extends Database {
 		listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed_By"), resultSet.getString("Written_By"), resultSet.getString("Genre"), rating, resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound_Mix"), resultSet.getString("Web_Runtime"), resultSet.getString("Awards")));
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the list model... */
@@ -1579,14 +1580,14 @@ public class DatabaseMySQL extends Database {
 		listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed_By"), resultSet.getString("Written_By"), resultSet.getString("Genre"), rating, resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound_Mix"), resultSet.getString("Web_Runtime"), resultSet.getString("Awards")));
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the list model... */
@@ -1618,14 +1619,14 @@ public class DatabaseMySQL extends Database {
 		list.add(new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("Title")));
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the list model... */
@@ -1691,14 +1692,14 @@ public class DatabaseMySQL extends Database {
 		    movie.setCoverData(resultSet.getBytes("CoverData"));
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the list model... */
@@ -1761,14 +1762,14 @@ public class DatabaseMySQL extends Database {
 		    episode.setCoverData(resultSet.getBytes("CoverData"));
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the list model... */
@@ -1789,14 +1790,14 @@ public class DatabaseMySQL extends Database {
 	    }
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("", e);
 	    checkErrorMessage(e.getMessage());
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("", e);
 	    }
 	}
 	/* Returns the list model... */

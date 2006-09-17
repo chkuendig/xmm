@@ -321,14 +321,14 @@ public class IMDbInfoUpdater {
 							model.setCover(imdb.getCoverName());
 						    }
 						} catch (Exception e) {
-						    log.error("Exception: "+ e);
+						    log.error("", e);
 						}
 					    }
 					    
 					    database.setGeneralInfo((ModelMovie) model);
                         
 					} catch (Exception e) {
-					    log.fatal("Exception: "+ e);
+					    log.fatal("", e);
 					    error = true;
 					}
 					

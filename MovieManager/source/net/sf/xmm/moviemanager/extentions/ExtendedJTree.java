@@ -276,7 +276,7 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 		    */
 		    
 		    } catch (Exception e) {
-			log.error("Exception:" + e);
+			log.error("", e);
 		    }
 		}
  

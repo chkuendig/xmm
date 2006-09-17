@@ -20,6 +20,7 @@
 
 package net.sf.xmm.moviemanager.fileproperties;
 
+import net.sf.xmm.moviemanager.util.FileUtil;
 import java.io.RandomAccessFile;
 import java.util.StringTokenizer;
 
@@ -90,7 +91,7 @@ class FilePropertiesOGM extends FileProperties {
 		    
 		    readUnsignedInt32(dataStream);
 		    skipBytes(dataStream, 4);
-            /* Not used */
+		    /* Not used */
 		    int streamType = readUnsignedByte(dataStream);
 		    
 		    skipBytes(dataStream, 12);
@@ -110,7 +111,7 @@ class FilePropertiesOGM extends FileProperties {
 			skipBytes(dataStream, 4);
 			videoFccHandler = readUnsignedInt32(dataStream);
 			
-			String videoCodec = findName(getClass().getResourceAsStream("/codecs/FOURCCvideo.txt"), fromByteToAscii(videoFccHandler, 4));
+			String videoCodec = findName(FileUtil.getResourceAsStream("/codecs/FOURCCvideo.txt"), fromByteToAscii(videoFccHandler, 4));
 			
 			setVideoCodec(videoCodec);
 			
@@ -140,7 +141,7 @@ class FilePropertiesOGM extends FileProperties {
 			
 			if (!audioCodecs.equals(""))
 			    audioCodecs += ", ";
-			audioCodecs += findName(getClass().getResourceAsStream("/codecs/FOURCCaudio.txt"), "0x"+fromByteToAscii(audioFccHandler, 4));
+			audioCodecs += findName(FileUtil.getResourceAsStream("/codecs/FOURCCaudio.txt"), "0x"+fromByteToAscii(audioFccHandler, 4));
 			skipBytes(dataStream, 12);
 			float sampleRate = readUnsignedInt32(dataStream);
 			
@@ -334,70 +335,10 @@ class FilePropertiesOGM extends FileProperties {
 	}
 	
 	catch (Exception e) {
-	    log.error("Exception:" + e);
+	    log.error("", e);
 	    return 0;
 	}
 	
 	return (int) ((float)duration/frameRate);
     }
-    
-    
-    // private void getExtendedCodecInfo(RandomAccessFile dataStream, int limit) throws Exception {
-	
-// 	int temp;
-// 	String extendedInfo = "";
-	
-// 	while (limit-- > 0) {
-// 	    temp = readUnsignedByte(dataStream);
-	    
-// 	    /*44 == D, 58 == X*/
-// 	    if (Integer.toHexString(temp).equals("44") || Integer.toHexString(temp).equals("58")) {
-// 		extendedInfo = "";
-// 		extendedInfo += fromByteToAscii(temp, 1);
-		
-// 		for (int u = 0; u < 3; u++) {
-// 		    temp = readUnsignedByte(dataStream);
-// 		    extendedInfo += fromByteToAscii(temp, 1);
-// 		}
-		
-// 		if ((extendedInfo.toLowerCase().equals("divx")) || (extendedInfo.toLowerCase().equals("xvid"))) {
-		    
-// 		    for (int a = 0; a < 100; a++) {
-// 			temp = readUnsignedByte(dataStream);
-			
-// 			if (temp == 0) {
-// 			    break;
-//   			}
-// 			extendedInfo += fromByteToAscii(temp, 1);
-// 		    }
-		    
-		    
-// 		    /*If last character is not a digit it is removed*/
-// 		    for (int i = 0; i < extendedInfo.length(); i++) {
-			
-// 			if (!Character.isDigit(extendedInfo.charAt(extendedInfo.length()-1))) {
-// 			    if (extendedInfo.charAt(extendedInfo.length()-1) == 'p')
-// 				;//Encoded with BVOP I think
-// 			    extendedInfo = extendedInfo.substring(0, (extendedInfo.length()-1));
-// 			}
-// 			else
-// 			    break;
-// 		    }
-		    
-// 		    /*Replaces "Build" with "b" if it occurs.*/
-// 		    if ((extendedInfo.toLowerCase().startsWith("divx")) && extendedInfo.length() > 12) {
-// 			if (extendedInfo.substring(7, 12).equals("Build")) {
-// 			    extendedInfo = extendedInfo.replaceFirst("Build", "b");
-// 			}
-// 		    }
-		    
-// 		    String codecName  = findName(getClass().getResourceAsStream("/codecs/videoExtended.txt"), extendedInfo);
-// 		    if (!codecName.equals("")) {
-// 			setVideoCodec(codecName);
-// 			return;
-// 		    }
-// 		}
-// 	    }
-// 	}
-//  }
-}
+  }

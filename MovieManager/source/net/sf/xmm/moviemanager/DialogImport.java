@@ -439,7 +439,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	    }
 	}
 	catch (Exception e) {
-	    log.error("Exception: "+ e);
+	    log.error("", e);
 	}
 	
 	return "";
@@ -520,13 +520,13 @@ public class DialogImport extends JDialog implements ActionListener {
 	}
 	
 	if (event.getSource().equals(buttonCancel)) {
-	    log.debug("ActionPerformed: "+ event.getActionCommand());
+	    log.debug("ActionPerformed: " + event.getActionCommand());
 	    parent.setCancelAll(true);
 	    dispose();
 	}
 	
 	if (event.getSource().equals(buttonAddMovies)) {
-	    log.debug("ActionPerformed: "+ event.getActionCommand());
+	    log.debug("ActionPerformed: " + event.getActionCommand());
 	    
 	    if (getPath().equals("")) {
 		DialogAlert alert = new DialogAlert("Alert","Please specify a file path.");

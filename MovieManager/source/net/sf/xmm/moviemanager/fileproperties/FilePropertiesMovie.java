@@ -105,6 +105,8 @@ public class FilePropertiesMovie {
     
     private ArrayList metaData;
     
+    protected String fileName = "";
+    
        
     /**
      * The Constructor. Gets all info available (reads contents from file).
@@ -236,7 +238,9 @@ public class FilePropertiesMovie {
 			_container = fileProperties.getContainer();
 			metaData = fileProperties.getMetaData();
 			_codecLibraryIdentifier = fileProperties.getVideoCodecLibraryIdentifier();
-
+			
+			fileName = new File(filePath).getName();
+			
 			done = true;
 		    }
 		
@@ -274,7 +278,7 @@ public class FilePropertiesMovie {
 	    }
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    
 	    if (!supported) {
@@ -314,6 +318,12 @@ public class FilePropertiesMovie {
 	    "aChannels:"+_audioChannels+" ]";
     }
     
+    
+
+    public ArrayList getMetaData() {
+	return metaData;
+    }
+    
     /*
      * Returns the the tag info if it exists
      */
@@ -349,6 +359,14 @@ public class FilePropertiesMovie {
     public int getFileSize() {
 	return _fileSize;
     }
+    
+    /**
+     * Returns the Media Type.
+     **/
+    public String getFileName() {
+	return fileName;
+    }
+    
 
     /**
      * Returns the resolution.

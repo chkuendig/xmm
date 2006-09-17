@@ -128,7 +128,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	    }
 	    
 	} catch (Exception e) {
-	    log.error("Exception: "+ e);
+	    log.error("", e);
 	}
 	
 	return newDatabase;

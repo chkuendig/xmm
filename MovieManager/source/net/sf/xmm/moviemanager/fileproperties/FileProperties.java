@@ -21,7 +21,7 @@
 package net.sf.xmm.moviemanager.fileproperties;
 
 import org.apache.log4j.Logger;
-
+import net.sf.xmm.moviemanager.util.FileUtil;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -294,6 +294,7 @@ abstract class FileProperties {
 	return metaData;
     }
     
+    
     /**
      * Processes a file from the given DataInputStream.
      **/
@@ -475,12 +476,13 @@ abstract class FileProperties {
      * Searchs in the inputStream stream the name following the string id (seperated by a \t).
      **/
     protected String findName(InputStream stream, String id) throws Exception {
+	
+	if (stream == null || id == null)
+	    return "";
+	
 	BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 	String line = null;
 	
-	if (stream == null)
-	    return "";
-	    
 	while ((line = reader.readLine()) != null) {
 	    if (line.length() > 0) {
 		StringTokenizer tokenizer = new StringTokenizer(line, "\t");
@@ -556,7 +558,7 @@ abstract class FileProperties {
 		    }
 		    
 		    _libIdentifier = extendedInfo;
-		    String codecName  = findName(getResourceAsStream("/codecs/videoExtended.txt"), extendedInfo);
+		    String codecName  = findName(FileUtil.getResourceAsStream("/codecs/videoExtended.txt"), extendedInfo);
 		    
 		    if (!codecName.equals("")) {
 			setVideoCodec(codecName);
@@ -567,22 +569,5 @@ abstract class FileProperties {
 	    }
 	}
 	return false;
-    }
-    
-
-     /**
-     * Returns a resource as a Stream or null if not found.
-     *
-     * @param name A resource name.
-     **/
-    public InputStream getResourceAsStream(String name) {
-	
-	try {
-	    return getClass().getResourceAsStream(name);
-	    
-	} catch (Exception e) {
-	    log.error("Exception: " + e);
-	}
-	return null;
     }
 }

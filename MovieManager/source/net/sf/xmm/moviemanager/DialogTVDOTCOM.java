@@ -142,7 +142,7 @@ class DialogTVDOTCOM extends JDialog {
 	buttonSelectAll.setEnabled(false);
 	buttonSelectAll.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+ event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    
 		    if (getMoviesList().getModel().getSize() > 0)
 			getMoviesList().setSelectionInterval(0, getMoviesList().getModel().getSize()-1);
@@ -156,7 +156,7 @@ class DialogTVDOTCOM extends JDialog {
 	buttonSelect.setActionCommand("GetTVDOTCOMInfo - Select");
 	buttonSelect.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+ event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandSelect();
 		}});
 	
@@ -170,7 +170,7 @@ class DialogTVDOTCOM extends JDialog {
 	
 	buttonOk.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+ event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    mode = 0;
 		    dispose();
 		}});

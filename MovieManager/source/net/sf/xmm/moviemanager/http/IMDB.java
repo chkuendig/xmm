@@ -494,7 +494,7 @@ public class IMDB {
 	    }
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	}
     }
 
@@ -655,7 +655,7 @@ public class IMDB {
 		_coverOK = true;
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	    _coverOK = false;
 	} 
 	
@@ -889,7 +889,7 @@ public class IMDB {
 	    urlData = new URL(url);
 	}
 	catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	}
 	return urlData;
     }

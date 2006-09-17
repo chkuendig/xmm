@@ -654,7 +654,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		    database = new DatabaseHSQL(path);
 			
 		} catch (Exception e) {
-		    log.error("Exception:"+ e);
+		    log.error("", e);
 		    return null;
 		}
 	    }
@@ -813,7 +813,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		MovieManager.getIt().getDatabase().finalize();
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: "+ e);
+	    log.error("", e);
 	    DialogAlert alert = new DialogAlert("Database creation failed!",e.getMessage());
 	    alert.setVisible(true);
 	}

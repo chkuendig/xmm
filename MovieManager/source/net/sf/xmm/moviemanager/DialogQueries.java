@@ -244,7 +244,7 @@ public class DialogQueries extends JDialog {
             }
         }
         catch (Exception e) {
-	    log.error("Exception: "+ e);
+	    log.error("", e);
 	}
         return "";
     }
@@ -309,7 +309,7 @@ public class DialogQueries extends JDialog {
 	    }
 	
 	} catch (Exception e) {
-	    log.error("Exception: "+ e);
+	    log.error("", e);
         }
 	
 	return listModel;
@@ -369,7 +369,7 @@ public class DialogQueries extends JDialog {
                 listModel.set(j, qry);
             }
         } catch (Exception e) {
-	    log.error("Exception: "+ e);
+	    log.error("", e);
         }
         /* Returns the model... */
         return listModel;

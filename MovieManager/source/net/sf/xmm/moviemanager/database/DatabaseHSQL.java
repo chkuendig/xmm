@@ -59,7 +59,7 @@ public class DatabaseHSQL extends Database {
 		setUp = true;
 	    }
 	} catch (Exception e) {
-	    log.warn("Exception: " + e);
+	    log.warn("", e);
 	    message = e.getMessage();
 	    
 	    exception = e;
@@ -128,7 +128,7 @@ public class DatabaseHSQL extends Database {
 	    value = _sql.executeUpdate("DELETE FROM \"General Info\" "+
 				       "WHERE \"General Info\".\"ID\"="+index+";");
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -151,13 +151,13 @@ public class DatabaseHSQL extends Database {
 				       "WHERE \"General Info Episodes\".\"ID\"="+index+";");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
     /* Returns the number of removed rows... */
@@ -275,13 +275,13 @@ public class DatabaseHSQL extends Database {
 				       ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
     /* Returns the number of altered rows... */
@@ -319,13 +319,13 @@ public class DatabaseHSQL extends Database {
 				       ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
     /* Returns the number of altered rows... */
@@ -344,13 +344,13 @@ public class DatabaseHSQL extends Database {
 				       "ID       INTEGER NOT NULL IDENTITY"+
 				       ");");
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
     /* Returns the number of altered rows... */
@@ -394,13 +394,13 @@ public class DatabaseHSQL extends Database {
 				       ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
     /* Returns the number of altered rows... */
@@ -439,13 +439,13 @@ public class DatabaseHSQL extends Database {
 				       ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
     /* Returns the number of altered rows... */
@@ -465,13 +465,13 @@ public class DatabaseHSQL extends Database {
 				       "ID       INTEGER NOT NULL IDENTITY"+
 				       ");");
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
     /* Returns the number of altered rows... */
@@ -494,13 +494,13 @@ public class DatabaseHSQL extends Database {
 				       ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
     /* Returns the number of altered rows... */
@@ -523,13 +523,13 @@ public class DatabaseHSQL extends Database {
 				       ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
     /* Returns the number of altered rows... */
@@ -551,13 +551,13 @@ public class DatabaseHSQL extends Database {
 				      ");");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
     /* Returns the number of altered rows... */
@@ -595,14 +595,14 @@ public class DatabaseHSQL extends Database {
 	    
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	    value = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = -1;
 	    }
 	}
@@ -633,14 +633,14 @@ public class DatabaseHSQL extends Database {
 	    
 	} catch (Exception e) {
 	    value = -1;
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
 		value = -1;
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
     /* Returns the number of altered rows... */
@@ -664,7 +664,7 @@ public class DatabaseHSQL extends Database {
 	    
 	    if (e.getMessage().indexOf("already exists in") == -1) {
 		value = 2;
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -672,7 +672,7 @@ public class DatabaseHSQL extends Database {
 		_sql.clear();
 	    } catch (Exception e) {
 		value = -1;
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
 	
@@ -686,7 +686,7 @@ public class DatabaseHSQL extends Database {
 	    
 	    if (e.getMessage().indexOf("already exists in") == -1) {
 		value = 2;
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -694,7 +694,7 @@ public class DatabaseHSQL extends Database {
 		_sql.clear();
 	    } catch (Exception e) {
 		value = -1;
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
 	
@@ -706,7 +706,7 @@ public class DatabaseHSQL extends Database {
 	} catch (Exception e) {
 	    
 	    if (e.getMessage().indexOf("already exists in") == -1) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 3;
 	    }
 	} finally {
@@ -714,7 +714,7 @@ public class DatabaseHSQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = -1;
 	    }
 	}
@@ -727,7 +727,7 @@ public class DatabaseHSQL extends Database {
 	} catch (Exception e) {
 	    
 	    if (e.getMessage().indexOf("already exists in") == -1) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 4;
 	    }
 	} finally {
@@ -735,7 +735,7 @@ public class DatabaseHSQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = -1;
 	    }
 	}
@@ -748,7 +748,7 @@ public class DatabaseHSQL extends Database {
 	} catch (Exception e) {
 	    
 	    if (e.getMessage().indexOf("already exists") == -1) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 5;
 	    }
 	} finally {
@@ -756,7 +756,7 @@ public class DatabaseHSQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = -1;
 	    }
 	}
@@ -769,7 +769,7 @@ public class DatabaseHSQL extends Database {
 	} catch (Exception e) {
 	    
 	    if (e.getMessage().indexOf("already exists") == -1) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 6;
 	    }
 	} finally {
@@ -777,7 +777,7 @@ public class DatabaseHSQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = -1;
 	    }
 	}
@@ -790,7 +790,7 @@ public class DatabaseHSQL extends Database {
 	} catch (Exception e) {
 	    
 	    if (e.getMessage().indexOf("already exists") == -1) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 7;
 	    }
 	} finally {
@@ -798,7 +798,7 @@ public class DatabaseHSQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = -1;
 	    }
 	}
@@ -812,7 +812,7 @@ public class DatabaseHSQL extends Database {
 	} catch (Exception e) {
 	    
 	    if (e.getMessage().indexOf("already exists") == -1) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 8;
 	    }
 	} finally {
@@ -820,7 +820,7 @@ public class DatabaseHSQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 8;
 	    }
 	}
@@ -846,7 +846,7 @@ public class DatabaseHSQL extends Database {
 	    createRelationShipMovie();
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	    value = 2;
 	}
 	
@@ -866,7 +866,7 @@ public class DatabaseHSQL extends Database {
 	    } catch (Exception e) {
 		
 		if (e.getMessage().indexOf("already exists") == -1) {
-		    log.error("Exception: " + e);
+		    log.error("", e);
 		    value = 3;
 		}
 	    } finally {
@@ -874,7 +874,7 @@ public class DatabaseHSQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = -1;
 	    }
 	}
@@ -889,7 +889,7 @@ public class DatabaseHSQL extends Database {
 	} catch (Exception e) {
 	    
 	    if (e.getMessage().indexOf("already exists") == -1) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 4;
 	    } 
 	} finally {
@@ -897,7 +897,7 @@ public class DatabaseHSQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 5;
 	    }
 	}
@@ -919,7 +919,7 @@ public class DatabaseHSQL extends Database {
 	    _sql.executeUpdate("ALTER TABLE FOLDERS RENAME TO \"Folders\";");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	    value = 2;
 	    return value;
 	} finally {
@@ -927,7 +927,7 @@ public class DatabaseHSQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 5;
 	    }
 	}
@@ -948,7 +948,7 @@ public class DatabaseHSQL extends Database {
 		_sql.executeUpdate("ALTER TABLE "+ tableNames[i]+ " "+
 				   "ALTER COLUMN " + columNames[i] +" RENAME TO "+ columReplacementNames[i] +";");
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 3;
 		return value;
 	    } finally {
@@ -956,7 +956,7 @@ public class DatabaseHSQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 5;
 	    }
 	}
@@ -967,7 +967,7 @@ public class DatabaseHSQL extends Database {
 	    _sql.executeUpdate("ALTER TABLE \"General Info\" "+
 			       "ADD COLUMN \"Certification\" VARCHAR");
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	    value = 4;
 	    return value;
 	} finally {
@@ -975,7 +975,7 @@ public class DatabaseHSQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 5;
 	    }
 	}
@@ -986,7 +986,7 @@ public class DatabaseHSQL extends Database {
 			       "ADD COLUMN \"Sound Mix\" VARCHAR");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	    value = 5;
 	    return value;
 	} finally {
@@ -994,7 +994,7 @@ public class DatabaseHSQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 5;
 	    }
 	}
@@ -1019,7 +1019,7 @@ public class DatabaseHSQL extends Database {
 			       "ADD COLUMN \"Media Type\" VARCHAR");
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	    value = 6;
 	    return value;
 	} finally {
@@ -1027,7 +1027,7 @@ public class DatabaseHSQL extends Database {
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 		value = 7;
 	    }
 	}
@@ -1280,7 +1280,7 @@ public class DatabaseHSQL extends Database {
 	    
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	    return 0;
 	}
 	return 1;
@@ -1296,7 +1296,7 @@ public class DatabaseHSQL extends Database {
 	    /*Avoids possible exceptions when trying to delete the canceled database files*/
 	    Thread.sleep(200);
 	} catch (Exception e) {
-	    log.error("Exception:" + e);
+	    log.error("", e);
 	}
 	
 	/*Shutting down the HSQL database to be able to delete the files*/
@@ -1313,7 +1313,7 @@ public class DatabaseHSQL extends Database {
 	    f.delete();
 	    
 	} catch (Exception e) {
-	    log.error("Exeption:"+e);
+	    log.error("", e);
 	}
     }
     
@@ -1323,13 +1323,13 @@ public class DatabaseHSQL extends Database {
 	try {
 	    _sql.executeQuery(query);
 	} catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e);
+		log.error("", e);
 	    }
 	}
     }

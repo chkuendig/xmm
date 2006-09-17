@@ -198,7 +198,7 @@ class DialogIMDB extends JDialog {
 	    searchStringField.setText(searchString);
 	    searchStringField.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent event) {
-			log.debug("ActionPerformed: "+event.getActionCommand());
+			log.debug("ActionPerformed: " + event.getActionCommand());
 			executeSearchMultipleMovies();
 			
 		    }
@@ -221,7 +221,7 @@ class DialogIMDB extends JDialog {
 	    
 	    buttonSearch.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent event) {
-			log.debug("ActionPerformed: "+event.getActionCommand());
+			log.debug("ActionPerformed: " + event.getActionCommand());
 			executeSearchMultipleMovies();
 		    }});
 	    multipleMovieButtons.add(buttonSearch);
@@ -235,7 +235,7 @@ class DialogIMDB extends JDialog {
 		chooseBetweenImdbAndLocalDatabase.setActionCommand("GetIMDBInfo - chooseBetweenImdbAndLocalDatabase");
 		chooseBetweenImdbAndLocalDatabase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-			    log.debug("ActionPerformed: "+event.getActionCommand());
+			    log.debug("ActionPerformed: " + event.getActionCommand());
 			
 			    if (addInfoToExistingMovie) {
 				panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," IMDB Movies List "), BorderFactory.createEmptyBorder(5,5,5,5)));
@@ -670,7 +670,7 @@ class DialogIMDB extends JDialog {
 		try {
 		    imdb = new IMDB(model.getKey());
 		} catch (Exception e) {
-		    log.error("Exception: "+ e);
+		    log.error("", e);
 		    return;
 		}
 		

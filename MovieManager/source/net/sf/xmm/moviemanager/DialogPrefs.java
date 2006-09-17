@@ -924,7 +924,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    updateLookAndFeel();
 
 	} catch (Exception e) {
-	    log.error("Exception: "+ e);
+	    log.error("", e);
 
 	    String lafName = (String) lafChooser.getSelectedItem();
 	    lafChooser.setSelectedItem(MovieManager.getConfig().getLookAndFeelString());

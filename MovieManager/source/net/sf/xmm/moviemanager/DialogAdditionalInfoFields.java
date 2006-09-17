@@ -162,7 +162,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 	buttonMakeActive.setActionCommand("AdditionalInfoFields - Make Active");
 	buttonMakeActive.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandMakeActive();
 		}});
 	constraints = new GridBagConstraints();
@@ -201,7 +201,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 	buttonMoveUp.setActionCommand("AdditionalInfoFields - Move Up");
 	buttonMoveUp.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandMoveUp();
 		}});
     
@@ -220,7 +220,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 	buttonMoveDown.setActionCommand("AdditionalInfoFields - Move Down");
 	buttonMoveDown.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandMoveDown();
 		}});
     
@@ -238,7 +238,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 	buttonRemove.setActionCommand("AdditionalInfoFields - Remove");
 	buttonRemove.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandRemove();
 		}});
     
@@ -258,7 +258,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 	buttonHide.setPreferredSize(buttonRemove.getPreferredSize());
 	buttonHide.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandHide();
 		}});
     
@@ -293,7 +293,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 	buttonAdd.setActionCommand("AdditionalInfoFields - Add");
 	buttonAdd.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandAdd();
 		}});
 	constraints = new GridBagConstraints();
@@ -321,7 +321,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 	buttonSave.setActionCommand("AdditionalInfoFields - Save");
 	buttonSave.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand());
 		    executeCommandSave();
 		}});
 	panelButtons.add(buttonSave);

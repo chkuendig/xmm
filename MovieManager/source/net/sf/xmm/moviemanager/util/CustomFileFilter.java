@@ -26,11 +26,11 @@ import java.io.File;
  
 public class CustomFileFilter extends javax.swing.filechooser.FileFilter {
 	
-	public static final int	DIRECTORIES_ONLY = 1;
-	public static final int	FILES_AND_DIRECTORIES = 2;
-	public static final int	FILES_ONLY = 0;
+    public static final int	DIRECTORIES_ONLY = 1;
+    public static final int	FILES_AND_DIRECTORIES = 2;
+    public static final int	FILES_ONLY = 0;
 	
-	int fileMode = FILES_AND_DIRECTORIES;
+    int fileMode = FILES_AND_DIRECTORIES;
 	
     /**
      * The filter extensions.
@@ -42,11 +42,12 @@ public class CustomFileFilter extends javax.swing.filechooser.FileFilter {
      **/
     private String _description;
 	
-	
-	/* Accepts only directores */
-	public CustomFileFilter(int fileMode) {
-		this.fileMode = fileMode;
-	}
+    
+    /* Accepts only directores */
+    public CustomFileFilter(int fileMode, String description) {
+	this.fileMode = fileMode;
+	_description = description;
+    }
 	
     /**
      * Initializes the private vars.

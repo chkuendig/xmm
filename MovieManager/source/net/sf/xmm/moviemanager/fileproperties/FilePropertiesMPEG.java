@@ -140,7 +140,7 @@ class FilePropertiesMPEG extends FileProperties {
 	    printBits(bits);
 	}
 	catch (Exception e) {
-	    log.error("Exception:" + e);
+	    log.error("", e);
 	}
     }
     
@@ -168,7 +168,7 @@ class FilePropertiesMPEG extends FileProperties {
 	}
 	
 	catch (Exception e) {
-	    log.error("Exception:" + e);
+	    log.error("", e);
 	}
     }
     
@@ -196,7 +196,7 @@ class FilePropertiesMPEG extends FileProperties {
 	}
 	
 	catch (Exception e) {
-	    log.error("Exception:" + e);
+	    log.error("", e);
 	    return 0;
 	}
 	
@@ -228,7 +228,7 @@ class FilePropertiesMPEG extends FileProperties {
 	}
 	
 	catch (Exception e) {
-	    log.error("Exception:" + e);
+	    log.error("", e);
 	    return 0;
 	}
 	
@@ -254,7 +254,7 @@ class FilePropertiesMPEG extends FileProperties {
 	    }
 	    
 	} catch (Exception e) {
-	    log.error("Exception:" + e);
+	    log.error("", e);
 	}
 	
 	return temp;

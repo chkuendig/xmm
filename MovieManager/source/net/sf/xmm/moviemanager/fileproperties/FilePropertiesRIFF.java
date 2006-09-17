@@ -20,6 +20,7 @@
 
 package net.sf.xmm.moviemanager.fileproperties;
 
+import net.sf.xmm.moviemanager.util.FileUtil;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -432,7 +433,7 @@ class FilePropertiesRIFF extends FileProperties {
 	    buffer.append('0');
 	}
 	buffer.append(value);
-	return findName(getResourceAsStream("/codecs/FOURCCaudio.txt"), buffer.toString());
+	return findName(FileUtil.getResourceAsStream("/codecs/FOURCCaudio.txt"), buffer.toString());
     }
     
     
@@ -484,83 +485,11 @@ class FilePropertiesRIFF extends FileProperties {
 	
 	String codecName = fromByteToAscii(fccHandler, 4).toUpperCase();
 	
-	codecName  = findName(getResourceAsStream("/codecs/FOURCCvideo.txt"), codecName);
+	codecName  = findName(FileUtil.getResourceAsStream("/codecs/FOURCCvideo.txt"), codecName);
 	
 	setVideoCodec(codecName);
     }
     
-    
-    // private void getExtendedCodecInfo(RandomAccessFile dataStream, int chunkSize) throws Exception {
-	
-// 	int temp;
-// 	String extendedInfo = "";
-	
-// 	while (chunkSize > 0) {
-	    	    
-// 	    temp = readUnsignedByte(dataStream);
-// 	    chunkSize--;
-	    
-// 	    /*44 == D, 58 == X*/
-// 	    if (Integer.toHexString(temp).equals("44") || Integer.toHexString(temp).equals("58")) {
-// 		extendedInfo = "";
-// 		extendedInfo += fromByteToAscii(temp, 1);
-		
-// 		for (int u = 0; u < 3; u++) {
-		    
-// 		    if (chunkSize == 0)
-// 			return;
-		    
-// 		    temp = readUnsignedByte(dataStream);
-// 		    chunkSize--;
-// 		    extendedInfo += fromByteToAscii(temp, 1);
-// 		}
-		
-// 		if ((extendedInfo.toLowerCase().equals("divx")) || (extendedInfo.toLowerCase().equals("xvid"))) {
-		    
-// 		    for (int a = 0; a < 100; a++) {
-// 			temp = readUnsignedByte(dataStream);
-// 			chunkSize--;
-			
-// 			if (temp == 0)
-// 			    break;
-			
-// 			if (chunkSize == 0)
-// 			    return;
-			
-// 			extendedInfo += fromByteToAscii(temp, 1);
-// 		    }
-		    
-// 		    /*If last character is not a digit it is removed*/
-// 		    for (int i = 0; i < extendedInfo.length(); i++) {
-			
-// 			if (!Character.isDigit(extendedInfo.charAt(extendedInfo.length()-1))) {
-// 			    if (extendedInfo.charAt(extendedInfo.length()-1) == 'p')
-// 				;//Encoded with BVOP I think
-// 			    extendedInfo = extendedInfo.substring(0, (extendedInfo.length()-1));
-// 			}
-// 			else
-// 			    break;
-// 		    }
-		    
-// 		    /*Replaces "Build" with "b" if it occurs.*/
-// 		    if ((extendedInfo.toLowerCase().startsWith("divx")) && extendedInfo.length() > 12) {
-// 			if (extendedInfo.substring(7, 12).equals("Build")) {
-// 			    extendedInfo = extendedInfo.replaceFirst("Build", "b");
-// 			}
-// 		    }
-		    
-// 		    String codecName  = findName(getResourceAsStream("/codecs/videoExtended.txt"), extendedInfo);
-		    
-// 		    if (!codecName.equals("")) {
-// 			setVideoCodec(codecName);
-// 			extendedCodecInfoFound = true;
-// 			skipBytes(dataStream,chunkSize);
-// 			return;
-// 		    }
-// 		}
-// 	    }
-// 	}
-//     }
     
     int correctChunkSize(int chunkSize) {
 	
@@ -570,6 +499,7 @@ class FilePropertiesRIFF extends FileProperties {
 	
 	return chunkSize;
     }
+    
     
     void processMetaTags(RandomAccessFile dataStream, int chunkSize) throws Exception {
 	

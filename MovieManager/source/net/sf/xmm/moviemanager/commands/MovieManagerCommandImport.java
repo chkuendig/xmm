@@ -186,7 +186,7 @@ public class MovieManagerCommandImport extends JPanel implements ActionListener{
 	    }
 	}
 	catch (Exception e) {
-	    log.error("Exception: " + e);
+	    log.error("", e);
 	}
 	/* Sets the last path... */
 	MovieManager.getConfig().setLastFileDir(fileChooser.getCurrentDirectory());

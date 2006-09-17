@@ -69,6 +69,7 @@ public class MovieManagerConfig  {
     private boolean useRegularSeenIcon = true;
 
     private boolean useJTreeIcons = true;
+
     private boolean useJTreeCovers = true;
 
     private int movieListRowHeight = 44;
@@ -330,8 +331,9 @@ public class MovieManagerConfig  {
 	 if (this.coversFolder.equals("")) {
 	     if (database == null)
 		 database = MovieManager.getIt().getDatabase();
-
-	     this.coversFolder = database.getCoversFolder();
+	     
+	     if (database != null)
+		 this.coversFolder = database.getCoversFolder();
 	 }
 	 return this.coversFolder;
      }
@@ -1797,7 +1799,7 @@ public class MovieManagerConfig  {
 	    }
 
 	} catch (Exception e) {
-	    log.error("Exception: "+ e);
+	    log.error("", e);
 	}
     }
 }
