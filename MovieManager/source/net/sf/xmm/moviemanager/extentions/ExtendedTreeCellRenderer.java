@@ -100,12 +100,14 @@ public class ExtendedTreeCellRenderer
 
             // icon
             int h = config.getMovieListRowHeight();
-            if(h != lastRowHeight || config.getUseJTreeCovers() != lastUseCovers) {
-                int w = config.getUseJTreeCovers() ? h * 32 / 44 : h;  // use height as width to obtain square default images when not showing covers
+            if(!useCovers)
+                h += 8;
+            if(h != lastRowHeight || useCovers != lastUseCovers) {
+                int w = useCovers ? h * 32 / 44 : h;  // use height as width to obtain square default images when not showing covers
                 defaultIconMovie = new ImageIcon(movieImage.getScaledInstance(w, h, Image.SCALE_SMOOTH));
                 defaultIconSerie = new ImageIcon(serieImage.getScaledInstance(w, h, Image.SCALE_SMOOTH));
                 lastRowHeight = h;
-                lastUseCovers = config.getUseJTreeCovers();
+                lastUseCovers = useCovers;
                 clearCoverCache();
             }
             Icon icon = null;
