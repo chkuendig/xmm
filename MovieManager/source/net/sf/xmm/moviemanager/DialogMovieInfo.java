@@ -2409,7 +2409,7 @@ public class DialogMovieInfo extends JDialog {
 		}
 		
 		if (!selectedFile.getName().equals("VIDEO_TS")) {
-		    throw new Exception("DVD drive not found.");
+		    throw new Exception("DVD drive not found:" + fileChooser.getSelectedFile());
 		}
 		    
 
