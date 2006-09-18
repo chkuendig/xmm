@@ -214,23 +214,21 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	    model = (ModelEntry) ((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject();
 	    
 	    if (model == null || model.getKey() == -1)
-			return;
+		return;
 	    
-		/* If not MySQL */
+	    /* If not MySQL */
 	    if (!(MovieManager.getIt().getDatabase() instanceof DatabaseMySQL)) {
 		
-            
-            
 		if (!model.getHasGeneralInfoData()) {
 		    ModelEntry tmpModel;
 		    
 		    if (model instanceof ModelMovie)
-				tmpModel = MovieManager.getIt().getDatabase().getMovie(model.getKey(), false);
+			tmpModel = MovieManager.getIt().getDatabase().getMovie(model.getKey(), false);
 		    else
-				tmpModel = MovieManager.getIt().getDatabase().getEpisode(model.getKey(), false);
+			tmpModel = MovieManager.getIt().getDatabase().getEpisode(model.getKey(), false);
 		    
 		    model.copyData(tmpModel);
-           		}
+		}
 	    }
 	    else {
 		/* If MySQL */
@@ -238,7 +236,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		boolean getByteCover = !MovieManager.getConfig().getStoreCoversLocally() ? true : false;
 		ModelEntry tmpModel = null;
 		
-		if (!model.getHasGeneralInfoData() || 1 == 1) {
+		if (!model.getHasGeneralInfoData()) {
 		    
 		    
 		    if (model instanceof ModelMovie)
@@ -283,28 +281,27 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			    }
 			}
 		    }
-        }
+		}
 		
 		if (model.getCoverData() != null) {
 		    byteCover = true;
 		    coverData = model.getCoverData();
 		}
-        }
+	    }
 	    
        	    if (!byteCover && cover.equals("")) {
-				cover = model.getCover();
+		cover = model.getCover();
 		
-        
 		if (!cover.equals("")) {
 		    
 		    /* Gets the full path for the cover... */
 		    String folder = MovieManager.getConfig().getCoversPath();
 		    
 		    File coverFile = new File(folder, cover);
-			
+		    
 		    if (coverFile.isFile())
 			cover = coverFile.getAbsolutePath();
-		        }
+		}
 	    }
 	    
 	    if (!model.getHasAdditionalInfoData())
@@ -356,6 +353,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			    }
 			    else 
 				img = ImageIO.read(new File(cover));
+			    
+			    
 			    
 			    height = ((97*img.getHeight())/img.getWidth());
 			}
