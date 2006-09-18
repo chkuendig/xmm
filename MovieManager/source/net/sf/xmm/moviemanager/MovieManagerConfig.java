@@ -305,15 +305,14 @@ public class MovieManagerConfig  {
 
    public void setCoverAndQueriesPaths(String coversPath, String queriesPath) {
        
-       System.err.println("set coversPath:" + coversPath);
-       System.err.println("set queriesPath:" + queriesPath);
-
-	this.coversPath = coversPath;
-	this.queriesPath = queriesPath;
-	MovieManager.getIt().getDatabase().setFolders(coversPath, queriesPath);
-	this.queriesFolder = "";
-	this.coversFolder = "";
-    }
+       this.queriesFolder = "";
+       this.coversFolder = "";
+       
+       this.coversPath = coversPath;
+       this.queriesPath = queriesPath;
+       MovieManager.getIt().getDatabase().setFolders(coversPath, queriesPath);
+       
+   }
 
     public void updateCoverAndQueriesPaths(String coversPath, String queriesPath) {
 	this.coversPath = coversPath;
@@ -351,23 +350,21 @@ public class MovieManagerConfig  {
     /* Returns the relative cover path */
     public String getCoversPath(Database database) {
 
-	String coversFolder = getCoversFolder(database);
-
 	/* Get covers folder from database*/
+	String coversFolder = getCoversFolder(database);
+	
 	String coversPath = "";
-
-	/* If relative path is used checks if directory exist after the user dir is added to the beginning */
-
+	
 	if (getUseRelativeCoversPath() == 2) {
-	    coversPath = MovieManager.getUserDir();
+	    coversPath = MovieManager.getUserDir() + File.separator;
 	}
 	else if (getUseRelativeCoversPath() == 1) {
 	    String dbPath = getDatabasePath(true);
 	    dbPath = dbPath.substring(0, dbPath.lastIndexOf(MovieManager.getDirSeparator()));
-
-	    coversPath = dbPath;
+	    coversPath = dbPath + File.separator;
 	}
-
+	
+	
 	return new File(coversPath + coversFolder).getAbsolutePath();
     }
 
@@ -376,11 +373,12 @@ public class MovieManagerConfig  {
     }
 
     public String getQueriesFolder(Database database) {
-
+	
 	if (this.queriesFolder.equals("")) {
 	    database = MovieManager.getIt().getDatabase();
-
-	    this.queriesFolder = database.getQueriesFolder();
+	    
+	    if (database != null)
+		this.queriesFolder = database.getQueriesFolder();
 	}
 	return this.queriesFolder;
     }
@@ -391,20 +389,20 @@ public class MovieManagerConfig  {
     
     /* Returns the relative queries path */
     public String getQueriesPath(Database database) {
-
+	
 	String queriesFolder = getQueriesFolder(database);
 
 	/* Get queries folder from database*/
-	String queriesPath = null;
+	String queriesPath = "";
 
 	/* If relative path is used checks if directory exist after the user dir is added to the beginning */
 	if (getUseRelativeQueriesPath() == 2) {
-	    queriesPath = MovieManager.getUserDir();
+	    queriesPath = MovieManager.getUserDir() + File.separator;
 	}
 	else if (getUseRelativeQueriesPath() == 1) {
 	    String dbPath = getDatabasePath(true);
 	    dbPath = dbPath.substring(0, dbPath.lastIndexOf(MovieManager.getDirSeparator()));
-	    queriesPath = dbPath;
+	    queriesPath = dbPath + File.separator;
 	}
 
 	return new File(queriesPath + queriesFolder).getAbsolutePath();
