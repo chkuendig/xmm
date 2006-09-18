@@ -315,25 +315,28 @@ public class MovieManager extends JFrame implements ComponentListener {
 		DefaultListModel moviesList = database.getMoviesList(options);
 		ArrayList episodesList = database.getEpisodeList("movieID");
 		DefaultTreeModel treeModel = createTreeModel(moviesList, episodesList);
-
+		
 		getMoviesList().setRootVisible(false);
 		//getMoviesList().setLargeModel(true);
 		
 		/* Makes database components visible. */
 		setDatabaseComponentsEnable(true);
-
+		
 		if (cancelRelativePaths && !isApplet()) {
-
-		    if (!new File(config.getCoversPath(database)).isDirectory() && new File(config.getCoversFolder(database)).isDirectory() )
+		    
+		    if (!new File(config.getCoversPath(database)).isDirectory() && new File(config.getCoversFolder(database)).isDirectory()) {
 			config.setUseRelativeCoversPath(0);
-
-		    if (!new File(config.getQueriesPath(database)).isDirectory() && new File(config.getQueriesFolder(database)).isDirectory() )
+		    }
+		    
+		    if (!new File(config.getQueriesPath(database)).isDirectory() && new File(config.getQueriesFolder(database)).isDirectory()) {
 			config.setUseRelativeQueriesPath(0);
-
+		    }
+		    
 		    if (database.getPath().indexOf(getUserDir()) == -1) {
 			config.setUseRelativeDatabasePath(0);
 		    }
 		}
+		
 		
 		/* Must be set here and not earlier. 
 		   If the database is set at the top and the  method returns because of an error after the database is set, 
@@ -357,15 +360,21 @@ public class MovieManager extends JFrame implements ComponentListener {
 	    _database = null;
 	
 	
-	if (database != null) {
+	if (_database != null) {
 	    if (config.getEnableCtrlMouseRightClick())
 		MovieManager.getIt().getMoviesList().updateUI();
 	    
 	    /* Selects the first movie in the list and loads its info. */
 	    if (getMoviesList().getModel().getChildCount(getMoviesList().getModel().getRoot()) > 0) {
-		getMoviesList().setSelectionRow(0);
+		
+		Runnable showProgress = new Runnable() {
+			public void run() {
+			    getMoviesList().setSelectionRow(0);
+			}};
+		SwingUtilities.invokeLater(showProgress);
 	    }
 	}
+	
 	return _database != null;
     }
 
@@ -2390,14 +2399,14 @@ public class MovieManager extends JFrame implements ComponentListener {
 			log.debug("database path is empty");
 			return null;
 		    }
-
+		    
 		    progressBar = new SimpleProgressBar(MovieManager.getIt(), true, this);
 
-		    Runnable updateProgress = new Runnable() {
+		    Runnable showProgress = new Runnable() {
 			    public void run() {
 				progressBar.setVisible(true);
 			    }};
-		    SwingUtilities.invokeLater(updateProgress);
+		    SwingUtilities.invokeLater(showProgress);
 
 		    if (type.equals("MySQL"))
 			DialogDatabase.updateProgress(progressBar, "Connecting to database...");
@@ -2444,7 +2453,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 		    if (db != null) {
 
 			try {
-			    Runnable getImdbInfo = new Runnable() {
+			    Runnable setModel = new Runnable() {
 				    public void run() {
 					ExtendedTreeNode root = new ExtendedTreeNode(new ModelMovie(-1, null, null, null, "Loading Database...", null, null, null, null, null, null, null, false, null, null, null, null, null, null, null, null, null));
 
@@ -2454,7 +2463,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 					getMoviesList().setRootVisible(true);
 				    }
 				};
-			    SwingUtilities.invokeLater(getImdbInfo);
+			    SwingUtilities.invokeLater(setModel);
 
 			} catch (Exception e) {
 			    log.error("Exception:" + e.getMessage());
@@ -2922,7 +2931,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 		    /* Starts the MovieManager. */
 		    MovieManager.getIt().setUp();
-
+		    
 		    /* Loads the database. */
 		    MovieManager.getIt().loadDatabase();
 
