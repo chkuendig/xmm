@@ -137,10 +137,8 @@ public class ExtendedFileChooser extends JFileChooser {
 		
 	textField.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-		    					
 		    textFieldAction = true;
 		    approveSelection();
-		    updateNameField();
 		    textFieldAction = false;
 		}
 				
@@ -152,7 +150,7 @@ public class ExtendedFileChooser extends JFileChooser {
     
 	
     public void approveSelection() {
-		
+	
 	approveSelected = true;
 	
 	if(getDialogType() == JFileChooser.SAVE_DIALOG || 
@@ -249,7 +247,9 @@ public class ExtendedFileChooser extends JFileChooser {
 		if (currentDir != null && fileName != null) {
 						
 		    if (currentDir.equals(fileName)) {
-						
+			
+			System.err.println("approve 1");
+			
 			this.selectedFile = tempFile;
 			super.approveSelection();
 			return;
@@ -257,6 +257,9 @@ public class ExtendedFileChooser extends JFileChooser {
 					
 					
 		    if (fileName.equals("")) {
+			
+			System.err.println("approve 2");
+			
 			this.selectedFile = new File(currentDir);
 			super.setSelectedFile(this.selectedFile);
 			super.approveSelection();
@@ -266,24 +269,26 @@ public class ExtendedFileChooser extends JFileChooser {
 		    if (fileName.startsWith(File.separator)) {
 			File newDir = new File(fileName);
 			
-			if (newDir.exists()) {
+			if (newDir.isDirectory()) {
 			    setCurrentDirectory(newDir);
 			    return;
 			}
 							
 		    }
 						
-		    File newFile = new File(currentDir,  fileName);
+		    File newFile = new File(currentDir, fileName);
 						
 		    if (newFile.isDirectory()) {
 			
 			if (ui instanceof BasicFileChooserUI)
 			    ((BasicFileChooserUI) ui).setFileName("");
-						
+			
 			setCurrentDirectory(newFile);
 			return;
 		    }
-		    else {
+		    else if (newFile.isFile()) {
+			System.err.println("approve 3");
+			
 			this.selectedFile = newFile;
 			super.setSelectedFile(this.selectedFile);
 			super.approveSelection();
@@ -295,6 +300,8 @@ public class ExtendedFileChooser extends JFileChooser {
 	    if (tempFile != null) {
 				
 		if (tempFile.exists()) {
+		    System.err.println("approve 4");
+		    
 		    this.selectedFile = tempFile;
 		    super.approveSelection();
 		    return;
@@ -309,6 +316,9 @@ public class ExtendedFileChooser extends JFileChooser {
 		tempFile = new File(currentDir + fileName);
 				
 		if (tempFile.exists()) {
+
+		    System.err.println("approve 5");
+		    
 		    this.selectedFile = tempFile;
 		    super.approveSelection();
 		    return;
@@ -685,19 +695,13 @@ public class ExtendedFileChooser extends JFileChooser {
     private void updateNameField() {
 	
 	File selectedFile = getSelectedFile();
-	
-	 if (selectedFile == null)
-	     return;
-	 
-	if (selectedFile.isDirectory() && fileChooser.getFileSelectionMode() != JFileChooser.DIRECTORIES_ONLY)
+	String value = "";
+
+	if (selectedFile == null || isDirectorySelectionEnabled()) {
 	    return;
+	}
 	
-	String value;
-	
-	if (isDirectorySelectionEnabled() && selectedFile.isDirectory())
-	    value = selectedFile.getAbsolutePath();
-	else
-	    value = selectedFile.getName();
+	value = selectedFile.getName();
 	
 	FileChooserUI ui = getUI();
 	
@@ -785,10 +789,13 @@ public class ExtendedFileChooser extends JFileChooser {
 		
 		jList.clearSelection();
 	    }
+
+	    System.err.println("keyReleased");
 	    updateNameField();
 	}
 	
 	public void keyPressed(KeyEvent e) {
+	    System.err.println("keyPressed");
 	    updateNameField();
 	}
 	
@@ -824,6 +831,7 @@ public class ExtendedFileChooser extends JFileChooser {
 		    fileChooser.ensureFileIsVisible((File) directories.get(index));
 		}
 		 
+		System.err.println("keyTyped");
 		updateNameField();
 	    }
 	}
@@ -832,6 +840,8 @@ public class ExtendedFileChooser extends JFileChooser {
     class MouseHandler extends MouseAdapter {
 	
 	public void mouseReleased(MouseEvent e){
+	    
+	    System.err.println("mouseReleased");
 	    
 	    lastSelectedFile = fileChooser.getSelectedFile();
 	    updateNameField();
