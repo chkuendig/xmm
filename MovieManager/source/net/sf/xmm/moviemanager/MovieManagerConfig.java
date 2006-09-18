@@ -304,9 +304,15 @@ public class MovieManagerConfig  {
 
 
    public void setCoverAndQueriesPaths(String coversPath, String queriesPath) {
+       
+       System.err.println("set coversPath:" + coversPath);
+       System.err.println("set queriesPath:" + queriesPath);
+
 	this.coversPath = coversPath;
 	this.queriesPath = queriesPath;
 	MovieManager.getIt().getDatabase().setFolders(coversPath, queriesPath);
+	this.queriesFolder = "";
+	this.coversFolder = "";
     }
 
     public void updateCoverAndQueriesPaths(String coversPath, String queriesPath) {
@@ -329,8 +335,7 @@ public class MovieManagerConfig  {
      public String getCoversFolder(Database database) {
 
 	 if (this.coversFolder.equals("")) {
-	     if (database == null)
-		 database = MovieManager.getIt().getDatabase();
+	     database = MovieManager.getIt().getDatabase();
 	     
 	     if (database != null)
 		 this.coversFolder = database.getCoversFolder();
@@ -342,6 +347,8 @@ public class MovieManagerConfig  {
 	return getCoversPath(null);
     }
 
+    
+    /* Returns the relative cover path */
     public String getCoversPath(Database database) {
 
 	String coversFolder = getCoversFolder(database);
@@ -371,9 +378,7 @@ public class MovieManagerConfig  {
     public String getQueriesFolder(Database database) {
 
 	if (this.queriesFolder.equals("")) {
-
-	    if (database == null)
-		database = MovieManager.getIt().getDatabase();
+	    database = MovieManager.getIt().getDatabase();
 
 	    this.queriesFolder = database.getQueriesFolder();
 	}
@@ -383,7 +388,8 @@ public class MovieManagerConfig  {
     public String getQueriesPath() {
 	return getQueriesPath(null);
     }
-
+    
+    /* Returns the relative queries path */
     public String getQueriesPath(Database database) {
 
 	String queriesFolder = getQueriesFolder(database);
