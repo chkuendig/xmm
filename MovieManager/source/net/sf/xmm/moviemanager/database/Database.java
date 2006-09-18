@@ -2156,8 +2156,8 @@ statement.setInt(1, index);
 		_sql.clear();
 
 		statement = _sql.prepareStatement("UPDATE " + quotedExtraInfoEpisodeString + " "+
-						  "SET " + quotedExtraInfoEpisodeString + ".\""+ (String) fieldNamesList.get(i) +"\"=? "+
-						  "WHERE " + quotedExtraInfoEpisodeString + ".\"ID\"=?;");
+						  "SET " + quotedExtraInfoEpisodeString + "."+ quote + (String) fieldNamesList.get(i) + quote + "=? "+
+						  "WHERE " + quotedExtraInfoEpisodeString + ".ID=?;");
 
 		statement.setString(1, (String) fieldValuesList.get(i));
 		statement.setInt(2, index);
@@ -2225,8 +2225,8 @@ statement.setInt(1, index);
 
 	try {
 	    PreparedStatement statement = _sql.prepareStatement("UPDATE " + quote + "Lists" + quote + " "+
-								"SET " + quote + "Lists" + quote + ".\""+ fieldName +"\"=? "+
-								"WHERE " + quote + "Lists" + quote + ".\"ID\"=?;");
+								"SET " + quote + "Lists" + quote + "." + quote + fieldName + quote + "=? "+
+								"WHERE " + quote + "Lists" + quote + ".ID=?;");
 	    statement.setBoolean(1, fieldValue.booleanValue());
 	    statement.setInt(2, index);
 	    value = statement.executeUpdate();
