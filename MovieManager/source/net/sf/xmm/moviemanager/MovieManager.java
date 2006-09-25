@@ -192,7 +192,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @param The current database.
      **/
     public boolean setDatabase(Database database, boolean cancelRelativePaths) {
-        
+
 	if (database != null) {
 
 	    boolean databaseUpdateAllowed = false;
@@ -315,41 +315,41 @@ public class MovieManager extends JFrame implements ComponentListener {
 		DefaultListModel moviesList = database.getMoviesList(options);
 		ArrayList episodesList = database.getEpisodeList("movieID");
 		DefaultTreeModel treeModel = createTreeModel(moviesList, episodesList);
-		
+
 		getMoviesList().setRootVisible(false);
 		//getMoviesList().setLargeModel(true);
-		
+
 		/* Makes database components visible. */
 		setDatabaseComponentsEnable(true);
-		
+
 		if (cancelRelativePaths && !isApplet()) {
-		    
+
 		    if (!new File(config.getCoversPath(database)).isDirectory() && new File(config.getCoversFolder(database)).isDirectory()) {
 			config.setUseRelativeCoversPath(0);
 		    }
-		    
+
 		    if (!new File(config.getQueriesPath(database)).isDirectory() && new File(config.getQueriesFolder(database)).isDirectory()) {
 			config.setUseRelativeQueriesPath(0);
 		    }
-		    
+
 		    if (database.getPath().indexOf(getUserDir()) == -1) {
 			config.setUseRelativeDatabasePath(0);
 		    }
 		}
-		
-		
-		/* Must be set here and not earlier. 
-		   If the database is set at the top and the  method returns because of an error after the database is set, 
+
+
+		/* Must be set here and not earlier.
+		   If the database is set at the top and the  method returns because of an error after the database is set,
 		   a faulty database will then be stored and used */
 		_database = database;
-		
+
 		/* Loads the movies list. */
 		getMoviesList().setModel(treeModel);
-		
+
 		/* Updates the entries Label */
 		setAndShowEntries();
 		loadMenuLists(database);
-		
+
 	    } else {
 		/* Makes database components invisible. */
 		setDatabaseComponentsEnable(false);
@@ -358,15 +358,15 @@ public class MovieManager extends JFrame implements ComponentListener {
 	}
 	else
 	    _database = null;
-	
-	
+
+
 	if (_database != null) {
 	    if (config.getEnableCtrlMouseRightClick())
 		MovieManager.getIt().getMoviesList().updateUI();
-	    
+
 	    /* Selects the first movie in the list and loads its info. */
 	    if (getMoviesList().getModel().getChildCount(getMoviesList().getModel().getRoot()) > 0) {
-		
+
 		Runnable showProgress = new Runnable() {
 			public void run() {
 			    getMoviesList().setSelectionRow(0);
@@ -374,7 +374,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 		SwingUtilities.invokeLater(showProgress);
 	    }
 	}
-	
+
 	return _database != null;
     }
 
@@ -531,7 +531,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	try {
 	    if (!isApplet()) {
-    		
+
 		File laf = new File("LookAndFeels" + File.separator + "lookAndFeels.ini");
 
 		if (!laf.exists()) {
@@ -809,6 +809,8 @@ public class MovieManager extends JFrame implements ComponentListener {
 	menuItemPrefs.addActionListener(new MovieManagerCommandPrefs());
 	menuTools.add(menuItemPrefs);
 
+        menuTools.addSeparator();
+
 	JMenuItem addMultipleMovies = new JMenuItem("Add Multiple Movies",'M');
 	addMultipleMovies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,ActionEvent.CTRL_MASK));
 	addMultipleMovies.setActionCommand("Add Multiple Movies");
@@ -820,6 +822,14 @@ public class MovieManager extends JFrame implements ComponentListener {
 	updateIMDbInfo.setActionCommand("Update IMDb Info");
 	updateIMDbInfo.addActionListener(new MovieManagerCommandUpdateIMDBInfo());
 	menuTools.add(updateIMDbInfo);
+
+        menuTools.addSeparator();
+
+        JMenuItem reportGenerator = new JMenuItem("Report Generator",'R');
+        reportGenerator.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,ActionEvent.CTRL_MASK));
+        reportGenerator.setActionCommand("Report Generator");
+        reportGenerator.addActionListener(new MovieManagerCommandReportGenerator());
+        menuTools.add(reportGenerator);
 
 	/* All done. */
 	log.debug("Creation of the Tools menu done.");
@@ -1835,7 +1845,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	/* Convert Database MenuItem*/
     	_movieManager.getJMenuBar().getMenu(1).getItem(4).setEnabled(enable);
 	/* Add multiple movies MenuItem*/
-    	_movieManager.getJMenuBar().getMenu(2).getItem(1).setEnabled(enable);
+    	_movieManager.getJMenuBar().getMenu(2).getItem(2).setEnabled(enable);
 	/* Lists*/
     	_movieManager.getJMenuBar().getMenu(3).setEnabled(enable);
 
@@ -2399,7 +2409,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 			log.debug("database path is empty");
 			return null;
 		    }
-		    
+
 		    progressBar = new SimpleProgressBar(MovieManager.getIt(), true, this);
 
 		    Runnable showProgress = new Runnable() {
@@ -2931,7 +2941,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 		    /* Starts the MovieManager. */
 		    MovieManager.getIt().setUp();
-		    
+
 		    /* Loads the database. */
 		    MovieManager.getIt().loadDatabase();
 
