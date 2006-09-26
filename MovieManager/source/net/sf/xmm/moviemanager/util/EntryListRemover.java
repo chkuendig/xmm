@@ -1,5 +1,5 @@
 /**
- * @(#)EntryListRemover.java 1.0 03.11.05 (dd.mm.yy)
+ * @(#)EntryListRemover.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -76,9 +76,11 @@ public class EntryListRemover {
 	Runnable updateListModel = new Runnable() {
 		public void run() {
 		    //listModel.removeElement(element);
-		    parent.remove(child);
-		    listModel.nodeStructureChanged(parent);
-		    MovieManager.getIt().setAndShowEntries();
+		    if (parent != null && child != null) {
+			parent.remove(child);
+			listModel.nodeStructureChanged(parent);
+			MovieManager.getIt().setAndShowEntries();
+		    }
 		}
 	    };
 	SwingUtilities.invokeLater(updateListModel);
@@ -98,7 +100,9 @@ public class EntryListRemover {
 	    
 	    /* Setting the priority of the thread to 4 */
 	    Thread.currentThread().setPriority(3);
-
+	    
+	    int ret = 0;
+	    
 	    try {
 		
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) MovieManager.getIt().getMoviesList().getModel().getRoot();
@@ -108,14 +112,16 @@ public class EntryListRemover {
 		    
 		    if (((DefaultMutableTreeNode) entries.get(0)).getUserObject() instanceof ModelEpisode) {
 			
-			if (database.removeEpisode(((ModelEpisode)((DefaultMutableTreeNode) entries.get(0)).getUserObject()).getKey()) != 0) {
+			
+			
+			if ((ret = database.removeEpisode(((ModelEpisode)((DefaultMutableTreeNode) entries.get(0)).getUserObject()).getKey())) == 0) {
 			    /* Removes from the list... */
 			    if (!fastremove)
 				updateList((DefaultMutableTreeNode) ((DefaultMutableTreeNode) entries.get(0)).getParent(), (DefaultMutableTreeNode) entries.get(0));
 			    
 			}
 			else
-			    log.warn("Error deleting entry:"+ ((ModelEpisode) ((DefaultMutableTreeNode) entries.get(0)).getUserObject()).getKey() +" "+ ((ModelEpisode) ((DefaultMutableTreeNode) entries.get(0)).getUserObject()).toString());
+			    log.warn("Error deleting entry (" +ret+ "):" + ((ModelEpisode) ((DefaultMutableTreeNode) entries.get(0)).getUserObject()).getKey() +" "+ ((ModelEpisode) ((DefaultMutableTreeNode) entries.get(0)).getUserObject()).toString());
 			
 		    }
 		    else {
@@ -129,23 +135,23 @@ public class EntryListRemover {
 			    
 			    for (int u = 0; u < child.length; u++) {
 				
-				if ((MovieManager.getIt().getDatabase()).removeEpisode(((ModelEpisode) child[u].getUserObject()).getKey()) != 0) {
+				if ((ret = database.removeEpisode(((ModelEpisode) child[u].getUserObject()).getKey())) == 0) {
 				    if (!fastremove)
 					node.remove(child[u]);
 				    
 				}
 				else
-				    log.warn("error deleting episode with key:" + ((ModelEpisode) child[u].getUserObject()).getKey());
+				    log.warn("Error deleting episode (" +ret+ ") with key:" + ((ModelEpisode) child[u].getUserObject()).getKey());
 			    }
 			}
 			
-			if (database.removeMovie(((ModelMovie)((DefaultMutableTreeNode) entries.get(0)).getUserObject()).getKey()) != 0) {
+			if ((ret = database.removeMovie(((ModelMovie)((DefaultMutableTreeNode) entries.get(0)).getUserObject()).getKey())) == 0) {
 			    /* Removes from the list... */
 			    if (!fastremove)
 				updateList(root, (DefaultMutableTreeNode) entries.get(0));
 			}
 			else
-			    log.warn("Error deleting entry:"+ ((ModelMovie) ((DefaultMutableTreeNode) entries.get(0)).getUserObject()).getKey() +" "+ ((ModelMovie) ((DefaultMutableTreeNode) entries.get(0)).getUserObject()).toString());
+			    log.warn("Error deleting entry (" +ret+ "):"+ ((ModelMovie) ((DefaultMutableTreeNode) entries.get(0)).getUserObject()).getKey() +" "+ ((ModelMovie) ((DefaultMutableTreeNode) entries.get(0)).getUserObject()).toString());
 		    }
 		    entries.remove(0);
 		}
