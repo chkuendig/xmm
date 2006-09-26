@@ -1,5 +1,5 @@
 /**
- * @(#)ExtendedTreeCellRenderer.java 1.0 01.07.06 (dd.mm.yy)
+ * @(#)ExtendedTreeCellRenderer.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  *
@@ -22,19 +22,26 @@ package net.sf.xmm.moviemanager.extentions;
 
 import java.io.*;
 import java.util.*;
+import java.lang.*;
 
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
+import javax.swing.event.*;
+
+import java.awt.event.*;
+import java.beans.*;
+
+
 import net.sf.xmm.moviemanager.*;
 import net.sf.xmm.moviemanager.database.*;
 import net.sf.xmm.moviemanager.models.*;
 
-public class ExtendedTreeCellRenderer
-    implements TreeCellRenderer {
+public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer, ComponentListener {
+    
+    
     private HashMap coverCache = new HashMap();
-    private JLabel label = new JLabel();
     private Icon defaultIconMovie;
     private Icon defaultIconSerie;
     private String folder;
@@ -49,7 +56,10 @@ public class ExtendedTreeCellRenderer
     private boolean lastUseCovers = false;
     private Image movieImage;
     private Image serieImage;
-
+    
+    private static int maxWidth = 0;
+    private static int viewPortWidth = 0;
+    
     /**
      * ExtendedTreeCellRenderer constructor
      *
@@ -59,7 +69,8 @@ public class ExtendedTreeCellRenderer
     public ExtendedTreeCellRenderer(MovieManager mm, JScrollPane scrollPane) {
         this(mm, scrollPane, MovieManager.getConfig());
     }
-
+    
+    
     /**
      * ExtendedTreeCellRenderer constrictor
      *
@@ -75,9 +86,33 @@ public class ExtendedTreeCellRenderer
         // load and scale default images
         movieImage = mm.getImage("/images/movie.png");
         serieImage = mm.getImage("/images/serie.png");
-        label.setOpaque(true);
+        setOpaque(true);
+	
+	scrollPane.addComponentListener(this);
     }
-
+    
+    public void	componentHidden(ComponentEvent e) {}
+    public void	componentMoved(ComponentEvent e) {}
+    public void	componentShown(ComponentEvent e){}
+    
+    /* Size of viewPort changed */
+    public void componentResized(ComponentEvent e) {
+	
+	if (!config.getMovieListHighlightEntireRow())
+	    return;
+	
+	int newViewPortWidth = scrollPane.getViewport().getExtentSize().width;
+	
+	if (viewPortWidth != newViewPortWidth) {
+	    viewPortWidth = newViewPortWidth;
+	    
+	    TreePath[] selPaths = mm.getMoviesList().getSelectionPaths();
+	    
+	    mm.getMoviesList().clearSelection();
+	    mm.getMoviesList().addSelectionPaths(selPaths);
+	}
+    }
+    
     /**
      * Returns specialized JLabel for JTree node display
      *
@@ -100,18 +135,22 @@ public class ExtendedTreeCellRenderer
 
             // icon
             int h = config.getMovieListRowHeight();
-            if(!useCovers)
+            if (!useCovers)
                 h += 8;
-            if(h != lastRowHeight || useCovers != lastUseCovers) {
-                int w = useCovers ? h * 32 / 44 : h;  // use height as width to obtain square default images when not showing covers
+	    
+            if ((h != lastRowHeight) || (useCovers != lastUseCovers)) {
+		/* Use height as width to obtain square default images when not showing covers. */
+                int w = useCovers ? h * 32 / 44 : h; 
                 defaultIconMovie = new ImageIcon(movieImage.getScaledInstance(w, h, Image.SCALE_SMOOTH));
                 defaultIconSerie = new ImageIcon(serieImage.getScaledInstance(w, h, Image.SCALE_SMOOTH));
                 lastRowHeight = h;
                 lastUseCovers = useCovers;
                 clearCoverCache();
             }
-            Icon icon = null;
-            if (useCovers) {
+            
+	    Icon icon = null;
+            
+	    if (useCovers) {
                 if (entry.getCover() != null && entry.getCover().length() > 0) {
                     icon = (Icon) coverCache.get(entry.getCover());
                     if (icon == null) {
@@ -128,38 +167,52 @@ public class ExtendedTreeCellRenderer
             else if (useIcons) {
                 icon = leaf ? defaultIconMovie : defaultIconSerie;
             }
-            label.setIcon(icon);
+            setIcon(icon);
 
-            // text and colors
-            label.setForeground(selected ? selectionForeground : foreground);
-            label.setBackground(selected ? selectionBackground : background);
+            /* text and colors */
+            setForeground(selected ? selectionForeground : foreground);
+            setBackground(selected ? selectionBackground : background);
+	    
             if (useCovers) {
                 Color c = selected ? selectionForeground : foreground;
                 String foreground = " color='#" + Integer.toHexString(c.getRed() * 256 * 256 + c.getGreen() * 256 + c.getBlue()) + "'";
                 int fontSize = 3 + h / 40;
-                label.setText("<html><font size='" + fontSize + "'" + foreground + "><b>" + entry.getTitle() + "</b></font><br><font size='" + (fontSize - 1) + "'" + foreground + ">" + entry.getDate() + "</font></html>");
+                setText("<html><font size='" + fontSize + "'" + foreground + "><b>" + entry.getTitle() + "</b></font><br><font size='" + (fontSize - 1) + "'" + foreground + ">" + entry.getDate() + "</font></html>");
             }
             else {
-                label.setText(entry.getTitle());
+                setText(entry.getTitle());
             }
-
-            // special row highlight
-            if (config.getMovieListHighlightEntireRow()) {
-                Dimension d = label.getUI().getPreferredSize(label); // hmmm... seems to return right size
-                int w = scrollPane.getVisibleRect().width;
-                if (d.width < w) {
-                    d.width = w;
-                }
-                label.setPreferredSize(d);
-            }
-        }
+	}
         else {
-            label.setText(o.toString());
+            setText(o.toString());
         }
 
-        return label;
+        return this;
     }
-
+    
+    
+    public Dimension getPreferredSize() {
+	  
+	Dimension dim = super.getPreferredSize();
+	int w = getIconTextGap() + SwingUtilities.computeStringWidth(this.getFontMetrics(this.getFont()), this.getText());
+	
+	if (getIcon() != null)
+	    w += + getIcon().getIconWidth() + 4;
+	
+	if (w > maxWidth)
+	    maxWidth = w;
+	
+	/* If highlightEntireRow == true, using the stored maxwidth on all the cells */
+	if (config.getMovieListHighlightEntireRow())
+	    w = maxWidth > viewPortWidth ? maxWidth : viewPortWidth;
+	
+	dim.width = w;
+	dim.height = lastRowHeight;
+	
+	return dim;
+    }
+    
+    
     /**
      * loadCover load cover from disk or database
      *
@@ -169,7 +222,7 @@ public class ExtendedTreeCellRenderer
     private Icon loadCover(ModelEntry entry) {
         if (folder == null) {
             folder = config.getCoversFolder();
-            String dirSep = mm.getDirSeparator();
+            String dirSep = MovieManager.getDirSeparator();
             if (!folder.endsWith(dirSep)) {
                 folder += dirSep;
             }
@@ -201,14 +254,16 @@ public class ExtendedTreeCellRenderer
             return null;
         }
     }
-
+    
+    
     /**
      * clear cached covers
      */
     public void clearCoverCache() {
         coverCache.clear();
     }
-
+    
+    
     /**
      * removeCoverFromCache - remove specified cover from cache
      *
