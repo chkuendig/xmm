@@ -1,5 +1,5 @@
 /**
- * @(#)TVDOTCOM.java 1.0 29.01.06 (dd.mm.yy)
+ * @(#)TVDOTCOM.java 1.0 19.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -216,17 +216,6 @@ public class TVDOTCOM {
 	    
 	    StringBuffer data = HttpUtil.readDataToStringBuffer(url);
 	    
-	    // /* Gets the input stream from the connection... */
-// 	    InputStream stream = url.openStream();
-// 	    /* Saves the page data in a string buffer... */
-// 	    StringBuffer data = new StringBuffer();
-// 	    int buffer;
-	    
-// 	    while ((buffer=stream.read()) != -1)
-// 		data.append((char)buffer);
-	    
-// 	    stream.close();
-	    
 	    int index = data.indexOf("http://image.com.com/tv/images/processed/thumb/");
 	    int index2 = data.indexOf("\"", index);
 	    
@@ -262,16 +251,6 @@ public class TVDOTCOM {
 		//connection.setRequestProperty("referer","xmmwww.domain.com");
 		//connection.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0");
 		
-	// 	InputStream inputStream = connection.getInputStream(); 
-// 		BufferedInputStream in = new BufferedInputStream(inputStream, 10000);
-		
-// 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream(in.available());
-		
-// 		int i; 
-// 		while ((i = in.read()) != -1)
-// 		    byteStream.write(i);
-		
-// 		coverData = byteStream.toByteArray();
 	    }
 	} catch (Exception e) {
 	    log.error("", e);
@@ -290,7 +269,6 @@ public class TVDOTCOM {
 	
 	try {
 	
-	    //URL url = makeURL(urlType+title.replaceAll("[\\p{Blank}]+","%20"));
 	    URL url = new URL(urlType + title.replaceAll("[\\p{Blank}]+","%20"));
 	    
 	    StringBuffer data;
@@ -306,7 +284,7 @@ public class TVDOTCOM {
 		return null;
 	    }
 	    
-	    FileUtil.writeToFile("seriesMatches.html", data);
+	    //FileUtil.writeToFile("seriesMatches.html", data);
 	    
 	    String temp = "";
 	    
@@ -375,34 +353,18 @@ public class TVDOTCOM {
 	
 	try {
 	    
-	    //URL url = makeURL(urlType);
 	    URL url = new URL(urlType);
 	    
 	    StringBuffer data = HttpUtil.readDataToStringBuffer(url);
 
-	    // /* Gets the input stream from the connection... */
-// 	    InputStream stream = url.openStream();
-// 	    /* Saves the page data in a string buffer... */
-// 	    StringBuffer data = new StringBuffer();
-// 	    int buffer;
-	
-// 	    while ((buffer=stream.read())!=-1) {
-// 		data.append((char)buffer);
-// 	    }
-	    
-// 	    stream.close();
-	    
-	    FileUtil.writeToFile("seasonsOutput.html", data);
+	    //FileUtil.writeToFile("seasonsOutput.html", data);
 	    
 	    int startlimit = 0;
 	    int start = 0;
 	    int stop = 0;
-	    
 	    int counter = 1;
 	    
 	    String title = "";
-	    
-	    //listModel.addElement(new ModelSearchHit(modelSeries.getShowKey(), modelSeries.getUrlTitle(), modelSeries.getTitle()+ " - Season "+ 1, 1));
 	    
 	    startlimit = data.indexOf("Trivia Guide");
 	    
@@ -452,8 +414,7 @@ public class TVDOTCOM {
 	String urlType = "http://www.tv.com/"+ modelSeason.getUrlTitle() +"/show/"+ modelSeason.getShowKey() +"/episode_guide.html&season="+ modelSeason.getSeasonNumber();
 	
 	try {
-	     
-	    //URL url = makeURL(urlType);
+	    
 	    URL url = new URL(urlType);
 	    
 	    try {
@@ -486,9 +447,7 @@ public class TVDOTCOM {
 		 
 		urlType = "http://www.tv.com/"+ modelSeason.getUrlTitle() +"/show/"+ modelSeason.getShowKey() +"/episode_guide.html&season="+modelSeason.getSeasonNumber()+ "&pg_episodes="+ (i+1);
 		 
-		//url = makeURL(urlType);
 		url = new URL(urlType);
-		
 		
 		try {
 		    data = HttpUtil.readDataToStringBuffer(url);
@@ -517,8 +476,6 @@ public class TVDOTCOM {
 	exception = null;
         
 	try {
-	    
-	    //String next = " <a href=\"http://www.tv.com/"+modelSeason.getUrlTitle()+"/";
 	    
 	    String temp = "";
 	    String temp2 = "";
@@ -577,8 +534,6 @@ public class TVDOTCOM {
 			listModel.addElement(new ModelSearchHit(modelSeason.getShowKey(), modelSeason.getUrlTitle(), temp, searchTitle, modelSeason.getSeasonNumber(), i));
 			
 		    }
-		    //else if(temp.indexOf("episode_listings.html") != -1)
-		    //break;
 		}
 	    }
 	    
@@ -606,8 +561,6 @@ public class TVDOTCOM {
 	String episodeUrlKey = "";
 	int episodeNumber = 0;
 
-	//String next = "http://www.tv.com/"+ episode.getUrlTitle()+"/";
-	
 	//FileUtil.writeToFile("episodeStream.html", data);
 	
 	try {
@@ -659,10 +612,8 @@ public class TVDOTCOM {
 	    start = data.indexOf("First aired:", startlimit) + 13;
 	    
 	    if (start > startlimit) {
-		//start = data.indexOf(" ", start) -4;
 		
 		temp = HttpUtil.decodeHTML(data.substring(start, data.indexOf(" ", start)).trim());
-		
 		startlimit = start;
 		
 		/* Getting date */
@@ -689,7 +640,6 @@ public class TVDOTCOM {
 		
 		end = data.indexOf("Director:", start);
 		startlimit = start;
-		//temp2 = data.substring(start, end);
 		
 		while (0 < data.indexOf("<a href=", start) && data.indexOf("<a href=", start) < end) {
 		    
@@ -739,7 +689,7 @@ public class TVDOTCOM {
 
 	    if (start > startlimit) {
 		stop = data.indexOf("</a>", start);
-		//startlimit = start;
+		
 		end = data.indexOf("Guest star:", startlimit);
 		
 		if (start != 17 && end > start) {
