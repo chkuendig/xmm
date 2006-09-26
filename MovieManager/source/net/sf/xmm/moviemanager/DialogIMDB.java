@@ -1,5 +1,5 @@
 /**
- * @(#)DialogIMDB.java 1.0 28.01.06 (dd.mm.yy)
+ * @(#)DialogIMDB.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -28,6 +28,7 @@ import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.ModelIMDB;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.util.SwingWorker;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import org.apache.log4j.Logger;
 
@@ -391,9 +392,11 @@ class DialogIMDB extends JDialog {
 		listMovies.setModel(list);
 		listMovies.setSelectedIndex(0);
 						
-		if (executeCommandMultipleMoviesSelectCheck(listSize) == 1)
-		    setVisible(true);
-						
+		if (executeCommandMultipleMoviesSelectCheck(listSize) == 1) {
+		    //setVisible(true);
+		    ShowGUI.show(this, true);
+		}
+		
 	    } catch (Exception e) {
 		executeErrorMessage(e.getMessage());
 		listMovies.setModel(null);
@@ -592,28 +595,33 @@ class DialogIMDB extends JDialog {
 	    return;
 		
 	if (exception.startsWith("Server returned HTTP response code: 407")) {
-	    DialogAlert alert = new DialogAlert("Authentication required", "Proxy server requires authentication");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Authentication required", "Proxy server requires authentication");
+	    //alert.setVisible(true);
+	    ShowGUI.show(alert, true);
 	}
 		
 	if (exception.startsWith("Connection timed out")) {
-	    DialogAlert alert = new DialogAlert("Connection timed out", "Server did not respond");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Connection timed out", "Server did not respond");
+	    //alert.setVisible(true);
+	    ShowGUI.show(alert, true);
 	}
 		
 	if (exception.startsWith("Connection reset")) {
-	    DialogAlert alert = new DialogAlert("Connection reset", "Connection reset by server");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Connection reset", "Connection reset by server");
+	    //alert.setVisible(true);
+	    ShowGUI.show(alert, true);
 	}
 		
 	if (exception.startsWith("Server redirected too many  times")) {
-	    DialogAlert alert = new DialogAlert("Access denied", "Username or password is invalid");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Access denied", "Username or password is invalid");
+	    //alert.setVisible(true);
+	    ShowGUI.show(alert, true);
 	}
 		
 	if (exception.startsWith("The host did not accept the connection within timeout of")) {
-	    DialogAlert alert = new DialogAlert("Connection timeout", exception);
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Connection timeout", exception);
+	    //alert.setVisible(true);
+	    ShowGUI.show(alert, true);
 	}
     }
     

@@ -1,5 +1,5 @@
 /**
- * @(#)DialogImport.java 1.0 24.01.06 (dd.mm.yy)
+ * @(#)DialogImport.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -26,6 +26,7 @@ import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandImport;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import org.apache.log4j.Logger;
 
@@ -337,7 +338,8 @@ public class DialogImport extends JDialog implements ActionListener {
 	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
 		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
 	
-	setVisible(true);
+	//setVisible(true);
+	ShowGUI.show(this, true);
     }
     
     JPanel makeListPanel() {
@@ -529,16 +531,19 @@ public class DialogImport extends JDialog implements ActionListener {
 	    log.debug("ActionPerformed: " + event.getActionCommand());
 	    
 	    if (getPath().equals("")) {
-		DialogAlert alert = new DialogAlert("Alert","Please specify a file path.");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Alert","Please specify a file path.");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
 	    }
 	    else if (!new File(getPath()).exists()) {
-		DialogAlert alert = new DialogAlert("Alert","The specified file does not exist.");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Alert","The specified file does not exist.");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
 	    }
 	    else if (getImportMode() == 1 && (getExcelTitleColumn() == null || getExcelTitleColumn().equals(""))) {
-		DialogAlert alert = new DialogAlert("Alert","You need to specify a column.");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Alert","You need to specify a column.");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
 	    }
 	    else {
 		executeSave();
@@ -553,7 +558,9 @@ public class DialogImport extends JDialog implements ActionListener {
 	    all.remove(2);
 	    all.add(makeListPanel(), 2);
 	    pack();
-	    setVisible(true);
+	    
+	    //setVisible(true);
+	    ShowGUI.show(this, true);
 	}
 	
 	if (event.getSource().equals(enableSearchForImdbInfo)) {

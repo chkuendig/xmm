@@ -1,5 +1,5 @@
 /**
- * @(#)DialogFolders.java 1.0 28.01.06 (dd.mm.yy)
+ * @(#)DialogFolders.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -22,6 +22,7 @@ package net.sf.xmm.moviemanager;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.*;
 
@@ -546,15 +547,17 @@ public class DialogFolders extends JDialog implements ItemListener {
 	    if (relativeCoversProgram.isSelected()) {
 		
 		if ((coversPath.indexOf(MovieManager.getUserDir()) == -1) && (!new File(MovieManager.getUserDir()+ coversPath).isDirectory())) {
-		    DialogAlert alert = new DialogAlert("Alert", "Current options demand that the covers directory must be located inside the install directory when using relative path");
-		    alert.setVisible(true);
+		    DialogAlert alert = new DialogAlert(this, "Alert", "Current options demand that the covers directory must be located inside the install directory when using relative path");
+		    //alert.setVisible(true);
+		    ShowGUI.show(alert, true);
 		    return;
 		}
 		
 		if (coversPath.equals("") || !(coversFolder = new File(coversPath)).isDirectory()) {
 		    if (coversPath.equals("") || !(coversFolder = new File(MovieManager.getUserDir()+ coversPath)).isDirectory()) {
-			DialogAlert alert = new DialogAlert("Alert","Covers directory does not exist");
-			alert.setVisible(true);
+			DialogAlert alert = new DialogAlert(this, "Alert","Covers directory does not exist");
+			//alert.setVisible(true);
+			ShowGUI.show(alert, true);
 			return;
 		    }
 		}
@@ -569,8 +572,9 @@ public class DialogFolders extends JDialog implements ItemListener {
 		dbPath = dbPath.substring(0, dbPath.lastIndexOf(MovieManager.getDirSeparator()));
 		
 		if ((coversPath.indexOf(dbPath) == -1) && (!new File(dbPath + MovieManager.getDirSeparator() + coversPath).isDirectory())) {
-		    DialogAlert alert = new DialogAlert("Alert", "Current options demand that the covers directory must be located relative to the database");
-		    alert.setVisible(true);
+		    DialogAlert alert = new DialogAlert(this, "Alert", "Current options demand that the covers directory must be located relative to the database");
+		    //alert.setVisible(true);
+		    ShowGUI.show(alert, true);
 		    return;
 		}
 		
@@ -584,8 +588,9 @@ public class DialogFolders extends JDialog implements ItemListener {
 	    coversFolder = new File(coversPath);
 	    
 	    if(!coversFolder.isDirectory()) {
-		DialogAlert alert = new DialogAlert("Alert","Covers directory does not exist");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Alert","Covers directory does not exist");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
 		return;
 	    }
 	    coversPath = coversFolder.getAbsolutePath();
@@ -601,15 +606,17 @@ public class DialogFolders extends JDialog implements ItemListener {
 		
 		if (queriesPath.indexOf(MovieManager.getUserDir()) == -1 && !(new File(MovieManager.getUserDir(), queriesPath)).isDirectory()) {
 		    
-		    DialogAlert alert = new DialogAlert("Alert","Queries directory must be located inside the install directory when using relative path");
-		    alert.setVisible(true);
+		    DialogAlert alert = new DialogAlert(this, "Alert", "Queries directory must be located inside the install directory when using relative path");
+		    //alert.setVisible(true);
+		    ShowGUI.show(alert, true);
 		    return;
 		}
 		
 		if (queriesPath.equals("") || !(queriesFolder = new File(queriesPath)).isDirectory()) {
 		    if (queriesPath.equals("") || !(queriesFolder = new File(MovieManager.getUserDir(), queriesPath)).isDirectory()) {
-			DialogAlert alert = new DialogAlert("Alert","Queries directory does not exist");
-			alert.setVisible(true);
+			DialogAlert alert = new DialogAlert(this, "Alert", "Queries directory does not exist");
+			//alert.setVisible(true);
+			ShowGUI.show(alert, true);
 			return;
 		    }
 		}
@@ -624,8 +631,9 @@ public class DialogFolders extends JDialog implements ItemListener {
 		dbPath = dbPath.substring(0, dbPath.lastIndexOf(MovieManager.getDirSeparator()));
 		
 		if ((queriesPath.indexOf(dbPath) == -1) && (!new File(dbPath, queriesPath).isDirectory())) {
-		    DialogAlert alert = new DialogAlert("Alert", "Current options demand that the queries directory must be located relative to the database");
-		    alert.setVisible(true);
+		    DialogAlert alert = new DialogAlert(this, "Alert", "Current options demand that the queries directory must be located relative to the database");
+		    //alert.setVisible(true);
+		    ShowGUI.show(alert, true);
 		    return;
 		}
 		
@@ -639,8 +647,9 @@ public class DialogFolders extends JDialog implements ItemListener {
 	    queriesFolder = new File(queriesPath);
 	    
 	    if(!queriesFolder.isDirectory()) {
-		DialogAlert alert = new DialogAlert("Alert","Queries directory does not exist");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Alert","Queries directory does not exist");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
 		return;
 	    }
 	    queriesPath = queriesFolder.getAbsolutePath();
@@ -652,8 +661,9 @@ public class DialogFolders extends JDialog implements ItemListener {
 	    String databasePath = MovieManager.getConfig().getDatabasePath(true);
 	    
 	    if (databasePath.indexOf(MovieManager.getUserDir()) == -1) {
-		DialogAlert alert = new DialogAlert("Alert", "Database must be located inside the install directory when using relative path");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Alert", "Database must be located inside the install directory when using relative path");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
 		return;
 	    }
 	    else {

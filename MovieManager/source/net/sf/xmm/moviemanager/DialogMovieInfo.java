@@ -1,5 +1,5 @@
 /**
- * @(#)DialogMovieInfo.java 1.0 17.09.06 (dd.mm.yy)
+ * @(#)DialogMovieInfo.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -31,6 +31,7 @@ import net.sf.xmm.moviemanager.fileproperties.FilePropertiesMovie;
 import net.sf.xmm.moviemanager.models.*;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
@@ -224,13 +225,13 @@ public class DialogMovieInfo extends JDialog {
 	
 	//YYYYMMDD, or YYYY/MM/DD or even YYYY-MM-DD, YYYY.MM.DD
 
-	JTextField date = new JTextField(10);
+	JTextField date = new JTextField(7);
 	
 	//date.setDocument(new DocumentRegExp("(\\d)*",4));
 	constraints = new GridBagConstraints();
 	constraints.gridx = 1;
 	constraints.gridy = 0;
-	constraints.gridwidth = 6;
+	constraints.gridwidth = 1;
 	constraints.insets = new Insets(1,5,1,5);
 	constraints.anchor = GridBagConstraints.WEST;  
 	panelGeneralInfo.add(date,constraints);
@@ -241,7 +242,7 @@ public class DialogMovieInfo extends JDialog {
 	constraints.gridx = 2;
 	constraints.gridy = 0;
 	constraints.gridwidth = 1;
-	constraints.insets = new Insets(1,10,1,5);
+	constraints.insets = new Insets(1,5,1,5);
 	constraints.anchor = GridBagConstraints.WEST;
 	panelGeneralInfo.add(colourID,constraints);
     
@@ -1969,11 +1970,10 @@ public class DialogMovieInfo extends JDialog {
     public ModelEntry executeCommandSave(String listName) {
 	
 	Database database = MovieManager.getIt().getDatabase();
-	int reloadIndex = _index;
-	
 	ModelEntry entry = null;
 	
 	_hasReadProperties = false;
+	
 	/* Checks the movie title... */
 	if (!getMovieTitle().getText().equals("")) {
 	    /* Saves the current field... */
@@ -2006,9 +2006,10 @@ public class DialogMovieInfo extends JDialog {
 		    log.error("Exception: " + e.getMessage());
 		    log.warn("Access denied when trying to save cover:" + coverFile.getAbsolutePath());
 		    
-		    DialogAlert alert = new DialogAlert("Access denied","An error occured when trying to save cover file.", e.getMessage());
-		    alert.setVisible(true);
-		    
+		    DialogAlert alert = new DialogAlert(this, "Access denied", "An error occured when trying to save cover file.", e.getMessage());
+		    //alert.setVisible(true);
+		    ShowGUI.show(alert, true);
+
 		    _cover = "";
 		}
 	    }
@@ -2143,8 +2144,6 @@ public class DialogMovieInfo extends JDialog {
 			if (extraFieldNamesList.size() > 0)
 			    database.addExtraInfoEpisode(episodeindex, extraFieldNamesList, extraFieldValuesList);
 			
-			/* The index sent to MovieManagerCommandSelect.executeAndReload is now the episode id*/
-			reloadIndex = episodeindex;
 			entry.setKey(episodeindex);
 			
 			/* Updates model */
@@ -2208,8 +2207,7 @@ public class DialogMovieInfo extends JDialog {
 		    entry.setCoverData(_coverData);
 		    
 		    /* Adds General Info... */
-		    reloadIndex = _index = 
-			MovieManager.getIt().getDatabase().addGeneralInfo((ModelMovie) entry);
+		    _index = MovieManager.getIt().getDatabase().addGeneralInfo((ModelMovie) entry);
 		    
 		    if (_index != -1) {
 			
@@ -2261,11 +2259,12 @@ public class DialogMovieInfo extends JDialog {
 	    }
 	    
 	} else {
-	    DialogAlert alert = new DialogAlert("Alert","Please specify a movie title.");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Alert","Please specify a movie title.");
+	    //alert.setVisible(true);
+	    ShowGUI.show(alert, true);
 	}
 	
-	// remove old cover possible cached by JTree cellrenderer
+	/* Remove old cover possible cached by JTree cellrenderer */
         ((ExtendedTreeCellRenderer) MovieManager.getIt().getMoviesList().getCellRenderer()).removeCoverFromCache(entry.getCover());
 	
 	return entry;
@@ -2275,8 +2274,8 @@ public class DialogMovieInfo extends JDialog {
 	
 	if  (reloadEntry != null && reloadEntry.getKey() != -1) {
 	    
-	    /* Clears the filter and reloads... */
-	    //MovieManager.getIt().getFilter().setText("");
+	    /* Reloads... */
+	    
 	    //long time = System.currentTimeMillis();
 	    MovieManagerCommandSelect.executeAndReload(reloadEntry, _edit, isEpisode, true);
 	    MovieManager.getIt().getMoviesList().requestFocus(true);
@@ -2338,15 +2337,8 @@ public class DialogMovieInfo extends JDialog {
 		
 		file = fileChooser.getSelectedFiles();
 		
-		System.err.println("Selected File:" + file[0]);
-		
 		String lastFileFilter = fileChooser.getFileFilter().getDescription();
 		MovieManager.getConfig().setLastFileFilterUsed(lastFileFilter);
-		
-		System.err.println("lastFileFilter:" + lastFileFilter);
-		System.err.println("filterChoices:" + filterChoices[1]);
-		
-		
 		
 		/* Use media info library */
 		if (lastFileFilter.equals(filterChoices[1]))
@@ -2386,16 +2378,9 @@ public class DialogMovieInfo extends JDialog {
 	    
 	    int returnVal = fileChooser.showOpenDialog(this);
 	    
-	    //System.err.println("returnVal:" + returnVal);
-
 	    if (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
 		/* Gets the path... */
 		File selectedFile = fileChooser.getSelectedFile();
-		
-		//System.err.println("selectedFile:" + selectedFile);
-		//System.err.println("isDirectory:" + selectedFile.isDirectory());
-		
-		//System.err.println("getParentFile:" + selectedFile.getParentFile().getName());
 		
 		if (selectedFile.getName().equals("AUDIO_TS")) {
 		    selectedFile = selectedFile.getParentFile();
@@ -2423,13 +2408,12 @@ public class DialogMovieInfo extends JDialog {
 			ifoList.add(list[i]);
 		}
 		
-		//System.err.println("ifoList..size:" + ifoList.size());
-		
 		File [] ifo = (File[]) ifoList.toArray(new File[0]);
 		
 		if (ifo == null || ifo.length == 0) {
-		    DialogAlert alert = new DialogAlert("Alert", "Failed to locate the DVD files");
-		    alert.setVisible(true);
+		    DialogAlert alert = new DialogAlert(this, "Alert", "Failed to locate the DVD files");
+		    //alert.setVisible(true);
+		    ShowGUI.show(alert, true);
 		}
 		else {
 		    
@@ -2461,12 +2445,8 @@ public class DialogMovieInfo extends JDialog {
 			}
 		    }
 		    
-		    /* If duration less than 30 minutes, will check the other ifos*/
+		    /* If duration less than 30 minutes, will check the other ifo files */
 		    if (fileProperties[biggestSizeIndex].getDuration() < 1800) {
-			
-			// System.err.println("longestDurationIndex:" + longestDurationIndex);
-// 			System.err.println("biggestSizeIndex:" + biggestSizeIndex);
-// 			System.err.println("longestDuration:" + longestDuration);
 			
 			if (longestDurationIndex != biggestSizeIndex && longestDuration > 1800)
 			    mainIfoIndex = longestDurationIndex;
@@ -2594,8 +2574,10 @@ public class DialogMovieInfo extends JDialog {
 		    
 		String currentValue = (String) _fieldValues.get(13);
 		    
-		if (!currentValue.equals("")) {
-			
+		if (currentValue.equals("")) {
+		    _fieldValues.set(13, location);
+		}
+		else {
 		    if (_hasReadProperties) {
 			    
 			StringTokenizer tokenizer = new StringTokenizer(currentValue, "*");
@@ -2724,10 +2706,12 @@ public class DialogMovieInfo extends JDialog {
 	/* Checks the movie title... */
 	if(!getMovieTitle().getText().equals("")) {
 	    DialogIMDB dialogIMDB = new DialogIMDB(this);
-	    dialogIMDB.setVisible(true);
+	    //dialogIMDB.setVisible(true);
+	    ShowGUI.show(dialogIMDB, true);
 	} else {
-	    DialogAlert alert = new DialogAlert("Alert","Please specify a movie title.");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Alert","Please specify a movie title.");
+	    //alert.setVisible(true);
+	    ShowGUI.show(alert, true);
 	}
     }
     
@@ -2741,8 +2725,9 @@ public class DialogMovieInfo extends JDialog {
 	if(!searchString.equals("")) {
 	    DialogIMDB dialogIMDB = new DialogIMDB(this, searchString, filename, multipleMovies, multiAddSelectOption);
 	} else {
-	    DialogAlert alert = new DialogAlert("Alert","Please specify a movie title.");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Alert","Please specify a movie title.");
+	    //    alert.setVisible(true);
+	    ShowGUI.show(alert, true);
 	}
     }
     
@@ -2753,10 +2738,12 @@ public class DialogMovieInfo extends JDialog {
 	/* Checks the movie title... */
 	if(!getMovieTitle().getText().equals("")) {
 	    DialogTVDOTCOM dialogIMDB = new DialogTVDOTCOM(this);
-	    dialogIMDB.setVisible(true);
+	    //dialogIMDB.setVisible(true);
+	    ShowGUI.show(dialogIMDB, true);
 	} else {
-	    DialogAlert alert = new DialogAlert("Alert","Please specify a movie title.");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Alert","Please specify a movie title.");
+	    //alert.setVisible(true);
+	    ShowGUI.show(alert, true);
 	}
     }
     

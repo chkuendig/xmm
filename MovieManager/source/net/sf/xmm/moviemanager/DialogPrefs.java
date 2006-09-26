@@ -1,5 +1,5 @@
 /**
- * @(#)DialogPrefs.java 1.0 28.01.06 (dd.mm.yy)
+ * @(#)DialogPrefs.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  *
@@ -645,8 +645,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	movieListPanel.setLayout(new BoxLayout(movieListPanel, BoxLayout.PAGE_AXIS));
 
 	/* Enable rightclick by ctrl key */
-	enableRightclickByCtrl = new JCheckBox("Enable rightclick by ctrl-key in movielist");
-	enableRightclickByCtrl.setActionCommand("Enable rightclickbyctrl");
+	enableRightclickByCtrl = new JCheckBox("Enable right click by ctrl-key in movielist");
+	enableRightclickByCtrl.setActionCommand("Enable right click by ctrl");
 
 	if (MovieManager.getConfig().getEnableCtrlMouseRightClick())
 	    enableRightclickByCtrl.setSelected(true);
@@ -701,6 +701,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         root.add(new DefaultMutableTreeNode(new ModelMovie(-1, "Example 1", null, null, "Year")));
         root.add(new DefaultMutableTreeNode(new ModelMovie(-1, "Example 2", null, null, "Year")));
         root.add(new DefaultMutableTreeNode(new ModelMovie(-1, "Example 3", null, null, "Year")));
+        root.add(new DefaultMutableTreeNode(new ModelMovie(-1, "Example 4", null, null, "Year")));
         exampleTree = new JTree(root);
         JScrollPane scroller = new JScrollPane(exampleTree);
         scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -876,12 +877,14 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	    if (!(new File(MovieManager.getConfig().getCoversFolder()).isDirectory())) {
 
-		DialogAlert alert = new DialogAlert("Alert", "Covers directory doesn't exist");
-		alert.setVisible(true);
-
+		DialogAlert alert = new DialogAlert(this, "Alert", "Covers directory doesn't exist");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
+		
 		DialogFolders dialogFolders = new DialogFolders();
-		dialogFolders.setVisible(true);
-
+		//dialogFolders.setVisible(true);
+		ShowGUI.show(dialogFolders, true);
+		
 		if (!(new File(MovieManager.getConfig().getCoversFolder()).isDirectory())) {
 		    enableStoreCoversLocally.setSelected(false);
 		}
@@ -1013,8 +1016,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	}
 
 
-	DialogAlert alert = new DialogAlert("Look and Feel error", message, error);
-	alert.setVisible(true);
+	DialogAlert alert = new DialogAlert(this, "Look and Feel error", message, error);
+	//alert.setVisible(true);
+	ShowGUI.show(alert, true);
     }
 
     void setLafChooserPreferredSize() {
@@ -1085,15 +1089,17 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    MovieManager.getIt().dispose();
 	    MovieManager.getIt().setUndecorated(true);
 	    MovieManager.getIt().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.FRAME);
-	    MovieManager.getIt().setVisible(true);
-
-	       /* Updating DialogSearch if open */
+	    //MovieManager.getIt().setVisible(true);
+	    ShowGUI.show(MovieManager.getIt(), true);
+	    
+	    /* Updating DialogSearch if open */
 	    if (MovieManager.getIt().getDialogSearch() != null) {
 		MovieManager.getIt().getDialogSearch().dispose();
 		MovieManager.getIt().getDialogSearch().setUndecorated(true);
 		MovieManager.getIt().getDialogSearch().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.PLAIN_DIALOG);
 		MovieManager.getIt().getDialogSearch().pack();
-		MovieManager.getIt().getDialogSearch().setVisible(true);
+		//MovieManager.getIt().getDialogSearch().setVisible(true);
+		ShowGUI.show(MovieManager.getIt().getDialogSearch(), true);
 	    }
 
 	    /* This */
@@ -1101,7 +1107,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    setUndecorated(true);
 	    getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.FRAME);
 	    pack();
-	    setVisible(true);
+	    //setVisible(true);
+	    ShowGUI.show(this, true);
 	}
 	else {
 	    MovieManager.getConfig().setDefaultLookAndFeelDecorated(false);
@@ -1112,7 +1119,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    MovieManager.getIt().dispose();
 	    MovieManager.getIt().setUndecorated(false);
 	    MovieManager.getIt().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.NONE);
-	    MovieManager.getIt().setVisible(true);
+	    //MovieManager.getIt().setVisible(true);
+	    ShowGUI.show(MovieManager.getIt(), true);
 
 	      /* Updating DialogSearch if open */
 	    if (MovieManager.getIt().getDialogSearch() != null) {
@@ -1120,7 +1128,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		MovieManager.getIt().getDialogSearch().setUndecorated(false);
 		MovieManager.getIt().getDialogSearch().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.NONE);
 		MovieManager.getIt().getDialogSearch().pack();
-		MovieManager.getIt().getDialogSearch().setVisible(true);
+		//MovieManager.getIt().getDialogSearch().setVisible(true);
+		ShowGUI.show(MovieManager.getIt().getDialogSearch(), true);
 	    }
 
 	    /* This */
@@ -1128,7 +1137,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    setUndecorated(false);
 	    getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.NONE);
 	    pack();
-	    setVisible(true);
+	    //setVisible(true);
+	    ShowGUI.show(this, true);
 	}
     }
 
