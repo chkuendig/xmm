@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandRemove.java 1.0 04.11.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandRemove.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -23,6 +23,7 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.DialogQuestion;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.*;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,7 +51,9 @@ public class MovieManagerCommandRemove implements ActionListener {
 	JTree movieList = MovieManager.getIt().getMoviesList();
 	
 	DefaultMutableTreeNode selected = (DefaultMutableTreeNode) movieList.getLastSelectedPathComponent();
-	    
+	
+	int ret = 0;
+
 	if (selected != null && ((ModelEntry) selected.getUserObject()).getKey() != -1) {
 	    /* Asks for removal... */
 	    boolean multipleRemove = false;
@@ -76,7 +79,8 @@ public class MovieManagerCommandRemove implements ActionListener {
 		question = new DialogQuestion("Remove Movie", "Are you sure you want to remove '"+ selected.getUserObject() +"'?");
 	    }
 	    
-	    question.setVisible(true);
+	    //question.setVisible(true);
+	    ShowGUI.show(question, true);
 	    
 	    if (question.getAnswer()) {
 		
@@ -96,7 +100,7 @@ public class MovieManagerCommandRemove implements ActionListener {
 		    if (entry instanceof ModelEpisode) {
 			
 			/* Removes episode from database */
-			if (MovieManager.getIt().getDatabase().removeEpisode(entry.getKey()) != 0) {
+			if ((ret = MovieManager.getIt().getDatabase().removeEpisode(entry.getKey())) == 0) {
 			    
 			    /* Ensures that a new node will be selected */
 			    DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selected.getParent();
@@ -135,14 +139,14 @@ public class MovieManagerCommandRemove implements ActionListener {
 			    
 			    for (int u = 0; u < child.length; u++) {
 				
-				if ((MovieManager.getIt().getDatabase()).removeEpisode(((ModelEpisode) child[u].getUserObject()).getKey()) != 0)
+				if ((ret = MovieManager.getIt().getDatabase().removeEpisode(((ModelEpisode) child[u].getUserObject()).getKey())) == 0)
 				    selected.remove(child[u]);
 				else
 				    log.warn("Error deleting episode with key:"+ ((ModelEpisode) child[u].getUserObject()).getKey());
 			    }
 			}
 			/* Removes the movie from the database... */
-			if (MovieManager.getIt().getDatabase().removeMovie(entry.getKey()) != 0) {
+			if ((ret = MovieManager.getIt().getDatabase().removeMovie(entry.getKey())) == 0) {
 			    
 			    /* Ensures that a new node will be selected */
 			    DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selected.getParent();
