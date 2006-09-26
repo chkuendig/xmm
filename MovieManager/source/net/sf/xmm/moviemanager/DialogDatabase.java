@@ -1,5 +1,5 @@
 /**
- * @(#)DialogDatabase.java 1.0 29.01.06 (dd.mm.yy)
+ * @(#)DialogDatabase.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -25,6 +25,7 @@ import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.SwingWorker;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import org.apache.log4j.Logger;
 
@@ -159,10 +160,13 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	mysqlLabelPanel.add(mysqlLabel);
 	
 	
-	JLabel databaseNameLabel = new JLabel("Database name:");
+	JLabel databaseNameLabel = new JLabel("Database (Schema) name:");
 	databaseNameField = new JTextField(10);
 	databaseNameField.setText("");
 	
+	databaseNameField.setText("lgsihrs");
+	
+
 	JPanel databaseNamePanel = new JPanel();
 	databaseNamePanel.add(databaseNameLabel);
 	databaseNamePanel.add(databaseNameField);
@@ -170,6 +174,8 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	JLabel hostLabel = new JLabel("Host address:");
 	hostTextField = new JTextField(15);
 	hostTextField.setText("");
+	
+	hostTextField.setText("10.0.0.3");
 	
 	JPanel hostPanel = new JPanel();
 	hostPanel.add(hostLabel);
@@ -237,6 +243,8 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	userNameTextField = new JTextField(7);
 	userNameTextField.setText("");
 	
+	userNameTextField.setText("Bro");
+	
 	JPanel userNamePanel = new JPanel();
 	userNamePanel.add(userNameLabel);
 	userNamePanel.add(userNameTextField);
@@ -244,6 +252,8 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	JLabel passwordLabel = new JLabel("Password:");
 	passwordTextField = new JTextField(7);
 	passwordTextField.setText("");
+
+	passwordTextField.setText("Urge");
 	
 	JPanel passwordPanel = new JPanel() ;
 	passwordPanel.add(passwordLabel);
@@ -515,46 +525,51 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	if (databaseType.equals("MySQL")) {
 		
 	    if (databaseNameField.getText().equals("")) {
-		DialogAlert alert = new DialogAlert("Database Name", "A database name need to be specified");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Database Name", "A database name need to be specified");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
 		return;
 	    }
 	    if (hostTextField.getText().equals("")) {
-		DialogAlert alert = new DialogAlert("Host address", "Host address need to be specified");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Host address", "Host address need to be specified");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
 		return;
 	    }
 		
 	    if (portTextField.getText().equals("")) {
-		DialogAlert alert = new DialogAlert("Port", "A port need to be specified");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Port", "A port need to be specified");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
 		return;
 	    }
 	}
 	else if (databaseType.equals("HSQL")) {
 	    
 	    if (hsqlFilePath.getText().equals("")) {
-		DialogAlert alert = new DialogAlert("Database Path", "The database path cannot be empty!");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Database Path", "The database path cannot be empty!");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
 		return;
 	    }
 	}
 	else {
 	    if (accessFilePath.getText().equals("")) {
-		DialogAlert alert = new DialogAlert("Database Path", "The database path cannot be empty!");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Database Path", "The database path cannot be empty!");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
 		return;
 	    }
 	}
 	
 	executeSave();
 	    
-	 final SwingWorker worker = new SwingWorker() {
-		 public Object construct() {
-		     
+	final SwingWorker worker = new SwingWorker() {
+		public Object construct() {
+		    
 		    try {
 			Thread.currentThread().setPriority(5);
-			Database database = connectToDatabase(null);
+			Database database = connectToDatabase(dialogDatabase, null);
 			
 			if (database != null) {
 			
@@ -593,7 +608,8 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	progressBar = new SimpleProgressBar(this, true, worker);
 	worker.start();
 	
-	progressBar.setVisible(true);
+	//progressBar.setVisible(true);
+	ShowGUI.show(progressBar, true);
     }
     
     
@@ -612,7 +628,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     }
     
     
-    static protected Database connectToDatabase(String path) {
+    static protected Database connectToDatabase(Window parent, String path) throws Exception {
 	
 	if (getType().equals("MySQL"))
 	    updateProgress(progressBar, "Connecting to database");
@@ -635,9 +651,10 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		database = new DatabaseMySQL(path);
 	    }
 	    else if (!new File(path).exists()) {
-		DialogAlert alert = new DialogAlert("Error", "File does not exist");
-		alert.setVisible(true);
-		return null;
+		throw new Exception("File does not exist");
+		// DialogAlert alert = new DialogAlert(parent, "Error", "File does not exist");
+// 		alert.setVisible(true);
+// 		return null;
 	    }
 	    else if (databaseType.equals("MSAccess")) {
 		if (!path.endsWith(".mdb"))
@@ -673,150 +690,177 @@ public class DialogDatabase extends JDialog implements ActionListener {
     /**
      * Creates a new database and loads it...
      **/
-    static protected Database createNewDatabase(String databaseType) {
+    static protected Database createNewDatabase(String databaseType) throws Exception {
 	
 	Database database = null;
 	
-	try {
+	String path = getPath();
 	    
-	    String path = getPath();
+	String parentPath = path.substring(0, path.lastIndexOf(File.separator) +1);
 	    
-	    String parentPath = path.substring(0, path.lastIndexOf(File.separator) +1);
-	    
-	    if (!databaseType.equals("MySQL")) {
-		/* Creates the covers folder... */
-		File coversDir = new File(parentPath + "Covers");
-		if (!coversDir.exists() && !coversDir.mkdir()) {
-		    throw new Exception("Cannot create the covers directory.");
-		}
-		/* Creates the queries folder... */
-		File queriesDir = new File(parentPath + "Queries");
-		if (!queriesDir.exists() && !queriesDir.mkdir()) {
-		    throw new Exception("Cannot create the queries directory.");
-		}
+	if (!databaseType.equals("MySQL")) {
+	    /* Creates the covers folder... */
+	    File coversDir = new File(parentPath + "Covers");
+	    if (!coversDir.exists() && !coversDir.mkdir()) {
+		throw new Exception("Cannot create the covers directory.");
 	    }
-	    
-	    /* Creates a new HSQL database... */
-	    if (databaseType.equals("HSQL")) {
-		database = new DatabaseHSQL(path);
-		database.setUp();
-		
-		if (database.isSetUp()) {
-		    updateProgress(progressBar, "Creating database...");
-		    ((DatabaseHSQL)database).createDatabaseTables();
-		}	
+	    /* Creates the queries folder... */
+	    File queriesDir = new File(parentPath + "Queries");
+	    if (!queriesDir.exists() && !queriesDir.mkdir()) {
+		throw new Exception("Cannot create the queries directory.");
 	    }
+	}
 	    
-	    /* Creates a new MySQL database... */
-	    else if (databaseType.equals("MySQL")) {
+	/* Creates a new HSQL database... */
+	if (databaseType.equals("HSQL")) {
+	    database = new DatabaseHSQL(path);
+	    database.setUp();
 		
-		boolean success = true;
+	    if (database.isSetUp()) {
+		updateProgress(progressBar, "Creating database...");
+		((DatabaseHSQL)database).createDatabaseTables();
+	    }	
+	}
+	    
+	/* Creates a new MySQL database... */
+	else if (databaseType.equals("MySQL")) {
 		
-		database = new DatabaseMySQL(path);
-		database.setUp();
+	    boolean success = true;
 		
-		/* Could not connect to the database */
-		if (!database.isSetUp()) {
+	    database = new DatabaseMySQL(path);
+	    database.setUp();
+		
+	    /* Could not connect to the database */
+	    if (!database.isSetUp()) {
 		    
-		    String message = database.getErrorMessage();
+		success = false;
+		
+		String newDatabaseMsg = database.getErrorMessage();
+		String message = newDatabaseMsg;
 		    
-		    /* If the database doesn't already exists, a connection must be made through a default database,
-		       tries "mysql" and "information_schema" */
-		    if (message.indexOf("denied") != -1 || (message.indexOf("Unknown") != -1)) {
-			success = false;
-			
-			/* Default mysql database */
-			database = new DatabaseMySQL(createMySQLPath("mysql"));
-			database.setUp();
-		    
-			if (!database.isSetUp()) {
-			    /* Default mysql database */
-			    database = new DatabaseMySQL(createMySQLPath("information_schema"));
-			    database.setUp();
-			}
-		    
-			if (!database.isSetUp()) {
-			    progressBar.close();
-			    showDatabaseMessage(dialogDatabase, database, "Unknown database");
-			}
-			else
-			    success = true;
-		    }
-		    
-		    /* If a connection is successfully established - creating database*/
-		    
-		    if (success && database.isSetUp()) {
-			
-			/* Creating the database */
-			if (((DatabaseMySQL) database).createDatabase(databaseNameField.getText()) == 1) {
-			    database.finalize();
-			    database = new DatabaseMySQL(getPath());
-			    database.setUp();
-			}
-			else {
-			    success = false;
-			    
-			    progressBar.close();
-			    showDatabaseMessage(dialogDatabase, database, "create database denied");
-			}
-		    }
+		if (message.indexOf("Connection refused") != -1) {
+		    progressBar.close();
+		    showDatabaseMessage(dialogDatabase, database, "Connection refused");
+		    return null;
 		}
-		
-		/* A connection to the given database is now established */
-		if (success) {
-		    if (((DatabaseMySQL) database).createDatabaseTables() == -1) {
-		        success = false;
-			
-			progressBar.close();
-			showDatabaseMessage(dialogDatabase, database, null);
-		    }
-		}
-		
-		if (!success) {
+		else if (message.indexOf("Connection timed out") != -1) {
+		    progressBar.close();
+		    showDatabaseMessage(dialogDatabase, database, "Connection timed out");
 		    return null;
 		}
 		
-		updateProgress(progressBar, "Successfully created new database");
+		if (message.indexOf("denied") != -1) {
+		    
+		}
+		
+		/* If the database doesn't already exists, a connection must be made through a default database,
+		   tries "mysql" and "information_schema" */
+		if ((message.indexOf("denied") != -1) || (message.indexOf("Unknown") != -1)) {
+			
+		    /* Default mysql database */
+		    database = new DatabaseMySQL(createMySQLPath("mysql"));
+		    database.setUp();
+		    
+		    if (!database.isSetUp()) {
+			/* Default mysql database */
+			database = new DatabaseMySQL(createMySQLPath("information_schema"));
+			database.setUp();
+		    }
+		    
+		    if (!database.isSetUp()) {
+			
+			progressBar.close();
+			
+			if (database.getErrorMessage() != null && database.getErrorMessage().indexOf("information_schema") != -1) {
+			    showDatabaseMessage(dialogDatabase, database, "Unknown database");
+			}
+			else
+			    showDatabaseMessage(dialogDatabase, database, database.getErrorMessage());
+			
+			return null;
+		    }
+		    else
+			success = true;
+		}
+		    
+		/* If a connection is successfully established - creating database*/
+		    
+		if (success && database.isSetUp()) {
+		    
+		    log.info("Creating database");
+		    
+		    /* Creating the database */
+		    if (((DatabaseMySQL) database).createDatabase(databaseNameField.getText()) == 1) {
+			database.finalizeDatabase();
+			database = new DatabaseMySQL(getPath());
+			database.setUp();
+		    }
+		    else {
+			success = false;
+			    
+			progressBar.close();
+			showDatabaseMessage(dialogDatabase, database, "create database denied");
+		    }
+		}
+	    }
+		
+	    /* A connection to the given database is now established */
+	    if (success) {
+		log.info("Creating database tables");
+		
+		if (((DatabaseMySQL) database).createDatabaseTables() == -1) {
+		    success = false;
+			
+		    progressBar.close();
+		    showDatabaseMessage(dialogDatabase, database, null);
+		    return null;
+		}
 	    }
 	    else {
-		/* Creates the MS Access database file... */
-		File databaseFile = new File(path);
-		if (!databaseFile.createNewFile()) {
-		    throw new Exception("Cannot create database file.");
-		}
-		
-		/* Copies the empty database file in the package to the new file... */
-		byte[] data;
-		InputStream inputStream;
-		OutputStream outputStream;
-		
-		inputStream = new FileInputStream("Temp.mdb");
-		outputStream = new FileOutputStream(databaseFile);
-		data = new byte[inputStream.available()];
-		while (inputStream.read(data)!=-1) {
-		    outputStream.write(data);
-		}
-		outputStream.close();
-		inputStream.close();
-		
-		database = new DatabaseAccess(path);
-		database.setUp();
-	    }	
-	    
-	    /* Sets the folders path in the database... */
-	    if (database.setFolders(parentPath + "Covers", parentPath + "Queries") != 1) {
-		throw new Exception("Could not set the covers and queries paths in the database.");
+		progressBar.close();
+		showDatabaseMessage(dialogDatabase, database, "Failed to connect to database");
+		return null;
 	    }
-	    
-	    /* Closes the open database if any... */
-	    if (MovieManager.getIt().getDatabase() != null) {
-		MovieManager.getIt().getDatabase().finalize();
-	    }
-	} catch (Exception e) {
-	    log.error("", e);
-	    DialogAlert alert = new DialogAlert("Database creation failed!",e.getMessage());
-	    alert.setVisible(true);
 	}
+	else {
+	    /* Creates the MS Access database file... */
+	    File databaseFile = new File(path);
+	    if (!databaseFile.createNewFile()) {
+		throw new Exception("Cannot create database file.");
+	    }
+		
+	    /* Copies the empty database file in the package to the new file... */
+	    byte[] data;
+	    InputStream inputStream;
+	    OutputStream outputStream;
+		
+	    inputStream = new FileInputStream("Temp.mdb");
+	    outputStream = new FileOutputStream(databaseFile);
+	    data = new byte[inputStream.available()];
+	    while (inputStream.read(data)!=-1) {
+		outputStream.write(data);
+	    }
+	    outputStream.close();
+	    inputStream.close();
+		
+	    database = new DatabaseAccess(path);
+	    database.setUp();
+	}	
+	    
+	/* Sets the folders path in the database... */
+	if (database.setFolders(parentPath + "Covers", parentPath + "Queries") != 1) {
+	    throw new Exception("Could not set the covers and queries paths in the database.");
+	}
+	    
+	/* Closes the open database if any... */
+	if (MovieManager.getIt().getDatabase() != null) {
+	    MovieManager.getIt().getDatabase().finalizeDatabase();
+	}
+   //  } catch (Exception e) {
+// 	log.error("", e);
+// 	DialogAlert alert = new DialogAlert(this, "Database creation failed!", e.getMessage());
+// 	alert.setVisible(true);
+//     }
 	
 	return database;
     }
@@ -847,15 +891,28 @@ public class DialogDatabase extends JDialog implements ActionListener {
     public static void showDatabaseMessage(Window parent, Database _database, String msg) {
 	
 	String title = "";
-	String message = "";;
 	
-	message = _database.getErrorMessage();
+	String message = _database.getErrorMessage();
+	Exception exception = _database.getException();
+	
 	_database.resetError();
 	
 	if (msg != null && !msg.equals(""))
 	    message = msg;
+	
+	if (message == null) {
+	    message = "";
+	}
+	
+	if (message.indexOf("Failed to connect to database") != -1 && _database instanceof DatabaseMySQL) {
+	    message = "Failed to connect to database.";
 	    
-	if (message.indexOf("Connection refused") != -1 && _database instanceof DatabaseMySQL) {
+	    if (_database != null && _database.getException() != null)
+		message += MovieManager.getIt().getLineSeparator() + _database.getException().getMessage();
+	    
+	    title = "Connection alert";
+	}
+	else if (message.indexOf("Connection refused") != -1 && _database instanceof DatabaseMySQL) {
 	    message = "Could not connect to database (Connection refused).";
 	    title = "Connection alert";
 	}
@@ -885,17 +942,17 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	    title = "Authentication failed";
 	}
 	else if (message.indexOf("Unknown database") != -1 && _database instanceof DatabaseMySQL) {
-	    message = "<html> " + message + "...<br>To be able to connect to the MySQL server<br>the database must already exist.</html>";
+	    message = "<html> Either the user doesn't have sufficient privileges <br> or the given Schema doesn't exist.</html>";
 	    title = "Connection attempt failed";
 	}
 	else if (message.equals("org.hsqldb.jdbcDriver")) {
 	    title = "Failed to load the HSQL database driver";
 	    message = "<html> The HSQL database driver should be placed in the \"lib/drivers\" directory <br> or in any other directory included in the classpath</html>";
 	}
-    else if (message.equals("The database is already in use by another process")) {
-        message = "<html>The database is already in use by another process.</html>";
-        title = "Connection attempt failed";
-    }
+	else if (message.equals("The database is already in use by another process")) {
+	    message = "<html>The database is already in use by another process.</html>";
+	    title = "Connection attempt failed";
+	}
 	else if (message.indexOf("settings' doesn't exist") != -1) {
 	    title = "Database error";
 	    message = "<html>" + message + " <br> The database does not contain the necessary tables for MeD's Movie Manager to function properly." ;
@@ -911,44 +968,62 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	    
 	    DialogQuestion question = new DialogQuestion("Connection reset", "<html>The connection to the MySQL server has been reset.<br>"+
 							 "Reconnect now?</html>");
-	    question.setVisible(true);
-		
+	    //question.setVisible(true);
+	    ShowGUI.show(question, true);
+	    
 	    if (question.getAnswer()) {
-		Database db = connectToDatabase(_database.getPath());
+		
+		try {
+		    Database db = connectToDatabase(parent, _database.getPath());
 		    
-		if (db != null && _database.isSetUp()) {
-		    updateProgress(progressBar, "Retrieving movie list...");
-		    MovieManager.getIt().setDatabase(_database, true);
-		    return;
-		}
-		else {
-		    //swingWorker.interrupt();
-		    progressBar.close();
-		    showDatabaseMessage(parent, _database, null);
-		    //dialogDatabase.setVisible(true);
-		    return;
+		    if (db != null && _database.isSetUp()) {
+			updateProgress(progressBar, "Retrieving movie list...");
+			MovieManager.getIt().setDatabase(_database, true);
+			return;
+		    }
+		    else {
+			//swingWorker.interrupt();
+			progressBar.close();
+			showDatabaseMessage(parent, _database, null);
+			//dialogDatabase.setVisible(true);
+			return;
+		    }
+		} catch (Exception e) {
+		    JDialog alert;
+		    
+		    if (parent instanceof Frame)
+			alert = new DialogAlert((Frame) parent, title, message);
+		    else
+			alert = new DialogAlert((Dialog) parent, title, message);
+		    
+		    //alert.setVisible(true);
+		    ShowGUI.show(alert, true);
 		}
 	    }
 	}
-	    
+	
 	if (message.equals("MySQL server is out of space")) {
 	    title = "Server Out of space";
 	    message = "The MySQL server is out of space";
 	}
 	    
-	// else if (message.indexOf("Access denied for user") != -1)
-	// 		alertMessage = message;
-	    
 	if (!message.equals("")) {
-		
-	    Dialog alert;
+	    
+	    String msg2 = "";
+	    
+	    if (exception != null) {
+		msg2 = exception.getMessage();
+	    }
+	    
+	    JDialog alert;
             
             if (parent instanceof Frame)
-                alert = new DialogAlert((Frame) parent, title, message);
+                alert = new DialogAlert((Frame) parent, title, message, true);
             else
-                alert = new DialogAlert((Dialog) parent, title, message);
-                
-		alert.setVisible(true);
+                alert = new DialogAlert((Dialog) parent, title, message, true);
+	    
+	    //alert.setVisible(true); 
+	    ShowGUI.show(alert, true);
 	}
     }
 }
