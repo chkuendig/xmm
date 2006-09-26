@@ -164,9 +164,6 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	databaseNameField = new JTextField(10);
 	databaseNameField.setText("");
 	
-	databaseNameField.setText("lgsihrs");
-	
-
 	JPanel databaseNamePanel = new JPanel();
 	databaseNamePanel.add(databaseNameLabel);
 	databaseNamePanel.add(databaseNameField);
@@ -174,8 +171,6 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	JLabel hostLabel = new JLabel("Host address:");
 	hostTextField = new JTextField(15);
 	hostTextField.setText("");
-	
-	hostTextField.setText("10.0.0.3");
 	
 	JPanel hostPanel = new JPanel();
 	hostPanel.add(hostLabel);
@@ -243,8 +238,6 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	userNameTextField = new JTextField(7);
 	userNameTextField.setText("");
 	
-	userNameTextField.setText("Bro");
-	
 	JPanel userNamePanel = new JPanel();
 	userNamePanel.add(userNameLabel);
 	userNamePanel.add(userNameTextField);
@@ -253,8 +246,6 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	passwordTextField = new JTextField(7);
 	passwordTextField.setText("");
 
-	passwordTextField.setText("Urge");
-	
 	JPanel passwordPanel = new JPanel() ;
 	passwordPanel.add(passwordLabel);
 	passwordPanel.add(passwordTextField);
@@ -908,7 +899,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	    message = "Failed to connect to database.";
 	    
 	    if (_database != null && _database.getException() != null)
-		message += MovieManager.getIt().getLineSeparator() + _database.getException().getMessage();
+		message += MovieManager.getLineSeparator() + _database.getException().getMessage();
 	    
 	    title = "Connection alert";
 	}
