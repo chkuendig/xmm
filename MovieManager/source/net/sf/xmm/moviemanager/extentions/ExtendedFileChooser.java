@@ -1,5 +1,5 @@
 /**
- * @(#)ExtendedFileChooser.java 1.0 12.01.06 (dd.mm.yy)
+ * @(#)ExtendedFileChooser.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -43,7 +43,6 @@ import javax.swing.plaf.basic.BasicFileChooserUI;
 import javax.swing.*;
 import java.awt.event.*;
 
-import org.xnap.commons.gui.completion.*;
 
 public class ExtendedFileChooser extends JFileChooser {
     
@@ -133,7 +132,7 @@ public class ExtendedFileChooser extends JFileChooser {
 	/* text field */
 	final JTextField textField = (JTextField) findComponent(this, JTextField.class);
 		
-	ActionListener[] listeners = textField.getActionListeners();
+	//ActionListener[] listeners = textField.getActionListeners();
 		
 	textField.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
@@ -201,17 +200,20 @@ public class ExtendedFileChooser extends JFileChooser {
 		
 		/* Delete confirmation */
 		DialogQuestion question = new DialogQuestion("Warning", msg);
-		question.setVisible(true);
+		//question.setVisible(true);
+		ShowGUI.show(question, true);
 		
 		if (question.getAnswer()) {
 		    if (!deleteFiles(file)) {
 			DialogAlert alert; 
 			
 			if (fileAlreadyExistWarningMessage.equals(""))
-			    alert = new DialogAlert("Error", "File could not be deleted.");
+			    alert = new DialogAlert(MovieManager.getIt(), "Error", "File could not be deleted.");
 			else
-			    alert = new DialogAlert("Error", fileAlreadyExistWarningMessage + selectedFile.getName() + " could not be deleted.");
-			alert.setVisible(true);
+			    alert = new DialogAlert(MovieManager.getIt(), "Error", fileAlreadyExistWarningMessage + selectedFile.getName() + " could not be deleted.");
+			//alert.setVisible(true);
+			ShowGUI.show(alert, true);
+		
 			approveSelected = false;
 			return;
 		    }
@@ -247,9 +249,6 @@ public class ExtendedFileChooser extends JFileChooser {
 		if (currentDir != null && fileName != null) {
 						
 		    if (currentDir.equals(fileName)) {
-			
-			System.err.println("approve 1");
-			
 			this.selectedFile = tempFile;
 			super.approveSelection();
 			return;
@@ -257,9 +256,6 @@ public class ExtendedFileChooser extends JFileChooser {
 					
 					
 		    if (fileName.equals("")) {
-			
-			System.err.println("approve 2");
-			
 			this.selectedFile = new File(currentDir);
 			super.setSelectedFile(this.selectedFile);
 			super.approveSelection();
@@ -287,8 +283,6 @@ public class ExtendedFileChooser extends JFileChooser {
 			return;
 		    }
 		    else if (newFile.isFile()) {
-			System.err.println("approve 3");
-			
 			this.selectedFile = newFile;
 			super.setSelectedFile(this.selectedFile);
 			super.approveSelection();
@@ -300,8 +294,6 @@ public class ExtendedFileChooser extends JFileChooser {
 	    if (tempFile != null) {
 				
 		if (tempFile.exists()) {
-		    System.err.println("approve 4");
-		    
 		    this.selectedFile = tempFile;
 		    super.approveSelection();
 		    return;
@@ -316,9 +308,6 @@ public class ExtendedFileChooser extends JFileChooser {
 		tempFile = new File(currentDir + fileName);
 				
 		if (tempFile.exists()) {
-
-		    System.err.println("approve 5");
-		    
 		    this.selectedFile = tempFile;
 		    super.approveSelection();
 		    return;
@@ -763,7 +752,8 @@ public class ExtendedFileChooser extends JFileChooser {
 		}
 		
 		DialogQuestion question = new DialogQuestion("Delete confirmation", msg);
-		question.setVisible(true);
+		//question.setVisible(true);
+		ShowGUI.show(question, true);
 		
 		if (!question.getAnswer()) {
 		    return;
@@ -778,8 +768,9 @@ public class ExtendedFileChooser extends JFileChooser {
 			else 
 			    msg = "Failed to delete directory "+selectedFiles[i].toString();
 			
-			DialogAlert alert = new DialogAlert("Error", msg);
-			alert.setVisible(true);
+			DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Error", msg);
+			//alert.setVisible(true);
+			ShowGUI.show(alert, true);
 			break;
 		    }
 		}
@@ -790,12 +781,10 @@ public class ExtendedFileChooser extends JFileChooser {
 		jList.clearSelection();
 	    }
 
-	    System.err.println("keyReleased");
 	    updateNameField();
 	}
 	
 	public void keyPressed(KeyEvent e) {
-	    System.err.println("keyPressed");
 	    updateNameField();
 	}
 	
@@ -831,7 +820,6 @@ public class ExtendedFileChooser extends JFileChooser {
 		    fileChooser.ensureFileIsVisible((File) directories.get(index));
 		}
 		 
-		System.err.println("keyTyped");
 		updateNameField();
 	    }
 	}
@@ -840,9 +828,6 @@ public class ExtendedFileChooser extends JFileChooser {
     class MouseHandler extends MouseAdapter {
 	
 	public void mouseReleased(MouseEvent e){
-	    
-	    System.err.println("mouseReleased");
-	    
 	    lastSelectedFile = fileChooser.getSelectedFile();
 	    updateNameField();
 	}
