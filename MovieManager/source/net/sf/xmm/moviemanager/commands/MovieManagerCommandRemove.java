@@ -80,7 +80,7 @@ public class MovieManagerCommandRemove implements ActionListener {
 	    }
 	    
 	    //question.setVisible(true);
-	    ShowGUI.show(question, true);
+	    ShowGUI.showAndWait(question, true);
 	    
 	    if (question.getAnswer()) {
 		

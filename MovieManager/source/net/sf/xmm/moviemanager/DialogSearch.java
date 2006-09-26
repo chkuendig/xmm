@@ -944,7 +944,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	    if (dateTextField.getText().length() != 4) {
 		DialogAlert alert = new DialogAlert(this, "Alert", "The date must be 4 integers, no more...no less!");
 		//alert.setVisible(true);
-		ShowGUI.show(alert, true);
+		ShowGUI.showAndWait(alert, true);
 		return;
 	    }
 	}

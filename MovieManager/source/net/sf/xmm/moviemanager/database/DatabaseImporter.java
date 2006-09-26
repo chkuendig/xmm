@@ -144,7 +144,7 @@ public class DatabaseImporter {
 		    
 		    JDialog alert = new DialogAlert(parent, "Error", e.getMessage());
 		    //alert.setVisible(true);
-		    ShowGUI.show(alert, true);
+		    ShowGUI.showAndWait(alert, true);
 		    return;
 		}
 		

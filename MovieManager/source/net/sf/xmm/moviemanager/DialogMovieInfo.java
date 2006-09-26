@@ -2008,7 +2008,7 @@ public class DialogMovieInfo extends JDialog {
 		    
 		    DialogAlert alert = new DialogAlert(this, "Access denied", "An error occured when trying to save cover file.", e.getMessage());
 		    //alert.setVisible(true);
-		    ShowGUI.show(alert, true);
+		    ShowGUI.showAndWait(alert, true);
 
 		    _cover = "";
 		}
@@ -2261,7 +2261,7 @@ public class DialogMovieInfo extends JDialog {
 	} else {
 	    DialogAlert alert = new DialogAlert(this, "Alert","Please specify a movie title.");
 	    //alert.setVisible(true);
-	    ShowGUI.show(alert, true);
+	    ShowGUI.showAndWait(alert, true);
 	}
 	
 	/* Remove old cover possible cached by JTree cellrenderer */
@@ -2413,7 +2413,7 @@ public class DialogMovieInfo extends JDialog {
 		if (ifo == null || ifo.length == 0) {
 		    DialogAlert alert = new DialogAlert(this, "Alert", "Failed to locate the DVD files");
 		    //alert.setVisible(true);
-		    ShowGUI.show(alert, true);
+		    ShowGUI.showAndWait(alert, true);
 		}
 		else {
 		    
@@ -2711,7 +2711,7 @@ public class DialogMovieInfo extends JDialog {
 	} else {
 	    DialogAlert alert = new DialogAlert(this, "Alert","Please specify a movie title.");
 	    //alert.setVisible(true);
-	    ShowGUI.show(alert, true);
+	    ShowGUI.showAndWait(alert, true);
 	}
     }
     
@@ -2727,7 +2727,7 @@ public class DialogMovieInfo extends JDialog {
 	} else {
 	    DialogAlert alert = new DialogAlert(this, "Alert","Please specify a movie title.");
 	    //    alert.setVisible(true);
-	    ShowGUI.show(alert, true);
+	    ShowGUI.showAndWait(alert, true);
 	}
     }
     
@@ -2743,7 +2743,7 @@ public class DialogMovieInfo extends JDialog {
 	} else {
 	    DialogAlert alert = new DialogAlert(this, "Alert","Please specify a movie title.");
 	    //alert.setVisible(true);
-	    ShowGUI.show(alert, true);
+	    ShowGUI.showAndWait(alert, true);
 	}
     }
     

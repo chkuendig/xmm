@@ -277,7 +277,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	if (!MovieManager.isWindows()) {
 	    DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Windows Only", "This function is available on windows only");
 	    //alert.setVisible(true);
-	    ShowGUI.show(alert, true);
+	    ShowGUI.showAndWait(alert, true);
 	}
 	else {
 	    movieListModel = MovieManager.getIt().getDatabase().getMoviesList("Title");
@@ -288,7 +288,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	    if (listModelSize == 0) {
 		DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Empty Database", "The database is empty! ");
 		//alert.setVisible(true);
-		ShowGUI.show(alert, true);
+		ShowGUI.showAndWait(alert, true);
 	    }
 	    else {
 		filePath = getFilePath();

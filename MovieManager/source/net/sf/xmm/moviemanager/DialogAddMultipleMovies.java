@@ -446,12 +446,12 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	    if (moviesPath.getText().equals("")) {
 		DialogAlert alert = new DialogAlert(this, "Alert","Please specify a directory path.");
 		//alert.setVisible(true); 
-		ShowGUI.show(this, true);
+		ShowGUI.showAndWait(this, true);
 	    }
 	    else if (!new File(moviesPath.getText()).exists()) {
 		DialogAlert alert = new DialogAlert(this, "Alert","The specified directory does not exist.");
 		//alert.setVisible(true); 
-		ShowGUI.show(this, true);
+		ShowGUI.showAndWait(this, true);
 	    }
 	    else {
 		executeSave();

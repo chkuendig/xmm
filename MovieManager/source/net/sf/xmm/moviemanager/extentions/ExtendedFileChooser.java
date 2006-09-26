@@ -201,7 +201,7 @@ public class ExtendedFileChooser extends JFileChooser {
 		/* Delete confirmation */
 		DialogQuestion question = new DialogQuestion("Warning", msg);
 		//question.setVisible(true);
-		ShowGUI.show(question, true);
+		ShowGUI.showAndWait(question, true);
 		
 		if (question.getAnswer()) {
 		    if (!deleteFiles(file)) {
@@ -212,7 +212,7 @@ public class ExtendedFileChooser extends JFileChooser {
 			else
 			    alert = new DialogAlert(MovieManager.getIt(), "Error", fileAlreadyExistWarningMessage + selectedFile.getName() + " could not be deleted.");
 			//alert.setVisible(true);
-			ShowGUI.show(alert, true);
+			ShowGUI.showAndWait(alert, true);
 		
 			approveSelected = false;
 			return;
@@ -753,7 +753,7 @@ public class ExtendedFileChooser extends JFileChooser {
 		
 		DialogQuestion question = new DialogQuestion("Delete confirmation", msg);
 		//question.setVisible(true);
-		ShowGUI.show(question, true);
+		ShowGUI.showAndWait(question, true);
 		
 		if (!question.getAnswer()) {
 		    return;
@@ -770,7 +770,7 @@ public class ExtendedFileChooser extends JFileChooser {
 			
 			DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Error", msg);
 			//alert.setVisible(true);
-			ShowGUI.show(alert, true);
+			ShowGUI.showAndWait(alert, true);
 			break;
 		    }
 		}

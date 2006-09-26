@@ -879,11 +879,11 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		DialogAlert alert = new DialogAlert(this, "Alert", "Covers directory doesn't exist");
 		//alert.setVisible(true);
-		ShowGUI.show(alert, true);
+		ShowGUI.showAndWait(alert, true);
 		
 		DialogFolders dialogFolders = new DialogFolders();
 		//dialogFolders.setVisible(true);
-		ShowGUI.show(dialogFolders, true);
+		ShowGUI.showAndWait(dialogFolders, true);
 		
 		if (!(new File(MovieManager.getConfig().getCoversFolder()).isDirectory())) {
 		    enableStoreCoversLocally.setSelected(false);
@@ -1018,7 +1018,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	DialogAlert alert = new DialogAlert(this, "Look and Feel error", message, error);
 	//alert.setVisible(true);
-	ShowGUI.show(alert, true);
+	ShowGUI.showAndWait(alert, true);
     }
 
     void setLafChooserPreferredSize() {

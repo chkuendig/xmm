@@ -533,17 +533,17 @@ public class DialogImport extends JDialog implements ActionListener {
 	    if (getPath().equals("")) {
 		DialogAlert alert = new DialogAlert(this, "Alert","Please specify a file path.");
 		//alert.setVisible(true);
-		ShowGUI.show(alert, true);
+		ShowGUI.showAndWait(alert, true);
 	    }
 	    else if (!new File(getPath()).exists()) {
 		DialogAlert alert = new DialogAlert(this, "Alert","The specified file does not exist.");
 		//alert.setVisible(true);
-		ShowGUI.show(alert, true);
+		ShowGUI.showAndWait(alert, true);
 	    }
 	    else if (getImportMode() == 1 && (getExcelTitleColumn() == null || getExcelTitleColumn().equals(""))) {
 		DialogAlert alert = new DialogAlert(this, "Alert","You need to specify a column.");
 		//alert.setVisible(true);
-		ShowGUI.show(alert, true);
+		ShowGUI.showAndWait(alert, true);
 	    }
 	    else {
 		executeSave();

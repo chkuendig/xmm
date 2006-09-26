@@ -20,30 +20,15 @@
 
 package net.sf.xmm.moviemanager.util;
 
+import org.apache.log4j.Logger;
+
 import javax.swing.*;
 import java.awt.Container;
 
 public class ShowGUI {
     
-   //  public static void show(final JDialog dialog, final boolean visible) {
-	
-// 	SwingUtilities.invokeLater(new Runnable(){
-// 		public void run() {
-// 		    dialog.setVisible(visible);
-// 		}
-// 	    });
-//     }
-    
-    
-//     public static void show(final JFrame frame, final boolean visible) {
-	
-// 	SwingUtilities.invokeLater(new Runnable(){
-// 		public void run() {
-// 		    frame.setVisible(visible);
-// 		}
-// 	    });
-//     }
-    
+    static Logger log = Logger.getRootLogger();
+
     public static void show(final Container container, final boolean visible) {
 	
 	SwingUtilities.invokeLater(new Runnable(){
@@ -51,5 +36,25 @@ public class ShowGUI {
 		    container.setVisible(visible);
 		}
 	    });
+    }
+    
+    public static void showAndWait(final Container container, final boolean visible) {
+	
+	if (SwingUtilities.isEventDispatchThread()) {
+	    container.setVisible(visible);
+	}
+	else {
+	    try {
+		SwingUtilities.invokeAndWait(new Runnable(){
+			public void run() {
+			    container.setVisible(visible);
+			}
+		    });
+	    } catch (InterruptedException i) {
+		log.error("showAndWait error:", i);
+	    } catch (java.lang.reflect.InvocationTargetException i) {
+		log.error("showAndWait error:", i);
+	    }
+	}
     }
 } 

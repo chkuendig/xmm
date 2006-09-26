@@ -597,31 +597,31 @@ class DialogIMDB extends JDialog {
 	if (exception.startsWith("Server returned HTTP response code: 407")) {
 	    DialogAlert alert = new DialogAlert(this, "Authentication required", "Proxy server requires authentication");
 	    //alert.setVisible(true);
-	    ShowGUI.show(alert, true);
+	    ShowGUI.showAndWait(alert, true);
 	}
 		
 	if (exception.startsWith("Connection timed out")) {
 	    DialogAlert alert = new DialogAlert(this, "Connection timed out", "Server did not respond");
 	    //alert.setVisible(true);
-	    ShowGUI.show(alert, true);
+	    ShowGUI.showAndWait(alert, true);
 	}
 		
 	if (exception.startsWith("Connection reset")) {
 	    DialogAlert alert = new DialogAlert(this, "Connection reset", "Connection reset by server");
 	    //alert.setVisible(true);
-	    ShowGUI.show(alert, true);
+	    ShowGUI.showAndWait(alert, true);
 	}
 		
 	if (exception.startsWith("Server redirected too many  times")) {
 	    DialogAlert alert = new DialogAlert(this, "Access denied", "Username or password is invalid");
 	    //alert.setVisible(true);
-	    ShowGUI.show(alert, true);
+	    ShowGUI.showAndWait(alert, true);
 	}
 		
 	if (exception.startsWith("The host did not accept the connection within timeout of")) {
 	    DialogAlert alert = new DialogAlert(this, "Connection timeout", exception);
 	    //alert.setVisible(true);
-	    ShowGUI.show(alert, true);
+	    ShowGUI.showAndWait(alert, true);
 	}
     }
     

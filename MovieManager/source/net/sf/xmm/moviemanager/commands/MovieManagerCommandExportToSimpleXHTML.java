@@ -130,7 +130,7 @@ public class MovieManagerCommandExportToSimpleXHTML {
 	    if (xhtmlFile.exists()) {
 		DialogQuestion question = new DialogQuestion("File already exists", "A file with the chosen filename already exists. Would you like to overwrite the old file?");
 		//question.setVisible(true);
-		ShowGUI.show(question, true);
+		ShowGUI.showAndWait(question, true);
 	    
 		if (question.getAnswer()) {
 		    xhtmlFile.delete();

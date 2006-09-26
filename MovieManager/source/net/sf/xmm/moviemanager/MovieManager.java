@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManager.java 1.0 29.01.06 (dd.mm.yy)
+ * @(#)MovieManager.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  *
@@ -58,7 +58,7 @@ public class MovieManager extends JFrame implements ComponentListener {
     /**
      * The current version of the program.
      **/
-    private String _version = "2.40 RC 1";
+    private String _version = "2.40 RC 2";
 
     /**
      * The current database object.
@@ -192,7 +192,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @param The current database.
      **/
     public boolean setDatabase(Database database, boolean cancelRelativePaths) {
-
+        
 	if (database != null) {
 
 	    boolean databaseUpdateAllowed = false;
@@ -315,41 +315,41 @@ public class MovieManager extends JFrame implements ComponentListener {
 		DefaultListModel moviesList = database.getMoviesList(options);
 		ArrayList episodesList = database.getEpisodeList("movieID");
 		DefaultTreeModel treeModel = createTreeModel(moviesList, episodesList);
-
+		
 		getMoviesList().setRootVisible(false);
 		//getMoviesList().setLargeModel(true);
-
+		
 		/* Makes database components visible. */
 		setDatabaseComponentsEnable(true);
-
+		
 		if (cancelRelativePaths && !isApplet()) {
-
+		    
 		    if (!new File(config.getCoversPath(database)).isDirectory() && new File(config.getCoversFolder(database)).isDirectory()) {
 			config.setUseRelativeCoversPath(0);
 		    }
-
+		    
 		    if (!new File(config.getQueriesPath(database)).isDirectory() && new File(config.getQueriesFolder(database)).isDirectory()) {
 			config.setUseRelativeQueriesPath(0);
 		    }
-
+		    
 		    if (database.getPath().indexOf(getUserDir()) == -1) {
 			config.setUseRelativeDatabasePath(0);
 		    }
 		}
-
-
-		/* Must be set here and not earlier.
-		   If the database is set at the top and the  method returns because of an error after the database is set,
+		
+		
+		/* Must be set here and not earlier. 
+		   If the database is set at the top and the  method returns because of an error after the database is set, 
 		   a faulty database will then be stored and used */
 		_database = database;
-
+		
 		/* Loads the movies list. */
 		getMoviesList().setModel(treeModel);
-
+		
 		/* Updates the entries Label */
 		setAndShowEntries();
 		loadMenuLists(database);
-
+		
 	    } else {
 		/* Makes database components invisible. */
 		setDatabaseComponentsEnable(false);
@@ -358,15 +358,15 @@ public class MovieManager extends JFrame implements ComponentListener {
 	}
 	else
 	    _database = null;
-
-
+	
+	
 	if (_database != null) {
 	    if (config.getEnableCtrlMouseRightClick())
 		MovieManager.getIt().getMoviesList().updateUI();
-
+	    
 	    /* Selects the first movie in the list and loads its info. */
 	    if (getMoviesList().getModel().getChildCount(getMoviesList().getModel().getRoot()) > 0) {
-
+		
 		Runnable showProgress = new Runnable() {
 			public void run() {
 			    getMoviesList().setSelectionRow(0);
@@ -374,7 +374,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 		SwingUtilities.invokeLater(showProgress);
 	    }
 	}
-
+	
 	return _database != null;
     }
 
@@ -416,38 +416,45 @@ public class MovieManager extends JFrame implements ComponentListener {
     protected boolean allowDatabaseUpdate(String databasePath) {
 	DialogQuestion question = new DialogQuestion("Old Database", "<html>This version of MeD's Movie Manager requires your old database:<br> ("+databasePath+") to be updated.<br>"+
 						     "Perform update now? (A backup will be made)</html>");
-	question.setVisible(true);
-
+	//question.setVisible(true);
+	ShowGUI.showAndWait(question, true);
+	
 	if (question.getAnswer()) {
 	    return true;
 	}
 	else {
-	    DialogAlert alert = new DialogAlert("Update needed", "This version cannot be used with an old database file!");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Update needed", "This version cannot be used with an old database file!");
+	    //alert.setVisible(true);
+	    ShowGUI.showAndWait(alert, true);
 	}
 	return false;
     }
 
     protected void showDatabaseUpdateMessage(String result) {
 	if (result.equals("Success")) {
-	    DialogAlert alert = new DialogAlert("Operation Successful", "The database was successfully updated!");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Operation Successful", "The database was successfully updated!");
+	    //alert.setVisible(true);
+	    ShowGUI.showAndWait(alert, true);
 	}
 	else if (result.equals("Database update error")) {
-	    DialogAlert alert = new DialogAlert("Update Failed", "An error occured when updating the database!");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Update Failed", "An error occured when updating the database!");
+	    //alert.setVisible(true);
+	    ShowGUI.showAndWait(alert, true);
 	}
 	else if (result.equals("Script update error")) {
-	    DialogAlert alert = new DialogAlert("Update Failed", "An error occured when updating the database script file!");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Update Failed", "An error occured when updating the database script file!");
+	    //alert.setVisible(true);
+	    ShowGUI.showAndWait(alert, true);
 	}
 	else if (result.equals("Backup failed")) {
-	    DialogAlert alert = new DialogAlert("Backup failed", "Failed to create backup!");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Backup failed", "Failed to create backup!");
+	    //alert.setVisible(true);
+	    ShowGUI.showAndWait(alert, true);
 	}
 	else {
-	    DialogAlert alert = new DialogAlert("Update Failed", result);
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Update Failed", result);
+	    //alert.setVisible(true);
+	    ShowGUI.showAndWait(alert, true);
 	}
     }
 
@@ -461,7 +468,8 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	    DialogQuestion question = new DialogQuestion("Connection reset", "<html>The connection to the MySQL server has been reset.<br>"+
 							 "Reconnect now?</html>");
-	    question.setVisible(true);
+	    //question.setVisible(true);
+	    ShowGUI.showAndWait(question, true);
 
 	    if (question.getAnswer()) {
 		setDatabase(new DatabaseMySQL(_database.getPath()), false);
@@ -469,8 +477,9 @@ public class MovieManager extends JFrame implements ComponentListener {
 	}
 
 	if (error.equals("MySQL server is out of space")) {
-	    DialogAlert alert = new DialogAlert("Out of space", "The MySQL server is out of space");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, "Out of space", "The MySQL server is out of space");
+	    //alert.setVisible(true);
+	    ShowGUI.showAndWait(alert, true);
 	}
     }
 
@@ -531,7 +540,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	try {
 	    if (!isApplet()) {
-
+    		
 		File laf = new File("LookAndFeels" + File.separator + "lookAndFeels.ini");
 
 		if (!laf.exists()) {
@@ -637,7 +646,6 @@ public class MovieManager extends JFrame implements ComponentListener {
 	}
 
 	_movieManager.setVisible(true);
-
 	log.debug("MovieManager SetUp done!");
     }
 
@@ -809,8 +817,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	menuItemPrefs.addActionListener(new MovieManagerCommandPrefs());
 	menuTools.add(menuItemPrefs);
 
-        menuTools.addSeparator();
-
+	menuTools.addSeparator();
 	JMenuItem addMultipleMovies = new JMenuItem("Add Multiple Movies",'M');
 	addMultipleMovies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,ActionEvent.CTRL_MASK));
 	addMultipleMovies.setActionCommand("Add Multiple Movies");
@@ -823,7 +830,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	updateIMDbInfo.addActionListener(new MovieManagerCommandUpdateIMDBInfo());
 	menuTools.add(updateIMDbInfo);
 
-        menuTools.addSeparator();
+	 menuTools.addSeparator();
 
         JMenuItem reportGenerator = new JMenuItem("Report Generator",'R');
         reportGenerator.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,ActionEvent.CTRL_MASK));
@@ -1028,8 +1035,9 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	toolBar.setFloatable(false);
 
-	//JToolBar.Separator s;
-
+	JToolBar.Separator s;
+	Dimension dim = new Dimension(3, 0);
+	
 	//JPanel flowPanel = new JPanel(new FlowLayout());
 
 	/* The Add button. */
@@ -1037,7 +1045,8 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	buttonAdd.setPreferredSize(new Dimension(39, 39));
 	buttonAdd.setMaximumSize(new Dimension(45, 45));
-	buttonAdd.setBorder(BorderFactory.createCompoundBorder(buttonAdd.getBorder(), BorderFactory.createEmptyBorder(0,0,0,0)));
+	//buttonAdd.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,100,0,100), buttonAdd.getBorder()));
+	buttonAdd.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
 
 	buttonAdd.setToolTipText("Add");
 	buttonAdd.setActionCommand("Add");
@@ -1047,17 +1056,17 @@ public class MovieManager extends JFrame implements ComponentListener {
 	toolBar.add(buttonAdd);
 	//flowPanel.add(buttonAdd);
 
-// 	s = new JToolBar.Separator(dim);
-// 	s.setOrientation(JSeparator.HORIZONTAL);
-// 	flowPanel.add(s);
+ 	s = new JToolBar.Separator(dim);
+ 	s.setOrientation(JSeparator.HORIZONTAL);
+ 	//flowPanel.add(s);
 
 	/* A separator. */
-	//toolBar.addSeparator(dim);
+	toolBar.addSeparator(dim);
 
 	/* The Remove button. */
 	JButton buttonRemove = new JButton(new ImageIcon(_movieManager.getImage("/images/remove.png").getScaledInstance(26,26,Image.SCALE_SMOOTH)));
 
-	buttonRemove.setBorder(BorderFactory.createCompoundBorder(buttonRemove.getBorder(), BorderFactory.createEmptyBorder(0,0,0,0)));
+	buttonRemove.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonRemove.getBorder()));
 
 	buttonRemove.setPreferredSize(new Dimension(39, 39));
 	buttonRemove.setMaximumSize(new Dimension(44, 45));
@@ -1069,18 +1078,19 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	// flowPanel.add(buttonRemove);
 
-// 	s = new JToolBar.Separator(dim);
-// 	s.setOrientation(JSeparator.HORIZONTAL);
-// 	flowPanel.add(s);
+ 	s = new JToolBar.Separator(dim);
+	s.setOrientation(JSeparator.HORIZONTAL);
+	//flowPanel.add(s);
 
 	/* A separator. */
-	//toolBar.addSeparator(dim);
+	toolBar.addSeparator(dim);
 
 	/* The Edit button. */
 	JButton buttonEdit = new JButton(new ImageIcon(_movieManager.getImage("/images/edit.png").getScaledInstance(23,23,Image.SCALE_SMOOTH)));
 
-	buttonEdit.setBorder(BorderFactory.createCompoundBorder(buttonEdit.getBorder(), BorderFactory.createEmptyBorder(0,0,0,0)));
-
+	//buttonEdit.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonEdit.getBorder()));
+	buttonEdit.setMargin(new Insets(0,10,0,10));
+    
 	buttonEdit.setPreferredSize(new Dimension(39, 39));
 	buttonEdit.setMaximumSize(new Dimension(44, 45));
 	buttonEdit.setToolTipText("Edit");
@@ -1091,17 +1101,17 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	// flowPanel.add(buttonEdit);
 
-// 	s = new JToolBar.Separator(dim);
-// 	s.setOrientation(JSeparator.HORIZONTAL);
-// 	flowPanel.add(s);
+	s = new JToolBar.Separator(dim);
+	s.setOrientation(JSeparator.HORIZONTAL);
+	//flowPanel.add(s);
 
 	/* A separator. */
-	//toolBar.addSeparator(dim);
+	toolBar.addSeparator(dim);
 
 	/* The Search button. */
 	JButton buttonSearch = new JButton(new ImageIcon(_movieManager.getImage("/images/search.png").getScaledInstance(25,25,Image.SCALE_SMOOTH)));
 
-	buttonSearch.setBorder(BorderFactory.createCompoundBorder(buttonSearch.getBorder(), BorderFactory.createEmptyBorder(0,0,0,0)));
+	buttonSearch.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonSearch.getBorder()));
 
 	buttonSearch.setPreferredSize(new Dimension(39, 39));
 	buttonSearch.setMaximumSize(new Dimension(45, 45));
@@ -1113,14 +1123,14 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 // 	flowPanel.add(buttonSearch);
 
-// 	s = new JToolBar.Separator(dim);
-// 	s.setOrientation(JSeparator.HORIZONTAL);
-// 	flowPanel.add(s);
+ 	s = new JToolBar.Separator(dim);
+ 	s.setOrientation(JSeparator.HORIZONTAL);
+ 	//flowPanel.add(s);
 
 	//toolBar.add(flowPanel);
 
 	/* A separator. */
-	//toolBar.add(new JToolBar.Separator(new Dimension(8, 3)));
+	toolBar.add(new JToolBar.Separator(new Dimension(8, 3)));
 
 	JPanel panelEntries = new JPanel();
 	panelEntries.setLayout(new BoxLayout(panelEntries, BoxLayout.X_AXIS));
@@ -1133,24 +1143,15 @@ public class MovieManager extends JFrame implements ComponentListener {
 	panelEntries.setSize(new Dimension(46, 33));
 
 	showEntries = new JLabel("    ");
-	showEntries.setFont(new Font(showEntries.getFont().getName(),Font.PLAIN,fontSize+1));
+	showEntries.setFont(new Font(showEntries.getFont().getName(), Font.PLAIN,fontSize + 1));
 
 	panelEntries.add(showEntries);
 
 	toolBar.add(panelEntries);
 
-	//JPanel toolBarPanel = new JPanel(new BorderLayout());
-	//toolBarPanel.add(toolBar, BorderLayout.CENTER);
-	//toolBarPanel.add(panelEntries, BorderLayout.EAST);
-
-	//toolBarPanel.setMaximumSize(new Dimension((int) getPreferredSize().getWidth(), 500));
-
-	// toolBar.setMinimumSize(toolBar.getPreferredSize());
-// 	toolBar.setMaximumSize(toolBar.getPreferredSize());
-
-	toolBar.setPreferredSize(toolBar.getMaximumSize());
-	toolBar.setMinimumSize(toolBar.getMaximumSize());
-
+	toolBar.setPreferredSize(new Dimension(toolBar.getMaximumSize()));
+	toolBar.setMinimumSize(toolBar.getPreferredSize());
+	
 	/* All done. */
 	log.debug("Creation of the ToolBar done.");
 	return toolBar;
@@ -1892,11 +1893,15 @@ public class MovieManager extends JFrame implements ComponentListener {
      public void updateLookAndFeelValues() {
 	updateToolButtonBorder();
 	updateJTreeIcons();
+	
+	//getMoviesList().updateUI();
     }
 
     public void updateJTreeIcons() {
-       getMoviesList().setRowHeight(config.getMovieListRowHeight() + 2);
-       getMoviesList().setShowsRootHandles(config.getUseJTreeCovers() || !config.getUseJTreeIcons()); // show handles in cover mode or no icon mode, otherwise it's hard to recognize series
+	getMoviesList().setRowHeight(config.getMovieListRowHeight() + 2);
+	
+	/* Show handles in cover mode or no icon mode, otherwise it's hard to recognize series. */
+	getMoviesList().setShowsRootHandles(config.getUseJTreeCovers() || !config.getUseJTreeIcons());
     }
 
     public void updateToolButtonBorder() {
@@ -2119,15 +2124,15 @@ public class MovieManager extends JFrame implements ComponentListener {
     }
 
     JButton getRemoveButton() {
-	return (JButton) getToolBar().getComponent(1);
-    }
-
-    JButton getEditButton() {
 	return (JButton) getToolBar().getComponent(2);
     }
 
+    JButton getEditButton() {
+	return (JButton) getToolBar().getComponent(4);
+    }
+
     JButton getSearchButton() {
-	return (JButton) getToolBar().getComponent(3);
+	return (JButton) getToolBar().getComponent(6);
     }
 
     JPanel getEntriesPanel() {
@@ -2409,15 +2414,11 @@ public class MovieManager extends JFrame implements ComponentListener {
 			log.debug("database path is empty");
 			return null;
 		    }
-
+		    
 		    progressBar = new SimpleProgressBar(MovieManager.getIt(), true, this);
-
-		    Runnable showProgress = new Runnable() {
-			    public void run() {
-				progressBar.setVisible(true);
-			    }};
-		    SwingUtilities.invokeLater(showProgress);
-
+		    
+		    ShowGUI.show(progressBar, true);
+		    
 		    if (type.equals("MySQL"))
 			DialogDatabase.updateProgress(progressBar, "Connecting to database...");
 		    else
@@ -2486,7 +2487,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 			DialogDatabase.updateProgress(progressBar, "Retrieving movie list...");
 
 			if (setDatabase(db, false))
-			    log.debug("Database loaded:" + (System.currentTimeMillis() - time));
+			    log.debug("Database loaded in:" + (System.currentTimeMillis() - time) + " ms");
 			else
 			    log.debug("Failed to load database");
 		    }
@@ -2879,7 +2880,7 @@ public class MovieManager extends JFrame implements ComponentListener {
     }
 
 
-
+    /* Adds all the files ending in .jar to the classpath */
     public static void includeJarFilesInClasspath(String path) {
 
 	URL url = MovieManager.getFile(path);
@@ -2941,7 +2942,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 		    /* Starts the MovieManager. */
 		    MovieManager.getIt().setUp();
-
+		    
 		    /* Loads the database. */
 		    MovieManager.getIt().loadDatabase();
 

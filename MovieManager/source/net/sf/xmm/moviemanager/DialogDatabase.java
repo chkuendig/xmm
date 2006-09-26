@@ -969,7 +969,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	    DialogQuestion question = new DialogQuestion("Connection reset", "<html>The connection to the MySQL server has been reset.<br>"+
 							 "Reconnect now?</html>");
 	    //question.setVisible(true);
-	    ShowGUI.show(question, true);
+	    ShowGUI.showAndWait(question, true);
 	    
 	    if (question.getAnswer()) {
 		
@@ -997,7 +997,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 			alert = new DialogAlert((Dialog) parent, title, message);
 		    
 		    //alert.setVisible(true);
-		    ShowGUI.show(alert, true);
+		    ShowGUI.showAndWait(alert, true);
 		}
 	    }
 	}
@@ -1023,7 +1023,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
                 alert = new DialogAlert((Dialog) parent, title, message, true);
 	    
 	    //alert.setVisible(true); 
-	    ShowGUI.show(alert, true);
+	    ShowGUI.showAndWait(alert, true);
 	}
     }
 }

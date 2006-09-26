@@ -88,7 +88,7 @@ public class LookAndFeelManager {
 	    log.error("Exception: " + e.getMessage());
 	    DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Look and Feel error", "Look and feel may not be properly installed.", e.getMessage());
 	    //alert.setVisible(true);
-	    ShowGUI.show(alert, true);
+	    ShowGUI.showAndWait(alert, true);
 	}
     }
     
