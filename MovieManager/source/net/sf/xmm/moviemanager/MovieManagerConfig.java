@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerConfig.java 1.0 20.08.06 (dd.mm.yy)
+ * @(#)MovieManagerConfig.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  *
@@ -70,9 +70,9 @@ public class MovieManagerConfig  {
 
     private boolean useJTreeIcons = true;
 
-    private boolean useJTreeCovers = true;
+    private boolean useJTreeCovers = false;
 
-    private int movieListRowHeight = 44;
+    private int movieListRowHeight = 22;
 
 
     final private int defaultFrameHeight = 635;
@@ -332,12 +332,15 @@ public class MovieManagerConfig  {
      }
 
      public String getCoversFolder(Database database) {
-
-	 if (this.coversFolder.equals("")) {
-	     database = MovieManager.getIt().getDatabase();
+	 
+	 if (database != null) {
+	     return database.getCoversFolder();
+	 }
+	 
+	 database = MovieManager.getIt().getDatabase();
 	     
-	     if (database != null)
-		 this.coversFolder = database.getCoversFolder();
+	 if (this.coversFolder.equals("") && database != null) {
+	     this.coversFolder = database.getCoversFolder();
 	 }
 	 return this.coversFolder;
      }
@@ -349,10 +352,9 @@ public class MovieManagerConfig  {
     
     /* Returns the relative cover path */
     public String getCoversPath(Database database) {
-
+	
 	/* Get covers folder from database*/
 	String coversFolder = getCoversFolder(database);
-	
 	String coversPath = "";
 	
 	if (getUseRelativeCoversPath() == 2) {
@@ -374,11 +376,14 @@ public class MovieManagerConfig  {
 
     public String getQueriesFolder(Database database) {
 	
-	if (this.queriesFolder.equals("")) {
-	    database = MovieManager.getIt().getDatabase();
-	    
-	    if (database != null)
-		this.queriesFolder = database.getQueriesFolder();
+	if (database != null) {
+	    return database.getQueriesFolder();
+	}
+	
+	database = MovieManager.getIt().getDatabase();
+	
+	if (this.queriesFolder.equals("") && database != null) {
+	    this.queriesFolder = database.getQueriesFolder();
 	}
 	return this.queriesFolder;
     }
@@ -1792,16 +1797,7 @@ public class MovieManagerConfig  {
 		stream.write(settings.charAt(i));
 	    }
 	    stream.close();
-
-	    if (database != null) {
-
-		if (database instanceof DatabaseHSQL && database.isSetUp()) {
-		    ((DatabaseHSQL) database).shutDownDatabase("SHUTDOWN COMPACT;");
-		    /* Closes the open database... */
-		}
-		database.finalize();
-	    }
-
+	    
 	} catch (Exception e) {
 	    log.error("", e);
 	}
