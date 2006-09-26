@@ -1,5 +1,5 @@
 /**
- * @(#)DialogAlert.java 1.0 20.09.05 (dd.mm.yy)
+ * @(#)DialogAlert.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -37,61 +37,80 @@ public class DialogAlert extends JDialog {
     
     static Logger log = Logger.getRootLogger();
     
-    public DialogAlert(Dialog parent, String title, String alertMsg) {
+    public DialogAlert(Dialog parent, String title, String alertMsg, boolean html) {
         super(parent, true);
-        setTitle(title);
-        createHTMLDialog(parent, alertMsg);
-          }
+	
+	if (html)
+	    createHTMLDialog(parent, title, alertMsg);
+	else
+	    createOneMessageAlert(title, alertMsg);
+    }
     
-    public DialogAlert(Frame parent, String title, String alertMsg) {
+    public DialogAlert(Frame parent, String title, String alertMsg, boolean html) {
         super(parent, true);
-        setTitle(title);
-        createHTMLDialog(parent, alertMsg);
+	
+	if (html)
+	    createHTMLDialog(parent, title, alertMsg);
+	else
+	    createOneMessageAlert(title, alertMsg);
     }
     
        
-    void createHTMLDialog(Window parent, String alertMsg) {
+    void createHTMLDialog(Window parent, String title, String alertMsg) {
 	
 	try {
-	
-	/* All stuff together... */
-	JPanel panelAlert = new JPanel(new BorderLayout());
-	panelAlert.setBorder(BorderFactory.createEmptyBorder(10,5,5,10));
-	
-	JLabel labelIcon = new JLabel();
-	labelIcon.setBorder(BorderFactory.createEmptyBorder(5,5,5,8));
-	labelIcon.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH)));
 	    
-	JTextPane area = new JTextPane();
-	area.setOpaque(false);
-	area.setBorder(null);
-	area.setEditable(false);
-	area.setContentType("text/html");
-	area.setText(alertMsg);
+	    setTitle(title);
+
+	    /* All stuff together... */
+	    JPanel panelAlert = new JPanel(new BorderLayout());
+	    panelAlert.setBorder(BorderFactory.createEmptyBorder(10,5,5,10));
 	
-	area.setFocusable(true);
-	
-	JScrollPane scrollPane = new JScrollPane(area, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	    JLabel labelIcon = new JLabel();
+	    labelIcon.setBorder(BorderFactory.createEmptyBorder(5,5,5,8));
+	    labelIcon.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH)));
 	    
-	panelAlert.add(labelIcon, BorderLayout.WEST);
-	panelAlert.add(scrollPane, BorderLayout.EAST);
+	    JTextPane area = new JTextPane();
+	    area.setOpaque(false);
+	    area.setBorder(null);
+	    area.setEditable(false);
+	    area.setContentType("text/html");
+	    area.setText(alertMsg);
 	
-	if (scrollPane.getPreferredSize().getHeight() > 200)
-	    scrollPane.setPreferredSize(new Dimension((int)scrollPane.getPreferredSize().getWidth(), 200));
+	    area.setFocusable(true);
 	
-	makeRest(parent, panelAlert);
+	    JScrollPane scrollPane = new JScrollPane(area, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	    
+	    panelAlert.add(labelIcon, BorderLayout.WEST);
+	    panelAlert.add(scrollPane, BorderLayout.EAST);
+	
+	    if (scrollPane.getPreferredSize().getHeight() > 200)
+		scrollPane.setPreferredSize(new Dimension((int)scrollPane.getPreferredSize().getWidth(), 200));
+	
+	    makeRest(parent, panelAlert);
 	
 	} catch (Exception e) {
 	    log.error("Exception:" + e.getMessage());
 	}
     }
     
-     /**
+    
+    public DialogAlert(Dialog parent, String title, String alertMsg) {
+        super(parent, true);
+	createOneMessageAlert(title, alertMsg);
+    }
+    
+    public DialogAlert(Frame parent, String title, String alertMsg) {
+        super(parent, true);
+        createOneMessageAlert(title, alertMsg);
+    }
+    
+    /**
      * The Constructor.
      **/
-    public DialogAlert(String title, String alertMsg) {
+    protected void createOneMessageAlert(String title, String alertMsg) {
+	
 	/* Dialog creation...*/
-	super(MovieManager.getIt());
 	
 	try {
 	    
@@ -127,12 +146,22 @@ public class DialogAlert extends JDialog {
 	    log.error("Exception:" + e.getMessage());
 	}
     }
-	
     
-    public DialogAlert(String title, String alertMsg, String alertMsg2) {
-	/* Dialog creation...*/
-	super(MovieManager.getIt());
+    
+    public DialogAlert(Dialog parent, String title, String alertMsg, String alertMsg2) {
+        super(parent, true);
+	createTwoMessageAlert(title, alertMsg, alertMsg2);
+    }
+    
+    public DialogAlert(Frame parent, String title, String alertMsg, String alertMsg2) {
+        super(parent, true);
+        createTwoMessageAlert(title, alertMsg, alertMsg2);
+    }
+    
 	
+    protected void createTwoMessageAlert(String title, String alertMsg, String alertMsg2) {
+	/* Dialog creation...*/
+		
 	setTitle(title);
 	
 	/* All stuff together... */
@@ -168,9 +197,9 @@ public class DialogAlert extends JDialog {
 		public void windowClosing(WindowEvent e) {
 		    dispose();
 		}
-	      });
+	    });
 	
-	/*Enables dispose when pushing escape*/
+	/* Enables dispose when pushing escape */
 	KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 	Action escapeAction = new AbstractAction()
 	    {
