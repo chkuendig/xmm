@@ -1,5 +1,5 @@
 /**
- * @(#)DatabaseHSQL.java 1.0 29.01.06 (dd.mm.yy)
+ * @(#)DatabaseHSQL.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -38,11 +38,6 @@ public class DatabaseMySQL extends Database {
     public DatabaseMySQL(String filePath) {
 	super(filePath);
 	databaseType = "MySQL";
-	
-	//MovieManager.executeCommandIncludeJarFilesInClasspath("lib/drivers");
-		
-	//makeURL(filePath);
-	
 	_sql = new SQL(filePath, "MySQL");
 	
 	quote = "`";
@@ -81,7 +76,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	    size = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -114,13 +109,14 @@ public class DatabaseMySQL extends Database {
      * (Additional_Info/ Extra_Info and lists are removed automatically by cascade delete)
      **/
     public int removeMovie(int index) {
-	int value = 0;
+	int value = 1;
 	try {
 	    value = _sql.executeUpdate("DELETE FROM General_Info "+
 				       "WHERE General_Info.ID="+index+";");
+	    value = 0;
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -134,17 +130,17 @@ public class DatabaseMySQL extends Database {
     }
     
     /**
-     * Removes the movie from the database and returns number of updated rows.
+     * Removes the episode from the database.
      **/
     public int removeEpisode(int index) {
-	int value = 0;
+	int value = 1;
 	try {
 	    value = _sql.executeUpdate("DELETE FROM General_Info_Episodes "+
 				       "WHERE General_Info_Episodes.ID="+index+";");
-	    
+	    value = 0;
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -173,7 +169,7 @@ public class DatabaseMySQL extends Database {
 				       ";");
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -194,11 +190,12 @@ public class DatabaseMySQL extends Database {
 	int value = 0;
 	
 	try {
-	    value = _sql.executeUpdate("CREATE DATABASE "+ databaseName+
+	    value = _sql.executeUpdate("CREATE DATABASE "+ databaseName +
 				       ";");
+	    value = 1;
 	} catch (Exception e) {
 	    log.error("", e);
-	    errorMessage = e.getMessage();
+	    checkErrorMessage(e);
 	    value = 0;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -208,7 +205,6 @@ public class DatabaseMySQL extends Database {
 		log.error("", e);
 	    }
 	}
-	/* Returns the number of altered rows... */
 	return value;
     }
 
@@ -328,7 +324,7 @@ public class DatabaseMySQL extends Database {
 			       "Written_By        TEXT, "+
 			       "Genre             TEXT, "+
 			       "Rating            DOUBLE, "+
-			       "Seen              BOOLEAN, "+
+			       "Seen              TINYINT(1), "+
 			       "Plot              TEXT, "+
 			       "Cast              TEXT, "+
 			       "Notes             TEXT, "+
@@ -346,7 +342,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    errorMessage = e.getMessage();
+	    checkErrorMessage(e);
 	    value = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -392,7 +388,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    errorMessage = e.getMessage();
+	    checkErrorMessage(e);
 	    value = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -419,7 +415,7 @@ public class DatabaseMySQL extends Database {
 				       ");");
 	} catch (Exception e) {
 	    log.error("", e);
-	    errorMessage = e.getMessage();
+	    checkErrorMessage(e);
 	    value = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -455,7 +451,7 @@ public class DatabaseMySQL extends Database {
 				       "Written_By        TEXT, "+
 				       "Genre             TEXT, "+
 				       "Rating            DOUBLE, "+
-				       "Seen              BOOLEAN, "+
+				       "Seen              TINYINT(1), "+
 				       "Plot              TEXT, "+
 				       "Cast              TEXT, "+
 				       "Notes             TEXT, "+
@@ -473,7 +469,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    errorMessage = e.getMessage();
+	    checkErrorMessage(e);
 	    value = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -520,7 +516,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    errorMessage = e.getMessage();
+	    checkErrorMessage(e);
 	    value = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -548,7 +544,7 @@ public class DatabaseMySQL extends Database {
 				       ");");
 	} catch (Exception e) {
 	    log.error("", e);
-	    errorMessage = e.getMessage();
+	    checkErrorMessage(e);
 	    value = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -579,7 +575,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    errorMessage = e.getMessage();
+	    checkErrorMessage(e);
 	    value = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -610,7 +606,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    errorMessage = e.getMessage();
+	    checkErrorMessage(e);
 	    value = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -640,7 +636,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    errorMessage = e.getMessage();
+	    checkErrorMessage(e);
 	    value = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -686,7 +682,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    errorMessage = e.getMessage();
+	    checkErrorMessage(e);
 	    value = -1;
 	    
 	} finally {
@@ -724,7 +720,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    errorMessage = e.getMessage();
+	    checkErrorMessage(e);
 	    value = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -776,7 +772,7 @@ public class DatabaseMySQL extends Database {
 	    }
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -823,7 +819,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} 
 	
 	/* Returns the data... */
@@ -845,7 +841,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} 
 	
 	/* Returns the data... */
@@ -866,7 +862,7 @@ public class DatabaseMySQL extends Database {
 					  "WHERE Extra_Info.ID="+index+";");
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	}
 	
 	/* Returns the data... */
@@ -887,7 +883,7 @@ public class DatabaseMySQL extends Database {
 					  "WHERE Extra_Info_Episodes.ID="+index+";");
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} 
 	
 	/* Returns the data... */
@@ -988,7 +984,7 @@ public class DatabaseMySQL extends Database {
 		else
 		    resultSet = getExtraInfoMovieResultSet(index);
 	    
-		ResultSetMetaData metaData = resultSet.getMetaData();
+		//ResultSetMetaData metaData = resultSet.getMetaData();
 		
 		String tempName;
 		String tempValue;
@@ -1019,7 +1015,7 @@ public class DatabaseMySQL extends Database {
 	    }
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1110,7 +1106,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	    index = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -1284,7 +1280,7 @@ public class DatabaseMySQL extends Database {
 	    value = statement.executeUpdate();
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1361,7 +1357,7 @@ public class DatabaseMySQL extends Database {
       
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	    index = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -1393,7 +1389,7 @@ public class DatabaseMySQL extends Database {
 	    value = statement.executeUpdate();
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1424,7 +1420,7 @@ public class DatabaseMySQL extends Database {
 	    value = statement.executeUpdate();
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1498,7 +1494,7 @@ public class DatabaseMySQL extends Database {
 	    }
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1581,7 +1577,7 @@ public class DatabaseMySQL extends Database {
 	    }
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1620,7 +1616,7 @@ public class DatabaseMySQL extends Database {
 	    }
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1693,7 +1689,7 @@ public class DatabaseMySQL extends Database {
 	    }
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1763,7 +1759,7 @@ public class DatabaseMySQL extends Database {
 	    }
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1791,7 +1787,7 @@ public class DatabaseMySQL extends Database {
 	    
 	} catch (Exception e) {
 	    log.error("", e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
