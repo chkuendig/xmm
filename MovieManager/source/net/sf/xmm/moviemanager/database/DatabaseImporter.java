@@ -1,5 +1,5 @@
 /**
- * @(#)DatabaseImporter.java 1.0 26.01.06 (dd.mm.yy)
+ * @(#)DatabaseImporter.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -27,6 +27,7 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMovies;
 import net.sf.xmm.moviemanager.util.SwingWorker;
 import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.*;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import org.apache.log4j.Logger;
 
@@ -37,6 +38,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.util.ArrayList;
+import javax.swing.*;
 
 import jxl.Cell;
 import jxl.Sheet;
@@ -53,9 +55,11 @@ public class DatabaseImporter {
     private boolean canceled = false;
     private String [] transferred = null;
     private ModelImportSettings importSettings;
-    
-    public DatabaseImporter(ModelImportSettings importSettings) {
+    private Dialog parent;
+
+    public DatabaseImporter(Dialog parent, ModelImportSettings importSettings) {
 	this.importSettings = importSettings;
+	this.parent = parent;
     }
     
     public void go() {
@@ -128,16 +132,25 @@ public class DatabaseImporter {
 	    
 	    if (filePath != null) {
 		
-		ArrayList movielist = getMovieList();
-		lengthOfTask = movielist.size();
-		transferred = new String[movielist.size()+1];
+		ArrayList movielist = null;
 		
-		if (movielist == null) {
-		    Dialog alert = new DialogAlert("Error", "An error occured while reading date");
-		    alert.setVisible(true);
+		try {
+		    movielist = getMovieList();
+		    
+		    if (movielist == null)
+			throw new Exception("An error occured while reading file");
+
+		} catch (Exception e) {
+		    
+		    JDialog alert = new DialogAlert(parent, "Error", e.getMessage());
+		    //alert.setVisible(true);
+		    ShowGUI.show(alert, true);
 		    return;
 		}
-	    
+		
+		lengthOfTask = movielist.size();
+		transferred = new String[lengthOfTask + 1];
+
 		String title;
 		int length;
 	    
@@ -368,10 +381,11 @@ public class DatabaseImporter {
 	
 	    if (mode == 1)
 		log.debug("result:" + result);
+	    
 	    return result;
 	}
     
-	protected ArrayList getMovieList() {
+	protected ArrayList getMovieList() throws Exception {
 	    
 	    ArrayList movieList = null;
 	    
@@ -380,14 +394,11 @@ public class DatabaseImporter {
 		
 		File textFile = new File(filePath);
 		
-		if (!textFile.exists()) {
-		    log.warn("Cannot read the textfile");
-		    Dialog alert = new DialogAlert("Failed to read texfile", "Cannot read the textfile");
-		    alert.setVisible(true);
-		    return null;
+		if (!textFile.isFile()) {
+		    throw new Exception("Text file does not exist.");
 		}
 		
-		movieList = new ArrayList(100);
+		movieList = new ArrayList(10);
 		
 		try {
 		    

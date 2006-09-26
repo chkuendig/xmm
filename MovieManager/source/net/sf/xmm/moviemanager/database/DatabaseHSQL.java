@@ -1,5 +1,5 @@
 /**
- * @(#)DatabaseHSQL.java 1.0 29.01.06 (dd.mm.yy)
+ * @(#)DatabaseHSQL.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -37,8 +37,6 @@ public class DatabaseHSQL extends Database {
     public DatabaseHSQL(String filePath) {
 	super(filePath);
 	databaseType = "HSQL";
-	
-	//MovieManager.executeCommandIncludeJarFilesInClasspath("lib/drivers");
 	_sql = new SQL(filePath, "HSQL");
     }
     
@@ -123,10 +121,11 @@ public class DatabaseHSQL extends Database {
      * Removes the movie from the general info table (Additional info/ extra info nad lists are removed by cascade delete) at index 'index' and returns number of updated rows.
      **/
     public int removeMovie(int index) {
-	int value = 0;
+	int value = 1;
 	try {
 	    value = _sql.executeUpdate("DELETE FROM \"General Info\" "+
 				       "WHERE \"General Info\".\"ID\"="+index+";");
+	    value = 0;
 	} catch (Exception e) {
 	    log.error("", e);
 	} finally {
@@ -145,10 +144,11 @@ public class DatabaseHSQL extends Database {
      * Removes the movie from the database and returns number of updated rows.
      **/
     public int removeEpisode(int index) {
-	int value = 0;
+	int value = 1;
 	try {
 	    value = _sql.executeUpdate("DELETE FROM \"General Info Episodes\" "+
 				       "WHERE \"General Info Episodes\".\"ID\"="+index+";");
+	    value = 0;
 	    
 	} catch (Exception e) {
 	    log.error("", e);
@@ -1301,7 +1301,7 @@ public class DatabaseHSQL extends Database {
 	
 	/*Shutting down the HSQL database to be able to delete the files*/
 	shutDownDatabase("SHUTDOWN IMMEDIATELY;");
-	finalize();
+	finalizeDatabase();
 	try {
 	    File f = new File(getPath()+".lck");
 	    f.delete();

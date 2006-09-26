@@ -1,5 +1,5 @@
 /**
- * @(#)DatabaseAccess.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)DatabaseAccess.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -47,20 +47,21 @@ public class DatabaseAccess extends Database {
 	value += removeMovieRecord(index);
 	value += removeListRecord(index);
 	
-	if (value != 2)
+	if (value == 2)
 	    value = 0;
 	
 	return value;
     }
     
     /**
-     * Removes the movie record from the database (Additional Info/Extra Info with cascade delete) and returns number of updated rows.
+     * Removes the movie record from the database (Additional Info/Extra Info automatically removed with cascade delete).
      **/
     protected int removeMovieRecord(int index) {
 	int value = 0;
 	try {
-	    value = _sql.executeUpdate("DELETE FROM [General Info] "+
-				       "WHERE [General Info]![id]="+index+";");
+	    _sql.executeUpdate("DELETE FROM [General Info] "+
+			       "WHERE [General Info]![id]="+index+";");
+	    value = 1;
 	} catch (Exception e) {
 	    log.error("", e);
 	} finally {
@@ -75,16 +76,18 @@ public class DatabaseAccess extends Database {
 	return value;
     }
     
+    
     /**
      * Removes the movie record from the list table and returns number of updated rows.
      **/
     protected int removeListRecord(int index) {
 	int value = 0;
 	try {
-	    value = _sql.executeUpdate("DELETE FROM [Lists] "+
-				       "WHERE [Lists]![id]="+index+";");
+	    _sql.executeUpdate("DELETE FROM [Lists] "+
+			       "WHERE [Lists]![id]="+index+";");
+	    value = 1;
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("Exception: ", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -97,27 +100,32 @@ public class DatabaseAccess extends Database {
     return value;
     }
     
+    
     /**
-     * Removes the movie from the database and returns number of updated rows.
+     * Removes the episode from the database.
      **/
     public int removeEpisode(int index) {
-	int value = 0;
+	int value = 3;
 	try {
-	    value += _sql.executeUpdate("DELETE FROM [General Info Episodes] "+
-				       "WHERE [General Info Episodes]![id]="+index+";");
+	    int ret = _sql.executeUpdate("DELETE FROM [General Info Episodes] "+
+					 "WHERE [General Info Episodes]![id]="+index+";");
+	    
+	    value --; 
 	    
 	    _sql.clear();
 	    
-	    value += _sql.executeUpdate("DELETE FROM [Additional Info Episodes] "+
-				       "WHERE [Additional Info Episodes]![id]="+index+";");
+	    _sql.executeUpdate("DELETE FROM [Additional Info Episodes] "+
+			       "WHERE [Additional Info Episodes]![id]="+index+";");
+	    value --; 
 	    
 	    _sql.clear();
 
-	    value += _sql.executeUpdate("DELETE FROM [Extra Info Episodes] "+
-				       "WHERE [Extra Info Episodes]![id]="+index+";");
+	    _sql.executeUpdate("DELETE FROM [Extra Info Episodes] "+
+			       "WHERE [Extra Info Episodes]![id]="+index+";");
+	    value --; 
 	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("Exception: ", e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -126,10 +134,8 @@ public class DatabaseAccess extends Database {
 		log.error("Exception: " + e.getMessage());
 	    }
 	}
-    /* Returns the number of removed rows... */
-    if (value != 3)
-	value = 0;
-    return value;
+	
+	return value;
     }
     
 
@@ -672,7 +678,9 @@ public class DatabaseAccess extends Database {
     
     
     public void deleteDatabase() {
-	finalize();
+	
+	finalizeDatabase();
+	
 	try {
 	    File f = new File(getPath());
 	    f.delete();

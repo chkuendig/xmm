@@ -1,5 +1,5 @@
 /**
- * @(#)ModelAdditionalInfo.java 16.09.05 (dd.mm.yy)
+ * @(#)ModelAdditionalInfo.java 00.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -24,6 +24,8 @@ import java.util.*;
 
 public class ModelAdditionalInfo {
     
+    public static int additionalInfoFieldCount = 17;
+    
     private int index;
     
     private String subtitles;
@@ -44,8 +46,8 @@ public class ModelAdditionalInfo {
     private String container;
     private String mediaType;
     
-    static public boolean hasOldExtraInfoFieldNames = true;
-    static private ArrayList extraInfoFieldNames = null;// = new ArrayList();
+    protected static boolean hasOldExtraInfoFieldNames = true;
+    static private ArrayList extraInfoFieldNames = null;
     private ArrayList extraInfoFieldValues = new ArrayList();
     
     /**
@@ -194,7 +196,11 @@ public class ModelAdditionalInfo {
     public static boolean hasOldExtraInfoFieldNames() {
 	return hasOldExtraInfoFieldNames;
     }
-
+    
+     public static void setHasOldExtraInfoFieldNames(boolean hasOldExtraInfoFieldNames) {
+	 ModelAdditionalInfo.hasOldExtraInfoFieldNames = hasOldExtraInfoFieldNames;
+    }
+    
     public static void setExtraInfoFieldNames(ArrayList extraInfoFieldNames) {
 	
 	if (hasOldExtraInfoFieldNames) {
@@ -206,7 +212,7 @@ public class ModelAdditionalInfo {
     public void setExtraInfoFieldValues(ArrayList extraInfoFieldValues) {
 	this.extraInfoFieldValues = extraInfoFieldValues;
     }
-    
+        
     public String toString() { 
 	return "ModelAdditionalInfo";
     }

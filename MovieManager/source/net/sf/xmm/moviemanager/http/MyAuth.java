@@ -1,8 +1,7 @@
-package net.sf.xmm.moviemanager.http;
 /**
  * @(#)MyAuth.java 1.0 14.11.05 (dd.mm.yy)
  *
- * Copyright (2003) Mediterranean
+ * Copyright (2003) Bro3
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -16,12 +15,13 @@ package net.sf.xmm.moviemanager.http;
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Boston, MA 02111.
  * 
- * Contact: mediterranean@users.sourceforge.net
+ * Contact: bro3@users.sourceforge.net
  **/
 
+package net.sf.xmm.moviemanager.http;
 
-public /*Handles user authorization if required by proxy server*/
-class MyAuth extends java.net.Authenticator{
+/* Handles user authorization if required by proxy server */
+public class MyAuth extends java.net.Authenticator{
     
     String user;
     String password;
