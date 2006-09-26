@@ -1,5 +1,5 @@
 /**
- * @(#)Database.java 1.0 29.01.06 (dd.mm.yy)
+ * @(#)Database.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  *
@@ -48,7 +48,8 @@ abstract public class Database {
     protected String databaseType = ""; /* Values: "MSAccess", "HSQL" ,"MySQL" */
 
     protected String errorMessage = "";
-
+    protected Exception exception = null;
+    
     protected boolean fatalError = false;
 
     /* Used to return the record count. */
@@ -90,9 +91,14 @@ abstract public class Database {
     public String getErrorMessage() {
 	return errorMessage;
     }
+    
+    public Exception getException() {
+	return exception;
+    }
 
     public void resetError() {
 	errorMessage = "";
+	exception = null;
     }
 
     public String getDatabaseType() {
@@ -111,9 +117,10 @@ abstract public class Database {
 		setUp = true;
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    errorMessage = e.getMessage();
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	    _initialized = false;
+	    fatalError = true;
 	}
 
 	return _initialized;
@@ -123,13 +130,13 @@ abstract public class Database {
     /**
      * Finalize...
      **/
-    public void finalize() {
+    public void finalizeDatabase() {
 	try {
 	    _sql.finalize();
 	    _initialized = false;
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	}
     }
 
@@ -178,8 +185,8 @@ abstract public class Database {
 	    sqlKeywords = metaData.getSQLKeywords();
 	}
 	catch (SQLException e) {
-	    log.error("Exception:" + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	}
 	return sqlKeywords;
     }
@@ -204,15 +211,14 @@ abstract public class Database {
 
 	    data.append("  |-----\n");
 
-	    for (int i=1; i<=resultSetMetaData.getColumnCount(); i++) {
+	    for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) {
 		names.add(resultSetMetaData.getColumnName(i));
 	    }
-	    //synchronized (data) {
+	    
 	    if (resultSet.next()) {
-
 		do {
 		    recordCount++;
-
+		    
 		    for (int i=0; i<names.size(); i++) {
 			data.append("  |   ");
 			data.append((String)names.get(i));
@@ -236,13 +242,12 @@ abstract public class Database {
 	    queryResult = data.toString();
 
 	} catch (Exception e) {
-	    log.error("Exception: "+ e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: " + e.getMessage());
 	    queryResult = e.getMessage();
 	    recordCount = 0;
 	} finally {
 
-	    /* Clears the Statement in the dataBase... */
+	    /* Clears the Statement in the database... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
@@ -270,8 +275,8 @@ abstract public class Database {
 		size = resultSet.getInt(1);
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	    size = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -285,13 +290,19 @@ abstract public class Database {
     }
 
 
-    void checkErrorMessage(String message) {
+    void checkErrorMessage(Exception e) {
+	
+	exception = e;
 
-	if (message == null) {
+	if (e == null) {
 	    errorMessage = "";
 	    return;
 	}
-
+	
+	String message = errorMessage = e.getMessage();
+	
+	log.warn("Database error occured", e);
+	
 	if (message.indexOf("Connection reset") != -1) {
 	    errorMessage = "Connection reset";
 	    MovieManager.getIt().processDatabaseError();
@@ -312,10 +323,10 @@ abstract public class Database {
 	    errorMessage = message;
 	    fatalError = true;
 	}
-	else
-	    errorMessage = "";
-
-	if (!errorMessage.equals(""))
+	else if (!fatalError) {
+	    message = "";
+	}
+	if (!message.equals(""))
 	    DialogDatabase.showDatabaseMessage(MovieManager.getIt(), this, "");
     }
 
@@ -333,8 +344,8 @@ abstract public class Database {
 		data = resultSet.getString(field);
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -361,8 +372,8 @@ abstract public class Database {
 	    }
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -390,8 +401,8 @@ abstract public class Database {
 		data = resultSet.getBoolean(field);
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -417,10 +428,9 @@ abstract public class Database {
 	    if (resultSet.next() && resultSet.getString(field) != null) {
 		data = resultSet.getDouble(field);
 	    }
-
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -452,8 +462,8 @@ abstract public class Database {
 		data = resultSet.getString(columnName);
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -463,21 +473,36 @@ abstract public class Database {
 	    }
 	}
 	StringTokenizer tokenizer = new StringTokenizer(data, ":");
-	int [] activeFields = new int[tokenizer.countTokens()];
-
-	if (activeFields.length == 0) {
-	    int counter = getAdditionalInfoFieldNames().size() + getExtraInfoFieldNames().size();
-
-	    activeFields = new int[counter];
-
-	    for (int i = 0; i < counter; i++) {
+	
+	ArrayList extraFields = getExtraInfoFieldNames();
+	ModelAdditionalInfo.setExtraInfoFieldNames(extraFields);
+	
+	int fieldCount = ModelAdditionalInfo.additionalInfoFieldCount + extraFields.size();
+	
+	int [] activeFields = new int[fieldCount];
+	
+	/* Nothing saved to 'active additional info fields' */
+	if (tokenizer.countTokens() == 0) {
+	    
+	    for (int i = 0; i < fieldCount; i++) {
 		activeFields[i] = i;
 	    }
 	}
 	else {
-	    int counter = 0;
-	    while (tokenizer.hasMoreTokens()) {
-		activeFields[counter++] = Integer.parseInt(tokenizer.nextToken());
+	    try {
+		int index = 0;
+		int tmp;
+		
+		while (tokenizer.hasMoreTokens()) {
+		    tmp = Integer.parseInt(tokenizer.nextToken());
+		    
+		    if (tmp >= fieldCount)
+			log.error("Index:" + tmp + " ignored, value is greater than max: " + (tmp - 1));
+		    else
+			activeFields[index++] = tmp;
+		}
+	    } catch (NumberFormatException n) {
+		log.error("NumberFormatException: Invalid format in active additional info fields");
 	    }
 	}
 	/* Returns the data... */
@@ -502,7 +527,7 @@ abstract public class Database {
 
 	} catch (Exception e) {
 	    log.error("Exception: " + e);
-	    checkErrorMessage(e.getMessage());
+	    checkErrorMessage(e);
 	}
 
 	/* Returns the data... */
@@ -525,8 +550,8 @@ abstract public class Database {
 					  "WHERE \"Additional Info Episodes\".\"ID\"="+index+";");
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	}
 
 	/* Returns the data... */
@@ -548,8 +573,8 @@ abstract public class Database {
 					  "FROM \"Extra Info\" "+
 					  "WHERE \"Extra Info\".\"ID\"="+index+";");
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	}
 
 	/* Returns the data... */
@@ -571,8 +596,8 @@ abstract public class Database {
 					  "FROM \"Extra Info Episodes\" "+
 					  "WHERE \"Extra Info Episodes\".\"ID\"="+index+";");
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	}
 
 	/* Returns the data... */
@@ -814,8 +839,8 @@ abstract public class Database {
 	    }
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the database... */
 	    try {
@@ -921,7 +946,7 @@ abstract public class Database {
 	    else
 		resultSet = getExtraInfoMovieResultSet(index);
 
-	    ResultSetMetaData metaData = resultSet.getMetaData();
+	    //ResultSetMetaData metaData = resultSet.getMetaData();
 
 	    String tempName;
 	    String tempValue;
@@ -951,8 +976,8 @@ abstract public class Database {
 	    ModelAdditionalInfo.setExtraInfoFieldNames(extraFieldnames);
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -995,14 +1020,14 @@ abstract public class Database {
 	    }
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
 		_sql.clear();
 	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
+		log.error("Exception: ", e);
 	    }
 	}
 	/* Returns the list model... */
@@ -1028,8 +1053,8 @@ abstract public class Database {
 	    }
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1060,8 +1085,8 @@ abstract public class Database {
 	    }
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1098,8 +1123,8 @@ abstract public class Database {
 	    }
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1130,8 +1155,8 @@ abstract public class Database {
 		list.add(allTables.getString("TABLE_NAME"));
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1227,8 +1252,8 @@ abstract public class Database {
 	    value = statement.executeUpdate();
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1320,8 +1345,8 @@ abstract public class Database {
 	    value = statement.executeUpdate();
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1437,8 +1462,8 @@ abstract public class Database {
 	    value = statement.executeUpdate();
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1549,8 +1574,8 @@ abstract public class Database {
 	    value = statement.executeUpdate();
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1654,8 +1679,8 @@ abstract public class Database {
 	    }
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	    index = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -1683,7 +1708,7 @@ abstract public class Database {
 						    "FROM " + quotedGeneralInfoString + ";");
 
 	    if (resultSet.next()) {
-		index = resultSet.getInt(1)+1;
+		index = resultSet.getInt(1) + 1;
 	    } else {
 		index = 0;
 	    }
@@ -1734,8 +1759,8 @@ abstract public class Database {
 	    }
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	    index = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -1815,8 +1840,8 @@ statement.setInt(1, index);
 	    }
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	    index = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -1907,7 +1932,8 @@ statement.setInt(1, index);
 
 	    value = statement.executeUpdate();
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -1999,8 +2025,8 @@ statement.setInt(1, index);
 
 	    value = statement.executeUpdate();
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2044,8 +2070,8 @@ statement.setInt(1, index);
 	    }
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2086,8 +2112,8 @@ statement.setInt(1, index);
 	    }
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	    value = 0;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -2127,8 +2153,8 @@ statement.setInt(1, index);
 		throw new Exception("Error occured while adding info to extra info fields");
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2165,8 +2191,8 @@ statement.setInt(1, index);
 	    }
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2203,8 +2229,8 @@ statement.setInt(1, index);
 		}
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2232,8 +2258,8 @@ statement.setInt(1, index);
 	    value = statement.executeUpdate();
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2263,8 +2289,8 @@ statement.setInt(1, index);
 
 	    value = statement.executeUpdate();
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2293,8 +2319,8 @@ statement.setInt(1, index);
 
 	    value = statement.executeUpdate();
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2324,8 +2350,8 @@ statement.setInt(1, index);
 	    value = _sql.executeUpdate("ALTER TABLE " + quote + "Lists" + quote + " "+
 				       "ADD COLUMN " + quote +field+ quote +" "+ fieldType +";");
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2349,8 +2375,8 @@ statement.setInt(1, index);
 	    value = _sql.executeUpdate("ALTER TABLE " + quote + "Lists" + quote + " "+
 				       "DROP COLUMN "+ quote +field+ quote +";");
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2393,8 +2419,8 @@ statement.setInt(1, index);
 				       "ADD COLUMN " +quote+ field +quote+" "+ fieldType +";");
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	    value = -2;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -2425,8 +2451,8 @@ statement.setInt(1, index);
 				       "ADD COLUMN " +quote+ field +quote+" "+ fieldType +";");
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	    value = -2;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
@@ -2459,8 +2485,8 @@ statement.setInt(1, index);
 	    value = _sql.executeUpdate("ALTER TABLE " + quotedExtraInfoString + " "+
 				       "DROP COLUMN " +quote+ field +quote+";");
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2484,8 +2510,8 @@ statement.setInt(1, index);
 	    value = _sql.executeUpdate("ALTER TABLE " + quotedExtraInfoEpisodeString + " "+
 				       "DROP COLUMN " +quote+ field +quote+";");
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2524,9 +2550,9 @@ statement.setInt(1, index);
 						    "FROM " + settings + " "+
 						    "WHERE " + settings + ".ID=1;");
 
-	    _sql.clear();
-
-	    if(resultSet.next()) {
+	    if (resultSet.next()) {
+		_sql.clear();
+		
 		/* It's an update... */
 		PreparedStatement statement = _sql.prepareStatement("UPDATE " + settings +" "+
 								    "SET " + settings + "."+ columnName +"=? "+
@@ -2534,6 +2560,8 @@ statement.setInt(1, index);
 		statement.setString(1, activeFields);
 		statement.executeUpdate();
 	    } else {
+		_sql.clear();
+		
 		/* It's an insert...*/
 		PreparedStatement statement = _sql.prepareStatement("INSERT INTO " + settings + " "+
 								    "(ID,"+ columnName +") "+
@@ -2542,8 +2570,8 @@ statement.setInt(1, index);
 		statement.executeUpdate();
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2591,9 +2619,8 @@ statement.setInt(1, index);
 		value = statement.executeUpdate();
 	    }
 	} catch (Exception e) {
-
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2683,8 +2710,8 @@ statement.setInt(1, index);
 		listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2768,12 +2795,11 @@ statement.setInt(1, index);
 
 	    /* Processes the result set till the end... */
 	    while (resultSet.next()) {
-
 		listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -3296,13 +3322,11 @@ statement.setInt(1, index);
 
 	    /* Processes the result set till the end... */
 	    while (resultSet.next()) {
-		//listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Title")));
 		listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Title"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date")));
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
-
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -3355,12 +3379,11 @@ statement.setInt(1, index);
 
 	    /* Processes the result set till the end... */
 	    while (resultSet.next()) {
-
 		list.add(new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -3408,13 +3431,13 @@ statement.setInt(1, index);
 						    "WHERE \"General Info\".\"ID\"="+index+";");
 
 	    /* Processes the result set till the end... */
-	    resultSet.next();
-
-	    movie = new ModelMovie(resultSet.getInt("id"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards"));
-
+	    if (resultSet.next()) {
+		movie = new ModelMovie(resultSet.getInt("id"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards"));
+	    }
+	    
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -3463,13 +3486,12 @@ statement.setInt(1, index);
 						    "FROM \"General Info Episodes\" "+ "WHERE \"General Info Episodes\".\"ID\"="+index+";");
 
 	    /* Processes the result set till the end... */
-	    resultSet.next();
-
-	    episode = new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), ""/*("Aka")*/, resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards"));
-
+	    if (resultSet.next()) {
+		episode = new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), ""/*("Aka")*/, resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards"));
+	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    checkErrorMessage(e.getMessage());
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
