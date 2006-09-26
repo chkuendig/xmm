@@ -1,5 +1,5 @@
 /**
- * @(#)DialogDatabaseImporter.java 1.0 03.11.05 (dd.mm.yy)
+ * @(#)DialogDatabaseImporter.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -71,7 +71,7 @@ public class DialogDatabaseImporter extends JPanel implements ActionListener {
         this.parent = parent;
 	this.importSettings = importSettings;
 	
-	databaseImporter = new DatabaseImporter(importSettings);
+	databaseImporter = new DatabaseImporter(parent, importSettings);
 	
 	startButton = new JButton("Start");
         startButton.setActionCommand("Start");
@@ -162,7 +162,7 @@ public class DialogDatabaseImporter extends JPanel implements ActionListener {
 		    taskOutput.append(newline + "Import canceled!" + newline);
 		    parent.setCanceled(true);
 		    
-		    databaseImporter = new DatabaseImporter(importSettings);
+		    databaseImporter = new DatabaseImporter(parent, importSettings);
 		    timer = new Timer(milliseconds, new TimerListener());
 		    
 		    counter = 0;

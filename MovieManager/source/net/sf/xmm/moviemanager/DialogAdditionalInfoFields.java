@@ -1,5 +1,5 @@
 /**
- * @(#)DialogAdditionalInfoFields.java 1.0 27.01.06 (dd.mm.yy) 
+ * @(#)DialogAdditionalInfoFields.java 1.0 26.09.06 (dd.mm.yy) 
  *
  * Copyright (2003) Mediterranean
  * 
@@ -560,8 +560,9 @@ public class DialogAdditionalInfoFields extends JDialog {
 	MovieManager.getIt().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
 	MovieManager.getIt().getDatabase().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
 	
+	/* Means the fields must be updated */
 	if (_toRemove.size() != 0 || _toAdd.size() != 0) {
-	    ModelAdditionalInfo.hasOldExtraInfoFieldNames = true;
+	    ModelAdditionalInfo.setHasOldExtraInfoFieldNames(true);
 	}
 	MovieManagerCommandSelect.execute();
 	dispose();
