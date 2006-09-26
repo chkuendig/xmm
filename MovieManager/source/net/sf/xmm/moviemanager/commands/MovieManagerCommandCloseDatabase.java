@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandCloseDatabase.java 1.0 07.11.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandCloseDatabase.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -38,7 +38,7 @@ public class MovieManagerCommandCloseDatabase implements ActionListener {
 		((DatabaseHSQL) database).shutDownDatabase("SHUTDOWN COMPACT;");
 		/* Closes the open database... */
 	    }
-	    database.finalize();
+	    database.finalizeDatabase();
 	    
 	    MovieManager.getIt().getMoviesList().setModel(null);
 	    MovieManager.getIt().setDatabaseComponentsEnable(false);

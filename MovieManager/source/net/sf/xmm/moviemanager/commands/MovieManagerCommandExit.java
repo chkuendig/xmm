@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandExit.java 1.0 23.01.06 (dd.mm.yy)
+ * @(#)MovieManagerCommandExit.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -24,7 +24,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import net.sf.xmm.moviemanager.database.*;
 
 public class MovieManagerCommandExit implements ActionListener {
 
@@ -39,6 +39,16 @@ public class MovieManagerCommandExit implements ActionListener {
 	
 	/* Finalizes the main frame... */
 	MovieManager.getIt().finalize();
+	
+	Database db = MovieManager.getIt().getDatabase();
+	
+	if (db != null) {
+	    if (db instanceof DatabaseHSQL && db.isSetUp()) {
+		((DatabaseHSQL) db).shutDownDatabase("SHUTDOWN COMPACT;");
+	    }
+	    /* Finalizing database... */
+	    db.finalizeDatabase();
+	}
 	
 	MovieManager.log.debug("Exit 2");
 
