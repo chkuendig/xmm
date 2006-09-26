@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandSelect.java 1.0 29.01.06 (dd.mm.yy)
+ * @(#)MovieManagerCommandSelect.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -25,6 +25,7 @@ import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 import net.sf.xmm.moviemanager.extentions.ExtendedJTree;
 import net.sf.xmm.moviemanager.extentions.ExtendedTreeNode;
 import net.sf.xmm.moviemanager.models.*;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import org.apache.log4j.Logger;
 import org.dotuseful.ui.tree.AutomatedTreeNode;
@@ -289,6 +290,9 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		}
 	    }
 	    
+	    
+	    
+	    
        	    if (!byteCover && cover.equals("")) {
 		cover = model.getCover();
 		
@@ -296,11 +300,11 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		    
 		    /* Gets the full path for the cover... */
 		    String folder = MovieManager.getConfig().getCoversPath();
-		    
 		    File coverFile = new File(folder, cover);
 		    
-		    if (coverFile.isFile())
+		    if (coverFile.isFile()) {
 			cover = coverFile.getAbsolutePath();
+		    }
 		}
 	    }
 	    
@@ -519,21 +523,16 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	int horizontalPosition = MovieManager.getIt().getMoviesListScrollPane().getHorizontalScrollBar().getValue();
 	
 	if (selected != null) {
-	    /* Notifies the JTree model of the updates - prevents the titles in the list from being truncated */
-	    ((DefaultTreeModel) movieList.getModel()).reload(selected);
-	    ((DefaultTreeModel) movieList.getModel()).nodeChanged(selected);
 	    
 	    if (movieList.getLastSelectedPathComponent() != null && 
-		((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject() instanceof ModelEpisode) {
-		((ExtendedJTree) movieList).scrollPathToVisible2(movieList.getLeadSelectionPath(), horizontalPosition);
+		((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject() instanceof ModelEpisode && movieList.getSelectionCount() == 1) {
+		((ExtendedJTree) movieList).scrollPathToVisible2(movieList.getSelectionPath(), horizontalPosition);
 	    }
-	    else
-		movieList.scrollRowToVisible(movieList.getMaxSelectionRow());
 	}
     }
     
-	/**
-     * Chekcs the value of the seenEditable(inMainWindow) variable in MovieManager 
+    /**
+     * Checks the value of the seenEditable(in MainWindow) variable in MovieManager 
      * and performes the appropriate action. A popup menu window is shown at 
      * the selected index when clicking right mouse button.
      **/
@@ -660,10 +659,18 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
     public void mouseEntered(MouseEvent event) {}
     public void mouseClicked(MouseEvent event) {
 	
-	/* If Button1 and more than 1 click the Movie info window appears with the info of the selected entry */
-	if (event.getButton() == MouseEvent.BUTTON1) {
-	    if (event.getClickCount() > 1)
-		;//MovieManagerCommandEdit.execute();
+	/* If Button1 and more than 1 click the node is expanded/collapsed */
+	if (SwingUtilities.isLeftMouseButton(event)) {
+	    if (event.getClickCount() >= 2 && isCtrlPressed(event)) {
+		
+		JTree movieList = MovieManager.getIt().getMoviesList();
+		int rowForLocation = movieList.getRowForLocation(event.getX(), event.getY());
+		
+		if (movieList.isCollapsed(rowForLocation))
+		    movieList.expandRow(rowForLocation);
+		else
+		    movieList.collapseRow(rowForLocation);
+	    }
 	}
     }
     
@@ -672,7 +679,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	JTree movieList = MovieManager.getIt().getMoviesList();
 	boolean isSeenEditable = MovieManager.getConfig().getSeenEditable();
 	JPopupMenu popupMenu = null;
-	//int rowforlocation = movieList.getRowForLocation(x, y);
 	
 	if (selectionCount <= 1) {
 	    
@@ -684,7 +690,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	    if (key == -1)
 		return;
 		
-	    //boolean seen = MovieManager.getIt().getDatabase().getSeen(key);
 	    boolean seen = selected.getSeen();
 	
 	    if (selected instanceof ModelMovie) {
@@ -742,7 +747,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		popupMenu.add(menuRemoveFromLists);
 	    }
 	    popupMenu.show(movieList, x, y);
-	    popupMenu.setVisible(true);
+	    //popupMenu.setVisible(true);
+	    ShowGUI.show(popupMenu, true);
 	}
     }
     
