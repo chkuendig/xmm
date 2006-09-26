@@ -1,4 +1,5 @@
 /**
+ * @(#)DialogUpdateIMDbInfo.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -22,6 +23,7 @@ package net.sf.xmm.moviemanager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandUpdateIMDBInfo;
 import net.sf.xmm.moviemanager.extentions.ButtonGroupNoSelection;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import org.apache.log4j.Logger;
 
@@ -100,11 +102,13 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
     JCheckBox markAll;
     JCheckBox markAllIfEmpty;
     
+    JDialog dialog;
     
-    public DialogUpdateIMDbInfo(final MovieManagerCommandUpdateIMDBInfo parent) {
+    public DialogUpdateIMDbInfo(final MovieManagerCommandUpdateIMDBInfo parent, JDialog dialog) {
         super(new BorderLayout());
         this.parent = parent;
-	
+	this.dialog = dialog;
+
 	imdbInfoUpdater = new IMDbInfoUpdater();
 	
 	startButton = new JButton("Start");
@@ -142,8 +146,6 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 	/* Creating update options */
 	
 	JPanel updateSettingsPanel = new JPanel();
-	//updateSettingsPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Update settings "), BorderFactory.createEmptyBorder(0,10,0,0)));
-	
 	updateSettingsPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,5,2,5), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
 																					" Update settings ",
 																					TitledBorder.DEFAULT_JUSTIFICATION,
@@ -155,7 +157,6 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 	double size[][] = {{TableLayout.PREFERRED, 10, TableLayout.PREFERRED, 10, TableLayout.PREFERRED}, 
 			   {TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, 10, TableLayout.PREFERRED}};
 	
-	//updateSettingsPanel.setLayout(new info.clearthought.layout.TableLayout(size));
 	updateSettingsPanel.setLayout(new TableLayout(size));
 	
 	/* Header */
@@ -613,128 +614,163 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 		imdbInfoUpdater.title = 1;
 		anySelectedButton = true;
 	    }
-	    else if (titleUpdateIfEmpty.isSelected())
+	    else if (titleUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.title = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    
 	    if (coverUpdate.isSelected()) {
 		imdbInfoUpdater.cover = 1;
 		anySelectedButton = true;
 	    }
-	    else if (coverUpdateIfEmpty.isSelected())
+	    else if (coverUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.cover = 2;
+		anySelectedButton = true;
+	    }
 
 	    if (dateUpdate.isSelected()) {
 		imdbInfoUpdater.date = 1;
 		anySelectedButton = true;
 	    }
-	    else if (dateUpdateIfEmpty.isSelected())
+	    else if (dateUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.date = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    if (colourUpdate.isSelected()) {
 		imdbInfoUpdater.colour = 1;
 		anySelectedButton = true;
 	    }
-	    else if (colourUpdateIfEmpty.isSelected())
+	    else if (colourUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.colour = 2;
-	    
+		anySelectedButton = true;
+	    }
 	    if (directedByUpdate.isSelected()) {
 		imdbInfoUpdater.directedBy = 1;
 		anySelectedButton = true;
 	    }
-	    else if (directedByUpdateIfEmpty.isSelected())
+	    else if (directedByUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.directedBy = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    if (writtenByUpdate.isSelected()) {
 		imdbInfoUpdater.writtenBy = 1;
 		anySelectedButton = true;
 	    }
-	    else if (writtenByUpdateIfEmpty.isSelected())
+	    else if (writtenByUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.writtenBy = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    if (genreUpdate.isSelected()) {
 		imdbInfoUpdater.genre = 1;
 		anySelectedButton = true;
 	    }
-	    else if (genreUpdateIfEmpty.isSelected())
+	    else if (genreUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.genre = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    if (ratingUpdate.isSelected()) {
 		imdbInfoUpdater.rating = 1;
 		anySelectedButton = true;
 	    }
-	    else if (ratingUpdateIfEmpty.isSelected())
+	    else if (ratingUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.rating = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    if (countryUpdate.isSelected()) {
 		imdbInfoUpdater.country = 1;
 		anySelectedButton = true;
 	    }
-	    else if (countryUpdateIfEmpty.isSelected())
+	    else if (countryUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.country = 2;
+		anySelectedButton = true;
+	    }
 	   
 	    if (languageUpdate.isSelected()) {
 		imdbInfoUpdater.language = 1;
 		anySelectedButton = true;
 	    }
-	    else if (languageUpdateIfEmpty.isSelected())
+	    else if (languageUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.language = 2;
+		anySelectedButton = true;
+	    }
 	   
 	    if (plotUpdate.isSelected()) {
 		imdbInfoUpdater.plot = 1;
 		anySelectedButton = true;
 	    }
-	    else if (plotUpdateIfEmpty.isSelected())
+	    else if (plotUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.plot = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    if (castUpdate.isSelected()) {
 		imdbInfoUpdater.cast = 1;
 		anySelectedButton = true;
 	    }
-	    else if (castUpdateIfEmpty.isSelected())
+	    else if (castUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.cast = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    if (akaUpdate.isSelected()) {
 		imdbInfoUpdater.aka = 1;
 		anySelectedButton = true;
 	    }
-	    else if (akaUpdateIfEmpty.isSelected())
+	    else if (akaUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.aka = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    if (soundMixUpdate.isSelected()) {
 		imdbInfoUpdater.soundMix = 1;
 		anySelectedButton = true;
 	    }
-	    else if (soundMixUpdateIfEmpty.isSelected())
+	    else if (soundMixUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.soundMix = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    if (runtimeUpdate.isSelected()) {
 		imdbInfoUpdater.runtime = 1;
 		anySelectedButton = true;
 	    }
-	    else if (runtimeUpdateIfEmpty.isSelected())
+	    else if (runtimeUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.runtime = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    if (awardsUpdate.isSelected()) {
 		imdbInfoUpdater.awards = 1;
 		anySelectedButton = true;
 	    }
-	    else if (awardsUpdateIfEmpty.isSelected())
+	    else if (awardsUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.awards = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    if (mpaaUpdate.isSelected()) {
 		imdbInfoUpdater.mpaa = 1;
 		anySelectedButton = true;
 	    }
-	    else if (mpaaUpdateIfEmpty.isSelected())
+	    else if (mpaaUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.mpaa = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    if (certificationUpdate.isSelected()) {
 		imdbInfoUpdater.certification = 1;
 		anySelectedButton = true;
 	    }
-	    else if (certificationUpdateIfEmpty.isSelected())
+	    else if (certificationUpdateIfEmpty.isSelected()) {
 		imdbInfoUpdater.certification = 2;
+		anySelectedButton = true;
+	    }
 	    
 	    
 	    if (anySelectedButton) {
@@ -745,13 +781,14 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 		taskOutput.append("Processing import list...\n");
 	    }
 	    else {
-		 DialogAlert alert = new DialogAlert("Alert","At least one of the fields should be checked.");
-		 alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(dialog, "Alert", "At least one of the fields should be checked.");
+		//alert.setVisible(true);
+		 ShowGUI.show(alert, true);
+
+		 startButton.setEnabled(true);
+		 cancelButton.setEnabled(false);
+		 closeButton.setEnabled(true);
 		 
-         startButton.setEnabled(true);
-         cancelButton.setEnabled(false);
-         closeButton.setEnabled(true);
-         
 		 imdbInfoUpdater = new IMDbInfoUpdater();
 	    }
 	}

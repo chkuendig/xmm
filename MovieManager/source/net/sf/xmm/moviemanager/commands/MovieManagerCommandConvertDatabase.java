@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandConvertDatabase.java 1.0 26.01.06 (dd.mm.yy)
+ * @(#)MovieManagerCommandConvertDatabase.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -187,13 +187,14 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	
 	dbConverter.setLocation((int)mm.getLocation().getX()+(mm.getWidth()- dbConverter.getWidth())/2,
 				(int)mm.getLocation().getY()+(mm.getHeight()- dbConverter.getHeight())/2);
-	dbConverter.setVisible(true);
+	//dbConverter.setVisible(true);
+	ShowGUI.show(dbConverter, true);
     }
     
     void finalizeDatabase() {
 	if (newDatabase instanceof DatabaseHSQL)
 	    ((DatabaseHSQL) newDatabase).shutDownDatabase("SHUTDOWN COMPACT;");
-	newDatabase.finalize();
+	newDatabase.finalizeDatabase();
     }
     
     public void deleteNewDatabase() {
@@ -217,7 +218,8 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     }
     
     public void dispose() {
-	dbConverter.setVisible(false);
+	//dbConverter.setVisible(false);
+	ShowGUI.show(dbConverter, false);
     }
     
     protected String getFilePath() {
@@ -273,8 +275,9 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	
 	
 	if (!MovieManager.isWindows()) {
-	    DialogAlert alert = new DialogAlert("Windows Only","This function is available on windows only");
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Windows Only", "This function is available on windows only");
+	    //alert.setVisible(true);
+	    ShowGUI.show(alert, true);
 	}
 	else {
 	    movieListModel = MovieManager.getIt().getDatabase().getMoviesList("Title");
@@ -283,8 +286,9 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	    int listModelSize = movieListModel.getSize();
 	    
 	    if (listModelSize == 0) {
-		DialogAlert alert = new DialogAlert("Empty Database", "The database is empty! ");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Empty Database", "The database is empty! ");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
 	    }
 	    else {
 		filePath = getFilePath();

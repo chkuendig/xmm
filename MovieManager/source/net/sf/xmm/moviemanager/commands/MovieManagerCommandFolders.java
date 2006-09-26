@@ -1,5 +1,5 @@
 /**
- * @(#)CommandFolders.java 1.0 23.03.05 (dd.mm.yy)
+ * @(#)CommandFolders.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -21,6 +21,8 @@
 package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.*;
+import net.sf.xmm.moviemanager.util.ShowGUI;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -30,8 +32,9 @@ public class MovieManagerCommandFolders implements ActionListener {
    * Executes the command.
    **/
   protected static void execute() {
-    DialogFolders dialogFolders = new DialogFolders();
-    dialogFolders.setVisible(true);
+      DialogFolders dialogFolders = new DialogFolders();
+      //dialogFolders.setVisible(true);
+      ShowGUI.show(dialogFolders, true);
   }
   
   /**

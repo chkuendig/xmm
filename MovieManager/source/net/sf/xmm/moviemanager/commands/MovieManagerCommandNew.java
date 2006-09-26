@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandNew.java 1.0 07.11.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandNew.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -24,12 +24,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import net.sf.xmm.moviemanager.*;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 public class MovieManagerCommandNew implements ActionListener {
     
     protected static void execute() {
 	DialogDatabase dialogDatabase = new DialogDatabase(true);
-    dialogDatabase.setVisible(true);
+	//dialogDatabase.setVisible(true);
+	ShowGUI.show(dialogDatabase, true);
     }
     
     /**

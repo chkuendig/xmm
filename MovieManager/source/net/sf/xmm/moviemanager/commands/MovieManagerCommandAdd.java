@@ -1,6 +1,5 @@
-package net.sf.xmm.moviemanager.commands;
 /**
- * @(#)MovieManagerCommandAdd.java 1.0 23.03.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandAdd.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -19,8 +18,11 @@ package net.sf.xmm.moviemanager.commands;
  * Contact: mediterranean@users.sourceforge.net
  **/
 
+package net.sf.xmm.moviemanager.commands;
+
 import net.sf.xmm.moviemanager.DialogMovieInfo;
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,17 +32,17 @@ public class MovieManagerCommandAdd implements ActionListener {
   /**
    * Executes the command.
    **/
-  protected static void execute() {
-    DialogMovieInfo dialogMovieInfo = new DialogMovieInfo("Add Movie");
-    dialogMovieInfo.setVisible(true);
-  }
-  
-  /**
-   * Invoked when an action occurs.
-   **/
-  public void actionPerformed(ActionEvent event) {
-    MovieManager.log.debug("ActionPerformed: "+ event.getActionCommand());
-    execute();
-  }
-
+    protected static void execute() {
+	DialogMovieInfo dialogMovieInfo = new DialogMovieInfo("Add Movie");
+	//dialogMovieInfo.setVisible(true);
+	ShowGUI.show(dialogMovieInfo, true);
+    }
+    
+    /**
+     * Invoked when an action occurs.
+     **/
+    public void actionPerformed(ActionEvent event) {
+	MovieManager.log.debug("ActionPerformed: "+ event.getActionCommand());
+	execute();
+    }
 }

@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandSearch.java 1.0 24.01.06 (dd.mm.yy)
+ * @(#)MovieManagerCommandSearch.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -134,12 +134,15 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
     int generalInfoFieldsCount = 0;
     int additionalInfoFieldsCount = 0;
     
+    DialogSearch dialogSearch;
     
     JTabbedPane allTabbedPanes;
     
     public DialogSearch() {
 	/* Dialog creation...*/
 	super(MovieManager.getIt());
+	dialogSearch = this;
+	
 	/* Close dialog... */
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
@@ -724,13 +727,10 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 		    } catch (Exception e) {
 			return "";
 		    }
-			
-		    SwingUtilities.invokeLater(new Runnable() {
-			    public void run() {
-				pack();
-				setVisible(true);
-			    }});
-			
+		    
+		    pack();
+		    ShowGUI.show(dialogSearch, true);
+		    
 		    return "";
 		}
 	    };
@@ -942,8 +942,9 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	
 	if (enableDateButton.isSelected()) {
 	    if (dateTextField.getText().length() != 4) {
-		DialogAlert alert = new DialogAlert("Alert", "The date must be 4 integers, no more...no less!");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Alert", "The date must be 4 integers, no more...no less!");
+		//alert.setVisible(true);
+		ShowGUI.show(alert, true);
 		return;
 	    }
 	}

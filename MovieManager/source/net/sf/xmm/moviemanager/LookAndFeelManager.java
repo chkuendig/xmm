@@ -1,5 +1,5 @@
 /**
- * @(#)LookAndFeelManager.java 1.0 20.08.06 (dd.mm.yy)
+ * @(#)LookAndFeelManager.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -25,6 +25,8 @@ import org.apache.log4j.Logger;
 import com.l2fprod.gui.plaf.skin.Skin;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 import com.oyoaha.swing.plaf.oyoaha.OyoahaLookAndFeel;
+
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -84,8 +86,9 @@ public class LookAndFeelManager {
 	    
 	} catch (Exception e) {
 	    log.error("Exception: " + e.getMessage());
-	    DialogAlert alert = new DialogAlert("Look and Feel error", "Look and feel may not be properly installed.", e.getMessage());
-	    alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Look and Feel error", "Look and feel may not be properly installed.", e.getMessage());
+	    //alert.setVisible(true);
+	    ShowGUI.show(alert, true);
 	}
     }
     

@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandPrefs.java 1.0 11.04.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandPrefs.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -23,12 +23,14 @@ package net.sf.xmm.moviemanager.commands;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import net.sf.xmm.moviemanager.*;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 public class MovieManagerCommandPrefs implements ActionListener {
     
     void execute() {
 	DialogPrefs dialogPrefs = new DialogPrefs();
-	dialogPrefs.setVisible(true);
+	//dialogPrefs.setVisible(true);
+	ShowGUI.show(dialogPrefs, true);
     }
     
     /**

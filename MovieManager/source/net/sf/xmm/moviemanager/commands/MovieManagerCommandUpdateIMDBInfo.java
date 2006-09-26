@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandUpdateIMDBInfo.java 1.0 03.11.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandUpdateIMDBInfo.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -23,6 +23,7 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.DialogUpdateIMDbInfo;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelImportSettings;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.event.*;
 
@@ -45,7 +46,7 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
 	dbImporter = new JDialog(MovieManager.getIt(), "IMDb Info Updater", true);
 	dbImporter.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	
-	final JComponent newContentPane = new DialogUpdateIMDbInfo(this);
+	final JComponent newContentPane = new DialogUpdateIMDbInfo(this, dbImporter);
         newContentPane.setOpaque(true);
         dbImporter.setContentPane(newContentPane);
 	dbImporter.pack();
@@ -82,7 +83,8 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
 	
 	dbImporter.setLocation((int)mm.getLocation().getX()+(mm.getWidth()- dbImporter.getWidth())/2,
 			  (int)mm.getLocation().getY()+(mm.getHeight()- dbImporter.getHeight())/2);
-	dbImporter.setVisible(true);
+	//dbImporter.setVisible(true);
+	ShowGUI.show(dbImporter, true);
     }
     
     public void setCanceled(boolean canceled) {
@@ -94,7 +96,8 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
     }
     
     public void dispose() {
-	dbImporter.setVisible(false);
+	//dbImporter.setVisible(false);
+	ShowGUI.show(dbImporter, false);
     }
     
     public void setCancelAll(boolean value) {
@@ -105,8 +108,7 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
 	
 	cancelAll = false;
 	
-	DialogUpdateIMDbInfo importMovie = new DialogUpdateIMDbInfo(this);
-	// importSettings = new ModelImportSettings();
+	DialogUpdateIMDbInfo importMovie = new DialogUpdateIMDbInfo(this, dbImporter);
 	
 	if (cancelAll)
 	    return;

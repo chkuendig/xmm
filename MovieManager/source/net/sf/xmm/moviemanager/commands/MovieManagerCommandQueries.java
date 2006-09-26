@@ -1,6 +1,5 @@
-package net.sf.xmm.moviemanager.commands;
 /**
- * @(#)MovieManagerCommandQueries.java 1.0 23.03.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandQueries.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -19,8 +18,11 @@ package net.sf.xmm.moviemanager.commands;
  * Contact: mediterranean@users.sourceforge.net
  **/
 
+package net.sf.xmm.moviemanager.commands;
+
 import net.sf.xmm.moviemanager.DialogQueries;
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,10 +32,11 @@ public class MovieManagerCommandQueries implements ActionListener {
   /**
    * Executes the command.
    **/
-  protected static void execute() {
-    DialogQueries dialogQueries = new DialogQueries();
-    dialogQueries.setVisible(true);
-  }
+    protected static void execute() {
+	DialogQueries dialogQueries = new DialogQueries();
+	//dialogQueries.setVisible(true);
+	ShowGUI.show(dialogQueries, true);
+    }
   
   /**
    * Invoked when an action occurs.

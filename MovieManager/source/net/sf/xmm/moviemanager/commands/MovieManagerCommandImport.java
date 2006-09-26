@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandImport.java 1.0 03.11.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandImport.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -25,6 +25,7 @@ import net.sf.xmm.moviemanager.DialogImport;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.models.ModelImportSettings;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import org.apache.log4j.Logger;
 
@@ -33,35 +34,43 @@ import java.io.File;
 
 import javax.swing.*;
 
-
-public class MovieManagerCommandImport extends JPanel implements ActionListener{
+public class MovieManagerCommandImport extends JDialog implements ActionListener{
     
     static Logger log = Logger.getRootLogger();
     
     boolean canceled = true;
     boolean done = false;
-    JDialog dbImporter;
+    // JDialog dbImporter;
         
     boolean cancelAll = false;
    
     ModelImportSettings importSettings;
     
+    public MovieManagerCommandImport() {
+	super(MovieManager.getIt(), "Importer", true);
+    }
+    
     void createAndShowGUI() {
 	
 	/* Owner, title, modal=true */
-	dbImporter = new JDialog(MovieManager.getIt(), "Importer", true);
-	dbImporter.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+	//dbImporter = new JDialog(MovieManager.getIt(), "Importer", true);
+	/*dbImporter.*/setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	
 	final JComponent newContentPane = new DialogDatabaseImporter(this, importSettings);
         newContentPane.setOpaque(true);
-        dbImporter.setContentPane(newContentPane);
-	dbImporter.pack();
-	dbImporter.addWindowListener(new WindowAdapter() {
+        // dbImporter.
+	    setContentPane(newContentPane);
+	// dbImporter.
+	    pack();
+	// dbImporter.
+	    addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
-		    dbImporter.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		    // dbImporter.
+			setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		    
 		    if (canceled || done) {
-			dbImporter.dispose();
+			// dbImporter.
+			dispose();
 			MovieManagerCommandSelect.executeAndReload(-1);
 		    }
 		}
@@ -73,23 +82,29 @@ public class MovieManagerCommandImport extends JPanel implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
 		    
 		    if (canceled || done) {
-			dbImporter.dispose();
+			// dbImporter.
+			    dispose();
 			MovieManagerCommandSelect.executeAndReload(-1);
 		    }
 		}
 	    };
 	
-	dbImporter.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-	dbImporter.getRootPane().getActionMap().put("ESCAPE", escapeAction);
+	// dbImporter.
+	    getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
+	// dbImporter.
+	    getRootPane().getActionMap().put("ESCAPE", escapeAction);
 	
 	MovieManager mm = MovieManager.getIt();
 	
 	setLocation((int) mm.getLocation().getX()+(mm.getWidth()-getWidth())/2,
 		    (int) mm.getLocation().getY()+(mm.getHeight()-getHeight())/2);
 	
-	dbImporter.setLocation((int)mm.getLocation().getX()+(mm.getWidth()- dbImporter.getWidth())/2,
-			  (int)mm.getLocation().getY()+(mm.getHeight()- dbImporter.getHeight())/2);
-	dbImporter.setVisible(true);
+	// dbImporter.
+	setLocation((int)mm.getLocation().getX()+(mm.getWidth()- /*dbImporter.*/getWidth())/2,
+		    (int)mm.getLocation().getY()+(mm.getHeight()- /*dbImporter.*/getHeight())/2);
+	// dbImporter.
+	//setVisible(true);
+	ShowGUI.show(this, true);
     }
     
     public void setCanceled(boolean canceled) {
@@ -101,7 +116,9 @@ public class MovieManagerCommandImport extends JPanel implements ActionListener{
     }
     
     public void dispose() {
-	dbImporter.setVisible(false);
+	// dbImporter.
+	//setVisible(false);
+	ShowGUI.show(this, false);
     }
     
     public void setCancelAll(boolean value) {

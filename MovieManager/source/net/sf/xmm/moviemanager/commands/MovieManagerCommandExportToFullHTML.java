@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandExportToFullHTML.java 1.0 26.01.06 (dd.mm.yy)
+ * @(#)MovieManagerCommandExportToFullHTML.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -26,6 +26,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.models.*;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import org.apache.log4j.Logger;
 
@@ -666,12 +667,14 @@ public class MovieManagerCommandExportToFullHTML {
 	    
 	    if (htmlFile.exists()) {
 		DialogQuestion fileQuestion = new DialogQuestion("File already exists", "A file with the chosen filename already exists. Would you like to overwrite the old file?");
-		fileQuestion.setVisible(true);
+		//fileQuestion.setVisible(true);
+		ShowGUI.show(fileQuestion, true);
 		
 		if (fileQuestion.getAnswer()) {
 		    if (coversDir.exists()) { 
 			DialogQuestion coverQuestion = new DialogQuestion("Directory already exists.", "The directory to store covers already exists. Put cover images in the existing directory?");
-			coverQuestion.setVisible(true);
+			//coverQuestion.setVisible(true);
+			ShowGUI.show(coverQuestion, true);
 			
 			if (coverQuestion.getAnswer()) {
 			    export(htmlFile, coversPath, coversRelativePath);
@@ -693,7 +696,8 @@ public class MovieManagerCommandExportToFullHTML {
 	    } 
 	    else if (coversDir.exists()) { 
 		DialogQuestion coverQuestion = new DialogQuestion("Directory already exists.", "The directory to store covers already exists. Put cover files in the exisitng directory and overwrite existing files?");
-		coverQuestion.setVisible(true);
+		//coverQuestion.setVisible(true);
+		ShowGUI.show(coverQuestion, true);
 		
 		if (coverQuestion.getAnswer()) {
 		    export(htmlFile, coversPath, coversRelativePath);
@@ -705,8 +709,9 @@ public class MovieManagerCommandExportToFullHTML {
 		
 	    }
 	    else if(!coversDir.mkdir()) {
-		DialogAlert coverAlert = new DialogAlert("Couldn't create directory.", "The directory to store covers could not be created.");
-		coverAlert.setVisible(true);
+		DialogAlert coverAlert = new DialogAlert(MovieManager.getIt(), "Couldn't create directory.", "The directory to store covers could not be created.");
+		//coverAlert.setVisible(true);
+		ShowGUI.show(coverAlert, true);
 	    }
 	    else {
 		export(htmlFile, coversPath, coversRelativePath);

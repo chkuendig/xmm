@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandHelp.java 1.0 24.01.06 (dd.mm.yy)
+ * @(#)MovieManagerCommandHelp.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -22,6 +22,7 @@ package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.DialogAlert;
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,8 +33,9 @@ public class MovieManagerCommandHelp implements ActionListener {
    * Executes the command.
    **/
   protected static void execute() {
-      DialogAlert alert = new DialogAlert("Help", "Try out the Online Help  ;-)");
-      alert.setVisible(true);
+      DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Help", "Try out the Online Help  ;-)");
+      //alert.setVisible(true);
+      ShowGUI.show(alert, true);
   }
   
   /**

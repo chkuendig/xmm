@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandLists.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandLists.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -21,6 +21,8 @@
 package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.*;
+import net.sf.xmm.moviemanager.util.ShowGUI;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -31,7 +33,8 @@ public class MovieManagerCommandLists implements ActionListener {
      **/
     public static void execute() {
 	DialogLists dialogLists = new DialogLists();
-	dialogLists.setVisible(true);
+	//dialogLists.setVisible(true);
+	ShowGUI.show(dialogLists, true);
     }
     
     /**

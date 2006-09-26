@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandExportToSimpleHTML.java 1.1 13.10.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandExportToSimpleHTML.java 1.1 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -136,7 +136,8 @@ public class MovieManagerCommandExportToSimpleHTML {
 	
 	    if (htmlFile.exists()) {
 		DialogQuestion question = new DialogQuestion("File already exists", "A file with the chosen filename already exists. Would you like to overwrite the old file?");
-		question.setVisible(true);
+		//question.setVisible(true);
+		ShowGUI.show(question, true);
 	    
 		if (question.getAnswer()) {
 		    htmlFile.delete();

@@ -1,5 +1,5 @@
 /**
- * @(#)DialogAddMultipleMovies.java 1.0 14.09.05 (dd.mm.yy)
+ * @(#)DialogAddMultipleMovies.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -24,6 +24,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import org.apache.log4j.Logger;
 
@@ -283,7 +284,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
                 (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
 	
-	setVisible(true);
+	//setVisible(true);
+	ShowGUI.show(this, true);
     }
     
     JPanel makeListPanel() {
@@ -442,12 +444,14 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	    log.debug("ActionPerformed: " + event.getActionCommand());
 	    
 	    if (moviesPath.getText().equals("")) {
-		DialogAlert alert = new DialogAlert("Alert","Please specify a directory path.");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Alert","Please specify a directory path.");
+		//alert.setVisible(true); 
+		ShowGUI.show(this, true);
 	    }
 	    else if (!new File(moviesPath.getText()).exists()) {
-		DialogAlert alert = new DialogAlert("Alert","The specified directory does not exist.");
-		alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, "Alert","The specified directory does not exist.");
+		//alert.setVisible(true); 
+		ShowGUI.show(this, true);
 	    }
 	    else {
 		executeSave();
@@ -462,7 +466,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	    all.remove(4);
 	    all.add(makeListPanel(), 4);
 	    pack();
-	    setVisible(true);
+	    ShowGUI.show(this, true);
 	}
 	
 	if (event.getSource().equals(enableExludeString)) {

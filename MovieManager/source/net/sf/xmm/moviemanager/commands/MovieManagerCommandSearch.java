@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandSearch.java 1.0 23.03.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandSearch.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 
 import net.sf.xmm.moviemanager.DialogSearch;
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 public class MovieManagerCommandSearch implements ActionListener {
     
@@ -32,7 +33,8 @@ public class MovieManagerCommandSearch implements ActionListener {
 	
 	if (MovieManager.getIt().getDialogSearch() == null) {
 	    DialogSearch dialogSearch = new DialogSearch();
-	    dialogSearch.setVisible(true);
+	    //dialogSearch.setVisible(true);
+	    ShowGUI.show(dialogSearch, true);
 	}
     }
     

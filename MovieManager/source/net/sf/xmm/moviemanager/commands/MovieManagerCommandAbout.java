@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandAbout.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandAbout.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 
 import net.sf.xmm.moviemanager.DialogAbout;
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 public class MovieManagerCommandAbout implements ActionListener {
 
@@ -33,7 +34,8 @@ public class MovieManagerCommandAbout implements ActionListener {
      **/
     protected static void execute() {
 	DialogAbout dialogAbout = new DialogAbout();
-	dialogAbout.setVisible(true);
+	//dialogAbout.setVisible(true);
+	ShowGUI.show(dialogAbout, true);
     }
 
     /**

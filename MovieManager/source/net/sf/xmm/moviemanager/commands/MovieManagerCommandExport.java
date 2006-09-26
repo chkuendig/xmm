@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandExport.java 1.0 20.04.05 (de.mm.yy)
+ * @(#)MovieManagerCommandExport.java 1.0 26.09.06 (de.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.*;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,7 +31,8 @@ public class MovieManagerCommandExport implements ActionListener {
     void execute() {
 	
 	DialogExport dialogExport = new DialogExport();
-	dialogExport.setVisible(true);
+	//dialogExport.setVisible(true);
+	ShowGUI.show(dialogExport, true);
     }
     
     /**

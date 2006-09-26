@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandEdit.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandEdit.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -23,6 +23,7 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.DialogMovieInfo;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -56,7 +57,8 @@ public class MovieManagerCommandEdit implements ActionListener {
 	    
 	    if (selected.getKey() != -1) {
 		DialogMovieInfo dialogMovieInfo = new DialogMovieInfo("Edit Movie", selected);
-		dialogMovieInfo.setVisible(true);
+		//dialogMovieInfo.setVisible(true);
+		ShowGUI.show(dialogMovieInfo, true);
 	    }
 	}
     }

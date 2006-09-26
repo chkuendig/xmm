@@ -1,6 +1,5 @@
-package net.sf.xmm.moviemanager.commands;
 /**
- * @(#)MovieManagerCommandAdditionalInfoFields.java 1.0 23.03.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandAdditionalInfoFields.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -19,11 +18,14 @@ package net.sf.xmm.moviemanager.commands;
  * Contact: mediterranean@users.sourceforge.net
  **/
 
+package net.sf.xmm.moviemanager.commands;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import net.sf.xmm.moviemanager.DialogAdditionalInfoFields;
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 public class MovieManagerCommandAdditionalInfoFields implements ActionListener {
 
@@ -31,8 +33,9 @@ public class MovieManagerCommandAdditionalInfoFields implements ActionListener {
    * Executes the command.
    **/
   protected static void execute() {
-    DialogAdditionalInfoFields dialogAdditionalInfoFields = new DialogAdditionalInfoFields();
-    dialogAdditionalInfoFields.setVisible(true);
+      DialogAdditionalInfoFields dialogAdditionalInfoFields = new DialogAdditionalInfoFields();
+      //dialogAdditionalInfoFields.setVisible(true);
+      ShowGUI.show(dialogAdditionalInfoFields, true);
   }
   
   /**
