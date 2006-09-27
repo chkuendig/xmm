@@ -396,7 +396,7 @@ class DialogIMDB extends JDialog {
 						
 		if (executeCommandMultipleMoviesSelectCheck(listSize) == 1) {
 		    //setVisible(true);
-		    ShowGUI.show(this, true);
+		    ShowGUI.showAndWait(this, true);
 		}
 		
 	    } catch (Exception e) {
