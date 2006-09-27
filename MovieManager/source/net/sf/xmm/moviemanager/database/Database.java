@@ -2048,7 +2048,7 @@ statement.setInt(1, index);
      **/
     public void addExtraInfoMovie(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
 
-	if (fieldNamesList == null || fieldNamesList.size() == 0)
+	if (fieldNamesList == null)
 	    return;
 
 	try {
@@ -2058,7 +2058,7 @@ statement.setInt(1, index);
 
 	    /* Creates an empty row... */
 	    int value = _sql.executeUpdate(query);
-
+	    
 	    _sql.clear();
 
 	    if (value == 0) {
@@ -2103,7 +2103,7 @@ statement.setInt(1, index);
 		    "SET " + quotedExtraInfoString + "." +
 		    quote + (String) fieldNamesList.get(i) + quote + "=? "+
 		    "WHERE " + quotedExtraInfoString + ".ID=?;";
-
+		
 		statement = _sql.prepareStatement(query);
 
 		statement.setString(1, (String) fieldValuesList.get(i));
@@ -2134,7 +2134,7 @@ statement.setInt(1, index);
      **/
     public void addExtraInfoEpisode(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
 
-	if (fieldNamesList == null || fieldNamesList.size() == 0)
+	if (fieldNamesList == null)
 	    return;
 
 	try {
