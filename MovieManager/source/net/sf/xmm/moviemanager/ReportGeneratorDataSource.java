@@ -64,15 +64,17 @@ public class ReportGeneratorDataSource implements JRDataSource {
     public boolean next() throws JRException {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
         entry = (ModelEntry) node.getUserObject();
-
-        if (entry instanceof ModelMovie) {
-            entry = MovieManager.getIt().getDatabase().getMovie(entry.getKey(), true);
+        int key = entry.getKey();
+        if (key >= 0) {
+            if (entry instanceof ModelMovie) {
+                entry = MovieManager.getIt().getDatabase().getMovie(key, true);
+            }
+            else {
+                entry = MovieManager.getIt().getDatabase().getEpisode(key, true);
+            }
+            progressBar.setValue(count++);
+            Thread.yield();
         }
-        else {
-            entry = MovieManager.getIt().getDatabase().getEpisode(entry.getKey(), true);
-        }
-        progressBar.setValue(count++);
-        Thread.yield();
         return e.hasMoreElements();
     }
 
@@ -87,7 +89,10 @@ public class ReportGeneratorDataSource implements JRDataSource {
      */
     public Object getFieldValue(JRField jRField) throws JRException {
         String name = jRField.getName();
-        if(!testmode) {
+        if (!testmode) {
+
+            // General fields
+
             if (name.equalsIgnoreCase("Cover")) {
                 if (entry.getCover() != null && entry.getCover().length() > 0) {
                     String filename = coversFolder + "/" + entry.getCover();
@@ -173,6 +178,87 @@ public class ReportGeneratorDataSource implements JRDataSource {
             else if (name.equalsIgnoreCase("Certification")) {
                 return entry.getCertification();
             }
+
+            // Additional fields
+
+            ModelAdditionalInfo a = null;
+            if (entry.getHasAdditionalInfoData()) {
+                a = entry.getAdditionalInfo();
+            }
+            else {
+                if (entry instanceof ModelMovie) {
+                    a = MovieManager.getIt().getDatabase().getAdditionalInfo(entry.getKey(), false);
+                }
+                else {
+                    a = MovieManager.getIt().getDatabase().getAdditionalInfo(entry.getKey(), true);
+                }
+                entry.setAdditionalInfo(a);
+            }
+            if (a != null) {
+                if (name.equalsIgnoreCase("Subtitles")) {
+                    return a.getSubtitles();
+                }
+                else if (name.equalsIgnoreCase("Duration")) {
+                    return Integer.valueOf(a.getDuration());
+                }
+                else if (name.equalsIgnoreCase("Filesize")) {
+                    return Integer.valueOf(a.getFileSize());
+                }
+                else if (name.equalsIgnoreCase("CDs")) {
+                    return Integer.valueOf(a.getCDs());
+                }
+                else if (name.equalsIgnoreCase("CDCases")) {
+                    return Double.valueOf(a.getCDCases());
+                }
+                else if (name.equalsIgnoreCase("Resolution")) {
+                    return a.getResolution();
+                }
+                else if (name.equalsIgnoreCase("VideoCodec")) {
+                    return a.getVideoCodec();
+                }
+                else if (name.equalsIgnoreCase("VideoRate")) {
+                    return a.getVideoRate();
+                }
+                else if (name.equalsIgnoreCase("VideoBitrate")) {
+                    return a.getVideoBitrate();
+                }
+                else if (name.equalsIgnoreCase("AudioCodec")) {
+                    return a.getAudioCodec();
+                }
+                else if (name.equalsIgnoreCase("AudioRate")) {
+                    return a.getAudioRate();
+                }
+                else if (name.equalsIgnoreCase("AudioBitrate")) {
+                    return a.getAudioBitrate();
+                }
+                else if (name.equalsIgnoreCase("AudioChannels")) {
+                    return a.getAudioChannels();
+                }
+                else if (name.equalsIgnoreCase("FileLocation")) {
+                    return a.getFileLocation();
+                }
+                else if (name.equalsIgnoreCase("FileCount")) {
+                    return Integer.valueOf(a.getFileCount());
+                }
+                else if (name.equalsIgnoreCase("Container")) {
+                    return a.getContainer();
+                }
+                else if (name.equalsIgnoreCase("MediaType")) {
+                    return a.getMediaType();
+                }
+
+                // Extra info
+
+                ArrayList extra = a.getExtraInfoFieldNames();
+                if (extra != null) {
+                    for (int i = 0; i < extra.size(); i++) {
+                        if (name.equalsIgnoreCase( (String) extra.get(i))) {
+                            return a.getExtraInfoFieldValue(i);
+                        }
+                    }
+                }
+            }
+
             return "unknown field " + name;
         }
         else { // testmode

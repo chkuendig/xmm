@@ -105,12 +105,12 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         panelReport.setLayout(borderLayout4);
         jPanel1.setLayout(flowLayout1);
         flowLayout1.setAlignment(FlowLayout.RIGHT);
-        jLabel3.setText("Generating report... Please wait");
         panelProgress.setLayout(gridBagLayout1);
         exampleLabel.setBackground(UIManager.getColor("controlShadow"));
         exampleLabel.setForeground(UIManager.getColor("controlHighlight"));
         exampleLabel.setOpaque(true);
         exampleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel3.setText("Generating report... Please wait");
         layoutList.addListSelectionListener(this);
         getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
         jPanel1.add(btnAction);
@@ -162,6 +162,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         btnClose.setEnabled(false);
         cardLayout1.show(jPanel4, "progress");
         try {
+            jLabel3.setText("Generating report... Please wait");
             HashMap parms = new HashMap();
             parms.put("logo", getImageURL("/images/filmFolder.png").toString());
             ReportGeneratorDataSource ds = new ReportGeneratorDataSource( (DefaultMutableTreeNode) MovieManager.getIt().getMoviesList().getModel().getRoot(), progressBar, getImageURL("/images/movie.png"), false);
@@ -172,8 +173,10 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
             cardLayout1.show(jPanel4, "report");
             viewerPanel.setFitWidthZoomRatio();
         }
-        catch (JRException ex) {
-            ex.printStackTrace();
+        catch (Exception ex) {
+            jLabel3.setText("Error generating report");
+            progressBar.setValue(0);
+            Logger.getRootLogger().error("Error generating report", ex);
         }
         btnAction.setText("Select Layout");
         btnAction.setEnabled(true);
