@@ -17,6 +17,9 @@
 		 whenNoDataType="NoPages"
 		 isTitleNewPage="false"
 		 isSummaryNewPage="false">
+	<property name="xmm.sortfield" value="none" />
+	<property name="xmm.description" value="Example movielist report" />
+	<property name="xmm.episodes" value="true" />
 	<property name="ireport.scriptlethandling" value="0" />
 	<property name="ireport.encoding" value="UTF-8" />
 	<import value="java.util.*" />
@@ -49,6 +52,23 @@
 	<field name="WebRuntime" class="java.lang.String"/>
 	<field name="Awards" class="java.lang.String"/>
 	<field name="PersonalRating" class="java.lang.String"/>
+	<field name="Subtitles" class="java.lang.String"/>
+	<field name="Duration" class="java.lang.Integer"/>
+	<field name="Filesize" class="java.lang.Integer"/>
+	<field name="CDs" class="java.lang.Integer"/>
+	<field name="CDCases" class="java.lang.Double"/>
+	<field name="Resolution" class="java.lang.String"/>
+	<field name="VideoCodec" class="java.lang.String"/>
+	<field name="VideoRate" class="java.lang.String"/>
+	<field name="VideoBitrate" class="java.lang.String"/>
+	<field name="AudioCodec" class="java.lang.String"/>
+	<field name="AudioRate" class="java.lang.String"/>
+	<field name="AudioBitrate" class="java.lang.String"/>
+	<field name="AudioChannels" class="java.lang.String"/>
+	<field name="FileLocation" class="java.lang.String"/>
+	<field name="FileCount" class="java.lang.Integer"/>
+	<field name="Container" class="java.lang.String"/>
+	<field name="MediaType" class="java.lang.String"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
