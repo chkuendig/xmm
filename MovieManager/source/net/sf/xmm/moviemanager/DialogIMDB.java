@@ -169,6 +169,8 @@ class DialogIMDB extends JDialog {
 		}
 	    };
 	
+	listMovies.setFixedCellHeight(18);
+
 	listMovies.setFont(new Font(listMovies.getFont().getName(),Font.PLAIN,listMovies.getFont().getSize()));
 	listMovies.setLayoutOrientation(JList.VERTICAL);
 	listMovies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

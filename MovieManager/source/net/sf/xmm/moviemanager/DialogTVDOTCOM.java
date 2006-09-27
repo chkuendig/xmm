@@ -116,11 +116,11 @@ class DialogTVDOTCOM extends JDialog {
 	panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," TV.COM "), BorderFactory.createEmptyBorder(5,5,5,5)));
 	
 	listMovies = new JList();
+	listMovies.setFixedCellHeight(18);
 	listMovies.setFont(new Font(listMovies.getFont().getName(),Font.PLAIN,listMovies.getFont().getSize()));
 	listMovies.setLayoutOrientation(JList.VERTICAL);
 	listMovies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	
-
 	
 	JScrollPane scrollPaneMovies = new JScrollPane(listMovies);
 	scrollPaneMovies.setPreferredSize(new Dimension(300,255));
