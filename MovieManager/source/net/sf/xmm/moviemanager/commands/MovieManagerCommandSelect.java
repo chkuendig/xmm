@@ -523,6 +523,10 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	int horizontalPosition = MovieManager.getIt().getMoviesListScrollPane().getHorizontalScrollBar().getValue();
 	
 	if (selected != null) {
+	    /* Notifies the JTree model of the updates - 
+	       1 - Keeps the entire width of the selected cell(s) highlighted after resize.
+	       2 - no longer seems necessary: (prevents the titles in the list from being truncated) */
+	    ((DefaultTreeModel) movieList.getModel()).nodeChanged(selected);
 	    
 	    if (movieList.getLastSelectedPathComponent() != null && 
 		((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject() instanceof ModelEpisode && movieList.getSelectionCount() == 1) {
