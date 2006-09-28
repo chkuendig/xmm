@@ -199,16 +199,16 @@ public class ReportGeneratorDataSource implements JRDataSource {
                     return a.getSubtitles();
                 }
                 else if (name.equalsIgnoreCase("Duration")) {
-                    return Integer.valueOf(a.getDuration());
+                    return new Integer(a.getDuration());
                 }
                 else if (name.equalsIgnoreCase("Filesize")) {
-                    return Integer.valueOf(a.getFileSize());
+                    return new Integer(a.getFileSize());
                 }
                 else if (name.equalsIgnoreCase("CDs")) {
-                    return Integer.valueOf(a.getCDs());
+                    return new Integer(a.getCDs());
                 }
                 else if (name.equalsIgnoreCase("CDCases")) {
-                    return Double.valueOf(a.getCDCases());
+                    return new Double(a.getCDCases());
                 }
                 else if (name.equalsIgnoreCase("Resolution")) {
                     return a.getResolution();
@@ -238,7 +238,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
                     return a.getFileLocation();
                 }
                 else if (name.equalsIgnoreCase("FileCount")) {
-                    return Integer.valueOf(a.getFileCount());
+                    return new Integer(a.getFileCount());
                 }
                 else if (name.equalsIgnoreCase("Container")) {
                     return a.getContainer();
