@@ -18,7 +18,7 @@ import net.sf.xmm.moviemanager.models.*;
  * @author olba2
  */
 public class ReportGeneratorDataSource implements JRDataSource {
-    private Enumeration e;
+    private Iterator iterator;
     private ModelEntry entry;
     private JProgressBar progressBar;
     private int count = 0;
@@ -31,28 +31,44 @@ public class ReportGeneratorDataSource implements JRDataSource {
      * Constructor
      *
      * @param root DefaultMutableTreeNode - pass MovieList root
+     * @param includeEpisodes boolean - if true, episodes are included in the
+     *   report, otherwise they are omitted.
+     * @param sortField String - name of field to sort list by - "none" for no
+     *   sorting.
      * @param progressBar JProgressBar - progressbar to update during
      *   generation of report
      * @param defaultCoverImageURL URL - default image for movies without cover
      * @param testmode boolean - if true only dummydata is returned
      */
-    public ReportGeneratorDataSource(DefaultMutableTreeNode root, JProgressBar progressBar, URL defaultCoverImageURL, boolean testmode) {
+    public ReportGeneratorDataSource(DefaultMutableTreeNode root, boolean includeEpisodes, String sortField, JProgressBar progressBar, URL defaultCoverImageURL, boolean testmode) {
         this.progressBar = progressBar;
         this.defaultCoverImageURL = defaultCoverImageURL;
         this.testmode = testmode;
         this.mySQL = MovieManager.getIt().getDatabase() instanceof DatabaseMySQL;
         this.coversFolder = MovieManager.getIt().getConfig().getCoversFolder();
 
-        e = root.depthFirstEnumeration();
-        int n = 0;
-        while (e.hasMoreElements()) {
-            e.nextElement();
-            n++;
+        LinkedList movies = new LinkedList();
+        int n = root.getChildCount();
+        for (int i = 0; i < n; i++) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode)root.getChildAt(i);
+            movies.add(node.getUserObject());
+            if (includeEpisodes) {
+                int episodeCount = node.getChildCount();
+                for (int j = 0; j < episodeCount; j++) {
+                    DefaultMutableTreeNode episodeNode = (DefaultMutableTreeNode)node.getChildAt(j);
+                    movies.add(episodeNode.getUserObject());
+                }
+            }
         }
+
+        if (sortField != null && sortField.length() > 0 && !sortField.equalsIgnoreCase("none")) {
+            Collections.sort(movies, new MovieComparator(sortField));
+        }
+
         progressBar.setMinimum(0);
-        progressBar.setMaximum(n);
+        progressBar.setMaximum(movies.size());
         progressBar.setValue(0);
-        e = root.depthFirstEnumeration();
+        iterator = movies.iterator();
     }
 
     /**
@@ -62,20 +78,22 @@ public class ReportGeneratorDataSource implements JRDataSource {
      * @throws JRException
      */
     public boolean next() throws JRException {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
-        entry = (ModelEntry) node.getUserObject();
-        int key = entry.getKey();
-        if (key >= 0) {
-            if (entry instanceof ModelMovie) {
-                entry = MovieManager.getIt().getDatabase().getMovie(key, true);
+        if (iterator.hasNext()) {
+            entry = (ModelEntry)iterator.next();
+            int key = entry.getKey();
+            if (key >= 0) {
+                if (entry instanceof ModelMovie) {
+                    entry = MovieManager.getIt().getDatabase().getMovie(key, true);
+                }
+                else {
+                    entry = MovieManager.getIt().getDatabase().getEpisode(key, true);
+                }
+                progressBar.setValue(count++);
+                Thread.yield();
             }
-            else {
-                entry = MovieManager.getIt().getDatabase().getEpisode(key, true);
-            }
-            progressBar.setValue(count++);
-            Thread.yield();
+            return true;
         }
-        return e.hasMoreElements();
+        return false;
     }
 
     /**
@@ -89,192 +107,342 @@ public class ReportGeneratorDataSource implements JRDataSource {
      */
     public Object getFieldValue(JRField jRField) throws JRException {
         String name = jRField.getName();
-        if (!testmode) {
+        // General fields
 
-            // General fields
-
-            if (name.equalsIgnoreCase("Cover")) {
-                if (entry.getCover() != null && entry.getCover().length() > 0) {
-                    String filename = coversFolder + "/" + entry.getCover();
-                    if (mySQL && entry.getCoverData() != null) {
-                        try {
-                            File tempFile = File.createTempFile("xmm", filename.substring(filename.indexOf('.')));
-                            tempFile.deleteOnExit();
-                            FileOutputStream fos = new FileOutputStream(tempFile);
-                            fos.write(entry.getCoverData());
-                            fos.close();
-                            return tempFile.getPath();
-                        }
-                        catch (Exception ex) {
-                            Logger.getRootLogger().error("Error saving temporary coverfile for " + filename, ex);
-                        }
+        if (name.equalsIgnoreCase("Cover")) {
+            if (!testmode && entry.getCover() != null && entry.getCover().length() > 0) {
+                String filename = coversFolder + "/" + entry.getCover();
+                if (mySQL && entry.getCoverData() != null) {
+                    try {
+                        File tempFile = File.createTempFile("xmm", filename.substring(filename.indexOf('.')));
+                        tempFile.deleteOnExit();
+                        FileOutputStream fos = new FileOutputStream(tempFile);
+                        fos.write(entry.getCoverData());
+                        fos.close();
+                        return tempFile.getPath();
                     }
-                    if (new File(filename).exists()) {
-                        return filename;
+                    catch (Exception ex) {
+                        Logger.getRootLogger().error("Error saving temporary coverfile for " + filename, ex);
                     }
                 }
-                return defaultCoverImageURL.toString();
+                if (new File(filename).exists()) {
+                    return filename;
+                }
             }
-            else if (name.equalsIgnoreCase("Genre")) {
-                return entry.getGenre();
-            }
-            else if (name.equalsIgnoreCase("Awards")) {
-                return entry.getAwards();
-            }
-            else if (name.equalsIgnoreCase("Notes")) {
-                return entry.getNotes();
-            }
-            else if (name.equalsIgnoreCase("Mpaa")) {
-                return entry.getMpaa();
-            }
-            else if (name.equalsIgnoreCase("Cast")) {
-                return entry.getCast();
-            }
-            else if (name.equalsIgnoreCase("Date")) {
-                return entry.getDate();
-            }
-            else if (name.equalsIgnoreCase("IMDB")) {
-                return entry.getUrlKey();
-            }
-            else if (name.equalsIgnoreCase("DirectedBy")) {
-                return entry.getDirectedBy();
-            }
-            else if (name.equalsIgnoreCase("Plot")) {
-                return entry.getPlot();
-            }
-            else if (name.equalsIgnoreCase("WrittenBy")) {
-                return entry.getWrittenBy();
-            }
-            else if (name.equalsIgnoreCase("SoundMix")) {
-                return entry.getCast();
-            }
-            else if (name.equalsIgnoreCase("Language")) {
-                return entry.getLanguage();
-            }
-            else if (name.equalsIgnoreCase("Genre")) {
-                return entry.getGenre();
-            }
-            else if (name.equalsIgnoreCase("Colour")) {
-                return entry.getColour();
-            }
-            else if (name.equalsIgnoreCase("Seen")) {
-                return Boolean.valueOf(entry.getSeen());
-            }
-            else if (name.equalsIgnoreCase("Country")) {
-                return entry.getCountry();
-            }
-            else if (name.equalsIgnoreCase("Title")) {
-                return entry.getTitle();
-            }
-            else if (name.equalsIgnoreCase("Aka")) {
-                return entry.getAka();
-            }
-            else if (name.equalsIgnoreCase("WebRuntime")) {
-                return entry.getWebRuntime();
-            }
-            else if (name.equalsIgnoreCase("Rating")) {
-                return entry.getRating();
-            }
-            else if (name.equalsIgnoreCase("Certification")) {
-                return entry.getCertification();
-            }
+            return defaultCoverImageURL.toString();
+        }
+        else if (name.equalsIgnoreCase("Genre")) {
+            return entry.getGenre();
+        }
+        else if (name.equalsIgnoreCase("Awards")) {
+            return entry.getAwards();
+        }
+        else if (name.equalsIgnoreCase("Notes")) {
+            return entry.getNotes();
+        }
+        else if (name.equalsIgnoreCase("Mpaa")) {
+            return entry.getMpaa();
+        }
+        else if (name.equalsIgnoreCase("Cast")) {
+            return entry.getCast();
+        }
+        else if (name.equalsIgnoreCase("Date")) {
+            return entry.getDate();
+        }
+        else if (name.equalsIgnoreCase("IMDB")) {
+            return entry.getUrlKey();
+        }
+        else if (name.equalsIgnoreCase("DirectedBy")) {
+            return entry.getDirectedBy();
+        }
+        else if (name.equalsIgnoreCase("Plot")) {
+            return testmode ? "" : entry.getPlot();
+        }
+        else if (name.equalsIgnoreCase("WrittenBy")) {
+            return entry.getWrittenBy();
+        }
+        else if (name.equalsIgnoreCase("SoundMix")) {
+            return entry.getCast();
+        }
+        else if (name.equalsIgnoreCase("Language")) {
+            return entry.getLanguage();
+        }
+        else if (name.equalsIgnoreCase("Genre")) {
+            return entry.getGenre();
+        }
+        else if (name.equalsIgnoreCase("Colour")) {
+            return entry.getColour();
+        }
+        else if (name.equalsIgnoreCase("Seen")) {
+            return Boolean.valueOf(entry.getSeen());
+        }
+        else if (name.equalsIgnoreCase("Country")) {
+            return entry.getCountry();
+        }
+        else if (name.equalsIgnoreCase("Title")) {
+            return testmode ? "Movie title " + count : entry.getTitle();
+        }
+        else if (name.equalsIgnoreCase("Aka")) {
+            return testmode ? "Aka " + count : entry.getAka();
+        }
+        else if (name.equalsIgnoreCase("WebRuntime")) {
+            return entry.getWebRuntime();
+        }
+        else if (name.equalsIgnoreCase("Rating")) {
+            return entry.getRating();
+        }
+        else if (name.equalsIgnoreCase("Certification")) {
+            return entry.getCertification();
+        }
 
-            // Additional fields
+        // Additional fields
 
-            ModelAdditionalInfo a = null;
-            if (entry.getHasAdditionalInfoData()) {
-                a = entry.getAdditionalInfo();
+        ModelAdditionalInfo a = null;
+        if (entry.getHasAdditionalInfoData()) {
+            a = entry.getAdditionalInfo();
+        }
+        else {
+            if (entry instanceof ModelMovie) {
+                a = MovieManager.getIt().getDatabase().getAdditionalInfo(entry.getKey(), false);
             }
             else {
-                if (entry instanceof ModelMovie) {
-                    a = MovieManager.getIt().getDatabase().getAdditionalInfo(entry.getKey(), false);
-                }
-                else {
-                    a = MovieManager.getIt().getDatabase().getAdditionalInfo(entry.getKey(), true);
-                }
-                entry.setAdditionalInfo(a);
+                a = MovieManager.getIt().getDatabase().getAdditionalInfo(entry.getKey(), true);
             }
-            if (a != null) {
-                if (name.equalsIgnoreCase("Subtitles")) {
-                    return a.getSubtitles();
-                }
-                else if (name.equalsIgnoreCase("Duration")) {
-                    return new Integer(a.getDuration());
-                }
-                else if (name.equalsIgnoreCase("Filesize")) {
-                    return new Integer(a.getFileSize());
-                }
-                else if (name.equalsIgnoreCase("CDs")) {
-                    return new Integer(a.getCDs());
-                }
-                else if (name.equalsIgnoreCase("CDCases")) {
-                    return new Double(a.getCDCases());
-                }
-                else if (name.equalsIgnoreCase("Resolution")) {
-                    return a.getResolution();
-                }
-                else if (name.equalsIgnoreCase("VideoCodec")) {
-                    return a.getVideoCodec();
-                }
-                else if (name.equalsIgnoreCase("VideoRate")) {
-                    return a.getVideoRate();
-                }
-                else if (name.equalsIgnoreCase("VideoBitrate")) {
-                    return a.getVideoBitrate();
-                }
-                else if (name.equalsIgnoreCase("AudioCodec")) {
-                    return a.getAudioCodec();
-                }
-                else if (name.equalsIgnoreCase("AudioRate")) {
-                    return a.getAudioRate();
-                }
-                else if (name.equalsIgnoreCase("AudioBitrate")) {
-                    return a.getAudioBitrate();
-                }
-                else if (name.equalsIgnoreCase("AudioChannels")) {
-                    return a.getAudioChannels();
-                }
-                else if (name.equalsIgnoreCase("FileLocation")) {
-                    return a.getFileLocation();
-                }
-                else if (name.equalsIgnoreCase("FileCount")) {
-                    return new Integer(a.getFileCount());
-                }
-                else if (name.equalsIgnoreCase("Container")) {
-                    return a.getContainer();
-                }
-                else if (name.equalsIgnoreCase("MediaType")) {
-                    return a.getMediaType();
-                }
+            entry.setAdditionalInfo(a);
+        }
+        if (a != null) {
+            if (name.equalsIgnoreCase("Subtitles")) {
+                return a.getSubtitles();
+            }
+            else if (name.equalsIgnoreCase("Duration")) {
+                return new Integer(a.getDuration());
+            }
+            else if (name.equalsIgnoreCase("Filesize")) {
+                return new Integer(a.getFileSize());
+            }
+            else if (name.equalsIgnoreCase("CDs")) {
+                return new Integer(a.getCDs());
+            }
+            else if (name.equalsIgnoreCase("CDCases")) {
+                return new Double(a.getCDCases());
+            }
+            else if (name.equalsIgnoreCase("Resolution")) {
+                return a.getResolution();
+            }
+            else if (name.equalsIgnoreCase("VideoCodec")) {
+                return a.getVideoCodec();
+            }
+            else if (name.equalsIgnoreCase("VideoRate")) {
+                return a.getVideoRate();
+            }
+            else if (name.equalsIgnoreCase("VideoBitrate")) {
+                return a.getVideoBitrate();
+            }
+            else if (name.equalsIgnoreCase("AudioCodec")) {
+                return a.getAudioCodec();
+            }
+            else if (name.equalsIgnoreCase("AudioRate")) {
+                return a.getAudioRate();
+            }
+            else if (name.equalsIgnoreCase("AudioBitrate")) {
+                return a.getAudioBitrate();
+            }
+            else if (name.equalsIgnoreCase("AudioChannels")) {
+                return a.getAudioChannels();
+            }
+            else if (name.equalsIgnoreCase("FileLocation")) {
+                return a.getFileLocation();
+            }
+            else if (name.equalsIgnoreCase("FileCount")) {
+                return new Integer(a.getFileCount());
+            }
+            else if (name.equalsIgnoreCase("Container")) {
+                return a.getContainer();
+            }
+            else if (name.equalsIgnoreCase("MediaType")) {
+                return a.getMediaType();
+            }
 
-                // Extra info
-
+            // Extra info
+            else {
                 ArrayList extra = a.getExtraInfoFieldNames();
                 if (extra != null) {
                     for (int i = 0; i < extra.size(); i++) {
-                        if (name.equalsIgnoreCase( (String) extra.get(i))) {
+                        if (name.equalsIgnoreCase((String)extra.get(i))) {
                             return a.getExtraInfoFieldValue(i);
                         }
                     }
                 }
             }
-
-            return "unknown field " + name;
         }
-        else { // testmode
-            if (name.equalsIgnoreCase("Cover")) {
-                return defaultCoverImageURL.toString();
+
+        return "unknown field " + name;
+    }
+
+    /**
+     * Movie comparater, sorts movies by named field
+     */
+    private class MovieComparator implements Comparator {
+        private String sortField;
+
+        public MovieComparator(String sortField) {
+            System.out.println("sorting by " + sortField);
+            this.sortField = sortField;
+
+        }
+
+        public int compare(Object o1, Object o2) {
+            ModelEntry m1 = (ModelEntry)o1;
+            ModelEntry m2 = (ModelEntry)o2;
+            int result = 0;
+
+            if (sortField.equalsIgnoreCase("Genre")) {
+                result = m1.getGenre().compareToIgnoreCase(m2.getGenre());
             }
-            else if (name.equalsIgnoreCase("Title")) {
-                return "Movie title " + count;
+            else if (sortField.equalsIgnoreCase("Awards")) {
+                result = m1.getAwards().compareToIgnoreCase(m2.getAwards());
             }
-            else if (name.equalsIgnoreCase("Rating")) {
-                return "9.9";
+            else if (sortField.equalsIgnoreCase("Notes")) {
+                result = m1.getNotes().compareToIgnoreCase(m2.getNotes());
             }
-            else if (name.equalsIgnoreCase("Seen")) {
-                return Boolean.TRUE;
+            else if (sortField.equalsIgnoreCase("Mpaa")) {
+                result = m1.getMpaa().compareToIgnoreCase(m2.getMpaa());
             }
-            return name;
+            else if (sortField.equalsIgnoreCase("Cast")) {
+                result = m1.getCast().compareToIgnoreCase(m2.getCast());
+            }
+            else if (sortField.equalsIgnoreCase("Date")) {
+                result = m1.getDate().compareToIgnoreCase(m2.getDate());
+            }
+            else if (sortField.equalsIgnoreCase("IMDB")) {
+                result = m1.getUrlKey().compareToIgnoreCase(m2.getUrlKey());
+            }
+            else if (sortField.equalsIgnoreCase("DirectedBy")) {
+                result = m1.getDirectedBy().compareToIgnoreCase(m2.getDirectedBy());
+            }
+            else if (sortField.equalsIgnoreCase("Plot")) {
+                result = m1.getPlot().compareToIgnoreCase(m2.getPlot());
+            }
+            else if (sortField.equalsIgnoreCase("WrittenBy")) {
+                result = m1.getWrittenBy().compareToIgnoreCase(m2.getWrittenBy());
+            }
+            else if (sortField.equalsIgnoreCase("SoundMix")) {
+                result = m1.getCast().compareToIgnoreCase(m2.getCast());
+            }
+            else if (sortField.equalsIgnoreCase("Language")) {
+                result = m1.getLanguage().compareToIgnoreCase(m2.getLanguage());
+            }
+            else if (sortField.equalsIgnoreCase("Genre")) {
+                result = m1.getGenre().compareToIgnoreCase(m2.getGenre());
+            }
+            else if (sortField.equalsIgnoreCase("Colour")) {
+                result = m1.getColour().compareToIgnoreCase(m2.getColour());
+            }
+            else if (sortField.equalsIgnoreCase("Seen")) {
+                if (!m1.getSeen() && m1.getSeen()) {
+                    result = -1;
+                }
+                else if (m1.getSeen() && !m1.getSeen()) {
+                    result = 1;
+                }
+            }
+            else if (sortField.equalsIgnoreCase("Country")) {
+                result = m1.getCountry().compareToIgnoreCase(m2.getCountry());
+            }
+            else if (sortField.equalsIgnoreCase("Title")) {
+                result = m1.getTitle().compareToIgnoreCase(m2.getTitle());
+            }
+            else if (sortField.equalsIgnoreCase("Aka")) {
+                result = m1.getAka().compareToIgnoreCase(m2.getAka());
+            }
+            else if (sortField.equalsIgnoreCase("WebRuntime")) {
+                result = m1.getWebRuntime().compareToIgnoreCase(m2.getWebRuntime());
+            }
+            else if (sortField.equalsIgnoreCase("Rating")) {
+                result = m1.getRating().compareToIgnoreCase(m2.getRating());
+            }
+            else if (sortField.equalsIgnoreCase("Certification")) {
+                result = m1.getCertification().compareToIgnoreCase(m2.getCertification());
+            }
+
+            // Additional fields
+
+            if (m1.getHasAdditionalInfoData() && m2.getHasAdditionalInfoData()) {
+                ModelAdditionalInfo a1 = m1.getAdditionalInfo();
+                ModelAdditionalInfo a2 = m2.getAdditionalInfo();
+                if (a1 != null && a2 != null) {
+                    if (sortField.equalsIgnoreCase("Subtitles")) {
+                        result = a1.getSubtitles().compareToIgnoreCase(a2.getSubtitles());
+                    }
+                    else if (sortField.equalsIgnoreCase("Duration")) {
+                        result = new Integer(a1.getDuration()).compareTo(new Integer(a2.getDuration()));
+                    }
+                    else if (sortField.equalsIgnoreCase("Filesize")) {
+                        result = new Integer(a1.getFileSize()).compareTo(new Integer(a2.getFileSize()));
+                    }
+                    else if (sortField.equalsIgnoreCase("CDs")) {
+                        result = new Integer(a1.getCDs()).compareTo(new Integer(a2.getCDs()));
+                    }
+                    else if (sortField.equalsIgnoreCase("CDCases")) {
+                        result = new Double(a1.getCDCases()).compareTo(new Double(a2.getCDCases()));
+                    }
+                    else if (sortField.equalsIgnoreCase("Resolution")) {
+                        result = a1.getResolution().compareToIgnoreCase(a2.getResolution());
+                    }
+                    else if (sortField.equalsIgnoreCase("VideoCodec")) {
+                        result = a1.getVideoCodec().compareToIgnoreCase(a2.getVideoCodec());
+                    }
+                    else if (sortField.equalsIgnoreCase("VideoRate")) {
+                        result = a1.getVideoRate().compareToIgnoreCase(a2.getVideoRate());
+                    }
+                    else if (sortField.equalsIgnoreCase("VideoBitrate")) {
+                        result = a1.getVideoBitrate().compareToIgnoreCase(a2.getVideoBitrate());
+                    }
+                    else if (sortField.equalsIgnoreCase("AudioCodec")) {
+                        result = a1.getAudioCodec().compareToIgnoreCase(a2.getAudioCodec());
+                    }
+                    else if (sortField.equalsIgnoreCase("AudioRate")) {
+                        result = a1.getAudioRate().compareToIgnoreCase(a2.getAudioRate());
+                    }
+                    else if (sortField.equalsIgnoreCase("AudioBitrate")) {
+                        result = a1.getAudioBitrate().compareToIgnoreCase(a2.getAudioBitrate());
+                    }
+                    else if (sortField.equalsIgnoreCase("AudioChannels")) {
+                        result = a1.getAudioChannels().compareToIgnoreCase(a2.getAudioChannels());
+                    }
+                    else if (sortField.equalsIgnoreCase("FileLocation")) {
+                        result = a1.getFileLocation().compareToIgnoreCase(a2.getFileLocation());
+                    }
+                    else if (sortField.equalsIgnoreCase("FileCount")) {
+                        result = new Integer(a1.getFileCount()).compareTo(new Integer(a2.getFileCount()));
+                    }
+                    else if (sortField.equalsIgnoreCase("Container")) {
+                        result = a1.getContainer().compareToIgnoreCase(a2.getContainer());
+                    }
+                    else if (sortField.equalsIgnoreCase("MediaType")) {
+                        result = a1.getMediaType().compareToIgnoreCase(a2.getMediaType());
+                    }
+
+                    // Extra info
+                    else {
+                        ArrayList extra1 = a1.getExtraInfoFieldNames();
+                        ArrayList extra2 = a2.getExtraInfoFieldNames();
+                        if (extra1 != null && extra2 != null) {
+                            for (int i = 0; i < extra1.size(); i++) {
+                                if (sortField.equalsIgnoreCase((String)extra1.get(i))) {
+                                    result = a1.getExtraInfoFieldValue(i).compareToIgnoreCase(a2.getExtraInfoFieldValue(i));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (result == 0) { // equal, sort by title as secondary sortoption
+                result = m1.getTitle().compareToIgnoreCase(m2.getTitle());
+            }
+
+            return result;
         }
     }
 }

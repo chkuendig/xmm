@@ -7,6 +7,7 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 
@@ -30,6 +31,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
     private JLabel jLabel2 = new JLabel();
     private JLabel jLabel3 = new JLabel();
     private JLabel exampleLabel = new JLabel();
+    private JLabel descriptionLabel = new JLabel();
     private JPanel jPanel1 = new JPanel();
     private JPanel jPanel2 = new JPanel();
     private JPanel jPanel3 = new JPanel();
@@ -50,6 +52,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
     private CardLayout cardLayout1 = new CardLayout();
     private FlowLayout flowLayout1 = new FlowLayout();
     private GridBagLayout gridBagLayout1 = new GridBagLayout();
+    private Border border1 = BorderFactory.createEmptyBorder(0, 3, 10, 3);
 
     public ReportGenerator() {
         this(null);
@@ -61,7 +64,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
             instance.toFront();
         }
         else {
-            setTitle( (frame != null ? frame.getTitle() : "") + " - Report Generator");
+            setTitle((frame != null ? frame.getTitle() : "") + " - Report Generator");
             try {
                 jbInit();
                 setLocation(50, 50);
@@ -110,8 +113,13 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         exampleLabel.setForeground(UIManager.getColor("controlHighlight"));
         exampleLabel.setOpaque(true);
         exampleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        descriptionLabel.setBackground(UIManager.getColor("controlShadow"));
         jLabel3.setText("Generating report... Please wait");
         layoutList.addListSelectionListener(this);
+        descriptionLabel.setBorder(border1);
+        descriptionLabel.setOpaque(true);
+        descriptionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        descriptionLabel.setText(" ");
         getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
         jPanel1.add(btnAction);
         jPanel1.add(btnClose);
@@ -130,8 +138,9 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
             , GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 30, 0, 30), 0, 0));
         panelProgress.add(jLabel3, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 30, 10, 30), 0, 0));
-        jPanel2.add(jLabel2, java.awt.BorderLayout.NORTH);
         jPanel2.add(exampleLabel, java.awt.BorderLayout.CENTER);
+        jPanel2.add(descriptionLabel, java.awt.BorderLayout.SOUTH);
+        jPanel2.add(jLabel2, java.awt.BorderLayout.NORTH);
     }
 
     /**
@@ -165,7 +174,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
             jLabel3.setText("Generating report... Please wait");
             HashMap parms = new HashMap();
             parms.put("logo", getImageURL("/images/filmFolder.png").toString());
-            ReportGeneratorDataSource ds = new ReportGeneratorDataSource( (DefaultMutableTreeNode) MovieManager.getIt().getMoviesList().getModel().getRoot(), progressBar, getImageURL("/images/movie.png"), false);
+            ReportGeneratorDataSource ds = new ReportGeneratorDataSource((DefaultMutableTreeNode)MovieManager.getIt().getMoviesList().getModel().getRoot(), selectedLayout.episodes, selectedLayout.sortField, progressBar, getImageURL("/images/movie.png"), false);
             JasperPrint print = JasperFillManager.fillReport("reports/" + selectedLayout.filename, parms, ds);
             JRViewer viewerPanel = new JRViewer(print);
             panel.removeAll();
@@ -199,10 +208,10 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
      */
     private void updateExample() {
         if (selectedLayout != null) {
-            String filename = "reports/" + selectedLayout.examplename;
-            if(new File(filename).exists()) {
-                Image image = Toolkit.getDefaultToolkit().getImage(filename);
-                ImageIcon icon = new ImageIcon(image); // getting size directly from image was unreliable
+
+            // display example
+            if (selectedLayout.exampleImage != null) {
+                ImageIcon icon = new ImageIcon(selectedLayout.exampleImage); // getting size directly from image was unreliable
                 int height = exampleLabel.getHeight() - PREVIEW_MARGIN;
                 int width = (height * icon.getIconWidth()) / icon.getIconHeight();
                 if (width > exampleLabel.getWidth() - PREVIEW_MARGIN) {
@@ -210,7 +219,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
                     height = (width * icon.getIconHeight()) / icon.getIconWidth();
                 }
 
-                image = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                Image image = selectedLayout.exampleImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                 icon = new ImageIcon(image);
                 exampleLabel.setIcon(icon);
                 exampleLabel.setText("");
@@ -219,10 +228,13 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
                 exampleLabel.setIcon(null);
                 exampleLabel.setText("No example");
             }
+
+            descriptionLabel.setText(selectedLayout.description != null ? selectedLayout.description : "No description");
         }
         else {
             exampleLabel.setIcon(null);
             exampleLabel.setText("Select layout");
+            descriptionLabel.setText(" ");
         }
     }
 
@@ -283,7 +295,8 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
     public void valueChanged(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()) {
             if (layoutList.getSelectedValue() != null) {
-                selectedLayout = (LayoutItem) layoutList.getSelectedValue();
+                selectedLayout = (LayoutItem)layoutList.getSelectedValue();
+                selectedLayout.fetchInfo();
                 btnAction.setEnabled(true);
             }
             else {
@@ -308,13 +321,22 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
      */
     private class LayoutItem {
         String filename;
-        String displayname;
-        String examplename;
+        private String displayname;
+        private String examplename;
+        private String sourcename;
+
+        boolean infoFetched = false;
+        Image exampleImage;
+        String description;
+        String sortField;
+        boolean episodes;
 
         public LayoutItem(String filename) {
             this.filename = filename;
-            displayname = mixCase(filename.substring(0, filename.length() - 7).replaceAll("_", " "));
-            examplename = filename.substring(0, filename.length() - 7) + ".png";
+            String prefix = filename.substring(0, filename.length() - 7);
+            displayname = mixCase(prefix.replaceAll("_", " "));
+            examplename = prefix + ".png";
+            sourcename = prefix + ".jrxml";
         }
 
         public String toString() {
@@ -336,10 +358,54 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
                     buf.append(Character.toUpperCase(c));
                     blank = false;
                 }
-                else
+                else {
                     buf.append(Character.toLowerCase(c));
+                }
             }
             return new String(buf);
+        }
+
+        public void fetchInfo() {
+            if (!infoFetched) {
+                // example image
+                String filename = "reports/" + examplename;
+                if (new File(filename).exists()) {
+                    exampleImage = Toolkit.getDefaultToolkit().getImage(filename);
+                }
+
+                // xmm custom property values
+                filename = "reports/" + sourcename;
+                if (new File(filename).exists()) {
+                    try {
+                        FileInputStream fis = new FileInputStream(filename);
+                        byte[] buffer = new byte[5000]; // 5000 is a safe margin since custom fields are placed first
+                        fis.read(buffer, 0, buffer.length);
+                        fis.close();
+                        String bufferText = new String(buffer);
+                        description = getCustomPropertyValue(bufferText, "xmm.description");
+                        sortField = getCustomPropertyValue(bufferText, "xmm.sortfield");
+                        String s = getCustomPropertyValue(bufferText, "xmm.episodes");
+                        episodes = s != null ? s.equalsIgnoreCase("true") : false;
+                    }
+                    catch (Exception ex) {
+                    }
+                }
+
+                infoFetched = true;
+            }
+        }
+
+        private String getCustomPropertyValue(String bufferText, String name) {
+            String searchText = "<property name=\"" + name + "\" value=\"";
+            int pos = bufferText.indexOf(searchText);
+            if (pos >= 0) {
+                pos += searchText.length();
+                int pos2 = bufferText.indexOf('"', pos);
+                if (pos2 > pos) {
+                    return bufferText.substring(pos, pos2);
+                }
+            }
+            return null;
         }
     }
 }
