@@ -18,7 +18,7 @@
 		 isTitleNewPage="false"
 		 isSummaryNewPage="false">
 	<property name="xmm.sortfield" value="none" />
-	<property name="xmm.description" value="Example movielist report" />
+	<property name="xmm.description" value="Movielist with covers, title, date and a few attributes" />
 	<property name="xmm.episodes" value="true" />
 	<property name="ireport.scriptlethandling" value="0" />
 	<property name="ireport.encoding" value="UTF-8" />
