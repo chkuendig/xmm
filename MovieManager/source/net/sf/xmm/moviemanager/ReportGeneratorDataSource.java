@@ -50,12 +50,12 @@ public class ReportGeneratorDataSource implements JRDataSource {
         LinkedList movies = new LinkedList();
         int n = root.getChildCount();
         for (int i = 0; i < n; i++) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode)root.getChildAt(i);
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) root.getChildAt(i);
             movies.add(node.getUserObject());
             if (includeEpisodes) {
                 int episodeCount = node.getChildCount();
                 for (int j = 0; j < episodeCount; j++) {
-                    DefaultMutableTreeNode episodeNode = (DefaultMutableTreeNode)node.getChildAt(j);
+                    DefaultMutableTreeNode episodeNode = (DefaultMutableTreeNode) node.getChildAt(j);
                     movies.add(episodeNode.getUserObject());
                 }
             }
@@ -79,7 +79,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
      */
     public boolean next() throws JRException {
         if (iterator.hasNext()) {
-            entry = (ModelEntry)iterator.next();
+            entry = (ModelEntry) iterator.next();
             int key = entry.getKey();
             if (key >= 0) {
                 if (entry instanceof ModelMovie) {
@@ -162,7 +162,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
             return entry.getWrittenBy();
         }
         else if (name.equalsIgnoreCase("SoundMix")) {
-            return entry.getCast();
+            return entry.getWebSoundMix();
         }
         else if (name.equalsIgnoreCase("Language")) {
             return entry.getLanguage();
@@ -215,16 +215,44 @@ public class ReportGeneratorDataSource implements JRDataSource {
                 return a.getSubtitles();
             }
             else if (name.equalsIgnoreCase("Duration")) {
-                return new Integer(a.getDuration());
+                int tempInt = a.getDuration();
+
+                if (tempInt != -1) {
+                    int hours = tempInt / 3600;
+                    int mints = tempInt / 60 - hours * 60;
+                    int secds = tempInt - hours * 3600 - mints * 60;
+                    return hours + ":" + mints + "." + secds;
+                }
+                else {
+                    return "";
+                }
             }
             else if (name.equalsIgnoreCase("Filesize")) {
-                return new Integer(a.getFileSize());
+                int tempInt = a.getFileSize();
+                if (tempInt != -1) {
+                    return tempInt + " MB";
+                }
+                else {
+                    return "";
+                }
             }
             else if (name.equalsIgnoreCase("CDs")) {
-                return new Integer(a.getCDs());
+                int tempInt = a.getCDs();
+                if (tempInt != -1) {
+                    return "" + tempInt;
+                }
+                else {
+                    return "";
+                }
             }
             else if (name.equalsIgnoreCase("CDCases")) {
-                return new Double(a.getCDCases());
+                double tempDouble = a.getCDCases();
+                if (tempDouble > 0) {
+                    return String.valueOf(tempDouble);
+                }
+                else {
+                    return "";
+                }
             }
             else if (name.equalsIgnoreCase("Resolution")) {
                 return a.getResolution();
@@ -233,19 +261,43 @@ public class ReportGeneratorDataSource implements JRDataSource {
                 return a.getVideoCodec();
             }
             else if (name.equalsIgnoreCase("VideoRate")) {
-                return a.getVideoRate();
+                String vRate = a.getVideoRate();
+                if (!vRate.equals("")) {
+                    return vRate + " fps";
+                }
+                else {
+                    return "";
+                }
             }
             else if (name.equalsIgnoreCase("VideoBitrate")) {
-                return a.getVideoBitrate();
+                String vRate = a.getVideoBitrate();
+                if (!vRate.equals("")) {
+                    return vRate + " kbps";
+                }
+                else {
+                    return "";
+                }
             }
             else if (name.equalsIgnoreCase("AudioCodec")) {
                 return a.getAudioCodec();
             }
             else if (name.equalsIgnoreCase("AudioRate")) {
-                return a.getAudioRate();
+                String aRate = a.getAudioRate();
+                if (!aRate.equals("")) {
+                    return aRate + " Hz";
+                }
+                else {
+                    return "";
+                }
             }
             else if (name.equalsIgnoreCase("AudioBitrate")) {
-                return a.getAudioBitrate();
+                String aRate = a.getAudioBitrate();
+                if (!aRate.equals("")) {
+                    return aRate + " kbps";
+                }
+                else {
+                    return "";
+                }
             }
             else if (name.equalsIgnoreCase("AudioChannels")) {
                 return a.getAudioChannels();
@@ -268,7 +320,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
                 ArrayList extra = a.getExtraInfoFieldNames();
                 if (extra != null) {
                     for (int i = 0; i < extra.size(); i++) {
-                        if (name.equalsIgnoreCase((String)extra.get(i))) {
+                        if (name.equalsIgnoreCase( (String) extra.get(i))) {
                             return a.getExtraInfoFieldValue(i);
                         }
                     }
@@ -292,8 +344,8 @@ public class ReportGeneratorDataSource implements JRDataSource {
         }
 
         public int compare(Object o1, Object o2) {
-            ModelEntry m1 = (ModelEntry)o1;
-            ModelEntry m2 = (ModelEntry)o2;
+            ModelEntry m1 = (ModelEntry) o1;
+            ModelEntry m2 = (ModelEntry) o2;
             int result = 0;
 
             if (sortField.equalsIgnoreCase("Genre")) {
@@ -429,7 +481,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
                         ArrayList extra2 = a2.getExtraInfoFieldNames();
                         if (extra1 != null && extra2 != null) {
                             for (int i = 0; i < extra1.size(); i++) {
-                                if (sortField.equalsIgnoreCase((String)extra1.get(i))) {
+                                if (sortField.equalsIgnoreCase( (String) extra1.get(i))) {
                                     result = a1.getExtraInfoFieldValue(i).compareToIgnoreCase(a2.getExtraInfoFieldValue(i));
                                 }
                             }
