@@ -65,12 +65,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      **/
     private Database _database;
 
-    /**
-     * Needed to update lookAndFeel
-     **/
-    private DialogSearch dialogSearch;
-
-
+    
     /**
      * To the log file.
      **/
@@ -286,6 +281,9 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 		    return false;
 		}
+		
+		/* Resets the additonal info fields names stored in ModelAdditionalInfo */
+		ModelAdditionalInfo.setHasOldExtraInfoFieldNames(true);
 
 		log.info("Loads the movies list");
 
@@ -361,8 +359,6 @@ public class MovieManager extends JFrame implements ComponentListener {
 	
 	
 	if (_database != null) {
-	    if (config.getEnableCtrlMouseRightClick())
-		MovieManager.getIt().getMoviesList().updateUI();
 	    
 	    /* Selects the first movie in the list and loads its info. */
 	    if (getMoviesList().getModel().getChildCount(getMoviesList().getModel().getRoot()) > 0) {
@@ -1023,7 +1019,9 @@ public class MovieManager extends JFrame implements ComponentListener {
 	//toolBar = new WrapAroundToolBar4(SwingConstants.HORIZONTAL);
 	else
 	    toolBar = new JToolBar(SwingConstants.HORIZONTAL);
-
+	
+	toolBar.setRollover(true);
+	
 	//	toolBar.setLayout(new ModifiedFlowLayout(SwingConstants.HORIZONTAL, 4, 4));
 
 	//toolBar.putClientProperty(new String("JToolBar.isRollover"), Boolean.TRUE);
@@ -1644,7 +1642,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	plot.setLayout(new BorderLayout());
 
-	plot.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,0,2,0), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder() /*BorderFactory.createEmptyBorder()*/,
+	plot.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder() /*BorderFactory.createEmptyBorder()*/,
 																					" Plot ",
 																					TitledBorder.DEFAULT_JUSTIFICATION,
 																					TitledBorder.DEFAULT_POSITION,
@@ -1676,7 +1674,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	cast.setLayout(new BorderLayout());
 
-	cast.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,0,2,0), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+	cast.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
 																					" Cast ",
 																					TitledBorder.DEFAULT_JUSTIFICATION,
 																					TitledBorder.DEFAULT_POSITION,
@@ -1709,7 +1707,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	miscellaenous.setLayout(new BorderLayout());
 
-	miscellaenous.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,0,2,0), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+	miscellaenous.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
 																						 " Miscellaneous ",
 																						 TitledBorder.DEFAULT_JUSTIFICATION,
 																						 TitledBorder.DEFAULT_POSITION,
@@ -2739,15 +2737,6 @@ public class MovieManager extends JFrame implements ComponentListener {
 	this.fontSize = fontSize;
     }
 
-    public DialogSearch getDialogSearch() {
-	return dialogSearch;
-    }
-
-    public void setDialogSearch(DialogSearch dialogSearch) {
-	this.dialogSearch = dialogSearch;
-    }
-
-
     public int getMovieListWidth() {
 	return movieListWidth;
     }
@@ -2920,7 +2909,12 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 		    /* Disable HTTPClient logging output */
 		    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-
+		    
+		    File configFile = new File("log4j.properties");
+		    
+		    if (configFile.isFile())
+			PropertyConfigurator.configure(configFile.getAbsolutePath());
+		    
 		    log = Logger.getRootLogger();
 
 		     /* Loads the config */
