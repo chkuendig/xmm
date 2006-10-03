@@ -339,7 +339,7 @@ public class DialogImport extends JDialog implements ActionListener {
 		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
 	
 	//setVisible(true);
-	ShowGUI.show(this, true);
+	ShowGUI.showAndWait(this, true);
     }
     
     JPanel makeListPanel() {
