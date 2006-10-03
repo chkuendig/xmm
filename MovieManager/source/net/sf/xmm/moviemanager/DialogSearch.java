@@ -48,12 +48,14 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
     
     static Logger log = Logger.getRootLogger();
     
+    static DialogSearch dialogSearch;
+    
     String movieTitleFilterString = "Movie Title";
     String directorFilterString = "Directed By";
     String writerFilterString = "Written By";
     String genreFilterString = "Genre";
     String castFilterString = "Cast";
-    String finalFilter; /*used to set the filterOption variable in MovieManager*/
+    String finalFilter; /* used to set the filterOption variable in MovieManager */
     
     String sortByString = "Sort by ";
     String dateSortString = "Date";
@@ -134,8 +136,6 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
     int generalInfoFieldsCount = 0;
     int additionalInfoFieldsCount = 0;
     
-    DialogSearch dialogSearch;
-    
     JTabbedPane allTabbedPanes;
     
     public DialogSearch() {
@@ -146,20 +146,16 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	/* Close dialog... */
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
-		    MovieManager.getIt().setDialogSearch(null);
+		    dialogSearch = null;
 		    dispose();
 		}
 	    });
 	
-	MovieManager.getIt().setDialogSearch(this);
-	
-	/*Enables dispose when pushing escape*/
+	/* Enables dispose when pushing escape */
 	KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-	Action escapeAction = new AbstractAction()
-	    {
-		public void actionPerformed(ActionEvent e)
-		{
-		    MovieManager.getIt().setDialogSearch(null);
+	Action escapeAction = new AbstractAction() {
+		public void actionPerformed(ActionEvent e) {
+		    dialogSearch = null;
 		    dispose();
 		}
 	    };
@@ -717,26 +713,34 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	    
 			    additionalInfoFieldsCount++;
 			}
-			    
-			allTabbedPanes.remove(1);
-			allTabbedPanes.remove(1);
-			    
-			allTabbedPanes.add("General Info Alias", generalAliasPanel);
-			allTabbedPanes.add("Additional Info Alias", additionalAliasPanel);
-			    
+			
+			/* Changes done to visible GUI is done in the EDT */
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+				    allTabbedPanes.remove(1);
+				    allTabbedPanes.remove(1);
+				    
+				    allTabbedPanes.add("General Info Alias", generalAliasPanel);
+				    allTabbedPanes.add("Additional Info Alias", additionalAliasPanel);
+				    
+				    pack();
+				}
+			    });
+			
 		    } catch (Exception e) {
 			return "";
 		    }
-		    
-		    pack();
-		    ShowGUI.show(dialogSearch, true);
-		    
 		    return "";
 		}
 	    };
 	worker.start();
     }
     
+
+    
+   public static DialogSearch getDialogSearch() {
+	return dialogSearch;
+    }
     
     
     public void actionPerformed(ActionEvent event) {
@@ -999,11 +1003,11 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	}
 	    
 	if (apply) {
-	    /*Applying the new setting to the movielist*/
+	    /* Applying the new setting to the movielist */
 	    new MovieManagerCommandFilter("", null, true, true).execute();
 	}
 	else {
-	    MovieManager.getIt().setDialogSearch(null);
+	    dialogSearch = null;
 	    dispose();
 	}
     }
