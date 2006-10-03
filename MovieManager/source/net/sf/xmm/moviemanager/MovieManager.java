@@ -58,7 +58,7 @@ public class MovieManager extends JFrame implements ComponentListener {
     /**
      * The current version of the program.
      **/
-    private String _version = "2.40 RC 2";
+    private String _version = "2.40";
 
     /**
      * The current database object.
