@@ -50,6 +50,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
     
     public static Logger log = Logger.getRootLogger();
     
+    private static boolean ignoreValueChanged = false;
+
     /**
      * Executes the command, and reloads the list with the selectedIndex select. 
      **/
@@ -67,9 +69,22 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	if (selectedIndex < 0 || selectedIndex > list.getSize())
 	    selectedIndex = 0;
 	
-	MovieManager.getIt().getMoviesList().setSelectionRow(selectedIndex);
-	MovieManager.getIt().setAndShowEntries();
-	execute();
+	final int index = selectedIndex;
+
+	SwingUtilities.invokeLater(new Runnable() {
+		public void run() {
+		    try {
+			ignoreValueChanged = true;
+			MovieManager.getIt().getMoviesList().setSelectionRow(index);
+			MovieManager.getIt().setAndShowEntries();
+			execute();
+			
+			ignoreValueChanged = false;
+		    } catch (Exception e) {
+			log.error(e.getMessage());
+		    }
+		}
+	    });
     }
     
     
@@ -532,6 +547,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject() instanceof ModelEpisode && movieList.getSelectionCount() == 1) {
 		((ExtendedJTree) movieList).scrollPathToVisible2(movieList.getSelectionPath(), horizontalPosition);
 	    }
+	    else
+		((ExtendedJTree) movieList).scrollPathToVisible2(movieList.getSelectionPath(), horizontalPosition);
 	}
     }
     
@@ -768,6 +785,9 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
      * Invoked when an action occurs.
      **/
     public void valueChanged(TreeSelectionEvent event) {
+	
+	if (ignoreValueChanged)
+	    return;
 	
 	/* Saving changed notes value to node */
 	if (MovieManager.getIt().getMoviesList().getLeadSelectionRow() != -1) {

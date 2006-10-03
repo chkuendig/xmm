@@ -31,9 +31,8 @@ public class MovieManagerCommandSearch implements ActionListener {
     
     void execute() {
 	
-	if (MovieManager.getIt().getDialogSearch() == null) {
+	if (DialogSearch.getDialogSearch() == null) {
 	    DialogSearch dialogSearch = new DialogSearch();
-	    //dialogSearch.setVisible(true);
 	    ShowGUI.show(dialogSearch, true);
 	}
     }
