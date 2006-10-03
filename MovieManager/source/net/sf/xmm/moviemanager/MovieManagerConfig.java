@@ -199,7 +199,7 @@ public class MovieManagerConfig  {
 
     private boolean databasePathPermanent = false;
 
-    private boolean useDisplayQueriesInTree = false;
+    private boolean useDisplayQueriesInTree = true;
 
     private String multipleAddList = "";
 
