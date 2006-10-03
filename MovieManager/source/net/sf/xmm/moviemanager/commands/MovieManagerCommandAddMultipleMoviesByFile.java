@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.*;
+import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import org.apache.log4j.Logger;
 
@@ -60,6 +61,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	cancelAll = false;
 	
 	DialogAddMultipleMovies damm = new DialogAddMultipleMovies();
+	ShowGUI.showAndWait(damm, true);
 	
 	dialogMovieInfo = new DialogMovieInfo("Add Movie");
 	
@@ -167,7 +169,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		else if (cancel) {
 		    dialogMovieInfo.getMovieTitle().setText("");
 		    
-		    /*Empties the additional fields in the DialogMovieInfo object*/
+		    /* Empties the additional fields in the DialogMovieInfo object */
 		    dialogMovieInfo.executeCommandSetAdditionalInfoFieldsEmpty();
 			cancel = false;
 		}
