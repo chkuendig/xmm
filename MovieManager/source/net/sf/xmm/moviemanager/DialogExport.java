@@ -84,18 +84,14 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 	
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
-		    MovieManager.getIt().setDialogSearch(null);
 		    dispose();
 		}
 	    });
 	
 	/*Enables dispose when pushing escape*/
 	KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-	Action escapeAction = new AbstractAction()
-	    {
-		public void actionPerformed(ActionEvent e)
-		{
-		    MovieManager.getIt().setDialogSearch(null);
+	Action escapeAction = new AbstractAction() {
+		public void actionPerformed(ActionEvent e) {
 		    dispose();
 		}
 	    };
