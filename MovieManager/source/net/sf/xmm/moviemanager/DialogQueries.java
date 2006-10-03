@@ -72,6 +72,8 @@ public class DialogQueries extends JDialog {
     
     JPanel panelResult;
     
+    
+    
     /**
      * The Constructor.
      **/
@@ -335,8 +337,8 @@ public class DialogQueries extends JDialog {
             /* Gets the queries dir... */
 	    File directory = new File(MovieManager.getConfig().getQueriesPath());
 	    
-	    /* Checks if it is a directory... */
-            if (directory.isDirectory()) {
+	    /* Checks if it is a directory... and that it's not the default queries */
+	    if (!directory.equals(new File(MovieManager.getPath("/queries/"))) && directory.isDirectory()) {
                 
                 /* Gets an array of the files in the dir... */
                 File[] queryFiles = directory.listFiles();
@@ -397,7 +399,9 @@ public class DialogQueries extends JDialog {
 	
 	directory = new File(MovieManager.getConfig().getQueriesPath());
 	
-	if (directory != null && directory.isDirectory()) {
+	 /* Checks if it is a directory... and that it's not the default queries */
+	if (!directory.equals(new File(MovieManager.getPath("/queries/")))
+	    && (directory != null && directory.isDirectory())) {
             createTreeModel_listDirContents(top, directory, 0);
         }
 	
