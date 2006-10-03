@@ -191,7 +191,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	
 	searchInSubdirectoriesCheckBoxPanel.add(enableSearchInSubdirectories);
 	
-	/*Exlude String, a checkbox to enable and the TextField
+	/*Exclude String, a checkbox to enable and the TextField
 	  DocumentRegExp makes sure illigal characters can't be entered.
 	 */
 	excludeString = new JTextField(27);
@@ -284,9 +284,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
                 (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
 	
-	//setVisible(true);
-	ShowGUI.show(this, true);
-    }
+	}
     
     JPanel makeListPanel() {
 	

@@ -1064,9 +1064,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	MovieManager.getIt().getLanguageTextField().setBorder(null);
 
 	/*If the search dialog is opened it will be updated*/
-	if (MovieManager.getIt().getDialogSearch() != null) {
-	    SwingUtilities.updateComponentTreeUI(MovieManager.getIt().getDialogSearch());
-	    MovieManager.getIt().getDialogSearch().pack();
+	if (DialogSearch.getDialogSearch() != null) {
+	    SwingUtilities.updateComponentTreeUI(DialogSearch.getDialogSearch());
+	    DialogSearch.getDialogSearch().pack();
 	}
 
 	SwingUtilities.updateComponentTreeUI(this);
@@ -1093,13 +1093,13 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    ShowGUI.show(MovieManager.getIt(), true);
 	    
 	    /* Updating DialogSearch if open */
-	    if (MovieManager.getIt().getDialogSearch() != null) {
-		MovieManager.getIt().getDialogSearch().dispose();
-		MovieManager.getIt().getDialogSearch().setUndecorated(true);
-		MovieManager.getIt().getDialogSearch().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.PLAIN_DIALOG);
-		MovieManager.getIt().getDialogSearch().pack();
-		//MovieManager.getIt().getDialogSearch().setVisible(true);
-		ShowGUI.show(MovieManager.getIt().getDialogSearch(), true);
+	    if (DialogSearch.getDialogSearch() != null) {
+		DialogSearch.getDialogSearch().dispose();
+		DialogSearch.getDialogSearch().setUndecorated(true);
+		DialogSearch.getDialogSearch().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.PLAIN_DIALOG);
+		DialogSearch.getDialogSearch().pack();
+		
+		ShowGUI.show(DialogSearch.getDialogSearch(), true);
 	    }
 
 	    /* This */
@@ -1123,13 +1123,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    ShowGUI.show(MovieManager.getIt(), true);
 
 	      /* Updating DialogSearch if open */
-	    if (MovieManager.getIt().getDialogSearch() != null) {
-		MovieManager.getIt().getDialogSearch().dispose();
-		MovieManager.getIt().getDialogSearch().setUndecorated(false);
-		MovieManager.getIt().getDialogSearch().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.NONE);
-		MovieManager.getIt().getDialogSearch().pack();
-		//MovieManager.getIt().getDialogSearch().setVisible(true);
-		ShowGUI.show(MovieManager.getIt().getDialogSearch(), true);
+	    if (DialogSearch.getDialogSearch() != null) {
+		DialogSearch.getDialogSearch().dispose();
+		DialogSearch.getDialogSearch().setUndecorated(false);
+		DialogSearch.getDialogSearch().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.NONE);
+		DialogSearch.getDialogSearch().pack();
+		ShowGUI.show(DialogSearch.getDialogSearch(), true);
 	    }
 
 	    /* This */
