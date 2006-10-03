@@ -2006,8 +2006,13 @@ public class DialogMovieInfo extends JDialog {
 		    log.error("Exception: " + e.getMessage());
 		    log.warn("Access denied when trying to save cover:" + coverFile.getAbsolutePath());
 		    
-		    DialogAlert alert = new DialogAlert(this, "Access denied", "An error occured when trying to save cover file.", e.getMessage());
-		    //alert.setVisible(true);
+		    DialogAlert alert;
+		    
+		    if (isDisplayable())
+			alert = new DialogAlert(this, "Access denied", "An error occured when trying to save cover file.", e.getMessage());
+		    else
+			alert = new DialogAlert(MovieManager.getIt(), "Access denied", "An error occured when trying to save cover file.", e.getMessage());
+		    
 		    ShowGUI.showAndWait(alert, true);
 
 		    _cover = "";
