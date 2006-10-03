@@ -56,7 +56,7 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
 		    
 		    if (canceled || done) {
 			dbImporter.dispose();
-			MovieManagerCommandSelect.executeAndReload(-1);
+			MovieManagerCommandSelect.execute();
 		    }
 		}
 	    });
@@ -68,7 +68,7 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
 		    
 		    if (canceled || done) {
 			dbImporter.dispose();
-			MovieManagerCommandSelect.executeAndReload(-1);
+			MovieManagerCommandSelect.execute();
 		    }
 		}
 	    };
