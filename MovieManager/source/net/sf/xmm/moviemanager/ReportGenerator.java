@@ -295,8 +295,8 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
      * @param filename String - image filename
      * @return URL for image
      */
-    public URL getImageURL(String filename) {
-        return getClass().getResource(filename);
+    public static URL getImageURL(String filename) {
+        return ReportGenerator.class.getResource(filename);
     }
 
     /**
@@ -504,6 +504,48 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
                 }
             }
             return null;
+        }
+    }
+
+    /**
+     * printDirect - print selected movies in tree directly using movie_details
+     * layout
+     *
+     * @param tree - the movielist tree
+     */
+    public static void printDirect(JTree tree) {
+        // list of selected movies
+        LinkedList movies = new LinkedList();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+        int n = root.getChildCount();
+        for (int i = 0; i < n; i++) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) root.getChildAt(i);
+            int row = tree.getRowForPath(new TreePath(node.getPath()));
+            if (tree.isRowSelected(row)) {
+                movies.add(node.getUserObject());
+            }
+            int episodeCount = node.getChildCount();
+            for (int j = 0; j < episodeCount; j++) {
+                DefaultMutableTreeNode episodeNode = (DefaultMutableTreeNode) node.getChildAt(j);
+                row = tree.getRowForPath(new TreePath(episodeNode.getPath()));
+                if (tree.isRowSelected(row)) {
+                    movies.add(episodeNode.getUserObject());
+                }
+            }
+        }
+
+        // print it
+        if(!movies.isEmpty()) {
+            try {
+                HashMap parms = new HashMap();
+                parms.put("logo", getImageURL("/images/filmFolder.png").toString());
+                ReportGeneratorDataSource ds = new ReportGeneratorDataSource(movies, "none", null, getImageURL("/images/movie.png"), false);
+                JasperPrint print = JasperFillManager.fillReport("reports/movie_details.jasper", parms, ds);
+                JasperPrintManager.printReport(print, true);
+            }
+            catch (JRException ex) {
+                Logger.getRootLogger().error("Error printing report", ex);
+            }
         }
     }
 }

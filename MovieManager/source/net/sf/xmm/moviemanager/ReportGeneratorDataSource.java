@@ -50,9 +50,11 @@ public class ReportGeneratorDataSource implements JRDataSource {
             Collections.sort(movies, new MovieComparator(sortField));
         }
 
-        progressBar.setMinimum(0);
-        progressBar.setMaximum(movies.size());
-        progressBar.setValue(0);
+        if (progressBar != null) {
+            progressBar.setMinimum(0);
+            progressBar.setMaximum(movies.size());
+            progressBar.setValue(0);
+        }
         iterator = movies.iterator();
     }
 
@@ -73,7 +75,9 @@ public class ReportGeneratorDataSource implements JRDataSource {
                 else {
                     entry = MovieManager.getIt().getDatabase().getEpisode(key, true);
                 }
-                progressBar.setValue(count++);
+                if (progressBar != null) {
+                    progressBar.setValue(count++);
+                }
                 Thread.yield();
             }
             return true;
