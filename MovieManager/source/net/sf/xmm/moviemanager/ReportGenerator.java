@@ -14,6 +14,8 @@ import javax.swing.tree.*;
 import org.apache.log4j.*;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.view.*;
+import net.sf.xmm.moviemanager.database.*;
+import net.sf.xmm.moviemanager.models.*;
 
 /**
  * ReportGenerator using JasperReports. Current entries in movielist is used as
@@ -27,21 +29,26 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
 
     private LayoutItem selectedLayout = null;
 
-    private JLabel jLabel1 = new JLabel();
-    private JLabel jLabel2 = new JLabel();
-    private JLabel jLabel3 = new JLabel();
-    private JLabel exampleLabel = new JLabel();
-    private JLabel descriptionLabel = new JLabel();
+    private JLabel labelProgress = new JLabel();
+    private JLabel labelExample = new JLabel();
+    private JLabel labelDescription = new JLabel();
     private JPanel jPanel1 = new JPanel();
     private JPanel jPanel2 = new JPanel();
     private JPanel jPanel3 = new JPanel();
     private JPanel jPanel4 = new JPanel();
+    private JPanel jPanel5 = new JPanel();
+    private JPanel jPanel6 = new JPanel();
     private JPanel panelOptions = new JPanel();
     private JPanel panelProgress = new JPanel();
     private JPanel panelReport = new JPanel();
-    private JButton btnAction = new JButton();
-    private JButton btnClose = new JButton();
+    private JButton buttonAction = new JButton();
+    private JButton buttonClose = new JButton();
     private JList layoutList = new JList();
+    private JRadioButton radioButtonCurrentList = new JRadioButton();
+    private JRadioButton radioButtonSelectedMovies = new JRadioButton();
+    private JRadioButton radioButtonAllMovies = new JRadioButton();
+    private ButtonGroup buttonGroup = new ButtonGroup();
+    private JCheckBox checkBoxEpisodes = new JCheckBox();
     private JSplitPane splitPane = new JSplitPane();
     private JScrollPane scrollPaneList = new JScrollPane();
     private JProgressBar progressBar = new JProgressBar();
@@ -49,10 +56,25 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
     private BorderLayout borderLayout2 = new BorderLayout();
     private BorderLayout borderLayout3 = new BorderLayout();
     private BorderLayout borderLayout4 = new BorderLayout();
+    private BorderLayout borderLayout5 = new BorderLayout();
     private CardLayout cardLayout1 = new CardLayout();
     private FlowLayout flowLayout1 = new FlowLayout();
     private GridBagLayout gridBagLayout1 = new GridBagLayout();
+    private GridLayout gridLayout1 = new GridLayout();
     private Border border1 = BorderFactory.createEmptyBorder(0, 3, 10, 3);
+    private Border border2 = BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+        " Content ",
+        TitledBorder.DEFAULT_JUSTIFICATION,
+        TitledBorder.DEFAULT_POSITION,
+        new Font(layoutList.getFont().getName(), Font.BOLD, layoutList.getFont().getSize())),
+        BorderFactory.createEmptyBorder(0, 5, 5, 5));
+    private Border border3 = BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+        " Layout ",
+        TitledBorder.DEFAULT_JUSTIFICATION,
+        TitledBorder.DEFAULT_POSITION,
+        new Font(layoutList.getFont().getName(), Font.BOLD, layoutList.getFont().getSize())),
+        BorderFactory.createEmptyBorder(0, 5, 5, 5));
+    private Border border4 = BorderFactory.createEmptyBorder(0, 5, 0, 3);
 
     public ReportGenerator() {
         this(null);
@@ -64,7 +86,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
             instance.toFront();
         }
         else {
-            setTitle((frame != null ? frame.getTitle() : "") + " - Report Generator");
+            setTitle( (frame != null ? frame.getTitle() : "") + " - Report Generator");
             try {
                 jbInit();
                 setLocation(50, 50);
@@ -94,41 +116,51 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         });
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(this);
-        btnClose.setText("Close");
-        btnClose.addActionListener(this);
-        btnAction.setText("Generate");
-        btnAction.addActionListener(this);
-        btnAction.setEnabled(false);
+        buttonClose.setText("Close");
+        buttonClose.addActionListener(this);
+        buttonAction.setText("Generate");
+        buttonAction.addActionListener(this);
+        buttonAction.setEnabled(false);
         panelOptions.setLayout(borderLayout1);
-        jLabel1.setText(" Layout");
         jPanel2.setLayout(borderLayout2);
-        jLabel2.setText(" Example");
         jPanel3.setLayout(borderLayout3);
         jPanel4.setLayout(cardLayout1);
         panelReport.setLayout(borderLayout4);
         jPanel1.setLayout(flowLayout1);
         flowLayout1.setAlignment(FlowLayout.RIGHT);
         panelProgress.setLayout(gridBagLayout1);
-        exampleLabel.setBackground(UIManager.getColor("controlShadow"));
-        exampleLabel.setForeground(UIManager.getColor("controlHighlight"));
-        exampleLabel.setOpaque(true);
-        exampleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        descriptionLabel.setBackground(UIManager.getColor("controlShadow"));
-        jLabel3.setText("Generating report... Please wait");
+        labelExample.setBackground(UIManager.getColor("controlShadow"));
+        labelExample.setForeground(UIManager.getColor("controlHighlight"));
+        labelExample.setOpaque(true);
+        labelExample.setHorizontalAlignment(SwingConstants.CENTER);
+        labelDescription.setBackground(UIManager.getColor("controlShadow"));
+        labelProgress.setText("Generating report... Please wait");
         layoutList.addListSelectionListener(this);
-        descriptionLabel.setBorder(border1);
-        descriptionLabel.setOpaque(true);
-        descriptionLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        descriptionLabel.setText(" ");
+        labelDescription.setBorder(border1);
+        labelDescription.setOpaque(true);
+        labelDescription.setHorizontalAlignment(SwingConstants.CENTER);
+        labelDescription.setText(" ");
+        jPanel5.setBorder(border2);
+        jPanel5.setLayout(gridLayout1);
+        radioButtonCurrentList.setText("Current movielist");
+        radioButtonSelectedMovies.setText("Selected movies");
+        radioButtonAllMovies.setText("All movies");
+        radioButtonCurrentList.setSelected(true);
+        buttonGroup.add(radioButtonCurrentList);
+        buttonGroup.add(radioButtonSelectedMovies);
+        buttonGroup.add(radioButtonAllMovies);
+        checkBoxEpisodes.setText("Include episodes");
+        checkBoxEpisodes.setSelected(true);
+        gridLayout1.setRows(4);
+        jPanel6.setLayout(borderLayout5);
+        jPanel6.setBorder(border3);
+        jPanel3.setBorder(border4);
         getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
-        jPanel1.add(btnAction);
-        jPanel1.add(btnClose);
+        jPanel1.add(buttonAction);
+        jPanel1.add(buttonClose);
         splitPane.add(jPanel3, JSplitPane.LEFT);
         splitPane.add(jPanel2, JSplitPane.RIGHT);
         splitPane.setDividerLocation(200);
-        jPanel3.add(scrollPaneList, java.awt.BorderLayout.CENTER);
-        jPanel3.add(jLabel1, java.awt.BorderLayout.NORTH);
-        scrollPaneList.getViewport().add(layoutList);
         panelOptions.add(splitPane, java.awt.BorderLayout.CENTER);
         jPanel4.add(panelOptions, "options");
         jPanel4.add(panelProgress, "progress");
@@ -136,11 +168,18 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         getContentPane().add(jPanel4, java.awt.BorderLayout.CENTER);
         panelProgress.add(progressBar, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 30, 0, 30), 0, 0));
-        panelProgress.add(jLabel3, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
+        panelProgress.add(labelProgress, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 30, 10, 30), 0, 0));
-        jPanel2.add(exampleLabel, java.awt.BorderLayout.CENTER);
-        jPanel2.add(descriptionLabel, java.awt.BorderLayout.SOUTH);
-        jPanel2.add(jLabel2, java.awt.BorderLayout.NORTH);
+        jPanel2.add(labelExample, java.awt.BorderLayout.CENTER);
+        jPanel2.add(labelDescription, java.awt.BorderLayout.SOUTH);
+        jPanel3.add(jPanel5, java.awt.BorderLayout.SOUTH);
+        jPanel5.add(radioButtonCurrentList);
+        jPanel5.add(radioButtonSelectedMovies);
+        jPanel5.add(radioButtonAllMovies);
+        jPanel5.add(checkBoxEpisodes);
+        scrollPaneList.getViewport().add(layoutList);
+        jPanel6.add(scrollPaneList, java.awt.BorderLayout.CENTER);
+        jPanel3.add(jPanel6, java.awt.BorderLayout.CENTER);
     }
 
     /**
@@ -167,14 +206,72 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
      *   container.
      */
     private void createReport(JPanel panel) {
-        btnAction.setEnabled(false);
-        btnClose.setEnabled(false);
+        buttonAction.setEnabled(false);
+        buttonClose.setEnabled(false);
         cardLayout1.show(jPanel4, "progress");
+
+        LinkedList movies = new LinkedList();
+        boolean includeEpisodes = checkBoxEpisodes.isSelected();
+        if (radioButtonAllMovies.isSelected()) { // load all movies from database
+            labelProgress.setText("Loading movies... Please wait");
+            progressBar.setValue(0);
+            Database database = MovieManager.getIt().getDatabase();
+            DefaultListModel moviesList = database.getMoviesList("Title");
+            ArrayList episodesList = includeEpisodes ? database.getEpisodeList("movieID") : null;
+            Object[] m = moviesList.toArray();
+            for (int i = 0; i < m.length; i++) {
+                movies.add(m[i]);
+                if (includeEpisodes) { // add episodes
+                    int tempKey = ( (ModelEntry) m[i]).getKey();
+                    for (int u = 0; u < episodesList.size(); u++) {
+                        if (tempKey == ( (ModelEpisode) episodesList.get(u)).getMovieKey()) {
+                            movies.add(episodesList.get(u));
+                        }
+                    }
+                }
+            }
+        }
+        else { // tree contains movies
+            boolean onlySelected = radioButtonSelectedMovies.isSelected();
+            JTree tree = MovieManager.getIt().getMoviesList();
+            DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+            int n = root.getChildCount();
+            for (int i = 0; i < n; i++) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) root.getChildAt(i);
+                boolean addnode = true;
+                if (onlySelected) {
+                    int row = tree.getRowForPath(new TreePath(node.getPath()));
+                    if (!tree.isRowSelected(row)) {
+                        addnode = false;
+                    }
+                }
+                if (addnode) {
+                    movies.add(node.getUserObject());
+                }
+                if (includeEpisodes) {
+                    int episodeCount = node.getChildCount();
+                    for (int j = 0; j < episodeCount; j++) {
+                        DefaultMutableTreeNode episodeNode = (DefaultMutableTreeNode) node.getChildAt(j);
+                        addnode = true;
+                        if (onlySelected) {
+                            int row = tree.getRowForPath(new TreePath(episodeNode.getPath()));
+                            if (!tree.isRowSelected(row)) {
+                                addnode = false;
+                            }
+                        }
+                        if (addnode) {
+                            movies.add(episodeNode.getUserObject());
+                        }
+                    }
+                }
+            }
+        }
+
         try {
-            jLabel3.setText("Generating report... Please wait");
+            labelProgress.setText("Generating report... Please wait");
             HashMap parms = new HashMap();
             parms.put("logo", getImageURL("/images/filmFolder.png").toString());
-            ReportGeneratorDataSource ds = new ReportGeneratorDataSource((DefaultMutableTreeNode)MovieManager.getIt().getMoviesList().getModel().getRoot(), selectedLayout.episodes, selectedLayout.sortField, progressBar, getImageURL("/images/movie.png"), false);
+            ReportGeneratorDataSource ds = new ReportGeneratorDataSource(movies, selectedLayout.sortField, progressBar, getImageURL("/images/movie.png"), false);
             JasperPrint print = JasperFillManager.fillReport("reports/" + selectedLayout.filename, parms, ds);
             JRViewer viewerPanel = new JRViewer(print);
             panel.removeAll();
@@ -183,13 +280,13 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
             viewerPanel.setFitWidthZoomRatio();
         }
         catch (Exception ex) {
-            jLabel3.setText("Error generating report");
+            labelProgress.setText("Error generating report");
             progressBar.setValue(0);
             Logger.getRootLogger().error("Error generating report", ex);
         }
-        btnAction.setText("Select Layout");
-        btnAction.setEnabled(true);
-        btnClose.setEnabled(true);
+        buttonAction.setText("Select Layout");
+        buttonAction.setEnabled(true);
+        buttonClose.setEnabled(true);
     }
 
     /**
@@ -212,38 +309,38 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
             // display example
             if (selectedLayout.exampleImage != null) {
                 ImageIcon icon = new ImageIcon(selectedLayout.exampleImage); // getting size directly from image was unreliable
-                int height = exampleLabel.getHeight() - PREVIEW_MARGIN;
+                int height = labelExample.getHeight() - PREVIEW_MARGIN;
                 int width = (height * icon.getIconWidth()) / icon.getIconHeight();
-                if (width > exampleLabel.getWidth() - PREVIEW_MARGIN) {
-                    width = exampleLabel.getWidth() - PREVIEW_MARGIN;
+                if (width > labelExample.getWidth() - PREVIEW_MARGIN) {
+                    width = labelExample.getWidth() - PREVIEW_MARGIN;
                     height = (width * icon.getIconHeight()) / icon.getIconWidth();
                 }
 
                 Image image = selectedLayout.exampleImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                 icon = new ImageIcon(image);
-                exampleLabel.setIcon(icon);
-                exampleLabel.setText("");
+                labelExample.setIcon(icon);
+                labelExample.setText("");
             }
             else {
-                exampleLabel.setIcon(null);
-                exampleLabel.setText("No example");
+                labelExample.setIcon(null);
+                labelExample.setText("No example");
             }
 
-            descriptionLabel.setText(selectedLayout.description != null ? selectedLayout.description : "No description");
+            labelDescription.setText(selectedLayout.description != null ? selectedLayout.description : "No description");
         }
         else {
-            exampleLabel.setIcon(null);
-            exampleLabel.setText("Select layout");
-            descriptionLabel.setText(" ");
+            labelExample.setIcon(null);
+            labelExample.setText("Select layout");
+            labelDescription.setText(" ");
         }
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnClose) {
+        if (e.getSource() == buttonClose) {
             dispose();
         }
-        else if (e.getSource() == btnAction) {
-            if (btnAction.getText().equalsIgnoreCase("Generate")) {
+        else if (e.getSource() == buttonAction) {
+            if (buttonAction.getText().equalsIgnoreCase("Generate")) {
                 Thread t = new Thread() { // generate using thread - ensures update of progress bar
                     public void run() {
                         createReport(panelReport);
@@ -254,7 +351,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
             else {
                 panelReport.removeAll();
                 cardLayout1.show(jPanel4, "options");
-                btnAction.setText("Generate");
+                buttonAction.setText("Generate");
             }
         }
     }
@@ -295,13 +392,14 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
     public void valueChanged(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()) {
             if (layoutList.getSelectedValue() != null) {
-                selectedLayout = (LayoutItem)layoutList.getSelectedValue();
+                selectedLayout = (LayoutItem) layoutList.getSelectedValue();
                 selectedLayout.fetchInfo();
-                btnAction.setEnabled(true);
+                buttonAction.setEnabled(true);
+                checkBoxEpisodes.setSelected(selectedLayout.episodes);
             }
             else {
                 selectedLayout = null;
-                btnAction.setEnabled(false);
+                buttonAction.setEnabled(false);
             }
             updateExample();
         }

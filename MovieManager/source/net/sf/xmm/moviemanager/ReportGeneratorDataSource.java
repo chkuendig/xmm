@@ -5,7 +5,6 @@ import java.net.*;
 import java.util.*;
 
 import javax.swing.*;
-import javax.swing.tree.*;
 
 import org.apache.log4j.*;
 import net.sf.jasperreports.engine.*;
@@ -40,26 +39,12 @@ public class ReportGeneratorDataSource implements JRDataSource {
      * @param defaultCoverImageURL URL - default image for movies without cover
      * @param testmode boolean - if true only dummydata is returned
      */
-    public ReportGeneratorDataSource(DefaultMutableTreeNode root, boolean includeEpisodes, String sortField, JProgressBar progressBar, URL defaultCoverImageURL, boolean testmode) {
+    public ReportGeneratorDataSource(List movies, String sortField, JProgressBar progressBar, URL defaultCoverImageURL, boolean testmode) {
         this.progressBar = progressBar;
         this.defaultCoverImageURL = defaultCoverImageURL;
         this.testmode = testmode;
         this.mySQL = MovieManager.getIt().getDatabase() instanceof DatabaseMySQL;
         this.coversFolder = MovieManager.getIt().getConfig().getCoversFolder();
-
-        LinkedList movies = new LinkedList();
-        int n = root.getChildCount();
-        for (int i = 0; i < n; i++) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) root.getChildAt(i);
-            movies.add(node.getUserObject());
-            if (includeEpisodes) {
-                int episodeCount = node.getChildCount();
-                for (int j = 0; j < episodeCount; j++) {
-                    DefaultMutableTreeNode episodeNode = (DefaultMutableTreeNode) node.getChildAt(j);
-                    movies.add(episodeNode.getUserObject());
-                }
-            }
-        }
 
         if (sortField != null && sortField.length() > 0 && !sortField.equalsIgnoreCase("none")) {
             Collections.sort(movies, new MovieComparator(sortField));
