@@ -12,14 +12,13 @@
 		 columnSpacing="0"
 		 leftMargin="70"
 		 rightMargin="30"
-		 topMargin="20"
+		 topMargin="70"
 		 bottomMargin="42"
 		 whenNoDataType="NoPages"
 		 isTitleNewPage="false"
 		 isSummaryNewPage="false">
 	<property name="xmm.sortfield" value="none" />
-	<property name="xmm.description" value="Detailed movieinfo on a full page
-" />
+	<property name="xmm.description" value="Detailed movieinfo on a full page " />
 	<property name="xmm.episodes" value="true" />
 	<property name="ireport.scriptlethandling" value="0" />
 	<property name="ireport.encoding" value="UTF-8" />
