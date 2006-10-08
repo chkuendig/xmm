@@ -1982,7 +1982,7 @@ public class DialogMovieInfo extends JDialog {
 	    /* Saves the cover... */
 	    if (_saveCover) {
 		
-		String coversFolder = database.getCoversFolder();
+		String coversFolder = MovieManager.getConfig().getCoversPath();
 		File coverFile = new File(coversFolder, _cover);
 		
 		try {
