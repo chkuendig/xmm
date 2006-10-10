@@ -366,6 +366,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 		Runnable showProgress = new Runnable() {
 			public void run() {
 			    getMoviesList().setSelectionRow(0);
+			    MovieManagerCommandSelect.execute();
 			}};
 		SwingUtilities.invokeLater(showProgress);
 	    }
