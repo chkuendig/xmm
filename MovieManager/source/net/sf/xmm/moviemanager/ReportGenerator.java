@@ -28,6 +28,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
     private static ReportGenerator instance = null;
 
     private LayoutItem selectedLayout = null;
+    private ReportGeneratorDataSource ds = null;
 
     private JLabel labelProgress = new JLabel();
     private JLabel labelExample = new JLabel();
@@ -206,8 +207,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
      *   container.
      */
     private void createReport(JPanel panel) {
-        buttonAction.setEnabled(false);
-        buttonClose.setEnabled(false);
+        buttonAction.setText("Abort");
         cardLayout1.show(jPanel4, "progress");
 
         LinkedList movies = new LinkedList();
@@ -271,22 +271,23 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
             labelProgress.setText("Generating report... Please wait");
             HashMap parms = new HashMap();
             parms.put("logo", getImageURL("/images/filmFolder.png").toString());
-            ReportGeneratorDataSource ds = new ReportGeneratorDataSource(movies, selectedLayout.sortField, progressBar, getImageURL("/images/movie.png"), false);
+            ds = new ReportGeneratorDataSource(movies, selectedLayout.sortField, progressBar, getImageURL("/images/movie.png"), false);
             JasperPrint print = JasperFillManager.fillReport("reports/" + selectedLayout.filename, parms, ds);
-            JRViewer viewerPanel = new JRViewer(print);
-            panel.removeAll();
-            panel.add(viewerPanel, BorderLayout.CENTER);
-            cardLayout1.show(jPanel4, "report");
-            viewerPanel.setFitWidthZoomRatio();
+            if (ds != null) {
+                ds = null;
+                JRViewer viewerPanel = new JRViewer(print);
+                panel.removeAll();
+                panel.add(viewerPanel, BorderLayout.CENTER);
+                cardLayout1.show(jPanel4, "report");
+                viewerPanel.setFitWidthZoomRatio();
+                buttonAction.setText("Select Layout");
+            }
         }
         catch (Exception ex) {
             labelProgress.setText("Error generating report");
             progressBar.setValue(0);
             Logger.getRootLogger().error("Error generating report", ex);
         }
-        buttonAction.setText("Select Layout");
-        buttonAction.setEnabled(true);
-        buttonClose.setEnabled(true);
     }
 
     /**
@@ -349,6 +350,10 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
                 t.start();
             }
             else {
+                if (ds != null) {
+                    ds.interrupt();
+                    ds = null;
+                }
                 panelReport.removeAll();
                 cardLayout1.show(jPanel4, "options");
                 buttonAction.setText("Generate");
@@ -363,6 +368,10 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
     }
 
     public void windowClosed(WindowEvent e) {
+        if (ds != null) {
+            ds.interrupt();
+            ds = null;
+        }
         instance = null;
     }
 
@@ -535,7 +544,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         }
 
         // print it
-        if(!movies.isEmpty()) {
+        if (!movies.isEmpty()) {
             try {
                 HashMap parms = new HashMap();
                 parms.put("logo", getImageURL("/images/filmFolder.png").toString());

@@ -25,6 +25,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
     private boolean mySQL;
     private String coversFolder;
     private boolean testmode;
+    private boolean interrupt = false;
 
     /**
      * Constructor
@@ -65,7 +66,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
      * @throws JRException
      */
     public boolean next() throws JRException {
-        if (iterator.hasNext()) {
+        if (iterator.hasNext() && !interrupt) {
             entry = (ModelEntry) iterator.next();
             int key = entry.getKey();
             if (key >= 0) {
@@ -485,5 +486,12 @@ public class ReportGeneratorDataSource implements JRDataSource {
 
             return result;
         }
+    }
+
+    /**
+     * interrupt - call to interrupt generation
+     */
+    public void interrupt() {
+        interrupt = true;
     }
 }
