@@ -229,176 +229,174 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	    
 	    model = (ModelEntry) ((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject();
 	    
-	    if (model == null || model.getKey() == -1)
+	    if (model == null)
 		return;
 	    
-	    /* If not MySQL */
-	    if (!(MovieManager.getIt().getDatabase() instanceof DatabaseMySQL)) {
+	    if (model.getKey() != -1) {
 		
-		if (!model.getHasGeneralInfoData()) {
-		    ModelEntry tmpModel;
-		    
-		    if (model instanceof ModelMovie)
-			tmpModel = MovieManager.getIt().getDatabase().getMovie(model.getKey(), false);
-		    else
-			tmpModel = MovieManager.getIt().getDatabase().getEpisode(model.getKey(), false);
-		    
-		    model.copyData(tmpModel);
-		}
-	    }
-	    else {
-		/* If MySQL */
+		/* If not MySQL */
+		if (!(MovieManager.getIt().getDatabase() instanceof DatabaseMySQL)) {
 		
-		boolean getByteCover = !MovieManager.getConfig().getStoreCoversLocally() ? true : false;
-		ModelEntry tmpModel = null;
-		
-		if (!model.getHasGeneralInfoData()) {
+		    if (!model.getHasGeneralInfoData()) {
+			ModelEntry tmpModel;
 		    
-		    
-		    if (model instanceof ModelMovie)
-			tmpModel = MovieManager.getIt().getDatabase().getMovie(model.getKey(), getByteCover);
-		    else
-			tmpModel = MovieManager.getIt().getDatabase().getEpisode(model.getKey(), getByteCover);
-		    
-		    model.copyData(tmpModel);
-		}
-		
-		/* Getting the cover from disc */
-		if (!getByteCover || (tmpModel != null && tmpModel.getCoverData() == null)) {
-		    cover = model.getCover();
-		    
-		    String folder = MovieManager.getConfig().getCoversPath();
-		    
-		    File coverFile = new File(folder, cover);
-		    
-		    /* The cover could not be found on disc so it will be retrieved from the MySQL db */
-		    if (!(coverFile.exists()) && !getByteCover) {
-			byteCover = true;
-			
 			if (model instanceof ModelMovie)
-			    coverData = ((DatabaseMySQL) MovieManager.getIt().getDatabase()).getCoverDataMovie(model.getKey());
+			    tmpModel = MovieManager.getIt().getDatabase().getMovie(model.getKey(), false);
 			else
-			    coverData = ((DatabaseMySQL) MovieManager.getIt().getDatabase()).getCoverDataEpisode(model.getKey());
+			    tmpModel = MovieManager.getIt().getDatabase().getEpisode(model.getKey(), false);
+		    
+			model.copyData(tmpModel);
+		    }
+		}
+		else {
+		    /* If MySQL */
+		
+		    boolean getByteCover = !MovieManager.getConfig().getStoreCoversLocally() ? true : false;
+		    ModelEntry tmpModel = null;
+		
+		    if (!model.getHasGeneralInfoData()) {
+		    
+		    
+			if (model instanceof ModelMovie)
+			    tmpModel = MovieManager.getIt().getDatabase().getMovie(model.getKey(), getByteCover);
+			else
+			    tmpModel = MovieManager.getIt().getDatabase().getEpisode(model.getKey(), getByteCover);
+		    
+			model.copyData(tmpModel);
+		    }
+		
+		    /* Getting the cover from disc */
+		    if (!getByteCover || (tmpModel != null && tmpModel.getCoverData() == null)) {
+			cover = model.getCover();
+		    
+			String folder = MovieManager.getConfig().getCoversPath();
+		    
+			File coverFile = new File(folder, cover);
+		    
+			/* The cover could not be found on disc so it will be retrieved from the MySQL db */
+			if (!(coverFile.exists()) && !getByteCover) {
+			    byteCover = true;
 			
-			if (coverData != null) {
+			    if (model instanceof ModelMovie)
+				coverData = ((DatabaseMySQL) MovieManager.getIt().getDatabase()).getCoverDataMovie(model.getKey());
+			    else
+				coverData = ((DatabaseMySQL) MovieManager.getIt().getDatabase()).getCoverDataEpisode(model.getKey());
+			
+			    if (coverData != null) {
 			    
-			    model.setCoverData(coverData);
+				model.setCoverData(coverData);
 			    
-			    try {
-				/* Saving the cover to covers directory */
-				if (coverFile.createNewFile()) {
-				    /* Copies the cover to the covers folder... */
-				    OutputStream outputStream = new FileOutputStream(coverFile);
-				    outputStream.write(coverData);
-				    outputStream.close();
+				try {
+				    /* Saving the cover to covers directory */
+				    if (coverFile.createNewFile()) {
+					/* Copies the cover to the covers folder... */
+					OutputStream outputStream = new FileOutputStream(coverFile);
+					outputStream.write(coverData);
+					outputStream.close();
+				    }
+				} catch (Exception e) {
+				    log.warn("Failed to save cover:" + e.getMessage());
 				}
-			    } catch (Exception e) {
-				log.warn("Failed to save cover:" + e.getMessage());
 			    }
 			}
 		    }
-		}
 		
-		if (model.getCoverData() != null) {
-		    byteCover = true;
-		    coverData = model.getCoverData();
+		    if (model.getCoverData() != null) {
+			byteCover = true;
+			coverData = model.getCoverData();
+		    }
 		}
-	    }
 	    
-	    
-	    
-	    
-       	    if (!byteCover && cover.equals("")) {
-		cover = model.getCover();
+		if (!byteCover && cover.equals("")) {
+		    cover = model.getCover();
 		
-		if (!cover.equals("")) {
+		    if (!cover.equals("")) {
+			/* Gets the full path for the cover... */
+			String folder = MovieManager.getConfig().getCoversPath();
+			File coverFile = new File(folder, cover);
 		    
-		    /* Gets the full path for the cover... */
-		    String folder = MovieManager.getConfig().getCoversPath();
-		    File coverFile = new File(folder, cover);
-		    
-		    if (coverFile.isFile()) {
 			cover = coverFile.getAbsolutePath();
 		    }
 		}
-	    }
 	    
-	    if (!model.getHasAdditionalInfoData())
-		model.updateAdditionalInfoData();
-	    
-	    
-	    date = model.getDate();
-	    title = model.getTitle();
-	    colour = model.getColour();
-	    urlKey = model.getUrlKey();
-	    directedBy = model.getDirectedBy();
-	    writtenBy = model.getWrittenBy();
-	    genre = model.getGenre();
-	    rating = model.getRating();
-	    aka = model.getAka();
-	    country = model.getCountry();
-	    seen = model.getSeen();
-	    language = model.getLanguage();
-	    plot = model.getPlot();
-	    cast = model.getCast();
-	    notes = model.getNotes();
-	    mpaa = model.getMpaa();
-	    certification = model.getCertification();
-	    soundMix = model.getWebSoundMix();
-	    webRuntime = model.getWebRuntime();
-	    awards = model.getAwards();
+		if (!model.getHasAdditionalInfoData())
+		    model.updateAdditionalInfoData();
 	    
 	    
-	    ModelAdditionalInfo additionalInfo = model.getAdditionalInfo();
+		date = model.getDate();
+		title = model.getTitle();
+		colour = model.getColour();
+		urlKey = model.getUrlKey();
+		directedBy = model.getDirectedBy();
+		writtenBy = model.getWrittenBy();
+		genre = model.getGenre();
+		rating = model.getRating();
+		aka = model.getAka();
+		country = model.getCountry();
+		seen = model.getSeen();
+		language = model.getLanguage();
+		plot = model.getPlot();
+		cast = model.getCast();
+		notes = model.getNotes();
+		mpaa = model.getMpaa();
+		certification = model.getCertification();
+		soundMix = model.getWebSoundMix();
+		webRuntime = model.getWebRuntime();
+		awards = model.getAwards();
 	    
-	    if (MovieManager.getIt().getDatabase() != null)
-		additionalInfoString = MovieManager.getIt().getDatabase().getAdditionalInfoString(additionalInfo);
+		ModelAdditionalInfo additionalInfo = model.getAdditionalInfo();
 	    
-	    try {
-		if (byteCover || (!MovieManager.isApplet() && (new File(cover)).isFile())) {
+		if (MovieManager.getIt().getDatabase() != null)
+		    additionalInfoString = MovieManager.getIt().getDatabase().getAdditionalInfoString(additionalInfo);
+	    
+		try {
+		    File coverFile = new File(cover);
+		
+		    if (byteCover || (!MovieManager.isApplet() && (coverFile).isFile())) {
 		    
-		    /* Loads the image...*/
-		    int height = 145;
+			/* Loads the image...*/
+			int height = 145;
 		    
-		    if (MovieManager.getConfig().getPreserveCoverAspectRatio() != 0) {
+			if (MovieManager.getConfig().getPreserveCoverAspectRatio() != 0) {
 			
-			if ((MovieManager.getConfig().getPreserveCoverAspectRatio() == 1) || model instanceof ModelEpisode) {
+			    if ((MovieManager.getConfig().getPreserveCoverAspectRatio() == 1) || model instanceof ModelEpisode) {
 			    
-			    BufferedImage img;
+				BufferedImage img;
 			    
-			    if (byteCover) {
-				InputStream in = new ByteArrayInputStream(coverData);
-				img = javax.imageio.ImageIO.read(in);
+				if (byteCover) {
+				    InputStream in = new ByteArrayInputStream(coverData);
+				    img = javax.imageio.ImageIO.read(in);
+				}
+				else 
+				    img = ImageIO.read(coverFile);
+			    
+				height = ((97*img.getHeight())/img.getWidth());
 			    }
-			    else 
-				img = ImageIO.read(new File(cover));
-			    
-			    
-			    
-			    height = ((97*img.getHeight())/img.getWidth());
+			}
+		    
+			if (height > 145)
+			    height = 145;
+		          
+			if (byteCover && coverData != null) {
+			
+			    MovieManager.getIt().getCover().setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(coverData).getScaledInstance(97, height,Image.SCALE_SMOOTH)));
+			    noCover = false;
+			}
+			else if (!byteCover) {
+              
+			    MovieManager.getIt().getCover().setIcon(new ImageIcon(MovieManager.getIt().getImage(cover).getScaledInstance(97, height,Image.SCALE_SMOOTH)));
+			    noCover = false;
 			}
 		    }
-		    
-		    if (height > 145)
-			height = 145;
-		          
-		    if (byteCover && coverData != null) {
-			
-			MovieManager.getIt().getCover().setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(coverData).getScaledInstance(97, height,Image.SCALE_SMOOTH)));
-			noCover = false;
+		    else if (!byteCover && (!MovieManager.isApplet())) {
+			log.debug("Cover not found:" + coverFile.getAbsolutePath());
 		    }
-		    else if (!byteCover) {
-              
-			MovieManager.getIt().getCover().setIcon(new ImageIcon(MovieManager.getIt().getImage(cover).getScaledInstance(97, height,Image.SCALE_SMOOTH)));
-			noCover = false;
-		    }
-		}
 		
-	    } catch (Exception e) {
-		log.error("Exception: "+e.getMessage());
-	    } 
+		} catch (Exception e) {
+		    log.error("Exception: "+e.getMessage());
+		} 
+	    }
 	}
-	
    
     
 	if (noCover) {
@@ -496,7 +494,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	    MovieManager.getIt().getLanguageTextField().setCaretPosition(0);
 	}
 	
-	/* Must be a space to avoid the top row from collapsing */
+	/* Must be a spaces to avoid the top row from collapsing */
 	if (colour.equals("")) {
 	    MovieManager.getIt().getColourLabel().setText(" ");
 	    MovieManager.getIt().getColourField().setText(" ");
@@ -517,7 +515,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	
 	MovieManager.getIt().getCast().setText(cast);
 	MovieManager.getIt().getCast().setCaretPosition(0);
-      
+	
 	/* Stores the additional info scollBar position */
 	final int verticalPosition = MovieManager.getIt().getAdditionalInfoScrollPane().getVerticalScrollBar().getValue();
 	MovieManager.getIt().getAdditionalInfo().setText(additionalInfoString);
@@ -542,6 +540,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	       1 - Keeps the entire width of the selected cell(s) highlighted after resize.
 	       2 - no longer seems necessary: (prevents the titles in the list from being truncated) */
 	    ((DefaultTreeModel) movieList.getModel()).nodeChanged(selected);
+	    
+	    
 	    
 	    if (movieList.getLastSelectedPathComponent() != null && 
 		((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject() instanceof ModelEpisode && movieList.getSelectionCount() == 1) {
@@ -768,7 +768,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		popupMenu.add(menuRemoveFromLists);
 	    }
 	    popupMenu.show(movieList, x, y);
-	    //popupMenu.setVisible(true);
 	    ShowGUI.show(popupMenu, true);
 	}
     }
@@ -789,7 +788,14 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	if (ignoreValueChanged)
 	    return;
 	
-	/* Saving changed notes value to node */
+	TreePath [] paths = event.getPaths();
+	
+	/* If less than 2 changed no need to call execute */
+	if (paths != null && paths.length <= 1) {
+	    return;
+	}
+	
+	/* Saving the node's changed notes value */
 	if (MovieManager.getIt().getMoviesList().getLeadSelectionRow() != -1) {
 	    
 	    ModelEntry entry = (ModelEntry) ((DefaultMutableTreeNode) MovieManager.getIt().getMoviesList().getLeadSelectionPath().getLastPathComponent()).getUserObject();
