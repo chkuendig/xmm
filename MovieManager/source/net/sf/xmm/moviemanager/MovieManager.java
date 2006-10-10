@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManager.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)MovieManager.java 1.0 10.10.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  *
@@ -65,7 +65,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      **/
     private Database _database;
 
-
+    
     /**
      * To the log file.
      **/
@@ -187,7 +187,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @param The current database.
      **/
     public boolean setDatabase(Database database, boolean cancelRelativePaths) {
-
+        
 	if (database != null) {
 
 	    boolean databaseUpdateAllowed = false;
@@ -281,7 +281,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 		    return false;
 		}
-
+		
 		/* Resets the additonal info fields names stored in ModelAdditionalInfo */
 		ModelAdditionalInfo.setHasOldExtraInfoFieldNames(true);
 
@@ -313,41 +313,41 @@ public class MovieManager extends JFrame implements ComponentListener {
 		DefaultListModel moviesList = database.getMoviesList(options);
 		ArrayList episodesList = database.getEpisodeList("movieID");
 		DefaultTreeModel treeModel = createTreeModel(moviesList, episodesList);
-
+		
 		getMoviesList().setRootVisible(false);
 		//getMoviesList().setLargeModel(true);
-
+		
 		/* Makes database components visible. */
 		setDatabaseComponentsEnable(true);
-
+		
 		if (cancelRelativePaths && !isApplet()) {
-
+		    
 		    if (!new File(config.getCoversPath(database)).isDirectory() && new File(config.getCoversFolder(database)).isDirectory()) {
 			config.setUseRelativeCoversPath(0);
 		    }
-
+		    
 		    if (!new File(config.getQueriesPath(database)).isDirectory() && new File(config.getQueriesFolder(database)).isDirectory()) {
 			config.setUseRelativeQueriesPath(0);
 		    }
-
+		    
 		    if (database.getPath().indexOf(getUserDir()) == -1) {
 			config.setUseRelativeDatabasePath(0);
 		    }
 		}
-
-
-		/* Must be set here and not earlier.
-		   If the database is set at the top and the  method returns because of an error after the database is set,
+		
+		
+		/* Must be set here and not earlier. 
+		   If the database is set at the top and the  method returns because of an error after the database is set, 
 		   a faulty database will then be stored and used */
 		_database = database;
-
+		
 		/* Loads the movies list. */
 		getMoviesList().setModel(treeModel);
-
+		
 		/* Updates the entries Label */
 		setAndShowEntries();
 		loadMenuLists(database);
-
+		
 	    } else {
 		/* Makes database components invisible. */
 		setDatabaseComponentsEnable(false);
@@ -356,13 +356,13 @@ public class MovieManager extends JFrame implements ComponentListener {
 	}
 	else
 	    _database = null;
-
-
+	
+	
 	if (_database != null) {
-
+	    
 	    /* Selects the first movie in the list and loads its info. */
 	    if (getMoviesList().getModel().getChildCount(getMoviesList().getModel().getRoot()) > 0) {
-
+		
 		Runnable showProgress = new Runnable() {
 			public void run() {
 			    getMoviesList().setSelectionRow(0);
@@ -370,7 +370,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 		SwingUtilities.invokeLater(showProgress);
 	    }
 	}
-
+	
 	return _database != null;
     }
 
@@ -414,7 +414,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 						     "Perform update now? (A backup will be made)</html>");
 	//question.setVisible(true);
 	ShowGUI.showAndWait(question, true);
-
+	
 	if (question.getAnswer()) {
 	    return true;
 	}
@@ -536,7 +536,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	try {
 	    if (!isApplet()) {
-
+    		
 		File laf = new File("LookAndFeels" + File.separator + "lookAndFeels.ini");
 
 		if (!laf.exists()) {
@@ -631,7 +631,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	/* Setting Movie Info slider position */
 	if (config.movieInfoSliderPosition == -1) {
-	    getMovieInfoSplitPane().setDividerLocation(1.0);
+	    getMovieInfoSplitPane().setDividerLocation(0.6);
 	    getMovieInfoSplitPane().setLastDividerLocation(getMovieInfoSplitPane().getDividerLocation());
 	 }
 	else {
@@ -1019,9 +1019,9 @@ public class MovieManager extends JFrame implements ComponentListener {
 	//toolBar = new WrapAroundToolBar4(SwingConstants.HORIZONTAL);
 	else
 	    toolBar = new JToolBar(SwingConstants.HORIZONTAL);
-
+	
 	toolBar.setRollover(true);
-
+	
 	//	toolBar.setLayout(new ModifiedFlowLayout(SwingConstants.HORIZONTAL, 4, 4));
 
 	//toolBar.putClientProperty(new String("JToolBar.isRollover"), Boolean.TRUE);
@@ -1032,8 +1032,9 @@ public class MovieManager extends JFrame implements ComponentListener {
 	//toolBar.setPreferredSize(new Dimension(254, 60));
 
 	toolBar.setFloatable(false);
-	Dimension dim = new Dimension(3, 0);
 
+	Dimension dim = new Dimension(3, 0);
+	
 	/* The Add button. */
 	JButton buttonAdd = new JButton(new ImageIcon(_movieManager.getImage("/images/add.png").getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
 
@@ -1048,7 +1049,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	buttonAdd.addActionListener(new MovieManagerCommandAdd());
 
 	toolBar.add(buttonAdd);
-
+	
 	/* A separator. */
 	toolBar.addSeparator(dim);
 
@@ -1065,7 +1066,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	buttonRemove.addActionListener(new MovieManagerCommandRemove());
 	toolBar.add(buttonRemove);
 
-	/* A separator. */
+		/* A separator. */
 	toolBar.addSeparator(dim);
 
 	/* The Edit button. */
@@ -1073,7 +1074,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	//buttonEdit.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonEdit.getBorder()));
 	buttonEdit.setMargin(new Insets(0,10,0,10));
-
+    
 	buttonEdit.setPreferredSize(new Dimension(39, 39));
 	buttonEdit.setMaximumSize(new Dimension(44, 45));
 	buttonEdit.setToolTipText("Edit");
@@ -1098,21 +1099,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	buttonSearch.addActionListener(new MovieManagerCommandSearch());
 	toolBar.add(buttonSearch);
 
-        /* A separator. */
-        toolBar.addSeparator(dim);
 
-        /* The Print button. */
-        JButton buttonPrint = new JButton(new ImageIcon(_movieManager.getImage("/images/printer.png").getScaledInstance(25,25,Image.SCALE_SMOOTH)));
-
-        buttonPrint.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonPrint.getBorder()));
-
-        buttonPrint.setPreferredSize(new Dimension(39, 39));
-        buttonPrint.setMaximumSize(new Dimension(45, 45));
-        buttonPrint.setToolTipText("Print");
-        buttonPrint.setActionCommand("Print");
-        buttonPrint.setMnemonic('P');
-        buttonPrint.addActionListener(new MovieManagerCommandPrint());
-        toolBar.add(buttonPrint);
 
 	/* A separator. */
 	toolBar.add(new JToolBar.Separator(new Dimension(8, 3)));
@@ -1136,7 +1123,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	toolBar.setPreferredSize(new Dimension(toolBar.getMaximumSize()));
 	toolBar.setMinimumSize(toolBar.getPreferredSize());
-
+	
 	/* All done. */
 	log.debug("Creation of the ToolBar done.");
 	return toolBar;
@@ -1832,6 +1819,10 @@ public class MovieManager extends JFrame implements ComponentListener {
     	_movieManager.getJMenuBar().getMenu(1).getItem(4).setEnabled(enable);
 	/* Add multiple movies MenuItem*/
     	_movieManager.getJMenuBar().getMenu(2).getItem(2).setEnabled(enable);
+	/* Update IMDb info */
+	_movieManager.getJMenuBar().getMenu(2).getItem(3).setEnabled(enable);
+	/* Report generator */
+	_movieManager.getJMenuBar().getMenu(2).getItem(5).setEnabled(enable);
 	/* Lists*/
     	_movieManager.getJMenuBar().getMenu(3).setEnabled(enable);
 
@@ -1844,8 +1835,6 @@ public class MovieManager extends JFrame implements ComponentListener {
 	getEditButton().setEnabled(enable);
 	/* Search Button. */
 	getSearchButton().setEnabled(enable);
-        /* Print Button. */
-        getPrintButton().setEnabled(enable);
 
 	/* The JTree. */
 	getMoviesList().setEnabled(enable);
@@ -1880,13 +1869,13 @@ public class MovieManager extends JFrame implements ComponentListener {
      public void updateLookAndFeelValues() {
 	updateToolButtonBorder();
 	updateJTreeIcons();
-
+	
 	//getMoviesList().updateUI();
     }
 
     public void updateJTreeIcons() {
 	getMoviesList().setRowHeight(config.getMovieListRowHeight() + 2);
-
+	
 	/* Show handles in cover mode or no icon mode, otherwise it's hard to recognize series. */
 	getMoviesList().setShowsRootHandles(config.getUseJTreeCovers() || !config.getUseJTreeIcons());
     }
@@ -1910,7 +1899,6 @@ public class MovieManager extends JFrame implements ComponentListener {
 	getRemoveButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,15,3,15), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
 	getEditButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,13,3,13), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
 	getSearchButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,13,3,13), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-        getPrintButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,13,3,13), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
 
 	// getAddButton().setBorder(BorderFactory.createCompoundBorder(new JButton().getBorder(), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
 // 	getRemoveButton().setBorder(BorderFactory.createCompoundBorder(new JButton().getBorder(), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
@@ -1921,13 +1909,11 @@ public class MovieManager extends JFrame implements ComponentListener {
 	getRemoveButton().setMaximumSize(new Dimension(44, 45));
 	getEditButton().setMaximumSize(new Dimension(44, 45));
 	getSearchButton().setMaximumSize(new Dimension(45, 45));
-        getPrintButton().setMaximumSize(new Dimension(45, 45));
 
 	getAddButton().setPreferredSize(new Dimension(45, 45));
 	getRemoveButton().setPreferredSize(new Dimension(44, 45));
 	getEditButton().setPreferredSize(new Dimension(44, 45));
 	getSearchButton().setPreferredSize(new Dimension(45, 45));
-        getPrintButton().setPreferredSize(new Dimension(45, 45));
     }
 
     void updateToolButtonBorderToRegular() {
@@ -1938,7 +1924,6 @@ public class MovieManager extends JFrame implements ComponentListener {
 	getRemoveButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
 	getEditButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
 	getSearchButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
-        getPrintButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
 
 	Dimension dim = new Dimension(40, 40);
 
@@ -1946,13 +1931,11 @@ public class MovieManager extends JFrame implements ComponentListener {
 	getRemoveButton().setPreferredSize(dim);
 	getEditButton().setPreferredSize(dim);
 	getSearchButton().setPreferredSize(dim);
-        getPrintButton().setPreferredSize(dim);
 
 	getAddButton().setMaximumSize(dim);
 	getRemoveButton().setMaximumSize(dim);
 	getEditButton().setMaximumSize(dim);
 	getSearchButton().setMaximumSize(dim);
-        getPrintButton().setMaximumSize(dim);
     }
 
 
@@ -2126,10 +2109,6 @@ public class MovieManager extends JFrame implements ComponentListener {
 
     JButton getSearchButton() {
 	return (JButton) getToolBar().getComponent(6);
-    }
-
-    JButton getPrintButton() {
-        return (JButton) getToolBar().getComponent(8);
     }
 
     JPanel getEntriesPanel() {
@@ -2411,11 +2390,11 @@ public class MovieManager extends JFrame implements ComponentListener {
 			log.debug("database path is empty");
 			return null;
 		    }
-
+		    
 		    progressBar = new SimpleProgressBar(MovieManager.getIt(), true, this);
-
+		    
 		    ShowGUI.show(progressBar, true);
-
+		    
 		    if (type.equals("MySQL"))
 			DialogDatabase.updateProgress(progressBar, "Connecting to database...");
 		    else
@@ -2908,12 +2887,12 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 		    /* Disable HTTPClient logging output */
 		    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-
+		    
 		    File configFile = new File("log4j.properties");
-
+		    
 		    if (configFile.isFile())
 			PropertyConfigurator.configure(configFile.getAbsolutePath());
-
+		    
 		    log = Logger.getRootLogger();
 
 		     /* Loads the config */
@@ -2935,7 +2914,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 		    /* Starts the MovieManager. */
 		    MovieManager.getIt().setUp();
-
+		    
 		    /* Loads the database. */
 		    MovieManager.getIt().loadDatabase();
 
