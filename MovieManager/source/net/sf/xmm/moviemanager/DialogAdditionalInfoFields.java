@@ -126,7 +126,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 		fieldsListArray[activeFields[i]] = null;
 	    }
 	    else
-		log.warn("Null entry in additional info active list.");
+		log.warn("Null entry in additional info active list at index:" + i);
 	}
 	
 	/* Adds the inactive-fields to the inactive-list */
