@@ -493,7 +493,7 @@ public class TVDOTCOM {
 
 	    for (int i = 0; i < streams.length; i++) {
 		
-		FileUtil.writeToFile("getEpisodes"+i, streams[i]);
+		//FileUtil.writeToFile("getEpisodes"+i, streams[i]);
 		
 		data = streams[i];
 		startCheck = 0;
