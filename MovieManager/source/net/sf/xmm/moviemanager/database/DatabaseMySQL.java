@@ -754,55 +754,6 @@ public class DatabaseMySQL extends Database {
     	;
     }
     
-    /**
-     * Returns the Active_Additional_Info_Fields.
-     **/
-    public int [] getActiveAdditionalInfoFields() {
-	
-	String data = "";
-	String columnName = "Active_Additional_Info_Fields";
-	
-	try {
-	    ResultSet resultSet = _sql.executeQuery("SELECT Settings."+ columnName +" "+
-						    "FROM Settings "+
-						    "WHERE Settings.id=1;");
-	    
-	    if (resultSet.next() && resultSet.getString(columnName) != null) {
-		data = resultSet.getString(columnName);
-	    }
-	} catch (Exception e) {
-	    log.error("", e);
-	    checkErrorMessage(e);
-	} finally {
-	    /* Clears the Statement in the dataBase... */
-	    try {
-		_sql.clear();
-	    } catch (Exception e) {
-		log.error("", e);
-	    }
-	}
-	StringTokenizer tokenizer = new StringTokenizer(data, ":");
-	int [] activeFields = new int[tokenizer.countTokens()];
-    
-	if (activeFields.length == 0) {
-	    int counter = getAdditionalInfoFieldNames().size() + getExtraInfoFieldNames().size();
-	
-	    activeFields = new int[counter];
-	
-	    for (int i = 0; i < counter; i++) {
-		activeFields[i] = i;
-	    }
-	}
-	else {
-	    int counter = 0;
-	    while (tokenizer.hasMoreTokens()) {
-		activeFields[counter++] = Integer.parseInt(tokenizer.nextToken());
-	    }	    
-	}
-	/* Returns the data... */
-	return activeFields;
-    }
-    
     
     /**
      * Returns the additional_info with index index...

@@ -131,6 +131,7 @@ abstract public class Database {
      * Finalize...
      **/
     public void finalizeDatabase() {
+	
 	try {
 	    _sql.finalize();
 	    _initialized = false;
@@ -203,12 +204,12 @@ abstract public class Database {
 	String tempData = "";
 
 	recordCount = 0;
-
+	
 	try {
 	    ResultSet resultSet = _sql.executeQueryForwardOnly(query);
 	    ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
 	    ArrayList names = new ArrayList();
-
+	    
 	    data.append("  |-----\n");
 
 	    for (int i = 1; i <= resultSetMetaData.getColumnCount(); i++) {
@@ -238,7 +239,7 @@ abstract public class Database {
 		}
 		data.append("  |-----\n");
 	    }
-
+	    
 	    queryResult = data.toString();
 
 	} catch (Exception e) {
@@ -452,12 +453,18 @@ abstract public class Database {
 
 	String data = "";
 	String columnName = "Active Additional Info Fields";
-
+	String quote = "\"";
+	
+	if (this instanceof DatabaseMySQL) {
+	    columnName = "Active_Additional_Info_Fields";
+	    quote = "";
+	}
+	
 	try {
-	    ResultSet resultSet = _sql.executeQuery("SELECT \"Settings\".\""+ columnName +"\" "+
-						    "FROM \"Settings\" "+
-						    "WHERE \"Settings\".id=1;");
-
+	    ResultSet resultSet = _sql.executeQuery("SELECT " +quote+ "Settings" +quote+ "." +quote+ columnName +quote+ " "+
+						    "FROM " +quote+ "Settings" +quote+ " "+
+						    "WHERE " +quote+ "Settings" +quote+ ".id=1;");
+	    
 	    if (resultSet.next() && resultSet.getString(columnName) != null) {
 		data = resultSet.getString(columnName);
 	    }
@@ -479,13 +486,13 @@ abstract public class Database {
 	
 	int fieldCount = ModelAdditionalInfo.additionalInfoFieldCount + extraFields.size();
 	
-	int [] activeFields = new int[fieldCount];
+	ArrayList activeFields = new ArrayList(20);
 	
 	/* Nothing saved to 'active additional info fields' */
 	if (tokenizer.countTokens() == 0) {
 	    
 	    for (int i = 0; i < fieldCount; i++) {
-		activeFields[i] = i;
+		activeFields.add(new Integer(i));
 	    }
 	}
 	else {
@@ -498,15 +505,23 @@ abstract public class Database {
 		    
 		    if (tmp >= fieldCount)
 			log.error("Index:" + tmp + " ignored, value is greater than max: " + (tmp - 1));
-		    else
-			activeFields[index++] = tmp;
+		    else {
+			activeFields.add(new Integer(tmp));
+		    }
+		    //activeFields[index++] = tmp;
 		}
 	    } catch (NumberFormatException n) {
 		log.error("NumberFormatException: Invalid format in active additional info fields");
 	    }
 	}
+	
+	int [] toReturn = new int[activeFields.size()];
+	
+	for (int i = 0; i < toReturn.length; i++)
+	    toReturn[i] = ((Integer) activeFields.get(i)).intValue();
+	    
 	/* Returns the data... */
-	return activeFields;
+	return toReturn;
     }
 
 
@@ -606,7 +621,7 @@ abstract public class Database {
 
 
     /**
-     * Returns the additional_info with index index...
+     * Returns the additional_info string of this model
      **/
     public String getAdditionalInfoString(ModelAdditionalInfo model) {
 
@@ -623,7 +638,7 @@ abstract public class Database {
 	    int [] activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
 
 	    for (int i = 0; i < activeAdditionalInfoFields.length; i++) {
-
+		
 		switch (activeAdditionalInfoFields[i]) {
 
 		case 0: {
@@ -1110,18 +1125,18 @@ abstract public class Database {
 	String query = "SELECT " + quotedGeneralInfoString +".* "+ "FROM "+ quotedGeneralInfoString +" WHERE 1=0;";
 
 	try {
-	    //_sql.clear();
-
 	    ResultSet rs = _sql.executeQuery(query);
-
 	    ResultSetMetaData metaData = rs.getMetaData();
 
 	    for (int i = 1; i <= metaData.getColumnCount(); i++) {
-		if(!metaData.getColumnName(i).equalsIgnoreCase("ID")) {
-		    list.add(metaData.getColumnName(i));
+		if (!metaData.getColumnName(i).equalsIgnoreCase("ID")) {
+		    
+		    /* Personal rating not yet implemented */
+		    if (metaData.getColumnName(i).indexOf("ersonal") == -1) {
+			list.add(metaData.getColumnName(i));
+		    }
 		}
 	    }
-
 	} catch (Exception e) {
 	    log.error("Exception: ", e);
 	    checkErrorMessage(e);
