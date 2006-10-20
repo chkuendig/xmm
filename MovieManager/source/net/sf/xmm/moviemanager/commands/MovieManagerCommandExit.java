@@ -21,10 +21,11 @@
 package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.database.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import net.sf.xmm.moviemanager.database.*;
+import java.util.*;
 
 public class MovieManagerCommandExit implements ActionListener {
 
@@ -35,7 +36,9 @@ public class MovieManagerCommandExit implements ActionListener {
 	
 	MovieManager.getConfig().saveConfig();
 	
-	MovieManager.log.debug("Exit 1");
+	long time = System.currentTimeMillis();
+	
+	MovieManager.log.debug("Shutting down...");
 	
 	/* Finalizes the main frame... */
 	MovieManager.getIt().finalize();
@@ -43,15 +46,15 @@ public class MovieManagerCommandExit implements ActionListener {
 	Database db = MovieManager.getIt().getDatabase();
 	
 	if (db != null) {
-	    if (db instanceof DatabaseHSQL && db.isSetUp()) {
-		((DatabaseHSQL) db).shutDownDatabase("SHUTDOWN COMPACT;");
-	    }
 	    /* Finalizing database... */
 	    db.finalizeDatabase();
 	}
 	
-	MovieManager.log.debug("Exit 2");
-
+	MovieManager.log.debug("Finalizing " + db.getDatabaseType() + " database in " + (System.currentTimeMillis() - time) + " ms");
+	
+	/* Writes the date. */
+	MovieManager.log.debug("Log End: "+new Date(System.currentTimeMillis()));
+	
 	if (MovieManager.isApplet())
 	    MovieManager.applet.destroy();
 	else

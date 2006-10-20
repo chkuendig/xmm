@@ -1301,7 +1301,9 @@ public class DatabaseHSQL extends Database {
 	
 	/*Shutting down the HSQL database to be able to delete the files*/
 	shutDownDatabase("SHUTDOWN IMMEDIATELY;");
-	finalizeDatabase();
+	
+	super.finalizeDatabase();
+	
 	try {
 	    File f = new File(getPath()+".lck");
 	    f.delete();
@@ -1317,7 +1319,7 @@ public class DatabaseHSQL extends Database {
 	}
     }
     
-    /*called with query = "SHUTDOWN;" or "SHUTDOWN COMPACT;"*/
+    /* Called with query = "SHUTDOWN;" or "SHUTDOWN COMPACT; "*/
     public void shutDownDatabase(String query) {
 	
 	try {
@@ -1332,5 +1334,14 @@ public class DatabaseHSQL extends Database {
 		log.error("", e);
 	    }
 	}
+    }
+    
+    /**
+     * Finalize...
+     **/
+    public void finalizeDatabase() {
+	
+	shutDownDatabase("SHUTDOWN COMPACT;");
+	super.finalizeDatabase();
     }
 }

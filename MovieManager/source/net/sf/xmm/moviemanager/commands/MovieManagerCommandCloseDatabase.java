@@ -34,16 +34,15 @@ public class MovieManagerCommandCloseDatabase implements ActionListener {
 	
 	if (database != null) {
 	    
-	    if (database instanceof DatabaseHSQL && database.isSetUp()) {
-		((DatabaseHSQL) database).shutDownDatabase("SHUTDOWN COMPACT;");
-		/* Closes the open database... */
-	    }
+	    /* Closes the open database... */
 	    database.finalizeDatabase();
 	    
 	    MovieManager.getIt().getMoviesList().setModel(null);
 	    MovieManager.getIt().setDatabaseComponentsEnable(false);
 	    MovieManager.getIt().setAndShowEntries(-1);
 	    MovieManager.getIt().setDatabase(null, false);
+	    
+	    MovieManagerCommandSelect.execute();
 	    
 	    if (!MovieManager.getConfig().getDatabasePathPermanent())
 		MovieManager.getConfig().setDatabasePath("");
