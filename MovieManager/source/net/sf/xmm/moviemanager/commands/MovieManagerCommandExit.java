@@ -44,13 +44,16 @@ public class MovieManagerCommandExit implements ActionListener {
 	MovieManager.getIt().finalize();
 	
 	Database db = MovieManager.getIt().getDatabase();
+	String type = "";
 	
 	if (db != null) {
 	    /* Finalizing database... */
 	    db.finalizeDatabase();
+	
+	    type = db.getDatabaseType();
 	}
 	
-	MovieManager.log.debug("Finalizing " + db.getDatabaseType() + " database in " + (System.currentTimeMillis() - time) + " ms");
+	MovieManager.log.debug("Finalized " + type + " database in " + (System.currentTimeMillis() - time) + " ms.");
 	
 	/* Writes the date. */
 	MovieManager.log.debug("Log End: "+new Date(System.currentTimeMillis()));
