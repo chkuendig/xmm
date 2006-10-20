@@ -65,18 +65,6 @@ public class MovieManager extends JFrame implements ComponentListener {
      **/
     private Database _database;
 
-    
-    /**
-     * To the log file.
-     **/
-    private FileOutputStream _outStream;
-
-    /**
-     * To the redirected out printStream.
-     **/
-    private PrintStream _printStream;
-
-
     /*Number of entries in the list*/
     private int entries;
 
@@ -566,9 +554,6 @@ public class MovieManager extends JFrame implements ComponentListener {
 		    pwriter.close();
 		}
 	    }
-
-	    /* Writes the date. */
-	    log.info("Log Start: " + new Date(System.currentTimeMillis()));
 	} catch (Exception e) {
 	    log.error("Exception: " + e.getMessage());
 	}
@@ -1852,17 +1837,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      * Finalizes this object (closes the out streams and disposes).
      **/
     public void finalize() {
-	try {
-	    if (_outStream != null && _printStream != null) {
-		/* Writes the date. */
-		log.debug("Log End: "+new Date(System.currentTimeMillis()));
-		    /* Closes the streams. */
-		_outStream.close();
-		_printStream.close();
-	    }
-	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	}
+	
 	/* Disposes. */
 	dispose();
     }
@@ -2885,7 +2860,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	EventQueue.invokeLater(new Runnable() {
 		public final void run() {
-
+		    
 		    /* Disable HTTPClient logging output */
 		    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
 		    
@@ -2895,7 +2870,10 @@ public class MovieManager extends JFrame implements ComponentListener {
 			PropertyConfigurator.configure(configFile.getAbsolutePath());
 		    
 		    log = Logger.getRootLogger();
-
+		    
+		    /* Writes the date. */
+		    log.debug("Log Start: " + new Date(System.currentTimeMillis()));
+		    
 		     /* Loads the config */
 		    config.loadConfig();
 
