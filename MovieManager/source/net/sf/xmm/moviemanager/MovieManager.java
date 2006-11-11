@@ -46,7 +46,7 @@ public class MovieManager extends JFrame implements ComponentListener {
     /**
      * Reference to the only instance of MovieManagerConfig.
      **/
-    public static MovieManagerConfig config = new MovieManagerConfig();
+    public static MovieManagerConfig config;
 
     public static JApplet applet = null;
 
@@ -58,7 +58,7 @@ public class MovieManager extends JFrame implements ComponentListener {
     /**
      * The current version of the program.
      **/
-    private String _version = "2.40";
+    private String _version = "2.41";
 
     /**
      * The current database object.
@@ -99,14 +99,45 @@ public class MovieManager extends JFrame implements ComponentListener {
 	_movieManager = this;
 	MovieManager.applet = applet;
 
+	System.err.println("Codebase:" + MovieManager.applet.getCodeBase());
+	
 	EventQueue.invokeLater(new Runnable() {
 		public final void run() {
+		    
+		     /* Disable HTTPClient logging output */
+		    //System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+		    
+		    URL configFile = getFile("log4j.properties");
 
+		    System.err.println("loading:" + configFile.toString());
+		    
+		    PropertyConfigurator.configure(configFile);
+		    
+		    log = Logger.getRootLogger();
+		    
+		    /* Writes the date. */
+		    log.debug("Log Start: " + new Date(System.currentTimeMillis()));
+		    
+		    config = new MovieManagerConfig();
+
+		     /* Loads the config */
 		    config.loadConfig();
+
+		    /* Must be executed before the JFrame (MovieManager) object is created. */
+		    if (config.getDefaultLookAndFeelDecorated()) {
+			JFrame.setDefaultLookAndFeelDecorated(true);
+			JDialog.setDefaultLookAndFeelDecorated(true);
+		    }
+
+		  
+// 		    /* Installs the Look&Feels*/
+// 		    LookAndFeelManager.instalLAFs();
+
 		    /* Starts the MovieManager. */
-		    _movieManager.setUp();
+		    MovieManager.getIt().setUp();
+		    
 		    /* Loads the database. */
-		    _movieManager.loadDatabase();
+		    MovieManager.getIt().loadDatabase();
 		}
 	    });
 
@@ -563,7 +594,9 @@ public class MovieManager extends JFrame implements ComponentListener {
 	LookAndFeelManager.setLookAndFeel();
 
 	Toolkit.getDefaultToolkit().setDynamicLayout(true);
-	System.setProperty("sun.awt.noerasebackground", "true");
+
+	if (!MovieManager.isApplet())
+	    System.setProperty("sun.awt.noerasebackground", "true");
 
 	_movieManager.setTitle(" MeD's Movie Manager v" + _version);
 
@@ -2334,8 +2367,6 @@ public class MovieManager extends JFrame implements ComponentListener {
 	if (!config.getLoadDatabaseOnStartup())
 	    return;
 
-	log.debug("Start loading database.");
-
 	SwingWorker worker = new SwingWorker() {
 		SimpleProgressBar progressBar;
 
@@ -2347,7 +2378,9 @@ public class MovieManager extends JFrame implements ComponentListener {
 		    if (databasePath == null || databasePath.equals("null")) {
 			return null;
 		    }
-
+		    
+		    log.debug("Start loading database.");
+		    
 		    if (!databasePath.equals("")) {
 
 			/* If not, no database type specified */
@@ -2873,6 +2906,9 @@ public class MovieManager extends JFrame implements ComponentListener {
 		    
 		    /* Writes the date. */
 		    log.debug("Log Start: " + new Date(System.currentTimeMillis()));
+		    
+		    
+		    config = new MovieManagerConfig();
 		    
 		     /* Loads the config */
 		    config.loadConfig();
