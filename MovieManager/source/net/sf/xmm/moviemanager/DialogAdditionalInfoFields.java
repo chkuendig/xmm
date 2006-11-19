@@ -466,25 +466,26 @@ public class DialogAdditionalInfoFields extends JDialog {
 	if (selectedIndex != -1) {
 	    /* Gets the field to remove... */
 	    String field = (String)((DefaultListModel)getActiveFields().getModel()).getElementAt(selectedIndex);
+	    
 	     /* Removes the field from the add list... */
-	    if(_toAdd.contains(field)) {
+	    if (_toAdd.contains(field)) {
 		_toAdd.remove(field);
 	    }
 	    
 	    /* Adds the field to the remove list if it exists in the original... */
-	    if(!_toRemove.contains(field) && _originalExtraList.contains(field)) {
+	    if (!_toRemove.contains(field) && _originalExtraList.contains(field)) {
 		_toRemove.add(field);
-		
-		/* Removes the field from the active fields list */
-		((DefaultListModel)getActiveFields().getModel()).remove(selectedIndex);
-		
-		if (selectedIndex == ((DefaultListModel)getActiveFields().getModel()).size())
-		    getActiveFields().setSelectedIndex(--selectedIndex);
-		else
-		    getActiveFields().setSelectedIndex(selectedIndex);
-		
-		getActiveFields().ensureIndexIsVisible(selectedIndex);
 	    }
+	    
+	    /* Removes the field from the active fields list */
+	    ((DefaultListModel) getActiveFields().getModel()).remove(selectedIndex);
+	    
+	    if (selectedIndex == ((DefaultListModel)getActiveFields().getModel()).size())
+		    getActiveFields().setSelectedIndex(--selectedIndex);
+	    else
+		getActiveFields().setSelectedIndex(selectedIndex);
+	    
+	    getActiveFields().ensureIndexIsVisible(selectedIndex);
 	}
     }
 
@@ -498,11 +499,11 @@ public class DialogAdditionalInfoFields extends JDialog {
 	/* If it isn't an empty string and does not exist in the active list... */
 	if (!field.equals("") && !containsIgnoreCase(getActiveFields(), field)) {
 	    /* Adds the field to the add list if it doesn't exists in the original... */
-	    if(!_toAdd.contains(field) && !_originalExtraList.contains(field)) {
+	    if (!_toAdd.contains(field) && !_originalExtraList.contains(field)) {
 		_toAdd.add(field);
 	    }
 	    /* Removes it from the remove list if it exists in the original list... */
-	    if(_toRemove.contains(field)) {
+	    if (_toRemove.contains(field)) {
 		_toRemove.remove(field);
 	    }
 	    /* Adds the field to the active fields list */
@@ -534,13 +535,16 @@ public class DialogAdditionalInfoFields extends JDialog {
 	for (int i = 0; i < _toRemove.size(); i++) {
 	    MovieManager.getIt().getDatabase().removeExtraInfoFieldName((String)_toRemove.get(i));
 	    fieldsList.remove(_toRemove.get(i));
-
+	    System.err.println("removes from db:" + _toRemove.get(i));
 	}
 	
 	/* Adds to database... */
 	for (int i = 0; i < _toAdd.size(); i++) {
-	    if ((MovieManager.getIt().getDatabase().addExtraInfoFieldName((String)_toAdd.get(i))) == 1)
+	    
+	    if ((MovieManager.getIt().getDatabase().addExtraInfoFieldName((String)_toAdd.get(i))) == 1) {
 		fieldsList.add(_toAdd.get(i));
+		System.err.println("removes from db:" + _toAdd.get(i));
+	    }
 	    else {
 		MovieManager.getIt().getDatabase().removeExtraInfoFieldName((String)_toAdd.get(i));
 		listActive.removeElement(_toAdd.get(i));
@@ -560,7 +564,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 	MovieManager.getIt().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
 	MovieManager.getIt().getDatabase().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
 	
-	/* Means the fields must be updated */
+	/* Means the fields in the ModelAdditionalInfo must be updated */
 	if (_toRemove.size() != 0 || _toAdd.size() != 0) {
 	    ModelAdditionalInfo.setHasOldExtraInfoFieldNames(true);
 	}
