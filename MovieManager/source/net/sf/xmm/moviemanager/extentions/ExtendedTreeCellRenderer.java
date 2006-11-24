@@ -1,5 +1,5 @@
 /**
- * @(#)ExtendedTreeCellRenderer.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)ExtendedTreeCellRenderer.java 1.0 24.11.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  *
@@ -33,12 +33,12 @@ import javax.swing.event.*;
 import java.awt.event.*;
 import java.beans.*;
 
-
 import net.sf.xmm.moviemanager.*;
 import net.sf.xmm.moviemanager.database.*;
 import net.sf.xmm.moviemanager.models.*;
+import net.sf.xmm.moviemanager.util.*;
 
-public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer, ComponentListener {
+public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer, ComponentListener, NewDatabaseLoadedEventListener {
     
     
     private HashMap coverCache = new HashMap();
@@ -72,7 +72,7 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
     
     
     /**
-     * ExtendedTreeCellRenderer constrictor
+     * ExtendedTreeCellRenderer constructor
      *
      * @param mm MovieManager
      * @param scrollPane - JScrollPane containing JTree
@@ -89,8 +89,14 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
         setOpaque(true);
 	
 	scrollPane.addComponentListener(this);
+
+	MovieManager.getIt().newDbHandler.addNewDatabaseLoadedEventListener(this);
     }
     
+    public void newDatabaseLoadedEvent(NewDatabaseLoadedEvent evt) {
+	folder = null;
+    }
+
     public void	componentHidden(ComponentEvent e) {}
     public void	componentMoved(ComponentEvent e) {}
     public void	componentShown(ComponentEvent e){}
@@ -221,19 +227,15 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
      */
     private Icon loadCover(ModelEntry entry) {
         if (folder == null) {
-            folder = config.getCoversFolder();
-            String dirSep = MovieManager.getDirSeparator();
-            if (!folder.endsWith(dirSep)) {
-                folder += dirSep;
-            }
-        }
+            folder = config.getCoversPath();
+	}
 
         int h = config.getMovieListRowHeight();
         int w = h * 32 / 44; // hardcoded aspect ratio
-
-        if (mm.getDatabase() instanceof DatabaseMySQL) {
-            if (config.getStoreCoversLocally() && new File(folder + entry.getCover()).exists()) {
-                return new ImageIcon(mm.getImage(folder + entry.getCover()).getScaledInstance(w, h, Image.SCALE_SMOOTH));
+	
+	if (mm.getDatabase() instanceof DatabaseMySQL) {
+            if (config.getStoreCoversLocally() && new File(folder, entry.getCover()).exists()) {
+                return new ImageIcon(mm.getImage(folder + File.separator + entry.getCover()).getScaledInstance(w, h, Image.SCALE_SMOOTH));
             }
             else {
                 byte[] coverData = entry.getCoverData();
@@ -246,9 +248,9 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
                 }
             }
         }
-        else if ( (new File(folder + entry.getCover()).exists())) {
+        else if ( (new File(folder, entry.getCover()).exists())) {
             /* Loads the image... */
-            return new ImageIcon(mm.getImage(folder + entry.getCover()).getScaledInstance(w, h, Image.SCALE_SMOOTH));
+            return new ImageIcon(mm.getImage(folder + File.separator + entry.getCover()).getScaledInstance(w, h, Image.SCALE_SMOOTH));
         }
         else {
             return null;
