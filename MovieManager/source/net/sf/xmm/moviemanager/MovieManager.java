@@ -50,6 +50,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
     public static JApplet applet = null;
 
+	public NewDatabaseLoadedHandler newDbHandler = new NewDatabaseLoadedHandler();
     /**
      * Reference to the only instance of MovieManager.
      **/
