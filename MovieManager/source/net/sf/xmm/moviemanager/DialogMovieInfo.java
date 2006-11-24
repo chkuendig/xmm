@@ -1283,7 +1283,7 @@ public class DialogMovieInfo extends JDialog {
 	    if (!_cover.equals("")) {
 		/* Gets the full path for the cover... */
 		
-		File cover = new File(MovieManager.getConfig().getCoversFolder(), _cover);
+		File cover = new File(MovieManager.getConfig().getCoversPath(), _cover);
 		
 		if (MovieManager.getIt().getDatabase() instanceof DatabaseMySQL) {
 		    

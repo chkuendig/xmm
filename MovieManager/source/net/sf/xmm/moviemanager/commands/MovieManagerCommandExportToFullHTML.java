@@ -122,8 +122,7 @@ public class MovieManagerCommandExportToFullHTML {
 	    String aBitrate = "aBitrate";
 	    String aChannels = "aChannels";
 	    String plot = "plot";
-	    String coversDBFolder;
-	    coversDBFolder = MovieManager.getConfig().getCoversFolder();
+	    String coversDBFolder = MovieManager.getConfig().getCoversPath();
 	    
 	    String lastStart = null;
 	    

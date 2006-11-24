@@ -45,7 +45,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
         this.defaultCoverImageURL = defaultCoverImageURL;
         this.testmode = testmode;
         this.mySQL = MovieManager.getIt().getDatabase() instanceof DatabaseMySQL;
-        this.coversFolder = MovieManager.getIt().getConfig().getCoversFolder();
+        this.coversFolder = MovieManager.getIt().getConfig().getCoversPath();
 
         if (sortField != null && sortField.length() > 0 && !sortField.equalsIgnoreCase("none")) {
             Collections.sort(movies, new MovieComparator(sortField));
