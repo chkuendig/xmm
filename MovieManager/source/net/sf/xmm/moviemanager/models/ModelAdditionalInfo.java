@@ -50,6 +50,8 @@ public class ModelAdditionalInfo {
     static private ArrayList extraInfoFieldNames = null;
     private ArrayList extraInfoFieldValues = new ArrayList();
     
+    public ModelAdditionalInfo() {}
+
     /**
      * The constructor.
      **/

@@ -34,7 +34,7 @@ public class ModelEpisode extends ModelEntry {
     /**
      * The constructor.
      **/
-    public ModelEpisode(int key, int movieKey, int episodeNumber, String urlKey, String cover, String date, String title, String directed_by, String written_by, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String webSoundMix, String webRuntime, String awards) {
+    public ModelEpisode(int key, int movieKey, int episodeNumber, String urlKey, String cover, String date, String title, String directedBy, String writtenBy, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String webSoundMix, String webRuntime, String awards) {
 	
 	this.key = key;
 	this.movieKey = movieKey;
@@ -43,8 +43,8 @@ public class ModelEpisode extends ModelEntry {
 	this.cover = cover;
 	this.date = date;
 	this.title = title;
-	this.directed_by = directed_by;
-	this.written_by = written_by;
+	this.directedBy = directedBy;
+	this.writtenBy = writtenBy;
 	this.genre = genre;
  	this.rating = rating;
 	this.plot = plot;
@@ -95,8 +95,8 @@ public class ModelEpisode extends ModelEntry {
 	this.coverData = model.getCoverData();
 	this.date = model.getDate();
 	this.title = model.getTitle();
-	this.directed_by = model.getDirectedBy();
-	this.written_by = model.getWrittenBy();
+	this.directedBy = model.getDirectedBy();
+	this.writtenBy = model.getWrittenBy();
 	this.genre = model.getGenre();
  	this.rating = model.getRating();
 	this.plot = model.getPlot();

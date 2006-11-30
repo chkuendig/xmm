@@ -32,8 +32,8 @@ abstract public class ModelEntry {
     protected String cover = "";
     protected String title = "";
     protected String date = "";
-    protected String directed_by = "";
-    protected String written_by = "";
+    protected String directedBy = "";
+    protected String writtenBy = "";
     protected String genre = "";
     protected String rating = "";
     protected String plot = "";
@@ -150,21 +150,21 @@ abstract public class ModelEntry {
     }
     
     public String getDirectedBy() {
-	if (directed_by == null)
+	if (directedBy == null)
 	    return "";
-	return directed_by;
+	return directedBy;
     }
     
-    public void setDirectedBy(String directed_by) {
-	this.directed_by = directed_by;
+    public void setDirectedBy(String directedBy) {
+	this.directedBy = directedBy;
     }
     
     public String getWrittenBy() {
-	return written_by;
+	return writtenBy;
     }
 
-    public void setWrittenBy(String written_by) {
-	this.written_by = written_by;
+    public void setWrittenBy(String writtenBy) {
+	this.writtenBy = writtenBy;
     }
     
     public String getGenre() {

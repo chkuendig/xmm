@@ -23,19 +23,22 @@ package net.sf.xmm.moviemanager.models;
 import net.sf.xmm.moviemanager.MovieManager;
 
 public class ModelMovie extends ModelEntry {
-
+    
+    
+    public ModelMovie() {}
+    
     /**
      * The constructor.
      **/
-    public ModelMovie(int key, String urlKey, String cover, String date, String title, String directed_by, String written_by, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String mpaa, String webSoundMix, String webRuntime, String awards) {
+    public ModelMovie(int key, String urlKey, String cover, String date, String title, String directedBy, String writtenBy, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String mpaa, String webSoundMix, String webRuntime, String awards) {
 
 	this.key = key;
 	this.urlKey = urlKey;
 	this.cover = cover;
 	this.date = date;
 	this.title = title;
-	this.directed_by = directed_by;
-	this.written_by = written_by;
+	this.directedBy = directedBy;
+	this.writtenBy = writtenBy;
 	this.genre = genre;
  	this.rating = rating;
 	this.plot = plot;
@@ -74,8 +77,8 @@ public class ModelMovie extends ModelEntry {
 	this.cover = model.getCover();
 	this.date = model.getDate();
 	this.title = model.getTitle();
-	this.directed_by = model.getDirectedBy();
-	this.written_by = model.getWrittenBy();
+	this.directedBy = model.getDirectedBy();
+	this.writtenBy = model.getWrittenBy();
 	this.genre = model.getGenre();
  	this.rating = model.getRating();
 	this.plot = model.getPlot();
