@@ -22,6 +22,7 @@ package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.DialogAlert;
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.event.ActionEvent;
@@ -33,7 +34,7 @@ public class MovieManagerCommandHelp implements ActionListener {
    * Executes the command.
    **/
   protected static void execute() {
-      DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Help", "Try out the Online Help  ;-)");
+      DialogAlert alert = new DialogAlert(MovieManager.getIt(), Localizer.getString("MovieManagerCommandHelp.alert.help.title"), Localizer.getString("MovieManagerCommandHelp.alert.help.message"));
       //alert.setVisible(true);
       ShowGUI.show(alert, true);
   }
@@ -42,7 +43,7 @@ public class MovieManagerCommandHelp implements ActionListener {
    * Invoked when an action occurs.
    **/
   public void actionPerformed(ActionEvent event) {
-    MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
+    MovieManager.log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
     execute();
   }
 

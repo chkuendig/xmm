@@ -22,6 +22,7 @@ package net.sf.xmm.moviemanager;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
+import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.*;
@@ -112,11 +113,11 @@ public class DialogFolders extends JDialog implements ItemListener {
 		}
 	    };
     
-	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-	getRootPane().getActionMap().put("ESCAPE", escapeAction);
+	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+	getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
     
 	/* Dialog properties...*/
-	setTitle("Folders");
+	setTitle(Localizer.getString("DialogFolders.title")); //$NON-NLS-1$
 	setModal(true);
 	setResizable(true);
 	
@@ -127,7 +128,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	GridBagConstraints constraints;
         
 	/*Covers*/
-	JLabel labelCovers = new JLabel("Covers Folder");
+	JLabel labelCovers = new JLabel(Localizer.getString("DialogFolders.label-covers")); //$NON-NLS-1$
 	labelCovers.setFont(new Font(labelCovers.getFont().getName(),Font.PLAIN,labelCovers.getFont().getSize()));
 	constraints = new GridBagConstraints();
 	constraints.gridx = 0;
@@ -143,13 +144,13 @@ public class DialogFolders extends JDialog implements ItemListener {
 	constraints.insets = new Insets(5,5,5,5);
 	panelFolders.add(textFieldCovers,constraints);
 	
-	JButton buttonCovers = new JButton("Browse");
-	buttonCovers.setToolTipText("Browse to get the desired Covers folder");
-	buttonCovers.setActionCommand("Folders - Browse Covers");
+	JButton buttonCovers = new JButton(Localizer.getString("DialogFolders.browse-covers")); //$NON-NLS-1$
+	buttonCovers.setToolTipText(Localizer.getString("DialogFolders.browse-covers-tooltip")); //$NON-NLS-1$
+	buttonCovers.setActionCommand("Folders - Browse Covers"); //$NON-NLS-1$
 	buttonCovers.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: " + event.getActionCommand());
-		    executeCommandBrowse("Select Covers Directory");
+		    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
+		    executeCommandBrowse(Localizer.getString("DialogFolders.selectCoversDir")); //$NON-NLS-1$
 		}});
 	constraints = new GridBagConstraints();
 	constraints.gridx = 3;
@@ -158,7 +159,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	panelFolders.add(buttonCovers,constraints); 
     
 	/*Queries*/
-	JLabel labelQueries = new JLabel("Queries Folder");
+	JLabel labelQueries = new JLabel(Localizer.getString("DialogFolders.label-queries")); //$NON-NLS-1$
 	labelQueries.setFont(new Font(labelQueries.getFont().getName(),Font.PLAIN,labelQueries.getFont().getSize()));
 	constraints = new GridBagConstraints();
 	constraints.gridx = 0;
@@ -178,13 +179,13 @@ public class DialogFolders extends JDialog implements ItemListener {
 	
 	
 	    
-	JButton buttonQueries = new JButton("Browse");
-	buttonQueries.setToolTipText("Browse to get the desired Queries folder");
-	buttonQueries.setActionCommand("Folders - Browse Queries");
+	JButton buttonQueries = new JButton(Localizer.getString("DialogFolders.browse-queries")); //$NON-NLS-1$
+	buttonQueries.setToolTipText(Localizer.getString("DialogFolders.browse-queries-tooltip")); //$NON-NLS-1$
+	buttonQueries.setActionCommand("Folders - Browse Queries"); //$NON-NLS-1$
 	buttonQueries.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: " + event.getActionCommand());
-		    executeCommandBrowse("Select Queries Directory");
+		    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
+		    executeCommandBrowse(Localizer.getString("DialogFolders.selectQueriesDir")); //$NON-NLS-1$
 		}});
 	constraints = new GridBagConstraints();
 	constraints.gridx = 3;
@@ -194,7 +195,7 @@ public class DialogFolders extends JDialog implements ItemListener {
      	panelFolders.add(buttonQueries,constraints);
         
 	/* Database */
-	JLabel labelDatabase = new JLabel("Current Database");
+	JLabel labelDatabase = new JLabel(Localizer.getString("DialogFolders.current-database")); //$NON-NLS-1$
 	labelDatabase.setFont(new Font(labelDatabase.getFont().getName(),Font.PLAIN,labelDatabase.getFont().getSize()));
 	constraints = new GridBagConstraints();
 	constraints.gridx = 0;
@@ -215,13 +216,13 @@ public class DialogFolders extends JDialog implements ItemListener {
 
 	JLabel labelDatabaseType = new JLabel();
 	if (MovieManager.getIt().getDatabase() instanceof DatabaseAccess)
-	    labelDatabaseType.setText("  MS Access Database");
+	    labelDatabaseType.setText("  MS Access Database"); //$NON-NLS-1$
 	else if (MovieManager.getIt().getDatabase() instanceof DatabaseHSQL)
-	    labelDatabaseType.setText("     HSQL Database");
+	    labelDatabaseType.setText("     HSQL Database"); //$NON-NLS-1$
 	else if (MovieManager.getIt().getDatabase() instanceof DatabaseMySQL)
-	    labelDatabaseType.setText("     MySQL Database");
+	    labelDatabaseType.setText("     MySQL Database"); //$NON-NLS-1$
 	else
-	    labelDatabaseType.setText("     Database");
+	    labelDatabaseType.setText(Localizer.getString("DialogFolders.database-label")); //$NON-NLS-1$
 
 	labelDatabaseType.setFont(new Font(labelDatabase.getFont().getName(),Font.BOLD,labelDatabase.getFont().getSize()));
 	constraints = new GridBagConstraints();
@@ -233,7 +234,7 @@ public class DialogFolders extends JDialog implements ItemListener {
     
 	
 
-	JLabel labelLoadDatabase = new JLabel("Load Database:");
+	JLabel labelLoadDatabase = new JLabel(Localizer.getString("DialogFolders.load-database")); //$NON-NLS-1$
 	labelLoadDatabase.setFont(new Font(labelLoadDatabase.getFont().getName(),Font.PLAIN, labelLoadDatabase.getFont().getSize()));
 	constraints = new GridBagConstraints();
 	constraints.gridx = 0;
@@ -251,8 +252,8 @@ public class DialogFolders extends JDialog implements ItemListener {
 	constraints.insets = new Insets(5,5,5,5);
 	panelFolders.add(textFieldLoadDatabase, constraints);
 	
-	setPermanentDatabase = new JCheckBox("Set Permanent");
-	setPermanentDatabase.setToolTipText("Any databases opened after this is selected will not be saved to the config file");
+	setPermanentDatabase = new JCheckBox(Localizer.getString("DialogFolders.set-permanent")); //$NON-NLS-1$
+	setPermanentDatabase.setToolTipText(Localizer.getString("DialogFolders.set-permanent-tooltip")); //$NON-NLS-1$
 	
 	if (MovieManager.getConfig().getDatabasePathPermanent())
 	    setPermanentDatabase.setSelected(true);
@@ -277,7 +278,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	JPanel panelOptions = new JPanel(new GridBagLayout());
 	panelOptions.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
 	
-	JLabel optionTitle = new JLabel("Save paths relative to:");
+	JLabel optionTitle = new JLabel(Localizer.getString("DialogFolders.save-paths-relative-to")); //$NON-NLS-1$
 	constraints = new GridBagConstraints();
 	constraints.gridx = 0;
 	constraints.gridy = 0;
@@ -286,7 +287,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	constraints.anchor = GridBagConstraints.WEST;
 	panelOptions.add(optionTitle, constraints);
 	
-	optionCovers = new JLabel("Covers");
+	optionCovers = new JLabel(Localizer.getString("DialogFolders.covers")); //$NON-NLS-1$
 	optionCovers.setEnabled(false);
 	constraints = new GridBagConstraints();
 	constraints.gridx = 1;
@@ -295,7 +296,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	constraints.anchor = GridBagConstraints.WEST;
 	panelOptions.add(optionCovers, constraints);
 	
-	optionQueries = new JLabel("Queries");
+	optionQueries = new JLabel(Localizer.getString("DialogFolders.queries")); //$NON-NLS-1$
 	optionQueries.setEnabled(false);
 	constraints = new GridBagConstraints();
 	constraints.gridx = 2;
@@ -304,7 +305,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	constraints.anchor = GridBagConstraints.WEST;
 	panelOptions.add(optionQueries, constraints);
 
-	optionDatabase = new JLabel("Database");
+	optionDatabase = new JLabel(Localizer.getString("DialogFolders.database")); //$NON-NLS-1$
 	optionDatabase.setEnabled(false);
 	constraints = new GridBagConstraints();
 	constraints.gridx = 3;
@@ -313,7 +314,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	constraints.anchor = GridBagConstraints.WEST;
 	panelOptions.add(optionDatabase, constraints);
 	
-	JLabel optionProgramLocation = new JLabel("Program Location");
+	JLabel optionProgramLocation = new JLabel(Localizer.getString("DialogFolders.program-location")); //$NON-NLS-1$
 	constraints = new GridBagConstraints();
 	constraints.gridx = 0;
 	constraints.gridy = 1;
@@ -354,7 +355,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	constraints.anchor = GridBagConstraints.CENTER;
 	panelOptions.add(relativeDatabaseProgram, constraints);
 	
-	JLabel optionDatabaseLocation = new JLabel("Database Location");
+	JLabel optionDatabaseLocation = new JLabel(Localizer.getString("DialogFolders.database-location")); //$NON-NLS-1$
 	constraints = new GridBagConstraints();
 	constraints.gridx = 0;
 	constraints.gridy = 2;
@@ -383,7 +384,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	panelOptions.add(relativeQueriesDatabase, constraints);
 	
 	
-	JLabel relativeEnable = new JLabel("Enable");
+	JLabel relativeEnable = new JLabel(Localizer.getString("DialogFolders.enable")); //$NON-NLS-1$
 	constraints = new GridBagConstraints();
 	constraints.gridx = 0;
 	constraints.gridy = 3;
@@ -471,18 +472,18 @@ public class DialogFolders extends JDialog implements ItemListener {
 	JPanel panelButtons = new JPanel();
 	panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 	panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
-	JButton buttonSave = new JButton("Save");
-	buttonSave.setToolTipText("Save changes");
-	buttonSave.setActionCommand("Folders - Save");
+	JButton buttonSave = new JButton(Localizer.getString("DialogFolders.save")); //$NON-NLS-1$
+	buttonSave.setToolTipText(Localizer.getString("DialogFolders.save-changes")); //$NON-NLS-1$
+	buttonSave.setActionCommand("Folders - Save"); //$NON-NLS-1$
 	buttonSave.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: " + event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 		    executeCommandSave();
 		}});
 	panelButtons.add(buttonSave);
-	JButton buttonCancel = new JButton("Cancel");
-	buttonCancel.setToolTipText("Discard changes");
-	buttonCancel.setActionCommand("Folders - Cancel");
+	JButton buttonCancel = new JButton(Localizer.getString("DialogFolders.cancel")); //$NON-NLS-1$
+	buttonCancel.setToolTipText(Localizer.getString("DialogFolders.cancel-tooltip")); //$NON-NLS-1$
+	buttonCancel.setActionCommand("Folders - Cancel"); //$NON-NLS-1$
 	buttonCancel.addActionListener(new CommandDialogDispose(this));
 	panelButtons.add(buttonCancel);
 	
@@ -547,16 +548,14 @@ public class DialogFolders extends JDialog implements ItemListener {
 	    if (relativeCoversProgram.isSelected()) {
 		
 		if ((coversPath.indexOf(MovieManager.getUserDir()) == -1) && (!new File(MovieManager.getUserDir()+ coversPath).isDirectory())) {
-		    DialogAlert alert = new DialogAlert(this, "Alert", "Current options demand that the covers directory must be located inside the install directory when using relative path");
-		    //alert.setVisible(true);
+		    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.covers-inside-install.message")); 
 		    ShowGUI.showAndWait(alert, true);
 		    return;
 		}
 		
-		if (coversPath.equals("") || !(coversFolder = new File(coversPath)).isDirectory()) {
-		    if (coversPath.equals("") || !(coversFolder = new File(MovieManager.getUserDir()+ coversPath)).isDirectory()) {
-			DialogAlert alert = new DialogAlert(this, "Alert","Covers directory does not exist");
-			//alert.setVisible(true);
+		if (coversPath.equals("") || !(coversFolder = new File(coversPath)).isDirectory()) { //$NON-NLS-1$
+		    if (coversPath.equals("") || !(coversFolder = new File(MovieManager.getUserDir()+ coversPath)).isDirectory()) { //$NON-NLS-1$
+			DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"),Localizer.getString("DialogFolders.alert-covers-exist")); 
 			ShowGUI.showAndWait(alert, true);
 			return;
 		    }
@@ -572,8 +571,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 		dbPath = dbPath.substring(0, dbPath.lastIndexOf(MovieManager.getDirSeparator()));
 		
 		if ((coversPath.indexOf(dbPath) == -1) && (!new File(dbPath + MovieManager.getDirSeparator() + coversPath).isDirectory())) {
-		    DialogAlert alert = new DialogAlert(this, "Alert", "Current options demand that the covers directory must be located relative to the database");
-		    //alert.setVisible(true);
+		    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert-covers-relative-database")); 
 		    ShowGUI.showAndWait(alert, true);
 		    return;
 		}
@@ -588,8 +586,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	    coversFolder = new File(coversPath);
 	    
 	    if(!coversFolder.isDirectory()) {
-		DialogAlert alert = new DialogAlert(this, "Alert","Covers directory does not exist");
-		//alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"),Localizer.getString("DialogFolders.alert.covers-doesnt-exist.message")); 
 		ShowGUI.showAndWait(alert, true);
 		return;
 	    }
@@ -606,16 +603,14 @@ public class DialogFolders extends JDialog implements ItemListener {
 		
 		if (queriesPath.indexOf(MovieManager.getUserDir()) == -1 && !(new File(MovieManager.getUserDir(), queriesPath)).isDirectory()) {
 		    
-		    DialogAlert alert = new DialogAlert(this, "Alert", "Queries directory must be located inside the install directory when using relative path");
-		    //alert.setVisible(true);
+		    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.queries-inside-install.message")); 
 		    ShowGUI.showAndWait(alert, true);
 		    return;
 		}
 		
-		if (queriesPath.equals("") || !(queriesFolder = new File(queriesPath)).isDirectory()) {
-		    if (queriesPath.equals("") || !(queriesFolder = new File(MovieManager.getUserDir(), queriesPath)).isDirectory()) {
-			DialogAlert alert = new DialogAlert(this, "Alert", "Queries directory does not exist");
-			//alert.setVisible(true);
+		if (queriesPath.equals("") || !(queriesFolder = new File(queriesPath)).isDirectory()) { //$NON-NLS-1$
+		    if (queriesPath.equals("") || !(queriesFolder = new File(MovieManager.getUserDir(), queriesPath)).isDirectory()) { //$NON-NLS-1$
+			DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.queries-doesnt-exist.message")); 
 			ShowGUI.showAndWait(alert, true);
 			return;
 		    }
@@ -631,8 +626,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 		dbPath = dbPath.substring(0, dbPath.lastIndexOf(MovieManager.getDirSeparator()));
 		
 		if ((queriesPath.indexOf(dbPath) == -1) && (!new File(dbPath, queriesPath).isDirectory())) {
-		    DialogAlert alert = new DialogAlert(this, "Alert", "Current options demand that the queries directory must be located relative to the database");
-		    //alert.setVisible(true);
+		    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.message"), Localizer.getString("DialogFolders.alert.queries-relative-database.message")); 
 		    ShowGUI.showAndWait(alert, true);
 		    return;
 		}
@@ -647,8 +641,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	    queriesFolder = new File(queriesPath);
 	    
 	    if(!queriesFolder.isDirectory()) {
-		DialogAlert alert = new DialogAlert(this, "Alert","Queries directory does not exist");
-		//alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert"),Localizer.getString("DialogFolders.alert.message.queries-doesnt-exist")); 
 		ShowGUI.showAndWait(alert, true);
 		return;
 	    }
@@ -661,8 +654,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	    String databasePath = MovieManager.getConfig().getDatabasePath(true);
 	    
 	    if (databasePath.indexOf(MovieManager.getUserDir()) == -1) {
-		DialogAlert alert = new DialogAlert(this, "Alert", "Database must be located inside the install directory when using relative path");
-		//alert.setVisible(true);
+		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.database-relative-install.message")); 
 		ShowGUI.showAndWait(alert, true);
 		return;
 	    }
@@ -697,7 +689,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	if (source.equals(setPermanentDatabase)) {
 	    
 	    String databaseType = MovieManager.getIt().getDatabase().getDatabaseType();
-	    textFieldLoadDatabase.setText(databaseType+ ">" +textFieldDatabase.getText());
+	    textFieldLoadDatabase.setText(databaseType+ ">" +textFieldDatabase.getText()); //$NON-NLS-1$
 	}
 	
 	boolean value = false;
@@ -746,7 +738,7 @@ public class DialogFolders extends JDialog implements ItemListener {
     private void executeCommandBrowse(String title) {
 	JTextField textField;
 	/* Gets the right JTextField. */
-	if (title.equals("Select Covers Directory")) {
+	if (title.equals(Localizer.getString("DialogFolders.selectCoversDir"))) {
 	    textField = getCovers();
 	} else {
 	    textField = getQueries();
@@ -755,14 +747,14 @@ public class DialogFolders extends JDialog implements ItemListener {
 	/*The Oyoaha theme wouldn't set the file name in the name texField so a contructor accepting current dir and selection mode takes care of that*/
 	ExtendedFileChooser fileChooser;
 	
-	if (title.equals("Select Covers Directory"))
+	if (title.equals(Localizer.getString("DialogFolders.selectCoversDir")))
 	    fileChooser = new ExtendedFileChooser(MovieManager.getConfig().getCoversFolder(), ExtendedFileChooser.DIRECTORIES_ONLY);
 	else
 	    fileChooser = new ExtendedFileChooser(MovieManager.getConfig().getQueriesFolder(), ExtendedFileChooser.DIRECTORIES_ONLY);
 	
 	fileChooser.setDialogTitle(title);
-	fileChooser.setApproveButtonText("Select");
-	fileChooser.setApproveButtonToolTipText("Select this folder");
+	fileChooser.setApproveButtonText(Localizer.getString("DialogFolders.fileChooser.approve.text"));
+	fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogFolders.filechooser.approve.tooltip"));
 	fileChooser.setAcceptAllFileFilterUsed(false);
 	
 	int returnVal = fileChooser.showOpenDialog(MovieManager.getIt());

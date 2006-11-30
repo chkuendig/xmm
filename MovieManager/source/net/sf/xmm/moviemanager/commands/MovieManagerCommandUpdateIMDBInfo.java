@@ -23,6 +23,7 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.DialogUpdateIMDbInfo;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelImportSettings;
+import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.event.*;
@@ -43,7 +44,7 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
     void createAndShowGUI() {
 	
 	/* Owner, title, modal=true */
-	dbImporter = new JDialog(MovieManager.getIt(), "IMDb Info Updater", true);
+	dbImporter = new JDialog(MovieManager.getIt(), Localizer.getString("MovieManagerCommandUpdateIMDBInfo.dialog-imdb-info-updater.title"), true); //$NON-NLS-1$
 	dbImporter.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	
 	final JComponent newContentPane = new DialogUpdateIMDbInfo(this, dbImporter);
@@ -73,8 +74,8 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
 		}
 	    };
 	
-	dbImporter.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-	dbImporter.getRootPane().getActionMap().put("ESCAPE", escapeAction);
+	dbImporter.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+	dbImporter.getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 	
 	MovieManager mm = MovieManager.getIt();
 	
@@ -120,7 +121,7 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
      * Invoked when an action occurs.
      **/
     public void actionPerformed(ActionEvent event) {
-	MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
+	MovieManager.log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 	execute();
     }
 }

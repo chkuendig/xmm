@@ -42,6 +42,7 @@ import javax.swing.Timer;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.database.DatabaseAccess;
 import net.sf.xmm.moviemanager.database.DatabaseConverter;
+import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
 
@@ -60,7 +61,7 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
     
     private DatabaseConverter databaseConverter;
     private JTextArea taskOutput;
-    private String newline = "\n";
+    private String newline = "\n"; //$NON-NLS-1$
     Database newDatabase;
     ListModel movieListModel;
     ArrayList episodeList;
@@ -81,23 +82,23 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 	
 	databaseConverter = new DatabaseConverter(movieListModel.getSize()+ episodeList.size());
 	
-	startButton = new JButton("Start");
-        startButton.setActionCommand("Start");
+	startButton = new JButton(Localizer.getString("DialogDatabaseConverter.button.start.text")); //$NON-NLS-1$
+        startButton.setActionCommand("Start"); //$NON-NLS-1$
         startButton.addActionListener(this);
 	
-	cancelButton = new JButton("Cancel");
-        cancelButton.setActionCommand("Cancel");
+	cancelButton = new JButton(Localizer.getString("DialogDatabaseConverter.button.cancel.text")); //$NON-NLS-1$
+        cancelButton.setActionCommand("Cancel"); //$NON-NLS-1$
 	cancelButton.setEnabled(false);
         cancelButton.addActionListener(this);
 	
-	openDbButton = new JButton("Open new database");
-        openDbButton.setActionCommand("Open");
+	openDbButton = new JButton(Localizer.getString("DialogDatabaseConverter.button.open-new-database.text")); //$NON-NLS-1$
+        openDbButton.setActionCommand("Open"); //$NON-NLS-1$
 	openDbButton.setEnabled(false);
         openDbButton.addActionListener(this);
 
         progressBar = new JProgressBar(0, databaseConverter.getLengthOfTask());
         progressBar.setValue(0);
-	progressBar.setString("                                                                                     ");
+	progressBar.setString("                                                                                     "); //$NON-NLS-1$
         progressBar.setStringPainted(true);
 	
 	taskOutput = new JTextArea(20, 50);
@@ -130,7 +131,7 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 			Thread.sleep(2);
 		}
 	    } catch (Exception e) {
-		log.warn("Exception:" + e);
+		log.warn("Exception:" + e); //$NON-NLS-1$
 	    }
 	    
 	    if (lengthOfTask == 0)
@@ -141,10 +142,10 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 		movieCounter++;
 		int percent = ((counter+1) * 100)/lengthOfTask;
 		
-		String msg = percent+ "%  (" + (counter+1) + " out of " + lengthOfTask+")     ";
+		String msg = percent+ "%  (" + (counter+1) + Localizer.getString("DialogDatabaseConverter.progress.out-of") + lengthOfTask+")     "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		progressBar.setValue(counter+1);
 		progressBar.setString(msg);
-		taskOutput.append(movieCounter + " - " + transferred[counter] + newline);
+		taskOutput.append(movieCounter + " - " + transferred[counter] + newline); //$NON-NLS-1$
 		taskOutput.setCaretPosition(taskOutput.getDocument().getLength());
 		counter++;
 	    }
@@ -155,24 +156,24 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 		
 		if (!canceled) {
 		    
-		    String oldDB = "HSQL";
-		    String newDB = "HSQL";
+		    String oldDB = "HSQL"; //$NON-NLS-1$
+		    String newDB = "HSQL"; //$NON-NLS-1$
 		    
 		    if (MovieManager.getIt().getDatabase() instanceof DatabaseAccess)
-			oldDB = "MS Access";
+			oldDB = "MS Access"; //$NON-NLS-1$
 		    
 		    if (newDatabase instanceof DatabaseAccess)
-			newDB = "MS Access";
+			newDB = "MS Access"; //$NON-NLS-1$
 		    
-		    taskOutput.append(newline + oldDB+ " database successfully transferred to a new "+ newDB +" database." + newline);
+		    taskOutput.append(newline + oldDB+ Localizer.getString("DialogDatabaseConverter.message.database-conversion-successfull")+ newDB +Localizer.getString("DialogDatabaseConverter.message.database") + newline); //$NON-NLS-1$ //$NON-NLS-2$
 		    
-		    taskOutput.append(movieCounter + " entries processed in " + (millisecondsToString(System.currentTimeMillis() - conversionStart)) + newline);
+		    taskOutput.append(movieCounter + Localizer.getString("DialogDatabaseConverter.message.entries-processed-in") + (millisecondsToString(System.currentTimeMillis() - conversionStart)) + newline); //$NON-NLS-1$
 		    openDbButton.setEnabled(true);
 		    cancelButton.setEnabled(false);
 		    parent.setDone(true);
 		}
 		else {
-		    taskOutput.append(newline + "Conversion canceled!" + newline);
+		    taskOutput.append(newline + Localizer.getString("DialogDatabaseConverter.message.conversion-canceled") + newline); //$NON-NLS-1$
 		    parent.setCanceled(true);
 		    
 		    databaseConverter = new DatabaseConverter(movieListModel.getSize()+ episodeList.size());
@@ -196,13 +197,13 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
      */
     public void actionPerformed(ActionEvent evt) {
 	
-	log.debug("ActionPerformed: "+ evt.getActionCommand());
+	log.debug("ActionPerformed: "+ evt.getActionCommand()); //$NON-NLS-1$
 
-	if (evt.getActionCommand().equals("Start")) {
+	if (evt.getActionCommand().equals("Start")) { //$NON-NLS-1$
 	    
 	    /*If the conversion was canceled it removes the listed movies to start fresh*/
-	    if (!taskOutput.getText().equals(""))
-		taskOutput.setText("");
+	    if (!taskOutput.getText().equals("")) //$NON-NLS-1$
+		taskOutput.setText(""); //$NON-NLS-1$
 	    
 	    startButton.setEnabled(false);
 	    cancelButton.setEnabled(true);
@@ -215,7 +216,7 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 	    conversionStart = System.currentTimeMillis();
 	}
 	
-	if (evt.getActionCommand().equals("Cancel")) {
+	if (evt.getActionCommand().equals("Cancel")) { //$NON-NLS-1$
 	    parent.setCanceled(true);
 	    canceled = true;
 	    cancelButton.setEnabled(false);
@@ -223,7 +224,7 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 	    databaseConverter.stop();
 	}
 	
-	if (evt.getActionCommand().equals("Open")) {
+	if (evt.getActionCommand().equals("Open")) { //$NON-NLS-1$
 	    openDbButton.setEnabled(false);
 	    parent.setDbOpened(true);
 	    parent.loadDatabase();
@@ -237,16 +238,16 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 	int seconds = (int)((time/1000) % 60);
 	int minutes = (int)((time/60000) % 60);
 	//int hours = (int)((time/3600000) % 24);
-	String millisecondsStr = (milliseconds<10 ? "00" : (milliseconds<100 ? "0" : ""))+milliseconds;
-	String secondsStr = (seconds<10 ? "0" : "")+seconds;
-	String minutesStr = (minutes<10 ? "0" : "")+minutes;
+	String millisecondsStr = (milliseconds<10 ? "00" : (milliseconds<100 ? "0" : ""))+milliseconds; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	String secondsStr = (seconds<10 ? "0" : "")+seconds; //$NON-NLS-1$ //$NON-NLS-2$
+	String minutesStr = (minutes<10 ? "0" : "")+minutes; //$NON-NLS-1$ //$NON-NLS-2$
 	//String hoursStr = (hours<10 ? "0" : "")+hours;
 	
-	String finalString = "";
+	String finalString = ""; //$NON-NLS-1$
 	
-	if (!minutesStr.equals("00"))
-	    finalString += minutesStr+" min ";
-	finalString += secondsStr+"."+millisecondsStr + " seconds.";
+	if (!minutesStr.equals("00")) //$NON-NLS-1$
+	    finalString += minutesStr+Localizer.getString("DialogDatabaseConverter.message.minutes"); //$NON-NLS-1$
+	finalString += secondsStr+"."+millisecondsStr + Localizer.getString("DialogDatabaseConverter.message.seconds"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	return new String(finalString);
     }

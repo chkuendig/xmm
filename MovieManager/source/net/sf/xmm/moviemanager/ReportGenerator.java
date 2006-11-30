@@ -77,6 +77,8 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         BorderFactory.createEmptyBorder(0, 5, 5, 5));
     private Border border4 = BorderFactory.createEmptyBorder(0, 5, 0, 3);
 
+    private static String reportsDir = MovieManager.getUserDir() + "/reports/";
+    
     public ReportGenerator() {
         this(null);
     }
@@ -188,7 +190,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
      * the filenames in the JList.
      */
     private void loadReportLayouts() {
-        File reportDir = new File("reports");
+        File reportDir = new File(reportsDir);
         String[] files = reportDir.list(this);
         if (files.length > 0) {
             LayoutItem[] layouts = new LayoutItem[files.length];
@@ -272,7 +274,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
             HashMap parms = new HashMap();
             parms.put("logo", getImageURL("/images/filmFolder.png").toString());
             ds = new ReportGeneratorDataSource(movies, selectedLayout.sortField, progressBar, getImageURL("/images/movie.png"), false);
-            JasperPrint print = JasperFillManager.fillReport("reports/" + selectedLayout.filename, parms, ds);
+            JasperPrint print = JasperFillManager.fillReport(reportsDir + selectedLayout.filename, parms, ds);
             if (ds != null) {
                 ds = null;
                 JRViewer viewerPanel = new JRViewer(print);
@@ -475,13 +477,13 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         public void fetchInfo() {
             if (!infoFetched) {
                 // example image
-                String filename = "reports/" + examplename;
+                String filename = reportsDir + examplename;
                 if (new File(filename).exists()) {
                     exampleImage = Toolkit.getDefaultToolkit().getImage(filename);
                 }
 
                 // xmm custom property values
-                filename = "reports/" + sourcename;
+                filename = reportsDir + sourcename;
                 if (new File(filename).exists()) {
                     try {
                         FileInputStream fis = new FileInputStream(filename);
@@ -549,7 +551,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
                 HashMap parms = new HashMap();
                 parms.put("logo", getImageURL("/images/filmFolder.png").toString());
                 ReportGeneratorDataSource ds = new ReportGeneratorDataSource(movies, "none", null, getImageURL("/images/movie.png"), false);
-                JasperPrint print = JasperFillManager.fillReport("reports/movie_details.jasper", parms, ds);
+                JasperPrint print = JasperFillManager.fillReport(reportsDir + "movie_details.jasper", parms, ds);
                 JasperPrintManager.printReport(print, true);
             }
             catch (JRException ex) {

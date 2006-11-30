@@ -98,22 +98,22 @@ class DialogTVDOTCOM extends JDialog {
 		    dispose();
 		}
 	    };
-	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-	getRootPane().getActionMap().put("ESCAPE", escapeAction);
+	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+	getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 	
 	createListDialog(null);
     }
     
     void createListDialog(DefaultListModel list) {
 	/* Dialog properties...*/
-	setTitle("Select Movie Title");
+	setTitle(Localizer.getString("DialogTVDOTCOM.title")); //$NON-NLS-1$
 	setModal(true);
 	setResizable(false);
 	mode = 0;
 	
 	/* Movies List panel...*/
 	panelMoviesList = new JPanel();
-	panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," TV.COM "), BorderFactory.createEmptyBorder(5,5,5,5)));
+	panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," TV.COM "), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 	
 	listMovies = new JList();
 	listMovies.setFixedCellHeight(18);
@@ -137,12 +137,12 @@ class DialogTVDOTCOM extends JDialog {
 	panelRegularButtons.setBorder(BorderFactory.createEmptyBorder(0,0,4,0));
 	panelRegularButtons.setLayout(new FlowLayout());
 	
-	buttonSelectAll = new JButton("Select All");
-	buttonSelectAll.setActionCommand("Select All");
+	buttonSelectAll = new JButton(Localizer.getString("DialogTVDOTCOM.button.select-all.text")); //$NON-NLS-1$
+	buttonSelectAll.setActionCommand("Select All"); //$NON-NLS-1$
 	buttonSelectAll.setEnabled(false);
 	buttonSelectAll.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: " + event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 		    
 		    if (getMoviesList().getModel().getSize() > 0)
 			getMoviesList().setSelectionInterval(0, getMoviesList().getModel().getSize()-1);
@@ -150,27 +150,27 @@ class DialogTVDOTCOM extends JDialog {
 		}});
 	panelRegularButtons.add(buttonSelectAll);
 	
-	JButton buttonSelect = new JButton("Select");
-	buttonSelect.setToolTipText("Get the info for the selected title(s)");
+	JButton buttonSelect = new JButton(Localizer.getString("DialogTVDOTCOM.button.select.text")); //$NON-NLS-1$
+	buttonSelect.setToolTipText(Localizer.getString("DialogTVDOTCOM.button.select.tooltip")); //$NON-NLS-1$
 	buttonSelect.setEnabled(false);
-	buttonSelect.setActionCommand("GetTVDOTCOMInfo - Select");
+	buttonSelect.setActionCommand("GetTVDOTCOMInfo - Select"); //$NON-NLS-1$
 	buttonSelect.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: " + event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 		    executeCommandSelect();
 		}});
 	
 	panelRegularButtons.add(buttonSelect);
 	
 	JButton buttonOk;
-	buttonOk = new JButton("Cancel");
-	buttonOk.setToolTipText("Close the TV.COM Info dialog");
+	buttonOk = new JButton(Localizer.getString("DialogTVDOTCOM.button.cancel.text")); //$NON-NLS-1$
+	buttonOk.setToolTipText(Localizer.getString("DialogTVDOTCOM.button.cancel.tooltip")); //$NON-NLS-1$
 	
-	buttonOk.setActionCommand("GetIMDBInfo - Cancel");
+	buttonOk.setActionCommand("GetIMDBInfo - Cancel"); //$NON-NLS-1$
 	
 	buttonOk.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: " + event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 		    mode = 0;
 		    dispose();
 		}});
@@ -187,7 +187,7 @@ class DialogTVDOTCOM extends JDialog {
 		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
 	
 	DefaultListModel model = new DefaultListModel();
-	model.addElement(new ModelMovie(-1, "Search in progress..."));
+	model.addElement(new ModelMovie(-1, Localizer.getString("DialogTVDOTCOM.list-item.message.search-in-progress"))); //$NON-NLS-1$
 	listMovies.setModel(model);
 	
 	SwingWorker worker = new SwingWorker() {
@@ -197,7 +197,7 @@ class DialogTVDOTCOM extends JDialog {
 			
 			if (list == null) {
 			    final DefaultListModel model = new DefaultListModel();
-			    model.addElement(new ModelMovie(-1, "No matches found"));
+			    model.addElement(new ModelMovie(-1, Localizer.getString("DialogTVDOTCOM.list-item.message.no-matches-found"))); //$NON-NLS-1$
 			    
 			    Runnable updateProgres = new Runnable() {
 				    public void run() {
@@ -225,9 +225,9 @@ class DialogTVDOTCOM extends JDialog {
 			getButtonSelect().setEnabled(true);
 		    }
 		    catch (Exception e) {
-			return "";
+			return ""; //$NON-NLS-1$
 			}
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	    };
 	worker.start();
@@ -297,26 +297,26 @@ class DialogTVDOTCOM extends JDialog {
 	if (exception == null)
 	    return;
 	
-	if (exception.startsWith("Server returned HTTP response code: 407")) {
-	    DialogAlert alert = new DialogAlert(this, "Authentication required", "Proxy server requires authentication");
+	if (exception.startsWith("Server returned HTTP response code: 407")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogTVDOTCOM.alert.title.authentication-requeried"), Localizer.getString("DialogTVDOTCOM.alert.message.proxy-server-requires-authentication")); //$NON-NLS-1$ //$NON-NLS-2$
 	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 	
-	if (exception.startsWith("Connection timed out")) {
-	    DialogAlert alert = new DialogAlert(this, "Connection timed out", "Server did not respond");
+	if (exception.startsWith("Connection timed out")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogTVDOTCOM.alert.title.connection-timed.out"), Localizer.getString("DialogTVDOTCOM.alert.message.connection-timed.out")); //$NON-NLS-1$ //$NON-NLS-2$
 	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 	
-	if (exception.startsWith("Connection reset")) {
-	    DialogAlert alert = new DialogAlert(this, "Connection reset", "Connection reset by server");
+	if (exception.startsWith("Connection reset")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogTVDOTCOM.alert.title.connection-reset"), Localizer.getString("DialogTVDOTCOM.alert.message.connection-reset-by-server")); //$NON-NLS-1$ //$NON-NLS-2$
 	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 	
-	if (exception.startsWith("Server redirected too many  times")) {
-	    DialogAlert alert = new DialogAlert(this, "Access denied", "Username or password is invalid");
+	if (exception.startsWith("Server redirected too many  times")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogTVDOTCOM.alert.title.access-denied"), Localizer.getString("DialogTVDOTCOM.alert.message.username-or-password-invalid")); //$NON-NLS-1$ //$NON-NLS-2$
 	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}

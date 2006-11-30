@@ -22,6 +22,7 @@ package net.sf.xmm.moviemanager;
 
 import net.sf.xmm.moviemanager.commands.*;
 import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
+import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
 
@@ -77,6 +78,8 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
     JButton closeButton;
     JButton exportButton;
     
+    JButton xmlButton;
+
     public DialogExport() {
 	/* Dialog creation...*/
 	super(MovieManager.getIt());
@@ -95,20 +98,20 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 		    dispose();
 		}
 	    };
-	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-	getRootPane().getActionMap().put("ESCAPE", escapeAction);
+	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+	getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 	
-	setTitle("Export Options");
+	setTitle(Localizer.getString("DialogExport.title")); //$NON-NLS-1$
 	setResizable(false);
 	
 	
 	/* apply current search-filter values to list  */
-	exportCurrentList = new JCheckBox("Export only current selected list");
-	applyCurrentAdvancedSearchSettings = new JCheckBox("Use current advanced search settings");
+	exportCurrentList = new JCheckBox(Localizer.getString("DialogExport.panel-html-export.button.export-only-current-selected-list")); //$NON-NLS-1$
+	applyCurrentAdvancedSearchSettings = new JCheckBox(Localizer.getString("DialogExport.panel-html-export.button.use-current-advanced-search-settings")); //$NON-NLS-1$
 	
 	JPanel moviesPanel = new JPanel(new GridLayout(2, 1));
 	moviesPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,5,0,0) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-																					       "",
+																					       "", //$NON-NLS-1$
 																					       TitledBorder.DEFAULT_JUSTIFICATION,
 																					       TitledBorder.DEFAULT_POSITION,
 																					       new Font(moviesPanel.getFont().getName(),Font.BOLD, moviesPanel.getFont().getSize())),
@@ -118,10 +121,10 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 	moviesPanel.add(applyCurrentAdvancedSearchSettings);
 	
 	/*Order panel*/
-	orderByMovieTitle = new JRadioButton("Movie Title");
-	orderByDirectedBy = new JRadioButton("Directed By");
-	orderByRating = new JRadioButton("Rating");
-	orderByDate = new JRadioButton("Date");
+	orderByMovieTitle = new JRadioButton(Localizer.getString("DialogExport.panel-order-by.button.movie-title")); //$NON-NLS-1$
+	orderByDirectedBy = new JRadioButton(Localizer.getString("DialogExport.panel-order-by.button.direvted-by")); //$NON-NLS-1$
+	orderByRating = new JRadioButton(Localizer.getString("DialogExport.panel-order-by.button.rating")); //$NON-NLS-1$
+	orderByDate = new JRadioButton(Localizer.getString("DialogExport.panel-order-by.button.date")); //$NON-NLS-1$
 	
 	orderByMovieTitle.addItemListener(this);
 	orderByDirectedBy.addItemListener(this);
@@ -138,7 +141,7 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 	
 	JPanel orderByPanel = new JPanel(new GridLayout(2, 1));
 	orderByPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,5,0) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-																						" Order By",
+																						Localizer.getString("DialogExport.panel-order-by.title"), //$NON-NLS-1$
 																						TitledBorder.DEFAULT_JUSTIFICATION,
 																						TitledBorder.DEFAULT_POSITION,
 																						new Font(orderByPanel.getFont().getName(),Font.BOLD, orderByPanel.getFont().getSize())),
@@ -152,13 +155,13 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 	
 	
 	/*Export options*/
-	simpleExport = new JRadioButton("Simple Export");
-	simpleExport.setActionCommand("Simple Export");
+	simpleExport = new JRadioButton(Localizer.getString("DialogExport.panel-export-options.button.simple-export")); //$NON-NLS-1$
+	simpleExport.setActionCommand("Simple Export"); //$NON-NLS-1$
 	
-	fullExport = new JRadioButton("Full Export");
-	fullExport.setActionCommand("Full Export");
+	fullExport = new JRadioButton(Localizer.getString("DialogExport.panel-export-options.button.full-export")); //$NON-NLS-1$
+	fullExport.setActionCommand("Full Export"); //$NON-NLS-1$
 	
-	if (MovieManager.getConfig().getExportType().equals("full"))
+	if (MovieManager.getConfig().getExportType().equals("full")) //$NON-NLS-1$
 	    fullExport.setSelected(true);
 	else
 	    simpleExport.setSelected(true);
@@ -172,11 +175,11 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 	simpleExport.addActionListener(this);
 	fullExport.addActionListener(this);
 	
-	enableXhtml = new JCheckBox("Xhtml");
-	enableXhtml.setActionCommand("Xhtml");
+	enableXhtml = new JCheckBox("Xhtml"); //$NON-NLS-1$
+	enableXhtml.setActionCommand("Xhtml"); //$NON-NLS-1$
 	
-	enableAlphabeticSplit = new JCheckBox("Divide alphabetically");
-	enableAlphabeticSplit.setActionCommand("Divide alphabetically");
+	enableAlphabeticSplit = new JCheckBox(Localizer.getString("DialogExport.panel-export-options.button.divide-alphabetically")); //$NON-NLS-1$
+	enableAlphabeticSplit.setActionCommand("Divide alphabetically"); //$NON-NLS-1$
 	enableAlphabeticSplit.setEnabled(false);
 	enableAlphabeticSplit.addItemListener(this);
 	
@@ -184,7 +187,7 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
         JPanel exportOptionPanel = new JPanel(new GridLayout(2, 1));
 	
 	exportOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,5,0) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-																						     " Export Options",
+																						     Localizer.getString("DialogExport.panel-export-options.title"), //$NON-NLS-1$
 																						     TitledBorder.DEFAULT_JUSTIFICATION,
 																						     TitledBorder.DEFAULT_POSITION,
 																						     new Font(exportOptionPanel.getFont().getName(),Font.BOLD, exportOptionPanel.getFont().getSize())),
@@ -200,7 +203,7 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 	exportPanel.setLayout(new BoxLayout(exportPanel, BoxLayout.PAGE_AXIS));
 	
 	exportPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,3,3,3), BorderFactory.createTitledBorder(
-																					       BorderFactory.createEtchedBorder(), " HTML Export ", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(exportPanel.getFont().getName(),Font.BOLD, exportPanel.getFont().getSize())
+																					       BorderFactory.createEtchedBorder(), Localizer.getString("DialogExport.panel-html-export.title"), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(exportPanel.getFont().getName(),Font.BOLD, exportPanel.getFont().getSize()) //$NON-NLS-1$
 																					       )), BorderFactory.createEmptyBorder(0,2,2,2)));
 	
 	
@@ -210,7 +213,7 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 	titleTextField = new JTextField(16);
 	titleTextField.setEditable(true);
 	
-	JLabel titleLabel = new JLabel("Title:");
+	JLabel titleLabel = new JLabel(Localizer.getString("DialogExport.title-text-field") + ": "); //$NON-NLS-1$
 	titleLabel.setLabelFor(titleTextField);
 	
 	titlePanel.add(titleLabel);
@@ -224,16 +227,23 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 	JPanel buttonPanel = new JPanel();
 	buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 	
-	exportButton = new JButton("Export");
-	exportButton.setActionCommand("Export");
+	exportButton = new JButton(Localizer.getString("DialogExport.button.export.text")); //$NON-NLS-1$
+	exportButton.setActionCommand("Export"); //$NON-NLS-1$
 	exportButton.addActionListener(this);
 	
-	closeButton = new JButton("Close");
-	closeButton.setActionCommand("Close");
+	closeButton = new JButton(Localizer.getString("DialogExport.button.close.text")); //$NON-NLS-1$
+	closeButton.setActionCommand("Close"); //$NON-NLS-1$
 	closeButton.addActionListener(this);
 	
 	buttonPanel.add(exportButton);
 	buttonPanel.add(closeButton);
+	
+	
+	xmlButton = new JButton("XML"); //$NON-NLS-1$
+	xmlButton.setActionCommand("XMLt"); //$NON-NLS-1$
+	xmlButton.addActionListener(new MovieManagerCommandExecuteXMLExport());
+	buttonPanel.add(xmlButton);
+	
 	
 	Container lerret = getContentPane();
 	lerret.setLayout(new BoxLayout(lerret,BoxLayout.Y_AXIS));
@@ -251,7 +261,7 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
     
     public void actionPerformed(ActionEvent event) {
 	
-	log.debug("ActionPerformed: "+event.getActionCommand());
+	log.debug("ActionPerformed: "+event.getActionCommand()); //$NON-NLS-1$
 	
 	if (event.getSource().equals(closeButton)) {
 	    dispose();
@@ -264,23 +274,23 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 	    
 	    String title = titleTextField.getText();
 	    
-	    String orderBy = "Title";
+	    String orderBy = "Title"; //$NON-NLS-1$
 	    
 	    if (orderByDirectedBy.isSelected())
-		orderBy = "Directed By";
+		orderBy = "Directed By"; //$NON-NLS-1$
 	    else if (orderByRating.isSelected())
-		orderBy = "Rating";
+		orderBy = "Rating"; //$NON-NLS-1$
 	    else if (orderByDate.isSelected())
-		orderBy = "Date";
+		orderBy = "Date"; //$NON-NLS-1$
 	    
 	    DefaultListModel listModel;
 	    
-	    String currentList = "Show All";
+	    String currentList = "Show All"; //$NON-NLS-1$
 	    
 	    if (exportCurrentList.isSelected())
 		currentList = MovieManager.getConfig().getCurrentList();
 	    
-	    if (exportCurrentList.isSelected() && !currentList.equals("Show All"))
+	    if (exportCurrentList.isSelected() && !currentList.equals("Show All")) //$NON-NLS-1$
 		listModel = MovieManager.getIt().getDatabase().getMoviesList(orderBy, currentList);
 	    else
 		listModel = MovieManager.getIt().getDatabase().getMoviesList(orderBy);
@@ -289,7 +299,7 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 		ModelDatabaseSearch options = MovieManager.getIt().getFilterOptions();
 		options.setListName(currentList);
 		
-		if (currentList.equals("Show All"))
+		if (currentList.equals("Show All")) //$NON-NLS-1$
 		    options.setListOption(0);
 		else
 		    options.setListOption(1);

@@ -23,6 +23,7 @@ package net.sf.xmm.moviemanager;
 import net.sf.xmm.moviemanager.commands.*;
 import net.sf.xmm.moviemanager.database.*;
 import net.sf.xmm.moviemanager.models.ModelImportSettings;
+import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
 
@@ -55,7 +56,7 @@ public class DialogDatabaseImporter extends JPanel implements ActionListener {
     
     private DatabaseImporter databaseImporter;
     private JTextArea taskOutput;
-    private String newline = "\n";
+    private String newline = "\n"; //$NON-NLS-1$
     
     int movieCounter = 0;
     int counter = 0;
@@ -73,23 +74,23 @@ public class DialogDatabaseImporter extends JPanel implements ActionListener {
 	
 	databaseImporter = new DatabaseImporter(parent, importSettings);
 	
-	startButton = new JButton("Start");
-        startButton.setActionCommand("Start");
+	startButton = new JButton(Localizer.getString("DialogDatabaseImporter.button.start.text")); //$NON-NLS-1$
+        startButton.setActionCommand("Start"); //$NON-NLS-1$
         startButton.addActionListener(this);
 	
-	cancelButton = new JButton("Cancel");
-        cancelButton.setActionCommand("Cancel");
+	cancelButton = new JButton(Localizer.getString("DialogDatabaseImporter.button.cancel.text")); //$NON-NLS-1$
+        cancelButton.setActionCommand("Cancel"); //$NON-NLS-1$
 	cancelButton.setEnabled(false);
         cancelButton.addActionListener(this);
 	
-	closeButton = new JButton("Close");
-        closeButton.setActionCommand("Close");
+	closeButton = new JButton(Localizer.getString("DialogDatabaseImporter.button.close.text")); //$NON-NLS-1$
+        closeButton.setActionCommand("Close"); //$NON-NLS-1$
 	closeButton.setEnabled(false);
         closeButton.addActionListener(this);
 
         progressBar = new JProgressBar();
         progressBar.setValue(0);
-	progressBar.setString("                                 ");
+	progressBar.setString("                                 "); //$NON-NLS-1$
         progressBar.setStringPainted(true);
 	progressBar.setPreferredSize(new Dimension(200, 25));
 	
@@ -123,7 +124,7 @@ public class DialogDatabaseImporter extends JPanel implements ActionListener {
 		}
 		
 	    } catch (Exception e) {
-		log.warn("Exception:"+ e);
+		log.warn("Exception:"+ e); //$NON-NLS-1$
 	    }
 	    
 	    if (lengthOfTask == 0) {
@@ -140,10 +141,10 @@ public class DialogDatabaseImporter extends JPanel implements ActionListener {
 		movieCounter++;
 		int percent = ((counter+1) * 100)/lengthOfTask;
 		
-		String msg = percent+ "%  (" + (counter+1) + " out of " + lengthOfTask+")     ";
+		String msg = percent+ "%  (" + (counter+1) + Localizer.getString("DialogDatabaseImporter.message.out-of") + lengthOfTask+")     "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		progressBar.setValue(counter+1);
 		progressBar.setString(msg);
-		taskOutput.append(movieCounter + " - " + transferred[counter] + newline);
+		taskOutput.append(movieCounter + " - " + transferred[counter] + newline); //$NON-NLS-1$
 		taskOutput.setCaretPosition(taskOutput.getDocument().getLength());
 		counter++;
 	    }
@@ -153,13 +154,13 @@ public class DialogDatabaseImporter extends JPanel implements ActionListener {
 		
 		if (!canceled) {
 		    
-		    taskOutput.append(movieCounter + " entries processed in " + (millisecondsToString(System.currentTimeMillis() - conversionStart)) + newline);
+		    taskOutput.append(movieCounter + Localizer.getString("DialogDatabaseImporter.message.entries-process-in") + (millisecondsToString(System.currentTimeMillis() - conversionStart)) + newline); //$NON-NLS-1$
 		    closeButton.setEnabled(true);
 		    cancelButton.setEnabled(false);
 		    parent.setDone(true);
 		}
 		else {
-		    taskOutput.append(newline + "Import canceled!" + newline);
+		    taskOutput.append(newline + Localizer.getString("DialogDatabaseImporter.message.import-canceled") + newline); //$NON-NLS-1$
 		    parent.setCanceled(true);
 		    
 		    databaseImporter = new DatabaseImporter(parent, importSettings);
@@ -179,13 +180,13 @@ public class DialogDatabaseImporter extends JPanel implements ActionListener {
      */
     public void actionPerformed(ActionEvent evt) {
 	
-	log.debug("ActionPerformed: "+ evt.getActionCommand());
+	log.debug("ActionPerformed: "+ evt.getActionCommand()); //$NON-NLS-1$
 
-	if (evt.getActionCommand().equals("Start")) {
+	if (evt.getActionCommand().equals("Start")) { //$NON-NLS-1$
 	    
 	    /*If the conversion was canceled it removes the listed movies to start fresh*/
-	    if (!taskOutput.getText().equals(""))
-		taskOutput.setText("");
+	    if (!taskOutput.getText().equals("")) //$NON-NLS-1$
+		taskOutput.setText(""); //$NON-NLS-1$
 	    
 	    startButton.setEnabled(false);
 	    cancelButton.setEnabled(true);
@@ -198,10 +199,10 @@ public class DialogDatabaseImporter extends JPanel implements ActionListener {
 	    
 	    timer.start();
 	    conversionStart = System.currentTimeMillis();
-	    taskOutput.append("Processing import list...\n");
+	    taskOutput.append(Localizer.getString("DialogDatabaseImporter.message.processing-import-list")); //$NON-NLS-1$
 	}
 	
-	if (evt.getActionCommand().equals("Cancel")) {
+	if (evt.getActionCommand().equals("Cancel")) { //$NON-NLS-1$
 	    parent.setCanceled(true);
 	    canceled = true;
 	    cancelButton.setEnabled(false);
@@ -210,7 +211,7 @@ public class DialogDatabaseImporter extends JPanel implements ActionListener {
 	    databaseImporter.stop();
 	}
 	
-	if (evt.getActionCommand().equals("Close")) {
+	if (evt.getActionCommand().equals("Close")) { //$NON-NLS-1$
 	    parent.dispose();
 	    MovieManagerCommandSelect.executeAndReload(-1);
 	}
@@ -222,16 +223,16 @@ public class DialogDatabaseImporter extends JPanel implements ActionListener {
 	int seconds = (int)((time/1000) % 60);
 	int minutes = (int)((time/60000) % 60);
 	//int hours = (int)((time/3600000) % 24);
-	String millisecondsStr = (milliseconds<10 ? "00" : (milliseconds<100 ? "0" : ""))+milliseconds;
-	String secondsStr = (seconds<10 ? "0" : "")+seconds;
-	String minutesStr = (minutes<10 ? "0" : "")+minutes;
+	String millisecondsStr = (milliseconds<10 ? "00" : (milliseconds<100 ? "0" : ""))+milliseconds; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	String secondsStr = (seconds<10 ? "0" : "")+seconds; //$NON-NLS-1$ //$NON-NLS-2$
+	String minutesStr = (minutes<10 ? "0" : "")+minutes; //$NON-NLS-1$ //$NON-NLS-2$
 	//String hoursStr = (hours<10 ? "0" : "")+hours;
 	
-	String finalString = "";
+	String finalString = ""; //$NON-NLS-1$
 	
-	if (!minutesStr.equals("00"))
-	    finalString += minutesStr+" min ";
-	finalString += secondsStr+"."+millisecondsStr + " seconds.";
+	if (!minutesStr.equals("00")) //$NON-NLS-1$
+	    finalString += minutesStr+Localizer.getString("DialogDatabaseImporter.message.minutes"); //$NON-NLS-1$
+	finalString += secondsStr+"."+millisecondsStr + Localizer.getString("DialogDatabaseImporter.message.seconds"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	return new String(finalString);
     }

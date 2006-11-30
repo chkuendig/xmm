@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.*;
 import java.util.*;
 
@@ -49,8 +50,9 @@ public class MovieManager extends JFrame implements ComponentListener {
     public static MovieManagerConfig config;
 
     public static JApplet applet = null;
+    
+    public NewDatabaseLoadedHandler newDbHandler = new NewDatabaseLoadedHandler();
 
-	public NewDatabaseLoadedHandler newDbHandler = new NewDatabaseLoadedHandler();
     /**
      * Reference to the only instance of MovieManager.
      **/
@@ -59,7 +61,7 @@ public class MovieManager extends JFrame implements ComponentListener {
     /**
      * The current version of the program.
      **/
-    private String _version = "2.41";
+    private String _version = "2.41"; //$NON-NLS-1$
 
     /**
      * The current database object.
@@ -100,7 +102,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	_movieManager = this;
 	MovieManager.applet = applet;
 
-	System.err.println("Codebase:" + MovieManager.applet.getCodeBase());
+	System.err.println("Codebase:" + MovieManager.applet.getCodeBase()); //$NON-NLS-1$
 	
 	EventQueue.invokeLater(new Runnable() {
 		public final void run() {
@@ -108,16 +110,16 @@ public class MovieManager extends JFrame implements ComponentListener {
 		     /* Disable HTTPClient logging output */
 		    //System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
 		    
-		    URL configFile = getFile("log4j.properties");
+		    URL configFile = getFile("log4j.properties"); //$NON-NLS-1$
 
-		    System.err.println("loading:" + configFile.toString());
+		    System.err.println("loading:" + configFile.toString()); //$NON-NLS-1$
 		    
 		    PropertyConfigurator.configure(configFile);
 		    
 		    log = Logger.getRootLogger();
 		    
 		    /* Writes the date. */
-		    log.debug("Log Start: " + new Date(System.currentTimeMillis()));
+		    log.debug("Log Start: " + new Date(System.currentTimeMillis())); //$NON-NLS-1$
 		    
 		    config = new MovieManagerConfig();
 
@@ -225,13 +227,13 @@ public class MovieManager extends JFrame implements ComponentListener {
 		    }
 
 		    if (database.makeDatabaseBackup() != 1) {
-			showDatabaseUpdateMessage("Backup failed");
+			showDatabaseUpdateMessage("Backup failed"); //$NON-NLS-1$
 			return false;
 		    }
 
 		    /* updates the script if audio channel type is INTEGER (HSQLDB)*/
 		    if (!((DatabaseHSQL) database).updateScriptFile()) {
-			showDatabaseUpdateMessage("Script update error");
+			showDatabaseUpdateMessage("Script update error"); //$NON-NLS-1$
 			return false;
 		    }
 		    databaseUpdateAllowed = true;
@@ -265,13 +267,13 @@ public class MovieManager extends JFrame implements ComponentListener {
 			    return false;
 			}
 			if (database.makeDatabaseBackup() != 1) {
-			    showDatabaseUpdateMessage("Backup failed");
+			    showDatabaseUpdateMessage("Backup failed"); //$NON-NLS-1$
 			    return false;
 			}
 		    }
 
 		    if (database.makeDatabaseUpToDate() == 1)
-			showDatabaseUpdateMessage("Success");
+			showDatabaseUpdateMessage("Success"); //$NON-NLS-1$
 		    else {
 			String message = database.getErrorMessage();
 
@@ -287,14 +289,16 @@ public class MovieManager extends JFrame implements ComponentListener {
 		//long time = System.currentTimeMillis();
 
 		/* Resetting the covers and queries paths */
-		config.resetCoverAndQueries();
+		//config.resetCoverAndQueries();
+		
+		newDbHandler.newDatabaseLoaded(this);
 
 		setActiveAdditionalInfoFields(database.getActiveAdditionalInfoFields());
 
 		/* Error occured */
 		if (database.getFatalError()) {
 
-		    if (!database.getErrorMessage().equals("")) {
+		    if (!database.getErrorMessage().equals("")) { //$NON-NLS-1$
 			DialogDatabase.showDatabaseMessage(this, database, null);
 			getMoviesList().setModel(null);
 		    }
@@ -305,23 +309,23 @@ public class MovieManager extends JFrame implements ComponentListener {
 		/* Resets the additonal info fields names stored in ModelAdditionalInfo */
 		ModelAdditionalInfo.setHasOldExtraInfoFieldNames(true);
 
-		log.info("Loads the movies list");
+		log.info("Loads the movies list"); //$NON-NLS-1$
 
 		ModelDatabaseSearch options = new ModelDatabaseSearch();
 
-		if (config.getLoadLastUsedListAtStartup() && !config.getCurrentList().equals("Show All") && database.listColumnExist(config.getCurrentList())) {
+		if (config.getLoadLastUsedListAtStartup() && !config.getCurrentList().equals("Show All") && database.listColumnExist(config.getCurrentList())) { //$NON-NLS-1$
 		    options.setListOption(1);
 		    options.setListName(config.getCurrentList());
 		    setListTitle(config.getCurrentList());
 		}
 		else {
 		    options.setListOption(0);
-		    setListTitle("Show All");
-		    config.setCurrentList("Show All");
+		    setListTitle("Show All"); //$NON-NLS-1$
+		    config.setCurrentList("Show All"); //$NON-NLS-1$
 		}
 
-		options.setFilterString("");
-		options.setOrderCategory("Title");
+		options.setFilterString(""); //$NON-NLS-1$
+		options.setOrderCategory("Title"); //$NON-NLS-1$
 		options.setSeen(0);
 		options.setRatingOption(0);
 		options.setDateOption(0);
@@ -331,7 +335,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 		}
 
 		DefaultListModel moviesList = database.getMoviesList(options);
-		ArrayList episodesList = database.getEpisodeList("movieID");
+		ArrayList episodesList = database.getEpisodeList("movieID"); //$NON-NLS-1$
 		DefaultTreeModel treeModel = createTreeModel(moviesList, episodesList);
 		
 		getMoviesList().setRootVisible(false);
@@ -399,7 +403,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	Object[] movies = movieList.toArray();
 
-	ExtendedTreeNode root = new ExtendedTreeNode(new ModelMovie(-1, null, null, null, "Loading Database", null, null, null, null, null, null, null, false, null, null, null, null, null, null, null, null, null));
+	ExtendedTreeNode root = new ExtendedTreeNode(new ModelMovie(-1, null, null, null, "Loading Database", null, null, null, null, null, null, null, false, null, null, null, null, null, null, null, null, null)); //$NON-NLS-1$
 
 	DefaultTreeModel model = new AutomatedTreeModel(root, false);
 
@@ -431,46 +435,39 @@ public class MovieManager extends JFrame implements ComponentListener {
     }
 
     protected boolean allowDatabaseUpdate(String databasePath) {
-	DialogQuestion question = new DialogQuestion("Old Database", "<html>This version of MeD's Movie Manager requires your old database:<br> ("+databasePath+") to be updated.<br>"+
-						     "Perform update now? (A backup will be made)</html>");
-	//question.setVisible(true);
+	DialogQuestion question = new DialogQuestion("Old Database", "<html>This version of MeD's Movie Manager requires your old database:<br> ("+databasePath+") to be updated.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						     "Perform update now? (A backup will be made)</html>"); //$NON-NLS-1$
 	ShowGUI.showAndWait(question, true);
 	
 	if (question.getAnswer()) {
 	    return true;
 	}
 	else {
-	    DialogAlert alert = new DialogAlert(this, "Update needed", "This version cannot be used with an old database file!");
-	    //alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("moviemanager.update-necessary"), Localizer.getString("moviemanager.update-necessary-message")); //$NON-NLS-1$ //$NON-NLS-2$
 	    ShowGUI.showAndWait(alert, true);
 	}
 	return false;
     }
 
     protected void showDatabaseUpdateMessage(String result) {
-	if (result.equals("Success")) {
-	    DialogAlert alert = new DialogAlert(this, "Operation Successful", "The database was successfully updated!");
-	    //alert.setVisible(true);
+	if (result.equals("Success")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("moviemanager.operation-successfull"), Localizer.getString("moviemanager.operation-successfullMessage")); //$NON-NLS-1$ //$NON-NLS-2$
 	    ShowGUI.showAndWait(alert, true);
 	}
-	else if (result.equals("Database update error")) {
-	    DialogAlert alert = new DialogAlert(this, "Update Failed", "An error occured when updating the database!");
-	    //alert.setVisible(true);
+	else if (result.equals("Database update error")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("moviemanager.database-update-failed"), Localizer.getString("moviemanager.database-update-failed-message")); //$NON-NLS-1$ //$NON-NLS-2$
 	    ShowGUI.showAndWait(alert, true);
 	}
-	else if (result.equals("Script update error")) {
-	    DialogAlert alert = new DialogAlert(this, "Update Failed", "An error occured when updating the database script file!");
-	    //alert.setVisible(true);
+	else if (result.equals("Script update error")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("moviemanager.script-update-failed"), Localizer.getString("moviemanager.script-update-failed-message")); //$NON-NLS-1$ //$NON-NLS-2$
 	    ShowGUI.showAndWait(alert, true);
 	}
-	else if (result.equals("Backup failed")) {
-	    DialogAlert alert = new DialogAlert(this, "Backup failed", "Failed to create backup!");
-	    //alert.setVisible(true);
+	else if (result.equals("Backup failed")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("moviemanager.backup-failed"), Localizer.getString("moviemanager.backup-failed-message")); //$NON-NLS-1$ //$NON-NLS-2$
 	    ShowGUI.showAndWait(alert, true);
 	}
 	else {
-	    DialogAlert alert = new DialogAlert(this, "Update Failed", result);
-	    //alert.setVisible(true);
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("moviemanager.update-failed"), result); //$NON-NLS-1$
 	    ShowGUI.showAndWait(alert, true);
 	}
     }
@@ -479,23 +476,21 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	String error = _database.getErrorMessage();
 
-	if (error.equals("Connection reset")) {
+	if (error.equals("Connection reset")) { //$NON-NLS-1$
 
 	    setDatabaseComponentsEnable(false);
 
-	    DialogQuestion question = new DialogQuestion("Connection reset", "<html>The connection to the MySQL server has been reset.<br>"+
-							 "Reconnect now?</html>");
-	    //question.setVisible(true);
-	    ShowGUI.showAndWait(question, true);
+	    DialogQuestion question = new DialogQuestion(Localizer.getString("moviemanager.connection-reset"), "<html>The connection to the MySQL server has been reset.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$
+							 "Reconnect now?</html>"); //$NON-NLS-1$
+	   ShowGUI.showAndWait(question, true);
 
 	    if (question.getAnswer()) {
 		setDatabase(new DatabaseMySQL(_database.getPath()), false);
 	    }
 	}
 
-	if (error.equals("MySQL server is out of space")) {
-	    DialogAlert alert = new DialogAlert(this, "Out of space", "The MySQL server is out of space");
-	    //alert.setVisible(true);
+	if (error.equals("MySQL server is out of space")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("moviemanager.mysql-out-of-space"), Localizer.getString("moviemanager.mysql-out-of-space-message")); //$NON-NLS-1$ //$NON-NLS-2$
 	    ShowGUI.showAndWait(alert, true);
 	}
     }
@@ -529,7 +524,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	    return byteStream.toByteArray();
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
 	}
 	return null;
     }
@@ -545,7 +540,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	    return getClass().getResourceAsStream(name);
 
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
 	}
 	return null;
     }
@@ -558,50 +553,53 @@ public class MovieManager extends JFrame implements ComponentListener {
 	try {
 	    if (!isApplet()) {
     		
-		File laf = new File("LookAndFeels" + File.separator + "lookAndFeels.ini");
-
-		if (!laf.exists()) {
-		    new File("LookAndFeels").mkdir();
-
-		    String text = "Here you can add new Look and Feels." + getLineSeparator()+
-			"Make sure the 'look and Feel' jar file is placed in the 'LookAndFeels' directory" + getLineSeparator()+
-			"and that the correct classname is given below." + getLineSeparator()+
-			"Both the name and classname must be enclosed in quotes." + getLineSeparator()+
-			"The names may be set to whatever fit your needs." + getLineSeparator()+
-			"Example:" + getLineSeparator()+ getLineSeparator()+
-			"\"Metal look and feel\"       \"javax.swing.plaf.metal.MetalLookAndFeel\"" + getLineSeparator()+
-			"\"Windows look and feel\"     \"com.sun.java.swing.plaf.windows.WindowsLookAndFeel\"" + getLineSeparator()+
-			getLineSeparator()+ "The metal and windows look and feels are preinstalled." + getLineSeparator()+
-			"Define the look and feels below:" + getLineSeparator()+
-			"#" + getLineSeparator();
-
-
-		    /* Creating the texfile */
-		    PrintWriter pwriter = new PrintWriter(new FileWriter("LookAndFeels/"+"lookAndFeels.ini"), true);
-
-		    /* Writes the lookAndFeels.ini textfile. */
-		    for (int i=0; i < text.length(); i++) {
-			pwriter.write(text.charAt(i));
-		    }
-		    pwriter.close();
+            
+         /* Gets the working dir... */
+            String directory = MovieManager.getUserDir();
+            File laf = new File(directory + "LookAndFeels" + File.separator + "lookAndFeels.ini");
+           
+	    if (!laf.exists() && !isMacAppBundle()) {
+		new File(directory + "LookAndFeels").mkdirs();
+		
+		String text = "Here you can add new Look and Feels." + getLineSeparator()+ //$NON-NLS-1$
+		    "Make sure the 'look and Feel' jar file is placed in the 'LookAndFeels' directory" + getLineSeparator()+ //$NON-NLS-1$
+		    "and that the correct classname is given below." + getLineSeparator()+ //$NON-NLS-1$
+		    "Both the name and classname must be enclosed in quotes." + getLineSeparator()+ //$NON-NLS-1$
+			"The names may be set to whatever fit your needs." + getLineSeparator()+ //$NON-NLS-1$
+		    "Example:" + getLineSeparator()+ getLineSeparator()+ //$NON-NLS-1$
+		    "\"Metal look and feel\"       \"javax.swing.plaf.metal.MetalLookAndFeel\"" + getLineSeparator()+ //$NON-NLS-1$
+		    "\"Windows look and feel\"     \"com.sun.java.swing.plaf.windows.WindowsLookAndFeel\"" + getLineSeparator()+ //$NON-NLS-1$
+		    getLineSeparator()+ "The metal and windows look and feels are preinstalled." + getLineSeparator()+ //$NON-NLS-1$
+		    "Define the look and feels below:" + getLineSeparator()+ //$NON-NLS-1$
+		    "#" + getLineSeparator(); //$NON-NLS-1$
+		
+		
+		/* Creating the texfile */
+		PrintWriter pwriter = new PrintWriter(new FileWriter(laf), true); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		/* Writes the lookAndFeels.ini textfile. */
+		for (int i=0; i < text.length(); i++) {
+		    pwriter.write(text.charAt(i));
 		}
+		pwriter.close();
+	    }
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
+	    log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
 	}
 	/* Starts other inits. */
-	log.debug("Start setting up the MovieManager.");
+	log.debug("Start setting up the MovieManager."); //$NON-NLS-1$
 
 	LookAndFeelManager.setLookAndFeel();
 
 	Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
 	if (!MovieManager.isApplet())
-	    System.setProperty("sun.awt.noerasebackground", "true");
+	    System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
-	_movieManager.setTitle(" MeD's Movie Manager v" + _version);
+	_movieManager.setTitle(" MeD's Movie Manager v" + _version); //$NON-NLS-1$
 
-	_movieManager.setIconImage(_movieManager.getImage("/images/film.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+	_movieManager.setIconImage(_movieManager.getImage("/images/film.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH)); //$NON-NLS-1$
 
 	_movieManager.setJMenuBar(createMenuBar());
 	_movieManager.getContentPane().add(createWorkingArea(),BorderLayout.CENTER);
@@ -662,7 +660,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	}
 
 	_movieManager.setVisible(true);
-	log.debug("MovieManager SetUp done!");
+	log.debug("MovieManager SetUp done!"); //$NON-NLS-1$
     }
 
 
@@ -672,7 +670,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @return The menubar.
      **/
     protected JMenuBar createMenuBar() {
-	log.debug("Start creation of the MenuBar.");
+	log.debug("Start creation of the MenuBar."); //$NON-NLS-1$
 	JMenuBar menuBar = new JMenuBar();
 	menuBar.setBorder(BorderFactory.createEmptyBorder(2,0,8,0));
 	/* Creation of the file menu. */
@@ -687,7 +685,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	/* Creation of the help menu. */
 	menuBar.add(createMenuHelp());
-	log.debug("Creation of the MenuBar done.");
+	log.debug("Creation of the MenuBar done."); //$NON-NLS-1$
 	return menuBar;
     }
 
@@ -697,37 +695,37 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @return The file menu.
      **/
     protected JMenu createMenuFile() {
-	log.debug("Start creation of the File menu.");
-	JMenu menuFile = new JMenu("File");
+	log.debug("Start creation of the File menu."); //$NON-NLS-1$
+	JMenu menuFile = new JMenu(Localizer.getString("moviemanager.menu.file")); //$NON-NLS-1$
 	menuFile.setMnemonic('F');
 
 	/* MenuItem New. */
-	JMenuItem menuItemNew = new JMenuItem("New Database",'N');
+	JMenuItem menuItemNew = new JMenuItem(Localizer.getString("moviemanager.menu.file.newdb"),'N'); //$NON-NLS-1$
 	menuItemNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
-	menuItemNew.setActionCommand("New");
+	menuItemNew.setActionCommand("New"); //$NON-NLS-1$
 	menuItemNew.addActionListener(new MovieManagerCommandNew());
 	menuFile.add(menuItemNew);
 
 	/* MenuItem Open. */
-	JMenuItem menuItemOpen = new JMenuItem("Open Database",'O');
+	JMenuItem menuItemOpen = new JMenuItem(Localizer.getString("moviemanager.menu.file.opendb"),'O'); //$NON-NLS-1$
 	menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.CTRL_MASK));
-	menuItemOpen.setActionCommand("Open");
+	menuItemOpen.setActionCommand("Open"); //$NON-NLS-1$
 	menuItemOpen.addActionListener(new MovieManagerCommandOpen());
 	menuFile.add(menuItemOpen);
 	/* A separator. */
 	menuFile.addSeparator();
 
 	/* MenuItem Close. */
-	JMenuItem menuItemClose = new JMenuItem("Close Database",'C');
+	JMenuItem menuItemClose = new JMenuItem(Localizer.getString("moviemanager.menu.file.closedb"),'C'); //$NON-NLS-1$
 	menuItemClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,ActionEvent.CTRL_MASK));
-	menuItemClose.setActionCommand("Open");
+	menuItemClose.setActionCommand("Open"); //$NON-NLS-1$
 	menuItemClose.addActionListener(new MovieManagerCommandCloseDatabase());
 	menuFile.add(menuItemClose);
 	/* A separator. */
 	menuFile.addSeparator();
 
 	/* The Import menuItem. */
-	JMenuItem menuImport = new JMenuItem("Import",'I');
+	JMenuItem menuImport = new JMenuItem(Localizer.getString("moviemanager.menu.file.import"),'I'); //$NON-NLS-1$
 	menuImport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,ActionEvent.CTRL_MASK));
 	menuImport.addActionListener(new MovieManagerCommandImport());
 	/* Adds MenuItem Import. */
@@ -736,7 +734,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	menuFile.addSeparator();
 
 	/* The Export menuItem. */
-	JMenuItem menuExport = new JMenuItem("Export",'E');
+	JMenuItem menuExport = new JMenuItem(Localizer.getString("moviemanager.menu.file.export"),'E'); //$NON-NLS-1$
 	menuExport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,ActionEvent.CTRL_MASK));
 	menuExport.addActionListener(new MovieManagerCommandExport());
 	/* Adds menuItem Export. */
@@ -745,12 +743,12 @@ public class MovieManager extends JFrame implements ComponentListener {
 	menuFile.addSeparator();
 
 	/* MenuItem Exit. */
-	JMenuItem menuItemExit = new JMenuItem("Exit",'X');
-	menuItemExit.setActionCommand("Exit");
+	JMenuItem menuItemExit = new JMenuItem(Localizer.getString("moviemanager.menu.file.exit"),'X'); //$NON-NLS-1$
+	menuItemExit.setActionCommand("Exit"); //$NON-NLS-1$
 	menuItemExit.addActionListener(new MovieManagerCommandExit());
 	menuFile.add(menuItemExit);
 	/* All done. */
-	log.debug("Creation of the File menu done.");
+	log.debug("Creation of the File menu done."); //$NON-NLS-1$
 	return menuFile;
     }
 
@@ -760,14 +758,14 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @return The database menu.
      **/
     protected JMenu createMenuDatabase() {
-	log.debug("Start creation of the Database menu.");
-	JMenu menuDatabase = new JMenu("Database");
+	log.debug("Start creation of the Database menu."); //$NON-NLS-1$
+	JMenu menuDatabase = new JMenu(Localizer.getString("moviemanager.menu.database")); //$NON-NLS-1$
 	menuDatabase.setMnemonic('D');
 
 	/* MenuItem Queries. */
-	JMenuItem menuItemQueries = new JMenuItem("Queries",'Q');
+	JMenuItem menuItemQueries = new JMenuItem(Localizer.getString("moviemanager.menu.database.queries"),'Q'); //$NON-NLS-1$
 	menuItemQueries.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,ActionEvent.CTRL_MASK));
-	menuItemQueries.setActionCommand("Queries");
+	menuItemQueries.setActionCommand("Queries"); //$NON-NLS-1$
 	menuItemQueries.addActionListener(new MovieManagerCommandQueries());
 	menuDatabase.add(menuItemQueries);
 
@@ -775,42 +773,42 @@ public class MovieManager extends JFrame implements ComponentListener {
 	menuDatabase.addSeparator();
 
 	/* MenuItem Folders. */
-	JMenuItem menuItemFolders = new JMenuItem("Folders",'F');
+	JMenuItem menuItemFolders = new JMenuItem(Localizer.getString("moviemanager.menu.database.folders"),'F'); //$NON-NLS-1$
 	menuItemFolders.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,ActionEvent.CTRL_MASK));
-	menuItemFolders.setActionCommand("Folders");
+	menuItemFolders.setActionCommand("Folders"); //$NON-NLS-1$
 	menuItemFolders.addActionListener(new MovieManagerCommandFolders());
 	menuDatabase.add(menuItemFolders);
 
 	/* MenuItem AddField. */
-	JMenuItem menuItemAddField = new JMenuItem("Additional Info Fields",'I');
+	JMenuItem menuItemAddField = new JMenuItem(Localizer.getString("moviemanager.menu.database.additionalinfofields"),'I'); //$NON-NLS-1$
 	menuItemAddField.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,ActionEvent.CTRL_MASK));
-	menuItemAddField.setActionCommand("AdditionalInfoFields");
+	menuItemAddField.setActionCommand("AdditionalInfoFields"); //$NON-NLS-1$
 	menuItemAddField.addActionListener(new MovieManagerCommandAdditionalInfoFields());
 	menuDatabase.add(menuItemAddField);
 
 	/* MenuItem AddList. */
-	JMenuItem menuItemAddList = new JMenuItem("Lists",'L');
+	JMenuItem menuItemAddList = new JMenuItem(Localizer.getString("moviemanager.menu.database.lists"),'L'); //$NON-NLS-1$
 	menuItemAddList.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,ActionEvent.CTRL_MASK));
-	menuItemAddList.setActionCommand("setLists");
+	menuItemAddList.setActionCommand("setLists"); //$NON-NLS-1$
 	menuItemAddList.addActionListener(new MovieManagerCommandLists());
 	menuDatabase.add(menuItemAddList);
 
 	/* MenuItem Convert Database. */
-	JMenuItem convertDatabase = new JMenuItem("Convert Database",'C');
+	JMenuItem convertDatabase = new JMenuItem(Localizer.getString("moviemanager.menu.database.covertdb"),'C'); //$NON-NLS-1$
 	convertDatabase.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,ActionEvent.CTRL_MASK));
-	convertDatabase.setActionCommand("Convert Database");
+	convertDatabase.setActionCommand("Convert Database"); //$NON-NLS-1$
 	convertDatabase.addActionListener(new MovieManagerCommandConvertDatabase());
 	menuDatabase.add(convertDatabase);
 
 	/* MenuItem Convert Database. */
-	JMenuItem saveNotes = new JMenuItem("Save changed notes",'Z');
+	JMenuItem saveNotes = new JMenuItem(Localizer.getString("moviemanager.menu.database.savechanhednotes"),'Z'); //$NON-NLS-1$
 	saveNotes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,ActionEvent.CTRL_MASK));
-	saveNotes.setActionCommand("Save changed notes");
+	saveNotes.setActionCommand("Save changed notes"); //$NON-NLS-1$
 	saveNotes.addActionListener(new MovieManagerCommandSaveChangedNotes());
 	menuDatabase.add(saveNotes);
 
 	/* All done. */
-	log.debug("Creation of the Database menu done.");
+	log.debug("Creation of the Database menu done."); //$NON-NLS-1$
 	return menuDatabase;
     }
 
@@ -820,42 +818,42 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @return The tools menu.
      **/
     protected JMenu createMenuTools() {
-	log.debug("Start creation of the Tools menu.");
-	JMenu menuTools = new JMenu("Tools");
+	log.debug("Start creation of the Tools menu."); //$NON-NLS-1$
+	JMenu menuTools = new JMenu(Localizer.getString("moviemanager.menu.tools")); //$NON-NLS-1$
 	menuTools.setMnemonic('T');
 	/* MenuItem Preferences.
 	   For some reason, addMovie KeyEvent.VK_A doesn't work when focused
 	   on the selected movie or the filter*/
 
-	JMenuItem menuItemPrefs = new JMenuItem("Preferences",'P');
+	JMenuItem menuItemPrefs = new JMenuItem(Localizer.getString("moviemanager.menu.tools.preferences"),'P'); //$NON-NLS-1$
 	menuItemPrefs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,ActionEvent.CTRL_MASK));
-	menuItemPrefs.setActionCommand("Preferences");
+	menuItemPrefs.setActionCommand("Preferences"); //$NON-NLS-1$
 	menuItemPrefs.addActionListener(new MovieManagerCommandPrefs());
 	menuTools.add(menuItemPrefs);
 
 	menuTools.addSeparator();
-	JMenuItem addMultipleMovies = new JMenuItem("Add Multiple Movies",'M');
+	JMenuItem addMultipleMovies = new JMenuItem(Localizer.getString("moviemanager.menu.tools.addmultiplemovies"),'M'); //$NON-NLS-1$
 	addMultipleMovies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,ActionEvent.CTRL_MASK));
-	addMultipleMovies.setActionCommand("Add Multiple Movies");
+	addMultipleMovies.setActionCommand("Add Multiple Movies"); //$NON-NLS-1$
 	addMultipleMovies.addActionListener(new MovieManagerCommandAddMultipleMoviesByFile());
 	menuTools.add(addMultipleMovies);
 
-	JMenuItem updateIMDbInfo = new JMenuItem("Update IMDb Info",'U');
+	JMenuItem updateIMDbInfo = new JMenuItem(Localizer.getString("moviemanager.menu.tools.updateIMDbInfo"),'U'); //$NON-NLS-1$
 	updateIMDbInfo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,ActionEvent.CTRL_MASK));
-	updateIMDbInfo.setActionCommand("Update IMDb Info");
+	updateIMDbInfo.setActionCommand("Update IMDb Info"); //$NON-NLS-1$
 	updateIMDbInfo.addActionListener(new MovieManagerCommandUpdateIMDBInfo());
 	menuTools.add(updateIMDbInfo);
 
 	 menuTools.addSeparator();
 
-        JMenuItem reportGenerator = new JMenuItem("Report Generator",'R');
+        JMenuItem reportGenerator = new JMenuItem(Localizer.getString("moviemanager.menu.tools.reportgenerator"),'R'); //$NON-NLS-1$
         reportGenerator.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,ActionEvent.CTRL_MASK));
-        reportGenerator.setActionCommand("Report Generator");
+        reportGenerator.setActionCommand("Report Generator"); //$NON-NLS-1$
         reportGenerator.addActionListener(new MovieManagerCommandReportGenerator());
         menuTools.add(reportGenerator);
 
 	/* All done. */
-	log.debug("Creation of the Tools menu done.");
+	log.debug("Creation of the Tools menu done."); //$NON-NLS-1$
 	return menuTools;
     }
 
@@ -865,11 +863,11 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @return The tools menu.
      **/
     protected JMenu createMenuLists() {
-	log.debug("Start creation of the Lists menu.");
-	JMenu menuLists = new JMenu("Lists");
+	log.debug("Start creation of the Lists menu."); //$NON-NLS-1$
+	JMenu menuLists = new JMenu(Localizer.getString("moviemanager.menu.lists")); //$NON-NLS-1$
 	menuLists.setMnemonic('L');
 
-	log.debug("Creation of the Lists menu done.");
+	log.debug("Creation of the Lists menu done."); //$NON-NLS-1$
 	return menuLists;
     }
 
@@ -879,43 +877,43 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @return The help menu.
      **/
     protected JMenu createMenuHelp() {
-	log.debug("Start creation of the Help menu.");
-	JMenu menuHelp = new JMenu("Help");
+	log.debug("Start creation of the Help menu."); //$NON-NLS-1$
+	JMenu menuHelp = new JMenu(Localizer.getString("moviemanager.menu.help")); //$NON-NLS-1$
 	menuHelp.setMnemonic('H');
 	/* MenuItem Help. */
-	JMenuItem menuItemHelp = new JMenuItem("Help",'H');
-	menuItemHelp.setAccelerator(KeyStroke.getKeyStroke("F1"));
-	menuItemHelp.setActionCommand("Help");
+	JMenuItem menuItemHelp = new JMenuItem(Localizer.getString("moviemanager.menu.help.help"),'H'); //$NON-NLS-1$
+	menuItemHelp.setAccelerator(KeyStroke.getKeyStroke("F1")); //$NON-NLS-1$
+	menuItemHelp.setActionCommand("Help"); //$NON-NLS-1$
 	menuItemHelp.addActionListener(new MovieManagerCommandHelp());
 	menuHelp.add(menuItemHelp);
 	/* MenuItem Online Help. */
-	JMenuItem menuItemOnlineHelp = new JMenuItem("Online Help",'O');
-	menuItemOnlineHelp.setActionCommand("OpenPage (Online Help)");
-	menuItemOnlineHelp.addActionListener(new MovieManagerCommandOpenPage("http://xmm.sourceforge.net/help.html"));
+	JMenuItem menuItemOnlineHelp = new JMenuItem(Localizer.getString("moviemanager.menu.help.onlinehelp"),'O'); //$NON-NLS-1$
+	menuItemOnlineHelp.setActionCommand("OpenPage (Online Help)"); //$NON-NLS-1$
+	menuItemOnlineHelp.addActionListener(new MovieManagerCommandOpenPage("http://xmm.sourceforge.net/help.html")); //$NON-NLS-1$
 	menuHelp.add(menuItemOnlineHelp);
 	/* A Separator. */
 	menuHelp.addSeparator();
 	/* MenuItem HomePage. */
-	JMenuItem menuItemHomePage = new JMenuItem("Home Page",'P');
-	menuItemHomePage.setActionCommand("OpenPage (Home Page)");
-	menuItemHomePage.addActionListener(new MovieManagerCommandOpenPage("http://xmm.sourceforge.net/"));
+	JMenuItem menuItemHomePage = new JMenuItem(Localizer.getString("moviemanager.menu.help.homepage"),'P'); //$NON-NLS-1$
+	menuItemHomePage.setActionCommand("OpenPage (Home Page)"); //$NON-NLS-1$
+	menuItemHomePage.addActionListener(new MovieManagerCommandOpenPage("http://xmm.sourceforge.net/")); //$NON-NLS-1$
 	menuHelp.add(menuItemHomePage);
 	/* A Separator. */
 	menuHelp.addSeparator();
 	/* MenuItem SourceForge. */
-	JMenuItem menuItemSourceForge = new JMenuItem("SourceForge Page",'S');
-	menuItemSourceForge.setActionCommand("OpenPage (SourceForge.net)");
-	menuItemSourceForge.addActionListener(new MovieManagerCommandOpenPage("http://sourceforge.net/projects/xmm/"));
+	JMenuItem menuItemSourceForge = new JMenuItem(Localizer.getString("moviemanager.menu.help.sourceforgepage"),'S'); //$NON-NLS-1$
+	menuItemSourceForge.setActionCommand("OpenPage (SourceForge.net)"); //$NON-NLS-1$
+	menuItemSourceForge.addActionListener(new MovieManagerCommandOpenPage("http://sourceforge.net/projects/xmm/")); //$NON-NLS-1$
 	menuHelp.add(menuItemSourceForge);
 	/* A Separator. */
 	menuHelp.addSeparator();
 	/* MenuItem About. */
-	JMenuItem menuItemAbout = new JMenuItem("About");
-	menuItemAbout.setActionCommand("About");
+	JMenuItem menuItemAbout = new JMenuItem(Localizer.getString("moviemanager.menu.help.about")); //$NON-NLS-1$
+	menuItemAbout.setActionCommand("About"); //$NON-NLS-1$
 	menuItemAbout.addActionListener(new MovieManagerCommandAbout());
 	menuHelp.add(menuItemAbout);
 	/* All done. */
-	log.debug("Creation of the Help menu done.");
+	log.debug("Creation of the Help menu done."); //$NON-NLS-1$
 	return menuHelp;
     }
 
@@ -925,7 +923,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @return JPanel with working area.
      **/
     protected JPanel createWorkingArea() {
-	log.debug("Start creation of the WorkingArea.");
+	log.debug("Start creation of the WorkingArea."); //$NON-NLS-1$
 	JPanel workingArea = new JPanel();
 
 	workingArea.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
@@ -936,13 +934,13 @@ public class MovieManager extends JFrame implements ComponentListener {
 	workingArea.setLayout(new info.clearthought.layout.TableLayout(size));
 
 	/* Creates the Movies List Panel. */
-	workingArea.add(createMoviesList(), "0, 0");
+	workingArea.add(createMoviesList(), "0, 0"); //$NON-NLS-1$
 
 	/* Creates the Movie Info Panel.*/
-	workingArea.add(createMovieInfo(), "1, 0");
+	workingArea.add(createMovieInfo(), "1, 0"); //$NON-NLS-1$
 
 	/* All done. */
-	log.debug("Creation of the WorkingArea done.");
+	log.debug("Creation of the WorkingArea done."); //$NON-NLS-1$
 	return workingArea;
     }
 
@@ -954,14 +952,14 @@ public class MovieManager extends JFrame implements ComponentListener {
     protected JPanel createMoviesList() {
 
 	if (getContentPane().getFont() == null) {
-	    getContentPane().setFont(new Font("Dialog", Font.PLAIN, 12));
+	    getContentPane().setFont(new Font("Dialog", Font.PLAIN, 12)); //$NON-NLS-1$
 	}
-	log.debug("Start creation of the Movies List panel.");
+	log.debug("Start creation of the Movies List panel."); //$NON-NLS-1$
 
 	JPanel moviesList = new JPanel(new GridBagLayout());
 
 	moviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-												 " "+ "List - " + config.getCurrentList() + " ",
+												 " "+ Localizer.getString("moviemanager.listpanel-title") + config.getCurrentList() + " ", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 												 TitledBorder.DEFAULT_JUSTIFICATION,
 												 TitledBorder.DEFAULT_POSITION,
 												 new Font(moviesList.getFont().getName(),Font.BOLD, fontSize)),
@@ -1004,7 +1002,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	moviesList.add(createFilter(), constraints);
 
 	/* All done. */
-	log.debug("Creation of the Movies List panel done.");
+	log.debug("Creation of the Movies List panel done."); //$NON-NLS-1$
 	return moviesList;
     }
 
@@ -1013,7 +1011,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	JPanel moviesList = getPanelMovieList();
 	moviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-												 " "+ "List - " + title + " ",
+												 " "+ Localizer.getString("moviemanager.listpanel-title") + title + " ", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 												 TitledBorder.DEFAULT_JUSTIFICATION,
 												 TitledBorder.DEFAULT_POSITION,
 												 new Font(moviesList.getFont().getName(),Font.BOLD, fontSize)),
@@ -1027,7 +1025,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      **/
     //protected JToolBar createToolBar() {
     protected JToolBar createToolBar() {
-	log.debug("Start creation of the ToolBar.");
+	log.debug("Start creation of the ToolBar."); //$NON-NLS-1$
 
 	boolean useDynamicToolbar = false;
 
@@ -1056,15 +1054,15 @@ public class MovieManager extends JFrame implements ComponentListener {
 	Dimension dim = new Dimension(3, 0);
 	
 	/* The Add button. */
-	JButton buttonAdd = new JButton(new ImageIcon(_movieManager.getImage("/images/add.png").getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+	JButton buttonAdd = new JButton(new ImageIcon(_movieManager.getImage("/images/add.png").getScaledInstance(24, 24, Image.SCALE_SMOOTH))); //$NON-NLS-1$
 
 	buttonAdd.setPreferredSize(new Dimension(39, 39));
 	buttonAdd.setMaximumSize(new Dimension(45, 45));
 	//buttonAdd.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,100,0,100), buttonAdd.getBorder()));
 	buttonAdd.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
 
-	buttonAdd.setToolTipText("Add");
-	buttonAdd.setActionCommand("Add");
+	buttonAdd.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-add")); //$NON-NLS-1$
+	buttonAdd.setActionCommand("Add"); //$NON-NLS-1$
 	buttonAdd.setMnemonic('A');
 	buttonAdd.addActionListener(new MovieManagerCommandAdd());
 
@@ -1074,31 +1072,31 @@ public class MovieManager extends JFrame implements ComponentListener {
 	toolBar.addSeparator(dim);
 
 	/* The Remove button. */
-	JButton buttonRemove = new JButton(new ImageIcon(_movieManager.getImage("/images/remove.png").getScaledInstance(26,26,Image.SCALE_SMOOTH)));
+	JButton buttonRemove = new JButton(new ImageIcon(_movieManager.getImage("/images/remove.png").getScaledInstance(26,26,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 
 	buttonRemove.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonRemove.getBorder()));
 
 	buttonRemove.setPreferredSize(new Dimension(39, 39));
 	buttonRemove.setMaximumSize(new Dimension(44, 45));
-	buttonRemove.setToolTipText("Remove");
-	buttonRemove.setActionCommand("Remove");
+	buttonRemove.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-remove")); //$NON-NLS-1$
+	buttonRemove.setActionCommand("Remove"); //$NON-NLS-1$
 	buttonRemove.setMnemonic('R');
 	buttonRemove.addActionListener(new MovieManagerCommandRemove());
 	toolBar.add(buttonRemove);
 
-		/* A separator. */
+	/* A separator. */
 	toolBar.addSeparator(dim);
 
 	/* The Edit button. */
-	JButton buttonEdit = new JButton(new ImageIcon(_movieManager.getImage("/images/edit.png").getScaledInstance(23,23,Image.SCALE_SMOOTH)));
+	JButton buttonEdit = new JButton(new ImageIcon(_movieManager.getImage("/images/edit.png").getScaledInstance(23,23,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 
 	//buttonEdit.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonEdit.getBorder()));
 	buttonEdit.setMargin(new Insets(0,10,0,10));
     
 	buttonEdit.setPreferredSize(new Dimension(39, 39));
 	buttonEdit.setMaximumSize(new Dimension(44, 45));
-	buttonEdit.setToolTipText("Edit");
-	buttonEdit.setActionCommand("Edit");
+	buttonEdit.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-edit")); //$NON-NLS-1$
+	buttonEdit.setActionCommand("Edit"); //$NON-NLS-1$
 	buttonEdit.setMnemonic('E');
 	buttonEdit.addActionListener(new MovieManagerCommandEdit());
 	toolBar.add(buttonEdit);
@@ -1107,14 +1105,14 @@ public class MovieManager extends JFrame implements ComponentListener {
 	toolBar.addSeparator(dim);
 
 	/* The Search button. */
-	JButton buttonSearch = new JButton(new ImageIcon(_movieManager.getImage("/images/search.png").getScaledInstance(25,25,Image.SCALE_SMOOTH)));
+	JButton buttonSearch = new JButton(new ImageIcon(_movieManager.getImage("/images/search.png").getScaledInstance(25,25,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 
 	buttonSearch.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonSearch.getBorder()));
 
 	buttonSearch.setPreferredSize(new Dimension(39, 39));
 	buttonSearch.setMaximumSize(new Dimension(45, 45));
-	buttonSearch.setToolTipText("Search");
-	buttonSearch.setActionCommand("Search");
+	buttonSearch.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-search")); //$NON-NLS-1$
+	buttonSearch.setActionCommand("Search"); //$NON-NLS-1$
 	buttonSearch.setMnemonic('S');
 	buttonSearch.addActionListener(new MovieManagerCommandSearch());
 	toolBar.add(buttonSearch);
@@ -1134,7 +1132,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	panelEntries.setPreferredSize(new Dimension(46, 33));
 	panelEntries.setSize(new Dimension(46, 33));
 
-	showEntries = new JLabel("    ");
+	showEntries = new JLabel("    "); //$NON-NLS-1$
 	showEntries.setFont(new Font(showEntries.getFont().getName(), Font.PLAIN,fontSize + 1));
 
 	panelEntries.add(showEntries);
@@ -1145,7 +1143,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	toolBar.setMinimumSize(toolBar.getPreferredSize());
 	
 	/* All done. */
-	log.debug("Creation of the ToolBar done.");
+	log.debug("Creation of the ToolBar done."); //$NON-NLS-1$
 	return toolBar;
     }
 
@@ -1155,10 +1153,10 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @return The listofmovies.
      **/
     protected JScrollPane createList() {
-	log.debug("Start creation of the List.");
+	log.debug("Start creation of the List."); //$NON-NLS-1$
 
 	ExtendedJTree tree = new ExtendedJTree();
-	tree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(new ModelMovie(-1, null, null, null, "", null, null, null, null, null, null, null, false, null, null, null, null, null, null, null, null, null))));
+	tree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(new ModelMovie(-1, null, null, null, "", null, null, null, null, null, null, null, false, null, null, null, null, null, null, null, null, null)))); //$NON-NLS-1$
 
 	tree.setRootVisible(false);
 	tree.setDragEnabled(false);
@@ -1177,7 +1175,7 @@ public class MovieManager extends JFrame implements ComponentListener {
         tree.setCellRenderer(new ExtendedTreeCellRenderer(this, scrollPane));
 
 	/* All done. */
-	log.debug("Creation of the List done.");
+	log.debug("Creation of the List done."); //$NON-NLS-1$
 	return scrollPane;
     }
 
@@ -1189,24 +1187,24 @@ public class MovieManager extends JFrame implements ComponentListener {
 
     protected JPanel createFilter() {
 
-	log.debug("Start creation of the Filter.");
+	log.debug("Start creation of the Filter."); //$NON-NLS-1$
 	JPanel filter = new JPanel(new BorderLayout());
 	filter.setBorder(BorderFactory.createEmptyBorder(10,4,4,4));
 
 	/* Adds the Label. */
-	JLabel label = new JLabel("Filter  ");
+	JLabel label = new JLabel(Localizer.getString("moviemanager.listpanel-filter")); //$NON-NLS-1$
 	label.setFont(new Font(label.getFont().getName(),Font.PLAIN,fontSize));
 	filter.add(label, BorderLayout.WEST);
 
 	/* Adds the TextField. */
 	JTextField textField = new JTextField();
-	textField.setFont(new Font("", Font.PLAIN, 12));
-	textField.setActionCommand("Filter");
-	textField.addActionListener(new MovieManagerCommandFilter("", null, true, true));
+	textField.setFont(new Font("", Font.PLAIN, 12)); //$NON-NLS-1$
+	textField.setActionCommand("Filter"); //$NON-NLS-1$
+	textField.addActionListener(new MovieManagerCommandFilter("", null, true, true)); //$NON-NLS-1$
 	filter.add(textField, BorderLayout.CENTER);
 
 	/* All done. */
-	log.debug("Creation of the Filter done.");
+	log.debug("Creation of the Filter done."); //$NON-NLS-1$
 
 	filter.setSize(255, 100);
 	return filter;
@@ -1218,7 +1216,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @return The Movie Info Panel.
      **/
     protected JPanel createMovieInfo() {
-	log.debug("Start creation of the Movie Info panel.");
+	log.debug("Start creation of the Movie Info panel."); //$NON-NLS-1$
 	JPanel movieInfo = new JPanel();
 	movieInfo.addComponentListener(this);
 
@@ -1230,7 +1228,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	movieInfo.setLayout(new info.clearthought.layout.TableLayout(size));
 	movieInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-												" Movie Info ",
+												Localizer.getString("moviemanager.movieinfopanel.title"), //$NON-NLS-1$
 												TitledBorder.DEFAULT_JUSTIFICATION,
 												TitledBorder.DEFAULT_POSITION,
 												new Font(movieInfo.getFont().getName(),Font.BOLD, fontSize)),
@@ -1248,7 +1246,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	constraints.anchor = GridBagConstraints.NORTH;
 	constraints.fill = GridBagConstraints.HORIZONTAL;
 
-	movieInfo.add(generalInfoPanel, "0, 0");
+	movieInfo.add(generalInfoPanel, "0, 0"); //$NON-NLS-1$
 
 	JPanel miscellaneous = createMiscellaneous();
 
@@ -1260,8 +1258,8 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	JTabbedPane all = new JTabbedPane();
 	all.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
-	all.add("Plot & Cast", plotAndCast);
-	all.add("Miscellaneous", miscellaneous);
+	all.add(Localizer.getString("moviemanager.movie-info-panel.plot_and_cast"), plotAndCast); //$NON-NLS-1$
+	all.add(Localizer.getString("moviemanager.movie-info-panel.miscellaneous"), miscellaneous); //$NON-NLS-1$
 
 	JPanel tabbedPanel = new JPanel(new BorderLayout());
 	tabbedPanel.add(all, BorderLayout.CENTER);
@@ -1278,11 +1276,11 @@ public class MovieManager extends JFrame implements ComponentListener {
 	/* Adds the additional info and notes. */
 
 	/* All done. */
-	log.debug("Creation of the Movie Info panel done.");
+	log.debug("Creation of the Movie Info panel done."); //$NON-NLS-1$
 
 	/* Removing the border of the splitpane */
 	//UIManager.put("SplitPane.contentBorderInsets", new Insets(0,0,0,0));
-	UIManager.put("SplitPane.border", new javax.swing.plaf.BorderUIResource(javax.swing.BorderFactory.createEmptyBorder(0,0,0,0)));
+	UIManager.put("SplitPane.border", new javax.swing.plaf.BorderUIResource(javax.swing.BorderFactory.createEmptyBorder(0,0,0,0))); //$NON-NLS-1$
 
 	JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, tabbedPanel, createAdditionalInfoAndNotes());
 	splitPane.setOneTouchExpandable(true);
@@ -1290,7 +1288,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	splitPane.setDividerSize(12);
 	splitPane.setResizeWeight(0.5);
 
-	movieInfo.add(splitPane, "0, 1");
+	movieInfo.add(splitPane, "0, 1"); //$NON-NLS-1$
 
 	return movieInfo;
     }
@@ -1302,7 +1300,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      **/
 
     protected JPanel createGeneralInfo() {
-	log.debug("Start creation of the General Info panel.");
+	log.debug("Start creation of the General Info panel."); //$NON-NLS-1$
 
 	JPanel panelGeneralInfo = new JPanel();
 	panelGeneralInfo.setLayout(new GridBagLayout());
@@ -1312,11 +1310,11 @@ public class MovieManager extends JFrame implements ComponentListener {
 	JPanel panelColour = new JPanel();
 	panelColour.setLayout(new BoxLayout(panelColour, BoxLayout.X_AXIS));
 
-	JLabel colourID = new JLabel("");
+	JLabel colourID = new JLabel(""); //$NON-NLS-1$
 	colourID.setFont(new Font(colourID.getFont().getName(), Font.BOLD, fontSize));
 	panelColour.add(colourID);
 
-	JLabel colour = new JLabel(" ");
+	JLabel colour = new JLabel(" "); //$NON-NLS-1$
 	colour.setFont(new Font(colour.getFont().getName(), Font.PLAIN, fontSize));
 	panelColour.add(colour);
 
@@ -1337,7 +1335,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 
 	JTextField title = new JTextField();
-	title.setFont(new Font("Dialog", Font.BOLD, fontSize +3));
+	title.setFont(new Font("Dialog", Font.BOLD, fontSize +3)); //$NON-NLS-1$
 	title.setBorder(null);
 	title.setOpaque(false);
 	title.setEditable(false);
@@ -1360,7 +1358,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	JPanel panelDirected = new JPanel();
 	panelDirected.setLayout(new BoxLayout(panelDirected, BoxLayout.X_AXIS));
 
-	JLabel directedID = new JLabel("Directed by: ");
+	JLabel directedID = new JLabel(Localizer.getString("moviemanager.movie-info-panel.directedby") + ": "); //$NON-NLS-1$
 	directedID.setFont(new Font(directedID.getFont().getName(), Font.BOLD, fontSize));
 	panelDirected.add(directedID);
 
@@ -1387,7 +1385,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	JPanel panelWritten = new JPanel();
 	panelWritten.setLayout(new BoxLayout(panelWritten, BoxLayout.X_AXIS));
 
-	JLabel writtenID = new JLabel("Written by: ");
+	JLabel writtenID = new JLabel(Localizer.getString("moviemanager.movie-info-panel.writtenby") + ": "); //$NON-NLS-1$
 	writtenID.setFont(new Font(writtenID.getFont().getName(), Font.BOLD, fontSize));
 	panelWritten.add(writtenID);
 
@@ -1414,7 +1412,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	JPanel panelGenre = new JPanel();
 	panelGenre.setLayout(new BoxLayout(panelGenre, BoxLayout.X_AXIS));
 
-	JLabel genreID = new JLabel("Genre: ");
+	JLabel genreID = new JLabel(Localizer.getString("moviemanager.movie-info-panel.genre") + ": "); //$NON-NLS-1$
 	genreID.setFont(new Font(genreID.getFont().getName(), Font.BOLD, fontSize));
 	panelGenre.add(genreID);
 
@@ -1443,7 +1441,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 
 
-	JLabel ratingID = new JLabel("Rating: ");
+	JLabel ratingID = new JLabel(Localizer.getString("moviemanager.movie-info-panel.raing") + ": "); //$NON-NLS-1$
 	ratingID.setFont(new Font(ratingID.getFont().getName(), Font.BOLD, fontSize));
 	panelRating.add(ratingID);
 
@@ -1468,7 +1466,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	JPanel panelCountry = new JPanel();
 	panelCountry.setLayout(new BoxLayout(panelCountry, BoxLayout.X_AXIS));
 
-	JLabel countryID = new JLabel("Country:   ");
+	JLabel countryID = new JLabel(Localizer.getString("moviemanager.movie-info-panel.country") + ": "); //$NON-NLS-1$
 	countryID.setFont(new Font(countryID.getFont().getName(), Font.BOLD, fontSize));
 
 	countryID.setMinimumSize(countryID.getPreferredSize());
@@ -1498,7 +1496,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	JPanel panelSeen = new JPanel();
 	panelSeen.setLayout(new BoxLayout(panelSeen, BoxLayout.X_AXIS));
 
-	JLabel seenID = new JLabel("Seen: ");
+	JLabel seenID = new JLabel(Localizer.getString("moviemanager.movie-info-panel.seen") + ": "); //$NON-NLS-1$
 	seenID.setFont(new Font(seenID.getFont().getName(), Font.BOLD, fontSize));
 	panelSeen.add(seenID);
 
@@ -1514,8 +1512,8 @@ public class MovieManager extends JFrame implements ComponentListener {
 	    };
 
 	if (config.getUseRegularSeenIcon()) {
-	    seenBox.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH)));
-	    seenBox.setSelectedIcon(new ImageIcon(MovieManager.getIt().getImage("/images/seen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH)));
+	    seenBox.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+	    seenBox.setSelectedIcon(new ImageIcon(MovieManager.getIt().getImage("/images/seen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 	}
 
 	seenBox.setPreferredSize(new Dimension(21, 21));
@@ -1538,7 +1536,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	JPanel panelLanguage = new JPanel();
 	panelLanguage.setLayout(new BoxLayout(panelLanguage, BoxLayout.X_AXIS));
 
-	JLabel languageID = new JLabel("Language: ");
+	JLabel languageID = new JLabel(Localizer.getString("moviemanager.movie-info-panel.language") + ": "); //$NON-NLS-1$
 	languageID.setFont(new Font(languageID.getFont().getName(), Font.BOLD, fontSize));
 	//languageID.setPreferredSize(new Dimension((int) new JLabel("Language: ").getPreferredSize().getWidth(), (int) languageID.getPreferredSize().getHeight()));
 	languageID.setMinimumSize(languageID.getPreferredSize());
@@ -1568,7 +1566,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	/* Adds the cover. */
 	JPanel panelCover = new JPanel();
 
-	JLabel cover = new JLabel(new ImageIcon(_movieManager.getImage("/images/" + config.getNoCover()).getScaledInstance(97,97,Image.SCALE_SMOOTH)));
+	JLabel cover = new JLabel(new ImageIcon(_movieManager.getImage("/images/" + config.getNoCover()).getScaledInstance(97,97,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 	cover.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,0), BorderFactory.createEtchedBorder()));
 	cover.setPreferredSize(new Dimension(97,145));
 	cover.setMinimumSize(new Dimension(97,145));
@@ -1620,7 +1618,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	panelInfo.add(cover, constraints);
 
 	/* All done. */
-	log.debug("Creation of the General Info panel done.");
+	log.debug("Creation of the General Info panel done."); //$NON-NLS-1$
 
 	return panelInfo;
     }
@@ -1631,19 +1629,19 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @return The JPanel.
      **/
     protected JPanel createPlot() {
-	log.debug("Start creation of the Plot panel.");
+	log.debug("Start creation of the Plot panel."); //$NON-NLS-1$
 	JPanel plot = new JPanel();
 
 	plot.setLayout(new BorderLayout());
 
 	plot.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder() /*BorderFactory.createEmptyBorder()*/,
-																					" Plot ",
+																					Localizer.getString("moviemanager.movie-info-panel.plot"), //$NON-NLS-1$
 																					TitledBorder.DEFAULT_JUSTIFICATION,
 																					TitledBorder.DEFAULT_POSITION,
 																					new Font(plot.getFont().getName(),Font.PLAIN, fontSize)),
 																       BorderFactory.createEmptyBorder(2,5,3,5))));
 
-	JTextArea textAreaPlot = new JTextArea("");
+	JTextArea textAreaPlot = new JTextArea(""); //$NON-NLS-1$
 	textAreaPlot.setEditable(false);
 	textAreaPlot.setFocusable(true);
 	textAreaPlot.setLineWrap(true);
@@ -1653,7 +1651,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	plot.add(scrollPane, BorderLayout.CENTER);
 	/* All done. */
-	log.debug("Creation of the Plot panel done.");
+	log.debug("Creation of the Plot panel done."); //$NON-NLS-1$
 	return plot;
     }
 
@@ -1663,13 +1661,13 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @return The JPanel.
      **/
     protected JPanel createCast() {
-	log.debug("Start creation of the Cast panel.");
+	log.debug("Start creation of the Cast panel."); //$NON-NLS-1$
 	JPanel cast = new JPanel();
 
 	cast.setLayout(new BorderLayout());
 
 	cast.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-																					" Cast ",
+																					Localizer.getString("moviemanager.movie-info-panel.cast"), //$NON-NLS-1$
 																					TitledBorder.DEFAULT_JUSTIFICATION,
 																					TitledBorder.DEFAULT_POSITION,
 																					new Font(cast.getFont().getName(),Font.PLAIN, fontSize)),
@@ -1685,7 +1683,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	cast.add(scrollPane, BorderLayout.CENTER);
 
 	/* All done. */
-	log.debug("Creation of the Cast done.");
+	log.debug("Creation of the Cast done."); //$NON-NLS-1$
 	return cast;
     }
 
@@ -1696,13 +1694,13 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @return The JPanel.
      **/
     protected JPanel createMiscellaneous() {
-	log.debug("Start creation of the Miscellaenous panel.");
+	log.debug(Localizer.getString("moviemanager.0")); //$NON-NLS-1$
 	JPanel miscellaenous = new JPanel();
 
 	miscellaenous.setLayout(new BorderLayout());
 
 	miscellaenous.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-																						 " Miscellaneous ",
+																						 " Miscellaneous ", //$NON-NLS-1$
 																						 TitledBorder.DEFAULT_JUSTIFICATION,
 																						 TitledBorder.DEFAULT_POSITION,
 																						 new Font(miscellaenous.getFont().getName(),Font.PLAIN, fontSize)),
@@ -1710,8 +1708,8 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 
 	JTextPane textAreaMiscellaenous = new JTextPane();
-	textAreaMiscellaenous.setContentType("text/html");
-	textAreaMiscellaenous.setBackground((Color) UIManager.get("TextArea.background"));
+	textAreaMiscellaenous.setContentType("text/html"); //$NON-NLS-1$
+	textAreaMiscellaenous.setBackground((Color) UIManager.get("TextArea.background")); //$NON-NLS-1$
 	textAreaMiscellaenous.setEditable(false);
 	textAreaMiscellaenous.setFocusable(false);
 
@@ -1720,7 +1718,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	miscellaenous.add(scrollPane, BorderLayout.CENTER);
 
 	/* All done. */
-	log.debug("Creation of the Miscellaenous done.");
+	log.debug("Creation of the Miscellaenous done."); //$NON-NLS-1$
 	return miscellaenous;
     }
 
@@ -1732,7 +1730,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      **/
     protected JPanel createAdditionalInfoAndNotes() {
 
-	log.debug("Start creation of the Additional Info and Notes panel.");
+	log.debug("Start creation of the Additional Info and Notes panel."); //$NON-NLS-1$
 	JPanel additionalInfoAndNotes = new JPanel();
 	additionalInfoAndNotes.setBorder(BorderFactory.createEmptyBorder(4,0,0,0));
 
@@ -1744,12 +1742,12 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	additionalInfo.addComponentListener(this);
 	additionalInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-																						  " Additional Info ",
+																						  Localizer.getString("moviemanager.movie-info-panel.additionalinfo"), //$NON-NLS-1$
 																						  TitledBorder.DEFAULT_JUSTIFICATION,
 																						  TitledBorder.DEFAULT_POSITION,
 																						  new Font(additionalInfo.getFont().getName(),Font.PLAIN, fontSize)),
 																		 BorderFactory.createEmptyBorder(1,5,3,5))));
-	JTextArea textAreaAdditionalInfo = new JTextArea("");
+	JTextArea textAreaAdditionalInfo = new JTextArea(""); //$NON-NLS-1$
 	textAreaAdditionalInfo.setEditable(false);
 	textAreaAdditionalInfo.setFocusable(true);
 	textAreaAdditionalInfo.setLineWrap(false);
@@ -1765,13 +1763,13 @@ public class MovieManager extends JFrame implements ComponentListener {
 	notes.addComponentListener(this);
 
 	notes.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,5,0,0), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-																					 " Notes ",
+																					 Localizer.getString("moviemanager.movie-info-panel.notes"), //$NON-NLS-1$
 																					 TitledBorder.DEFAULT_JUSTIFICATION,
 																					 TitledBorder.DEFAULT_POSITION,
 																					 new Font(notes.getFont().getName(),Font.PLAIN, fontSize)),
 																	BorderFactory.createEmptyBorder(1,5,3,5))));
 
-	JTextArea textAreaNotes = new JTextArea("");
+	JTextArea textAreaNotes = new JTextArea(""); //$NON-NLS-1$
 	textAreaNotes.setEditable(true);
 	textAreaNotes.setFocusable(true);
 	textAreaNotes.setLineWrap(true);
@@ -1791,7 +1789,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	additionalInfoAndNotes.add(splitPane, BorderLayout.CENTER);
 
 	/* All done. */
-	log.debug("Creation of the Additional Info and Notes done.");
+	log.debug("Creation of the Additional Info and Notes done."); //$NON-NLS-1$
 	return additionalInfoAndNotes;
     }
 
@@ -2374,30 +2372,30 @@ public class MovieManager extends JFrame implements ComponentListener {
 		public Object construct() {
 
 		    String databasePath = config.getDatabasePath(true);
-		    String type = "";
+		    String type = ""; //$NON-NLS-1$
 
-		    if (databasePath == null || databasePath.equals("null")) {
+		    if (databasePath == null || databasePath.equals("null")) { //$NON-NLS-1$
 			return null;
 		    }
 		    
-		    log.debug("Start loading database.");
+		    log.debug("Start loading database."); //$NON-NLS-1$
 		    
-		    if (!databasePath.equals("")) {
+		    if (!databasePath.equals("")) { //$NON-NLS-1$
 
 			/* If not, no database type specified */
-			if (databasePath.indexOf(">") != -1) {
-			    type = databasePath.substring(0, databasePath.indexOf(">"));
-			    databasePath = databasePath.substring(databasePath.indexOf(">")+1, databasePath.length());
+			if (databasePath.indexOf(">") != -1) { //$NON-NLS-1$
+			    type = databasePath.substring(0, databasePath.indexOf(">")); //$NON-NLS-1$
+			    databasePath = databasePath.substring(databasePath.indexOf(">")+1, databasePath.length()); //$NON-NLS-1$
 			}
 			else {
-			    if (databasePath.endsWith(".mdb"))
-				type = "MSAccess";
-			    else if (new File(databasePath+".properties").exists() && new File(databasePath+".script").exists())
-				type = "HSQL";
+			    if (databasePath.endsWith(".mdb")) //$NON-NLS-1$
+				type = "MSAccess"; //$NON-NLS-1$
+			    else if (new File(databasePath+".properties").exists() && new File(databasePath+".script").exists()) //$NON-NLS-1$ //$NON-NLS-2$
+				type = "HSQL"; //$NON-NLS-1$
 			}
 		    }
 		    else {
-			log.debug("database path is empty");
+			log.debug("database path is empty"); //$NON-NLS-1$
 			return null;
 		    }
 		    
@@ -2405,13 +2403,13 @@ public class MovieManager extends JFrame implements ComponentListener {
 		    
 		    ShowGUI.show(progressBar, true);
 		    
-		    if (type.equals("MySQL"))
-			DialogDatabase.updateProgress(progressBar, "Connecting to database...");
+		    if (type.equals("MySQL")) //$NON-NLS-1$
+			DialogDatabase.updateProgress(progressBar, Localizer.getString("moviemanager.progress.connecting-to-database")); //$NON-NLS-1$
 		    else
-			DialogDatabase.updateProgress(progressBar, "Creating connection...");
+			DialogDatabase.updateProgress(progressBar, Localizer.getString("moviemanager.progress.creating-connection")); //$NON-NLS-1$
 
 
-		    log.info("Loading " +type+ ":" + databasePath);
+		    log.info("Loading " +type+ ":" + databasePath); //$NON-NLS-1$ //$NON-NLS-2$
 
 		    /* Database path relative to program location */
 		    if (config.getUseRelativeDatabasePath() == 2)
@@ -2421,29 +2419,29 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 		    try {
 
-			if (type.equals("MSAccess")) {
+			if (type.equals("MSAccess")) { //$NON-NLS-1$
 			    if (new File(databasePath).exists()) {
-				log.debug("Loading Access database");
+				log.debug("Loading Access database"); //$NON-NLS-1$
 				db = new DatabaseAccess(databasePath);
 			    }
 			    else
-				log.debug("Access database does not exist");
+				log.debug("Access database does not exist"); //$NON-NLS-1$
 			}
-			else if (type.equals("HSQL")) {
-			    if (new File(databasePath+".properties").exists() && new File(databasePath+".script").exists()) {
-				log.debug("Loading HSQL database");
+			else if (type.equals("HSQL")) { //$NON-NLS-1$
+			    if (new File(databasePath+".properties").exists() && new File(databasePath+".script").exists()) { //$NON-NLS-1$ //$NON-NLS-2$
+				log.debug("Loading HSQL database"); //$NON-NLS-1$
 				db = new DatabaseHSQL(databasePath);
 			    }
 			    else
-				log.debug("HSQL database does not exist");
+				log.debug("HSQL database does not exist"); //$NON-NLS-1$
 			}
-			else if (type.equals("MySQL")) {
-			    log.debug("Loading MySQL database");
+			else if (type.equals("MySQL")) { //$NON-NLS-1$
+			    log.debug("Loading MySQL database"); //$NON-NLS-1$
 			    db = new DatabaseMySQL(databasePath);
 			}
 
 		    } catch (Exception e) {
-			log.error("Exception: " + e.getMessage());
+			log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
 		    }
 
 
@@ -2452,7 +2450,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 			try {
 			    Runnable setModel = new Runnable() {
 				    public void run() {
-					ExtendedTreeNode root = new ExtendedTreeNode(new ModelMovie(-1, null, null, null, "Loading Database...", null, null, null, null, null, null, null, false, null, null, null, null, null, null, null, null, null));
+					ExtendedTreeNode root = new ExtendedTreeNode(new ModelMovie(-1, null, null, null, Localizer.getString("moviemanager.progress.loading-database"), null, null, null, null, null, null, null, false, null, null, null, null, null, null, null, null, null)); //$NON-NLS-1$
 
 					DefaultTreeModel model = new AutomatedTreeModel(root, false);
 
@@ -2463,19 +2461,19 @@ public class MovieManager extends JFrame implements ComponentListener {
 			    SwingUtilities.invokeLater(setModel);
 
 			} catch (Exception e) {
-			    log.error("Exception:" + e.getMessage());
+			    log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
 			}
 
 			Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
 			long time = System.currentTimeMillis();
 
-			DialogDatabase.updateProgress(progressBar, "Retrieving movie list...");
+			DialogDatabase.updateProgress(progressBar, Localizer.getString("moviemanager.progress.retrieving-movie-list")); //$NON-NLS-1$
 
 			if (setDatabase(db, false))
-			    log.debug("Database loaded in:" + (System.currentTimeMillis() - time) + " ms");
+			    log.debug("Database loaded in:" + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			else
-			    log.debug("Failed to load database");
+			    log.debug("Failed to load database"); //$NON-NLS-1$
 		    }
 
 		    progressBar.dispose();
@@ -2564,9 +2562,9 @@ public class MovieManager extends JFrame implements ComponentListener {
 	    }
 
 	    /* Adds 'Show all' in the list */
-	    menuItem = new JRadioButtonMenuItem("Show All", true);
+	    menuItem = new JRadioButtonMenuItem("Show All", true); //$NON-NLS-1$
 	    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
-	    menuItem.setActionCommand("Show All");
+	    menuItem.setActionCommand("Show All"); //$NON-NLS-1$
 	    menuItem.addActionListener(new MovieManagerCommandLoadList());
 	    group.add(menuItem);
 
@@ -2579,10 +2577,10 @@ public class MovieManager extends JFrame implements ComponentListener {
 	try {
 	    //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
 
-	    fileName = fileName.replaceAll("\\\\", "/");
+	    fileName = fileName.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 
-	    if (fileName.startsWith("/"))
-		fileName = fileName.replaceFirst("/", "");
+	    if (fileName.startsWith("/")) //$NON-NLS-1$
+		fileName = fileName.replaceFirst("/", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
 	    //log.debug("fileName:" + fileName);
 	    //log.debug("codebase:"+ _movieManager.applet.getCodeBase());
@@ -2600,7 +2598,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	    //return new File((java.net.URI) new java.net.URI(URLEncoder.encode(url.toString() , "UTF-8")));
 
     	} catch(Exception e) {
-	    log.error("Exception:" + e.getMessage());
+	    log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
 	}
 	return null;
     }
@@ -2613,14 +2611,18 @@ public class MovieManager extends JFrame implements ComponentListener {
 	    //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
 
 	    if (!MovieManager.isApplet()) {
-		url = new File(getUserDir() + fileName).toURL();
+	    	/* handle paths with leading slash as absolute paths */
+	    	if (fileName.startsWith("/")) {
+		    url = new File(fileName).toURL();
+	    	} else {
+		    url = new File(getUserDir() + fileName).toURL();
+	    	}
 	    }
 	    else {
+		fileName = fileName.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		fileName = fileName.replaceAll("\\\\", "/");
-
-		if (fileName.startsWith("/"))
-		    fileName = fileName.replaceFirst("/", "");
+		if (fileName.startsWith("/")) //$NON-NLS-1$
+		    fileName = fileName.replaceFirst("/", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
 		//log.debug("fileName:" + fileName);
 		//log.debug("codebase:"+ _movieManager.applet.getCodeBase());
@@ -2636,7 +2638,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	    //return new File((java.net.URI) new java.net.URI(URLEncoder.encode(url.toString() , "UTF-8")));
 
     	} catch(Exception e) {
-	    log.error("Exception:" + e.getMessage());
+	    log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
 	}
 	return url;
     }
@@ -2672,11 +2674,11 @@ public class MovieManager extends JFrame implements ComponentListener {
 	String value;;
 
 	if (entries < 10)
-	    value = "    ";
+	    value = "    "; //$NON-NLS-1$
 	else if (entries < 100)
-	    value = "  ";
+	    value = "  "; //$NON-NLS-1$
 	else
-	    value = " ";
+	    value = " "; //$NON-NLS-1$
 
 	if (entries != -1) {
 	    value += String.valueOf(entries);
@@ -2693,7 +2695,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	options.setFilterCategory(config.getFilterCategory());
 
-	if ("Movie Title".equals(config.getFilterCategory()) && config.getIncludeAkaTitlesInFilter())
+	if ("Movie Title".equals(config.getFilterCategory()) && config.getIncludeAkaTitlesInFilter()) //$NON-NLS-1$
 	    options.setIncludeAkaTitlesInFilter(true);
 	else
 	    options.setIncludeAkaTitlesInFilter(false);
@@ -2703,7 +2705,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	options.setSeen(config.getFilterSeen());
 	options.setListName(config.getCurrentList());
 
-	if (!options.getListName().equals("Show All"))
+	if (!options.getListName().equals("Show All")) //$NON-NLS-1$
 	    options.setListOption(1);
 
 	options.setRatingOption(config.getRatingOption());
@@ -2755,20 +2757,35 @@ public class MovieManager extends JFrame implements ComponentListener {
      **/
     public static String getUserDir() {
 
-	String path = "";
+	String path = ""; //$NON-NLS-1$
 
 	try {
 	    java.net.URL url = MovieManager.class.getProtectionDomain().getCodeSource().getLocation();
-	    File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8"));
-
-	    /* If running in a jar file the parent is the root dir */
+	    File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
+	    //File file = new File(java.net.URLDecoder.decode(System.getProperty("user.dir"), "UTF-8"));
+	    
+	    
+	    // If running in a jar file the parent is the root dir 
 	    if (file.isFile())
-	    	path = file.getParentFile().getAbsolutePath();
+	    path = file.getParentFile().getAbsolutePath();
 	    else
-	    	path = file.getAbsolutePath();
+	    path = file.getAbsolutePath();
+	    
+
+        /* If running in a mac application bundle, we can't write in the application-directory, so we use the home of the user */
+	    if (MovieManager.isMac() && path.indexOf(".app/Contents") > -1) {
+		path = System.getProperty("user.home") + "/Library/Application Support/MovieManager/";
+		File dir = new File(path);
+		
+		if (!dir.exists()) {
+		    if(!dir.mkdir()) {
+			log.error("Could not create settings folder.");
+		    }
+		}
+	    }
 	}
 	catch (UnsupportedEncodingException e) {
-	    path = System.getProperty("user.dir");
+	    path = System.getProperty("user.dir"); //$NON-NLS-1$
 	}
 
 	if (!path.endsWith(getDirSeparator()))
@@ -2779,7 +2796,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 
     public static String getLineSeparator() {
-	return System.getProperty("line.separator");
+	return System.getProperty("line.separator"); //$NON-NLS-1$
     }
 
 
@@ -2787,26 +2804,29 @@ public class MovieManager extends JFrame implements ComponentListener {
 	return File.separator;
     }
 
+    public static boolean isMacAppBundle() {
+    	return isMac() & (MovieManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().indexOf(".app/Contents/Resources") > -1);
+    }
 
 
     public static boolean isMac() {
-	String os = System.getProperty("os.name");
-	return os != null && os.toLowerCase().startsWith("mac") ? true : false;
+	String os = System.getProperty("os.name"); //$NON-NLS-1$
+	return os != null && os.toLowerCase().startsWith("mac") ? true : false; //$NON-NLS-1$
     }
 
     public static boolean isLinux() {
-	String os = System.getProperty("os.name");
-	return os != null && os.toLowerCase().startsWith("linux") ? true : false;
+	String os = System.getProperty("os.name"); //$NON-NLS-1$
+	return os != null && os.toLowerCase().startsWith("linux") ? true : false; //$NON-NLS-1$
     }
 
     public static boolean isSolaris() {
-	String os = System.getProperty("os.name");
-	return os != null && (os.toLowerCase().startsWith("sunos") || os.toLowerCase().startsWith("solaris")) ? true : false;
+	String os = System.getProperty("os.name"); //$NON-NLS-1$
+	return os != null && (os.toLowerCase().startsWith("sunos") || os.toLowerCase().startsWith("solaris")) ? true : false; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public static boolean isWindows() {
-	String os = System.getProperty("os.name");
-	return os != null && os.toLowerCase().startsWith("windows") ? true : false;
+	String os = System.getProperty("os.name"); //$NON-NLS-1$
+	return os != null && os.toLowerCase().startsWith("windows") ? true : false; //$NON-NLS-1$
     }
 
     public Dimension getMainSize() {
@@ -2823,35 +2843,38 @@ public class MovieManager extends JFrame implements ComponentListener {
     		image = MovieManager.applet.getImage(url);
 	    }
 	    else {
-
-		if (new File(imageName).exists()) {
-		    image = Toolkit.getDefaultToolkit().getImage(imageName);
-        	}
+	    	String path = new String();
+	    	if(!new File(imageName).exists()){
+	    		path = System.getProperty("user.dir");
+	    	}
+	    if (new File(path + imageName).exists()) {
+		    image = Toolkit.getDefaultToolkit().getImage(path + imageName);
+		}
         	else {
-
+   
 		    try {
 			URL url = MovieManager.class.getResource(imageName);
 			image = Toolkit.getDefaultToolkit().getImage(url);
 		    }
 		    catch (Exception e) {
-			log.error("Exception:" + e.getMessage());
+			log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
 		    }
 		}
 	    }
 	} catch (Exception e) {
-	    log.error("Exception:" + e.getMessage());
+	    log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
 	}
 	return image;
     }
 
 
     public static String getPath(String fileName) {
-    	String path = "";
+    	String path = ""; //$NON-NLS-1$
     	try {
-	    path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
+	    path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8"); //$NON-NLS-1$
     	}
     	catch (Exception e) {
-	    log.error("Exception:" + e.getMessage());
+	    log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
 	}
     	return path;
     }
@@ -2862,7 +2885,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	URL url = MovieManager.getFile(path);
 
-      	if (url.toExternalForm().startsWith("http://"))
+      	if (url.toExternalForm().startsWith("http://")) //$NON-NLS-1$
 	    return;
 
       	File dir = new File(url.getPath());
@@ -2872,20 +2895,20 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	    if (jarList != null) {
 
-		String absolutePath = "";
+		String absolutePath = ""; //$NON-NLS-1$
 		for (int i = 0; i < jarList.length; i++) {
 
 		    absolutePath = jarList[i].getAbsolutePath();
 
-		    if (absolutePath.endsWith(".jar")) {
+		    if (absolutePath.endsWith(".jar")) { //$NON-NLS-1$
 			ClassPathHacker.addFile(absolutePath);
-		    log.debug(absolutePath+ " added to classpath");
+		    log.debug(absolutePath+ " added to classpath"); //$NON-NLS-1$
 		    }
 		}
 	    }
 	}
 	catch (Exception e) {
-	    log.error("Exception:" + e.getMessage());
+	    log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
 	}
     }
 
@@ -2896,18 +2919,21 @@ public class MovieManager extends JFrame implements ComponentListener {
 		public final void run() {
 		    
 		    /* Disable HTTPClient logging output */
-		    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+		    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog"); //$NON-NLS-1$ //$NON-NLS-2$
 		    
-		    File configFile = new File("log4j.properties");
-		    
-		    if (configFile.isFile())
-			PropertyConfigurator.configure(configFile.getAbsolutePath());
-		    
+		    File configFile = new File(getUserDir() + "/log4j.properties"); //$NON-NLS-1$
+		                
+		    if (configFile.isFile()) {
+		    } else {
+		        BasicConfigurator.configure();
+		    }
+		   
 		    log = Logger.getRootLogger();
 		    
 		    /* Writes the date. */
-		    log.debug("Log Start: " + new Date(System.currentTimeMillis()));
+		    log.debug("Log Start: " + new Date(System.currentTimeMillis())); //$NON-NLS-1$
 		    
+		    _movieManager = new MovieManager();
 		    
 		    config = new MovieManagerConfig();
 		    
@@ -2919,17 +2945,28 @@ public class MovieManager extends JFrame implements ComponentListener {
 			JFrame.setDefaultLookAndFeelDecorated(true);
 			JDialog.setDefaultLookAndFeelDecorated(true);
 		    }
-
-		    _movieManager = new MovieManager();
-
+		    
 		    /* Includes the avallable jar files*/
-		    includeJarFilesInClasspath("LookAndFeels");
+		    includeJarFilesInClasspath("LookAndFeels"); //$NON-NLS-1$
 
+		    if(!MovieManager.isMacAppBundle()) {
+		    	includeJarFilesInClasspath("LookAndFeels");
+		    } else {
+			includeJarFilesInClasspath(System.getProperty("user.dir") + "/LookAndFeels");
+		    }
+		    
 		    /* Installs the Look&Feels*/
+		    if(isMac()) { 
+                LookAndFeelManager.setupOSXLaF(); 
+		    }
 		    LookAndFeelManager.instalLAFs();
-
+		    
 		    /* Starts the MovieManager. */
 		    MovieManager.getIt().setUp();
+		    
+		    if (MovieManager.isMac()) {
+                LookAndFeelManager.macOSXRegistration();
+		    }   
 		    
 		    /* Loads the database. */
 		    MovieManager.getIt().loadDatabase();
@@ -2938,4 +2975,8 @@ public class MovieManager extends JFrame implements ComponentListener {
 		}
 	    });
     }
-}
+
+
+  }
+
+

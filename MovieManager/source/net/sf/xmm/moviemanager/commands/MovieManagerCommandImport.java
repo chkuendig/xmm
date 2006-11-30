@@ -25,6 +25,7 @@ import net.sf.xmm.moviemanager.DialogImport;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.models.ModelImportSettings;
+import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import org.apache.log4j.Logger;
@@ -47,7 +48,7 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
     ModelImportSettings importSettings;
     
     public MovieManagerCommandImport() {
-	super(MovieManager.getIt(), "Importer", true);
+	super(MovieManager.getIt(), Localizer.getString("MovieManagerCommandImport.dialog-importer.title"), true); //$NON-NLS-1$
     }
     
     void createAndShowGUI() {
@@ -90,9 +91,9 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
 	    };
 	
 	// dbImporter.
-	    getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
+	    getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
 	// dbImporter.
-	    getRootPane().getActionMap().put("ESCAPE", escapeAction);
+	    getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 	
 	MovieManager mm = MovieManager.getIt();
 	
@@ -159,11 +160,11 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
 	    
 	    File tempFile = new File(importSettings.filePath);
 	    
-	    importSettings.coverPath = tempFile.getParentFile().getParent()+ File.separator +"Covers" + File.separator;
+	    importSettings.coverPath = tempFile.getParentFile().getParent()+ File.separator +"Covers" + File.separator; //$NON-NLS-1$
 	    if (!new File(importSettings.coverPath).isDirectory()) {
 		
-		String path = "";
-		if (!(path = getCoverDirectory(importSettings.filePath)).equals(""))
+		String path = ""; //$NON-NLS-1$
+		if (!(path = getCoverDirectory(importSettings.filePath)).equals("")) //$NON-NLS-1$
 		    importSettings.coverPath = path + File.separator;
 	    }
 	}
@@ -179,14 +180,14 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
 	    fileChooser.setFileSelectionMode(ExtendedFileChooser.DIRECTORIES_ONLY);
 	    File path;
 	    
-	    if (!databaseFilePath.equals("") && (path = new File(databaseFilePath)).exists())
+	    if (!databaseFilePath.equals("") && (path = new File(databaseFilePath)).exists()) //$NON-NLS-1$
 		fileChooser.setCurrentDirectory(path);
 	    else if (MovieManager.getConfig().getLastFileDir() != null)
 		fileChooser.setCurrentDirectory(MovieManager.getConfig().getLastFileDir());
 	    
-	    fileChooser.setDialogTitle("Select Covers Directory");
-	    fileChooser.setApproveButtonText("Select");
-	    fileChooser.setApproveButtonToolTipText("Select Covers Directory");
+	    fileChooser.setDialogTitle(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.title")); //$NON-NLS-1$
+	    fileChooser.setApproveButtonText(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.approve-button.text")); //$NON-NLS-1$
+	    fileChooser.setApproveButtonToolTipText(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.approve-button.tooltip")); //$NON-NLS-1$
 	    fileChooser.setAcceptAllFileFilterUsed(false);
 	    
 	    int returnVal = fileChooser.showOpenDialog(this);
@@ -195,7 +196,7 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
 		String filepath = fileChooser.getSelectedFile().getAbsolutePath();
 		
 		if (!(new File(filepath).exists())) {
-		    throw new Exception("Covers directory not found.");
+		    throw new Exception("Covers directory not found."); //$NON-NLS-1$
 		}
 		/* Sets the last path... */
 		MovieManager.getConfig().setLastFileDir(new File(filepath));
@@ -203,18 +204,18 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
 	    }
 	}
 	catch (Exception e) {
-	    log.error("", e);
+	    log.error("", e); //$NON-NLS-1$
 	}
 	/* Sets the last path... */
 	MovieManager.getConfig().setLastFileDir(fileChooser.getCurrentDirectory());
-	return "";
+	return ""; //$NON-NLS-1$
     }
 
     /**
      * Invoked when an action occurs.
      **/
     public void actionPerformed(ActionEvent event) {
-	log.debug("ActionPerformed: " + event.getActionCommand());
+	log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 	execute();
     }
 }

@@ -23,6 +23,7 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.DialogMovieInfo;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.event.ActionEvent;
@@ -56,7 +57,7 @@ public class MovieManagerCommandEdit implements ActionListener {
 	    ModelEntry selected = ((ModelEntry) ((DefaultMutableTreeNode) MovieManager.getIt().getMoviesList().getLastSelectedPathComponent()).getUserObject());
 	    
 	    if (selected.getKey() != -1) {
-		DialogMovieInfo dialogMovieInfo = new DialogMovieInfo("Edit Movie", selected);
+		DialogMovieInfo dialogMovieInfo = new DialogMovieInfo(Localizer.getString("MovieManagerCommandEdit.dialog-movie-info.title.edit-movie"), selected); //$NON-NLS-1$
 		//dialogMovieInfo.setVisible(true);
 		ShowGUI.show(dialogMovieInfo, true);
 	    }
@@ -67,7 +68,7 @@ public class MovieManagerCommandEdit implements ActionListener {
      * Invoked when an action occurs.
      **/
     public void actionPerformed(ActionEvent event) {
-	MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
+	MovieManager.log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 	execute();
     }
 }

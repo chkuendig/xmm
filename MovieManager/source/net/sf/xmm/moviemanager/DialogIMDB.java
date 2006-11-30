@@ -27,6 +27,7 @@ import net.sf.xmm.moviemanager.extentions.JMultiLineToolTip;
 import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.ModelIMDB;
 import net.sf.xmm.moviemanager.models.ModelMovie;
+import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SwingWorker;
 import net.sf.xmm.moviemanager.util.ShowGUI;
 
@@ -89,10 +90,10 @@ class DialogIMDB extends JDialog {
 		    dispose();
 		}
 	    };
-	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-	getRootPane().getActionMap().put("ESCAPE", escapeAction);
+	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+	getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 	
-	createListDialog("searchString", "filename");
+	createListDialog("searchString", "filename"); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     
@@ -129,8 +130,8 @@ class DialogIMDB extends JDialog {
 		    dispose();
 		}
 	    };
-	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-	getRootPane().getActionMap().put("ESCAPE", escapeAction);
+	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+	getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 	
 	createListDialog(searchString, filename);
     }
@@ -138,12 +139,12 @@ class DialogIMDB extends JDialog {
     
     void createListDialog(final String searchString, String filename) {
 	/* Dialog properties...*/
-	setTitle("Select Movie Title");
+	setTitle(Localizer.getString("DialogIMDB.title")); //$NON-NLS-1$
 	setModal(true);
 	setResizable(false);
 	/* Movies List panel...*/
 	panelMoviesList = new JPanel();
-	panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," IMDB Movies List "), BorderFactory.createEmptyBorder(5,5,5,5)));
+	panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 	
 	listMovies = new JList() {
 		
@@ -194,14 +195,14 @@ class DialogIMDB extends JDialog {
 	    setTitle(filename);
 	    JPanel searchStringPanel = new JPanel();
 	    searchStringPanel.setLayout(new BorderLayout());
-	    searchStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Search string "), BorderFactory.createEmptyBorder(4,4,4,4)));
+	    searchStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-search-string.title")), BorderFactory.createEmptyBorder(4,4,4,4))); //$NON-NLS-1$
 	    
 	    searchStringField = new JTextField(27);
-	    searchStringField.setActionCommand("Search String:");
+	    searchStringField.setActionCommand("Search String:"); //$NON-NLS-1$
 	    searchStringField.setText(searchString);
 	    searchStringField.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent event) {
-			log.debug("ActionPerformed: " + event.getActionCommand());
+			log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 			executeSearchMultipleMovies();
 			
 		    }
@@ -217,14 +218,14 @@ class DialogIMDB extends JDialog {
 	    /*This button is used to search for on IMDB and for movies in the Database
 	      Where to search is desided in the executeSearchMultipleMovies method
 	    */
-	    JButton buttonSearch = new JButton("Search");
-	    buttonSearch.setToolTipText("Do a search with the search string");
-	    buttonSearch.setActionCommand("GetIMDBInfo - Search again");
+	    JButton buttonSearch = new JButton(Localizer.getString("DialogIMDB.button.search.text")); //$NON-NLS-1$
+	    buttonSearch.setToolTipText(Localizer.getString("DialogIMDB.button.search.tooltip")); //$NON-NLS-1$
+	    buttonSearch.setActionCommand("GetIMDBInfo - Search again"); //$NON-NLS-1$
 	    
 	    
 	    buttonSearch.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent event) {
-			log.debug("ActionPerformed: " + event.getActionCommand());
+			log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 			executeSearchMultipleMovies();
 		    }});
 	    multipleMovieButtons.add(buttonSearch);
@@ -232,29 +233,29 @@ class DialogIMDB extends JDialog {
 	    if (commandAddMovies instanceof MovieManagerCommandAddMultipleMoviesByFile) {
 		
 		/*This button choses between IMDB and local movie database*/
-		final JButton chooseBetweenImdbAndLocalDatabase  = new JButton("Add to existing movie");
-		chooseBetweenImdbAndLocalDatabase.setToolTipText("Add file info to an existing movie instead of adding a new movie to the movie list");
+		final JButton chooseBetweenImdbAndLocalDatabase  = new JButton(Localizer.getString("DialogIMDB.button.add-to-existing-movie.text")); //$NON-NLS-1$
+		chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.getString("DialogIMDB.button.add-to-existing-movie.tooltip")); //$NON-NLS-1$
 		chooseBetweenImdbAndLocalDatabase.setPreferredSize(new Dimension(155, 26));
-		chooseBetweenImdbAndLocalDatabase.setActionCommand("GetIMDBInfo - chooseBetweenImdbAndLocalDatabase");
+		chooseBetweenImdbAndLocalDatabase.setActionCommand("GetIMDBInfo - chooseBetweenImdbAndLocalDatabase"); //$NON-NLS-1$
 		chooseBetweenImdbAndLocalDatabase.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-			    log.debug("ActionPerformed: " + event.getActionCommand());
+			    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 			
 			    if (addInfoToExistingMovie) {
-				panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," IMDB Movies List "), BorderFactory.createEmptyBorder(5,5,5,5)));
-				chooseBetweenImdbAndLocalDatabase.setText("Add to existing movie");
-				chooseBetweenImdbAndLocalDatabase.setToolTipText("Add file info to an existing movie instead of adding a new movie to the movie list");
+				panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+				chooseBetweenImdbAndLocalDatabase.setText(Localizer.getString("DialogIMDB.button.add-to-existing-movie.text")); //$NON-NLS-1$
+				chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.getString("DialogIMDB.button.add-to-existing-movie.tooltip")); //$NON-NLS-1$
 				addInfoToExistingMovie = false;
 				executeSearchMultipleMovies();
 			    }
 			
 			    else {
-				executeEditExistingMovie("");
-				chooseBetweenImdbAndLocalDatabase.setText("Search on IMDB");
-				chooseBetweenImdbAndLocalDatabase.setToolTipText("Search on IMDB");
+				executeEditExistingMovie(""); //$NON-NLS-1$
+				chooseBetweenImdbAndLocalDatabase.setText(Localizer.getString("DialogIMDB.button.search-on-IMDb.text")); //$NON-NLS-1$
+				chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.getString("DialogIMDB.button.search-on-IMDb.tooltip")); //$NON-NLS-1$
 				addInfoToExistingMovie = true;
 			    
-				panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Your Movies List "), BorderFactory.createEmptyBorder(5,5,5,5)));
+				panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-your-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 			    
 			    }
 			
@@ -265,13 +266,13 @@ class DialogIMDB extends JDialog {
 		multipleMovieButtons.add(chooseBetweenImdbAndLocalDatabase);
 	    }
 	    
-	    JButton addWithoutIMDBInfo = new JButton("Add without IMDB info");
-	    addWithoutIMDBInfo.setToolTipText("Add movie to database without retrieving movie info from IMDB");
-	    addWithoutIMDBInfo.setActionCommand("GetIMDBInfo - addWithoutIMDBInfo");
+	    JButton addWithoutIMDBInfo = new JButton(Localizer.getString("DialogIMDB.button.add-without-web-info.text")); //$NON-NLS-1$
+	    addWithoutIMDBInfo.setToolTipText(Localizer.getString("DialogIMDB.button.add-without-web-info.tooltip")); //$NON-NLS-1$
+	    addWithoutIMDBInfo.setActionCommand("GetIMDBInfo - addWithoutIMDBInfo"); //$NON-NLS-1$
 	    
 	    addWithoutIMDBInfo.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent event) {
-			log.debug("ActionPerformed: "+ event.getActionCommand());
+			log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
 			
 			_parent.getMovieTitle().setText(searchStringField.getText());
 			_parent.getMovieTitle().setCaretPosition(0);
@@ -281,13 +282,13 @@ class DialogIMDB extends JDialog {
 		    }});
 	    multipleMovieButtons.add(addWithoutIMDBInfo);
 	    
-	    JButton cancelAll = new JButton("Abort");
-	    cancelAll.setToolTipText("Abort will cancel every movie left on the add-list");
-	    cancelAll.setActionCommand("GetIMDBInfo - cancelAll");
+	    JButton cancelAll = new JButton(Localizer.getString("DialogIMDB.button.abort.text")); //$NON-NLS-1$
+	    cancelAll.setToolTipText(Localizer.getString("DialogIMDB.button.abort.tooltip")); //$NON-NLS-1$
+	    cancelAll.setActionCommand("GetIMDBInfo - cancelAll"); //$NON-NLS-1$
 	    
 	    cancelAll.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent event) {
-			log.debug("ActionPerformed: "+ event.getActionCommand());
+			log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
 			
 			/*Sets the cancelAll variable in multipleMovies object to true
 			  This variable is checked in the multipleMovies object before saving,
@@ -306,12 +307,12 @@ class DialogIMDB extends JDialog {
 	panelRegularButtons.setBorder(BorderFactory.createEmptyBorder(0,0,4,0));
 	panelRegularButtons.setLayout(new FlowLayout());
 	
-	JButton buttonMore = new JButton("More Titles");
-	buttonMore.setToolTipText("Get more related titles from IMDB");
-	buttonMore.setActionCommand("GetIMDBInfo - More");
+	JButton buttonMore = new JButton(Localizer.getString("DialogIMDB.button.more-titles.text")); //$NON-NLS-1$
+	buttonMore.setToolTipText(Localizer.getString("DialogIMDB.button.more-titles.tooltip")); //$NON-NLS-1$
+	buttonMore.setActionCommand("GetIMDBInfo - More"); //$NON-NLS-1$
 	buttonMore.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+ event.getActionCommand());
+		    log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
 		    
 		    getButtonMore().setEnabled(false);
 		    getButtonSelect().setEnabled(false);
@@ -320,12 +321,12 @@ class DialogIMDB extends JDialog {
 		}});
 	
 	panelRegularButtons.add(buttonMore);
-	JButton buttonSelect = new JButton("Select");
-	buttonSelect.setToolTipText("Get the info for the selected title");
-	buttonSelect.setActionCommand("GetIMDBInfo - Select");
+	JButton buttonSelect = new JButton(Localizer.getString("DialogIMDB.button.select.text")); //$NON-NLS-1$
+	buttonSelect.setToolTipText(Localizer.getString("DialogIMDB.button.select.tooltip")); //$NON-NLS-1$
+	buttonSelect.setActionCommand("GetIMDBInfo - Select"); //$NON-NLS-1$
 	buttonSelect.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+ event.getActionCommand());
+		    log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
 		    
 		    if (!getMoviesList().isSelectionEmpty())
 			executeCommandSelect();
@@ -341,19 +342,19 @@ class DialogIMDB extends JDialog {
 	JButton buttonCancel;
 	
 	if (isMultiAdd()) {
-	    buttonCancel = new JButton("Skip movie");
-	    buttonCancel.setToolTipText("Skip this movie");
+	    buttonCancel = new JButton(Localizer.getString("DialogIMDB.button.cancel.text.skip-movie")); //$NON-NLS-1$
+	    buttonCancel.setToolTipText(Localizer.getString("DialogIMDB.button.cancel.ooltip.cancel")); //$NON-NLS-1$
 	}
 	else {
-	    buttonCancel = new JButton("Cancel");
-	    buttonCancel.setToolTipText("Close the Get IMDB Info dialog");
+	    buttonCancel = new JButton(Localizer.getString("DialogIMDB.button.cancel.text.cancel")); //$NON-NLS-1$
+	    buttonCancel.setToolTipText(Localizer.getString("DialogIMDB.button.cancel.tooltip.cancel")); //$NON-NLS-1$
 	}
 	
-	buttonCancel.setActionCommand("GetIMDBInfo - Cancel");
+	buttonCancel.setActionCommand("GetIMDBInfo - Cancel"); //$NON-NLS-1$
 	
 	buttonCancel.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: "+ event.getActionCommand());
+		    log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
 		    
 		    if (isMultiAdd())
 			commandAddMovies.setCancel(true);
@@ -377,7 +378,7 @@ class DialogIMDB extends JDialog {
 	//listModel.addElement(new ModelIMDB(key, movieTitle, aka));
 	
 	DefaultListModel model = new DefaultListModel();
-	model.addElement(new ModelIMDB(null, "Search in progress...", null));
+	model.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.search-in-progress"), null)); //$NON-NLS-1$
 	listMovies.setModel(model);
 	
 	
@@ -388,7 +389,7 @@ class DialogIMDB extends JDialog {
 		int listSize = list.getSize();
 						
 		if (list.getSize() == 0) {
-		    list.addElement(new ModelIMDB(null, "No hits found", null));
+		    list.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
 		}
 						
 		listMovies.setModel(list);
@@ -410,7 +411,7 @@ class DialogIMDB extends JDialog {
 			    DefaultListModel list = IMDB.getSimpleMatches(_parent.getMovieTitle().getText());
 			    
 			    if (list.getSize() == 0) {
-				list.addElement(new ModelIMDB(null, "No hits found", null));
+				list.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
 			    }
 						
 			    listMovies.setModel(list);
@@ -423,7 +424,7 @@ class DialogIMDB extends JDialog {
 			    executeErrorMessage(e.getMessage());
 			    listMovies.setModel(null);
 			}
-			return "";
+			return ""; //$NON-NLS-1$
 		    }
 		};
 	    worker.start();
@@ -454,7 +455,7 @@ class DialogIMDB extends JDialog {
 			
 	    try {
 				
-		if (!getButtonMore().getText().equals("More Titles"))
+		if (!getButtonMore().getText().equals(Localizer.getString("DialogIMDB.button.more-titles.text"))) //$NON-NLS-1$
 		    listModel = IMDB.getExtendedMatches(searchStringField.getText());
 		else
 		    listModel = IMDB.getSimpleMatches(searchStringField.getText());
@@ -508,7 +509,7 @@ class DialogIMDB extends JDialog {
     void executeCommandMore() {
 	
 	DefaultListModel model = new DefaultListModel();
-	model.addElement(new ModelMovie(-1, "Search in progress..."));
+	model.addElement(new ModelMovie(-1, Localizer.getString("DialogIMDB.list-element.messsage.search-in-progress"))); //$NON-NLS-1$
 	listMovies.setModel(model);
 	
 	SwingWorker worker = new SwingWorker() {
@@ -518,7 +519,7 @@ class DialogIMDB extends JDialog {
 				
 		    try {
 					
-			if (getButtonMore().getText().equals("More Titles")) {
+			if (getButtonMore().getText().equals(Localizer.getString("DialogIMDB.button.more-titles.text"))) { //$NON-NLS-1$
 					
 			    if (isMultiAdd())
 				listModel = IMDB.getExtendedMatches(searchStringField.getText());
@@ -527,14 +528,14 @@ class DialogIMDB extends JDialog {
 					
 						
 			    if (listModel.getSize() == 0) {
-				listModel.addElement(new ModelIMDB(null, "No hits found", null));
+				listModel.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
 			    }
 						
 			    getMoviesList().setModel(listModel);
 			    getMoviesList().setSelectedIndex(0);
 						
-			    getButtonMore().setToolTipText("Show less related titles");
-			    getButtonMore().setText("Less Titles");
+			    getButtonMore().setToolTipText(Localizer.getString("DialogIMDB.button.less-titles.tooltip")); //$NON-NLS-1$
+			    getButtonMore().setText(Localizer.getString("DialogIMDB.button.less-titles.text")); //$NON-NLS-1$
 			} else {
 						
 			    if (isMultiAdd())
@@ -543,14 +544,14 @@ class DialogIMDB extends JDialog {
 				listModel = IMDB.getSimpleMatches(_parent.getMovieTitle().getText());
 						
 			    if (listModel.getSize() == 0) {
-				listModel.addElement(new ModelIMDB(null, "No hits found", null));
+				listModel.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
 			    }
 						
 			    getMoviesList().setModel(listModel);
 			    getMoviesList().setSelectedIndex(0);
 						
-			    getButtonMore().setToolTipText("Get more related titles from IMDB");
-			    getButtonMore().setText("More Titles");
+			    getButtonMore().setToolTipText(Localizer.getString("DialogIMDB.button.more-titles.tooltip")); //$NON-NLS-1$
+			    getButtonMore().setText(Localizer.getString("DialogIMDB.button.more-titles.text")); //$NON-NLS-1$
 			}
 			getButtonMore().setEnabled(true);
 			getButtonSelect().setEnabled(true);
@@ -560,7 +561,7 @@ class DialogIMDB extends JDialog {
 			dispose();
 		    }
 				
-		    return "";
+		    return ""; //$NON-NLS-1$
 		}
 	    };
 	worker.start();
@@ -596,32 +597,32 @@ class DialogIMDB extends JDialog {
 	if (exception == null)
 	    return;
 		
-	if (exception.startsWith("Server returned HTTP response code: 407")) {
-	    DialogAlert alert = new DialogAlert(this, "Authentication required", "Proxy server requires authentication");
+	if (exception.startsWith("Server returned HTTP response code: 407")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.authentication-required"), Localizer.getString("DialogIMDB.alert.message.proxy-authentication-required")); //$NON-NLS-1$ //$NON-NLS-2$
 	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 		
-	if (exception.startsWith("Connection timed out")) {
-	    DialogAlert alert = new DialogAlert(this, "Connection timed out", "Server did not respond");
+	if (exception.startsWith("Connection timed out")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.connection-timed-out"), Localizer.getString("DialogIMDB.alert.message.connection-timed-out")); //$NON-NLS-1$ //$NON-NLS-2$
 	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 		
-	if (exception.startsWith("Connection reset")) {
-	    DialogAlert alert = new DialogAlert(this, "Connection reset", "Connection reset by server");
+	if (exception.startsWith("Connection reset")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.connection-reset"), Localizer.getString("DialogIMDB.alert.message.connection-reset")); //$NON-NLS-1$ //$NON-NLS-2$
 	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 		
-	if (exception.startsWith("Server redirected too many  times")) {
-	    DialogAlert alert = new DialogAlert(this, "Access denied", "Username or password is invalid");
+	if (exception.startsWith("Server redirected too many  times")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.access-denied"), Localizer.getString("DialogIMDB.alert.message.username-of-password-invalid")); //$NON-NLS-1$ //$NON-NLS-2$
 	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 		
-	if (exception.startsWith("The host did not accept the connection within timeout of")) {
-	    DialogAlert alert = new DialogAlert(this, "Connection timeout", exception);
+	if (exception.startsWith("The host did not accept the connection within timeout of")) { //$NON-NLS-1$
+	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.connection-timed-out"), exception); //$NON-NLS-1$
 	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
@@ -651,7 +652,7 @@ class DialogIMDB extends JDialog {
 	    if (model.getKey() == -1)
 		return;
 		
-	    DialogMovieInfo dialogMovieInfo = new DialogMovieInfo("Edit Movie", model);
+	    DialogMovieInfo dialogMovieInfo = new DialogMovieInfo("Edit Movie", model); //$NON-NLS-1$
 	    
 	    /* Need to set the hasReadProperties variable because when normally 
 	       calling the getfileinfo the first time it replaces the old additional values with the new ones
@@ -680,7 +681,7 @@ class DialogIMDB extends JDialog {
 		try {
 		    imdb = new IMDB(model.getKey());
 		} catch (Exception e) {
-		    log.error("", e);
+		    log.error("", e); //$NON-NLS-1$
 		    return;
 		}
 		

@@ -23,6 +23,7 @@ package net.sf.xmm.moviemanager;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
 
@@ -58,8 +59,8 @@ public class DialogQuestion extends JDialog  {
      * The choosed answer.
      */
     private boolean _answer = false;
-    private String title = "";
-    private String questionMsg = "";
+    private String title = ""; //$NON-NLS-1$
+    private String questionMsg = ""; //$NON-NLS-1$
     private Object [] list = null;
     
     
@@ -105,8 +106,8 @@ public class DialogQuestion extends JDialog  {
 		    dispose();
 		}
 	    };
-	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-	getRootPane().getActionMap().put("ESCAPE", escapeAction);
+	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+	getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 	
 	/* Dialog properties...*/
 	setTitle(title);
@@ -122,7 +123,7 @@ public class DialogQuestion extends JDialog  {
 	    panelQuestion = new JPanel();
 	    panelQuestion.setBorder(BorderFactory.createEmptyBorder(10,5,5,5));
 	    JLabel labelQuestion = new JLabel(questionMsg);
-	    labelQuestion.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/question.png").getScaledInstance(50,50,Image.SCALE_SMOOTH)));
+	    labelQuestion.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/question.png").getScaledInstance(50,50,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 	    
 	    panelQuestion.add(labelQuestion);
 	    
@@ -133,7 +134,7 @@ public class DialogQuestion extends JDialog  {
 	    panelQuestion = new JPanel(new BorderLayout());
 	    panelQuestion.setBorder(BorderFactory.createEmptyBorder(10,5,5,5));
 	    JLabel labelQuestion = new JLabel(questionMsg);
-	    labelQuestion.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/question.png").getScaledInstance(50,50,Image.SCALE_SMOOTH)));
+	    labelQuestion.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/question.png").getScaledInstance(50,50,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 	    
 	    panelQuestion.add(labelQuestion, BorderLayout.NORTH);
 	    
@@ -143,9 +144,9 @@ public class DialogQuestion extends JDialog  {
 	    
 	    for (int i = 0; i < list.length; i++) {
 		area.append(((ModelEntry) list[i]).getTitle());
-		if (!((ModelEntry) list[i]).getDate().equals(""))
-		    area.append("  ("+ ((ModelEntry) list[i]).getDate()+")");
-		area.append("\n");
+		if (!((ModelEntry) list[i]).getDate().equals("")) //$NON-NLS-1$
+		    area.append("  ("+ ((ModelEntry) list[i]).getDate()+")"); //$NON-NLS-1$ //$NON-NLS-2$
+		area.append("\n"); //$NON-NLS-1$
 	    }
 	    
 	    area.setCaretPosition(0);
@@ -163,11 +164,11 @@ public class DialogQuestion extends JDialog  {
 	JPanel panelButtons = new JPanel();
 	panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 	panelButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-	JButton buttonYes = new JButton("Yes");
-	buttonYes.setActionCommand("Question - Yes");
+	JButton buttonYes = new JButton(Localizer.getString("DialogQuestion.answer.yes")); //$NON-NLS-1$
+	buttonYes.setActionCommand("Question - Yes"); //$NON-NLS-1$
 	buttonYes.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: " + event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 		    _answer = true;
 		    dispose();
 		}});
@@ -181,8 +182,8 @@ public class DialogQuestion extends JDialog  {
 		}});
 	
 	panelButtons.add(buttonYes);
-	JButton buttonNo = new JButton("No");
-	buttonNo.setActionCommand("Question - No");
+	JButton buttonNo = new JButton(Localizer.getString("DialogQuestion.answer.no")); //$NON-NLS-1$
+	buttonNo.setActionCommand("Question - No"); //$NON-NLS-1$
 	buttonNo.addActionListener(new CommandDialogDispose(this));
 	buttonNo.addKeyListener(new KeyAdapter() {
 		public void keyTyped(KeyEvent e) {

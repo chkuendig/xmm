@@ -50,35 +50,35 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
     
     static DialogSearch dialogSearch;
     
-    String movieTitleFilterString = "Movie Title";
-    String directorFilterString = "Directed By";
-    String writerFilterString = "Written By";
-    String genreFilterString = "Genre";
-    String castFilterString = "Cast";
+    String movieTitleFilterString = Localizer.getString("DialogSearch.filter-option.movie-title"); //$NON-NLS-1$
+    String directorFilterString = Localizer.getString("DialogSearch.filter-option.directed-by"); //$NON-NLS-1$
+    String writerFilterString = Localizer.getString("DialogSearch.filter-option.written-by"); //$NON-NLS-1$
+    String genreFilterString = Localizer.getString("DialogSearch.filter-option.genre"); //$NON-NLS-1$
+    String castFilterString = Localizer.getString("DialogSearch.filter-option.cast"); //$NON-NLS-1$
     String finalFilter; /* used to set the filterOption variable in MovieManager */
     
-    String sortByString = "Sort by ";
-    String dateSortString = "Date";
-    String movieTitleSortString = "Title"; /*Need only Title in that string because it's used 
+    String sortByString = Localizer.getString("DialogSearch.sort-option.title"); //$NON-NLS-1$
+    String dateSortString = Localizer.getString("DialogSearch.sort-option.date"); //$NON-NLS-1$
+    String movieTitleSortString = Localizer.getString("DialogSearch.sort-option.movie-title"); /*Need only Title in that string because it's used  //$NON-NLS-1$
 					     directly in the database when sorting*/
-    String directorSortString = "Directed By";
-    String ratingSortString = "Rating";
-    String durationSortString = "Duration";
+    String directorSortString = Localizer.getString("DialogSearch.sort-option.directed-by"); //$NON-NLS-1$
+    String ratingSortString = Localizer.getString("DialogSearch.sort-option.rating"); //$NON-NLS-1$
+    String durationSortString = Localizer.getString("DialogSearch.sort-option.duration"); //$NON-NLS-1$
     
     String finalSort; /*used to set the sortOption variable in MovieManager*/
     
-    String seenString = "Seen";
-    String unseenString = "Unseen";
-    String enableSeenString = "Enable";
-    int seen = MovieManager.getConfig().getFilterSeen();   /*used to set the seen variable in MovieManager
-							 0 means the seen is disabled (and seenButton selected), 
-							 1 means the seen is disabled (and unseenButton selected),
-							 2 means show only seen, 
-							 3 means show only unseen*/
+    String seenString = Localizer.getString("DialogSearch.sort-option.seen"); //$NON-NLS-1$
+    String unseenString = Localizer.getString("DialogSearch.sort-option.unseen"); //$NON-NLS-1$
+    String enableSeenString = Localizer.getString("DialogSearch.sort-option.enable"); //$NON-NLS-1$
+    int seen = MovieManager.getConfig().getFilterSeen();   /* used to set the seen variable in MovieManager
+							     0 means the seen is disabled (and seenButton selected), 
+							     1 means the seen is disabled (and unseenButton selected),
+							     2 means show only seen, 
+							     3 means show only unseen */
     
-    String ratingAboveString = "Above";
-    String ratingBelowString = "Below";
-    String enableRatingString = "Enable";
+    String ratingAboveString = Localizer.getString("DialogSearch.sort-option.above");
+    String ratingBelowString = Localizer.getString("DialogSearch.sort-option.below");
+    String enableRatingString = Localizer.getString("DialogSearch.sort-option.enable");
     int ratingValue;
     int ratingOption = MovieManager.getConfig().getRatingOption();  /*used to set the ratingOption variable in MovieManager
 								  0 means the seen is disabled (and ratingAboveButton selected), 
@@ -87,9 +87,10 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 								  3 means show only below the ratingValue.
 								  ratingValue == value from JComboBox*/
     
-    String dateAboveString = "Above";
-    String dateBelowString = "Below";
-    String enableDateString = "Enable";
+    String dateAboveString = Localizer.getString("DialogSearch.sort-option.above");
+    String dateBelowString = Localizer.getString("DialogSearch.sort-option.below");
+    String enableDateString = Localizer.getString("DialogSearch.sort-option.enable");
+    
     int dateValue;
     int dateOption = MovieManager.getConfig().getDateOption();  /*used to set the dateOption variable in MovieManager
 								  0 means the date is disabled (and dateAboveButton selected), 
@@ -160,9 +161,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 		}
 	    };
 	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-	getRootPane().getActionMap().put("ESCAPE", escapeAction);
-	
-	setTitle("Advanced search");
+    getRootPane().getActionMap().put("ESCAPE", escapeAction);
 	setResizable(false);
 	
 
@@ -173,7 +172,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	
 	movieTitleFilterButton.addItemListener(this);
 
-	includeAkaTitles = new JCheckBox("Include \"Also known as\" titles");
+	includeAkaTitles = new JCheckBox(Localizer.getString("DialogSearch.filter-option.include-also-known-as-titles"));
 	//includeAkaTitles = new JCheckBox("Include aka");
 	
 	JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -213,7 +212,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	else if(finalFilter.equals("Cast"))
 	    castFilterButton.setSelected(true);
 	
-	
+
 	includeAkaTitles.setSelected(MovieManager.getConfig().getIncludeAkaTitlesInFilter());
 	
 	/*Group the radio buttons.*/
@@ -235,7 +234,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
         JPanel radioFilterPanel = new JPanel(new GridLayout(0, 1));
 	
 	radioFilterPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-												       " Filter Category ",
+		Localizer.getString("DialogSearch.panel-filter.title"),
 												       TitledBorder.DEFAULT_JUSTIFICATION,
 												       TitledBorder.DEFAULT_POSITION,
 											    new Font(radioFilterPanel.getFont().getName(),Font.BOLD, radioFilterPanel.getFont().getSize())),
@@ -252,7 +251,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	dateSortButton = new JRadioButton(dateSortString);
 	dateSortButton.setActionCommand(dateSortString);
 	
-	movieTitleSortButton = new JRadioButton("Movie "+movieTitleSortString);
+	movieTitleSortButton = new JRadioButton(Localizer.getString("DialogSearch.filter-option.movie-title"));
 	movieTitleSortButton.setActionCommand(movieTitleSortString);
 	
 	directorSortButton = new JRadioButton(directorSortString);
@@ -282,6 +281,8 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	else if("Duration".equals(finalSort))
 	    durationSortButton.setSelected(true);
 	
+
+
 	/*Group the radio buttons.*/
 	ButtonGroup sortGroup = new ButtonGroup();
 	sortGroup.add(movieTitleSortButton);
@@ -304,7 +305,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 		
 	
 	radioSortPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                                                                                            " Order Category ",
+                                                                       Localizer.getString("DialogSearch.panel-order-category.title"),
                                                                                             TitledBorder.DEFAULT_JUSTIFICATION,
                                                                                             TitledBorder.DEFAULT_POSITION,
 											    new Font(radioSortPanel.getFont().getName(),Font.BOLD, radioSortPanel.getFont().getSize())),
@@ -323,8 +324,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 
 	JPanel radioSeenPanel = new JPanel(new GridLayout(1, 0));
 		
-	radioSeenPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-												       " Show only ",
+	radioSeenPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogSearch.panel-show-only.title"),
 												       TitledBorder.DEFAULT_JUSTIFICATION,
 												       TitledBorder.DEFAULT_POSITION,
 											    new Font(radioSeenPanel.getFont().getName(),Font.BOLD, radioSeenPanel.getFont().getSize())),
@@ -389,8 +389,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	/*Rating panel*/
 	JPanel radioRatingPanel = new JPanel(new GridLayout(1, 0));
 	
-	radioRatingPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-												       " Show only movies with chosen rating and ",
+	radioRatingPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogSearch.panel-show-only.show-only-movies-with-chosen-rating-and"),
 												       TitledBorder.DEFAULT_JUSTIFICATION,
 												       TitledBorder.DEFAULT_POSITION,
 											    new Font(radioRatingPanel.getFont().getName(),Font.BOLD, radioRatingPanel.getFont().getSize())),
@@ -475,8 +474,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	/* Date panel */
 	JPanel radioDatePanel = new JPanel(new GridLayout(1, 0));
 	
-	radioDatePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-												       " Show only movies from chosen date and ",
+	radioDatePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogSearch.panel-show-only.show-only-movies-with-chosen-date-and"),
 												       TitledBorder.DEFAULT_JUSTIFICATION,
 												       TitledBorder.DEFAULT_POSITION,
 											    new Font(radioDatePanel.getFont().getName(),Font.BOLD, radioDatePanel.getFont().getSize())),
@@ -560,14 +558,14 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 	buttonPanel.setBorder(BorderFactory.createEmptyBorder(0,0,5,5));
 	
-	buttonApply = new JButton("Apply");
-	buttonApply.setToolTipText("Apply selected settings");
+	buttonApply = new JButton(Localizer.getString("DialogSearch.button.apply.text"));
+	buttonApply.setToolTipText(Localizer.getString("DialogSearch.button.apply.tooltip"));
 	
 	buttonApply.addActionListener(this);
 	buttonPanel.add(buttonApply);
 	
-	buttonSave = new JButton("Save");
-	buttonSave.setToolTipText("Save and Close");
+	buttonSave = new JButton(Localizer.getString("DialogSearch.button.save.text"));
+    buttonSave = new JButton(Localizer.getString("DialogSearch.button.save.tooltip"));
 	
 	buttonSave.addActionListener(this);
 	buttonPanel.add(buttonSave);
@@ -583,10 +581,10 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	
 	allTabbedPanes = new JTabbedPane();
 	allTabbedPanes.setBorder(BorderFactory.createEmptyBorder(8,8,5,8));
-	allTabbedPanes.add("Settings", settings);
+    allTabbedPanes.add(Localizer.getString("DialogSearch.tab.settings.title"), settings);
 	
-	allTabbedPanes.add("Loading Alias list..", null);
-	allTabbedPanes.add("loading Alias list..", null);
+    allTabbedPanes.add(Localizer.getString("DialogSearch.tab.loading-alias-list"), null);
+    allTabbedPanes.add(Localizer.getString("DialogSearch.tab.loading-alias-list"), null);
 	
 	allTabbedPanes.setEnabledAt(1, false);
 	allTabbedPanes.setEnabledAt(2, false);
@@ -634,9 +632,9 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	
 			String tmpKey;
 	
-			generalAliasPanel.add(new JLabel("Table Name"));   
-			generalAliasPanel.add(new JLabel("Column Name"));
-			generalAliasPanel.add(new JLabel("Alias"));
+			generalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.table-name")));   
+			generalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.column-name")));
+			generalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.alias")));
 	
 			HashMap searchAlias = MovieManager.getConfig().getSearchAlias();
 	
@@ -664,9 +662,9 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	
 			additionalAliasPanel = new JPanel(new GridLayout(additionalInfoFields.size()+ extraInfoFields.size() +1, 3));
 	
-			additionalAliasPanel.add(new JLabel("Table Name"));   
-			additionalAliasPanel.add(new JLabel("Column Name"));
-			additionalAliasPanel.add(new JLabel("Alias"));
+			additionalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.table-name")));   
+			additionalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.column-name")));
+			additionalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.alias")));
 	
 			String tmpColumn;
 			String table = (String) tableNames.get(0);
@@ -720,16 +718,16 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 				    allTabbedPanes.remove(1);
 				    allTabbedPanes.remove(1);
 				    
-				    allTabbedPanes.add("General Info Alias", generalAliasPanel);
-				    allTabbedPanes.add("Additional Info Alias", additionalAliasPanel);
+                    allTabbedPanes.add(Localizer.getString("DialogSearch.tab.alias.general-info.title"), generalAliasPanel);
+                    allTabbedPanes.add(Localizer.getString("DialogSearch.tab.alias.additional-info.title"), additionalAliasPanel);
 				    
 				    pack();
 				}
 			    });
 			
-		    } catch (Exception e) {
+            } catch (Exception e) {
 			return "";
-		    }
+		  }
 		    return "";
 		}
 	    };
@@ -760,56 +758,58 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	
 	/*Filter*/
 	if (event.getSource().equals(movieTitleFilterButton)) {
-	    finalFilter = movieTitleFilterString;
+	    finalFilter = "Movie Title";
 	    MovieManager.getConfig().setFilterCategory(finalFilter);
 	    includeAkaTitles.setEnabled(true);
 	    return;
 	}
 	
+		
+	
 	if (event.getSource().equals(directorFilterButton)) {
-	    finalFilter = directorFilterString;
+	    finalFilter = "Directed By";
 	    return;
 	}
 	
 	if (event.getSource().equals(writerFilterButton)) {
-	    finalFilter = writerFilterString;
+	    finalFilter = "Written By";
 	    return;
 	}
 	
 	if (event.getSource().equals(genreFilterButton)) {
-	    finalFilter = genreFilterString;
+	    finalFilter = "Genre";
 	    return;
 	}
 	
 	if (event.getSource().equals(castFilterButton)) {
-	    finalFilter = castFilterString;
+	    finalFilter = "Cast";
 	    return;
 	}
-	
-	
+
+
 	/*Sort*/
 	if (event.getSource().equals(movieTitleSortButton)) {
-	    finalSort = movieTitleSortString;
+	    finalSort = "Title";
 	    return;
 	}
 	
 	if (event.getSource().equals(directorSortButton)) {
-	    finalSort = directorSortString;
+	    finalSort = "Directed By";
 	    return;
 	}
 	
 	if (event.getSource().equals(ratingSortButton)) {
-	    finalSort = ratingSortString;
+	    finalSort = "Rating";
 	    return;
 	}
 	
 	if (event.getSource().equals(dateSortButton)) {
-	    finalSort = dateSortString;
+	    finalSort = "Date";
 	    return;
 	}
 	
 	if (event.getSource().equals(durationSortButton)) {
-	    finalSort = durationSortString;
+	    finalSort = "Duration";
 	    return;
 	}
 	
@@ -946,9 +946,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	
 	if (enableDateButton.isSelected()) {
 	    if (dateTextField.getText().length() != 4) {
-		DialogAlert alert = new DialogAlert(this, "Alert", "The date must be 4 integers, no more...no less!");
-		//alert.setVisible(true);
-		ShowGUI.showAndWait(alert, true);
+		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogSearch.alert.title.alert"), Localizer.getString("DialogSearch.alert.message.date-must-be-4-integers"), true);
 		return;
 	    }
 	}
@@ -966,9 +964,9 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	    
 	if ("Title".equals(finalSort))
 	    ModelEntry.sort = 1;
-	else if ("directed".equals(finalSort))
+	else if ("Directed".equals(finalSort))
 	    ModelEntry.sort = 2;
-	else if ("Rating".equals(finalSort))
+    else if ("Rating".equals(finalSort))
 	    ModelEntry.sort = 3;
 	else if ("Date".equals(finalSort))
 	    ModelEntry.sort = 4;
@@ -991,7 +989,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	}
 	    	    
 	index = 5;
-	    
+	
 	for (int i = 0; i < additionalInfoFieldsCount; i++) {
 
 	    tmp = ((JTextField) additionalAliasPanel.getComponent(index)).getText();
@@ -1003,12 +1001,13 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	}
 	    
 	if (apply) {
-	    /* Applying the new setting to the movielist */
+	    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ /* Applying the new setting to the movielist */
 	    new MovieManagerCommandFilter("", null, true, true).execute();
 	}
 	else {
 	    dialogSearch = null;
 	    dispose();
+ //$NON-NLS-1$
 	}
     }
 }

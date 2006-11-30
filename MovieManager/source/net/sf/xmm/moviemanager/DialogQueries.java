@@ -62,6 +62,7 @@ import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.database.DatabaseHSQL;
 import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 import net.sf.xmm.moviemanager.models.ModelQuery;
+import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
 
@@ -89,7 +90,7 @@ public class DialogQueries extends JDialog {
             }
         });
         /* Dialog properties...*/
-        setTitle("Queries");
+        setTitle(Localizer.getString("DialogQueries.title")); //$NON-NLS-1$
         setModal(true);
         setResizable(false);
         
@@ -101,12 +102,12 @@ public class DialogQueries extends JDialog {
             }
         };
         
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-        getRootPane().getActionMap().put("ESCAPE", escapeAction);
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+        getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
         
         /* Execute panel...*/
         JPanel panelExecute = new JPanel();
-        panelExecute.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Execute "),
+        panelExecute.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogQueries.panel-execute.title")), //$NON-NLS-1$
                 BorderFactory.createEmptyBorder(5,5,5,5)));
         
 	if (MovieManager.getConfig().getDisplayQueriesInTree()) {
@@ -118,7 +119,7 @@ public class DialogQueries extends JDialog {
 	
         /* Result panel...*/
         panelResult = new JPanel();
-        panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Result "),
+        panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogQueries.panel-result.title")), //$NON-NLS-1$
                 BorderFactory.createEmptyBorder(5,5,5,5)));
         JTextArea textAreaResult = new JTextArea();
         textAreaResult.setEditable(false);
@@ -138,9 +139,9 @@ public class DialogQueries extends JDialog {
         JPanel panelButtons = new JPanel();
         panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        JButton buttonOk = new JButton("OK");
-        buttonOk.setToolTipText("Close the Queries dialog");
-        buttonOk.setActionCommand("Queries - OK");
+        JButton buttonOk = new JButton(Localizer.getString("DialogQueries.button.ok.text")); //$NON-NLS-1$
+        buttonOk.setToolTipText(Localizer.getString("DialogQueries.button.ok.tooltip")); //$NON-NLS-1$
+        buttonOk.setActionCommand("Queries - OK"); //$NON-NLS-1$
         buttonOk.addActionListener(new CommandDialogDispose(this));
         panelButtons.add(buttonOk);
         /* Adds all and buttonsPanel... */
@@ -162,7 +163,7 @@ public class DialogQueries extends JDialog {
         listExecute.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {
                 if (event.getValueIsAdjusting()) {
-		    log.debug("ActionPerformed: Queries - Execute");
+		    log.debug("ActionPerformed: Queries - Execute"); //$NON-NLS-1$
                     
                     String query = ((ModelQuery)getExecuteList().getModel().getElementAt(getExecuteList().getSelectedIndex())).getQuery();
                     executeCommandQuery(query);
@@ -193,7 +194,7 @@ public class DialogQueries extends JDialog {
         
         jTree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent event) {
-		log.debug("ActionPerformed: Queries(from tree) - Execute");
+		log.debug("ActionPerformed: Queries(from tree) - Execute"); //$NON-NLS-1$
                 String query = getExecuteQuery();
                 
                 executeCommandQuery(query);
@@ -230,7 +231,7 @@ public class DialogQueries extends JDialog {
 		     ((JPanel)
 		      getContentPane().getComponent(0)).getComponent(0)).getComponent(0)).getViewport().getComponent(0);
             if (jObj instanceof JList) {
-                return "";   //(JList)jObj;
+                return "";   //(JList)jObj; //$NON-NLS-1$
             }
             else if (jObj instanceof JTree) {     
                 JTree jTree = (JTree)jObj;
@@ -242,13 +243,13 @@ public class DialogQueries extends JDialog {
 		}
 	    }
 	    else {
-		return ""; // if we come here we have an error.
+		return ""; // if we come here we have an error. //$NON-NLS-1$
             }
         }
         catch (Exception e) {
-	    log.error("", e);
+	    log.error("", e); //$NON-NLS-1$
 	}
-        return "";
+        return ""; //$NON-NLS-1$
     }
     
     /**
@@ -273,24 +274,24 @@ public class DialogQueries extends JDialog {
 	DefaultListModel listModel = new DefaultListModel();
 	
 	/* Gets the default queries... */
-	String[] defaultQueries = {"CountCDCases.qry",
-				   "CountCDs.qry",
-				   "CountMovies.qry",
-				   "SumDurationsAccess.qry",
-				   "SumGB.qry",
-				   "MoviesWithSubTitles.qry",
-				   "UnseenMovies.qry",
-				   "UnseenMoviesWithSubTitles.qry"};
+	String[] defaultQueries = {"CountCDCases.qry", //$NON-NLS-1$
+				   "CountCDs.qry", //$NON-NLS-1$
+				   "CountMovies.qry", //$NON-NLS-1$
+				   "SumDurationsAccess.qry", //$NON-NLS-1$
+				   "SumGB.qry", //$NON-NLS-1$
+				   "MoviesWithSubTitles.qry", //$NON-NLS-1$
+				   "UnseenMovies.qry", //$NON-NLS-1$
+				   "UnseenMoviesWithSubTitles.qry"}; //$NON-NLS-1$
 	    
-	String queriesPath = "/queries/";
+	String queriesPath = "/queries/"; //$NON-NLS-1$
             
 	/* Need a different sum duration query for hsql database */
 	if (MovieManager.getIt().getDatabase() instanceof DatabaseHSQL)
-	    defaultQueries[3] = "SumDurationsHSQL.qry";
+	    defaultQueries[3] = "SumDurationsHSQL.qry"; //$NON-NLS-1$
 	else if (MovieManager.getIt().getDatabase() instanceof DatabaseMySQL) {
 	    /* Need a different queries for mysql database */
-	    queriesPath = "/queries/MySQL/";
-	    defaultQueries[3] = "SumDurationsMySQL.qry";
+	    queriesPath = "/queries/MySQL/"; //$NON-NLS-1$
+	    defaultQueries[3] = "SumDurationsMySQL.qry"; //$NON-NLS-1$
 	}
 	
 	try {
@@ -299,19 +300,19 @@ public class DialogQueries extends JDialog {
                 
 		reader = new BufferedReader(new InputStreamReader(MovieManager.getIt().getResourceAsStream(queriesPath + defaultQueries[i])));
 		name = reader.readLine();
-		query = "";
+		query = ""; //$NON-NLS-1$
                 
 		while ((line = reader.readLine()) != null) {
 		    query = query + line;
-		    if (!query.endsWith(" ")) {
-			query = query + " ";
+		    if (!query.endsWith(" ")) { //$NON-NLS-1$
+			query = query + " "; //$NON-NLS-1$
 		    }
 		}
 		listModel.addElement(new ModelQuery(name, query));
 	    }
 	
 	} catch (Exception e) {
-	    log.error("", e);
+	    log.error("", e); //$NON-NLS-1$
         }
 	
 	return listModel;
@@ -338,7 +339,7 @@ public class DialogQueries extends JDialog {
 	    File directory = new File(MovieManager.getConfig().getQueriesPath());
 	    
 	    /* Checks if it is a directory... and that it's not the default queries */
-	    if (!directory.equals(new File(MovieManager.getPath("/queries/"))) && directory.isDirectory()) {
+	    if (!directory.equals(new File(MovieManager.getPath("/queries/"))) && directory.isDirectory()) { //$NON-NLS-1$
                 
                 /* Gets an array of the files in the dir... */
                 File[] queryFiles = directory.listFiles();
@@ -346,14 +347,14 @@ public class DialogQueries extends JDialog {
                 /* Creates the model... */
                 for (int i = 0; i < queryFiles.length; i++) {
                     
-		    if (queryFiles[i].isFile() && queryFiles[i].canRead() && queryFiles[i].getName().endsWith(".qry")) {
+		    if (queryFiles[i].isFile() && queryFiles[i].canRead() && queryFiles[i].getName().endsWith(".qry")) { //$NON-NLS-1$
                         reader = new BufferedReader(new FileReader(queryFiles[i]));
                         name = reader.readLine();
-                        query = "";
+                        query = ""; //$NON-NLS-1$
                         while ((line = reader.readLine()) != null) {
                             query = query + line;
-                            if (!query.endsWith(" ")) {
-                                query = query + " ";
+                            if (!query.endsWith(" ")) { //$NON-NLS-1$
+                                query = query + " "; //$NON-NLS-1$
                             }
                         }
                         listModel.addElement(new ModelQuery(name,query));
@@ -371,7 +372,7 @@ public class DialogQueries extends JDialog {
                 listModel.set(j, qry);
             }
         } catch (Exception e) {
-	    log.error("", e);
+	    log.error("", e); //$NON-NLS-1$
         }
         /* Returns the model... */
         return listModel;
@@ -383,9 +384,9 @@ public class DialogQueries extends JDialog {
      * Creates a new model for the list execute.
      **/
     private DefaultTreeModel createTreeModel() {
-	DefaultMutableTreeNode top = new DefaultMutableTreeNode("Queries");
+	DefaultMutableTreeNode top = new DefaultMutableTreeNode("Queries"); //$NON-NLS-1$
         
-	DefaultMutableTreeNode defaultNode = new DefaultMutableTreeNode("Default");
+	DefaultMutableTreeNode defaultNode = new DefaultMutableTreeNode("Default"); //$NON-NLS-1$
 	
 	/* Getting the default queries */
 	DefaultListModel defaultQueries = getDefaultQueries();
@@ -400,7 +401,7 @@ public class DialogQueries extends JDialog {
 	directory = new File(MovieManager.getConfig().getQueriesPath());
 	
 	 /* Checks if it is a directory... and that it's not the default queries */
-	if (!directory.equals(new File(MovieManager.getPath("/queries/")))
+	if (!directory.equals(new File(MovieManager.getPath("/queries/"))) //$NON-NLS-1$
 	    && (directory != null && directory.isDirectory())) {
             createTreeModel_listDirContents(top, directory, 0);
         }
@@ -420,7 +421,7 @@ public class DialogQueries extends JDialog {
             File f = new File(someDirectory, fileOrDirName[i]);
             if (f.isDirectory()) {
                 DefaultMutableTreeNode top1 
-                        = new DefaultMutableTreeNode(new ModelQuery(f.getName(), ""));
+                        = new DefaultMutableTreeNode(new ModelQuery(f.getName(), "")); //$NON-NLS-1$
                 pTop.add(top1);
                 createTreeModel_listDirContents(top1, f, depth+1); // Recursively list contents of dir
             } 
@@ -435,23 +436,23 @@ public class DialogQueries extends JDialog {
     }
         
     private String loadQuery(File f) {
-        String query = "";
-        if ( f.canRead() && f.getName().endsWith(".qry")) {
+        String query = ""; //$NON-NLS-1$
+        if ( f.canRead() && f.getName().endsWith(".qry")) { //$NON-NLS-1$
             try {
                 BufferedReader reader;
                 String line;                    
                 reader = new BufferedReader(new FileReader(f));
                 reader.readLine(); // reading name
-                query = "";
+                query = ""; //$NON-NLS-1$
                 while ((line = reader.readLine()) != null) {
                     query = query + line;
-                    if (!query.endsWith(" ")) {
-                        query = query + " ";
+                    if (!query.endsWith(" ")) { //$NON-NLS-1$
+                        query = query + " "; //$NON-NLS-1$
                     }
                 }
             }
             catch (Exception e) {
-		log.error("Exception: "+ e);
+		log.error("Exception: "+ e); //$NON-NLS-1$
             }
         }
         return query; 
@@ -464,9 +465,9 @@ public class DialogQueries extends JDialog {
         
         
         /* if no query then set results to blank */
-        if (query == "") {
-            getResult().setText("");
-            panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Result "),
+        if (query == "") { //$NON-NLS-1$
+            getResult().setText(""); //$NON-NLS-1$
+            panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogQueries.panel-result.title")), //$NON-NLS-1$
                     BorderFactory.createEmptyBorder(5,5,5,5)));            
             return;
         }
@@ -476,14 +477,14 @@ public class DialogQueries extends JDialog {
 	
         if (MovieManager.getIt().getDatabase().getRecordCount() != 1) {
             panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-												      " Result - " + 
+												      Localizer.getString("DialogQueries.panel-result.title") +  //$NON-NLS-1$
 												      MovieManager.getIt().getDatabase().getRecordCount() + 
-												      " records returned"),
+												      Localizer.getString("DialogQueries.panel-result.records-returned")), //$NON-NLS-1$
 								     BorderFactory.createEmptyBorder(5,5,5,5)));
         } else {
-            panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Result - " + 
+            panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogQueries.panel-result.title") +  //$NON-NLS-1$
 												      MovieManager.getIt().getDatabase().getRecordCount() + 
-												      " record returned"),
+												      Localizer.getString("DialogQueries.panel-result.record-returned")), //$NON-NLS-1$
 								     BorderFactory.createEmptyBorder(5,5,5,5)));
         }
     }

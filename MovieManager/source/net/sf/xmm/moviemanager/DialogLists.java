@@ -24,6 +24,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
+import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
 
@@ -88,11 +89,11 @@ public class DialogLists extends JDialog {
 		}
 	    };
     
-	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-	getRootPane().getActionMap().put("ESCAPE", escapeAction);
+	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+	getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
     
 	/* Dialog properties...*/
-	setTitle("Lists");
+	setTitle(Localizer.getString("DialogLists.title")); //$NON-NLS-1$
 	setModal(true);
 	setResizable(false);
 	/* Initializes the original List... */
@@ -105,7 +106,7 @@ public class DialogLists extends JDialog {
     
 	/* Existing Fields panel...*/
 	JPanel panelExistingFields = new JPanel();
-	panelExistingFields.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Existing Lists "),
+	panelExistingFields.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogLists.panel-existing-list.title")), //$NON-NLS-1$
 									 BorderFactory.createEmptyBorder(5,5,5,5)));
 	panelExistingFields.setLayout(new GridBagLayout());
 	GridBagConstraints constraints;
@@ -122,12 +123,12 @@ public class DialogLists extends JDialog {
 	constraints.insets = new Insets(5,5,5,5);
 	constraints.anchor = GridBagConstraints.WEST;
 	panelExistingFields.add(scrollPaneExistingFields,constraints);
-	JButton buttonRemove = new JButton("Remove");
-	buttonRemove.setToolTipText("Remove field");
-	buttonRemove.setActionCommand("AdditionalInfoFields - Remove");
+	JButton buttonRemove = new JButton(Localizer.getString("DialogLists.button.remove.text")); //$NON-NLS-1$
+	buttonRemove.setToolTipText(Localizer.getString("DialogLists.button.remove.tooltip")); //$NON-NLS-1$
+	buttonRemove.setActionCommand("AdditionalInfoFields - Remove"); //$NON-NLS-1$
 	buttonRemove.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: " + event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 		    executeCommandRemove();
 		}});
 	constraints = new GridBagConstraints();
@@ -138,23 +139,23 @@ public class DialogLists extends JDialog {
 	panelExistingFields.add(buttonRemove,constraints);
 	/* Add New Field panel...*/
 	JPanel panelAddNewField = new JPanel();
-	panelAddNewField.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Add New List "),
+	panelAddNewField.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogLists.panel-add-new-list.title")), //$NON-NLS-1$
 								      BorderFactory.createEmptyBorder(5,5,5,5)));
 	panelAddNewField.setLayout(new GridBagLayout());
 	JTextField textFieldAdd = new JTextField(22);
-	textFieldAdd.setDocument(new DocumentRegExp("[^\\p{Punct}]*"));
+	textFieldAdd.setDocument(new DocumentRegExp("[^\\p{Punct}]*")); //$NON-NLS-1$
 	constraints = new GridBagConstraints();
 	constraints.gridx = 0;
 	constraints.gridy = 0;
 	constraints.insets = new Insets(5,5,5,5);
 	constraints.anchor = GridBagConstraints.WEST;
 	panelAddNewField.add(textFieldAdd,constraints);
-	JButton buttonAdd = new JButton("    Add    ");
-	buttonAdd.setToolTipText("Add new list");
-	buttonAdd.setActionCommand("AdditionalInfoFields - Add");
+	JButton buttonAdd = new JButton(Localizer.getString("DialogLists.button.add.text")); //$NON-NLS-1$
+	buttonAdd.setToolTipText(Localizer.getString("DialogLists.button.add.tooltip")); //$NON-NLS-1$
+	buttonAdd.setActionCommand("AdditionalInfoFields - Add"); //$NON-NLS-1$
 	buttonAdd.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: " + event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 		    executeCommandAdd();
 		}});
 	constraints = new GridBagConstraints();
@@ -173,18 +174,18 @@ public class DialogLists extends JDialog {
 	JPanel panelButtons = new JPanel();
 	panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 	panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
-	JButton buttonSave = new JButton("Save");
-	buttonSave.setToolTipText("Save changes");
-	buttonSave.setActionCommand("AdditionalInfoFields - Save");
+	JButton buttonSave = new JButton(Localizer.getString("DialogLists.button.save.text")); //$NON-NLS-1$
+	buttonSave.setToolTipText(Localizer.getString("DialogLists.button.save.tooltip")); //$NON-NLS-1$
+	buttonSave.setActionCommand("AdditionalInfoFields - Save"); //$NON-NLS-1$
 	buttonSave.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
-		    log.debug("ActionPerformed: " + event.getActionCommand());
+		    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 		    executeCommandSave();
 		}});
 	panelButtons.add(buttonSave);
-	JButton buttonCancel = new JButton("Cancel");
-	buttonCancel.setToolTipText("Discard changes");
-	buttonCancel.setActionCommand("AdditionalInfoFields - Cancel");
+	JButton buttonCancel = new JButton(Localizer.getString("DialogLists.button.cancel.text")); //$NON-NLS-1$
+	buttonCancel.setToolTipText(Localizer.getString("DialogLists.button.cancel.tooltip")); //$NON-NLS-1$
+	buttonCancel.setActionCommand("AdditionalInfoFields - Cancel"); //$NON-NLS-1$
 	buttonCancel.addActionListener(new CommandDialogDispose(this));
 	panelButtons.add(buttonCancel);
 	/* Adds all and buttonsPanel... */    
@@ -247,7 +248,7 @@ public class DialogLists extends JDialog {
 	String field = getFieldToAdd().getText().trim();
 	
 	/* If it isn't an empty string and does not exist in the existing list... */
-	if (!field.equals("") && !containsIgnoreCase(getExistingFields(), field)) {
+	if (!field.equals("") && !containsIgnoreCase(getExistingFields(), field)) { //$NON-NLS-1$
 	    /* Adds the field to the add list if it doesn't exists in the original... */
 	    if(!_toAdd.contains(field) && !_originalList.contains(field)) {
 		_toAdd.add(field);
@@ -286,7 +287,7 @@ public class DialogLists extends JDialog {
 	    MovieManager.getIt().getDatabase().removeListsColumn((String)_toRemove.get(i));
 	    
 	    if (((String)_toRemove.get(i)).equals(MovieManager.getConfig().getCurrentList())) {
-		MovieManager.getConfig().setCurrentList("Show All");
+		MovieManager.getConfig().setCurrentList("Show All"); //$NON-NLS-1$
 		reload = true;
 	    }
 	}
