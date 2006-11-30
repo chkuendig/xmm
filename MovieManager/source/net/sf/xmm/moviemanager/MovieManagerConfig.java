@@ -23,6 +23,7 @@ package net.sf.xmm.moviemanager;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.database.DatabaseHSQL;
 import net.sf.xmm.moviemanager.models.AdditionalInfoFieldDefaultValues;
+import net.sf.xmm.moviemanager.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -36,7 +37,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
-public class MovieManagerConfig  {
+public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
     static Logger log = Logger.getRootLogger();
 
@@ -231,8 +232,13 @@ public class MovieManagerConfig  {
 
     private boolean defaultLookAndFeelDecorated = false;
 
-    //MovieManagerConfig()
+    MovieManagerConfig() {
+	MovieManager.getIt().newDbHandler.addNewDatabaseLoadedEventListener(this);
+    }
 
+    public void newDatabaseLoadedEvent(NewDatabaseLoadedEvent evt) {
+	resetCoverAndQueries();
+    }
 
      public boolean isWritable(File dir) {
 
@@ -331,6 +337,8 @@ public class MovieManagerConfig  {
 	 return getCoversFolder(null);
      }
 
+    
+    /* Returns the value stored in the database */
      public String getCoversFolder(Database database) {
 	 
 	 if (database != null) {
@@ -350,16 +358,18 @@ public class MovieManagerConfig  {
     }
 
     
-    /* Returns the relative cover path */
+    /* Returns the absolute cover path */
     public String getCoversPath(Database database) {
 	
 	/* Get covers folder from database*/
 	String coversFolder = getCoversFolder(database);
 	String coversPath = "";
 	
+	/* Relative to user dir */
 	if (getUseRelativeCoversPath() == 2) {
 	    coversPath = MovieManager.getUserDir() + File.separator;
 	}
+	/* Relative to database location */
 	else if (getUseRelativeCoversPath() == 1) {
 	    String dbPath = getDatabasePath(true);
 	    dbPath = dbPath.substring(0, dbPath.lastIndexOf(MovieManager.getDirSeparator()));
