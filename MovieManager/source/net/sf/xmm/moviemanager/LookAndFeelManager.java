@@ -31,6 +31,7 @@ import net.sf.xmm.moviemanager.util.ShowGUI;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -46,8 +47,22 @@ public class LookAndFeelManager {
 	
 	MovieManagerConfig config = MovieManager.getConfig();
 
+    UIManager.LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+    
+	if(config.getLookAndFeelString().equals("")) {
+		LookAndFeel currentLAF = UIManager.getLookAndFeel();
+		if (currentLAF != null) {
+			config.setLookAndFeelString(currentLAF.getName());
+		} else {
+			for(int i = 0;i<installedLookAndFeels.length;i++) {
+				if(installedLookAndFeels[i].getClassName().equals(UIManager.getSystemLookAndFeelClassName())) {
+					config.setLookAndFeelString(installedLookAndFeels[i].getName());
+				}
+			}
+		}
+	}
+
 	try {
-	    UIManager.LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
 	    config.numberOfLookAndFeels = installedLookAndFeels.length;
 	    
 	    if (getSkinlfThemepackList() != null && config.getLookAndFeelType() == 1) {
@@ -106,8 +121,8 @@ public class LookAndFeelManager {
 		
 	    	dir = new File(config.getSkinlfThemePackDir());
 		
-		if (!dir.exists()) {
-		    dir.mkdir();
+		if (!dir.exists() && !MovieManager.isMacAppBundle()) {
+		    dir.mkdirs();
 		
 		    String text = "Here you can add new Skinlf themes."+ MovieManager.getLineSeparator()+
 	    		"Simply put the .zip files into the 'Skinlf Theme Packs' directory.";
@@ -130,12 +145,12 @@ public class LookAndFeelManager {
 	    
 	    	String [] list = dir.list();
 		ArrayList themePackList = new ArrayList();
-	    
+	    if(list != null) {
 	    	for (int i = 0; i < list.length; i++) {
 		    if (list[i].endsWith(".zip"))
 			themePackList.add(list[i]);
 	    	}
-	    
+	    }
 		if (themePackList.size() == 0)
 		    return null;
 	    
@@ -174,9 +189,8 @@ public class LookAndFeelManager {
 		    File oyoaha = null;
 		
 		    oyoaha = new File(config.getOyoahaThemePackDir() + "Oyoaha.txt");
-		
-		
-		    if (oyoaha.createNewFile()) {
+		    
+		    if (oyoaha.mkdirs() && oyoaha.createNewFile()) {
 			/* Writes the oyoaha textfile. */
 			FileOutputStream stream = new FileOutputStream(oyoaha);
 			for (int i=0; i < text.length(); i++) {
@@ -209,7 +223,13 @@ public class LookAndFeelManager {
     protected static void instalLAFs() {
 	
 	try {
-	    URL url = MovieManager.getFile("LookAndFeels/lookAndFeels.ini");
+		URL url = null;
+		if(!MovieManager.isMacAppBundle()) {
+			url = MovieManager.getFile("LookAndFeels/lookAndFeels.ini");
+		} else {
+			// Search in the absolute Path of the Application Bundle (Search as if we weren't in a Application Bundle)
+			url = MovieManager.getFile(System.getProperty("user.dir") + "/LookAndFeels/lookAndFeels.ini");
+		}
 	    BufferedInputStream stream = new BufferedInputStream(url.openStream());
 				
 	    int buffer;
@@ -234,7 +254,7 @@ public class LookAndFeelManager {
 	    int fileEnd = lookAndFeel.length();
 	    
 	    while (true) {
-		end = lookAndFeel.indexOf(lineSeparator, start);
+		end = lookAndFeel.indexOf(lineSeparator, start+1);
 		
 		/*If the last line has no lineSeparator at the end*/
 		if (end == -1)
@@ -272,5 +292,62 @@ public class LookAndFeelManager {
 	catch (Exception e) {
 	    log.warn("Failed to open lookAndFeels.ini file.");
 	}
+    }
+    
+    public static void setupOSXLaF() {
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("apple.awt.showGrowBox", "true");
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MeD's Movie Manager");
+        
+        try {
+            Class quaquaClass = ClassLoader.getSystemClassLoader().loadClass("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+            LookAndFeel quaquqLAF = (LookAndFeel) quaquaClass.newInstance();
+            UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(quaquqLAF.getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel"));
+            // Override system look and feel
+            UIManager.setLookAndFeel(quaquqLAF);
+            System.load(MovieManager.getFile(System.getProperty("user.dir") + "/LookAndFeels/libquaqua.jnilib").getPath());
+            System.setProperty("Quaqua.JNI.isPreloaded","true");
+            log.debug("Quaqua installed");
+        } catch (Exception e) {
+            log.error("Quaqua Look and Feel not installed:" + e);
+        }
+        catch(UnsatisfiedLinkError e) {
+            log.error("Quaqua installed, but without the native parts: " + e);
+        }
+    }
+    
+    public static void macOSXRegistration() {
+        if (MovieManager.isMac()) {
+      try {
+        Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass("apple.dts.samplecode.osxadapter.OSXAdapter");
+        
+        Class[] defArgs = {MovieManager.class};
+        Method registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication", defArgs);
+        if (registerMethod != null) {
+          Object[] args = { MovieManager.getIt() };
+          registerMethod.invoke(osxAdapter, args);
+        }
+        // This is slightly gross.  to reflectively access methods with boolean args, 
+        // use "boolean.class", then pass a Boolean object in as the arg, which apparently
+        // gets converted for you by the reflection system.
+        defArgs[0] = boolean.class;
+        Method prefsEnableMethod =  osxAdapter.getDeclaredMethod("enablePrefs", defArgs);
+        if (prefsEnableMethod != null) {
+          Object args[] = {Boolean.TRUE};
+          prefsEnableMethod.invoke(osxAdapter, args);
+        }
+      } catch (NoClassDefFoundError e) {
+        // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
+        // because OSXAdapter extends ApplicationAdapter in its def
+          log.error("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
+      } catch (ClassNotFoundException e) {
+        // This shouldn't be reached; if there's a problem with the OSXAdapter we should get the 
+        // above NoClassDefFoundError first.
+          log.error("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
+      } catch (Exception e) {
+          log.error("Exception while loading the OSXAdapter:");
+        e.printStackTrace();
+      }
+    }
     }
 }
