@@ -241,8 +241,8 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 	
 	xmlButton = new JButton("XML"); //$NON-NLS-1$
 	xmlButton.setActionCommand("XMLt"); //$NON-NLS-1$
-	xmlButton.addActionListener(new MovieManagerCommandExecuteXMLExport());
-	buttonPanel.add(xmlButton);
+	//xmlButton.addActionListener(new MovieManagerCommandExecuteXMLExport());
+	//buttonPanel.add(xmlButton);
 	
 	
 	Container lerret = getContentPane();
