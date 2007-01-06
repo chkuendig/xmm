@@ -22,17 +22,11 @@ package net.sf.xmm.moviemanager.extentions;
 
 import java.io.*;
 import java.util.*;
-import java.lang.*;
-
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
-import javax.swing.event.*;
-
 import java.awt.event.*;
-import java.beans.*;
-
 import net.sf.xmm.moviemanager.*;
 import net.sf.xmm.moviemanager.database.*;
 import net.sf.xmm.moviemanager.models.*;
@@ -84,8 +78,8 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
         this.config = config;
 
         // load and scale default images
-        movieImage = mm.getImage("/images/movie.png");
-        serieImage = mm.getImage("/images/serie.png");
+        movieImage = FileUtil.getImage("/images/movie.png");
+        serieImage = FileUtil.getImage("/images/serie.png");
         setOpaque(true);
 	
 	scrollPane.addComponentListener(this);
@@ -235,7 +229,7 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 	
 	if (mm.getDatabase() instanceof DatabaseMySQL) {
             if (config.getStoreCoversLocally() && new File(folder, entry.getCover()).exists()) {
-                return new ImageIcon(mm.getImage(folder + File.separator + entry.getCover()).getScaledInstance(w, h, Image.SCALE_SMOOTH));
+                return new ImageIcon(FileUtil.getImage(folder + File.separator + entry.getCover()).getScaledInstance(w, h, Image.SCALE_SMOOTH));
             }
             else {
                 byte[] coverData = entry.getCoverData();
@@ -250,7 +244,7 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
         }
         else if ( (new File(folder, entry.getCover()).exists())) {
             /* Loads the image... */
-            return new ImageIcon(mm.getImage(folder + File.separator + entry.getCover()).getScaledInstance(w, h, Image.SCALE_SMOOTH));
+            return new ImageIcon(FileUtil.getImage(folder + File.separator + entry.getCover()).getScaledInstance(w, h, Image.SCALE_SMOOTH));
         }
         else {
             return null;

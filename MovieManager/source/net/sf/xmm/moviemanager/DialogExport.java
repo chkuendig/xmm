@@ -37,22 +37,9 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 public class DialogExport extends JDialog implements ActionListener, ItemListener {
@@ -78,8 +65,8 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
     JButton closeButton;
     JButton exportButton;
     
-    JButton xmlButton;
-
+    JTabbedPane tabs = null;
+    
     public DialogExport() {
 	/* Dialog creation...*/
 	super(MovieManager.getIt());
@@ -175,8 +162,8 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 	simpleExport.addActionListener(this);
 	fullExport.addActionListener(this);
 	
-	enableXhtml = new JCheckBox("Xhtml"); //$NON-NLS-1$
-	enableXhtml.setActionCommand("Xhtml"); //$NON-NLS-1$
+	enableXhtml = new JCheckBox("XHTML"); //$NON-NLS-1$
+	enableXhtml.setActionCommand("XHTML"); //$NON-NLS-1$
 	
 	enableAlphabeticSplit = new JCheckBox(Localizer.getString("DialogExport.panel-export-options.button.divide-alphabetically")); //$NON-NLS-1$
 	enableAlphabeticSplit.setActionCommand("Divide alphabetically"); //$NON-NLS-1$
@@ -238,18 +225,29 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 	buttonPanel.add(exportButton);
 	buttonPanel.add(closeButton);
 	
+    
+    
+    // XML panel
 	
-	xmlButton = new JButton("XML"); //$NON-NLS-1$
-	xmlButton.setActionCommand("XMLt"); //$NON-NLS-1$
-	//xmlButton.addActionListener(new MovieManagerCommandExecuteXMLExport());
-	//buttonPanel.add(xmlButton);
+    JPanel xmlPanel = new JPanel();
+    xmlPanel.setLayout(new BoxLayout(xmlPanel, BoxLayout.PAGE_AXIS));
+    
+    xmlPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,3,3,3), BorderFactory.createTitledBorder(
+                                                                                           BorderFactory.createEtchedBorder(), Localizer.getString("DialogExport.panel-xml-export.title"), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(exportPanel.getFont().getName(),Font.BOLD, exportPanel.getFont().getSize()) //$NON-NLS-1$
+                                                                                           )), BorderFactory.createEmptyBorder(0,2,2,2)));
+    
+    JLabel labelInfo = new JLabel("Export entire collection to XML");
+    xmlPanel.add(labelInfo);
+    
+	Container container = getContentPane();
+    container.setLayout(new BoxLayout(container,BoxLayout.Y_AXIS));
 	
-	
-	Container lerret = getContentPane();
-	lerret.setLayout(new BoxLayout(lerret,BoxLayout.Y_AXIS));
-	
-	lerret.add(exportPanel);
-	lerret.add(buttonPanel);
+    tabs = new JTabbedPane();
+    tabs.add(exportPanel, Localizer.getString("DialogExport.panel-html-export.title"));
+    tabs.add(xmlPanel, Localizer.getString("DialogExport.panel-xml-export.title"));
+        
+    container.add(tabs);
+    container.add(buttonPanel);
 	
 	setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         
@@ -272,6 +270,8 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 	    
 	    dispose();
 	    
+        if (tabs.getSelectedIndex() == 0) {
+        
 	    String title = titleTextField.getText();
 	    
 	    String orderBy = "Title"; //$NON-NLS-1$
@@ -319,7 +319,30 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
 		else
 		    new MovieManagerCommandExportToFullHTML(false, title, listModel).execute();
 	    }
-	    return;
+        }
+        else {
+        // XML export    
+            
+            JFileChooser chooser = new JFileChooser();
+            int returnVal = chooser.showDialog(null, "Save output file");
+            
+            if (returnVal != JFileChooser.APPROVE_OPTION) {
+                log.warn("Failed to retrieve output file");
+                return;   
+            }
+
+            try {
+                String outputFile = chooser.getSelectedFile().getCanonicalPath();
+            
+                if (!outputFile.toLowerCase().endsWith(".xml"))
+                    outputFile += ".xml";
+                    
+                MovieManagerCommandExportToXML.execute(outputFile);
+            } catch (IOException e) {
+                log.warn("Failed to retrieve output file");
+            }
+        }
+        return;
 	}
 	
 	if (event.getSource().equals(simpleExport)) {

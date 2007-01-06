@@ -31,7 +31,6 @@ public class MovieManagerCommandExport implements ActionListener {
     void execute() {
 	
 	DialogExport dialogExport = new DialogExport();
-	//dialogExport.setVisible(true);
 	ShowGUI.show(dialogExport, true);
     }
     

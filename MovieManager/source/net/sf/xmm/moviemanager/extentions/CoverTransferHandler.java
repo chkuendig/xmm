@@ -2,21 +2,20 @@ package net.sf.xmm.moviemanager.extentions;
 
 import java.io.*;
 import java.net.URL;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.datatransfer.*;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
 import org.apache.log4j.Logger;
-import net.sf.xmm.moviemanager.DialogMovieInfo;
+import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 
 public class CoverTransferHandler extends TransferHandler {
    static Logger log = Logger.getRootLogger();
 
-   private DialogMovieInfo movieInfo;
-   public CoverTransferHandler(DialogMovieInfo info) {
+   private ModelMovieInfo movieInfo;
+   
+   public CoverTransferHandler(ModelMovieInfo info) {
        this.movieInfo = info;
    }
 
@@ -80,9 +79,12 @@ public class CoverTransferHandler extends TransferHandler {
            ImageIcon image = new ImageIcon(_coverData);
            if (image.getIconHeight() > 1 && image.getIconWidth() > 1) {
                movieInfo.setCover(coverName, _coverData);
+               /*
                movieInfo.getCover().setIcon(
                        new ImageIcon(Toolkit.getDefaultToolkit().createImage(_coverData).getScaledInstance(97, 145,
                                Image.SCALE_FAST)));
+               */
+               
                movieInfo.setSaveCover(true);
                return true;
 

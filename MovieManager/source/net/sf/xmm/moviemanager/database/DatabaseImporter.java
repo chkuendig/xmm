@@ -20,16 +20,18 @@
 
 package net.sf.xmm.moviemanager.database;
 
-import net.sf.xmm.moviemanager.DialogAlert;
-import net.sf.xmm.moviemanager.DialogMovieInfo;
-import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.*;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMovies;
+import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SwingWorker;
 import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.*;
 import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import org.apache.log4j.Logger;
+import org.exolab.castor.mapping.Mapping;
+import org.exolab.castor.xml.Unmarshaller;
 
 import java.awt.Dialog;
 import java.io.BufferedReader;
@@ -68,7 +70,17 @@ public class DatabaseImporter {
 		    current = -1;
 		    done = false;
 		    canceled = false;
-		    return new Importer(importSettings);
+            
+		    Importer importer = null;
+            
+		    try {
+            
+			importer =  new Importer(importSettings);
+		    }
+		    catch (Exception e) {
+			log.warn("Exception:" + e.getMessage());   
+		    }
+		    return importer;
 		}
 	    };
 	worker.start();
@@ -97,6 +109,8 @@ public class DatabaseImporter {
 	return transferred;
     }
     
+   
+    
     /**
      * The actual database import task.
      * This runs in a SwingWorker thread.
@@ -111,10 +125,14 @@ public class DatabaseImporter {
 	String filePath;
 	boolean originalLanguage = true;
 	String coverPath;
+		    
+	ModelMovieInfo modelMovieInfo = new ModelMovieInfo(false, true);
 	
-	DialogMovieInfo dialogMovieInfo;
-	    
-        Importer(ModelImportSettings importSettings) {
+	ArrayList movielist = null;
+    
+	int extraInfoFieldsCount;
+    
+	Importer(ModelImportSettings importSettings) {
 	    
 	    multiAddSelectOption = importSettings.multiAddSelectOption;
 	    importMode = importSettings.importMode;
@@ -124,15 +142,11 @@ public class DatabaseImporter {
 	    filePath = importSettings.filePath;
 	    originalLanguage = importSettings.extremeOriginalLanguage;
 	    coverPath = importSettings.coverPath;
-	    
-	    dialogMovieInfo = new DialogMovieInfo("Add Movie");
-	    
+	    	    
 	    /* Setting the priority of the thread to 4 to give the GUI room to update more often */
 	    Thread.currentThread().setPriority(4);
 	    
 	    if (filePath != null) {
-		
-		ArrayList movielist = null;
 		
 		try {
 		    movielist = getMovieList();
@@ -143,7 +157,6 @@ public class DatabaseImporter {
 		} catch (Exception e) {
 		    
 		    JDialog alert = new DialogAlert(parent, "Error", e.getMessage());
-		    //alert.setVisible(true);
 		    ShowGUI.showAndWait(alert, true);
 		    return;
 		}
@@ -152,34 +165,45 @@ public class DatabaseImporter {
 		transferred = new String[lengthOfTask + 1];
 
 		String title;
-		int length;
-	    
+			    
 		/* Extreme cover path */
-		File tempFile = new File(filePath);
+		//File tempFile = new File(filePath);
 		
-		int extraInfoFieldsCount = MovieManager.getIt().getDatabase().getExtraInfoFieldNames().size();
+		extraInfoFieldsCount = MovieManager.getIt().getDatabase().getExtraInfoFieldNames().size();
 		
 		for (int i = 0; i < movielist.size(); i++) {
 		    
 		    cancel = false;
-		
+		    
 		    if (importMode == 2)
-			title = ((ModelExtremeMovie) movielist.get(i)).title;
+		    	title = ((ModelExtremeMovie) movielist.get(i)).title;
+		    else if (importMode == 3) {
+		    
+		    	if (movielist.get(i) instanceof ModelMovie)
+			    title = ((ModelMovie) movielist.get(i)).getTitle();
+		    	else if (movielist.get(i) instanceof ModelSeries) {
+			    title = ((ModelSeries) movielist.get(i)).getMovie().getTitle();
+		    	}
+		    	else
+			    continue;
+		    }
 		    else
-			title = (String) movielist.get(i);
+		    	title = (String) movielist.get(i);
 		
 		    if (!title.equals("")) {
 			
 			/* First resetting the info already present */
-			dialogMovieInfo.executeCommandSetGeneralInfoFieldsEmpty();
+		    	
+		    	modelMovieInfo.clearModel();
 			
 			if (multiAddSelectOption != -1) {
 			    
-			    dialogMovieInfo.executeCommandGetIMDBInfoMultiMovies(this, title, title, multiAddSelectOption);
+			    executeCommandGetIMDBInfoMultiMovies(title, title, multiAddSelectOption);
 			    
 			    /* If the user cancels the imdb */
 			    if (dropImdbInfo)
-				dialogMovieInfo.executeCommandSetGeneralInfoFieldsEmpty();
+			    	modelMovieInfo.clearModel();
+			    
 			    dropImdbInfo = false;
 			}
 			
@@ -190,165 +214,202 @@ public class DatabaseImporter {
 			
 			    /* Extreme movie manager */
 			    if (importMode == 2) {
-				
-				/* Title */
-				if (!(overwriteWithImdbInfo && !dialogMovieInfo.getMovieTitle().getText().equals("")) && !((ModelExtremeMovie) movielist.get(i)).title.equals(""))
-				    dialogMovieInfo.getMovieTitle().setText(((ModelExtremeMovie) movielist.get(i)).title);
-				
-				/* Date */
-				if (!(overwriteWithImdbInfo && !dialogMovieInfo.getDate().getText().equals("")) && !((ModelExtremeMovie) movielist.get(i)).date.equals(""))
-				    dialogMovieInfo.getDate().setText(((ModelExtremeMovie) movielist.get(i)).date);
-				
-				/* Colour */
-				if (!(overwriteWithImdbInfo && !dialogMovieInfo.getColour().getText().equals("")) && !((ModelExtremeMovie) movielist.get(i)).colour.equals(""))
-				    dialogMovieInfo.getColour().setText(((ModelExtremeMovie) movielist.get(i)).colour);
-			    
-				/* Directed by */
-				if (!(overwriteWithImdbInfo && !dialogMovieInfo.getDirectedBy().getText().equals("")) && !((ModelExtremeMovie) movielist.get(i)).directed_by.equals(""))
-				    dialogMovieInfo.getDirectedBy().setText(((ModelExtremeMovie) movielist.get(i)).directed_by);
-			    
-				/* Written by */
-				if (!(overwriteWithImdbInfo && !dialogMovieInfo.getWrittenBy().getText().equals("")) && !((ModelExtremeMovie) movielist.get(i)).written_by.equals(""))
-				    dialogMovieInfo.getWrittenBy().setText(((ModelExtremeMovie) movielist.get(i)).written_by);
-			    
-				/* Genre */
-				if (!(overwriteWithImdbInfo && !dialogMovieInfo.getGenre().getText().equals("")) && !((ModelExtremeMovie) movielist.get(i)).genre.equals(""))
-				    dialogMovieInfo.getGenre().setText(((ModelExtremeMovie) movielist.get(i)).genre);
-			    
-				/* Rating */
-				if (!(overwriteWithImdbInfo && !dialogMovieInfo.getRating().getText().equals("")) && !((ModelExtremeMovie) movielist.get(i)).rating.equals(""))
-				    dialogMovieInfo.getRating().setText(((ModelExtremeMovie) movielist.get(i)).rating);
-			    
-				/* Country */
-				if (!(overwriteWithImdbInfo && !dialogMovieInfo.getCountry().getText().equals("")) && !((ModelExtremeMovie) movielist.get(i)).country.equals(""))
-				    dialogMovieInfo.getCountry().setText(((ModelExtremeMovie) movielist.get(i)).country);
-			    
-				/* Seen */
-				dialogMovieInfo._seen = ((ModelExtremeMovie) movielist.get(i)).seen;
-			    
-				/* Language */
-				if (!(overwriteWithImdbInfo && !dialogMovieInfo.getLanguage().getText().equals("")) && !((ModelExtremeMovie) movielist.get(i)).language.equals("")) {
-				    if (originalLanguage)
-					dialogMovieInfo.getLanguage().setText(((ModelExtremeMovie) movielist.get(i)).originalLanguage);
-				    else
-					dialogMovieInfo.getLanguage().setText(((ModelExtremeMovie) movielist.get(i)).language);
-				}
-				
-				/* Plot */
-				if (!(overwriteWithImdbInfo && !dialogMovieInfo.getPlot().getText().equals("")) && !((ModelExtremeMovie) movielist.get(i)).plot.equals(""))
-				    dialogMovieInfo.getPlot().setText(((ModelExtremeMovie) movielist.get(i)).plot);
-			    
-				/* Cast */
-				if (!(overwriteWithImdbInfo && !dialogMovieInfo.getCast().getText().equals("")) && !((ModelExtremeMovie) movielist.get(i)).cast.equals(""))
-				    dialogMovieInfo.getCast().setText(((ModelExtremeMovie) movielist.get(i)).cast);
-			    
-				/* Notes */
-				dialogMovieInfo.getNotes().setText(((ModelExtremeMovie) movielist.get(i)).notes);
-				
-				/* Runntime */
-				dialogMovieInfo.getWebRuntime().setText(((ModelExtremeMovie) movielist.get(i)).length);
-				
-				/* If Aka doesn't equal the title */
-				if (!((ModelExtremeMovie) movielist.get(i)).aka.equalsIgnoreCase(((ModelExtremeMovie) movielist.get(i)).title))
-				    dialogMovieInfo.getAka().setText(((ModelExtremeMovie) movielist.get(i)).aka);
-
-				/* MPAA */
-				dialogMovieInfo.getMpaa().setText(((ModelExtremeMovie) movielist.get(i)).mpaa);
-				
-				
-				dialogMovieInfo._fieldValues = new ArrayList();
-				
-				/* Subtitles */
-				dialogMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).subtitles);
-				
-				String duration;
-				try {
-				    duration = IMDB.extractTime(((ModelExtremeMovie) movielist.get(i)).length);
-				
-				    if (!duration.equals("")) {
-					length = Integer.parseInt(duration);
-					length = length*60;
-					duration = String.valueOf(length);
+			        addExtremeMovie(i);
+			    }
+			    else if (importMode == 3) {
+                	
+				Object tmp = movielist.get(i);
+                	
+				if (tmp instanceof ModelMovie) {
+				    modelMovieInfo.setModel((ModelMovie) tmp);
+				    modelMovieInfo.saveToDatabase(null);
+                			
+				} else if (tmp instanceof ModelSeries) {
+                    	
+				    ModelSeries seriesTmp = (ModelSeries) tmp;
+				    ModelEpisode episodeTmp;
+                    	
+				    modelMovieInfo.setModel(seriesTmp.getMovie());
+				    modelMovieInfo.saveToDatabase(null);
+                    	
+				    int movieKey = modelMovieInfo.model.getKey();
+                    	
+				    title = "";
+				    transferred[++current] = modelMovieInfo.model.getTitle();
+                    	
+				    for (int u = 0; u < seriesTmp.episodes.size(); u++) {
+					episodeTmp = (ModelEpisode) seriesTmp.episodes.get(u);
+					episodeTmp.setMovieKey(movieKey);
+                    		
+					modelMovieInfo.setModel(episodeTmp);
+					modelMovieInfo.saveToDatabase(null);
+                    		
+					transferred[++current] = episodeTmp.getTitle();
 				    }
-				}
-				catch (Exception e) {
-				    duration = "";
-				}
-			    
-				dialogMovieInfo._fieldValues.add(duration); /* Duration */
-				dialogMovieInfo._fieldValues.add(cleanInt(((ModelExtremeMovie) movielist.get(i)).filesize, 0));
-				dialogMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).cds); /* CDs */ 
-				dialogMovieInfo._fieldValues.add("1"); /* CD cases */
-				dialogMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).resolution);
-				dialogMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).codec);
-				dialogMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).videoRate);
-				dialogMovieInfo._fieldValues.add(cleanInt(((ModelExtremeMovie) movielist.get(i)).bitrate, 0));
-				dialogMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).audioCodec);
-				dialogMovieInfo._fieldValues.add(cleanInt(((ModelExtremeMovie) movielist.get(i)).sampleRate, 0));
-				dialogMovieInfo._fieldValues.add(cleanInt(((ModelExtremeMovie) movielist.get(i)).audioBitrate, 0));
-				dialogMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).channels);
-				dialogMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).filePath); /* Location */
-				dialogMovieInfo._fieldValues.add(String.valueOf(((ModelExtremeMovie) movielist.get(i)).fileCount));
-				dialogMovieInfo._fieldValues.add(""); /* Container */
-				dialogMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).media);
-				
-				/* Adding empty values for the extra info fields */
-				for (int u = 0; u < extraInfoFieldsCount; u++)
-				    dialogMovieInfo._fieldValues.add("");
-				
-				if (((ModelExtremeMovie) movielist.get(i)).scriptUsed.indexOf("IMDB.COM") != -1)
-				    dialogMovieInfo.setIMDB(((ModelExtremeMovie) movielist.get(i)).imdb);
-			    
-				if (!((ModelExtremeMovie) movielist.get(i)).cover.equals("none.jpg")) {
-				    tempFile = new File(coverPath + ((ModelExtremeMovie) movielist.get(i)).cover);
-				
-				    if (tempFile.isFile()) {
-				    
-					try {
-					    /* Reading cover to memory */
-					    InputStream inputStream = new FileInputStream(tempFile);
-					    byte [] coverData = new byte[inputStream.available()];
-					    inputStream.read(coverData);
-					    inputStream.close();
-					
-					    /* Setting cover */
-					    dialogMovieInfo.setCover(((ModelExtremeMovie) movielist.get(i)).cover, coverData);
-					}
-					catch (Exception e) {
-					    log.error("", e);
-					}
-				    }
-				    else
-					log.warn(tempFile.getAbsolutePath() + " does not exist");
 				}
 			    }
 			    else
-				dialogMovieInfo.getMovieTitle().setText(title);
-			
-			    int ret = (dialogMovieInfo.executeCommandSave(addToThisList)).getKey();
-			    
+			    	modelMovieInfo.model.setTitle(title);
+						    
+			    int ret = (modelMovieInfo.saveToDatabase(addToThisList)).getKey();
+			     
 			    if (ret == -1) {
 				
 				if (MovieManager.getIt().getDatabase().getErrorMessage().equals("Data truncation cover")) {
-				    dialogMovieInfo.removeCover();
-				    ret = (dialogMovieInfo.executeCommandSave(addToThisList)).getKey();
+				    modelMovieInfo.setCover("", null);
+				    ret = (modelMovieInfo.saveToDatabase(addToThisList)).getKey();
 				}
 			    }
 			    
 			    if (ret == -1)
-				transferred[++current] = "Failed to import: " + title;
-			    else
-				transferred[++current] = title;
+			    	transferred[++current] = "Failed to import: " + title;
+			    else if (!title.equals(""))
+			    	transferred[++current] = title;
 			    
 			}
 		    }
 		    else
-			transferred[++current] = "Empty entry";
+		    	transferred[++current] = "Empty entry";
 		}
 		done = true;
 	    }
 	}
 	
+	void addExtremeMovie(int i) {
+	    /* Title */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getTitle().equals("")) && !((ModelExtremeMovie) movielist.get(i)).title.equals(""))
+	    	modelMovieInfo.model.setTitle(((ModelExtremeMovie) movielist.get(i)).title);
+        
+	    /* Date */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getDate().equals("")) && !((ModelExtremeMovie) movielist.get(i)).date.equals(""))
+	    	modelMovieInfo.model.setDate(((ModelExtremeMovie) movielist.get(i)).date);
+        
+	    /* Colour */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getColour().equals("")) && !((ModelExtremeMovie) movielist.get(i)).colour.equals(""))
+	    	modelMovieInfo.model.setColour(((ModelExtremeMovie) movielist.get(i)).colour);
+        
+	    /* Directed by */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getDirectedBy().equals("")) && !((ModelExtremeMovie) movielist.get(i)).directed_by.equals(""))
+	    	modelMovieInfo.model.setDirectedBy(((ModelExtremeMovie) movielist.get(i)).directed_by);
+        
+	    /* Written by */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getWrittenBy().equals("")) && !((ModelExtremeMovie) movielist.get(i)).written_by.equals(""))
+	    	modelMovieInfo.model.setWrittenBy(((ModelExtremeMovie) movielist.get(i)).written_by);
+        
+	    /* Genre */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getGenre().equals("")) && !((ModelExtremeMovie) movielist.get(i)).genre.equals(""))
+	    	modelMovieInfo.model.setGenre(((ModelExtremeMovie) movielist.get(i)).genre);
+        
+	    /* Rating */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getRating().equals("")) && !((ModelExtremeMovie) movielist.get(i)).rating.equals(""))
+	    	modelMovieInfo.model.setRating(((ModelExtremeMovie) movielist.get(i)).rating);
+        
+	    /* Country */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getCountry().equals("")) && !((ModelExtremeMovie) movielist.get(i)).country.equals(""))
+	    	modelMovieInfo.model.setCountry(((ModelExtremeMovie) movielist.get(i)).country);
+        
+	    /* Seen */
+	    modelMovieInfo.model.setSeen(((ModelExtremeMovie) movielist.get(i)).seen);
+        
+	    /* Language */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getLanguage().equals("")) && !((ModelExtremeMovie) movielist.get(i)).language.equals("")) {
+		if (originalLanguage)
+		    modelMovieInfo.model.setLanguage(((ModelExtremeMovie) movielist.get(i)).originalLanguage);
+		else
+		    modelMovieInfo.model.setLanguage(((ModelExtremeMovie) movielist.get(i)).language);
+	    }
+        
+	    /* Plot */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getPlot().equals("")) && !((ModelExtremeMovie) movielist.get(i)).plot.equals(""))
+	    	modelMovieInfo.model.setPlot(((ModelExtremeMovie) movielist.get(i)).plot);
+        
+	    /* Cast */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getCast().equals("")) && !((ModelExtremeMovie) movielist.get(i)).cast.equals(""))
+	    	modelMovieInfo.model.setCast(((ModelExtremeMovie) movielist.get(i)).cast);
+        
+	    /* Notes */
+	    modelMovieInfo.model.setNotes(((ModelExtremeMovie) movielist.get(i)).notes);
+        
+	    /* Runntime */
+	    modelMovieInfo.model.setWebRuntime(((ModelExtremeMovie) movielist.get(i)).length);
+        
+	    /* If Aka doesn't equal the title */
+	    if (!((ModelExtremeMovie) movielist.get(i)).aka.equalsIgnoreCase(((ModelExtremeMovie) movielist.get(i)).title))
+	    	modelMovieInfo.model.setAka(((ModelExtremeMovie) movielist.get(i)).aka);
+
+	    /* MPAA */
+	    modelMovieInfo.model.setMpaa(((ModelExtremeMovie) movielist.get(i)).mpaa);
+        
+        
+	    modelMovieInfo._fieldValues = new ArrayList();
+        
+	    /* Subtitles */
+	    modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).subtitles);
+        
+	    String duration;
+	    try {
+		int length;
+		duration = IMDB.extractTime(((ModelExtremeMovie) movielist.get(i)).length);
+        
+		if (!duration.equals("")) {
+		    length = Integer.parseInt(duration);
+		    length = length*60;
+		    duration = String.valueOf(length);
+		}
+	    }
+	    catch (Exception e) {
+		duration = "";
+	    }
+        
+	    modelMovieInfo._fieldValues.add(duration); /* Duration */
+	    modelMovieInfo._fieldValues.add(cleanInt(((ModelExtremeMovie) movielist.get(i)).filesize, 0));
+	    modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).cds); /* CDs */ 
+	    modelMovieInfo._fieldValues.add("1"); /* CD cases */
+	    modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).resolution);
+	    modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).codec);
+	    modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).videoRate);
+	    modelMovieInfo._fieldValues.add(cleanInt(((ModelExtremeMovie) movielist.get(i)).bitrate, 0));
+	    modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).audioCodec);
+	    modelMovieInfo._fieldValues.add(cleanInt(((ModelExtremeMovie) movielist.get(i)).sampleRate, 0));
+	    modelMovieInfo._fieldValues.add(cleanInt(((ModelExtremeMovie) movielist.get(i)).audioBitrate, 0));
+	    modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).channels);
+	    modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).filePath); /* Location */
+	    modelMovieInfo._fieldValues.add(String.valueOf(((ModelExtremeMovie) movielist.get(i)).fileCount));
+	    modelMovieInfo._fieldValues.add(""); /* Container */
+	    modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).media);
+        
+	    /* Adding empty values for the extra info fields */
+	    for (int u = 0; u < extraInfoFieldsCount; u++)
+	    	modelMovieInfo._fieldValues.add("");
+        
+	    if (((ModelExtremeMovie) movielist.get(i)).scriptUsed.indexOf("IMDB.COM") != -1)
+	    	modelMovieInfo.model.setUrlKey(((ModelExtremeMovie) movielist.get(i)).imdb);
+        
+	    if (!((ModelExtremeMovie) movielist.get(i)).cover.equals("none.jpg")) {
+		File tempFile = new File(coverPath + ((ModelExtremeMovie) movielist.get(i)).cover);
+        
+		if (tempFile.isFile()) {
+            
+		    try {
+			/* Reading cover to memory */
+			InputStream inputStream = new FileInputStream(tempFile);
+			byte [] coverData = new byte[inputStream.available()];
+			inputStream.read(coverData);
+			inputStream.close();
+            
+			/* Setting cover */
+			modelMovieInfo.setCover(((ModelExtremeMovie) movielist.get(i)).cover, coverData);
+		    }
+		    catch (Exception e) {
+			log.error("", e);
+		    }
+		}
+		else
+		    log.warn(tempFile.getAbsolutePath() + " does not exist");
+	    }
+    
+	}
+        
 	private String cleanInt(String toBeCleaned, int mode) {
 	    
 	    boolean start = false;
@@ -384,9 +445,149 @@ public class DatabaseImporter {
 	    
 	    return result;
 	}
+        
+       
+	void addFromXML(int i) {
+        
+	    System.err.println("addFromXML");
+    	
+	    Object tmp = movielist.get(i);
+        
+	    ModelMovie movie = null;
+        
+	    if (tmp instanceof ModelMovie)
+		movie = (ModelMovie) tmp;
+	    else if (tmp instanceof ModelSeries) {
+        	System.err.println("ModelSeries  -  !");
+		movie = ((ModelSeries) tmp).getMovie();
+	    }
+	    else return;
+        
+	    System.err.println("SKROT 1");
+        
+	    /* Title */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getTitle().equals("")) && !movie.getTitle().equals(""))
+		modelMovieInfo.model.setTitle(movie.getTitle());
+        
+	    /* Date */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getDate().equals("")) && !movie.getDate().equals(""))
+		modelMovieInfo.model.setDate(movie.getDate());
+        
+	    /* Colour */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getColour().equals("")) && !movie.getColour().equals(""))
+		modelMovieInfo.model.setColour(movie.getColour());
+        
+	    /* Directed by */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getDirectedBy().equals("")) && !movie.getDirectedBy().equals(""))
+		modelMovieInfo.model.setDirectedBy(movie.getDirectedBy());
+        
+	    /* Written by */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getWrittenBy().equals("")) && !movie.getWrittenBy().equals(""))
+		modelMovieInfo.model.setWrittenBy(movie.getWrittenBy());
+        
+	    /* Genre */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getGenre().equals("")) && !movie.getGenre().equals(""))
+		modelMovieInfo.model.setGenre(movie.getGenre());
+        
+	    /* Rating */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getRating().equals("")) && !movie.getRating().equals(""))
+		modelMovieInfo.model.setRating(movie.getRating());
+        
+	    /* Country */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getCountry().equals("")) && !movie.getCountry().equals(""))
+		modelMovieInfo.model.setCountry(movie.getCountry());
+        
+	    /* Seen */
+	    modelMovieInfo.model.setSeen(movie.getSeen());
+        
+	    /* Language */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getLanguage().equals("")) && !movie.getLanguage().equals("")) {
+		modelMovieInfo.model.setLanguage(movie.getLanguage());
+	    }
+        
+	    /* Plot */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getPlot().equals("")) && !movie.getPlot().equals(""))
+		modelMovieInfo.model.setPlot(movie.getPlot());
+        
+	    /* Cast */
+	    if (!(overwriteWithImdbInfo && !modelMovieInfo.model.getCast().equals("")) && !movie.getCast().equals(""))
+		modelMovieInfo.model.setCast(movie.getCast());
+        
+	    /* Notes */
+	    modelMovieInfo.model.setNotes(movie.getNotes());
+        
+	    /* Runntime */
+	    modelMovieInfo.model.setWebRuntime(movie.getWebRuntime());
+        
+	    /* Aka */
+	    modelMovieInfo.model.setAka(movie.getAka());
+
+	    /* MPAA */
+	    modelMovieInfo.model.setMpaa(movie.getMpaa());
+                
+	    ModelAdditionalInfo additionalInfo = movie.getAdditionalInfo();
+        
+	    modelMovieInfo._fieldValues = new ArrayList();
+        
+	    System.err.println("SKROT 5");
+        
+	    if (additionalInfo != null) {
+        	
+	        /* Subtitles */
+	        modelMovieInfo._fieldValues.add(additionalInfo.getSubtitles());
+	        modelMovieInfo._fieldValues.add(String.valueOf(additionalInfo.getDuration()));
+	        modelMovieInfo._fieldValues.add(String.valueOf(additionalInfo.getFileSize()));
+	        modelMovieInfo._fieldValues.add(String.valueOf(additionalInfo.getCDs())); /* CDs */ 
+	        modelMovieInfo._fieldValues.add(String.valueOf(additionalInfo.getCDCases())); /* CD cases */
+	        modelMovieInfo._fieldValues.add(additionalInfo.getResolution());
+	        modelMovieInfo._fieldValues.add(additionalInfo.getVideoCodec());
+	        modelMovieInfo._fieldValues.add(additionalInfo.getVideoRate());
+	        modelMovieInfo._fieldValues.add(additionalInfo.getVideoBitrate());
+	        modelMovieInfo._fieldValues.add(additionalInfo.getAudioCodec());
+	        modelMovieInfo._fieldValues.add(additionalInfo.getAudioRate());
+	        modelMovieInfo._fieldValues.add(additionalInfo.getAudioBitrate());
+	        modelMovieInfo._fieldValues.add(additionalInfo.getAudioChannels());
+	        modelMovieInfo._fieldValues.add(additionalInfo.getFileLocation()); /* Location */
+	        modelMovieInfo._fieldValues.add(String.valueOf(additionalInfo.getFileCount()));
+	        modelMovieInfo._fieldValues.add(additionalInfo.getContainer());
+	        modelMovieInfo._fieldValues.add(additionalInfo.getMediaType());
+	        
+	        /* Adding empty values for the extra info fields */
+	        for (int u = 0; u < extraInfoFieldsCount; u++)
+		    modelMovieInfo._fieldValues.add("");
+	                
+	        
+	        File tempFile = new File(coverPath + movie.getCover());
+	        
+	        if (tempFile.isFile()) {
+	            
+	            try {
+			/* Reading cover to memory */
+			InputStream inputStream = new FileInputStream(tempFile);
+			byte [] coverData = new byte[inputStream.available()];
+			inputStream.read(coverData);
+			inputStream.close();
+	            
+			/* Setting cover */
+			modelMovieInfo.setCover(movie.getCover(), coverData);
+	            }
+	            catch (Exception e) {
+			log.error("", e);
+	            }
+	        }
+	        else
+	            log.warn(tempFile.getAbsolutePath() + " does not exist");
+	    }
+               
+        }
+        
+    	
+    
     
 	protected ArrayList getMovieList() throws Exception {
 	    
+	    System.err.println("getMovieList()");
+        
 	    ArrayList movieList = null;
 	    
 	    /* Textfile */
@@ -442,9 +643,93 @@ public class DatabaseImporter {
 		extremeDb.setUp();
 		
 		movieList = extremeDb.getMovies();
-	    }
+        
+        
+		/* XML */
+	    } else if (importMode == 3) {
+        
+	        final ArrayList list = movieList;
+           
+    		Mapping mapping = new Mapping();
+    		mapping.loadMapping(FileUtil.getFileURL("mapping.xml"));
+             
+    		System.err.println("loadMapping");
+             
+    		Unmarshaller unmarshaller = new Unmarshaller(ModelExportXML.class);
+    		//unmarshaller.setDebug(true);
+             
+    		System.err.println("setMapping");
+             
+    		unmarshaller.setMapping(mapping);
+             
+    		System.err.println("new Unmarshaller(mapping)");
+             
+    		log.debug("mapping set --------------- !!!!!!!");
+    		
+        	File xmlFile = new File("output.xml");
+                 
+    		FileReader reader = null;
+    		Object tmp = null;
+             
+    		if (xmlFile.isFile()) {
+    		    System.err.println("xmlFile.isFile()");
+    		    reader = new FileReader(xmlFile);
+    		}
+    		else {
+    		    log.error("XML file not found");
+    		    return null;
+    		}
+                    
+    		tmp = unmarshaller.unmarshal(reader);
+            
+    		if (tmp instanceof ModelSeries) {
+    		    System.err.println("ModelSerie");
+    		}
+    		else if (tmp instanceof ModelMovie) {
+    		    System.err.println("ModelMovie");
+    		}
+    		else if (tmp instanceof ModelExportXML) {
+    		    System.err.println("ModelExportXML");
+    		
+    		    System.err.println("get combined list");
+    		    
+            
+		    movieList = ((ModelExportXML) tmp).getCombindedList();
+            
+    		
+    		
+		    ModelMovie movieinfo = (ModelMovie) movieList.get(1);
+    		
+		    System.err.println("movieinfo:" + movieinfo);
+            
+		    ModelAdditionalInfo addInfo = movieinfo.getAdditionalInfo();
+            
+		    System.err.println("addInfo:" + addInfo);
+            
+		}
+               
+    		System.err.println("ost");
+    		
+    		System.err.println("movieList size:" + movieList.size());
+            
+    	    }
+    	    return movieList;
+    	}
 	
-	    return movieList;
+	/**
+	 * Gets the IMDB info for movies (multiAdd)
+	 **/
+	public void executeCommandGetIMDBInfoMultiMovies(String searchString, String filename, int multiAddSelectOption) {
+	
+	    /* Checks the movie title... */
+	    log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
+	    if (!searchString.equals("")) { //$NON-NLS-1$
+		DialogIMDB dialogIMDB = new DialogIMDB(modelMovieInfo, searchString, filename, this, multiAddSelectOption);
+	    } else {
+		DialogAlert alert = new DialogAlert(MovieManager.getIt(), Localizer.getString("DialogMovieInfo.alert.title.alert"),Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
+		ShowGUI.showAndWait(alert, true);
+	    }
 	}
     }
 }
+

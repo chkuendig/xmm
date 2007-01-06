@@ -20,42 +20,19 @@
 
 package net.sf.xmm.moviemanager;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-
-import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
+import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+
+import javax.swing.*;
 
 public class DialogAdditionalInfoFields extends JDialog {
   
@@ -536,7 +513,6 @@ public class DialogAdditionalInfoFields extends JDialog {
 	for (int i = 0; i < _toRemove.size(); i++) {
 	    MovieManager.getIt().getDatabase().removeExtraInfoFieldName((String)_toRemove.get(i));
 	    fieldsList.remove(_toRemove.get(i));
-	    System.err.println("removes from db:" + _toRemove.get(i)); //$NON-NLS-1$
 	}
 	
 	/* Adds to database... */
@@ -544,7 +520,6 @@ public class DialogAdditionalInfoFields extends JDialog {
 	    
 	    if ((MovieManager.getIt().getDatabase().addExtraInfoFieldName((String)_toAdd.get(i))) == 1) {
 		fieldsList.add(_toAdd.get(i));
-		System.err.println("removes from db:" + _toAdd.get(i)); //$NON-NLS-1$
 	    }
 	    else {
 		MovieManager.getIt().getDatabase().removeExtraInfoFieldName((String)_toAdd.get(i));

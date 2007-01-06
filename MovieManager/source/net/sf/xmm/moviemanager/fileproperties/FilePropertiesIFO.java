@@ -22,8 +22,6 @@ package net.sf.xmm.moviemanager.fileproperties;
 
 import net.sf.xmm.moviemanager.util.FileUtil;
 
-import org.apache.log4j.Logger;
-
 import java.io.RandomAccessFile;
 
 class FilePropertiesIFO extends FileProperties {

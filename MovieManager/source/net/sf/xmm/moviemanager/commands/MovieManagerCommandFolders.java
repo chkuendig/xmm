@@ -33,7 +33,6 @@ public class MovieManagerCommandFolders implements ActionListener {
    **/
   protected static void execute() {
       DialogFolders dialogFolders = new DialogFolders();
-      //dialogFolders.setVisible(true);
       ShowGUI.show(dialogFolders, true);
   }
   

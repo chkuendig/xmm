@@ -26,10 +26,7 @@ import net.sf.xmm.moviemanager.models.ModelMovie;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
-
 import javax.swing.DefaultListModel;
 
 

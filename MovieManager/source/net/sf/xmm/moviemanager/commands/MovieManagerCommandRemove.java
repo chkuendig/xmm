@@ -79,7 +79,6 @@ public class MovieManagerCommandRemove implements ActionListener {
 		question = new DialogQuestion("Remove Movie", "Are you sure you want to remove '"+ selected.getUserObject() +"'?");
 	    }
 	    
-	    //question.setVisible(true);
 	    ShowGUI.showAndWait(question, true);
 	    
 	    if (question.getAnswer()) {

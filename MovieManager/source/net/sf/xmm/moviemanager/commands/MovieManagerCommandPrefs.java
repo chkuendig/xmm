@@ -27,11 +27,19 @@ import net.sf.xmm.moviemanager.util.ShowGUI;
 
 public class MovieManagerCommandPrefs implements ActionListener {
     
+    private static DialogPrefs dialogPrefs;
+    
     void execute() {
-	DialogPrefs dialogPrefs = new DialogPrefs();
-	//dialogPrefs.setVisible(true);
+	dialogPrefs = new DialogPrefs();
 	ShowGUI.show(dialogPrefs, true);
     }
+    
+    public static DialogPrefs getDialogPrefs(){
+
+               return dialogPrefs;
+
+            }
+
     
     /**
      * Invoked when an action occurs.

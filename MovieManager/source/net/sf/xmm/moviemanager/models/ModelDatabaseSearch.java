@@ -20,6 +20,7 @@
 
 package net.sf.xmm.moviemanager.models;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -37,6 +38,13 @@ public class ModelDatabaseSearch {
     
     /* ORDER BY column */
     private String orderCategory;
+    
+    public ArrayList searchTerms = new ArrayList();
+    
+    public void addSearchTerm(String term) {
+	searchTerms.add(term);
+    }
+    
     
     /**
        Tells if the filter should filter out seen/unseen movies.

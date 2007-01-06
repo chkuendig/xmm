@@ -20,7 +20,7 @@
 
 package net.sf.xmm.moviemanager.database;
 
-import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.util.FileUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -699,7 +699,7 @@ public class DatabaseAccess extends Database {
 	    String absolutePath = getPath();
 	    File currentFile = new File(absolutePath);
 	    InputStream inputStream = new FileInputStream(absolutePath);
-	    String path = absolutePath.substring(0, absolutePath.lastIndexOf(MovieManager.getDirSeparator())+1);
+	    String path = absolutePath.substring(0, absolutePath.lastIndexOf(FileUtil.getDirSeparator())+1);
 	    
 	    int number = 1;
 	    while (new File(path + "Backup" + number +" of "+ currentFile.getName()).exists())

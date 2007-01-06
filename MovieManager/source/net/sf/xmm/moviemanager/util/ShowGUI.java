@@ -28,33 +28,33 @@ import java.awt.Container;
 public class ShowGUI {
     
     static Logger log = Logger.getRootLogger();
-
+    
     public static void show(final Container container, final boolean visible) {
-	
-	SwingUtilities.invokeLater(new Runnable(){
-		public void run() {
-		    container.setVisible(visible);
-		}
-	    });
+        
+        SwingUtilities.invokeLater(new Runnable(){
+            public void run() {
+                container.setVisible(visible);
+            }
+        });
     }
     
     public static void showAndWait(final Container container, final boolean visible) {
-	
-	if (SwingUtilities.isEventDispatchThread()) {
-	    container.setVisible(visible);
-	}
-	else {
-	    try {
-		SwingUtilities.invokeAndWait(new Runnable(){
-			public void run() {
-			    container.setVisible(visible);
-			}
-		    });
-	    } catch (InterruptedException i) {
-		log.error("showAndWait error:", i);
-	    } catch (java.lang.reflect.InvocationTargetException i) {
-		log.error("showAndWait error:", i);
-	    }
-	}
+        
+        if (SwingUtilities.isEventDispatchThread()) {
+            container.setVisible(visible);
+        }
+        else {
+            try {
+                SwingUtilities.invokeAndWait(new Runnable(){
+                    public void run() {
+                        container.setVisible(visible);
+                    }
+                });
+            } catch (InterruptedException i) {
+                log.error("showAndWait error:", i);
+            } catch (java.lang.reflect.InvocationTargetException i) {
+                log.error("showAndWait error:", i);
+            }
+        }
     }
 } 

@@ -22,6 +22,7 @@ package net.sf.xmm.moviemanager;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
+import net.sf.xmm.moviemanager.util.FileUtil;
 
 import org.apache.log4j.Logger;
 
@@ -68,7 +69,7 @@ public class DialogAlert extends JDialog {
 	
 	    JLabel labelIcon = new JLabel();
 	    labelIcon.setBorder(BorderFactory.createEmptyBorder(5,5,5,8));
-	    labelIcon.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH)));
+	    labelIcon.setIcon(new ImageIcon(FileUtil.getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH)));
 	    
 	    JTextPane area = new JTextPane();
 	    area.setOpaque(false);
@@ -122,7 +123,7 @@ public class DialogAlert extends JDialog {
 	    
 	    JLabel labelIcon = new JLabel();
 	    labelIcon.setBorder(BorderFactory.createEmptyBorder(5,5,5,8));
-	    labelIcon.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH)));
+	    labelIcon.setIcon(new ImageIcon(FileUtil.getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH)));
 	    
 	    JTextArea area = new JTextArea(alertMsg);
 	    area.setOpaque(false);
@@ -170,7 +171,7 @@ public class DialogAlert extends JDialog {
 	
 	JLabel labelIcon = new JLabel();
 	labelIcon.setBorder(BorderFactory.createEmptyBorder(5,5,5,10));
-	labelIcon.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH)));
+	labelIcon.setIcon(new ImageIcon(FileUtil.getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH)));
 	
 	JLabel labelAlert = new JLabel(alertMsg);
 	JLabel labelAlert2 = new JLabel(alertMsg2);

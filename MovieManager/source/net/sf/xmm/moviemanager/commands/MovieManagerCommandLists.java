@@ -33,7 +33,6 @@ public class MovieManagerCommandLists implements ActionListener {
      **/
     public static void execute() {
 	DialogLists dialogLists = new DialogLists();
-	//dialogLists.setVisible(true);
 	ShowGUI.show(dialogLists, true);
     }
     

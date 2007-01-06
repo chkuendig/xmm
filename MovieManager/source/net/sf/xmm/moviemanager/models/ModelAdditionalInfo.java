@@ -26,31 +26,37 @@ public class ModelAdditionalInfo {
     
     public static int additionalInfoFieldCount = 17;
     
-    private int index;
+    private int index = -1;
     
-    private String subtitles;
-    private int duration;
-    private int fileSize;
-    private int cds;
-    private double cdCases;
-    private String resolution;
-    private String videoCodec;
-    private String videoRate;
-    private String videoBitrate;
-    private String audioCodec;
-    private String audioRate;
-    private String audioBitrate;
-    private String audioChannels;
-    private String fileLocation;
-    private int fileCount;
-    private String container;
-    private String mediaType;
+    private String subtitles = null;
+    private int duration = 0;
+    private int fileSize = 0;
+    private int cds = 0;
+    private double cdCases = 0;
+    private String resolution = null;
+    private String videoCodec = null;
+    private String videoRate = null;
+    private String videoBitrate = null;
+    private String audioCodec = null;
+    private String audioRate = null;
+    private String audioBitrate = null;
+    private String audioChannels = null;
+    private String fileLocation = null;
+    private int fileCount = 0;
+    private String container = null;
+    private String mediaType = null;
     
     protected static boolean hasOldExtraInfoFieldNames = true;
     static private ArrayList extraInfoFieldNames = null;
     private ArrayList extraInfoFieldValues = new ArrayList();
     
-    public ModelAdditionalInfo() {}
+    public ModelAdditionalInfo() {
+        
+        if (extraInfoFieldNames != null) {
+            for (int i = 0; i < extraInfoFieldNames.size(); i++)
+                extraInfoFieldValues.add("");    
+        }
+    }
 
     /**
      * The constructor.
@@ -131,7 +137,7 @@ public class ModelAdditionalInfo {
 	return audioCodec;
     }
     
-     public String getAudioRate() {
+    public String getAudioRate() {
 	if (audioRate == null)
 	    return "";
 	return audioRate;
@@ -181,13 +187,13 @@ public class ModelAdditionalInfo {
     
     public String getExtraInfoFieldValue(int index) {
 	
-	if (index >= extraInfoFieldValues.size())
+	if (index < 0 || index >= extraInfoFieldValues.size())
 	    return "";
 	else
 	    return (String) extraInfoFieldValues.get(index);
     }
     
-    public ArrayList getExtraInfoFieldNames() {
+    public static ArrayList getExtraInfoFieldNames() {
 	return extraInfoFieldNames;
     }
 
@@ -199,8 +205,8 @@ public class ModelAdditionalInfo {
 	return hasOldExtraInfoFieldNames;
     }
     
-     public static void setHasOldExtraInfoFieldNames(boolean hasOldExtraInfoFieldNames) {
-	 ModelAdditionalInfo.hasOldExtraInfoFieldNames = hasOldExtraInfoFieldNames;
+    public static void setHasOldExtraInfoFieldNames(boolean hasOldExtraInfoFieldNames) {
+	ModelAdditionalInfo.hasOldExtraInfoFieldNames = hasOldExtraInfoFieldNames;
     }
     
     public static void setExtraInfoFieldNames(ArrayList extraInfoFieldNames) {
@@ -214,8 +220,76 @@ public class ModelAdditionalInfo {
     public void setExtraInfoFieldValues(ArrayList extraInfoFieldValues) {
 	this.extraInfoFieldValues = extraInfoFieldValues;
     }
-        
-    public String toString() { 
-	return "ModelAdditionalInfo";
+
+    public void setAudioBitrate(String audioBitrate) {
+	this.audioBitrate = audioBitrate;
     }
+
+    public void setAudioChannels(String audioChannels) {
+	this.audioChannels = audioChannels;
+    }
+
+    public void setAudioCodec(String audioCodec) {
+	this.audioCodec = audioCodec;
+    }
+
+    public void setAudioRate(String audioRate) {
+	this.audioRate = audioRate;
+    }
+
+    public void setCDCases(double cdCases) {
+	this.cdCases = cdCases;
+    }
+
+    public void setCDs(int cds) {
+	this.cds = cds;
+    }
+
+    public void setContainer(String container) {
+	this.container = container;
+    }
+
+    public void setDuration(int duration) {
+	this.duration = duration;
+    }
+
+    public void setFileCount(int fileCount) {
+	this.fileCount = fileCount;
+    }
+
+    public void setFileLocation(String fileLocation) {
+	this.fileLocation = fileLocation;
+    }
+
+    public void setFileSize(int fileSize) {
+	this.fileSize = fileSize;
+    }
+
+    public void setIndex(int index) {
+	this.index = index;
+    }
+
+    public void setMediaType(String mediaType) {
+	this.mediaType = mediaType;
+    }
+
+    public void setResolution(String resolution) {
+	this.resolution = resolution;
+    }
+
+    public void setSubtitles(String subtitles) {
+	this.subtitles = subtitles;
+    }
+
+    public void setVideoBitrate(String videoBitrate) {
+	this.videoBitrate = videoBitrate;
+    }
+
+    public void setVideoCodec(String videoCodec) {
+	this.videoCodec = videoCodec;
+    }
+
+    public void setVideoRate(String videoRate) {
+	this.videoRate = videoRate;
+    }        
 }

@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager.models;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 
 public class ModelEpisode extends ModelEntry {
 
@@ -30,6 +31,14 @@ public class ModelEpisode extends ModelEntry {
     /*The database key for this episode.*/
     private int episodeNumber;
     
+    /* default public constructor for XML export */
+    public ModelEpisode() {
+        additionalInfo = new ModelAdditionalInfo();
+    }
+    
+    public ModelEpisode(ModelEpisode model) {
+    	copyData(model);
+    }
     
     /**
      * The constructor.
@@ -61,6 +70,8 @@ public class ModelEpisode extends ModelEntry {
 	this.awards = awards;
 	
 	hasGeneralInfoData = true;
+    
+    additionalInfo = new ModelAdditionalInfo();
     }
     
     public ModelEpisode(int key, int movieKey, int episodeNumber, String title) {
@@ -77,8 +88,12 @@ public class ModelEpisode extends ModelEntry {
 	return movieKey; 
     }
     
+    public void setMovieKey(int movieKey) {
+    	this.movieKey = movieKey; 
+    }
+    
     public int getEpisodeNumber() {
-	return episodeNumber; 
+    	return episodeNumber; 
     }
     
     public void setEpisodeNumber(int episodeNumber) {
@@ -120,9 +135,7 @@ public class ModelEpisode extends ModelEntry {
 	hasAdditionalInfoData = model.getHasAdditionalInfoData();
 	
 	additionalInfo = model.getAdditionalInfo();
-	
-	
-    }
+	 }
     
      public void updateGeneralInfoData() {
 	ModelEntry model = null;
@@ -134,6 +147,12 @@ public class ModelEpisode extends ModelEntry {
 	}
     }
     
+     public void updateCoverData() {
+         
+         if (MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL"))
+             coverData = ((DatabaseMySQL) MovieManager.getIt().getDatabase()).getCoverDataEpisode(getKey());
+     }
+     
     public void updateAdditionalInfoData() {
 	
 	ModelAdditionalInfo tmp = MovieManager.getIt().getDatabase().getAdditionalInfo(getKey(), true);

@@ -22,6 +22,7 @@ package net.sf.xmm.moviemanager;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
+import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.ShowGUI;
 
@@ -547,30 +548,30 @@ public class DialogFolders extends JDialog implements ItemListener {
 	    
 	    if (relativeCoversProgram.isSelected()) {
 		
-		if ((coversPath.indexOf(MovieManager.getUserDir()) == -1) && (!new File(MovieManager.getUserDir()+ coversPath).isDirectory())) {
+		if ((coversPath.indexOf(FileUtil.getUserDir()) == -1) && (!new File(FileUtil.getUserDir()+ coversPath).isDirectory())) {
 		    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.covers-inside-install.message")); 
 		    ShowGUI.showAndWait(alert, true);
 		    return;
 		}
 		
 		if (coversPath.equals("") || !(coversFolder = new File(coversPath)).isDirectory()) { //$NON-NLS-1$
-		    if (coversPath.equals("") || !(coversFolder = new File(MovieManager.getUserDir()+ coversPath)).isDirectory()) { //$NON-NLS-1$
+		    if (coversPath.equals("") || !(coversFolder = new File(FileUtil.getUserDir()+ coversPath)).isDirectory()) { //$NON-NLS-1$
 			DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"),Localizer.getString("DialogFolders.alert-covers-exist")); 
 			ShowGUI.showAndWait(alert, true);
 			return;
 		    }
 		}
 		
-		if (coversPath.indexOf(MovieManager.getUserDir()) != -1)
-		    coversPath = coversPath.substring(MovieManager.getUserDir().length()+1, coversPath.length());
+		if (coversPath.indexOf(FileUtil.getUserDir()) != -1)
+		    coversPath = coversPath.substring(FileUtil.getUserDir().length()+1, coversPath.length());
 		
 		MovieManager.getConfig().setUseRelativeCoversPath(2);
 	    }
 	    else {
 		String dbPath = MovieManager.getConfig().getDatabasePath(true);
-		dbPath = dbPath.substring(0, dbPath.lastIndexOf(MovieManager.getDirSeparator()));
+		dbPath = dbPath.substring(0, dbPath.lastIndexOf(FileUtil.getDirSeparator()));
 		
-		if ((coversPath.indexOf(dbPath) == -1) && (!new File(dbPath + MovieManager.getDirSeparator() + coversPath).isDirectory())) {
+		if ((coversPath.indexOf(dbPath) == -1) && (!new File(dbPath + FileUtil.getDirSeparator() + coversPath).isDirectory())) {
 		    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert-covers-relative-database")); 
 		    ShowGUI.showAndWait(alert, true);
 		    return;
@@ -601,7 +602,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	    
 	    if (relativeQueriesProgram.isSelected()) {
 		
-		if (queriesPath.indexOf(MovieManager.getUserDir()) == -1 && !(new File(MovieManager.getUserDir(), queriesPath)).isDirectory()) {
+		if (queriesPath.indexOf(FileUtil.getUserDir()) == -1 && !(new File(FileUtil.getUserDir(), queriesPath)).isDirectory()) {
 		    
 		    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.queries-inside-install.message")); 
 		    ShowGUI.showAndWait(alert, true);
@@ -609,21 +610,21 @@ public class DialogFolders extends JDialog implements ItemListener {
 		}
 		
 		if (queriesPath.equals("") || !(queriesFolder = new File(queriesPath)).isDirectory()) { //$NON-NLS-1$
-		    if (queriesPath.equals("") || !(queriesFolder = new File(MovieManager.getUserDir(), queriesPath)).isDirectory()) { //$NON-NLS-1$
+		    if (queriesPath.equals("") || !(queriesFolder = new File(FileUtil.getUserDir(), queriesPath)).isDirectory()) { //$NON-NLS-1$
 			DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.queries-doesnt-exist.message")); 
 			ShowGUI.showAndWait(alert, true);
 			return;
 		    }
 		}
 		
-		if (queriesPath.indexOf(MovieManager.getUserDir()) != -1)
-		    queriesPath = queriesPath.substring(MovieManager.getUserDir().length()+1, queriesPath.length());
+		if (queriesPath.indexOf(FileUtil.getUserDir()) != -1)
+		    queriesPath = queriesPath.substring(FileUtil.getUserDir().length()+1, queriesPath.length());
 		
 		MovieManager.getConfig().setUseRelativeQueriesPath(2);
 	    }
 	    else {
 		String dbPath = MovieManager.getConfig().getDatabasePath(true);
-		dbPath = dbPath.substring(0, dbPath.lastIndexOf(MovieManager.getDirSeparator()));
+		dbPath = dbPath.substring(0, dbPath.lastIndexOf(FileUtil.getDirSeparator()));
 		
 		if ((queriesPath.indexOf(dbPath) == -1) && (!new File(dbPath, queriesPath).isDirectory())) {
 		    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.message"), Localizer.getString("DialogFolders.alert.queries-relative-database.message")); 
@@ -653,7 +654,7 @@ public class DialogFolders extends JDialog implements ItemListener {
 	    
 	    String databasePath = MovieManager.getConfig().getDatabasePath(true);
 	    
-	    if (databasePath.indexOf(MovieManager.getUserDir()) == -1) {
+	    if (databasePath.indexOf(FileUtil.getUserDir()) == -1) {
 		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.database-relative-install.message")); 
 		ShowGUI.showAndWait(alert, true);
 		return;

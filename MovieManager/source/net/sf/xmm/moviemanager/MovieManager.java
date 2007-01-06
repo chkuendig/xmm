@@ -21,12 +21,12 @@
 package net.sf.xmm.moviemanager;
 
 import java.io.*;
-import java.lang.reflect.Method;
 import java.net.*;
 import java.util.*;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.tree.*;
@@ -43,7 +43,7 @@ import net.sf.xmm.moviemanager.util.*;
 public class MovieManager extends JFrame implements ComponentListener {
 
     public static Logger log;
-
+   
     /**
      * Reference to the only instance of MovieManagerConfig.
      **/
@@ -58,10 +58,16 @@ public class MovieManager extends JFrame implements ComponentListener {
      **/
     public static MovieManager _movieManager;
 
+    public JScrollPane movieListScrollPane;
+    public JPanel filterPanel;
+    public JPanel moviesList;
+    public ExtendedToolBar toolBar;
+    
+    
     /**
      * The current version of the program.
      **/
-    private String _version = "2.41"; //$NON-NLS-1$
+    private String _version = "2.5 beta 1"; //$NON-NLS-1$
 
     /**
      * The current database object.
@@ -71,11 +77,10 @@ public class MovieManager extends JFrame implements ComponentListener {
     /*Number of entries in the list*/
     private int entries;
 
-    private int fontSize = 12;
+    public int fontSize = 12;
 
     /* Stores the active additional fields */
     private int [] activeAdditionalInfoFields;
-
 
     /* While multi-deleting, this is set to true */
     private boolean deleting = false;
@@ -101,8 +106,6 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	_movieManager = this;
 	MovieManager.applet = applet;
-
-	System.err.println("Codebase:" + MovieManager.applet.getCodeBase()); //$NON-NLS-1$
 	
 	EventQueue.invokeLater(new Runnable() {
 		public final void run() {
@@ -110,10 +113,8 @@ public class MovieManager extends JFrame implements ComponentListener {
 		     /* Disable HTTPClient logging output */
 		    //System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
 		    
-		    URL configFile = getFile("log4j.properties"); //$NON-NLS-1$
+		    URL configFile = FileUtil.getFileURL("log4j.properties"); //$NON-NLS-1$
 
-		    System.err.println("loading:" + configFile.toString()); //$NON-NLS-1$
-		    
 		    PropertyConfigurator.configure(configFile);
 		    
 		    log = Logger.getRootLogger();
@@ -196,12 +197,6 @@ public class MovieManager extends JFrame implements ComponentListener {
     synchronized public Database getDatabase() {
 	return _database;
     }
-
-
-
-
-
-
 
     /**
      * Sets the current database.
@@ -354,7 +349,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 			config.setUseRelativeQueriesPath(0);
 		    }
 		    
-		    if (database.getPath().indexOf(getUserDir()) == -1) {
+		    if (database.getPath().indexOf(FileUtil.getUserDir()) == -1) {
 			config.setUseRelativeDatabasePath(0);
 		    }
 		}
@@ -381,19 +376,18 @@ public class MovieManager extends JFrame implements ComponentListener {
 	else
 	    _database = null;
 	
-	
 	if (_database != null) {
 	    
-	    /* Selects the first movie in the list and loads its info. */
-	    if (getMoviesList().getModel().getChildCount(getMoviesList().getModel().getRoot()) > 0) {
-		
-		Runnable showProgress = new Runnable() {
-			public void run() {
-			    getMoviesList().setSelectionRow(0);
+	    Runnable showProgress = new Runnable() {
+	        public void run() {
+			    
+	            /* Selects the first movie in the list and loads its info. */
+                if (getMoviesList().getModel().getChildCount(getMoviesList().getModel().getRoot()) > 0)
+                    getMoviesList().setSelectionRow(0); 
+                
 			    MovieManagerCommandSelect.execute();
 			}};
 		SwingUtilities.invokeLater(showProgress);
-	    }
 	}
 	
 	return _database != null;
@@ -424,7 +418,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 		    temp.add(temp2);
 
 		    episodes.remove(u);
-		    u --;
+		    u--;
 		}
 	    }
 
@@ -509,7 +503,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 		inputStream = new FileInputStream(new File(name));
 	    }
 	    else {
-		inputStream = inputStream = getClass().getResourceAsStream(name);
+		inputStream = getClass().getResourceAsStream(name);
 	    }
 
 	    BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
@@ -555,23 +549,23 @@ public class MovieManager extends JFrame implements ComponentListener {
     		
             
          /* Gets the working dir... */
-            String directory = MovieManager.getUserDir();
+            String directory = FileUtil.getUserDir();
             File laf = new File(directory + "LookAndFeels" + File.separator + "lookAndFeels.ini");
            
 	    if (!laf.exists() && !isMacAppBundle()) {
 		new File(directory + "LookAndFeels").mkdirs();
 		
-		String text = "Here you can add new Look and Feels." + getLineSeparator()+ //$NON-NLS-1$
-		    "Make sure the 'look and Feel' jar file is placed in the 'LookAndFeels' directory" + getLineSeparator()+ //$NON-NLS-1$
-		    "and that the correct classname is given below." + getLineSeparator()+ //$NON-NLS-1$
-		    "Both the name and classname must be enclosed in quotes." + getLineSeparator()+ //$NON-NLS-1$
-			"The names may be set to whatever fit your needs." + getLineSeparator()+ //$NON-NLS-1$
-		    "Example:" + getLineSeparator()+ getLineSeparator()+ //$NON-NLS-1$
-		    "\"Metal look and feel\"       \"javax.swing.plaf.metal.MetalLookAndFeel\"" + getLineSeparator()+ //$NON-NLS-1$
-		    "\"Windows look and feel\"     \"com.sun.java.swing.plaf.windows.WindowsLookAndFeel\"" + getLineSeparator()+ //$NON-NLS-1$
-		    getLineSeparator()+ "The metal and windows look and feels are preinstalled." + getLineSeparator()+ //$NON-NLS-1$
-		    "Define the look and feels below:" + getLineSeparator()+ //$NON-NLS-1$
-		    "#" + getLineSeparator(); //$NON-NLS-1$
+		String text = "Here you can add new Look and Feels." + FileUtil.getLineSeparator()+ //$NON-NLS-1$
+		    "Make sure the 'look and Feel' jar file is placed in the 'LookAndFeels' directory" + FileUtil.getLineSeparator()+ //$NON-NLS-1$
+		    "and that the correct classname is given below." + FileUtil.getLineSeparator()+ //$NON-NLS-1$
+		    "Both the name and classname must be enclosed in quotes." + FileUtil.getLineSeparator()+ //$NON-NLS-1$
+			"The names may be set to whatever fit your needs." + FileUtil.getLineSeparator()+ //$NON-NLS-1$
+		    "Example:" + FileUtil.getLineSeparator()+ FileUtil.getLineSeparator()+ //$NON-NLS-1$
+		    "\"Metal look and feel\"       \"javax.swing.plaf.metal.MetalLookAndFeel\"" + FileUtil.getLineSeparator()+ //$NON-NLS-1$
+		    "\"Windows look and feel\"     \"com.sun.java.swing.plaf.windows.WindowsLookAndFeel\"" + FileUtil.getLineSeparator()+ //$NON-NLS-1$
+            FileUtil.getLineSeparator()+ "The metal and windows look and feels are preinstalled." + FileUtil.getLineSeparator()+ //$NON-NLS-1$
+		    "Define the look and feels below:" + FileUtil.getLineSeparator()+ //$NON-NLS-1$
+		    "#" + FileUtil.getLineSeparator(); //$NON-NLS-1$
 		
 		
 		/* Creating the texfile */
@@ -599,7 +593,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	_movieManager.setTitle(" MeD's Movie Manager v" + _version); //$NON-NLS-1$
 
-	_movieManager.setIconImage(_movieManager.getImage("/images/film.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH)); //$NON-NLS-1$
+	_movieManager.setIconImage(FileUtil.getImage("/images/film.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH)); //$NON-NLS-1$
 
 	_movieManager.setJMenuBar(createMenuBar());
 	_movieManager.getContentPane().add(createWorkingArea(),BorderLayout.CENTER);
@@ -615,7 +609,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	/* All done, pack. */
 	pack();
-	updateToolButtonBorder();
+    toolBar.updateToolButtonBorder();
 
 	_movieManager.setSize(MovieManager.getConfig().mainSize);
 
@@ -701,14 +695,14 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	/* MenuItem New. */
 	JMenuItem menuItemNew = new JMenuItem(Localizer.getString("moviemanager.menu.file.newdb"),'N'); //$NON-NLS-1$
-	menuItemNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,ActionEvent.CTRL_MASK));
+    menuItemNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	menuItemNew.setActionCommand("New"); //$NON-NLS-1$
 	menuItemNew.addActionListener(new MovieManagerCommandNew());
 	menuFile.add(menuItemNew);
 
 	/* MenuItem Open. */
 	JMenuItem menuItemOpen = new JMenuItem(Localizer.getString("moviemanager.menu.file.opendb"),'O'); //$NON-NLS-1$
-	menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.CTRL_MASK));
+    menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	menuItemOpen.setActionCommand("Open"); //$NON-NLS-1$
 	menuItemOpen.addActionListener(new MovieManagerCommandOpen());
 	menuFile.add(menuItemOpen);
@@ -717,7 +711,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	/* MenuItem Close. */
 	JMenuItem menuItemClose = new JMenuItem(Localizer.getString("moviemanager.menu.file.closedb"),'C'); //$NON-NLS-1$
-	menuItemClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,ActionEvent.CTRL_MASK));
+    menuItemClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, (java.awt.event.InputEvent.SHIFT_MASK | (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))));
 	menuItemClose.setActionCommand("Open"); //$NON-NLS-1$
 	menuItemClose.addActionListener(new MovieManagerCommandCloseDatabase());
 	menuFile.add(menuItemClose);
@@ -726,7 +720,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	/* The Import menuItem. */
 	JMenuItem menuImport = new JMenuItem(Localizer.getString("moviemanager.menu.file.import"),'I'); //$NON-NLS-1$
-	menuImport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,ActionEvent.CTRL_MASK));
+    menuImport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, (java.awt.event.InputEvent.SHIFT_MASK | (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))));
 	menuImport.addActionListener(new MovieManagerCommandImport());
 	/* Adds MenuItem Import. */
 	menuFile.add(menuImport);
@@ -735,7 +729,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	/* The Export menuItem. */
 	JMenuItem menuExport = new JMenuItem(Localizer.getString("moviemanager.menu.file.export"),'E'); //$NON-NLS-1$
-	menuExport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,ActionEvent.CTRL_MASK));
+    menuExport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	menuExport.addActionListener(new MovieManagerCommandExport());
 	/* Adds menuItem Export. */
 	menuFile.add(menuExport);
@@ -764,7 +758,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	/* MenuItem Queries. */
 	JMenuItem menuItemQueries = new JMenuItem(Localizer.getString("moviemanager.menu.database.queries"),'Q'); //$NON-NLS-1$
-	menuItemQueries.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,ActionEvent.CTRL_MASK));
+    menuItemQueries.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, (java.awt.event.InputEvent.SHIFT_MASK | (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))));
 	menuItemQueries.setActionCommand("Queries"); //$NON-NLS-1$
 	menuItemQueries.addActionListener(new MovieManagerCommandQueries());
 	menuDatabase.add(menuItemQueries);
@@ -774,35 +768,35 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	/* MenuItem Folders. */
 	JMenuItem menuItemFolders = new JMenuItem(Localizer.getString("moviemanager.menu.database.folders"),'F'); //$NON-NLS-1$
-	menuItemFolders.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F,ActionEvent.CTRL_MASK));
+    menuItemFolders.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	menuItemFolders.setActionCommand("Folders"); //$NON-NLS-1$
 	menuItemFolders.addActionListener(new MovieManagerCommandFolders());
 	menuDatabase.add(menuItemFolders);
 
 	/* MenuItem AddField. */
 	JMenuItem menuItemAddField = new JMenuItem(Localizer.getString("moviemanager.menu.database.additionalinfofields"),'I'); //$NON-NLS-1$
-	menuItemAddField.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,ActionEvent.CTRL_MASK));
+    menuItemAddField.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, (java.awt.event.InputEvent.ALT_MASK | (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))));
 	menuItemAddField.setActionCommand("AdditionalInfoFields"); //$NON-NLS-1$
 	menuItemAddField.addActionListener(new MovieManagerCommandAdditionalInfoFields());
 	menuDatabase.add(menuItemAddField);
 
 	/* MenuItem AddList. */
 	JMenuItem menuItemAddList = new JMenuItem(Localizer.getString("moviemanager.menu.database.lists"),'L'); //$NON-NLS-1$
-	menuItemAddList.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,ActionEvent.CTRL_MASK));
+    menuItemAddList.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	menuItemAddList.setActionCommand("setLists"); //$NON-NLS-1$
 	menuItemAddList.addActionListener(new MovieManagerCommandLists());
 	menuDatabase.add(menuItemAddList);
 
 	/* MenuItem Convert Database. */
 	JMenuItem convertDatabase = new JMenuItem(Localizer.getString("moviemanager.menu.database.covertdb"),'C'); //$NON-NLS-1$
-	convertDatabase.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,ActionEvent.CTRL_MASK));
+    convertDatabase.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	convertDatabase.setActionCommand("Convert Database"); //$NON-NLS-1$
 	convertDatabase.addActionListener(new MovieManagerCommandConvertDatabase());
 	menuDatabase.add(convertDatabase);
 
-	/* MenuItem Convert Database. */
+	/* MenuItem Save changed notes. */
 	JMenuItem saveNotes = new JMenuItem(Localizer.getString("moviemanager.menu.database.savechanhednotes"),'Z'); //$NON-NLS-1$
-	saveNotes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z,ActionEvent.CTRL_MASK));
+    saveNotes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	saveNotes.setActionCommand("Save changed notes"); //$NON-NLS-1$
 	saveNotes.addActionListener(new MovieManagerCommandSaveChangedNotes());
 	menuDatabase.add(saveNotes);
@@ -821,25 +815,26 @@ public class MovieManager extends JFrame implements ComponentListener {
 	log.debug("Start creation of the Tools menu."); //$NON-NLS-1$
 	JMenu menuTools = new JMenu(Localizer.getString("moviemanager.menu.tools")); //$NON-NLS-1$
 	menuTools.setMnemonic('T');
+    
 	/* MenuItem Preferences.
 	   For some reason, addMovie KeyEvent.VK_A doesn't work when focused
 	   on the selected movie or the filter*/
 
 	JMenuItem menuItemPrefs = new JMenuItem(Localizer.getString("moviemanager.menu.tools.preferences"),'P'); //$NON-NLS-1$
-	menuItemPrefs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,ActionEvent.CTRL_MASK));
+    menuItemPrefs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	menuItemPrefs.setActionCommand("Preferences"); //$NON-NLS-1$
 	menuItemPrefs.addActionListener(new MovieManagerCommandPrefs());
 	menuTools.add(menuItemPrefs);
 
 	menuTools.addSeparator();
 	JMenuItem addMultipleMovies = new JMenuItem(Localizer.getString("moviemanager.menu.tools.addmultiplemovies"),'M'); //$NON-NLS-1$
-	addMultipleMovies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,ActionEvent.CTRL_MASK));
+    addMultipleMovies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	addMultipleMovies.setActionCommand("Add Multiple Movies"); //$NON-NLS-1$
 	addMultipleMovies.addActionListener(new MovieManagerCommandAddMultipleMoviesByFile());
 	menuTools.add(addMultipleMovies);
 
 	JMenuItem updateIMDbInfo = new JMenuItem(Localizer.getString("moviemanager.menu.tools.updateIMDbInfo"),'U'); //$NON-NLS-1$
-	updateIMDbInfo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,ActionEvent.CTRL_MASK));
+    updateIMDbInfo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	updateIMDbInfo.setActionCommand("Update IMDb Info"); //$NON-NLS-1$
 	updateIMDbInfo.addActionListener(new MovieManagerCommandUpdateIMDBInfo());
 	menuTools.add(updateIMDbInfo);
@@ -847,7 +842,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	 menuTools.addSeparator();
 
         JMenuItem reportGenerator = new JMenuItem(Localizer.getString("moviemanager.menu.tools.reportgenerator"),'R'); //$NON-NLS-1$
-        reportGenerator.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,ActionEvent.CTRL_MASK));
+        reportGenerator.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         reportGenerator.setActionCommand("Report Generator"); //$NON-NLS-1$
         reportGenerator.addActionListener(new MovieManagerCommandReportGenerator());
         menuTools.add(reportGenerator);
@@ -956,8 +951,8 @@ public class MovieManager extends JFrame implements ComponentListener {
 	}
 	log.debug("Start creation of the Movies List panel."); //$NON-NLS-1$
 
-	JPanel moviesList = new JPanel(new GridBagLayout());
-
+	/*JPanel*/ moviesList = new JPanel(new GridBagLayout());
+   
 	moviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
 												 " "+ Localizer.getString("moviemanager.listpanel-title") + config.getCurrentList() + " ", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 												 TitledBorder.DEFAULT_JUSTIFICATION,
@@ -967,39 +962,67 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 
 	GridBagConstraints constraints;
-
-
+/*
+    constraints = new GridBagConstraints();
+    constraints.gridx = 0;
+    constraints.gridy = 0;  
+    moviesList.add(new JPanel(), constraints);
+  */  
 	constraints = new GridBagConstraints();
 	constraints.gridx = 0;
 	constraints.gridy = 0;
-	 constraints.weightx = 1;
+    constraints.gridwidth = 1;
+	constraints.weightx = 2;
  	constraints.weighty = 0;
-	constraints.insets = new Insets(0,0,0,0);
+    //constraints.fill = GridBagConstraints.HORIZONTAL;
+	constraints.insets = new Insets(2,0,4,0);
+    
+/*
+    constraints = new GridBagConstraints();
+    constraints.gridx = 2;
+    constraints.gridy = 0;  
+    moviesList.add(new JPanel(), constraints);
+  */  
+    toolBar = createToolBar();
+    
+    /*
+    double size[][] = {{info.clearthought.layout.TableLayout.MINIMUM}, {info.clearthought.layout.TableLayout.FILL}};
 
+    JPanel toolBarPanel = new JPanel(new info.clearthought.layout.TableLayout(size));
+    toolBarPanel.add(toolBar, "0, 0"); 
+    
+    toolBarPanel.setBackground(Color.BLUE);
+    */
 	/* Adds the toolbar.*/
-	moviesList.add(createToolBar(), constraints);
+	moviesList.add(toolBar, constraints);
 
 	constraints = new GridBagConstraints();
 	constraints.gridx = 0;
 	constraints.gridy = 1;
-	constraints.weightx = 1;
+    constraints.gridwidth = 3;
+	constraints.weightx = 0;
 	constraints.weighty = 1;
 	constraints.insets = new Insets(0,0,0,0);
 	constraints.fill = GridBagConstraints.BOTH;
 
+    movieListScrollPane = createList();
+    
 	/* Adds the list. */
-	moviesList.add(createList(), constraints);
+	moviesList.add(movieListScrollPane, constraints);
 
 	constraints = new GridBagConstraints();
 	constraints.gridx = 0;
 	constraints.gridy = 2;
+    constraints.gridwidth = 3;
 	constraints.weightx = 0;
 	constraints.weighty = 0;
 	constraints.insets = new Insets(0,0,0,0);
 	constraints.fill = GridBagConstraints.HORIZONTAL;
 
+    filterPanel = createFilter();
+    
 	/* Adds the filter. */
-	moviesList.add(createFilter(), constraints);
+	moviesList.add(filterPanel, constraints);
 
 	/* All done. */
 	log.debug("Creation of the Movies List panel done."); //$NON-NLS-1$
@@ -1011,7 +1034,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	JPanel moviesList = getPanelMovieList();
 	moviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-												 " "+ Localizer.getString("moviemanager.listpanel-title") + title + " ", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+												 " "+ Localizer.getString("moviemanager.listpanel-title") + " - " + title , //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 												 TitledBorder.DEFAULT_JUSTIFICATION,
 												 TitledBorder.DEFAULT_POSITION,
 												 new Font(moviesList.getFont().getName(),Font.BOLD, fontSize)),
@@ -1023,128 +1046,18 @@ public class MovieManager extends JFrame implements ComponentListener {
      *
      * @return The toolbar.
      **/
-    //protected JToolBar createToolBar() {
-    protected JToolBar createToolBar() {
+    protected ExtendedToolBar createToolBar() {
+    //protected JPanel createToolBar() {
 	log.debug("Start creation of the ToolBar."); //$NON-NLS-1$
 
-	boolean useDynamicToolbar = false;
+	ExtendedToolBar toolBar = new ExtendedToolBar(SwingConstants.HORIZONTAL);
 
-	//JToolBar toolBar = new JToolBar(SwingConstants.HORIZONTAL);
-	JToolBar toolBar = null;
-
-	if (useDynamicToolbar)
-	    ;
-	//toolBar = new WrapAroundToolBar4(SwingConstants.HORIZONTAL);
-	else
-	    toolBar = new JToolBar(SwingConstants.HORIZONTAL);
-	
-	toolBar.setRollover(true);
-	
-	//	toolBar.setLayout(new ModifiedFlowLayout(SwingConstants.HORIZONTAL, 4, 4));
-
-	//toolBar.putClientProperty(new String("JToolBar.isRollover"), Boolean.TRUE);
-
-	//toolBar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10,10,40,10), BorderFactory.createEmptyBorder(10,10,30,10)));
-
-	//toolBar.setMinimumSize(new Dimension(254, 50));
-	//toolBar.setPreferredSize(new Dimension(254, 60));
-
-	toolBar.setFloatable(false);
-
-	Dimension dim = new Dimension(3, 0);
-	
-	/* The Add button. */
-	JButton buttonAdd = new JButton(new ImageIcon(_movieManager.getImage("/images/add.png").getScaledInstance(24, 24, Image.SCALE_SMOOTH))); //$NON-NLS-1$
-
-	buttonAdd.setPreferredSize(new Dimension(39, 39));
-	buttonAdd.setMaximumSize(new Dimension(45, 45));
-	//buttonAdd.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,100,0,100), buttonAdd.getBorder()));
-	buttonAdd.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
-
-	buttonAdd.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-add")); //$NON-NLS-1$
-	buttonAdd.setActionCommand("Add"); //$NON-NLS-1$
-	buttonAdd.setMnemonic('A');
-	buttonAdd.addActionListener(new MovieManagerCommandAdd());
-
-	toolBar.add(buttonAdd);
-	
-	/* A separator. */
-	toolBar.addSeparator(dim);
-
-	/* The Remove button. */
-	JButton buttonRemove = new JButton(new ImageIcon(_movieManager.getImage("/images/remove.png").getScaledInstance(26,26,Image.SCALE_SMOOTH))); //$NON-NLS-1$
-
-	buttonRemove.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonRemove.getBorder()));
-
-	buttonRemove.setPreferredSize(new Dimension(39, 39));
-	buttonRemove.setMaximumSize(new Dimension(44, 45));
-	buttonRemove.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-remove")); //$NON-NLS-1$
-	buttonRemove.setActionCommand("Remove"); //$NON-NLS-1$
-	buttonRemove.setMnemonic('R');
-	buttonRemove.addActionListener(new MovieManagerCommandRemove());
-	toolBar.add(buttonRemove);
-
-	/* A separator. */
-	toolBar.addSeparator(dim);
-
-	/* The Edit button. */
-	JButton buttonEdit = new JButton(new ImageIcon(_movieManager.getImage("/images/edit.png").getScaledInstance(23,23,Image.SCALE_SMOOTH))); //$NON-NLS-1$
-
-	//buttonEdit.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonEdit.getBorder()));
-	buttonEdit.setMargin(new Insets(0,10,0,10));
-    
-	buttonEdit.setPreferredSize(new Dimension(39, 39));
-	buttonEdit.setMaximumSize(new Dimension(44, 45));
-	buttonEdit.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-edit")); //$NON-NLS-1$
-	buttonEdit.setActionCommand("Edit"); //$NON-NLS-1$
-	buttonEdit.setMnemonic('E');
-	buttonEdit.addActionListener(new MovieManagerCommandEdit());
-	toolBar.add(buttonEdit);
-
-	/* A separator. */
-	toolBar.addSeparator(dim);
-
-	/* The Search button. */
-	JButton buttonSearch = new JButton(new ImageIcon(_movieManager.getImage("/images/search.png").getScaledInstance(25,25,Image.SCALE_SMOOTH))); //$NON-NLS-1$
-
-	buttonSearch.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonSearch.getBorder()));
-
-	buttonSearch.setPreferredSize(new Dimension(39, 39));
-	buttonSearch.setMaximumSize(new Dimension(45, 45));
-	buttonSearch.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-search")); //$NON-NLS-1$
-	buttonSearch.setActionCommand("Search"); //$NON-NLS-1$
-	buttonSearch.setMnemonic('S');
-	buttonSearch.addActionListener(new MovieManagerCommandSearch());
-	toolBar.add(buttonSearch);
-
-
-
-	/* A separator. */
-	toolBar.add(new JToolBar.Separator(new Dimension(8, 3)));
-
-	JPanel panelEntries = new JPanel();
-	panelEntries.setLayout(new BoxLayout(panelEntries, BoxLayout.X_AXIS));
-
-	panelEntries.setBorder(new CompoundBorder(new EmptyBorder(0,0,0,0), new CompoundBorder(new EtchedBorder(EtchedBorder.RAISED), new EmptyBorder(6,4,5,5))));
-
-
-	panelEntries.setMaximumSize(new Dimension(46, 33));
-	panelEntries.setPreferredSize(new Dimension(46, 33));
-	panelEntries.setSize(new Dimension(46, 33));
-
-	showEntries = new JLabel("    "); //$NON-NLS-1$
-	showEntries.setFont(new Font(showEntries.getFont().getName(), Font.PLAIN,fontSize + 1));
-
-	panelEntries.add(showEntries);
-
-	toolBar.add(panelEntries);
-
-	toolBar.setPreferredSize(new Dimension(toolBar.getMaximumSize()));
-	toolBar.setMinimumSize(toolBar.getPreferredSize());
+    showEntries = toolBar.showEntries;
 	
 	/* All done. */
 	log.debug("Creation of the ToolBar done."); //$NON-NLS-1$
-	return toolBar;
+    
+    return toolBar;
     }
 
     /**
@@ -1512,8 +1425,8 @@ public class MovieManager extends JFrame implements ComponentListener {
 	    };
 
 	if (config.getUseRegularSeenIcon()) {
-	    seenBox.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
-	    seenBox.setSelectedIcon(new ImageIcon(MovieManager.getIt().getImage("/images/seen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+	    seenBox.setIcon(new ImageIcon(FileUtil.getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+	    seenBox.setSelectedIcon(new ImageIcon(FileUtil.getImage("/images/seen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 	}
 
 	seenBox.setPreferredSize(new Dimension(21, 21));
@@ -1566,7 +1479,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	/* Adds the cover. */
 	JPanel panelCover = new JPanel();
 
-	JLabel cover = new JLabel(new ImageIcon(_movieManager.getImage("/images/" + config.getNoCover()).getScaledInstance(97,97,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+	JLabel cover = new JLabel(new ImageIcon(FileUtil.getImage("/images/" + config.getNoCover()).getScaledInstance(97,97,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 	cover.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,0), BorderFactory.createEtchedBorder()));
 	cover.setPreferredSize(new Dimension(97,145));
 	cover.setMinimumSize(new Dimension(97,145));
@@ -1711,7 +1624,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	textAreaMiscellaenous.setContentType("text/html"); //$NON-NLS-1$
 	textAreaMiscellaenous.setBackground((Color) UIManager.get("TextArea.background")); //$NON-NLS-1$
 	textAreaMiscellaenous.setEditable(false);
-	textAreaMiscellaenous.setFocusable(false);
+	textAreaMiscellaenous.setFocusable(true);
 
 	JScrollPane scrollPane = new JScrollPane(textAreaMiscellaenous);
 	scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -1875,7 +1788,7 @@ public class MovieManager extends JFrame implements ComponentListener {
     }
 
      public void updateLookAndFeelValues() {
-	updateToolButtonBorder();
+         toolBar.updateToolButtonBorder();
 	updateJTreeIcons();
 	
 	//getMoviesList().updateUI();
@@ -1888,63 +1801,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	getMoviesList().setShowsRootHandles(config.getUseJTreeCovers() || !config.getUseJTreeIcons());
     }
 
-    public void updateToolButtonBorder() {
-	if (config.isRegularToolButtonsUsed())
-	    updateToolButtonBorderToRegular();
-	else
-	    updateToolButtonBorderToCurrentLaf();
-    }
-
-
-    void updateToolButtonBorderToCurrentLaf() {
-
-	//getToolBar().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10,10,10,10), BorderFactory.createEmptyBorder(0,0,0,0)));
-
-	// getAddButton().setMargin(new Insets(15,15,15,45));
-// 	getRemoveButton().setMargin(new Insets(15,45,15,15));
-
-	getAddButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,15,3,15), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-	getRemoveButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,15,3,15), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-	getEditButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,13,3,13), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-	getSearchButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,13,3,13), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-
-	// getAddButton().setBorder(BorderFactory.createCompoundBorder(new JButton().getBorder(), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-// 	getRemoveButton().setBorder(BorderFactory.createCompoundBorder(new JButton().getBorder(), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-// 	getEditButton().setBorder(BorderFactory.createCompoundBorder(new JButton().getBorder(), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-// 	getSearchButton().setBorder(BorderFactory.createCompoundBorder(new JButton().getBorder(), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-
-	getAddButton().setMaximumSize(new Dimension(45, 45));
-	getRemoveButton().setMaximumSize(new Dimension(44, 45));
-	getEditButton().setMaximumSize(new Dimension(44, 45));
-	getSearchButton().setMaximumSize(new Dimension(45, 45));
-
-	getAddButton().setPreferredSize(new Dimension(45, 45));
-	getRemoveButton().setPreferredSize(new Dimension(44, 45));
-	getEditButton().setPreferredSize(new Dimension(44, 45));
-	getSearchButton().setPreferredSize(new Dimension(45, 45));
-    }
-
-    void updateToolButtonBorderToRegular() {
-
-	getToolBar().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,0), BorderFactory.createEmptyBorder(0,0,0,0)));
-
-	getAddButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
-	getRemoveButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
-	getEditButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
-	getSearchButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
-
-	Dimension dim = new Dimension(40, 40);
-
-	getAddButton().setPreferredSize(dim);
-	getRemoveButton().setPreferredSize(dim);
-	getEditButton().setPreferredSize(dim);
-	getSearchButton().setPreferredSize(dim);
-
-	getAddButton().setMaximumSize(dim);
-	getRemoveButton().setMaximumSize(dim);
-	getEditButton().setMaximumSize(dim);
-	getSearchButton().setMaximumSize(dim);
-    }
+   
 
 
     JPanel getPanelMovieList() {
@@ -2096,6 +1953,10 @@ public class MovieManager extends JFrame implements ComponentListener {
     }
 
     JToolBar getToolBar() {
+        return toolBar;
+    }
+    
+    JToolBar getToolBar2() {
 	return
 	    ((JToolBar)
 	      ((JPanel)
@@ -2104,21 +1965,29 @@ public class MovieManager extends JFrame implements ComponentListener {
     }
 
     JButton getAddButton() {
-	return (JButton) getToolBar().getComponent(0);
+        return ((ExtendedToolBar) getToolBar()).getAddButton();
     }
 
     JButton getRemoveButton() {
-	return (JButton) getToolBar().getComponent(2);
+	return ((ExtendedToolBar) getToolBar()).getRemoveButton();
     }
 
     JButton getEditButton() {
-	return (JButton) getToolBar().getComponent(4);
+	return ((ExtendedToolBar) getToolBar()).getEditButton();
     }
 
     JButton getSearchButton() {
-	return (JButton) getToolBar().getComponent(6);
+        return ((ExtendedToolBar) getToolBar()).getSearchButton();
     }
 
+    JButton getPlayButton() {
+        return ((ExtendedToolBar) getToolBar()).getPlayButton();
+    }
+    
+    JButton getPrintButton() {
+        return ((ExtendedToolBar) getToolBar()).getPrintButton();
+    }
+    
     JPanel getEntriesPanel() {
 	return
 	    ((JPanel)
@@ -2136,12 +2005,11 @@ public class MovieManager extends JFrame implements ComponentListener {
     public JTree getMoviesList() {
 	return
 	    (JTree)
-	    ((JScrollPane)
-	     ((JPanel)
-	      ((JPanel)
-	       _movieManager.getContentPane().getComponent(0)).getComponent(0)).getComponent(1)).getViewport().getComponent(0);
+	   
+                getMoviesListScrollPane().getViewport().getComponent(0);
     }
 
+   
 
 
     /**
@@ -2150,11 +2018,7 @@ public class MovieManager extends JFrame implements ComponentListener {
      * @return JList that displays the MovieList.
      **/
     public JScrollPane getMoviesListScrollPane() {
-	return
-	    ((JScrollPane)
-	     ((JPanel)
-	      ((JPanel)
-	       _movieManager.getContentPane().getComponent(0)).getComponent(0)).getComponent(1));
+	return movieListScrollPane;
     }
 
     /**
@@ -2165,18 +2029,11 @@ public class MovieManager extends JFrame implements ComponentListener {
     public JTextField getFilter() {
 	return
 	    (JTextField)
-	    ((JPanel)
-	     ((JPanel)
-	      ((JPanel)
-	       _movieManager.getContentPane().getComponent(0)).getComponent(0)).getComponent(2)).getComponent(1);
+	    getFilterPanel().getComponent(1);
     }
 
     protected JPanel getFilterPanel() {
-	return
-	    ((JPanel)
-	     ((JPanel)
-	      ((JPanel)
-	       _movieManager.getContentPane().getComponent(0)).getComponent(0)).getComponent(2));
+	return filterPanel;
     }
 
 
@@ -2413,7 +2270,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 		    /* Database path relative to program location */
 		    if (config.getUseRelativeDatabasePath() == 2)
-			databasePath = getUserDir() + databasePath;
+			databasePath = FileUtil.getUserDir() + databasePath;
 
 		    Database db = null;
 
@@ -2563,7 +2420,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	    /* Adds 'Show all' in the list */
 	    menuItem = new JRadioButtonMenuItem("Show All", true); //$NON-NLS-1$
-	    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	    menuItem.setActionCommand("Show All"); //$NON-NLS-1$
 	    menuItem.addActionListener(new MovieManagerCommandLoadList());
 	    group.add(menuItem);
@@ -2572,76 +2429,9 @@ public class MovieManager extends JFrame implements ComponentListener {
 	}
     }
 
-    File getAppletFile(String fileName) {
+   
 
-	try {
-	    //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
-
-	    fileName = fileName.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-
-	    if (fileName.startsWith("/")) //$NON-NLS-1$
-		fileName = fileName.replaceFirst("/", ""); //$NON-NLS-1$ //$NON-NLS-2$
-
-	    //log.debug("fileName:" + fileName);
-	    //log.debug("codebase:"+ _movieManager.applet.getCodeBase());
-
-	    URL url = new URL(MovieManager.applet.getCodeBase(), fileName);
-
-	    //log.debug("URL"+ url.toString());
-	    //log.debug("url.getFile():" + url.getFile());
-
-	    //log.debug("encode:"+URLEncoder.encode(url.toString() , "UTF-8"));
-
-
-	    return new File(url.toString());
-
-	    //return new File((java.net.URI) new java.net.URI(URLEncoder.encode(url.toString() , "UTF-8")));
-
-    	} catch(Exception e) {
-	    log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
-	}
-	return null;
-    }
-
-    public static URL getFile(String fileName) {
-
-    	URL url = null;
-
-	try {
-	    //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
-
-	    if (!MovieManager.isApplet()) {
-	    	/* handle paths with leading slash as absolute paths */
-	    	if (fileName.startsWith("/")) {
-		    url = new File(fileName).toURL();
-	    	} else {
-		    url = new File(getUserDir() + fileName).toURL();
-	    	}
-	    }
-	    else {
-		fileName = fileName.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		if (fileName.startsWith("/")) //$NON-NLS-1$
-		    fileName = fileName.replaceFirst("/", ""); //$NON-NLS-1$ //$NON-NLS-2$
-
-		//log.debug("fileName:" + fileName);
-		//log.debug("codebase:"+ _movieManager.applet.getCodeBase());
-
-		url = new URL(MovieManager.applet.getCodeBase(), fileName);
-
-		//log.debug("URL:"+ url.toString());
-		//log.debug("url.getFile():" + url.getFile());
-		//log.debug("getPath():" + url.getPath());
-
-		//log.debug("encode:"+URLEncoder.encode(url.toString() , "UTF-8"));
-	    }
-	    //return new File((java.net.URI) new java.net.URI(URLEncoder.encode(url.toString() , "UTF-8")));
-
-    	} catch(Exception e) {
-	    log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
-	}
-	return url;
-    }
+   
 
 
 
@@ -2755,6 +2545,7 @@ public class MovieManager extends JFrame implements ComponentListener {
     /**
      * Getting the 'root directory' of the app.
      **/
+    /*
     public static String getUserDir() {
 
 	String path = ""; //$NON-NLS-1$
@@ -2772,7 +2563,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 	    path = file.getAbsolutePath();
 	    
 
-        /* If running in a mac application bundle, we can't write in the application-directory, so we use the home of the user */
+        // If running in a mac application bundle, we can't write in the application-directory, so we use the home of the user 
 	    if (MovieManager.isMac() && path.indexOf(".app/Contents") > -1) {
 		path = System.getProperty("user.home") + "/Library/Application Support/MovieManager/";
 		File dir = new File(path);
@@ -2793,16 +2584,10 @@ public class MovieManager extends JFrame implements ComponentListener {
 
 	return path;
     }
-
-
-    public static String getLineSeparator() {
-	return System.getProperty("line.separator"); //$NON-NLS-1$
     }
+*/
 
-
-    public static String getDirSeparator() {
-	return File.separator;
-    }
+    
 
     public static boolean isMacAppBundle() {
     	return isMac() & (MovieManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().indexOf(".app/Contents/Resources") > -1);
@@ -2833,57 +2618,16 @@ public class MovieManager extends JFrame implements ComponentListener {
 	return MovieManager.getIt().getSize();
     }
 
-    public Image getImage(String imageName) {
-    	Image image = null;
+    
 
-	try {
 
-	    if (MovieManager.isApplet()) {
-		URL url = MovieManager.getIt().getClass().getResource(imageName);
-    		image = MovieManager.applet.getImage(url);
-	    }
-	    else {
-	    	String path = new String();
-	    	if(!new File(imageName).exists()){
-	    		path = System.getProperty("user.dir");
-	    	}
-	    if (new File(path + imageName).exists()) {
-		    image = Toolkit.getDefaultToolkit().getImage(path + imageName);
-		}
-        	else {
    
-		    try {
-			URL url = MovieManager.class.getResource(imageName);
-			image = Toolkit.getDefaultToolkit().getImage(url);
-		    }
-		    catch (Exception e) {
-			log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
-		    }
-		}
-	    }
-	} catch (Exception e) {
-	    log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
-	}
-	return image;
-    }
-
-
-    public static String getPath(String fileName) {
-    	String path = ""; //$NON-NLS-1$
-    	try {
-	    path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8"); //$NON-NLS-1$
-    	}
-    	catch (Exception e) {
-	    log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
-	}
-    	return path;
-    }
 
 
     /* Adds all the files ending in .jar to the classpath */
     public static void includeJarFilesInClasspath(String path) {
 
-	URL url = MovieManager.getFile(path);
+	URL url = FileUtil.getFileURL(path);
 
       	if (url.toExternalForm().startsWith("http://")) //$NON-NLS-1$
 	    return;
@@ -2921,7 +2665,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 		    /* Disable HTTPClient logging output */
 		    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog"); //$NON-NLS-1$ //$NON-NLS-2$
 		    
-		    File configFile = new File(getUserDir() + "/log4j.properties"); //$NON-NLS-1$
+		    File configFile = new File(FileUtil.getUserDir() + "/log4j.properties"); //$NON-NLS-1$
 		                
 		    if (configFile.isFile()) {
 		    } else {
@@ -2971,7 +2715,7 @@ public class MovieManager extends JFrame implements ComponentListener {
 		    /* Loads the database. */
 		    MovieManager.getIt().loadDatabase();
 
-		    getUserDir();
+            FileUtil.getUserDir();
 		}
 	    });
     }

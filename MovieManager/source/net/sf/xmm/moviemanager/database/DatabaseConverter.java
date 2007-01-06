@@ -189,7 +189,7 @@ public class DatabaseConverter {
 			    // for (int u = 0; u < extraFieldNamesList.size(); u++) {
 // 				extraFieldValuesList.add(cDb.getExtraInfoMovieField(key, (String) extraFieldNamesList.get(u)));
 // 			    }
-			    newDatabase.addExtraInfoEpisode(index, additionalModel.getExtraInfoFieldNames(), additionalModel.getExtraInfoFieldValues());
+			    newDatabase.addExtraInfoEpisode(index, ModelAdditionalInfo.getExtraInfoFieldNames(), additionalModel.getExtraInfoFieldValues());
 			}
 			
 			current = i;

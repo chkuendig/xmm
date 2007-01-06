@@ -101,6 +101,7 @@ class FilePropertiesRIFF extends FileProperties {
 	/* If not RIFF_AVI, returns...*/
 	if (streamType == RIFF_AVI) {
 	    
+       
 	    supported = true;
 	    setContainer("AVI");
 	    
@@ -126,14 +127,16 @@ class FilePropertiesRIFF extends FileProperties {
     /**
      * Processes n bytes of the AVI chunk.
      **/
-    private void processAviChunks(RandomAccessFile dataStream, int n) throws Exception {
+    private void processAviChunks(RandomAccessFile dataStream, int bytesToProcess) throws Exception {
 	
 	int chunkType;
 	int chunkSize;
 	int safety = 0;
-	
+	int n = bytesToProcess;
+    
+    
 	while (n > 0 && !quit && safety++ < 100000) {
-	    
+ 
 	    /* Gets the chunk type...*/
 	    chunkType = readUnsignedInt32(dataStream);
 	    
@@ -145,7 +148,7 @@ class FilePropertiesRIFF extends FileProperties {
 	    /* processes this chunk... */
 	    n -= chunkSize;
 	    
-	    if(header) {
+	    if (header) {
 		
 		switch (chunkType) {
 		    
@@ -156,22 +159,24 @@ class FilePropertiesRIFF extends FileProperties {
 		    /* If AVI_movi, the header is finished*/
 		    if (chunkType == AVI_movi) {
 			
-			/* A very aproximate test to check if the AVI_movi chunk size isn't wrong*/
-			if (chunkSize < (dataStream.length()*0.7) || 
-			    chunkSize > dataStream.length())
-			    videoAudioStreamSize = dataStream.length();
-			else
-			    videoAudioStreamSize = chunkSize;
-			
-			/* No longer processing the header */
-			header = false;
-									    
-		    } else if(chunkType == AVI_INFO) {
-			chunkSize = correctChunkSize(chunkSize);
-			processMetaTags(dataStream, chunkSize-4);
+                /* No longer processing the header */
+                header = false;
+                
+                /* A very aproximate test to check if the AVI_movi chunk size isn't wrong*/
+                if (chunkSize < (dataStream.length()*0.7) || 
+                        chunkSize > dataStream.length())
+                    videoAudioStreamSize = dataStream.length();
+                else
+                    videoAudioStreamSize = chunkSize;
+                
+                processAviChunks(dataStream, chunkSize-4);
+                
+		    } else if (chunkType == AVI_INFO) {
+		        chunkSize = correctChunkSize(chunkSize);
+		        processMetaTags(dataStream, chunkSize-4);
 			
 		    } else {
-			processAviChunks(dataStream, chunkSize-4);
+		        processAviChunks(dataStream, chunkSize-4);
 		    }
 		    
 		    break;
@@ -291,6 +296,7 @@ class FilePropertiesRIFF extends FileProperties {
 		
 		extendedCodecInfoChunkCounter++;
 	
+         
 		/* 100000 is an approximate value to prevent the whole file from being parsed */
 		if (chunkSize < 0 || dataStream.getFilePointer() > 100000) {
 		    quit = true;
@@ -301,7 +307,7 @@ class FilePropertiesRIFF extends FileProperties {
 		if (!quit) {
 		    
 		    /* Sometimes the chunksize is so huge it uses many minutes to process,
-		       usually a sign of no usefull info availlable.
+		       usually a sign of no usefull info available.
 		       Setting limit to 500KB */
 		    
 		    if (chunkSize > 500000) {

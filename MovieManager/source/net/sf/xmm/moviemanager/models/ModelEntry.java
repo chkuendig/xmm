@@ -81,8 +81,8 @@ abstract public class ModelEntry {
     }
     
     public void setAdditionalInfo(ModelAdditionalInfo additionalInfo) {
-	this.additionalInfo = additionalInfo;
-	hasAdditionalInfoData = true;
+    	this.additionalInfo = additionalInfo;
+    	hasAdditionalInfoData = true;
     }
 
     public String getSortCategory() {
@@ -107,6 +107,10 @@ abstract public class ModelEntry {
 	return urlKey;
     }
     
+    public void setUrlKey(String urlKey) {
+    	this.urlKey = urlKey;	
+    }
+    
     public String getCover() {
 	if (cover == null)
 	    return "";
@@ -117,8 +121,10 @@ abstract public class ModelEntry {
 	this.cover = cover;
     }
 
+    public abstract void updateCoverData();
+        
     public byte [] getCoverData() {
-	return coverData;
+        return coverData;
     }
     
     public void setCoverData(byte [] data) {

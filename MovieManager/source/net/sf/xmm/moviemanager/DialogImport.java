@@ -67,10 +67,12 @@ public class DialogImport extends JDialog implements ActionListener {
     private JTextField excelFilePath;
     private JTextField excelTitleColumn;
     private JTextField extremeFilePath;
+    private JTextField xmlFilePath;
     
     private JButton browseForTextFile;
     private JButton browseForExcelFile;
     private JButton browseForExtremeFile;
+    private JButton browseForXMLFile;
     
     private JButton buttonOk;
     private JButton buttonCancel;
@@ -187,8 +189,8 @@ public class DialogImport extends JDialog implements ActionListener {
 	textFilePath.setText(MovieManager.getConfig().getImportTextfilePath());
 	
 	browseForTextFile = new JButton("Browse");
-	browseForTextFile.setToolTipText("Browse for a textfile");
-	browseForTextFile.setActionCommand("Browse textFile");
+	browseForTextFile.setToolTipText("Browse for a text file");
+	browseForTextFile.setActionCommand("Browse text File");
 	browseForTextFile.addActionListener(this);
 	
 	JPanel textPathPanel = new JPanel();
@@ -288,15 +290,39 @@ public class DialogImport extends JDialog implements ActionListener {
 	extremePanel.add(extremeOptionPanel2, BorderLayout.CENTER);
 	extremePanel.add(extremePathPanel, BorderLayout.SOUTH);
 	
+    
+    /* XML file path */
+    xmlFilePath = new JTextField(27);
+    xmlFilePath.setText(MovieManager.getConfig().getImportTextfilePath());
+    
+    browseForXMLFile = new JButton("Browse");
+    browseForXMLFile.setToolTipText("Browse for an XML file");
+    browseForXMLFile.setActionCommand("Browse XML File");
+    browseForXMLFile.addActionListener(this);
+    
+    JPanel xmlPathPanel = new JPanel();
+    xmlPathPanel.setLayout(new FlowLayout());
+    xmlPathPanel.add(xmlFilePath);
+    xmlPathPanel.add(browseForXMLFile);
+    
+    xmlPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Directory "), BorderFactory.createEmptyBorder(0,0,0,0))));
+    
+    JPanel xmlFilePanel = new JPanel(new BorderLayout());
+    xmlFilePanel.add(labelPanel, BorderLayout.NORTH);
+    xmlFilePanel.add(xmlPathPanel, BorderLayout.SOUTH);
+    
+    
 	/* Tabbed pane */
 	tabbedPane = new JTabbedPane();
 	tabbedPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-	tabbedPane.add("Textfile", textFilePanel);
+	tabbedPane.add("Text File", textFilePanel);
 	tabbedPane.add("Excel Spreadsheet", excelFilePanel);
 	
 	if (MovieManager.isWindows())
 	    tabbedPane.add("Extreme Movie Manager database|", extremePanel);
 	
+    tabbedPane.add("XML File", xmlFilePanel);
+    
 	/* Add to list */
 	JPanel listPanel = makeListPanel();
 	
@@ -338,7 +364,6 @@ public class DialogImport extends JDialog implements ActionListener {
 	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
 		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
 	
-	//setVisible(true);
 	ShowGUI.showAndWait(this, true);
     }
     
@@ -407,6 +432,8 @@ public class DialogImport extends JDialog implements ActionListener {
 	try {
 	    fileChooser.setFileSelectionMode(ExtendedFileChooser.FILES_ONLY);
 	    
+        fileChooser.setCurrentDirectory(MovieManager.getConfig().getLastMiscDir());
+        
 	    String title = "";
 	    
 	    if (importMode == 0) {
@@ -423,7 +450,11 @@ public class DialogImport extends JDialog implements ActionListener {
 		title = "Select eXtreme movie manager database";
 		fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"mdb"},new String("MS Access Database File (*.mdb)")));
 	    }
-	    
+        else if (importMode == 3) {
+            title = "Select XML file";
+            fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"xml"},new String("Exported XML file (*.xml)")));
+            }
+        
 	    fileChooser.setDialogTitle(title);
 	    fileChooser.setApproveButtonText("Select");
 	    fileChooser.setApproveButtonToolTipText("Select file");
@@ -437,6 +468,9 @@ public class DialogImport extends JDialog implements ActionListener {
 		if (!(new File(filepath).exists())) {
 		    throw new Exception("File not found!");
 		}
+        
+        MovieManager.getConfig().setLastMiscDir(new File(filepath));
+        
 		return filepath;
 	    }
 	}
@@ -477,6 +511,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	case 0 : return textFilePath.getText();
 	case 1 : return excelFilePath.getText();
 	case 2 : return extremeFilePath.getText();
+    case 3 : return xmlFilePath.getText();
 	}
 	return "";
     }
@@ -515,6 +550,12 @@ public class DialogImport extends JDialog implements ActionListener {
 		extremeFilePath.setText(ret);
 	}
 	
+    if (event.getSource().equals(browseForXMLFile)) {
+        String ret = executeCommandGetFile(3);
+        if (!ret.equals(""))
+        xmlFilePath.setText(ret);
+    }
+    
 	if (event.getSource().equals(buttonOk)) {
 	    executeSave();
 	    parent.setCancelAll(true);
@@ -532,17 +573,14 @@ public class DialogImport extends JDialog implements ActionListener {
 	    
 	    if (getPath().equals("")) {
 		DialogAlert alert = new DialogAlert(this, "Alert","Please specify a file path.");
-		//alert.setVisible(true);
 		ShowGUI.showAndWait(alert, true);
 	    }
 	    else if (!new File(getPath()).exists()) {
 		DialogAlert alert = new DialogAlert(this, "Alert","The specified file does not exist.");
-		//alert.setVisible(true);
 		ShowGUI.showAndWait(alert, true);
 	    }
 	    else if (getImportMode() == 1 && (getExcelTitleColumn() == null || getExcelTitleColumn().equals(""))) {
 		DialogAlert alert = new DialogAlert(this, "Alert","You need to specify a column.");
-		//alert.setVisible(true);
 		ShowGUI.showAndWait(alert, true);
 	    }
 	    else {
@@ -559,7 +597,6 @@ public class DialogImport extends JDialog implements ActionListener {
 	    all.add(makeListPanel(), 2);
 	    pack();
 	    
-	    //setVisible(true);
 	    ShowGUI.show(this, true);
 	}
 	

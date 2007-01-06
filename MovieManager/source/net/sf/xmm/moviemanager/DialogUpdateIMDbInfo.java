@@ -782,14 +782,13 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 	    }
 	    else {
 		DialogAlert alert = new DialogAlert(dialog, "Alert", "At least one of the fields should be checked.");
-		//alert.setVisible(true);
-		 ShowGUI.showAndWait(alert, true);
+		ShowGUI.showAndWait(alert, true);
 
-		 startButton.setEnabled(true);
-		 cancelButton.setEnabled(false);
-		 closeButton.setEnabled(true);
+		startButton.setEnabled(true);
+		cancelButton.setEnabled(false);
+		closeButton.setEnabled(true);
 		 
-		 imdbInfoUpdater = new IMDbInfoUpdater();
+		imdbInfoUpdater = new IMDbInfoUpdater();
 	    }
 	}
 	

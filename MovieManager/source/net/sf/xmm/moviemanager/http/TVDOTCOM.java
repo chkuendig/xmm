@@ -22,8 +22,6 @@ package net.sf.xmm.moviemanager.http;
 
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelSearchHit;
-import net.sf.xmm.moviemanager.util.FileUtil;
-
 import org.apache.log4j.Logger;
 
 import java.net.SocketTimeoutException;

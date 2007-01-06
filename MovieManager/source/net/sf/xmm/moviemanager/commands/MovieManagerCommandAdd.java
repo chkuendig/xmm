@@ -23,8 +23,6 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.DialogMovieInfo;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.util.ShowGUI;
-import net.sf.xmm.moviemanager.util.Localizer;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -34,8 +32,7 @@ public class MovieManagerCommandAdd implements ActionListener {
    * Executes the command.
    **/
     protected static void execute() {
-	DialogMovieInfo dialogMovieInfo = new DialogMovieInfo(Localizer.getString("MovieManagerCommand..dialog-movie-info.add-movie")); //$NON-NLS-1$
-	//dialogMovieInfo.setVisible(true);
+	DialogMovieInfo dialogMovieInfo = new DialogMovieInfo();
 	ShowGUI.show(dialogMovieInfo, true);
     }
     

@@ -34,7 +34,6 @@ public class MovieManagerCommandAdditionalInfoFields implements ActionListener {
    **/
   protected static void execute() {
       DialogAdditionalInfoFields dialogAdditionalInfoFields = new DialogAdditionalInfoFields();
-      //dialogAdditionalInfoFields.setVisible(true);
       ShowGUI.show(dialogAdditionalInfoFields, true);
   }
   

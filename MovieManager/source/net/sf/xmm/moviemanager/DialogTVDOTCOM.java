@@ -57,9 +57,11 @@ class DialogTVDOTCOM extends JDialog {
    
     static Logger log = Logger.getRootLogger();
     
-    private DialogMovieInfo _parent;
+    //private DialogMovieInfo _parent;
+    
+    ModelMovieInfo modelInfo;
+    
     private JList listMovies;
-    private int multiAddSelectOption;
     
     private JPanel panelMoviesList;
     
@@ -70,15 +72,16 @@ class DialogTVDOTCOM extends JDialog {
     /* The current mode (Season/episode */
     private static int mode = 0;
     
+    public boolean multipleEpisodesAdded = false;
+    
     /**
      * The Constructor.
      **/
-    protected DialogTVDOTCOM(DialogMovieInfo parent) {
+    protected DialogTVDOTCOM(ModelMovieInfo modelInfo) {
 	/* Dialog creation...*/
 	super(MovieManager.getIt());
 		    
-	/* Sets parent... */
-	_parent = parent;
+	this.modelInfo = modelInfo;
 	
 	/* Close dialog... */
 	addWindowListener(new WindowAdapter() {
@@ -193,7 +196,7 @@ class DialogTVDOTCOM extends JDialog {
 	SwingWorker worker = new SwingWorker() {
 		public Object construct() {
 		    try {
-			DefaultListModel list = TVDOTCOM.getSeriesMatches(_parent.getMovieTitle().getText());
+			DefaultListModel list = TVDOTCOM.getSeriesMatches(modelInfo.model.getTitle());
 			
 			if (list == null) {
 			    final DefaultListModel model = new DefaultListModel();
@@ -265,30 +268,7 @@ class DialogTVDOTCOM extends JDialog {
 	     getContentPane().getComponent(1)).getComponent(1);
     }
     
-    private int executeCommandMultipleMoviesSelectCheck(int listSize) {
-	
-	/*here is some code to check the property settings entered in the multi add movie preferences*/
-	
-	if (multiAddSelectOption != 0) {
-	    
-	    /*Select first hit no matter*/
-	    if ((multiAddSelectOption == 1) && (listSize > 0)) {
-		executeCommandSelect();
-		return 0;
-	    }
-	    
-	    /*Select first if only one hit*/
-	    if (multiAddSelectOption == 2) {
-		if (listSize == 1) {
-		    getMoviesList().setSelectedIndex(0);
-		    executeCommandSelect();
-		    return 0;
-		}
-	    }
-	}
-	return 1;
-    }
-    
+       
     /* Alerts the user of different error messages from proxy servers*/
     void executeErrorMessage() {
 	
@@ -299,25 +279,21 @@ class DialogTVDOTCOM extends JDialog {
 	
 	if (exception.startsWith("Server returned HTTP response code: 407")) { //$NON-NLS-1$
 	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogTVDOTCOM.alert.title.authentication-requeried"), Localizer.getString("DialogTVDOTCOM.alert.message.proxy-server-requires-authentication")); //$NON-NLS-1$ //$NON-NLS-2$
-	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 	
 	if (exception.startsWith("Connection timed out")) { //$NON-NLS-1$
 	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogTVDOTCOM.alert.title.connection-timed.out"), Localizer.getString("DialogTVDOTCOM.alert.message.connection-timed.out")); //$NON-NLS-1$ //$NON-NLS-2$
-	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 	
 	if (exception.startsWith("Connection reset")) { //$NON-NLS-1$
 	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogTVDOTCOM.alert.title.connection-reset"), Localizer.getString("DialogTVDOTCOM.alert.message.connection-reset-by-server")); //$NON-NLS-1$ //$NON-NLS-2$
-	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 	
 	if (exception.startsWith("Server redirected too many  times")) { //$NON-NLS-1$
 	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogTVDOTCOM.alert.title.access-denied"), Localizer.getString("DialogTVDOTCOM.alert.message.username-or-password-invalid")); //$NON-NLS-1$ //$NON-NLS-2$
-	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
     }
@@ -360,52 +336,48 @@ class DialogTVDOTCOM extends JDialog {
 	    boolean execute = false;
 	    String coverFileName = ((ModelSearchHit) selectedValues[0]).getUrlTitle() +((ModelSearchHit) selectedValues[0]).getCoverExtension();
 
-	    if (selectedValues.length != 1)
-	        _parent.dispose();
-	    
+	    if (selectedValues.length > 1)
+	    	multipleEpisodesAdded = true;
+ 
 	    for (int i = 0; i < selectedValues.length; i++) {
 		
 		//long time = System.currentTimeMillis();
 		
 		ModelEpisode episode = TVDOTCOM.getEpisodeInfo((ModelSearchHit) selectedValues[i], streams);
 		
-		_parent.getMovieTitle().setText(episode.getTitle());
-		_parent.getMovieTitle().setCaretPosition(0);
-		_parent.getDate().setText(episode.getDate());
-		_parent.getDate().setCaretPosition(0);
-		_parent.getDirectedBy().setText(episode.getDirectedBy());
-		_parent.getDirectedBy().setCaretPosition(0);
-		_parent.getWrittenBy().setText(episode.getWrittenBy());
-		_parent.getWrittenBy().setCaretPosition(0);
-		_parent.getRating().setText(episode.getRating());
-		_parent.getRating().setCaretPosition(0);
-		_parent.getPlot().setText(episode.getPlot());
-		_parent.getPlot().setCaretPosition(0);
-		_parent.getCast().setText(episode.getCast());
-		_parent.getCast().setCaretPosition(0);
-		_parent.setIMDB(episode.getUrlKey());
-		_parent.setEpisodeNumber(episode.getEpisodeNumber());
-		
-		/* The cover... */
+        /*
+		modelInfo.model.setTitle(episode.getTitle());
+		modelInfo.model.setDate(episode.getDate());
+		modelInfo.model.setDirectedBy(episode.getDirectedBy());
+		modelInfo.model.setWrittenBy(episode.getWrittenBy());
+		modelInfo.model.setRating(episode.getRating());
+		modelInfo.model.setPlot(episode.getPlot());
+		modelInfo.model.setCast(episode.getCast());
+		modelInfo.model.setUrlKey(episode.getUrlKey());
+		((ModelEpisode) modelInfo.model).setEpisodeNumber(episode.getEpisodeNumber());
+		*/
+        
+        modelInfo.setModel(episode);
+        
+		// The cover... 
 		if (cover != null) {
-		    _parent.setCover(coverFileName, cover);
+			modelInfo.setCover(coverFileName, cover);
 		} else {
-		    _parent.removeCover();
+			modelInfo.setCover("", null);
 		}
 		
 		/* The imdb id... */
 		if (selectedValues.length != 1) {
-		    ModelEntry entry = _parent.executeCommandSave(null);
+		    ModelEntry entry = modelInfo.saveToDatabase(null);
 		    
 		    if (i+1 == selectedValues.length)
-			execute = true;
+		    	execute = true;
 		    
 		    MovieManagerCommandSelect.executeAndReload(entry, false, true, execute);
 		}
 	    }
 	    dispose();
 	}
-	
 	mode++;
     }
 }

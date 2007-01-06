@@ -294,6 +294,9 @@ abstract class FileProperties {
 	return metaData;
     }
     
+	protected boolean isSupported() {
+		return supported;
+    }
     
     /**
      * Processes a file from the given DataInputStream.
@@ -500,11 +503,12 @@ abstract class FileProperties {
      */
     protected boolean getExtendedCodecInfo(RandomAccessFile dataStream, int chunkSize) throws Exception {
 	
+        
 	int temp;
 	String extendedInfo = "";
 	
 	while (chunkSize > 0) {
-	    	    
+	
 	    temp = readUnsignedByte(dataStream);
 	    chunkSize--;
 	    
@@ -557,6 +561,7 @@ abstract class FileProperties {
 			}
 		    }
 		    
+            
 		    _libIdentifier = extendedInfo;
 		    String codecName  = findName(FileUtil.getResourceAsStream("/codecs/videoExtended.txt"), extendedInfo);
 		    

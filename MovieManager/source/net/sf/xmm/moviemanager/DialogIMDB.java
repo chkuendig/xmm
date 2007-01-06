@@ -20,13 +20,12 @@
 
 package net.sf.xmm.moviemanager;
 
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMovies;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFile;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandFilter;
+import net.sf.xmm.moviemanager.commands.*;
 import net.sf.xmm.moviemanager.extentions.JMultiLineToolTip;
 import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.ModelIMDB;
 import net.sf.xmm.moviemanager.models.ModelMovie;
+import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SwingWorker;
 import net.sf.xmm.moviemanager.util.ShowGUI;
@@ -39,11 +38,12 @@ import java.io.File;
 
 import javax.swing.*;
 
-class DialogIMDB extends JDialog {
+public class DialogIMDB extends JDialog {
    
     static Logger log = Logger.getRootLogger();
+        
+    ModelMovieInfo modelInfo;
     
-    DialogMovieInfo _parent;
     JList listMovies;
     JTextField searchStringField;
     boolean multiAdd = false;
@@ -66,13 +66,13 @@ class DialogIMDB extends JDialog {
     /**
      * The Constructor.
      **/
-    protected DialogIMDB(DialogMovieInfo parent) {
+    protected DialogIMDB(ModelMovieInfo modelInfo) {
 	/* Dialog creation...*/
 	super(MovieManager.getIt());
 	multiAddFile = new File[1];
 	
 	/* Sets parent... */
-	_parent = parent;
+	this.modelInfo = modelInfo;
 	
 	/* Close dialog... */
 	addWindowListener(new WindowAdapter() {
@@ -100,13 +100,13 @@ class DialogIMDB extends JDialog {
     /**
      * The Constructor.
      **/
-    protected DialogIMDB(DialogMovieInfo parent, String searchString, String filename, final MovieManagerCommandAddMultipleMovies commandAddMovies, int multiAddSelectOption) {
+    public DialogIMDB(ModelMovieInfo modelInfo, String searchString, String filename, final MovieManagerCommandAddMultipleMovies commandAddMovies, int multiAddSelectOption) {
 	/* Dialog creation...*/
 	super(MovieManager.getIt());
 	multiAddFile = new File[1];
 	    
 	/* Sets parent... */
-	_parent = parent;
+	this.modelInfo = modelInfo;
 	this.multiAdd = true;
 	this.commandAddMovies = commandAddMovies;
 	this.multiAddSelectOption = multiAddSelectOption;
@@ -259,7 +259,7 @@ class DialogIMDB extends JDialog {
 			    
 			    }
 			
-			    multiAddFile[0] = _parent.getMultiAddFile();
+			    multiAddFile[0] = modelInfo.getMultiAddFile();
 			
 			}});
 		
@@ -274,8 +274,7 @@ class DialogIMDB extends JDialog {
 		    public void actionPerformed(ActionEvent event) {
 			log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
 			
-			_parent.getMovieTitle().setText(searchStringField.getText());
-			_parent.getMovieTitle().setCaretPosition(0);
+			modelInfo.model.setTitle(searchStringField.getText());
 			commandAddMovies.setDropImdbInfo(true);
 			dispose();
 			return;
@@ -396,7 +395,6 @@ class DialogIMDB extends JDialog {
 		listMovies.setSelectedIndex(0);
 						
 		if (executeCommandMultipleMoviesSelectCheck(listSize) == 1) {
-		    //setVisible(true);
 		    ShowGUI.showAndWait(this, true);
 		}
 		
@@ -408,7 +406,7 @@ class DialogIMDB extends JDialog {
 	    SwingWorker worker = new SwingWorker() {
 		    public Object construct() {
 			try {
-			    DefaultListModel list = IMDB.getSimpleMatches(_parent.getMovieTitle().getText());
+				DefaultListModel list = IMDB.getSimpleMatches(modelInfo.model.getTitle());
 			    
 			    if (list.getSize() == 0) {
 				list.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
@@ -440,7 +438,7 @@ class DialogIMDB extends JDialog {
     
     void executeEditExistingMovie(String searchString) {
 	MovieManagerCommandFilter mmcf = new MovieManagerCommandFilter(searchString, getMoviesList(), false, true);
-	mmcf.execute();
+    MovieManagerCommandFilter.execute();
     }
     
     /*Checks if the movie list should be retrived from IMDB or the local movie Databse
@@ -524,7 +522,7 @@ class DialogIMDB extends JDialog {
 			    if (isMultiAdd())
 				listModel = IMDB.getExtendedMatches(searchStringField.getText());
 			    else
-				listModel = IMDB.getExtendedMatches(_parent.getMovieTitle().getText());
+				listModel = IMDB.getExtendedMatches(modelInfo.model.getTitle());
 					
 						
 			    if (listModel.getSize() == 0) {
@@ -537,11 +535,11 @@ class DialogIMDB extends JDialog {
 			    getButtonMore().setToolTipText(Localizer.getString("DialogIMDB.button.less-titles.tooltip")); //$NON-NLS-1$
 			    getButtonMore().setText(Localizer.getString("DialogIMDB.button.less-titles.text")); //$NON-NLS-1$
 			} else {
-						
+				
 			    if (isMultiAdd())
-				listModel = IMDB.getSimpleMatches(searchStringField.getText());
+			    	listModel = IMDB.getSimpleMatches(searchStringField.getText());
 			    else
-				listModel = IMDB.getSimpleMatches(_parent.getMovieTitle().getText());
+			    	listModel = IMDB.getSimpleMatches(modelInfo.model.getTitle());
 						
 			    if (listModel.getSize() == 0) {
 				listModel.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
@@ -599,31 +597,26 @@ class DialogIMDB extends JDialog {
 		
 	if (exception.startsWith("Server returned HTTP response code: 407")) { //$NON-NLS-1$
 	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.authentication-required"), Localizer.getString("DialogIMDB.alert.message.proxy-authentication-required")); //$NON-NLS-1$ //$NON-NLS-2$
-	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 		
 	if (exception.startsWith("Connection timed out")) { //$NON-NLS-1$
 	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.connection-timed-out"), Localizer.getString("DialogIMDB.alert.message.connection-timed-out")); //$NON-NLS-1$ //$NON-NLS-2$
-	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 		
 	if (exception.startsWith("Connection reset")) { //$NON-NLS-1$
 	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.connection-reset"), Localizer.getString("DialogIMDB.alert.message.connection-reset")); //$NON-NLS-1$ //$NON-NLS-2$
-	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 		
 	if (exception.startsWith("Server redirected too many  times")) { //$NON-NLS-1$
 	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.access-denied"), Localizer.getString("DialogIMDB.alert.message.username-of-password-invalid")); //$NON-NLS-1$ //$NON-NLS-2$
-	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 		
 	if (exception.startsWith("The host did not accept the connection within timeout of")) { //$NON-NLS-1$
 	    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.connection-timed-out"), exception); //$NON-NLS-1$
-	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
     }
@@ -634,11 +627,12 @@ class DialogIMDB extends JDialog {
     private void executeCommandSelect() {
 	int index = getMoviesList().getSelectedIndex();
 	
-	/*When adding the file info the an existing movie, a new DialogMovieInfo object is created
-	  with title "Edit Movie". When done the old DialogMovieInfo object created in the 
-	  MovieManagerCommandAddMultipleMovies object needs not to save the file as a new movie,
-	  therefore setCAncel method with true is called at the end of the if scoop.
-	*/
+	/*
+	 * When adding the file info the an existing movie, a new ModelMovieInfo object is created. 
+	 * When done, the old ModelMovieInfo object created in the 
+	 * MovieManagerCommandAddMultipleMovies object needs not to save the file as a new movie,
+	 * therefore setCAncel method with true is called at the end of the if scoop.
+	 */	
 	
 	if (index == -1)
 	    return;
@@ -651,17 +645,19 @@ class DialogIMDB extends JDialog {
 		
 	    if (model.getKey() == -1)
 		return;
-		
-	    DialogMovieInfo dialogMovieInfo = new DialogMovieInfo("Edit Movie", model); //$NON-NLS-1$
+			    
+	    ModelMovieInfo modelInfoTmp = new ModelMovieInfo(false, true);
 	    
 	    /* Need to set the hasReadProperties variable because when normally 
 	       calling the getfileinfo the first time it replaces the old additional values with the new ones
 	       Then the second time it plusses the time and size to match.
 	       When multiadding the next file info should be directly added to the old, not replace it
 	    */
-	    dialogMovieInfo.setHasReadProperties(true);
-	    dialogMovieInfo.executeCommandGetFileInfo(multiAddFile);
-	    dialogMovieInfo.executeAndReloadMovieList(dialogMovieInfo.executeCommandSave(null));
+	    modelInfoTmp._hasReadProperties = true;
+	    modelInfoTmp.getFileInfo(multiAddFile);
+	    modelInfoTmp.saveToDatabase(null);
+	    
+	    MovieManagerCommandSelect.executeAndReload(modelInfoTmp.model, modelInfoTmp._edit, modelInfoTmp.isEpisode, true);
 	    
 	    commandAddMovies.setCancel(true);
 	    dispose();
@@ -679,68 +675,46 @@ class DialogIMDB extends JDialog {
 		IMDB imdb;
 			
 		try {
-		    imdb = new IMDB(model.getKey());
+            imdb = new IMDB(model.getKey());
 		} catch (Exception e) {
-		    log.error("", e); //$NON-NLS-1$
+		    log.error(e.getMessage()); //$NON-NLS-1$
 		    return;
 		}
 		
-		String title = imdb.getTitle();
+		modelInfo.model.setTitle(imdb.getTitle());
+		modelInfo.model.setDate(imdb.getDate());
+		modelInfo.model.setColour(imdb.getColour());
+		modelInfo.model.setDirectedBy(imdb.getDirectedBy());
+		modelInfo.model.setWrittenBy(imdb.getWrittenBy());
+		modelInfo.model.setGenre(imdb.getGenre());
+		modelInfo.model.setRating(imdb.getRating());
+		modelInfo.model.setCountry(imdb.getCountry());
+		modelInfo.model.setLanguage(imdb.getLanguage());
+		modelInfo.model.setPlot(imdb.getPlot());
+		modelInfo.model.setCast(imdb.getCast());
+				
+		modelInfo.model.setWebRuntime(imdb.getRuntime());
+		modelInfo.model.setWebSoundMix(imdb.getSoundMix());
+		modelInfo.model.setAwards(imdb.getAwards());
+		modelInfo.model.setMpaa(imdb.getMpaa());
+		modelInfo.model.setAka(imdb.getAka());
+		modelInfo.model.setCertification(imdb.getCertification());
 		
-		_parent.getMovieTitle().setText(title);
-		_parent.getMovieTitle().setCaretPosition(0);
-		
-		_parent.getDate().setText(imdb.getDate());
-		_parent.getDate().setCaretPosition(0);
-		_parent.getColour().setText(imdb.getColour());
-		_parent.getColour().setCaretPosition(0);
-		_parent.getDirectedBy().setText(imdb.getDirectedBy());
-		_parent.getDirectedBy().setCaretPosition(0);
-		_parent.getWrittenBy().setText(imdb.getWrittenBy());
-		_parent.getWrittenBy().setCaretPosition(0);
-		_parent.getGenre().setText(imdb.getGenre());
-		_parent.getGenre().setCaretPosition(0);
-		_parent.getRating().setText(imdb.getRating());
-		_parent.getRating().setCaretPosition(0);
-		_parent.getCountry().setText(imdb.getCountry());
-		_parent.getCountry().setCaretPosition(0);
-		_parent.getLanguage().setText(imdb.getLanguage());
-		_parent.getLanguage().setCaretPosition(0);
-		_parent.getPlot().setText(imdb.getPlot());
-		_parent.getPlot().setCaretPosition(0);
-		_parent.getCast().setText(imdb.getCast());
-		_parent.getCast().setCaretPosition(0);
-		
-		
-		_parent.getWebRuntime().setText(imdb.getRuntime());
-		_parent.getWebRuntime().setCaretPosition(0);
-		
-		_parent.getWebSoundMix().setText(imdb.getSoundMix());
-		_parent.getWebSoundMix().setCaretPosition(0);
-
-		_parent.getAwards().setText(imdb.getAwards());
-		_parent.getAwards().setCaretPosition(0);
-		
-		_parent.getMpaa().setText(imdb.getMpaa());
-		_parent.getMpaa().setCaretPosition(0);
-
-		_parent.getAka().setText(imdb.getAka());
-		_parent.getAka().setCaretPosition(0);
-		
-		_parent.getCertification().append(imdb.getCertification());
-		_parent.getCertification().setCaretPosition(0);
+		modelInfo.model.setUrlKey(imdb.getKey());
 		
 		/* The cover... */
 		byte[] coverData = imdb.getCover();
 		
 		if (imdb.getCoverOK()) {
-		    _parent.setCover(imdb.getKey()+imdb.getCoverURL().substring(imdb.getCoverURL().lastIndexOf('.')), coverData);
+		    modelInfo.setCover(imdb.getCoverName(), coverData);
+            modelInfo.setSaveCover(true);
 		} else {
-		    _parent.removeCover();
+		    modelInfo.setCover("", null);
+            modelInfo.setSaveCover(false);
 		}
-		
-		/* The imdb id... */
-		_parent.setIMDB(imdb.getKey());
+				
+        modelInfo.executeTitleModification(imdb.getTitle());
+        
 		dispose();
 	    }
 	}

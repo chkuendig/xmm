@@ -199,7 +199,7 @@ public class DialogDatabaseImporter extends JPanel implements ActionListener {
 	    
 	    timer.start();
 	    conversionStart = System.currentTimeMillis();
-	    taskOutput.append(Localizer.getString("DialogDatabaseImporter.message.processing-import-list")); //$NON-NLS-1$
+	    taskOutput.append(Localizer.getString("DialogDatabaseImporter.message.processing-import-list"));
 	}
 	
 	if (evt.getActionCommand().equals("Cancel")) { //$NON-NLS-1$

@@ -26,6 +26,7 @@ import com.l2fprod.gui.plaf.skin.Skin;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 import com.oyoaha.swing.plaf.oyoaha.OyoahaLookAndFeel;
 
+import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.io.BufferedInputStream;
@@ -102,7 +103,6 @@ public class LookAndFeelManager {
 	} catch (Exception e) {
 	    log.error("Exception: " + e.getMessage());
 	    DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Look and Feel error", "Look and feel may not be properly installed.", e.getMessage());
-	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
     }
@@ -112,19 +112,19 @@ public class LookAndFeelManager {
 	
 	try {
 	    File dir;
-	    String dirSep = MovieManager.getDirSeparator();
+	    String dirSep = FileUtil.getDirSeparator();
 	    MovieManagerConfig config = MovieManager.getConfig();
 	    
 	    if (!MovieManager.isApplet()) {
 	    
-		config.setSkinlfThemePackDir(MovieManager.getUserDir() + dirSep + "LookAndFeels" + dirSep + "Skinlf Theme Packs" + dirSep);
+		config.setSkinlfThemePackDir(FileUtil.getUserDir() + dirSep + "LookAndFeels" + dirSep + "Skinlf Theme Packs" + dirSep);
 		
 	    	dir = new File(config.getSkinlfThemePackDir());
 		
 		if (!dir.exists() && !MovieManager.isMacAppBundle()) {
 		    dir.mkdirs();
 		
-		    String text = "Here you can add new Skinlf themes."+ MovieManager.getLineSeparator()+
+		    String text = "Here you can add new Skinlf themes."+ FileUtil.getLineSeparator()+
 	    		"Simply put the .zip files into the 'Skinlf Theme Packs' directory.";
 		
 		    File skinlf = null;
@@ -171,10 +171,10 @@ public class LookAndFeelManager {
 	
 	try {
 	    MovieManagerConfig config = MovieManager.getConfig();
-	    String dirSep = MovieManager.getDirSeparator();
+	    String dirSep = FileUtil.getDirSeparator();
 	    
 	    if (!MovieManager.isApplet()) {
-		config.setOyoahaThemePackDir(MovieManager.getUserDir() + dirSep + "LookAndFeels" + dirSep + "Oyoaha Theme Packs" + dirSep);
+		config.setOyoahaThemePackDir(FileUtil.getUserDir() + dirSep + "LookAndFeels" + dirSep + "Oyoaha Theme Packs" + dirSep);
 		File dir = new File(config.getOyoahaThemePackDir());
 		
 		ArrayList themePackList = new ArrayList();
@@ -183,7 +183,7 @@ public class LookAndFeelManager {
 	    	if (!dir.exists()) {
 		    dir.mkdir();
 		
-		    String text = "Here you can add new Oyoaha themes."+ MovieManager.getLineSeparator()+
+		    String text = "Here you can add new Oyoaha themes."+ FileUtil.getLineSeparator()+
 	    		"Simply put the .zotm files into the 'Oyoaha Theme Packs' directory.";
 		
 		    File oyoaha = null;
@@ -225,10 +225,10 @@ public class LookAndFeelManager {
 	try {
 		URL url = null;
 		if(!MovieManager.isMacAppBundle()) {
-			url = MovieManager.getFile("LookAndFeels/lookAndFeels.ini");
+			url = FileUtil.getFileURL("LookAndFeels/lookAndFeels.ini");
 		} else {
 			// Search in the absolute Path of the Application Bundle (Search as if we weren't in a Application Bundle)
-			url = MovieManager.getFile(System.getProperty("user.dir") + "/LookAndFeels/lookAndFeels.ini");
+			url = FileUtil.getFileURL(System.getProperty("user.dir") + "/LookAndFeels/lookAndFeels.ini");
 		}
 	    BufferedInputStream stream = new BufferedInputStream(url.openStream());
 				
@@ -241,7 +241,7 @@ public class LookAndFeelManager {
 	    }
 	    stream.close();
 	    
-	    String lineSeparator = MovieManager.getLineSeparator();
+	    String lineSeparator = FileUtil.getLineSeparator();
 	    int start = lookAndFeel.indexOf("#")+2;
 	    
 	    if (start == 1)
@@ -305,11 +305,11 @@ public class LookAndFeelManager {
             UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(quaquqLAF.getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel"));
             // Override system look and feel
             UIManager.setLookAndFeel(quaquqLAF);
-            System.load(MovieManager.getFile(System.getProperty("user.dir") + "/LookAndFeels/libquaqua.jnilib").getPath());
+            System.load(FileUtil.getFile(System.getProperty("user.dir") + "/LookAndFeels/libquaqua.jnilib").getPath());
             System.setProperty("Quaqua.JNI.isPreloaded","true");
             log.debug("Quaqua installed");
         } catch (Exception e) {
-            log.error("Quaqua Look and Feel not installed:" + e);
+            log.error("Quaqua Look and Feel not installed: " + e);
         }
         catch(UnsatisfiedLinkError e) {
             log.error("Quaqua installed, but without the native parts: " + e);
@@ -319,7 +319,7 @@ public class LookAndFeelManager {
     public static void macOSXRegistration() {
         if (MovieManager.isMac()) {
       try {
-        Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass("apple.dts.samplecode.osxadapter.OSXAdapter");
+        Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass("net.sf.xmm.moviemanager.util.mac.OSXAdapter");
         
         Class[] defArgs = {MovieManager.class};
         Method registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication", defArgs);

@@ -21,9 +21,11 @@
 package net.sf.xmm.moviemanager;
 
 import net.sf.xmm.moviemanager.database.Database;
+import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovie;
+import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.util.SwingWorker;
 
 import org.apache.commons.httpclient.*;
@@ -51,7 +53,8 @@ public class IMDbInfoUpdater {
     
     Database database = MovieManager.getIt().getDatabase();
     
-   
+   /* 0 = No, 1 = Yes, 2 = Yes, but only if empty */
+    
     public int title = 0;
     public int cover = 0;
     public int date = 0;
@@ -163,6 +166,8 @@ public class IMDbInfoUpdater {
 		class GetInfo extends Thread {
 		    
 		    boolean httpclient = true;
+            
+            ModelMovieInfo modelInfo;
 		    ModelEntry model;
 
 		    InputStream stream;
@@ -172,7 +177,8 @@ public class IMDbInfoUpdater {
 		    GetMethod method;
 
 		    GetInfo(ModelEntry model) {
-			this.model = model;
+                modelInfo = new ModelMovieInfo((ModelMovie) model);
+                this.model = model;
 		    }
 		    
 		    public void run() {
@@ -184,8 +190,11 @@ public class IMDbInfoUpdater {
 
 			    IMDB imdb;
 				
+                System.err.println("(" + model.getUrlKey()+ ")" + model.getTitle());    
+                
 			    if (model.getUrlKey().equals("")) {
-                    model.setNotes("UrlKey empty");
+                    //model.setNotes("UrlKey empty");
+                   
 			        return;
                 }
                 
@@ -193,7 +202,7 @@ public class IMDbInfoUpdater {
 				    
 				if (httpclient) {
 					
-				    method = new GetMethod("http://www.imdb.com/title/tt"+ model.getUrlKey() +"/");
+				    method = new GetMethod("http://akas.imdb.com/title/tt"+ model.getUrlKey() +"/");
 					
 				    int statusCode = client.executeMethod(method);
 					
@@ -224,66 +233,85 @@ public class IMDbInfoUpdater {
 						model.setTitle(imdb.getTitle());
 						log.debug("title updated");
 					    }
+                        
 					    if (date == 1 || (date == 2 && model.getDate().equals(""))) {
 						model.setDate(imdb.getDate());
 						log.debug("Date updated");
 					    }
+                        
 					    if (colour == 1 || (colour == 2 && model.getColour().equals(""))) {
 						model.setColour(imdb.getColour());
 						log.debug("Colour updated");
 					    }
+                        
 					    if (directedBy == 1 || (directedBy == 2 && model.getDirectedBy().equals(""))) {
+                            System.err.println("imdb.getDirectedBy():" + imdb.getDirectedBy());
 						model.setDirectedBy(imdb.getDirectedBy());
-						log.debug("DirectedBy( updated");
+						log.debug("DirectedBy updated");
 					    }
+                        
 					    if (writtenBy == 1 || (writtenBy == 2 && model.getWrittenBy().equals(""))) {
 						model.setWrittenBy(imdb.getWrittenBy());
 						log.debug("WrittenBy updated");
 					    }
+                        
 					    if (genre == 1 || (genre == 2 && model.getGenre().equals(""))) {
 						model.setGenre(imdb.getGenre());
 						log.debug("genre updated");
 					    }
+                        
 					    if (rating == 1 || (rating == 2 && model.getRating().equals(""))) {
 						model.setRating(imdb.getRating());
 						log.debug("rating updated");
 					    }
+                        
 					    if (country == 1 || (country == 2 && model.getCountry().equals(""))) {
 						model.setCountry(imdb.getCountry());
 						log.debug("country updated");
 					    }
+                        
 					    if (language == 1 || (language == 2 && model.getLanguage().equals(""))) {
 						model.setLanguage(imdb.getLanguage());
 						log.debug("language updated");
 					    }
+                        
 					    if (plot == 1 || (plot == 2 && model.getPlot().equals(""))) {
 						model.setPlot(imdb.getPlot());
 						log.debug("plot updated");
 					    }
+                        
 					    if (cast == 1 || (cast == 2 && model.getCast().equals(""))) {
 						model.setCast(imdb.getCast());
 						log.debug("cast updated");
 					    }
+                        
 					    if (aka == 1 || (aka == 2 && model.getAka().equals(""))) {
-						model.setAka(imdb.getAka());
-						log.debug("aka updated");
+					        model.setAka(imdb.getAka());
+					        modelInfo.executeTitleModification(imdb.getTitle());
+                        
+					        log.debug("aka updated");
 					    }
+                        
 					    if (soundMix == 1 || (soundMix == 2 && model.getWebSoundMix().equals(""))) {
 						model.setWebSoundMix(imdb.getSoundMix());
 						log.debug("soundMix updated");
 					    }
+                        
 					    if (runtime == 1 || (runtime == 2 && model.getWebRuntime().equals(""))) {
 						model.setWebRuntime(imdb.getRuntime());
 						log.debug("runtime updated");
 					    }
+                        
 					    if (awards == 1 || (awards == 2 && model.getAwards().equals(""))) {
 						model.setAwards(imdb.getAwards());
 						log.debug("awards updated");
 					    }
+                        
 					    if (mpaa == 1 || (mpaa == 2 && model.getMpaa().equals(""))) {
 						model.setMpaa(imdb.getMpaa());
 						log.debug("mpaa updated");
 					    }
+                        
 					    if (certification == 1 || (certification == 2 && model.getCertification().equals(""))) {
 						model.setCertification(imdb.getCertification());
 						log.debug("certification updated");
@@ -291,42 +319,50 @@ public class IMDbInfoUpdater {
 
 					    
 					    if (cover == 1 || (cover == 2 && model.getCover().equals(""))) {
-						    
-						try {
-						    /* Gets the covers folder... */
-						    String coversFolder = database.getCoversFolder();
-						    String coverURL = imdb.getCoverURL();
-						    byte [] coverData = imdb.getCover();
-						    
-						    if (coverURL.indexOf("/") != -1) {
-							    
-							/* Creates the new file... */
-							File coverFile = new File(coversFolder, imdb.getCoverName());
-							    
-							if (coverFile.exists()) {
-							    if (!coverFile.delete() && !coverFile.createNewFile()) {
-								throw new Exception("Cannot delete old cover file and create a new one.");
-							    }
-							} else {
-							    if (!coverFile.createNewFile()) {
-								throw new Exception("Cannot create cover file.");
-							    }
-							}
-							    
-							/* Copies the cover to the covers folder... */
-							OutputStream outputStream = new FileOutputStream(coverFile);
-							outputStream.write(coverData);
-							outputStream.close();
-							
-							model.setCover(imdb.getCoverName());
-						    }
-						} catch (Exception e) {
-						    log.error("", e);
-						}
-					    }
-					    
-					    database.setGeneralInfo((ModelMovie) model);
+					        
+					        try {
+					            
+					            /* Gets the covers folder... */
+					            String coversFolder = database.getCoversFolder();
+					            
+					            byte [] coverData = imdb.getCover();
+					            
+					            if (imdb.getCoverOK()) {
+					                model.setCoverData(coverData);
+					                model.setCover(imdb.getCoverName());
+					                
+					                
+					                if (!((MovieManager.getIt().getDatabase() instanceof DatabaseMySQL) && !MovieManager.getConfig().getStoreCoversLocally())
+					                        && (imdb.getCoverURL().indexOf("/") != -1)) {
+					                    
+					                    /* Creates the new file... */
+					                    File coverFile = new File(coversFolder, imdb.getCoverName());
+					                    
+					                    if (coverFile.exists()) {
+					                        if (!coverFile.delete() && !coverFile.createNewFile()) {
+					                            throw new Exception("Cannot delete old cover file and create a new one.");
+					                        }
+					                    } else {
+					                        if (!coverFile.createNewFile()) {
+					                            throw new Exception("Cannot create cover file.");
+					                        }
+					                    }
+					                    
+					                    /* Copies the cover to the covers folder... */
+					                    OutputStream outputStream = new FileOutputStream(coverFile);
+					                    outputStream.write(coverData);
+					                    outputStream.close();
+					                }
+                                }
+					        } catch (Exception e) {
+					            log.error("", e);
+					        }
+                        }
                         
+                        modelInfo.saveToDatabase(null);
+                        
+					    //database.setGeneralInfo((ModelMovie) model);
+                                                
 					} catch (Exception e) {
 					    log.fatal("", e);
 					    error = true;

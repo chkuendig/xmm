@@ -16,6 +16,7 @@ import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.view.*;
 import net.sf.xmm.moviemanager.database.*;
 import net.sf.xmm.moviemanager.models.*;
+import net.sf.xmm.moviemanager.util.FileUtil;
 
 /**
  * ReportGenerator using JasperReports. Current entries in movielist is used as
@@ -77,13 +78,20 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         BorderFactory.createEmptyBorder(0, 5, 5, 5));
     private Border border4 = BorderFactory.createEmptyBorder(0, 5, 0, 3);
 
-    private static String reportsDir = MovieManager.getUserDir() + "/reports/";
+    private static String reportsDir = getReportsDir();
     
     public ReportGenerator() {
         this(null);
     }
 
-    public ReportGenerator(Frame frame) {
+    private static String getReportsDir() {
+    	if(MovieManager.isMacAppBundle()) { 
+    		return "reports/";
+    	}
+    	return FileUtil.getUserDir() + "/reports/";
+	}
+
+	public ReportGenerator(Frame frame) {
         if (instance != null) { // on second instantiation, just show the first
             instance.setState(Frame.NORMAL);
             instance.toFront();
@@ -191,6 +199,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
      */
     private void loadReportLayouts() {
         File reportDir = new File(reportsDir);
+        System.out.println(reportDir.getAbsolutePath());
         String[] files = reportDir.list(this);
         if (files.length > 0) {
             LayoutItem[] layouts = new LayoutItem[files.length];

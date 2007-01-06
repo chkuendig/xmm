@@ -22,6 +22,7 @@ package net.sf.xmm.moviemanager;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.*;
+import net.sf.xmm.moviemanager.util.FileUtil;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -81,7 +82,7 @@ public class DialogAbout extends JDialog {
 	panelInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Info "),
 							       BorderFactory.createEmptyBorder(5,5,5,5)));
 	JLabel labelInfo = new JLabel(" MeD's Movie Manager version "+MovieManager.getIt().getVersion(),
-				      new ImageIcon(MovieManager.getIt().getImage("/images/filmFolder.png").getScaledInstance(55,55,Image.SCALE_SMOOTH)),
+				      new ImageIcon(FileUtil.getImage("/images/filmFolder.png").getScaledInstance(55,55,Image.SCALE_SMOOTH)),
 				      JLabel.CENTER);
 	labelInfo.setFont(new Font(labelInfo.getFont().getName(),Font.PLAIN,labelInfo.getFont().getSize()));
 	panelInfo.add(labelInfo);

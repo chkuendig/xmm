@@ -25,6 +25,7 @@ import net.sf.xmm.moviemanager.DialogQuestion;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
+import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.models.*;
 import net.sf.xmm.moviemanager.util.ShowGUI;
 
@@ -126,8 +127,8 @@ public class MovieManagerCommandExportToFullHTML {
 	    
 	    String lastStart = null;
 	    
-	    if (!coversDBFolder.endsWith(MovieManager.getDirSeparator()))
-		coversDBFolder = coversDBFolder + MovieManager.getDirSeparator();
+	    if (!coversDBFolder.endsWith(FileUtil.getDirSeparator()))
+		coversDBFolder = coversDBFolder + FileUtil.getDirSeparator();
 	    
 	    File coverInputFile;
 	    FileInputStream coverInputStream;
@@ -140,7 +141,7 @@ public class MovieManagerCommandExportToFullHTML {
 	    
 	    /* Creates the nocover file... */
 	    try {
-		coverOutputFile = new File(coversPath+ MovieManager.getDirSeparator() + MovieManager.getConfig().getNoCover());
+		coverOutputFile = new File(coversPath+ FileUtil.getDirSeparator() + MovieManager.getConfig().getNoCover());
 		if (!coverOutputFile.createNewFile()) {
 		    coverOutputFile.delete();
 		}
@@ -180,7 +181,7 @@ public class MovieManagerCommandExportToFullHTML {
 			}
 			
 			/* Creates the output file... */
-			coverOutputFile = new File(coversPath + MovieManager.getDirSeparator() + cover);
+			coverOutputFile = new File(coversPath + FileUtil.getDirSeparator() + cover);
 			if (!coverOutputFile.createNewFile()) {
 			    coverOutputFile.delete();
 			}
@@ -595,7 +596,7 @@ public class MovieManagerCommandExportToFullHTML {
 	
 	String s;
 	
-	filepath = filepath.substring(filepath.lastIndexOf(MovieManager.getDirSeparator())+1, filepath.length());
+	filepath = filepath.substring(filepath.lastIndexOf(FileUtil.getDirSeparator())+1, filepath.length());
 	
 	
 	String tempFileName;
@@ -666,13 +667,11 @@ public class MovieManagerCommandExportToFullHTML {
 	    
 	    if (htmlFile.exists()) {
 		DialogQuestion fileQuestion = new DialogQuestion("File already exists", "A file with the chosen filename already exists. Would you like to overwrite the old file?");
-		//fileQuestion.setVisible(true);
 		ShowGUI.showAndWait(fileQuestion, true);
 		
 		if (fileQuestion.getAnswer()) {
 		    if (coversDir.exists()) { 
 			DialogQuestion coverQuestion = new DialogQuestion("Directory already exists.", "The directory to store covers already exists. Put cover images in the existing directory?");
-			//coverQuestion.setVisible(true);
 			ShowGUI.showAndWait(coverQuestion, true);
 			
 			if (coverQuestion.getAnswer()) {
@@ -695,7 +694,6 @@ public class MovieManagerCommandExportToFullHTML {
 	    } 
 	    else if (coversDir.exists()) { 
 		DialogQuestion coverQuestion = new DialogQuestion("Directory already exists.", "The directory to store covers already exists. Put cover files in the exisitng directory and overwrite existing files?");
-		//coverQuestion.setVisible(true);
 		ShowGUI.showAndWait(coverQuestion, true);
 		
 		if (coverQuestion.getAnswer()) {
@@ -709,7 +707,6 @@ public class MovieManagerCommandExportToFullHTML {
 	    }
 	    else if(!coversDir.mkdir()) {
 		DialogAlert coverAlert = new DialogAlert(MovieManager.getIt(), "Couldn't create directory.", "The directory to store covers could not be created.");
-		//coverAlert.setVisible(true);
 		ShowGUI.showAndWait(coverAlert, true);
 	    }
 	    else {

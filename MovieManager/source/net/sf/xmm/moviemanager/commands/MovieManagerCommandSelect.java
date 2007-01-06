@@ -25,6 +25,7 @@ import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 import net.sf.xmm.moviemanager.extentions.ExtendedJTree;
 import net.sf.xmm.moviemanager.extentions.ExtendedTreeNode;
 import net.sf.xmm.moviemanager.models.*;
+import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.ShowGUI;
 
@@ -36,6 +37,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -96,8 +98,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
      **/
     public static void executeAndReload(ModelEntry reloadEntry, boolean edit, boolean isEpisode, boolean execute) {
 	
-        System.err.println("executeAndReload(ModelEntry reloadEntry, boolean edit, boolean isEpisode, boolean execute)");
-        
 	//long time = System.currentTimeMillis();
 
 	JTree movieList = MovieManager.getIt().getMoviesList();
@@ -123,8 +123,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		
 		ExtendedTreeNode root = ((ExtendedTreeNode) movieList.getModel().getRoot());
         
-        if (root.getChildCount() == 1 && ((ModelEntry) ((ExtendedTreeNode) root.getFirstChild()).getUserObject()).getKey() == -1)
-            root.removeAllChildren();
+		if (root.getChildCount() == 1 && ((ModelEntry) ((ExtendedTreeNode) root.getFirstChild()).getUserObject()).getKey() == -1)
+		    root.removeAllChildren();
         
 		ExtendedTreeNode newNode = new ExtendedTreeNode(reloadEntry);
 		root.addNode(newNode);
@@ -166,6 +166,11 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	/* Saves time not to execute when multiadding episodes */
 	if (execute)
 	    execute();
+	
+	MovieManager.getIt().getMoviesList().requestFocus(true);
+    
+	/*Updates the entries value shown in the right side of the toolbars.*/
+	MovieManager.getIt().setAndShowEntries();
     }
 	
 
@@ -224,7 +229,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	JTree movieList = MovieManager.getIt().getMoviesList();
 	
 	//long time = System.currentTimeMillis();
-	
+
 	/* Makes sure the list is not empty and an object is selected... */
 	if (movieList.getModel() != null && movieList.getModel().getChildCount(movieList.getModel().getRoot()) > 0 && movieList.getMaxSelectionRow() != -1) {
 	    
@@ -353,6 +358,19 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	    
 		ModelAdditionalInfo additionalInfo = model.getAdditionalInfo();
 	    
+		/* Experimental - needs more work */
+		StringTokenizer tokenizer = new StringTokenizer(additionalInfo.getFileLocation(), "*");
+		boolean enable = false;
+        
+		while (tokenizer.hasMoreElements()) {
+		    if (new File(tokenizer.nextToken()).isFile()) {
+			enable = true;
+			break;
+		    }
+		}
+        
+		MovieManager.getIt().toolBar.setEnablePlayButton(enable);
+        
 		if (MovieManager.getIt().getDatabase() != null)
 		    additionalInfoString = MovieManager.getIt().getDatabase().getAdditionalInfoString(additionalInfo);
 	    
@@ -391,7 +409,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			}
 			else if (!byteCover) {
               
-			    MovieManager.getIt().getCover().setIcon(new ImageIcon(MovieManager.getIt().getImage(cover).getScaledInstance(97, height,Image.SCALE_SMOOTH)));
+			    MovieManager.getIt().getCover().setIcon(new ImageIcon(FileUtil.getImage(cover).getScaledInstance(97, height,Image.SCALE_SMOOTH)));
 			    noCover = false;
 			}
 		    }
@@ -404,10 +422,13 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		} 
 	    }
 	}
+    
+    
+    
    
     
 	if (noCover) {
-	    MovieManager.getIt().getCover().setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/" + MovieManager.getConfig().getNoCover()).getScaledInstance(97,97, Image.SCALE_SMOOTH))); //$NON-NLS-1$
+	    MovieManager.getIt().getCover().setIcon(new ImageIcon(FileUtil.getImage("/images/" + MovieManager.getConfig().getNoCover()).getScaledInstance(97,97, Image.SCALE_SMOOTH))); //$NON-NLS-1$
 	}
 	
 	/* Removes mouse listeners */
@@ -434,6 +455,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	    MovieManager.getIt().getDateField().setCaretPosition(0);
 	}
 	
+	System.err.println("title:" + title);
+    
 	MovieManager.getIt().getTitleField().setText(title);
 	MovieManager.getIt().getTitleField().setCaretPosition(0);
 	
@@ -511,12 +534,10 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	    MovieManager.getIt().getColourField().setText(colour+ " "); //$NON-NLS-1$
 	}
       
-	if (!seen) {
-	    MovieManager.getIt().getSeen().setSelected(false);
-	} else {
-	    MovieManager.getIt().getSeen().setSelected(true);
-	}
-
+	MovieManager.getIt().getSeen().setSelected(seen);
+	
+   
+    
 	MovieManager.getIt().getPlot().setText(plot);
 	MovieManager.getIt().getPlot().setCaretPosition(0);
 	

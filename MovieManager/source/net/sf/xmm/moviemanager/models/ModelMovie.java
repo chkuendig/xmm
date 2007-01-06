@@ -21,11 +21,18 @@
 package net.sf.xmm.moviemanager.models;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 
 public class ModelMovie extends ModelEntry {
     
+    /* default public constructor for XML export */
+    public ModelMovie() {
+    	additionalInfo = new ModelAdditionalInfo();
+    }
     
-    public ModelMovie() {}
+    public ModelMovie(ModelMovie model) {
+    	copyData(model);
+    }
     
     /**
      * The constructor.
@@ -56,6 +63,8 @@ public class ModelMovie extends ModelEntry {
 	this.awards = awards;
 
 	hasGeneralInfoData = true;
+    
+    additionalInfo = new ModelAdditionalInfo();
     }
 
     public ModelMovie(int key, String title) {
@@ -113,6 +122,12 @@ public class ModelMovie extends ModelEntry {
 	}
     }
 
+ public void updateCoverData() {
+         
+         if (MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL"))
+             coverData = ((DatabaseMySQL) MovieManager.getIt().getDatabase()).getCoverDataMovie(getKey());
+ }
+     
     public void updateAdditionalInfoData() {
 
 	ModelAdditionalInfo tmp = MovieManager.getIt().getDatabase().getAdditionalInfo(getKey(), false);

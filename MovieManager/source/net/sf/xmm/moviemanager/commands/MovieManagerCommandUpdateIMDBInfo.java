@@ -84,7 +84,6 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
 	
 	dbImporter.setLocation((int)mm.getLocation().getX()+(mm.getWidth()- dbImporter.getWidth())/2,
 			  (int)mm.getLocation().getY()+(mm.getHeight()- dbImporter.getHeight())/2);
-	//dbImporter.setVisible(true);
 	ShowGUI.show(dbImporter, true);
     }
     
@@ -97,7 +96,6 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
     }
     
     public void dispose() {
-	//dbImporter.setVisible(false);
 	ShowGUI.show(dbImporter, false);
     }
     

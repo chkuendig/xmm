@@ -31,7 +31,6 @@ public class MovieManagerCommandOpen implements ActionListener {
     
     protected static void execute() {
 	DialogDatabase dialogDatabase = new DialogDatabase(false);
-	//dialogDatabase.setVisible(true);
 	ShowGUI.show(dialogDatabase, true);
     }
 

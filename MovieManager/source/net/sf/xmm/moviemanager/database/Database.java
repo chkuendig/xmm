@@ -503,12 +503,11 @@ abstract public class Database {
 		while (tokenizer.hasMoreTokens()) {
 		    tmp = Integer.parseInt(tokenizer.nextToken());
 		    
-		    if (tmp >= fieldCount)
-			log.error("Index:" + tmp + " ignored, value is greater than max: " + (tmp - 1));
+		    if ((tmp >= fieldCount) || (tmp < 0))
+			log.error("Index:" + tmp + " ignored, value is invalid: " + tmp);
 		    else {
 			activeFields.add(new Integer(tmp));
 		    }
-		    //activeFields[index++] = tmp;
 		}
 	    } catch (NumberFormatException n) {
 		log.error("NumberFormatException: Invalid format in active additional info fields");
@@ -1816,7 +1815,7 @@ abstract public class Database {
 						  "(\"ID\",\"Title\",\"Cover\",\"UrlKey\",\"Date\",\"Directed By\",\"Written By\",\"Genre\",\"Rating\",\"Seen\",\"Aka\",\"Country\",\"Language\",\"Colour\",\"Plot\",\"Cast\",\"Notes\",\"movieID\",\"episodeNr\",\"Certification\",\"Sound Mix\",\"Web Runtime\",\"Awards\") "+
 						  "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 
-statement.setInt(1, index);
+		statement.setInt(1, index);
 		statement.setString(2, model.getTitle());
 		statement.setString(3, model.getCover());
 		statement.setString(4, model.getUrlKey());
@@ -1878,7 +1877,7 @@ statement.setInt(1, index);
 	return setGeneralInfo(model.getKey(), model);
     }
 
-     /**
+    /**
      * Sets the fields of movie index to the general info table and returns the number of
      * updated rows.
      **/
@@ -2063,7 +2062,7 @@ statement.setInt(1, index);
      **/
     public void addExtraInfoMovie(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
 
-	if (fieldNamesList == null)
+	if (fieldNamesList == null || fieldValuesList == null)
 	    return;
 
 	try {
@@ -2077,7 +2076,7 @@ statement.setInt(1, index);
 	    _sql.clear();
 
 	    if (value == 0) {
-		throw new Exception("Can't add row.");
+	    	throw new Exception("Can't add row.");
 	    }
 
 	    if (setExtraInfoMovie(index, fieldNamesList, fieldValuesList) != 1) {
@@ -2109,11 +2108,11 @@ statement.setInt(1, index);
 	String query = "";
 
 	try {
-
+	    
 	    for (int i = 0; i < fieldNamesList.size(); i++) {
 
 		_sql.clear();
-
+		
 		query = "UPDATE " + quotedExtraInfoString + " "+
 		    "SET " + quotedExtraInfoString + "." +
 		    quote + (String) fieldNamesList.get(i) + quote + "=? "+
@@ -3035,27 +3034,34 @@ statement.setInt(1, index);
 		    queryTemp += "("+ table +"."+ filterColumn +" LIKE '' ";
 
 		    /* If include aka titles */
-		    if (options.getIncludeAkaTitlesInFilter() && filterColumn.equals("Title") && !recursive) {
+		    if (options.getIncludeAkaTitlesInFilter() && (filterColumn.indexOf("Title") != -1) && !recursive) {
 			queryTemp += "OR "+ table +".Aka LIKE '' ";
 		    }
 		    queryTemp += ") ";
 		}
 		else if (caseinsensitive && databaseType.equals("HSQL")) {
+		    /* Edit */
+		    queryTemp += "(UPPER("+ table + "." + filterColumn + ") LIKE ? ";
 
-		    queryTemp += "(UPPER("+ table + "." + filterColumn + ") LIKE '%"+ value.toUpperCase() +"%' ";
-
+		    options.addSearchTerm(value.toUpperCase());
+		    
 		    /* If include aka titles */
-		    if (options.getIncludeAkaTitlesInFilter() && filterColumn.equals("Title") && !recursive) {
-			queryTemp += "OR UPPER("+ table +".Aka) LIKE '%"+ value.toUpperCase() +"%' ";
+		    if (options.getIncludeAkaTitlesInFilter() && (filterColumn.indexOf("Title") != -1) && !recursive) {
+		    	
+		    	queryTemp += "OR UPPER("+ table +".\"Aka\") LIKE ? ";
+		    	options.addSearchTerm(value.toUpperCase());
 		    }
 		    queryTemp += ") ";
 		}
 		else {
-		    queryTemp += "(" + table + "."+ filterColumn +" LIKE '%"+ value +"%' ";
+		    queryTemp += "(" + table + "."+ filterColumn +" LIKE ? ";
 
+		    options.addSearchTerm(value);
+		    
 		    /* If include aka titles */
 		    if (options.getIncludeAkaTitlesInFilter() && !recursive) {
-			queryTemp += "OR "+ table +".Aka LIKE '%"+ value +"%' ";
+		    	queryTemp += "OR "+ table +".Aka LIKE ? ";
+		    	options.addSearchTerm(value);
 		    }
 		    queryTemp += ") ";
 		}
@@ -3319,21 +3325,30 @@ statement.setInt(1, index);
 	if (databaseType.equals("MySQL"))
 	    orderBy = orderBy.replaceAll(" ", "_");
 
+
+	
 	/* if MSAccess, have to convert rating with the Val function */
 	if (databaseType.equals("MSAccess") && orderBy.equals("Rating")) {
-	    sqlQuery += "ORDER BY Val("+ orderBy +"), \"Title\"";
+	    orderBy = "ORDER BY Val("+ orderBy +"), \"Title\"";
 	}
 	else
-	    sqlQuery += "ORDER BY " +quote+ orderBy +quote+ ", " +quote+ "Title" +quote;
+	    orderBy = "ORDER BY " +quote+ orderBy +quote+ ", " +quote+ "Title" +quote;
 
-	sqlQuery += ";";
-
-
-	log.debug("sqlQuery:" + sqlQuery);
+	sqlQuery += orderBy + "";
+	
+	log.debug("sqlQuery:\n" + sqlQuery);
 
 	try {
+	    PreparedStatement statement = _sql.prepareStatement(sqlQuery);
+		
+	    for (int i = 0; i < options.searchTerms.size(); i++) {
+		statement.setString(i+1, "%" + ((String) options.searchTerms.get(i)) + "%");
+	    }
+		
+	    options.searchTerms.clear();
+			
 	    /* Gets the list in a result set... */
-	    ResultSet resultSet = _sql.executeQuery(sqlQuery);
+	    ResultSet resultSet = statement.executeQuery();
 
 	    /* Processes the result set till the end... */
 	    while (resultSet.next()) {
@@ -3354,8 +3369,22 @@ statement.setInt(1, index);
 	return listModel;
     }
 
+    String removeDoubleSpace(String searchString) {
+    	
+	int index;
+	
+	/*Removes all double spaces*/
+	while ((index = searchString.indexOf("  ")) != -1) {
+	    searchString = removeCharAt(searchString, index);
+	}
+	
+	return searchString;
+    }
 
-
+    static String removeCharAt(String s, int pos) {
+    	return s.substring(0,pos)+s.substring(pos+1);
+    }
+    
     /**
      * Returns a DefaultListModel that contains all the movies in the
      * current database.
@@ -3770,7 +3799,4 @@ statement.setInt(1, index);
 	/* Returns the data... */
 	return data;
     }
-
-
-
 }

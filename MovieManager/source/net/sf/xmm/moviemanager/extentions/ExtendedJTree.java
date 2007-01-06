@@ -20,8 +20,8 @@
 
 package net.sf.xmm.moviemanager.extentions;
 
-import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
+import net.sf.xmm.moviemanager.util.FileUtil;
 
 import org.apache.log4j.Logger;
 
@@ -178,7 +178,7 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 	    //_movieManager.getImage("/images/serie.png").getScaledInstance(25,25, Image.SCALE_SMOOTH))
 
 	    if (drag)
-		e.startDrag(Toolkit.getDefaultToolkit().createCustomCursor(MovieManager.getIt().getImage("/images/movie.png"), new Point(0, 0), "MoveDrop"), new TransferableNode(nodes), this);
+		e.startDrag(Toolkit.getDefaultToolkit().createCustomCursor(FileUtil.getImage("/images/movie.png"), new Point(0, 0), "MoveDrop"), new TransferableNode(nodes), this);
 	//e.startDrag(DragSource.DefaultMoveDrop, new TransferableNode(nodes), this);
 	}
     }

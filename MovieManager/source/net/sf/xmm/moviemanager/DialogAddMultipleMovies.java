@@ -444,12 +444,10 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	    
 	    if (moviesPath.getText().equals("")) { //$NON-NLS-1$
 		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogAddMultipleMovies.alert.title.alert"),Localizer.getString("DialogAddMultipleMovies.alert.message.specify-directory-path")); //$NON-NLS-1$ //$NON-NLS-2$
-		//alert.setVisible(true); 
 		ShowGUI.showAndWait(this, true);
 	    }
 	    else if (!new File(moviesPath.getText()).exists()) {
 		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogAddMultipleMovies.alert.title.alert"),Localizer.getString("DialogAddMultipleMovies.alert.message.specified-directory-does-not-exist")); //$NON-NLS-1$ //$NON-NLS-2$
-		//alert.setVisible(true); 
 		ShowGUI.showAndWait(this, true);
 	    }
 	    else {

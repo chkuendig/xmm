@@ -57,7 +57,7 @@ public class DatabaseHSQL extends Database {
 		setUp = true;
 	    }
 	} catch (Exception e) {
-	    log.warn("", e);
+	    log.warn(e);
 	    message = e.getMessage();
 	    
 	    exception = e;

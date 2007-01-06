@@ -21,6 +21,8 @@
 package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.*;
+import net.sf.xmm.moviemanager.models.ModelMovieInfo;
+import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import org.apache.log4j.Logger;
@@ -40,6 +42,8 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
     
     ArrayList fileList = null;
     
+    ModelMovieInfo movieInfoModel = null;
+    
     String excludeString;
     boolean enableExludeString = false;
     int multiAddSelectOption;
@@ -58,12 +62,12 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
      **/
     protected void execute() {
 	
+        movieInfoModel = new ModelMovieInfo(false, true);
+        
 	cancelAll = false;
 	
 	DialogAddMultipleMovies damm = new DialogAddMultipleMovies();
 	ShowGUI.showAndWait(damm, true);
-	
-	dialogMovieInfo = new DialogMovieInfo("Add Movie");
 	
 	multiAddSelectOption = damm.getMultiAddSelectOption();
 	enableExludeString = damm.getMultiAddExcludeStringEnabled();
@@ -125,13 +129,13 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		
 		log.debug("Processing:" + fileName);
 		
-		dialogMovieInfo.executeCommandSetAdditionalInfoFieldsEmpty();
+		movieInfoModel.setAdditionalInfoFieldsEmpty();
 		
 		/*Getting the fileinfo from file*/
-		dialogMovieInfo.executeCommandGetFileInfo(tempFile);
+		movieInfoModel.getFileInfo(tempFile);
 		
 		/*Used if editing existing movie*/
-		dialogMovieInfo.setMultiAddFile(tempFile[0]);
+		movieInfoModel.setMultiAddFile(tempFile[0]);
 		
 		/*Used to set the title of the DialogIMDB window*/
 		String searchString = fileName;/*Used to search on imdb*/
@@ -154,28 +158,28 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		/*removes dots, double spaces, underscore...*/
 		searchString = removeVarious(searchString);
 		
-		dialogMovieInfo.executeCommandGetIMDBInfoMultiMovies(this, searchString, fileName, multiAddSelectOption);
+		executeCommandGetIMDBInfoMultiMovies(searchString, fileName, multiAddSelectOption);
 		
 		if (dropImdbInfo)
-		    dialogMovieInfo.executeCommandSetGeneralInfoFieldsEmpty();
+			movieInfoModel.setGeneralInfoFieldsEmpty();
 		
 		dropImdbInfo = false;
 		
 		if (cancelAll) {
-		    dialogMovieInfo.getMovieTitle().setText("");
+			movieInfoModel.model.setTitle("");
 		    fileList.clear();
 		    return;
 		}
 		else if (cancel) {
-		    dialogMovieInfo.getMovieTitle().setText("");
+			movieInfoModel.model.setTitle("");
 		    
 		    /* Empties the additional fields in the DialogMovieInfo object */
-		    dialogMovieInfo.executeCommandSetAdditionalInfoFieldsEmpty();
+			movieInfoModel.setAdditionalInfoFieldsEmpty();
 			cancel = false;
 		}
 		else {
-		    dialogMovieInfo.executeAndReloadMovieList(dialogMovieInfo.executeCommandSave(addToThisList));
-		    dialogMovieInfo.getMovieTitle().setText("");
+			MovieManagerCommandSelect.executeAndReload(movieInfoModel.saveToDatabase(addToThisList), false, true, false);
+		    movieInfoModel.model.setTitle("");
 		}
 	    }
 	    else  if (searchInSubdirectories){
@@ -347,7 +351,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
     }
     
     static String removeCharAt(String s, int pos) {
-	return s.substring(0,pos)+s.substring(pos+1);
+    	return s.substring(0,pos)+s.substring(pos+1);
     }
     
     static String replaceCharAt(String s, int pos, char c) {
@@ -376,6 +380,21 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		for (int i = 0; i < allTheFiles.length; i++)
 		    fileList.add(allTheFiles[i]);
 	    }
+	}
+    }
+    
+    /**
+     * Gets the IMDB info for movies (multiAdd)
+     **/
+    public void executeCommandGetIMDBInfoMultiMovies(String searchString, String filename, int multiAddSelectOption) {
+	
+	/* Checks the movie title... */
+	log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
+	if (!searchString.equals("")) { //$NON-NLS-1$
+	    DialogIMDB dialogIMDB = new DialogIMDB(movieInfoModel, searchString, filename, this, multiAddSelectOption);
+	} else {
+	    DialogAlert alert = new DialogAlert(MovieManager.getIt(), Localizer.getString("DialogMovieInfo.alert.title.alert"),Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
+	    ShowGUI.showAndWait(alert, true);
 	}
     }
     

@@ -41,7 +41,6 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
     
     boolean canceled = true;
     boolean done = false;
-    // JDialog dbImporter;
         
     boolean cancelAll = false;
    
@@ -53,24 +52,17 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
     
     void createAndShowGUI() {
 	
-	/* Owner, title, modal=true */
-	//dbImporter = new JDialog(MovieManager.getIt(), "Importer", true);
-	/*dbImporter.*/setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+	setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	
 	final JComponent newContentPane = new DialogDatabaseImporter(this, importSettings);
         newContentPane.setOpaque(true);
-        // dbImporter.
-	    setContentPane(newContentPane);
-	// dbImporter.
-	    pack();
-	// dbImporter.
-	    addWindowListener(new WindowAdapter() {
+	setContentPane(newContentPane);
+	pack();
+	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
-		    // dbImporter.
-			setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		    
 		    if (canceled || done) {
-			// dbImporter.
 			dispose();
 			MovieManagerCommandSelect.executeAndReload(-1);
 		    }
@@ -83,28 +75,23 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
 		public void actionPerformed(ActionEvent e) {
 		    
 		    if (canceled || done) {
-			// dbImporter.
-			    dispose();
+			dispose();
 			MovieManagerCommandSelect.executeAndReload(-1);
 		    }
 		}
 	    };
 	
-	// dbImporter.
-	    getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-	// dbImporter.
-	    getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
+	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+	getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 	
 	MovieManager mm = MovieManager.getIt();
 	
 	setLocation((int) mm.getLocation().getX()+(mm.getWidth()-getWidth())/2,
 		    (int) mm.getLocation().getY()+(mm.getHeight()-getHeight())/2);
 	
-	// dbImporter.
-	setLocation((int)mm.getLocation().getX()+(mm.getWidth()- /*dbImporter.*/getWidth())/2,
-		    (int)mm.getLocation().getY()+(mm.getHeight()- /*dbImporter.*/getHeight())/2);
-	// dbImporter.
-	//setVisible(true);
+	setLocation((int)mm.getLocation().getX()+(mm.getWidth()- getWidth())/2,
+		    (int)mm.getLocation().getY()+(mm.getHeight()- getHeight())/2);
+	
 	ShowGUI.show(this, true);
     }
     
@@ -117,8 +104,6 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
     }
     
     public void dispose() {
-	// dbImporter.
-	//setVisible(false);
 	ShowGUI.show(this, false);
     }
     

@@ -107,14 +107,18 @@ public class FilePropertiesMovie {
     
     protected String fileName = "";
     
+    private boolean infoAvailable = false;
+    
+	private boolean supported = false;
        
     /**
      * The Constructor. Gets all info available (reads contents from file).
      *
      * @param filePath A path for the file.
+     * @param useMediaInfo , 0 = no, 1 = yes if no java parser avaliable, 2 = yes 
      **/
     public FilePropertiesMovie(String filePath, int useMediaInfo) throws Exception {
-	boolean supported = false;
+	
 	FileProperties fileProperties = null;
 	
 	try {
@@ -216,13 +220,19 @@ public class FilePropertiesMovie {
 		    }
 		    }
 		
-		
+            
 		    if (fileProperties != null) {
-			supported = true;
 			
 			/* Starts parsing the file...*/
 			fileProperties.process(dataStream);
 		    
+            supported = fileProperties.isSupported();
+            
+            if (supported)
+                infoAvailable = true;
+            else
+                throw new Exception("Info not available");
+                        
 			/* Gets the processed info... */
 			_subtitles = fileProperties.getSubtitles();
 			_videoResolution = fileProperties.getVideoResolution();
@@ -261,16 +271,22 @@ public class FilePropertiesMovie {
 		    else {
 			/* The file is corrupted, tries to save the info that may have been found */
 			if (fileProperties != null) {
-			    _subtitles = fileProperties.getSubtitles();
-			    _videoResolution = fileProperties.getVideoResolution();
-			    _videoCodec = fileProperties.getVideoCodec();
-			    _videoRate = fileProperties.getVideoRate();
-			    _videoBitrate = fileProperties.getVideoBitrate();
-			    _duration = fileProperties.getDuration();
-			    _audioCodec = fileProperties.getAudioCodec();
-			    _audioRate = fileProperties.getAudioRate();
-			    _audioBitrate = fileProperties.getAudioBitrate();
-			    _audioChannels = fileProperties.getAudioChannels();
+                _subtitles = fileProperties.getSubtitles();
+                _videoResolution = fileProperties.getVideoResolution();
+                _videoCodec = fileProperties.getVideoCodec();
+                _videoRate = fileProperties.getVideoRate();
+                _videoBitrate = fileProperties.getVideoBitrate();
+                _duration = fileProperties.getDuration();
+                _audioCodec = fileProperties.getAudioCodec();
+                _audioRate = fileProperties.getAudioRate();
+                _audioBitrate = fileProperties.getAudioBitrate();
+                _audioChannels = fileProperties.getAudioChannels();
+                _location = filePath;
+                _container = fileProperties.getContainer();
+                metaData = fileProperties.getMetaData();
+                _codecLibraryIdentifier = fileProperties.getVideoCodecLibraryIdentifier();
+                
+                fileName = new File(filePath).getName();
 			}
 			throw new Exception("File could be corrupted. Some info may have been saved.");
 		    }
@@ -345,6 +361,13 @@ public class FilePropertiesMovie {
 	return "";
     }
     
+	public boolean getInfoAvailable() {
+	return infoAvailable;
+    }
+
+    public boolean getFileFormatSupported() {
+	return supported;
+    }
     
     /**
      * Returns the subtitles.

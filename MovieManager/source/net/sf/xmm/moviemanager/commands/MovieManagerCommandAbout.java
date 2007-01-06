@@ -34,7 +34,6 @@ public class MovieManagerCommandAbout implements ActionListener {
      **/
     protected static void execute() {
 	DialogAbout dialogAbout = new DialogAbout();
-	//dialogAbout.setVisible(true);
 	ShowGUI.showAndWait(dialogAbout, true);
     }
 

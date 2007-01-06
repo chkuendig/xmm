@@ -45,7 +45,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
         this.defaultCoverImageURL = defaultCoverImageURL;
         this.testmode = testmode;
         this.mySQL = MovieManager.getIt().getDatabase() instanceof DatabaseMySQL;
-        this.coversFolder = MovieManager.getIt().getConfig().getCoversPath();
+        this.coversFolder = MovieManager.getConfig().getCoversPath();
 
         if (sortField != null && sortField.length() > 0 && !sortField.equalsIgnoreCase("none")) {
             Collections.sort(movies, new MovieComparator(sortField));
@@ -307,7 +307,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
 
             // Extra info
             else {
-                ArrayList extra = a.getExtraInfoFieldNames();
+                ArrayList extra = ModelAdditionalInfo.getExtraInfoFieldNames();
                 if (extra != null) {
                     for (int i = 0; i < extra.size(); i++) {
                         if (name.equalsIgnoreCase( (String) extra.get(i))) {
@@ -467,9 +467,9 @@ public class ReportGeneratorDataSource implements JRDataSource {
 
                     // Extra info
                     else {
-                        ArrayList extra1 = a1.getExtraInfoFieldNames();
-                        ArrayList extra2 = a2.getExtraInfoFieldNames();
-                        if (extra1 != null && extra2 != null) {
+                        ArrayList extra1 = ModelAdditionalInfo.getExtraInfoFieldNames();
+                        
+                        if (extra1 != null) {
                             for (int i = 0; i < extra1.size(); i++) {
                                 if (sortField.equalsIgnoreCase( (String) extra1.get(i))) {
                                     result = a1.getExtraInfoFieldValue(i).compareToIgnoreCase(a2.getExtraInfoFieldValue(i));

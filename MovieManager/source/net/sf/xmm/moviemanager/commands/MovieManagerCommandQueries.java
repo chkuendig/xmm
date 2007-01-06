@@ -34,7 +34,6 @@ public class MovieManagerCommandQueries implements ActionListener {
    **/
     protected static void execute() {
 	DialogQueries dialogQueries = new DialogQueries();
-	//dialogQueries.setVisible(true);
 	ShowGUI.show(dialogQueries, true);
     }
   

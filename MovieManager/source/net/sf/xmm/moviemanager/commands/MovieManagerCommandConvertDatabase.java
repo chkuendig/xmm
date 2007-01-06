@@ -187,7 +187,6 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	
 	dbConverter.setLocation((int)mm.getLocation().getX()+(mm.getWidth()- dbConverter.getWidth())/2,
 				(int)mm.getLocation().getY()+(mm.getHeight()- dbConverter.getHeight())/2);
-	//dbConverter.setVisible(true);
 	ShowGUI.show(dbConverter, true);
     }
     
@@ -218,7 +217,6 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     }
     
     public void dispose() {
-	//dbConverter.setVisible(false);
 	ShowGUI.show(dbConverter, false);
     }
     
@@ -276,7 +274,6 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	
 	if (!MovieManager.isWindows()) {
 	    DialogAlert alert = new DialogAlert(MovieManager.getIt(), Localizer.getString("MovieManagerCommandConvertDatabase.alert.windows-only.title"), Localizer.getString("MovieManagerCommandConvertDatabase.alert.windows-only.message"));
-	    //alert.setVisible(true);
 	    ShowGUI.showAndWait(alert, true);
 	}
 	else {
@@ -287,7 +284,6 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	    
 	    if (listModelSize == 0) {
 		DialogAlert alert = new DialogAlert(MovieManager.getIt(), Localizer.getString("MovieManagerCommandConvertDatabase.alert.empty-database.title"), Localizer.getString("MovieManagerCommandConvertDatabase.alert.empty-database.message"));
-		//alert.setVisible(true);
 		ShowGUI.showAndWait(alert, true);
 	    }
 	    else {

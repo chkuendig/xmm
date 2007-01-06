@@ -23,6 +23,7 @@ package net.sf.xmm.moviemanager;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
@@ -123,7 +124,7 @@ public class DialogQuestion extends JDialog  {
 	    panelQuestion = new JPanel();
 	    panelQuestion.setBorder(BorderFactory.createEmptyBorder(10,5,5,5));
 	    JLabel labelQuestion = new JLabel(questionMsg);
-	    labelQuestion.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/question.png").getScaledInstance(50,50,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+	    labelQuestion.setIcon(new ImageIcon(FileUtil.getImage("/images/question.png").getScaledInstance(50,50,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 	    
 	    panelQuestion.add(labelQuestion);
 	    
@@ -134,7 +135,7 @@ public class DialogQuestion extends JDialog  {
 	    panelQuestion = new JPanel(new BorderLayout());
 	    panelQuestion.setBorder(BorderFactory.createEmptyBorder(10,5,5,5));
 	    JLabel labelQuestion = new JLabel(questionMsg);
-	    labelQuestion.setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/question.png").getScaledInstance(50,50,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+	    labelQuestion.setIcon(new ImageIcon(FileUtil.getImage("/images/question.png").getScaledInstance(50,50,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 	    
 	    panelQuestion.add(labelQuestion, BorderLayout.NORTH);
 	    

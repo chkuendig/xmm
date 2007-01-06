@@ -30,7 +30,6 @@ public class MovieManagerCommandNew implements ActionListener {
     
     protected static void execute() {
 	DialogDatabase dialogDatabase = new DialogDatabase(true);
-	//dialogDatabase.setVisible(true);
 	ShowGUI.show(dialogDatabase, true);
     }
     

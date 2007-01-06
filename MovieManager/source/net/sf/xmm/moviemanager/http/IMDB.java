@@ -24,9 +24,11 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFile;
 import net.sf.xmm.moviemanager.models.ModelIMDB;
+import net.sf.xmm.moviemanager.util.FileUtil;
 
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -156,8 +158,8 @@ public class IMDB {
 	_key = key;
 	
 	/* Gets the url... */
-	URL url = makeURL("http://www.imdb.com/title/tt"+key+"/");
-	  
+	URL url = makeURL("http://akas.imdb.com/title/tt"+key+"/");
+	
 	/* Saves the page data in a string buffer... */
 	StringBuffer data = HttpUtil.readDataToStringBuffer(url);
 	
@@ -213,7 +215,7 @@ public class IMDB {
         
         if (start != 0 && start != -1)
             _coverName = _key + _coverURL.substring(start, _coverURL.length());
-	    }
+        }
 	    
 	    start = 0;
 	    stop = 0;
@@ -323,12 +325,14 @@ public class IMDB {
 		    if (start >= stop) break;
 		    start += 4;
 		    end = data.indexOf("<br>", start);
-		    if (!_aka.equals(""))
-			_aka += "\r\n";
-		    _aka += HttpUtil.decodeHTML(data.substring(start, end));
+		    
+            if (!_aka.equals(""))
+		        _aka += "\r\n";
+            
+		    _aka += /*data.substring(start, end); */ HttpUtil.decodeHTML(data.substring(start, end));
 		    start = data.indexOf("<br>", end);
 		}
-		_aka = MovieManagerCommandAddMultipleMoviesByFile.performExcludeParantheses(_aka, false);
+		
 	    }
 	    
 	    if ((start = data.indexOf("a href=\"/mpaa\">MPAA</a>:</b>", start)) != -1) {
@@ -480,7 +484,7 @@ public class IMDB {
 
 	    /* Gets a bigger plot (if it exists...)
 	       /* Creates the url... */
-	    URL url = new URL("http://www.imdb.com/title/tt"+_key+"/plotsummary");
+	    URL url = new URL("http://akas.imdb.com/title/tt"+_key+"/plotsummary");
 	    
 	    data = HttpUtil.readDataToStringBuffer(url);   
 	    
@@ -665,7 +669,7 @@ public class IMDB {
     
     
     /**
-     * Returns if the last cover reading went ok..
+     * Returns true if the last cover reading went ok..
      **/
     public boolean getCoverOK() {
 	return _coverOK;
@@ -676,7 +680,9 @@ public class IMDB {
      **/
     public static DefaultListModel getSimpleMatches(String title) throws Exception {
 	
-	return getMatches("http://www.imdb.com/find?q="+ title +";s=tt;site=aka");
+	return getMatches("http://akas.imdb.com/find?s=tt&q="+ title);
+	                  // http://akas.imdb.com/find?s=tt&q=Predator 
+	                  // http://akas.imdb.com/find?s=all&q=predator
 	//	return getMatches("http://www.imdb.com/find?tt=on;q=" + title);
 	//return getMatches("http://www.imdb.com/find?tt=on;q=",title);
     }
@@ -685,7 +691,7 @@ public class IMDB {
      * Returns extended matches list...
      **/
     public static DefaultListModel getExtendedMatches(String title) throws Exception {
-	return getMatches("http://www.imdb.com/find?more=tt;q=" + title);
+	return getMatches("http://akas.imdb.com/find?more=tt;q=" + title);
     }
     
     /**
@@ -698,13 +704,15 @@ public class IMDB {
     private static DefaultListModel getMatches(String urlType) throws Exception {
 	DefaultListModel listModel = new DefaultListModel();
 	exception = null;
-        
+    
 	try {
 	
 	    URL url = new URL(urlType.replaceAll("[\\p{Blank}]+","%20"));
 	    
 	    StringBuffer data = HttpUtil.readDataToStringBuffer(url);
 	    
+        FileUtil.writeToFile("direct-simple", data);
+        
 	    int start = 0, end = 0, stop = 0;
 	    String key = "";
 	    String movieTitle = "", aka = "";
@@ -720,8 +728,8 @@ public class IMDB {
 		titleEnd = data.indexOf("</title>", titleSTart);
 		movieTitle = HttpUtil.decodeHTML(data.substring(titleSTart, titleEnd));
 	    
-		if ((start=data.indexOf("title/tt",start) + 8) != 7 && (end=data.indexOf("/\"",start)) != -1) {
-		    key = HttpUtil.decodeHTML(data.substring(start,end));
+		if ((start=data.indexOf("title/tt",start) + 8) != 7) {
+            key = HttpUtil.decodeHTML(data.substring(start, start + 7));
 		}
 		
 		/* Getting aka titles */
@@ -735,7 +743,7 @@ public class IMDB {
 			start += 4;
 			end = data.indexOf("<br>", start);
 			if (!aka.equals(""))
-			    aka += MovieManager.getLineSeparator(); // windows == "\r\n";, linuz == \n
+			    aka += FileUtil.getLineSeparator(); // windows == "\r\n";, linuz == \n
 			aka += HttpUtil.decodeHTML(data.substring(start, end));
 			start = data.indexOf("<br>", end);
 		    }
@@ -753,6 +761,7 @@ public class IMDB {
 		aka = "";
 
 		if ((start = data.indexOf("/title/tt", start)+9) == 8) break;
+		
 		if ((end = data.indexOf("/\">", start)) == -1) break;
 	    
 		/* the string "Other Results only occurs with the simplematches url,
@@ -797,7 +806,7 @@ public class IMDB {
 			start = titleEnd;
 			
 			if (!aka.equals("")) {
-			    aka += MovieManager.getLineSeparator();
+			    aka += FileUtil.getLineSeparator();
 			}
 			aka += HttpUtil.decodeHTML(data.substring(titleSTart, titleEnd));
 		    }
@@ -808,13 +817,13 @@ public class IMDB {
 		/* Adds to the list model... */
 		boolean insert = true;
 		for (int i = 0; i < listModel.size(); i++) {
-		    if (((ModelIMDB)listModel.elementAt(i)).getKey().equals(key)) {
-			insert = false;
-			break;
-		    }
+			if (((ModelIMDB)listModel.elementAt(i)).getKey().equals(key)) {
+				insert = false;
+				break;
+			}
 		}
 		if (insert) {
-		    listModel.addElement(new ModelIMDB(key, movieTitle, aka));
+			listModel.addElement(new ModelIMDB(key, movieTitle, aka));
 		}
 	    }
 		
@@ -825,7 +834,7 @@ public class IMDB {
 	} catch (MalformedURLException m) {
         log.warn(m.getMessage());
 	}
-		
+	
 	/* Returns the model... */
 	return listModel;
     }
@@ -923,5 +932,45 @@ public class IMDB {
 	    }
 	}
 	return result;
+    }
+    
+    public static URL getFile(String fileName) {
+
+        URL url = null;
+
+    try {
+        //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
+
+        if (!MovieManager.isApplet()) {
+            /* handle paths with leading slash as absolute paths */
+            if (fileName.startsWith("/")) {
+            url = new File(fileName).toURL();
+            } else {
+            url = new File(FileUtil.getUserDir() + fileName).toURL();
+            }
+        }
+        else {
+        fileName = fileName.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        if (fileName.startsWith("/")) //$NON-NLS-1$
+            fileName = fileName.replaceFirst("/", ""); //$NON-NLS-1$ //$NON-NLS-2$
+
+        //log.debug("fileName:" + fileName);
+        //log.debug("codebase:"+ _movieManager.applet.getCodeBase());
+
+        url = new URL(MovieManager.applet.getCodeBase(), fileName);
+
+        //log.debug("URL:"+ url.toString());
+        //log.debug("url.getFile():" + url.getFile());
+        //log.debug("getPath():" + url.getPath());
+
+        //log.debug("encode:"+URLEncoder.encode(url.toString() , "UTF-8"));
+        }
+        //return new File((java.net.URI) new java.net.URI(URLEncoder.encode(url.toString() , "UTF-8")));
+
+        } catch(Exception e) {
+        log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
+    }
+    return url;
     }
 }

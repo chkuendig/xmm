@@ -200,7 +200,6 @@ public class ExtendedFileChooser extends JFileChooser {
 		
 		/* Delete confirmation */
 		DialogQuestion question = new DialogQuestion("Warning", msg);
-		//question.setVisible(true);
 		ShowGUI.showAndWait(question, true);
 		
 		if (question.getAnswer()) {
@@ -211,7 +210,6 @@ public class ExtendedFileChooser extends JFileChooser {
 			    alert = new DialogAlert(MovieManager.getIt(), "Error", "File could not be deleted.");
 			else
 			    alert = new DialogAlert(MovieManager.getIt(), "Error", fileAlreadyExistWarningMessage + selectedFile.getName() + " could not be deleted.");
-			//alert.setVisible(true);
 			ShowGUI.showAndWait(alert, true);
 		
 			approveSelected = false;
@@ -299,11 +297,11 @@ public class ExtendedFileChooser extends JFileChooser {
 		    return;
 		}
 				
-		if (!currentDir.endsWith(MovieManager.getDirSeparator()))
-		    currentDir += MovieManager.getDirSeparator();
+		if (!currentDir.endsWith(FileUtil.getDirSeparator()))
+		    currentDir += FileUtil.getDirSeparator();
 				
-		if (fileName.lastIndexOf(MovieManager.getDirSeparator()) != -1)
-		    fileName = fileName.substring(fileName.lastIndexOf(MovieManager.getDirSeparator())+1, fileName.length());
+		if (fileName.lastIndexOf(FileUtil.getDirSeparator()) != -1)
+		    fileName = fileName.substring(fileName.lastIndexOf(FileUtil.getDirSeparator())+1, fileName.length());
 				
 		tempFile = new File(currentDir + fileName);
 				
@@ -479,7 +477,7 @@ public class ExtendedFileChooser extends JFileChooser {
 			return selectedFile2;
 		    }
 		    else {
-			selectedFile2[0] = new File(currentDir.getAbsolutePath()+MovieManager.getDirSeparator()+fileName);
+			selectedFile2[0] = new File(currentDir.getAbsolutePath() + FileUtil.getDirSeparator()+fileName);
 			return selectedFile2;
 		    }
 		}
@@ -537,7 +535,7 @@ public class ExtendedFileChooser extends JFileChooser {
 			return selectedFile;
 		    }
 		    else {
-			return new File(currentDir.getAbsolutePath()+MovieManager.getDirSeparator()+fileName);
+			return new File(currentDir.getAbsolutePath() + FileUtil.getDirSeparator()+fileName);
 		    }
 		}
 	    }
@@ -752,7 +750,6 @@ public class ExtendedFileChooser extends JFileChooser {
 		}
 		
 		DialogQuestion question = new DialogQuestion("Delete confirmation", msg);
-		//question.setVisible(true);
 		ShowGUI.showAndWait(question, true);
 		
 		if (!question.getAnswer()) {
@@ -769,7 +766,6 @@ public class ExtendedFileChooser extends JFileChooser {
 			    msg = "Failed to delete directory "+selectedFiles[i].toString();
 			
 			DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Error", msg);
-			//alert.setVisible(true);
 			ShowGUI.showAndWait(alert, true);
 			break;
 		    }

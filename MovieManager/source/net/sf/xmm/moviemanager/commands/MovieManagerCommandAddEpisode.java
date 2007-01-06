@@ -23,7 +23,6 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.DialogMovieInfo;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelMovie;
-import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.ShowGUI;
 
 import java.awt.event.ActionEvent;
@@ -45,8 +44,7 @@ class MovieManagerCommandAddEpisode implements ActionListener {
 	    ModelMovie model = (ModelMovie) ((DefaultMutableTreeNode) MovieManager.getIt().getMoviesList().getLastSelectedPathComponent()).getUserObject();
 	    
 	    if (model.getKey() != -1) {
-		DialogMovieInfo dialogMovieInfo = new DialogMovieInfo(model, Localizer.getString("MovieManagerCommand.dialog-movie-info.title.add-episode")); //$NON-NLS-1$
-		//dialogMovieInfo.setVisible(true);
+		DialogMovieInfo dialogMovieInfo = new DialogMovieInfo(model); //$NON-NLS-1$
 		ShowGUI.show(dialogMovieInfo, true);
 	    }
 	}

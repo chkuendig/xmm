@@ -21,9 +21,12 @@
 package net.sf.xmm.moviemanager;
 
 import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
 
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -41,7 +44,8 @@ import net.sf.xmm.moviemanager.util.*;
 public class DialogPrefs extends JDialog implements ActionListener, ItemListener {
 
     static Logger log = Logger.getRootLogger();
-
+    private static MovieManagerConfig config = MovieManager.getConfig();
+    
     private Container contentPane;
     private JTabbedPane all;
 
@@ -81,6 +85,14 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
     private JCheckBox enableAutoMoveThe;
     private JCheckBox enableAutoMoveAnAndA;
 
+    
+    private JCheckBox storeAllAvailableAkaTitles;
+    private JCheckBox noDuplicateAkaTitles;
+    private JCheckBox includeAkaLanguageCodes;
+    private JCheckBox useLanguageSpecificTitle;
+    
+    private JComboBox languageCodeSelector;
+    
     private JCheckBox displayQueriesInTree;
 
     private JCheckBox enableSeenEditable;
@@ -98,10 +110,13 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
     private JCheckBox enableStoreCoversLocally;
 
+    private JTextField mediaPlayerPathField;
+    
     private JSlider rowHeightSlider;
     private JTree exampleTree;
     private MovieManagerConfig exampleConfig = new MovieManagerConfig();
 
+        
     public DialogPrefs() {
 	/* Dialog creation...*/
 	super(MovieManager.getIt());
@@ -150,7 +165,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	regularSeenIcon.addActionListener(this);
 	currentLookAndFeelIcon.addActionListener(this);
 
-	if (MovieManager.getConfig().getUseRegularSeenIcon())
+	if (config.getUseRegularSeenIcon())
 	    regularSeenIcon.setSelected(true);
 	else
 	    currentLookAndFeelIcon.setSelected(true);
@@ -179,7 +194,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	regularToolBarButtons.addActionListener(this);
 	currentLookAndFeelButtons.addActionListener(this);
 
-	if (MovieManager.getConfig().isRegularToolButtonsUsed())
+	if (config.isRegularToolButtonsUsed())
 	    regularToolBarButtons.setSelected(true);
 	else
 	    currentLookAndFeelButtons.setSelected(true);
@@ -208,7 +223,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	regularDecoratedButton.addActionListener(this);
 	defaultLafDecoratedButton.addActionListener(this);
 
-	if (MovieManager.getConfig().getDefaultLookAndFeelDecorated())
+	if (config.getDefaultLookAndFeelDecorated())
 	    defaultLafDecoratedButton.setSelected(true);
 	else
 	    regularDecoratedButton.setSelected(true);
@@ -230,7 +245,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	/* Group the radio buttons. */
 	ButtonGroup lafGroup = new ButtonGroup();
 
-	int numberOfLookAndFeels = MovieManager.getConfig().getNumberOfLookAndFeels();
+	int numberOfLookAndFeels = config.getNumberOfLookAndFeels();
 	String [] lookAndFeelStrings = new String [numberOfLookAndFeels];
 
 	for (int i = 0; i < numberOfLookAndFeels; i++) {
@@ -241,7 +256,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	enableLafChooser.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
 	lafGroup.add(enableLafChooser);
 
-	String currentLookAndFeel = MovieManager.getConfig().getLookAndFeelString();
+	String currentLookAndFeel = config.getLookAndFeelString();
 
 	lafChooser.setSelectedItem(currentLookAndFeel);
 	lafChooser.setEnabled(false);
@@ -271,10 +286,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    lafGroup.add(enableSkinlf);
 
 	    skinlfThemePackChooser = new JComboBox(skinlfThemePackList);
-	    skinlfThemePackChooser.setSelectedItem(MovieManager.getConfig().getSkinlfThemePack());
+	    skinlfThemePackChooser.setSelectedItem(config.getSkinlfThemePack());
 	    skinlfThemePackChooser.setEnabled(false);
 
-	    String currentSkinlfThemePack = MovieManager.getConfig().getSkinlfThemePack();
+	    String currentSkinlfThemePack = config.getSkinlfThemePack();
 
 	    for (int i = 0; i < skinlfThemePackList.length; i++) {
 		if (skinlfThemePackList[i].equals(currentSkinlfThemePack)) {
@@ -305,10 +320,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    lafGroup.add(enableOyoaha);
 
 	    oyoahaThemePackChooser = new JComboBox(oyoahaThemePackList);
-	    oyoahaThemePackChooser.setSelectedItem(MovieManager.getConfig().getOyoahaThemePack());
+	    oyoahaThemePackChooser.setSelectedItem(config.getOyoahaThemePack());
 	    oyoahaThemePackChooser.setEnabled(false);
 
-	    String currentOyoahaThemePack = MovieManager.getConfig().getOyoahaThemePack();
+	    String currentOyoahaThemePack = config.getOyoahaThemePack();
 
 	    if (oyoahaThemePackList != null) {
 		for (int i = 0; i < oyoahaThemePackList.length; i++) {
@@ -336,12 +351,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	setLafChooserPreferredSize();
 
-	if ((skinlfThemePackList != null) && (MovieManager.getConfig().getLookAndFeelType() == 1)) {
+	if ((skinlfThemePackList != null) && (config.getLookAndFeelType() == 1)) {
 	    enableSkinlf.setSelected(true);
 	    skinlfThemePackChooser.setEnabled(true);
 	}
 
-	else if ((oyoahaThemePackList != null) && (MovieManager.getConfig().getLookAndFeelType() == 2)) {
+	else if ((oyoahaThemePackList != null) && (config.getLookAndFeelType() == 2)) {
 	    enableOyoaha.setSelected(true);
 	    oyoahaThemePackChooser.setEnabled(true);
 	}
@@ -362,7 +377,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	String[] proxyTypeString = { "HTTP", "SOCKS" }; //$NON-NLS-1$ //$NON-NLS-2$
 	proxyType = new JComboBox(proxyTypeString);
-	proxyType.setSelectedItem(MovieManager.getConfig().getProxyType());
+	proxyType.setSelectedItem(config.getProxyType());
 	proxyType.setEnabled(false);
 	proxyTypeLabel = new JLabel(Localizer.getString("dialogprefs.panel.proxy.proxy-type") + ": "); //$NON-NLS-1$
 	proxyTypeLabel.setEnabled(false);
@@ -495,22 +510,22 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	String temp;
 
-	if (((temp = MovieManager.getConfig().getProxyHost()) != null) && !temp.equals("null")) //$NON-NLS-1$
+	if (((temp = config.getProxyHost()) != null) && !temp.equals("null")) //$NON-NLS-1$
 	    hostTextField.setText(temp);
 
-	if (((temp = MovieManager.getConfig().getProxyPort()) != null) && !temp.equals("null")) //$NON-NLS-1$
+	if (((temp = config.getProxyPort()) != null) && !temp.equals("null")) //$NON-NLS-1$
 	    portTextField.setText(temp);
 
-	if (((temp = MovieManager.getConfig().getProxyUser()) != null)&& !temp.equals("null")) //$NON-NLS-1$
+	if (((temp = config.getProxyUser()) != null)&& !temp.equals("null")) //$NON-NLS-1$
 	    userNameTextField.setText(temp);
 
-	if (((temp = MovieManager.getConfig().getProxyPassword()) != null) && !temp.equals("null")) //$NON-NLS-1$
+	if (((temp = config.getProxyPassword()) != null) && !temp.equals("null")) //$NON-NLS-1$
 	    passwordTextField.setText(temp);
 
-	if (MovieManager.getConfig().getProxyEnabled())
+	if (config.getProxyEnabled())
 	    enableProxyButton.setSelected(true);
 
-	if (MovieManager.getConfig().getAuthenticationEnabled())
+	if (config.getAuthenticationEnabled())
 	    enableAuthenticationButton.setSelected(true);
 
 
@@ -527,7 +542,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	loadDatabaseOnStartUp = new JCheckBox(Localizer.getString("dialogprefs.panel.miscellaneous.auto-load-database")); //$NON-NLS-1$
 	loadDatabaseOnStartUp.setActionCommand("Load databse"); //$NON-NLS-1$
 
-	if (MovieManager.getConfig().getLoadDatabaseOnStartup())
+	if (config.getLoadDatabaseOnStartup())
 	    loadDatabaseOnStartUp.setSelected(true);
 
 	miscCheckBoxes.add(loadDatabaseOnStartUp);
@@ -537,7 +552,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	enableSeenEditable.setActionCommand("Enable Seen"); //$NON-NLS-1$
 
-	if (MovieManager.getConfig().getSeenEditable())
+	if (config.getSeenEditable())
 	    enableSeenEditable.setSelected(true);
 
 	miscCheckBoxes.add(enableSeenEditable);
@@ -545,39 +560,142 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	displayQueriesInTree = new JCheckBox(Localizer.getString("dialogprefs.panel.miscellaneous.use-directory-structure-to-group-queries")); //$NON-NLS-1$
 
-	if (MovieManager.getConfig().getDisplayQueriesInTree())
+	if (config.getDisplayQueriesInTree())
 	    displayQueriesInTree.setSelected(true);
 
 	miscCheckBoxes.add(displayQueriesInTree);
 
 	miscPanel.add(miscCheckBoxes);
 
+    
+    
+	JPanel titlePanel = new JPanel();
+    
+	titlePanel.setLayout(new GridLayout(0,1));
+    
+	titlePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),"Imported Movie Titles"), BorderFactory.createEmptyBorder(0,5,5,5))); //$NON-NLS-1$
 
+    
+    
 	JPanel autoMovieToEndOfTitlePanel = new JPanel(new GridBagLayout());
-	autoMovieToEndOfTitlePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("dialogprefs.panel.miscellaneous.auto-move-to-end-of-title")), BorderFactory.createEmptyBorder(0,5,5,5))); //$NON-NLS-1$
-
+	GridBagConstraints c = new GridBagConstraints();
+	c.gridx = 0;
+	c.gridy = 0;
+	c.gridwidth = 3;
+    
+	JLabel autoMoveLabel = new JLabel(Localizer.getString("dialogprefs.panel.miscellaneous.auto-move-to-end-of-title") + ":");
+    	
+	autoMovieToEndOfTitlePanel.add(autoMoveLabel, c);
+    
 	/* Enable Automatic placement of 'The' at the end of title */
 	enableAutoMoveThe = new JCheckBox("'The '"); //$NON-NLS-1$
 	enableAutoMoveThe.setActionCommand("Enable auto move"); //$NON-NLS-1$
 
-	if (MovieManager.getConfig().getAutoMoveThe())
+	if (config.getAutoMoveThe())
 	    enableAutoMoveThe.setSelected(true);
 
-	autoMovieToEndOfTitlePanel.add(enableAutoMoveThe);
+	c.gridx = 0;
+	c.gridy = 1;
+	c.gridwidth = 1;
+    
+	autoMovieToEndOfTitlePanel.add(enableAutoMoveThe, c);
 
 	/* Enable Automatic placement of 'The' at the end of title */
 	enableAutoMoveAnAndA = new JCheckBox("'A ' and 'An '"); //$NON-NLS-1$
 	enableAutoMoveAnAndA.setActionCommand("Enable auto move"); //$NON-NLS-1$
 
-	if (MovieManager.getConfig().getAutoMoveAnAndA())
+	if (config.getAutoMoveAnAndA())
 	    enableAutoMoveAnAndA.setSelected(true);
 
-	autoMovieToEndOfTitlePanel.add(enableAutoMoveAnAndA);
+	c.gridx = 1;
+	c.gridy = 1;
+	c.gridwidth = 1;
+    
+	autoMovieToEndOfTitlePanel.add(enableAutoMoveAnAndA, c);
 	autoMovieToEndOfTitlePanel.setMaximumSize(new Dimension((int) autoMovieToEndOfTitlePanel.getMaximumSize().getWidth(), (int) autoMovieToEndOfTitlePanel.getPreferredSize().getHeight()));
+    
+	titlePanel.add(autoMovieToEndOfTitlePanel);
 
+	/* Insert title in specific language */
+    
+	JPanel akaTitlePanel = new JPanel();
+	//akaTitlePanel.setLayout(new BoxLayout(akaTitlePanel, BoxLayout.Y_AXIS));
+	akaTitlePanel.setLayout(new GridLayout(0, 1));
+    
+	storeAllAvailableAkaTitles = new JCheckBox("Store all available aka titles");
+	noDuplicateAkaTitles = new JCheckBox("No duplicate aka titles");
+	includeAkaLanguageCodes = new JCheckBox("Include comments and language codes");
+	useLanguageSpecificTitle = new JCheckBox("Replace original title with aka title (with languageCode):");
+    
+    
+	ArrayList langCodesList = new ArrayList(150);
+	int index = 0;
+    
+	try {
+    
+	    URL url = FileUtil.getFileURL("codecs/LanguageCodes.txt");
+	    BufferedInputStream stream = new BufferedInputStream(url.openStream());
 
-	miscPanel.add(autoMovieToEndOfTitlePanel);
-
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+    
+    
+	    String currentLangCode = config.getTitleLanguageCode();
+    
+	    String line;
+    
+	    while ((line = reader.readLine()) != null) {
+		
+		if (line.startsWith(currentLangCode))
+		    index = langCodesList.size();
+        
+		line = " " + line.replace("\t", " - ");
+        
+		langCodesList.add(line);
+	    }
+	    reader.close();
+    
+	} catch (IOException e) {
+	    log.warn(e);
+	}
+    
+	Object [] languageCodes = langCodesList.toArray();
+    
+	languageCodeSelector = new JComboBox(languageCodes);
+    
+	languageCodeSelector.setMaximumSize(languageCodeSelector.getPreferredSize());
+	languageCodeSelector.setSelectedIndex(index);
+    
+	storeAllAvailableAkaTitles.addItemListener(this);
+	useLanguageSpecificTitle.addItemListener(this);
+    
+	if (!config.getStoreAllAkaTitles()) {
+	    noDuplicateAkaTitles.setEnabled(false);
+	}
+    
+	if (config.getStoreAllAkaTitles())
+	    storeAllAvailableAkaTitles.setSelected(true);
+        
+	if (config.getNoDuplicateAkaTitles())
+	    noDuplicateAkaTitles.setSelected(true);
+   
+	if (config.getIncludeAkaLanguageCodes())
+	    includeAkaLanguageCodes.setSelected(true);
+    
+	if (config.getUseLanguageSpecificTitle()) {
+	    useLanguageSpecificTitle.setSelected(true);
+	}
+	else
+	    languageCodeSelector.setEnabled(false);
+    
+	akaTitlePanel.add(storeAllAvailableAkaTitles);
+	akaTitlePanel.add(noDuplicateAkaTitles);
+	akaTitlePanel.add(includeAkaLanguageCodes);
+	akaTitlePanel.add(useLanguageSpecificTitle);
+	akaTitlePanel.add(languageCodeSelector);
+     
+	titlePanel.add(akaTitlePanel);
+	miscPanel.add(titlePanel);
+    
 	/* Cover settings */
 	JPanel coverPanel = new JPanel();
 	coverPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("dialogprefs.panel.cover-settings.title")), BorderFactory.createEmptyBorder(12,30,16,0))); //$NON-NLS-1$
@@ -587,7 +705,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	enablePreserveCoverRatio.setActionCommand("Preserve Cover ratio"); //$NON-NLS-1$
 	enablePreserveCoverRatio.addItemListener(this);
 
-	if (MovieManager.getConfig().getPreserveCoverAspectRatio() == 1)
+	if (config.getPreserveCoverAspectRatio() == 1)
 	    enablePreserveCoverRatio.setSelected(true);
 
 	coverPanel.add(enablePreserveCoverRatio);
@@ -596,7 +714,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	enablePreserveCoverRatioEpisodesOnly.setActionCommand("Preserve Cover ratio episodes"); //$NON-NLS-1$
 	enablePreserveCoverRatioEpisodesOnly.addItemListener(this);
 
-	if (MovieManager.getConfig().getPreserveCoverAspectRatio() == 2) {
+	if (config.getPreserveCoverAspectRatio() == 2) {
 	    enablePreserveCoverRatioEpisodesOnly.setSelected(true);
 	    enablePreserveCoverRatio.setSelected(false);
 	}
@@ -612,7 +730,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	pumaCover = new JRadioButton(Localizer.getString("dialogprefs.panel.cover-settings.nocover.use-puma")); //$NON-NLS-1$
 	jaguarCover = new JRadioButton(Localizer.getString("dialogprefs.panel.cover-settings.nocover.use-jaguar")); //$NON-NLS-1$
 
-	if (MovieManager.getConfig().getNoCover().equals("nocover_jaguar.png")) //$NON-NLS-1$
+	if (config.getNoCover().equals("nocover_jaguar.png")) //$NON-NLS-1$
 	    jaguarCover.setSelected(true);
 	else
 	    pumaCover.setSelected(true);
@@ -630,7 +748,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    enableStoreCoversLocally = new JCheckBox(Localizer.getString("dialogprefs.panel.cover-settings.store-covers-locally")); //$NON-NLS-1$
 	    enableStoreCoversLocally.setActionCommand("Store covers locally"); //$NON-NLS-1$
 
-	    if (MovieManager.getConfig().getStoreCoversLocally())
+	    if (config.getStoreCoversLocally())
 		enableStoreCoversLocally.setSelected(true);
 
 	    coverPanel.add(enableStoreCoversLocally);
@@ -648,7 +766,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	enableRightclickByCtrl = new JCheckBox(Localizer.getString("dialogprefs.panel.movie-list.enable-right-click-by-ctrl-in-movie-list")); //$NON-NLS-1$
 	enableRightclickByCtrl.setActionCommand("Enable right click by ctrl"); //$NON-NLS-1$
 
-	if (MovieManager.getConfig().getEnableCtrlMouseRightClick())
+	if (config.getEnableCtrlMouseRightClick())
 	    enableRightclickByCtrl.setSelected(true);
 
 	movieListPanel.add(enableRightclickByCtrl);
@@ -657,7 +775,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	enableLoadLastUsedList = new JCheckBox(Localizer.getString("dialogprefs.panel.movie-list.load-last-used-list")); //$NON-NLS-1$
 	enableLoadLastUsedList.setActionCommand("Enable lastLoadedList"); //$NON-NLS-1$
 
-	if (MovieManager.getConfig().getLoadLastUsedListAtStartup())
+	if (config.getLoadLastUsedListAtStartup())
 	    enableLoadLastUsedList.setSelected(true);
 
 	movieListPanel.add(enableLoadLastUsedList);
@@ -668,7 +786,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	enableUseJTreeIcons.setActionCommand("Enable JTree Icons"); //$NON-NLS-1$
         enableUseJTreeIcons.addActionListener(this);
 
-	if (MovieManager.getConfig().getUseJTreeIcons())
+	if (config.getUseJTreeIcons())
 	    enableUseJTreeIcons.setSelected(true);
 
 	movieListPanel.add(enableUseJTreeIcons);
@@ -678,7 +796,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         enableUseJTreeCovers.setActionCommand("Enable JTree Covers"); //$NON-NLS-1$
         enableUseJTreeCovers.addActionListener(this);
 
-        if (MovieManager.getConfig().getUseJTreeCovers())
+        if (config.getUseJTreeCovers())
             enableUseJTreeCovers.setSelected(true);
 
         movieListPanel.add(enableUseJTreeCovers);
@@ -687,7 +805,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	enableHighlightEntireRow = new JCheckBox(Localizer.getString("dialogprefs.panel.movie-list.highlight-entire-rom-in-movie-list")); //$NON-NLS-1$
 	enableHighlightEntireRow.setActionCommand("Enable highlight row"); //$NON-NLS-1$
 
-	if (MovieManager.getConfig().getMovieListHighlightEntireRow())
+	if (config.getMovieListHighlightEntireRow())
 	    enableHighlightEntireRow.setSelected(true);
 
 	movieListPanel.add(enableHighlightEntireRow);
@@ -710,12 +828,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         exampleTree.setRootVisible(false);
         exampleTree.setShowsRootHandles(true);
         exampleTree.setCellRenderer(new ExtendedTreeCellRenderer(MovieManager.getIt(), scroller, exampleConfig));
-        rowHeightSlider = new JSlider(6, 100, MovieManager.getConfig().getMovieListRowHeight());
+        rowHeightSlider = new JSlider(6, 100, config.getMovieListRowHeight());
         rowHeightSlider.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                updateRowHeightExample();
-            }
-        });
+		public void stateChanged(ChangeEvent e) {
+		    updateRowHeightExample();
+		}
+	    });
         JPanel p = new JPanel(new BorderLayout());
         p.add(new JLabel("Scale"), BorderLayout.WEST); //$NON-NLS-1$
         p.add(rowHeightSlider, BorderLayout.CENTER);
@@ -724,6 +842,63 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         movieListPanel.add(rowHeightPanel);
         updateRowHeightExample();
 
+        /* Player panel */
+        JPanel playerPanel = new JPanel();
+        playerPanel.setLayout(new GridBagLayout());
+        c = new GridBagConstraints();
+        
+        playerPanel.setBorder(BorderFactory.createCompoundBorder(
+								 BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Player "),
+								 BorderFactory.createEmptyBorder(12,1,16,1)));
+        
+        JLabel label = new JLabel("Default Player Location:");
+        
+        c.gridx = 0;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        playerPanel.add(label, c);
+        
+        JButton browse = new JButton("Browse...");
+        
+        mediaPlayerPathField = new JTextField(32);
+        mediaPlayerPathField.setText(config.getMediaPlayerPath());
+        
+        JPanel filePanel = new JPanel ();
+        filePanel.setLayout(new BoxLayout(filePanel, BoxLayout.X_AXIS));
+        filePanel.add(mediaPlayerPathField);
+        filePanel.add(Box.createHorizontalGlue());
+        filePanel.add(browse);
+        
+        browse.setActionCommand("Browse Player Path");
+        browse.addActionListener(new ActionListener() {
+            
+		public void actionPerformed(ActionEvent arg0) {
+		    // check if there is a file selected
+
+		    JFileChooser chooser = new JFileChooser();
+		    int returnVal = chooser.showDialog(null, "Choose");
+		    if(returnVal != JFileChooser.APPROVE_OPTION)
+			return;
+
+		    try {
+			String location = chooser.getSelectedFile().getCanonicalPath();
+                
+			if (location != null)
+			    mediaPlayerPathField.setText(location);
+		    } catch (IOException e) {
+			log.warn("Failed to retrieve player path");
+		    }
+                
+		}});
+                
+        c.gridx = 0;
+        c.gridy = 1;
+        playerPanel.add(filePanel, c);
+        playerPanel.add(Box.createVerticalGlue());
+        
+       
+       
+        
 	/* OK panel */
 	JPanel okPanel = new JPanel();
 	okPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -742,7 +917,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	all.add(Localizer.getString("dialogprefs.panel.cover-settings.title"), coverPanel); //$NON-NLS-1$
 	all.add(Localizer.getString("dialogprefs.panel.movie-list.title"), movieListPanel); //$NON-NLS-1$
 
-	all.setSelectedIndex(MovieManager.getConfig().getLastPreferencesTabIndex());
+	all.add("Media Player", playerPanel);
+    
+	all.setSelectedIndex(config.getLastPreferencesTabIndex());
 
 	contentPane = getContentPane();
 	contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.Y_AXIS));
@@ -766,137 +943,179 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         exampleConfig.setUseJTreeIcons(enableUseJTreeIcons.isSelected());
         exampleConfig.setUseJTreeCovers(enableUseJTreeCovers.isSelected());
         exampleConfig.setMovieListHighlightEntireRow(enableHighlightEntireRow.isSelected());
-        exampleConfig.setStoreCoversLocally(MovieManager.getConfig().getStoreCoversLocally());
+        exampleConfig.setStoreCoversLocally(config.getStoreCoversLocally());
         exampleTree.setRowHeight(rowHeight + 2);
         exampleTree.updateUI();
     }
 
     void saveSettings() {
 
+        
+        
 	/* Saving the tab index */
-	MovieManager.getConfig().setLastPreferencesTabIndex(all.getSelectedIndex());
+	config.setLastPreferencesTabIndex(all.getSelectedIndex());
 
 	/* Save proxy settings */
-	MovieManager.getConfig().setProxyType((String) proxyType.getSelectedItem());
-	MovieManager.getConfig().setProxyHost(hostTextField.getText());
-	MovieManager.getConfig().setProxyPort(portTextField.getText());
-	MovieManager.getConfig().setProxyUser(userNameTextField.getText());
-	MovieManager.getConfig().setProxyPassword(passwordTextField.getText());
+	config.setProxyType((String) proxyType.getSelectedItem());
+	config.setProxyHost(hostTextField.getText());
+	config.setProxyPort(portTextField.getText());
+	config.setProxyUser(userNameTextField.getText());
+	config.setProxyPassword(passwordTextField.getText());
 
 	if (enableProxyButton.isSelected())
-	    MovieManager.getConfig().setProxyEnabled(true);
+	    config.setProxyEnabled(true);
 	else
-	    MovieManager.getConfig().setProxyEnabled(false);
+	    config.setProxyEnabled(false);
 
 	if (enableAuthenticationButton.isSelected())
-	    MovieManager.getConfig().setAuthenticationEnabled(true);
+	    config.setAuthenticationEnabled(true);
 	else
-	    MovieManager.getConfig().setAuthenticationEnabled(false);
+	    config.setAuthenticationEnabled(false);
 
 
+	if (mediaPlayerPathField.getText() != null) {
+	    config.setMediaPlayerPath(mediaPlayerPathField.getText());
+	}
+    
+    
 	/* automatic move of 'The' */
 	if (enableAutoMoveThe.isSelected())
-	    MovieManager.getConfig().setAutoMoveThe(true);
+	    config.setAutoMoveThe(true);
 	else
-	    MovieManager.getConfig().setAutoMoveThe(false);
+	    config.setAutoMoveThe(false);
 
 	/* automatic move of 'An and A' */
 	if (enableAutoMoveAnAndA.isSelected())
-	    MovieManager.getConfig().setAutoMoveAnAndA(true);
+	    config.setAutoMoveAnAndA(true);
 	else
-	    MovieManager.getConfig().setAutoMoveAnAndA(false);
+	    config.setAutoMoveAnAndA(false);
 
+    
+    
+	if (storeAllAvailableAkaTitles.isSelected())
+	    config.setStoreAllAkaTitles(true);
+	else
+	    config.setStoreAllAkaTitles(false);
+    
+    
+	if (noDuplicateAkaTitles.isSelected())
+	    config.setNoDuplicateAkaTitles(true);
+	else
+	    config.setNoDuplicateAkaTitles(false);
+    
+   
+	if (includeAkaLanguageCodes.isSelected())
+	    config.setIncludeAkaLanguageCodes(true);
+	else
+	    config.setIncludeAkaLanguageCodes(false);
+    
+    
+	if (useLanguageSpecificTitle.isSelected()) {
+	    config.setUseLanguageSpecificTitle(true);
+        
+	    String value = (String) languageCodeSelector.getSelectedItem();
+        
+	    value = value.substring(1, 3);
+        
+	    config.setTitleLanguageCode(value);
+        
+	}
+	else
+	    config.setUseLanguageSpecificTitle(false);
+    
+    
+    
+    
+    
 	/* automatically load database at startup */
 	if (loadDatabaseOnStartUp.isSelected())
-	    MovieManager.getConfig().setLoadDatabaseOnStartup(true);
+	    config.setLoadDatabaseOnStartup(true);
 	else
-	    MovieManager.getConfig().setLoadDatabaseOnStartup(false);
+	    config.setLoadDatabaseOnStartup(false);
 
 	/* seen editable */
 	if (enableSeenEditable.isSelected())
-	    MovieManager.getConfig().setSeenEditable(true);
+	    config.setSeenEditable(true);
 	else
-	    MovieManager.getConfig().setSeenEditable(false);
+	    config.setSeenEditable(false);
 
 	/* Display Queries In JTree */
 	if (displayQueriesInTree.isSelected()) {
-	    MovieManager.getConfig().setUseDisplayQueriesInTree(true);
+	    config.setUseDisplayQueriesInTree(true);
         }
         else {
-            MovieManager.getConfig().setUseDisplayQueriesInTree(false);
+            config.setUseDisplayQueriesInTree(false);
 	}
 
 	/* rightclick by ctrl */
 	if (enableRightclickByCtrl.isSelected())
-	    MovieManager.getConfig().setEnableCtrlMouseRightClick(true);
+	    config.setEnableCtrlMouseRightClick(true);
 	else
-	    MovieManager.getConfig().setEnableCtrlMouseRightClick(false);
+	    config.setEnableCtrlMouseRightClick(false);
 
 	/* Load Last List At Startup */
 	if (enableLoadLastUsedList.isSelected())
-	    MovieManager.getConfig().setLoadLastUsedListAtStartup(true);
+	    config.setLoadLastUsedListAtStartup(true);
 	else
-	    MovieManager.getConfig().setLoadLastUsedListAtStartup(false);
+	    config.setLoadLastUsedListAtStartup(false);
 
 	/* Icons in JTree */
 	if (enableUseJTreeIcons.isSelected())
-	    MovieManager.getConfig().setUseJTreeIcons(true);
+	    config.setUseJTreeIcons(true);
 	else
-	    MovieManager.getConfig().setUseJTreeIcons(false);
+	    config.setUseJTreeIcons(false);
 
         /* Covers in JTree */
         if (enableUseJTreeCovers.isSelected())
-          MovieManager.getConfig().setUseJTreeCovers(true);
+	    config.setUseJTreeCovers(true);
         else
-          MovieManager.getConfig().setUseJTreeCovers(false);
+	    config.setUseJTreeCovers(false);
 
 	/* Highlight entire row */
 	if (enableHighlightEntireRow.isSelected()) {
-	    MovieManager.getConfig().setMovieListHighlightEntireRow(true);
+	    config.setMovieListHighlightEntireRow(true);
 	}
 	else {
-	    MovieManager.getConfig().setMovieListHighlightEntireRow(false);
+	    config.setMovieListHighlightEntireRow(false);
 	}
 
         /* Rowheight */
-        MovieManager.getConfig().setMovieListRowHeight(rowHeightSlider.getValue());
+        config.setMovieListRowHeight(rowHeightSlider.getValue());
 
 	if (enablePreserveCoverRatioEpisodesOnly.isSelected())
-	    MovieManager.getConfig().setPreserveCoverAspectRatio(2);
+	    config.setPreserveCoverAspectRatio(2);
 	else if (enablePreserveCoverRatio.isSelected())
-	    MovieManager.getConfig().setPreserveCoverAspectRatio(1);
+	    config.setPreserveCoverAspectRatio(1);
 	else
-	    MovieManager.getConfig().setPreserveCoverAspectRatio(0);
+	    config.setPreserveCoverAspectRatio(0);
 
 	if (pumaCover.isSelected())
-	    MovieManager.getConfig().setNoCover("nocover_puma.png"); //$NON-NLS-1$
+	    config.setNoCover("nocover_puma.png"); //$NON-NLS-1$
 	else
-	    MovieManager.getConfig().setNoCover("nocover_jaguar.png"); //$NON-NLS-1$
+	    config.setNoCover("nocover_jaguar.png"); //$NON-NLS-1$
 
 	if (enableStoreCoversLocally != null && enableStoreCoversLocally.isSelected()) {
 
-	    if (!(new File(MovieManager.getConfig().getCoversFolder()).isDirectory())) {
+	    if (!(new File(config.getCoversFolder()).isDirectory())) {
 
 		DialogAlert alert = new DialogAlert(this, Localizer.getString("dialogprefs.alert.title.alert"), Localizer.getString("dialogprefs.alert.message.covers-dir-not-existing")); //$NON-NLS-1$ //$NON-NLS-2$
-		//alert.setVisible(true);
 		ShowGUI.showAndWait(alert, true);
 		
 		DialogFolders dialogFolders = new DialogFolders();
-		//dialogFolders.setVisible(true);
 		ShowGUI.showAndWait(dialogFolders, true);
 		
-		if (!(new File(MovieManager.getConfig().getCoversFolder()).isDirectory())) {
+		if (!(new File(config.getCoversFolder()).isDirectory())) {
 		    enableStoreCoversLocally.setSelected(false);
 		}
 	    }
 
 	    if (enableStoreCoversLocally.isSelected())
-		MovieManager.getConfig().setStoreCoversLocally(true);
+		config.setStoreCoversLocally(true);
 	    else
-		MovieManager.getConfig().setStoreCoversLocally(false);
+		config.setStoreCoversLocally(false);
 	}
 	else
-	    MovieManager.getConfig().setStoreCoversLocally(false);
+	    config.setStoreCoversLocally(false);
 
 	MovieManager.getIt().updateJTreeIcons();
 
@@ -930,7 +1149,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    log.error("", e); //$NON-NLS-1$
 
 	    String lafName = (String) lafChooser.getSelectedItem();
-	    lafChooser.setSelectedItem(MovieManager.getConfig().getLookAndFeelString());
+	    lafChooser.setSelectedItem(config.getLookAndFeelString());
 
 	    /* Calls itself recursively to restore the old look and feel */
 	    if (counter < 1) {
@@ -942,13 +1161,13 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    }
 	    return;
 	}
-	MovieManager.getConfig().setLookAndFeelString(selectedItem);
+	config.setLookAndFeelString(selectedItem);
 	//MovieManager.getIt().addSplitPaneMouseListeners();
     }
 
     void setSkinlfLookAndFeel() {
 	String selectedItem = (String) skinlfThemePackChooser.getSelectedItem();
-	String skinlfThemePackPath = MovieManager.getConfig().getSkinlfThemePackDir() + selectedItem;
+	String skinlfThemePackPath = config.getSkinlfThemePackDir() + selectedItem;
 
 	try {
 	    Skin skin = null;
@@ -956,7 +1175,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    if (MovieManager.applet == null)
 		skin = SkinLookAndFeel.loadThemePack(skinlfThemePackPath);
 	    else {
-		skin = SkinLookAndFeel.loadThemePack(MovieManager.getIt().getAppletFile(skinlfThemePackPath).toURL());
+		skin = SkinLookAndFeel.loadThemePack(FileUtil.getAppletFile(skinlfThemePackPath).toURL());
 	    }
 	    SkinLookAndFeel.setSkin(skin);
 
@@ -971,12 +1190,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    showErrorMessage(e.getMessage(), "SkinLF"); //$NON-NLS-1$
 	    return;
 	}
-	MovieManager.getConfig().setSkinlfThemePack(selectedItem);
+	config.setSkinlfThemePack(selectedItem);
     }
 
     void setOyoahaLookAndFeel() {
 	String selectedItem = (String) oyoahaThemePackChooser.getSelectedItem();
-	String oyoahaThemePackPath = MovieManager.getConfig().getOyoahaThemePackDir() + selectedItem;
+	String oyoahaThemePackPath = config.getOyoahaThemePackDir() + selectedItem;
 
 	try {
 	    File file = new File(oyoahaThemePackPath);
@@ -994,7 +1213,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    showErrorMessage(e.getMessage(),"Oyoaha"); //$NON-NLS-1$
 	    return;
 	}
-	MovieManager.getConfig().setOyoahaThemePack(selectedItem);
+	config.setOyoahaThemePack(selectedItem);
 	//MovieManager.getIt().addSplitPaneMouseListeners();
     }
 
@@ -1017,7 +1236,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 
 	DialogAlert alert = new DialogAlert(this, Localizer.getString("dialogprefs.alert.title.laf-error"), message, error); //$NON-NLS-1$
-	//alert.setVisible(true);
 	ShowGUI.showAndWait(alert, true);
     }
 
@@ -1034,10 +1252,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
     }
 
     void updateLookAndFeel() throws Exception {
-	MovieManager.getIt().updateToolButtonBorder();
+	MovieManager.getIt().toolBar.updateToolButtonBorder();
 
 	SwingUtilities.updateComponentTreeUI(MovieManager.getIt());
-	MovieManager.getIt().updateToolButtonBorder();
+	MovieManager.getIt().toolBar.updateToolButtonBorder();
 
 	MovieManager.getIt().getDateField().setOpaque(false);
 	MovieManager.getIt().getDateField().setBorder(null);
@@ -1072,7 +1290,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	SwingUtilities.updateComponentTreeUI(this);
 	pack();
 	setLafChooserPreferredSize();
-	MovieManager.getIt().updateToolButtonBorder();
+	MovieManager.getIt().toolBar.updateToolButtonBorder();
 
 	MovieManager.getIt().validate();
     }
@@ -1081,7 +1299,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
     void setDefaultLookAndFeelDecoration(boolean decorated) {
 
 	if (decorated) {
-	    MovieManager.getConfig().setDefaultLookAndFeelDecorated(true);
+	    config.setDefaultLookAndFeelDecorated(true);
 
 	    javax.swing.JFrame.setDefaultLookAndFeelDecorated(true);
 	    javax.swing.JDialog.setDefaultLookAndFeelDecorated(true);
@@ -1089,7 +1307,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    MovieManager.getIt().dispose();
 	    MovieManager.getIt().setUndecorated(true);
 	    MovieManager.getIt().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.FRAME);
-	    //MovieManager.getIt().setVisible(true);
 	    ShowGUI.show(MovieManager.getIt(), true);
 	    
 	    /* Updating DialogSearch if open */
@@ -1107,11 +1324,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    setUndecorated(true);
 	    getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.FRAME);
 	    pack();
-	    //setVisible(true);
 	    ShowGUI.show(this, true);
 	}
 	else {
-	    MovieManager.getConfig().setDefaultLookAndFeelDecorated(false);
+	    config.setDefaultLookAndFeelDecorated(false);
 
 	    javax.swing.JFrame.setDefaultLookAndFeelDecorated(false);
 	    javax.swing.JDialog.setDefaultLookAndFeelDecorated(false);
@@ -1119,10 +1335,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    MovieManager.getIt().dispose();
 	    MovieManager.getIt().setUndecorated(false);
 	    MovieManager.getIt().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.NONE);
-	    //MovieManager.getIt().setVisible(true);
 	    ShowGUI.show(MovieManager.getIt(), true);
 
-	      /* Updating DialogSearch if open */
+	    /* Updating DialogSearch if open */
 	    if (DialogSearch.getDialogSearch() != null) {
 		DialogSearch.getDialogSearch().dispose();
 		DialogSearch.getDialogSearch().setUndecorated(false);
@@ -1136,19 +1351,19 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    setUndecorated(false);
 	    getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.NONE);
 	    pack();
-	    //setVisible(true);
+	    
 	    ShowGUI.show(this, true);
 	}
     }
 
     private void updateEnabling() {
-      if(enableUseJTreeIcons.isSelected()) {
-        enableUseJTreeCovers.setEnabled(true);
-      }
-      else {
-        enableUseJTreeCovers.setEnabled(false);
-        enableUseJTreeCovers.setSelected(false);
-      }
+	if(enableUseJTreeIcons.isSelected()) {
+	    enableUseJTreeCovers.setEnabled(true);
+	}
+	else {
+	    enableUseJTreeCovers.setEnabled(false);
+	    enableUseJTreeCovers.setSelected(false);
+	}
     }
 
     public void actionPerformed(ActionEvent event) {
@@ -1163,8 +1378,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	}
 
         if (event.getActionCommand().equals("Enable JTree Icons") || event.getActionCommand().equals("Enable JTree Covers")) { //$NON-NLS-1$ //$NON-NLS-2$
-          updateEnabling();
-          updateRowHeightExample();
+	    updateEnabling();
+	    updateRowHeightExample();
         }
 
 	if (event.getActionCommand().equals("Enable LookAndFeel")) { //$NON-NLS-1$
@@ -1177,7 +1392,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		if (oyoahaThemePackChooser != null)
 		    oyoahaThemePackChooser.setEnabled(false);
 
-		MovieManager.getConfig().setLookAndFeelType(1);
+		config.setLookAndFeelType(1);
 		setSkinlfLookAndFeel();
 	    }
 
@@ -1189,10 +1404,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		if (skinlfThemePackChooser != null)
 		    skinlfThemePackChooser.setEnabled(false);
 
-		MovieManager.getConfig().setLookAndFeelType(2);
+		config.setLookAndFeelType(2);
 		setOyoahaLookAndFeel();
 
-		MovieManager.getIt().updateToolButtonBorder();
+		MovieManager.getIt().toolBar.updateToolButtonBorder();
 	    }
 
 	    else {
@@ -1203,7 +1418,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		if (skinlfThemePackChooser != null)
 		    skinlfThemePackChooser.setEnabled(false);
 
-		MovieManager.getConfig().setLookAndFeelType(0);
+		config.setLookAndFeelType(0);
 		setCustomLookAndFeel(0);
 
 
@@ -1214,26 +1429,26 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	if (event.getActionCommand().equals("ToolBarButton")) { //$NON-NLS-1$
 
 	    if (regularToolBarButtons.isSelected())
-		MovieManager.getConfig().setRegularToolButtonsUsed(true);
+		config.setRegularToolButtonsUsed(true);
 	    else
-		MovieManager.getConfig().setRegularToolButtonsUsed(false);
+		config.setRegularToolButtonsUsed(false);
 
-	    MovieManager.getIt().updateToolButtonBorder();
+	    MovieManager.getIt().toolBar.updateToolButtonBorder();
 	}
 
 
 	if (event.getActionCommand().equals("SeenIcon")) { //$NON-NLS-1$
 
 	    if (regularSeenIcon.isSelected()) {
-		MovieManager.getIt().getSeen().setIcon(new ImageIcon(MovieManager.getIt().getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
-		MovieManager.getIt().getSeen().setSelectedIcon(new ImageIcon(MovieManager.getIt().getImage("/images/seen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
-		MovieManager.getConfig().setUseRegularSeenIcon(true);
+		MovieManager.getIt().getSeen().setIcon(new ImageIcon(FileUtil.getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+		MovieManager.getIt().getSeen().setSelectedIcon(new ImageIcon(FileUtil.getImage("/images/seen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+		config.setUseRegularSeenIcon(true);
 
 	    }
 	    else {
 		MovieManager.getIt().getSeen().setIcon(null);
 		MovieManager.getIt().getSeen().setSelectedIcon(null);
-		MovieManager.getConfig().setUseRegularSeenIcon(false);
+		config.setUseRegularSeenIcon(false);
 	    }
 
 	    MovieManager.getIt().getSeen().updateUI();
@@ -1331,6 +1546,26 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    }
 	    else
 		enablePreserveCoverRatio.setEnabled(true);
+	}
+       
+    
+	/* Misc - Aka title checkboxes */
+    
+	if (source.equals(storeAllAvailableAkaTitles)) {
+	    if (storeAllAvailableAkaTitles.isSelected()) {
+		noDuplicateAkaTitles.setEnabled(true);
+            }
+	    else {
+		noDuplicateAkaTitles.setEnabled(false);
+	    }
+	}
+    
+	if (source.equals(useLanguageSpecificTitle)) {
+    
+	    if (useLanguageSpecificTitle.isSelected())
+		languageCodeSelector.setEnabled(true);
+	    else
+		languageCodeSelector.setEnabled(false);
 	}
     }
 }
