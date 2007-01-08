@@ -107,7 +107,7 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
     public DialogUpdateIMDbInfo(final MovieManagerCommandUpdateIMDBInfo parent, JDialog dialog) {
         super(new BorderLayout());
         this.parent = parent;
-	this.dialog = dialog;
+        this.dialog = dialog;
 
 	imdbInfoUpdater = new IMDbInfoUpdater();
 	

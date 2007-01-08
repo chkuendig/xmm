@@ -20,6 +20,7 @@
 
 package net.sf.xmm.moviemanager;
 
+import net.sf.xmm.moviemanager.commands.MovieManagerCommandDialogIMDB;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 import net.sf.xmm.moviemanager.http.IMDB;
@@ -48,7 +49,6 @@ public class IMDbInfoUpdater {
     private int current = -1;
     private boolean done = false;
     private boolean canceled = false;
-    //private String [] transferred = null;
     private ArrayList transferred = new ArrayList();
     
     Database database = MovieManager.getIt().getDatabase();
@@ -191,11 +191,16 @@ public class IMDbInfoUpdater {
 			    IMDB imdb;
 				
                 System.err.println("(" + model.getUrlKey()+ ")" + model.getTitle());    
-                
+                                
 			    if (model.getUrlKey().equals("")) {
-                    //model.setNotes("UrlKey empty");
+                   log.info("UrlKey is empty");
                    
-			        return;
+                   String urlKey = MovieManagerCommandDialogIMDB.getIMDBKey(model.getTitle());
+                   
+                   if (urlKey != null && !urlKey.equals(""))
+                       model.setUrlKey(urlKey);
+                   else
+                       return;
                 }
                 
 			    for (int i = 0; i < 5; i++) {
