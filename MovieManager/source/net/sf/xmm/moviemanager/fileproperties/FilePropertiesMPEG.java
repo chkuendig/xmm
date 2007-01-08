@@ -99,6 +99,8 @@ class FilePropertiesMPEG extends FileProperties {
 	setAudioCodec("MPEG-1 Layer 2");
 	setContainer("MPEG");
 	
+    supported = true;
+    
 	log.info("Processing MPEG file done.");
     }
     

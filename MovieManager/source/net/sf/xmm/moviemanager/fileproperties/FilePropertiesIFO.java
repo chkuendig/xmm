@@ -58,6 +58,8 @@ class FilePropertiesIFO extends FileProperties {
 	int streamType = readUnsignedInt32(ifoFile, 9);
 	
 	if (streamType == DVDVIDEO_VTS) {
+        
+        supported = true;
 	    processIfoFile(ifoFile);
 	    setContainer("VOB");
 	    
