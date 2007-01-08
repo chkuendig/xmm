@@ -20,6 +20,7 @@
 
 package net.sf.xmm.moviemanager;
 
+import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFile;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.models.AdditionalInfoFieldDefaultValues;
 import net.sf.xmm.moviemanager.util.*;
@@ -36,6 +37,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
+import javax.swing.filechooser.FileSystemView;
+
 public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
     static Logger log = Logger.getRootLogger();
@@ -44,7 +47,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
      * Keeps track of the last directory open...(Moviefiles)
      **/
     private static File lastFileDir;
-
+    private static File lastDVDDir;
+    
+    private static File lastExportAndImportDir;
+    
+    private static File lastCoversDir;
+    
     /**
      * Keeps track of the last directory open...(Databasefiles)
      **/
@@ -292,9 +300,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	return new File("");
     }
 
-
-
-
+   
     /**
      * Sets the current directory.
      *
@@ -304,6 +310,43 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	lastFileDir = directory;
     }
 
+    /* If the display name is empty, it's probably an empty removable device */
+    public File getLastDVDDir() {
+
+        String displayName = FileUtil.getDriveDisplayName(lastDVDDir);
+        
+        if (displayName != null) {
+            
+            if (!displayName.equals(""))
+                return lastDVDDir;
+            else
+                new File("");
+        }
+        return lastDVDDir;
+    }
+    
+    
+    public void setLastDVDDir(File directory) {
+        lastDVDDir = directory;
+    }
+    
+    public File getLastExportAndImportDir() {
+        return lastExportAndImportDir;
+    }
+
+    public void setLastExportAndImportDir(File directory) {
+        lastExportAndImportDir = directory;
+    }
+    
+    public File getLastCoversDir() {
+        return lastCoversDir;
+    }
+
+    public void setLastCoversDir(File directory) {
+        lastCoversDir = directory;
+    }
+    
+    
     public File getLastDatabaseDir() {
 	return lastDatabaseDir;
     }
@@ -1299,6 +1342,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		setLastFileDir(lastFileDirctory);
 	    }
 
+        index = settings.indexOf("lastDVDDir:");
+
+        if (index != -1) {
+        readFile = settings.substring(settings.indexOf(":", index)+1, settings.indexOf(lineSeparator, index));
+        File lastDVDDirctory = new File(readFile);
+        setLastDVDDir(lastDVDDirctory);
+        }
+        
+        
 	    index = settings.indexOf("lastDatabaseDir:");
 
 	    if (index != -1) {
@@ -1793,6 +1845,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	if (getLastFileDir() != null)
 	    settings.append(getLastFileDir().getPath());
 
+    
+    settings.append(lineSeparator);
+    settings.append("lastDVDDir:");
+    if (getLastFileDir() != null)
+        settings.append(getLastFileDir().getPath());
+       
+    
 	settings.append(lineSeparator);
 	settings.append("lastDatabaseDir:");
 	if (getLastDatabaseDir() != null)
