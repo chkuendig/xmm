@@ -390,6 +390,9 @@ public class FilePropertiesMovie {
 	return fileName;
     }
     
+    public void setFileName(String newName) {
+        fileName = newName;
+    }
 
     /**
      * Returns the resolution.
