@@ -22,55 +22,55 @@ import java.util.StringTokenizer;
 
 
 public class ModelMovieInfo {
-
+    
     private ModelUpdatedHandler modelUpdatedHandler = new ModelUpdatedHandler();
-	
+    
     static Logger log = Logger.getRootLogger();
-	
+    
     public boolean _edit = false;
     private boolean _saveCover = false;
     public boolean _hasReadProperties = false;
     public boolean isEpisode = false;
-
+    
     public int _lastFieldIndex = -1;
     public List _saveLastFieldValue = new ArrayList();
     public List _fieldNames = new ArrayList();
     public List _fieldValues = new ArrayList();
-	
+    
     public boolean saveAdditionalInfo = true;
     
     public int EXTRA_START = 17;
-
+    
     /* Used when multiadding movies, if adding fileinfo
-       to existing movie */
+     to existing movie */
     private File multiAddFile; 
-	
+    
     public ModelEntry model;
-
-
+    
+    
     public ModelMovieInfo(boolean episode, boolean loadEmptyAdditionalInfoFields) {
         
         isEpisode = episode;
-                
+        
         if (isEpisode)
             model = new ModelEpisode();
         else
             model = new ModelMovie();
-
+        
         initializeAdditionalInfo(loadEmptyAdditionalInfoFields);
     }
-	
+    
     public ModelMovieInfo(ModelEntry model, boolean loadEmptyAdditionalInfoFields) {
-				
-	if (model instanceof ModelEpisode) {
-	    this.model = new ModelEpisode((ModelEpisode) model);
-	    isEpisode = true;
-	}
-	else {
-	    this.model = new ModelMovie((ModelMovie) model);
-	}
-
-	initializeAdditionalInfo(loadEmptyAdditionalInfoFields);
+        
+        if (model instanceof ModelEpisode) {
+            this.model = new ModelEpisode((ModelEpisode) model);
+            isEpisode = true;
+        }
+        else {
+            this.model = new ModelMovie((ModelMovie) model);
+        }
+        
+        initializeAdditionalInfo(loadEmptyAdditionalInfoFields);
     }
     
     
@@ -79,40 +79,40 @@ public class ModelMovieInfo {
         this.model = model;
         saveAdditionalInfo = false;
     }
-
+    
     
     public void addModelChangedEventListenener(ModelUpdatedEventListener listener) {
-	modelUpdatedHandler.addModelChangedEventListenener(listener);
+        modelUpdatedHandler.addModelChangedEventListenener(listener);
     }
-	
+    
     public void modelChanged(Object source) {
-	modelUpdatedHandler.modelChanged(source);
+        modelUpdatedHandler.modelChanged(source);
     }
-	
+    
     
     public Image getCoverImage() {
-	    
-	Image image = null;
-	    
-	try {
-	        
-	    if (model.getCoverData() != null) {
-		image = Toolkit.getDefaultToolkit().createImage(model.getCoverData()).getScaledInstance(97,145, Image.SCALE_SMOOTH);
+        
+        Image image = null;
+        
+        try {
+            
+            if (model.getCoverData() != null) {
+                image = Toolkit.getDefaultToolkit().createImage(model.getCoverData()).getScaledInstance(97,145, Image.SCALE_SMOOTH);
             }
             else if (MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL") && 
-		     !MovieManager.getConfig().getStoreCoversLocally()) {
-		
+                    !MovieManager.getConfig().getStoreCoversLocally()) {
+                
                 model.updateCoverData();
                 byte [] coverData = model.getCoverData();
-	                
+                
                 if (coverData != null)
                     image = Toolkit.getDefaultToolkit().createImage(model.getCoverData());
                 else
                     log.warn("Cover data not available."); //$NON-NLS-1$
             }
             else if (!model.getCover().equals("")) {
-               
-		File cover = new File(MovieManager.getConfig().getCoversPath(), model.getCover());
+                
+                File cover = new File(MovieManager.getConfig().getCoversPath(), model.getCover());
                 
                 if ((cover.exists())) {
                     /* Loads the image...*/
@@ -123,14 +123,14 @@ public class ModelMovieInfo {
             if (image == null) {
                 image = FileUtil.getImage("/images/" + MovieManager.getConfig().getNoCover()).getScaledInstance(97,97,Image.SCALE_SMOOTH); //$NON-NLS-1$
             }
-	} catch (Exception e) {
-	    log.error("", e); //$NON-NLS-1$
-	}
-	        
-	if (image == null) 
-	    log.warn("Cover file not found."); //$NON-NLS-1$
-            
-	return image;
+        } catch (Exception e) {
+            log.error("", e); //$NON-NLS-1$
+        }
+        
+        if (image == null) 
+            log.warn("Cover file not found."); //$NON-NLS-1$
+        
+        return image;
     }
     
     public Image getSeenImage() {
@@ -141,24 +141,24 @@ public class ModelMovieInfo {
             image = FileUtil.getImage("/images/seen.png"); //$NON-NLS-1$
         else
             image = FileUtil.getImage("/images/unseen.png"); //$NON-NLS-1$
-    
+        
         return image.getScaledInstance(18,18,Image.SCALE_SMOOTH);    
     }
     
     
     /*Used when multiadding*/
     public File getMultiAddFile() {
-    	return multiAddFile;
+        return multiAddFile;
     }
     
     /*Used when multiadding*/
     public void setMultiAddFile(File multiAddFile) {
-    	this.multiAddFile = multiAddFile;
+        this.multiAddFile = multiAddFile;
     }
-	
+    
     public void setCover(String cover, byte[] coverData) {
-    	model.setCover(cover);
-    	model.setCoverData(coverData);
+        model.setCover(cover);
+        model.setCoverData(coverData);
         
         modelChanged(this);
     }	
@@ -175,33 +175,33 @@ public class ModelMovieInfo {
     
     public void setGeneralInfoFieldsEmpty() {
         
-    	model.setKey(-1);
-    	model.setUrlKey("");
-    	model.setCover("");
-    	model.setCoverData(null);
-    	model.setDate("");
-    	model.setDirectedBy("");
-    	model.setWrittenBy("");
-    	model.setGenre("");
-    	model.setRating("");
-    	model.setPlot("");
-    	model.setCast("");
-    	model.setNotes("");
-    	model.setSeen(false);
-    	model.setAka("");
-    	model.setCountry("");
-    	model.setLanguage("");
-    	model.setColour("");
-    	model.setMpaa("");
-    	model.setCertification("");
-    	model.setWebSoundMix("");
-    	model.setWebRuntime("");
-    	model.setAwards("");
-    	
-    	if (isEpisode) {
-	    ((ModelEpisode) model).setMovieKey(-1);
-	    ((ModelEpisode) model).setEpisodeNumber(-1);
-    	}
+        model.setKey(-1);
+        model.setUrlKey("");
+        model.setCover("");
+        model.setCoverData(null);
+        model.setDate("");
+        model.setDirectedBy("");
+        model.setWrittenBy("");
+        model.setGenre("");
+        model.setRating("");
+        model.setPlot("");
+        model.setCast("");
+        model.setNotes("");
+        model.setSeen(false);
+        model.setAka("");
+        model.setCountry("");
+        model.setLanguage("");
+        model.setColour("");
+        model.setMpaa("");
+        model.setCertification("");
+        model.setWebSoundMix("");
+        model.setWebRuntime("");
+        model.setAwards("");
+        
+        if (isEpisode) {
+            ((ModelEpisode) model).setMovieKey(-1);
+            ((ModelEpisode) model).setEpisodeNumber(-1);
+        }
         
         modelChanged(this);
     }
@@ -210,154 +210,158 @@ public class ModelMovieInfo {
      * Empties all the additional fields values stored in the _fieldValues arrayList
      **/
     public void setAdditionalInfoFieldsEmpty() {
-	
-	try {
-	    for (int i = 0; i < _fieldValues.size(); i++)
-	    	_fieldValues.set(i,""); //$NON-NLS-1$
-	    
-	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
-	    e.printStackTrace();
-	    _hasReadProperties = false;
-	}
-    
-	modelChanged(this);
+        
+        try {
+            for (int i = 0; i < _fieldValues.size(); i++)
+                _fieldValues.set(i,""); //$NON-NLS-1$
+            
+        } catch (Exception e) {
+            log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
+            e.printStackTrace();
+            _hasReadProperties = false;
+        }
+        
+        modelChanged(this);
     }
     
     public void saveAdditionalInfoData() {
-
-	ModelAdditionalInfo additionalInfo = model.getAdditionalInfo();
-
-	/* Sets the additional info... */
-		
+        
+        ModelAdditionalInfo additionalInfo = model.getAdditionalInfo();
+        
+        /* Sets the additional info... */
+        
         // Duration
-	if (!((String) _fieldValues.get(1)).equals("")) { //$NON-NLS-1$
-	    additionalInfo.setDuration(Integer.parseInt((String) _fieldValues.get(1)));
-	}
-
-	// file size
-	if (!((String) _fieldValues.get(2)).equals("")) { //$NON-NLS-1$
-	    additionalInfo.setFileSize(Integer.parseInt((String) _fieldValues.get(2)));
-	}
-
-	// Cds
-	if (!((String) _fieldValues.get(3)).equals("")) { //$NON-NLS-1$
-	    additionalInfo.setCDs(Integer.parseInt((String) _fieldValues.get(3)));
-	}	 
-
-	// CD cases
-	if (!((String) _fieldValues.get(4)).equals("")) { //$NON-NLS-1$
-	    additionalInfo.setCDCases(Double.parseDouble((String) _fieldValues.get(4)));
-	}
-
-	// File count
-	if (!((String) _fieldValues.get(14)).equals("")) { //$NON-NLS-1$
-	    additionalInfo.setFileCount(Integer.parseInt((String) _fieldValues.get(14)));
-
-	}
-
-	additionalInfo.setSubtitles((String) _fieldValues.get(0));
-	additionalInfo.setResolution((String) _fieldValues.get(5));
-	additionalInfo.setVideoCodec((String) _fieldValues.get(6));
-	additionalInfo.setVideoRate((String) _fieldValues.get(7));
-	additionalInfo.setVideoBitrate((String) _fieldValues.get(8));
-	additionalInfo.setAudioCodec((String) _fieldValues.get(9));
-	additionalInfo.setAudioRate((String) _fieldValues.get(10));
-	additionalInfo.setAudioBitrate((String) _fieldValues.get(11));
-	additionalInfo.setAudioChannels((String) _fieldValues.get(1));
-	additionalInfo.setFileLocation((String) _fieldValues.get(13));
-
-	additionalInfo.setContainer((String) _fieldValues.get(15));
-	additionalInfo.setMediaType((String) _fieldValues.get(16));
-
-
-	ArrayList extraFieldValuesList = new ArrayList();
-
-	for (int i = EXTRA_START; i <  _fieldNames.size(); i++) {
-	    extraFieldValuesList.add( _fieldValues.get(i));
-	}
-	additionalInfo.setExtraInfoFieldValues(extraFieldValuesList);
-
+        if (!((String) _fieldValues.get(1)).equals("")) { //$NON-NLS-1$
+            additionalInfo.setDuration(Integer.parseInt((String) _fieldValues.get(1)));
+        }
+        
+        // file size
+        if (!((String) _fieldValues.get(2)).equals("")) { //$NON-NLS-1$
+            additionalInfo.setFileSize(Integer.parseInt((String) _fieldValues.get(2)));
+        }
+        
+        // Cds
+        if (!((String) _fieldValues.get(3)).equals("")) { //$NON-NLS-1$
+            additionalInfo.setCDs(Integer.parseInt((String) _fieldValues.get(3)));
+        }	 
+        
+        // CD cases
+        if (!((String) _fieldValues.get(4)).equals("")) { //$NON-NLS-1$
+            additionalInfo.setCDCases(Double.parseDouble((String) _fieldValues.get(4)));
+        }
+        
+        // File count
+        if (!((String) _fieldValues.get(14)).equals("")) { //$NON-NLS-1$
+            additionalInfo.setFileCount(Integer.parseInt((String) _fieldValues.get(14)));
+            
+        }
+        
+        additionalInfo.setSubtitles((String) _fieldValues.get(0));
+        additionalInfo.setResolution((String) _fieldValues.get(5));
+        additionalInfo.setVideoCodec((String) _fieldValues.get(6));
+        additionalInfo.setVideoRate((String) _fieldValues.get(7));
+        additionalInfo.setVideoBitrate((String) _fieldValues.get(8));
+        additionalInfo.setAudioCodec((String) _fieldValues.get(9));
+        additionalInfo.setAudioRate((String) _fieldValues.get(10));
+        additionalInfo.setAudioBitrate((String) _fieldValues.get(11));
+        additionalInfo.setAudioChannels((String) _fieldValues.get(12));
+        additionalInfo.setFileLocation((String) _fieldValues.get(13));
+        
+        additionalInfo.setContainer((String) _fieldValues.get(15));
+        additionalInfo.setMediaType((String) _fieldValues.get(16));
+        
+        
+        ArrayList extraFieldValuesList = new ArrayList();
+        
+        for (int i = EXTRA_START; i <  _fieldNames.size(); i++) {
+            extraFieldValuesList.add( _fieldValues.get(i));
+        }
+        additionalInfo.setExtraInfoFieldValues(extraFieldValuesList);
+        
     }
-	
-
+    
+    
     public ModelEntry saveToDatabase(String listName) {
-
-	Database database = MovieManager.getIt().getDatabase();
-	ModelAdditionalInfo additionalInfo = model.getAdditionalInfo();
-		
-	if (isEpisode) {
-			
-	    if (_edit) {
-		/* Editing episode */
-				
-		database.setGeneralInfoEpisode(model.getKey(), (ModelEpisode) model);
-		database.setAdditionalInfoEpisode(model.getKey(), additionalInfo);
-		database.setExtraInfoEpisode(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
-				
-	    } else {
-		/* Adding episode */
-				
-		int episodeindex = database.addGeneralInfoEpisode((ModelEpisode) model);
-
-		if (episodeindex != -1) {
-
-		    /* Adds the additional info... */
-		    database.addAdditionalInfoEpisode(episodeindex, additionalInfo);
-
-		    if (ModelAdditionalInfo.getExtraInfoFieldNames().size() > 0) {
-			
+        
+        saveAdditionalInfoData();
+        
+        Database database = MovieManager.getIt().getDatabase();
+        ModelAdditionalInfo additionalInfo = model.getAdditionalInfo();
+        
+        System.err.println("additionalInfo:audiochannels:" + additionalInfo.getAudioChannels());
+        
+        if (isEpisode) {
+            
+            if (_edit) {
+                /* Editing episode */
+                
+                database.setGeneralInfoEpisode(model.getKey(), (ModelEpisode) model);
+                database.setAdditionalInfoEpisode(model.getKey(), additionalInfo);
+                database.setExtraInfoEpisode(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+                
+            } else {
+                /* Adding episode */
+                
+                int episodeindex = database.addGeneralInfoEpisode((ModelEpisode) model);
+                
+                if (episodeindex != -1) {
+                    
+                    /* Adds the additional info... */
+                    database.addAdditionalInfoEpisode(episodeindex, additionalInfo);
+                    
+                    if (ModelAdditionalInfo.getExtraInfoFieldNames().size() > 0) {
+                        
                         database.addExtraInfoEpisode(episodeindex, ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
-		    }   
+                    }   
                 }
-	    }
-	} else {
-			
-	    if (_edit) {
-				
-		/* Editing movie */
-
-		database.setGeneralInfo((ModelMovie) model);
+            }
+        } else {
+            
+            if (_edit) {
+                
+                /* Editing movie */
+                
+                database.setGeneralInfo((ModelMovie) model);
                 
                 if (saveAdditionalInfo) {
                     database.setAdditionalInfo(model.getKey(), additionalInfo);
                     database.setExtraInfoMovie(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
                 }
                 
-	    } else {
-		/* Adding new movie */
-				
-		int index = MovieManager.getIt().getDatabase().addGeneralInfo((ModelMovie) model);
-				
-		model.setKey(index);
-				
-		if (index != -1) {
-					
-		    database.addAdditionalInfo(model.getKey(), additionalInfo);
-										
-		    database.addExtraInfoMovie(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
-
-		    /* Add new row in Lists table with default values */
-		    ArrayList listNames = database.getListsColumnNames();
-		    ArrayList listValues = new ArrayList();
-
-		    String applyToThisList = ""; //$NON-NLS-1$
-
-		    if (listName != null)
-			applyToThisList = listName;
-
-		    for (int i = 0; i < listNames.size(); i++) {
-			if (listNames.get(i).equals(applyToThisList))
-			    listValues.add(new Boolean(true));
-			else
-			    listValues.add(new Boolean(false));
-		    }
-		    database.addLists(model.getKey(), listNames, listValues);
-		}
-	    }
-	}
+            } else {
+                /* Adding new movie */
+                
+                int index = MovieManager.getIt().getDatabase().addGeneralInfo((ModelMovie) model);
+                
+                model.setKey(index);
+                
+                if (index != -1) {
+                    
+                    database.addAdditionalInfo(model.getKey(), additionalInfo);
+                    
+                    database.addExtraInfoMovie(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+                    
+                    /* Add new row in Lists table with default values */
+                    ArrayList listNames = database.getListsColumnNames();
+                    ArrayList listValues = new ArrayList();
+                    
+                    String applyToThisList = ""; //$NON-NLS-1$
+                    
+                    if (listName != null)
+                        applyToThisList = listName;
+                    
+                    for (int i = 0; i < listNames.size(); i++) {
+                        if (listNames.get(i).equals(applyToThisList))
+                            listValues.add(new Boolean(true));
+                        else
+                            listValues.add(new Boolean(false));
+                    }
+                    database.addLists(model.getKey(), listNames, listValues);
+                }
+            }
+        }
         
-	return model;
+        return model;
     }
     
     
@@ -365,172 +369,177 @@ public class ModelMovieInfo {
      * Sets _saveCover.
      **/
     public void setSaveCover(boolean saveCover) {
-    
-	if (!((MovieManager.getIt().getDatabase() instanceof DatabaseMySQL) && !MovieManager.getConfig().getStoreCoversLocally()))
-	    _saveCover = saveCover;
-	else
-	    _saveCover = false;
+        
+        if (!((MovieManager.getIt().getDatabase() instanceof DatabaseMySQL) && !MovieManager.getConfig().getStoreCoversLocally()))
+            _saveCover = saveCover;
+        else
+            _saveCover = false;
     }
     
     /**
      * Gets the file properties...
      **/
     public void getFileInfo(File [] file) {
-    
-	for (int i = 0; i < file.length; i++) {
         
-	    if (!file[i].isFile())
-		continue;
-        
-	    try {
-		/* Reads the info... */
-		FilePropertiesMovie properties = new FilePropertiesMovie(file[i].getAbsolutePath(), MovieManager.getConfig().getUseMediaInfoDLL());
-        
-		getFileInfo(properties);
-        
-	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
-	    }
-	}
+        for (int i = 0; i < file.length; i++) {
+            
+            if (!file[i].isFile())
+                continue;
+            
+            try {
+                /* Reads the info... */
+                FilePropertiesMovie properties = new FilePropertiesMovie(file[i].getAbsolutePath(), MovieManager.getConfig().getUseMediaInfoDLL());
+                
+                getFileInfo(properties);
+                
+            } catch (Exception e) {
+                log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
+            }
+        }
     }    
     
-	
+    
     public void getFileInfo(FilePropertiesMovie properties) {
-		
-	try {
-			
-	    //executeCommandAdditionalInfo();
-			
-	    if (!properties.getSubtitles().equals("")) //$NON-NLS-1$
-		_fieldValues.set(0, properties.getSubtitles());
-			
-	    /* Saves info... */
-	    int duration = properties.getDuration();
-		    
-	    if (_hasReadProperties && duration != -1 && !((String) _fieldValues.get(1)).equals("")) { //$NON-NLS-1$
-		duration += Integer.parseInt((String) _fieldValues.get(1));
-	    }
-	    if(duration != -1) {
-		_fieldValues.set(1, String.valueOf(duration));
-		_saveLastFieldValue.set(1,new Boolean(false));
-	    } else {
-		_fieldValues.set(1, ""); //$NON-NLS-1$
-	    }
-			
-	    int fileSize = properties.getFileSize();
-	    if (_hasReadProperties && fileSize != -1 && !((String) _fieldValues.get(2)).equals("")) { //$NON-NLS-1$
-		fileSize += Integer.parseInt((String) _fieldValues.get(2));
-	    }
-	    if (fileSize != -1) {
-		_fieldValues.set(2,String.valueOf(fileSize));
-		_saveLastFieldValue.set(2,new Boolean(false));
-	    } else {
-		_fieldValues.set(2,""); //$NON-NLS-1$
-	    }
-	    if (fileSize != -1) {
-		int cds = (int)Math.ceil(fileSize / 702.0);
-		_fieldValues.set(3,String.valueOf(cds));
-		_saveLastFieldValue.set(3,new Boolean(false));
-	    }
-			
-	    if (((String) _fieldValues.get(4)).equals("")) { //$NON-NLS-1$
-		_fieldValues.set(4,String.valueOf(1));
-		_saveLastFieldValue.set(4,new Boolean(false));
-	    }
-			
-	    _fieldValues.set(5,properties.getVideoResolution());
-	    _fieldValues.set(6,properties.getVideoCodec());
-	    _fieldValues.set(7,properties.getVideoRate());
-	    _fieldValues.set(8,properties.getVideoBitrate());
-	    _fieldValues.set(9,properties.getAudioCodec());
-	    _fieldValues.set(10,properties.getAudioRate());
-	    _fieldValues.set(11,properties.getAudioBitrate());
-		  
-	    String audioChannels = properties.getAudioChannels();
-	    _fieldValues.set(12, audioChannels);
-			
-	    String location = properties.getLocation();
-			
-	    /* Adds location only if file exist on writable media */
-	    if (MovieManager.getConfig().isWritable(new File(location).getParentFile())) {
-			    
-		String currentValue = (String) _fieldValues.get(13);
-			    
-		if (currentValue.equals("")) { //$NON-NLS-1$
-		    _fieldValues.set(13, location);
-		}
-		else {
-		    if (_hasReadProperties) {
-				    
-			StringTokenizer tokenizer = new StringTokenizer(currentValue, "*"); //$NON-NLS-1$
-			boolean fileAlreadyAdded = false;
-				    
-			while (tokenizer.hasMoreTokens()) {
-			    if (tokenizer.nextToken().equals(location))
-				fileAlreadyAdded = true;
-			}
-				    
-			if (fileAlreadyAdded)
-			    log.warn("file already added"); //$NON-NLS-1$
-			else {
-			    currentValue += "*" + location; //$NON-NLS-1$
-			    _fieldValues.set(13, currentValue);
-			}
-		    }
-		    else 
-			_fieldValues.set(13, location);
-		}
-	    }
-			
-	    int fileCount = 1;
-	    if (_hasReadProperties && !((String) _fieldValues.get(14)).equals("")) { //$NON-NLS-1$
-		fileCount += Integer.parseInt((String) _fieldValues.get(14));
-	    }
-			
-	    _fieldValues.set(14, String.valueOf(fileCount));
-			
-	    _fieldValues.set(15, properties.getContainer());
-			
-	    _fieldValues.set(16, model.getAdditionalInfo().getMediaType());
-			
-	    /* Sets title if title field is empty... */
-	    if (model.getTitle().equals("")) { //$NON-NLS-1$
-			    
-		if (!properties.getMetaDataTagInfo("INAM").equals("")) //$NON-NLS-1$ //$NON-NLS-2$
-		    model.setTitle(properties.getMetaDataTagInfo("INAM")); //$NON-NLS-1$
-			    
-		else {
-		    String title = properties.getFileName();
-				
-		    if (title.lastIndexOf(".") != -1) //$NON-NLS-1$
-			title = title.substring(0, title.lastIndexOf('.'));
-				
-		    setTitle(title);
-		}
-	    }
-			
-	    /* The value currently in the selected index will not be saved, but be replaced by the new info */
-	    _saveLastFieldValue.set(_lastFieldIndex, new Boolean(false).toString());
-	    //executeCommandAdditionalInfo();
-	    for (int u = 0; u < _saveLastFieldValue.size(); u++) {
-		_saveLastFieldValue.set(u, new Boolean(true));
-	    }
-			
-	    _hasReadProperties = true;
-			
-	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
-	}
-		
+        
+        try {
+            
+            //executeCommandAdditionalInfo();
+            
+            if (!properties.getSubtitles().equals("")) //$NON-NLS-1$
+                _fieldValues.set(0, properties.getSubtitles());
+            
+            /* Saves info... */
+            int duration = properties.getDuration();
+            
+            if (_hasReadProperties && duration != -1 && !((String) _fieldValues.get(1)).equals("")) { //$NON-NLS-1$
+                duration += Integer.parseInt((String) _fieldValues.get(1));
+            }
+            if(duration != -1) {
+                _fieldValues.set(1, String.valueOf(duration));
+                _saveLastFieldValue.set(1,new Boolean(false));
+            } else {
+                _fieldValues.set(1, ""); //$NON-NLS-1$
+            }
+            
+            int fileSize = properties.getFileSize();
+            
+            if (_hasReadProperties && fileSize != -1 && !((String) _fieldValues.get(2)).equals("")) { //$NON-NLS-1$
+                fileSize += Integer.parseInt((String) _fieldValues.get(2));
+            }
+            
+            if (fileSize != -1) {
+                _fieldValues.set(2,String.valueOf(fileSize));
+                _saveLastFieldValue.set(2,new Boolean(false));
+            } else {
+                _fieldValues.set(2,""); //$NON-NLS-1$
+            }
+            
+            if (fileSize != -1) {
+                int cds = (int)Math.ceil(fileSize / 702.0);
+                _fieldValues.set(3,String.valueOf(cds));
+                _saveLastFieldValue.set(3,new Boolean(false));
+            }
+            
+            if (((String) _fieldValues.get(4)).equals("")) { //$NON-NLS-1$
+                _fieldValues.set(4,String.valueOf(1));
+                _saveLastFieldValue.set(4,new Boolean(false));
+            }
+            
+            _fieldValues.set(5,properties.getVideoResolution());
+            _fieldValues.set(6,properties.getVideoCodec());
+            _fieldValues.set(7,properties.getVideoRate());
+            _fieldValues.set(8,properties.getVideoBitrate());
+            _fieldValues.set(9,properties.getAudioCodec());
+            _fieldValues.set(10,properties.getAudioRate());
+            _fieldValues.set(11,properties.getAudioBitrate());
+            
+            String audioChannels = properties.getAudioChannels();
+            _fieldValues.set(12, audioChannels);
+            
+            System.err.println("audioChannels:" + audioChannels);
+            
+            String location = properties.getLocation();
+            
+            /* Adds location only if file exist on writable media */
+            if (MovieManager.getConfig().isWritable(new File(location).getParentFile())) {
+                
+                String currentValue = (String) _fieldValues.get(13);
+                
+                if (currentValue.equals("")) { //$NON-NLS-1$
+                    _fieldValues.set(13, location);
+                }
+                else {
+                    if (_hasReadProperties) {
+                        
+                        StringTokenizer tokenizer = new StringTokenizer(currentValue, "*"); //$NON-NLS-1$
+                        boolean fileAlreadyAdded = false;
+                        
+                        while (tokenizer.hasMoreTokens()) {
+                            if (tokenizer.nextToken().equals(location))
+                                fileAlreadyAdded = true;
+                        }
+                        
+                        if (fileAlreadyAdded)
+                            log.warn("file already added"); //$NON-NLS-1$
+                        else {
+                            currentValue += "*" + location; //$NON-NLS-1$
+                            _fieldValues.set(13, currentValue);
+                        }
+                    }
+                    else 
+                        _fieldValues.set(13, location);
+                }
+            }
+            
+            int fileCount = 1;
+            if (_hasReadProperties && !((String) _fieldValues.get(14)).equals("")) { //$NON-NLS-1$
+                fileCount += Integer.parseInt((String) _fieldValues.get(14));
+            }
+            
+            _fieldValues.set(14, String.valueOf(fileCount));
+            
+            _fieldValues.set(15, properties.getContainer());
+            
+            _fieldValues.set(16, model.getAdditionalInfo().getMediaType());
+            
+            /* Sets title if title field is empty... */
+            if (model.getTitle().equals("")) { //$NON-NLS-1$
+                
+                if (!properties.getMetaDataTagInfo("INAM").equals("")) //$NON-NLS-1$ //$NON-NLS-2$
+                    model.setTitle(properties.getMetaDataTagInfo("INAM")); //$NON-NLS-1$
+                
+                else {
+                    String title = properties.getFileName();
+                    
+                    if (title.lastIndexOf(".") != -1) //$NON-NLS-1$
+                        title = title.substring(0, title.lastIndexOf('.'));
+                    
+                    setTitle(title);
+                }
+            }
+            
+            /* The value currently in the selected index will not be saved, but be replaced by the new info */
+            _saveLastFieldValue.set(_lastFieldIndex, new Boolean(false).toString());
+            //executeCommandAdditionalInfo();
+            for (int u = 0; u < _saveLastFieldValue.size(); u++) {
+                _saveLastFieldValue.set(u, new Boolean(true));
+            }
+            
+            _hasReadProperties = true;
+            
+        } catch (Exception e) {
+            log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
+        }
+        
     }
-	
+    
     
     public void initializeAdditionalInfo(boolean loadEmpty) {
         
         ModelAdditionalInfo additionalInfo = null;
         
         if (!loadEmpty) {
-      
+            
             if (model.getHasAdditionalInfoData())
                 model.updateAdditionalInfoData();
             
@@ -544,17 +553,17 @@ public class ModelMovieInfo {
             _fieldValues.add("");
         else
             _fieldValues.add(additionalInfo.getSubtitles());
-         
+        
         _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Duration"); //$NON-NLS-1$
-      
-      
+        
+        
         if (!loadEmpty && additionalInfo.getDuration() > 0) {
             _fieldValues.add(String.valueOf(additionalInfo.getDuration()));
         } else {
             _fieldValues.add(""); //$NON-NLS-1$
         }
-         
+        
         _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("File Size"); //$NON-NLS-1$
         
@@ -563,16 +572,16 @@ public class ModelMovieInfo {
         } else {
             _fieldValues.add(""); //$NON-NLS-1$
         }
-       
+        
         _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("CDs"); //$NON-NLS-1$
         
         if (!loadEmpty && additionalInfo.getCDs() > 0) {
-	    _fieldValues.add(String.valueOf(additionalInfo.getCDs()));
+            _fieldValues.add(String.valueOf(additionalInfo.getCDs()));
         } else {
             _fieldValues.add(""); //$NON-NLS-1$
         }
-         
+        
         _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("CD Cases"); //$NON-NLS-1$
         
@@ -581,7 +590,7 @@ public class ModelMovieInfo {
         } else {
             _fieldValues.add(""); //$NON-NLS-1$
         }
-            
+        
         _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Resolution"); //$NON-NLS-1$
         
@@ -639,13 +648,13 @@ public class ModelMovieInfo {
             _fieldValues.add(additionalInfo.getAudioBitrate());
         
         _saveLastFieldValue.add(new Boolean(true));
-	_fieldNames.add("Audio Channels"); //$NON-NLS-1$
-       
-	if (loadEmpty)
-	    _fieldValues.add("");
-	else
-	    _fieldValues.add(additionalInfo.getAudioChannels());
-       
+        _fieldNames.add("Audio Channels"); //$NON-NLS-1$
+        
+        if (loadEmpty)
+            _fieldValues.add("");
+        else
+            _fieldValues.add(additionalInfo.getAudioChannels());
+        
         _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Location"); //$NON-NLS-1$
         
@@ -656,7 +665,7 @@ public class ModelMovieInfo {
         
         _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("File Count"); //$NON-NLS-1$
-                
+        
         
         if (!loadEmpty && additionalInfo.getFileCount() > 0) {
             _fieldValues.add(String.valueOf(additionalInfo.getFileCount()));
@@ -664,7 +673,7 @@ public class ModelMovieInfo {
             _fieldValues.add(""); //$NON-NLS-1$
         }
         
-                
+        
         _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Container"); //$NON-NLS-1$
         
@@ -680,8 +689,8 @@ public class ModelMovieInfo {
             _fieldValues.add("");
         else
             _fieldValues.add(additionalInfo.getMediaType());
-                
-       
+        
+        
         ArrayList extraFieldNames = ModelAdditionalInfo.getExtraInfoFieldNames();
         ArrayList extraFieldValues = null;
         
@@ -689,7 +698,7 @@ public class ModelMovieInfo {
             extraFieldValues = additionalInfo.getExtraInfoFieldValues();
         
         for (int i = 0; i < extraFieldNames.size(); i++) {
-        
+            
             _fieldNames.add(extraFieldNames.get(i));
             
             if (loadEmpty)
@@ -716,7 +725,7 @@ public class ModelMovieInfo {
     
     
     public boolean saveCoverToFile() throws Exception {
-         
+        
         if (!_saveCover)
             return false;
         
@@ -749,7 +758,7 @@ public class ModelMovieInfo {
         
         return true;
     }
-	
+    
     
     public void executeTitleModification(String originalTitle) {
         
@@ -762,7 +771,7 @@ public class ModelMovieInfo {
             
             String akaTitles = model.getAka();
             String newAkaTitles = "";
-             
+            
             StringTokenizer tokenizer = new StringTokenizer(akaTitles, "\r\n", false);
             
             String value;
@@ -777,22 +786,22 @@ public class ModelMovieInfo {
                 key = MovieManagerCommandAddMultipleMoviesByFile.performExcludeParantheses(value, false).trim();
                 
                 if (MovieManager.getConfig().getUseLanguageSpecificTitle() && value.indexOf("[" + languageCode + "]") != -1) {
-                     
-		    /* Adds original title to aka list */
-		    akaKeys.add(0, model.getTitle());
-                        
-		    if (MovieManager.getConfig().getIncludeAkaLanguageCodes())
-			akaValues.add(0, originalTitle + " (Original)");
-		    else
-			akaValues.add(0, originalTitle);
-                        
-		    setTitle(key);
+                    
+                    /* Adds original title to aka list */
+                    akaKeys.add(0, model.getTitle());
+                    
+                    if (MovieManager.getConfig().getIncludeAkaLanguageCodes())
+                        akaValues.add(0, originalTitle + " (Original)");
+                    else
+                        akaValues.add(0, originalTitle);
+                    
+                    setTitle(key);
                 }
                 
-                 
+                
                 /* If aka translation */
                 if (!(!MovieManager.getConfig().getStoreAllAkaTitles() && value.indexOf("[") != -1)) {
-                     
+                    
                     /* Adds the language code to the existing title */
                     if (MovieManager.getConfig().getNoDuplicateAkaTitles() && (index = akaKeys.indexOf(key)) != -1) {
                         value =  value.replaceFirst(key, "");
@@ -809,35 +818,35 @@ public class ModelMovieInfo {
                         akaValues.add(value);
                     }
                 }
-	    }
-                
+            }
+            
             while (!akaValues.isEmpty()) {
-		newAkaTitles += akaValues.remove(0) + "\r\n";
+                newAkaTitles += akaValues.remove(0) + "\r\n";
             }   
-                
+            
             model.setAka(newAkaTitles.trim());
             modelChanged(this);
         }
     }
-        
-  
+    
+    
     public void clearModel() {
-		
-	if (isEpisode)
-	    model = new ModelEpisode();
-	else
-	    model = new ModelMovie();
+        
+        if (isEpisode)
+            model = new ModelEpisode();
+        else
+            model = new ModelMovie();
         
         modelChanged(this);
     }
-	
+    
     public void setModel(ModelEntry model) {
-	this.model = model;
-
-	if (model instanceof ModelEpisode)
-	    isEpisode = true;
-	else
-	    isEpisode = false;
+        this.model = model;
+        
+        if (model instanceof ModelEpisode)
+            isEpisode = true;
+        else
+            isEpisode = false;
         
         modelChanged(this);
     }
