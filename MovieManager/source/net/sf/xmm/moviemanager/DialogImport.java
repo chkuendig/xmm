@@ -181,8 +181,8 @@ public class DialogImport extends JDialog implements ActionListener {
 	
 	
 	JLabel textlabel = new JLabel("Import movies from a textfile containing movie titles only");
-	JPanel labelPanel = new JPanel();
-	labelPanel.add(textlabel);
+	JPanel textLabelPanel = new JPanel();
+    textLabelPanel.add(textlabel);
 	
 	/* textfile path */
 	textFilePath = new JTextField(27);
@@ -201,7 +201,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	textPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Directory "), BorderFactory.createEmptyBorder(0,0,0,0))));
 	
 	JPanel textFilePanel = new JPanel(new BorderLayout());
-	textFilePanel.add(labelPanel, BorderLayout.NORTH);
+	textFilePanel.add(textLabelPanel, BorderLayout.NORTH);
 	textFilePanel.add(textPathPanel, BorderLayout.SOUTH);
 	
 	/* Excel spreadsheet */
@@ -307,8 +307,12 @@ public class DialogImport extends JDialog implements ActionListener {
     
     xmlPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Directory "), BorderFactory.createEmptyBorder(0,0,0,0))));
     
+    JLabel xmlLabel = new JLabel("Import movies from a XML file (Must be exported by MeD's Movie Manager)");
+    JPanel xmlLabelPanel = new JPanel();
+    xmlLabelPanel.add(xmlLabel);
+    
     JPanel xmlFilePanel = new JPanel(new BorderLayout());
-    xmlFilePanel.add(labelPanel, BorderLayout.NORTH);
+    xmlFilePanel.add(xmlLabelPanel, BorderLayout.NORTH);
     xmlFilePanel.add(xmlPathPanel, BorderLayout.SOUTH);
     
     
