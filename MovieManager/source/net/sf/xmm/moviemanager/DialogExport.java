@@ -43,7 +43,7 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 public class DialogExport extends JDialog implements ActionListener, ItemListener {
-                                     
+    
     static Logger log = Logger.getRootLogger();
     
     JRadioButton orderByMovieTitle;
@@ -53,7 +53,7 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
     
     JCheckBox applyCurrentAdvancedSearchSettings;
     JCheckBox exportCurrentList;
-
+    
     JRadioButton simpleExport;
     JRadioButton fullExport;
     
@@ -68,312 +68,316 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
     JTabbedPane tabs = null;
     
     public DialogExport() {
-	/* Dialog creation...*/
-	super(MovieManager.getIt());
-	/* Close dialog... */
-	
-	addWindowListener(new WindowAdapter() {
-		public void windowClosing(WindowEvent e) {
-		    dispose();
-		}
-	    });
-	
-	/*Enables dispose when pushing escape*/
-	KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-	Action escapeAction = new AbstractAction() {
-		public void actionPerformed(ActionEvent e) {
-		    dispose();
-		}
-	    };
-	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-	getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
-	
-	setTitle(Localizer.getString("DialogExport.title")); //$NON-NLS-1$
-	setResizable(false);
-	
-	
-	/* apply current search-filter values to list  */
-	exportCurrentList = new JCheckBox(Localizer.getString("DialogExport.panel-html-export.button.export-only-current-selected-list")); //$NON-NLS-1$
-	applyCurrentAdvancedSearchSettings = new JCheckBox(Localizer.getString("DialogExport.panel-html-export.button.use-current-advanced-search-settings")); //$NON-NLS-1$
-	
-	JPanel moviesPanel = new JPanel(new GridLayout(2, 1));
-	moviesPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,5,0,0) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-																					       "", //$NON-NLS-1$
-																					       TitledBorder.DEFAULT_JUSTIFICATION,
-																					       TitledBorder.DEFAULT_POSITION,
-																					       new Font(moviesPanel.getFont().getName(),Font.BOLD, moviesPanel.getFont().getSize())),
-																	      BorderFactory.createEmptyBorder(5,10,5,5))));
-	
-	moviesPanel.add(exportCurrentList);
-	moviesPanel.add(applyCurrentAdvancedSearchSettings);
-	
-	/*Order panel*/
-	orderByMovieTitle = new JRadioButton(Localizer.getString("DialogExport.panel-order-by.button.movie-title")); //$NON-NLS-1$
-	orderByDirectedBy = new JRadioButton(Localizer.getString("DialogExport.panel-order-by.button.direvted-by")); //$NON-NLS-1$
-	orderByRating = new JRadioButton(Localizer.getString("DialogExport.panel-order-by.button.rating")); //$NON-NLS-1$
-	orderByDate = new JRadioButton(Localizer.getString("DialogExport.panel-order-by.button.date")); //$NON-NLS-1$
-	
-	orderByMovieTitle.addItemListener(this);
-	orderByDirectedBy.addItemListener(this);
-	orderByRating.addItemListener(this);
-	orderByDate.addItemListener(this);
-
-	ButtonGroup orderGroup = new ButtonGroup();
-	orderGroup.add(orderByMovieTitle);
-	orderGroup.add(orderByDirectedBy);
-	orderGroup.add(orderByRating);
-	orderGroup.add(orderByDate);
-	
-	orderByMovieTitle.setSelected(true);
-	
-	JPanel orderByPanel = new JPanel(new GridLayout(2, 1));
-	orderByPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,5,0) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-																						Localizer.getString("DialogExport.panel-order-by.title"), //$NON-NLS-1$
-																						TitledBorder.DEFAULT_JUSTIFICATION,
-																						TitledBorder.DEFAULT_POSITION,
-																						new Font(orderByPanel.getFont().getName(),Font.BOLD, orderByPanel.getFont().getSize())),
-																	       BorderFactory.createEmptyBorder(5,5,5,5))));
-	
-	
-	orderByPanel.add(orderByMovieTitle);
-	orderByPanel.add(orderByDirectedBy);
-	orderByPanel.add(orderByRating);
-	orderByPanel.add(orderByDate);
-	
-	
-	/*Export options*/
-	simpleExport = new JRadioButton(Localizer.getString("DialogExport.panel-export-options.button.simple-export")); //$NON-NLS-1$
-	simpleExport.setActionCommand("Simple Export"); //$NON-NLS-1$
-	
-	fullExport = new JRadioButton(Localizer.getString("DialogExport.panel-export-options.button.full-export")); //$NON-NLS-1$
-	fullExport.setActionCommand("Full Export"); //$NON-NLS-1$
-	
-	if (MovieManager.getConfig().getExportType().equals("full")) //$NON-NLS-1$
-	    fullExport.setSelected(true);
-	else
-	    simpleExport.setSelected(true);
-	
-	/*Group the radio buttons.*/
-	ButtonGroup exportGroup = new ButtonGroup();
-	exportGroup.add(simpleExport);
-	exportGroup.add(fullExport);
-	
-	/*Register a listener for the radio buttons.*/
-	simpleExport.addActionListener(this);
-	fullExport.addActionListener(this);
-	
-	enableXhtml = new JCheckBox("XHTML"); //$NON-NLS-1$
-	enableXhtml.setActionCommand("XHTML"); //$NON-NLS-1$
-	
-	enableAlphabeticSplit = new JCheckBox(Localizer.getString("DialogExport.panel-export-options.button.divide-alphabetically")); //$NON-NLS-1$
-	enableAlphabeticSplit.setActionCommand("Divide alphabetically"); //$NON-NLS-1$
-	enableAlphabeticSplit.setEnabled(false);
-	enableAlphabeticSplit.addItemListener(this);
-	
-	/*Put the radio buttons in a column in a panel.*/
+        /* Dialog creation...*/
+        super(MovieManager.getIt());
+        /* Close dialog... */
+        
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
+        
+        /*Enables dispose when pushing escape*/
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        Action escapeAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        };
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+        getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
+        
+        setTitle(Localizer.getString("DialogExport.title")); //$NON-NLS-1$
+        setResizable(false);
+        
+        
+        /* apply current search-filter values to list  */
+        exportCurrentList = new JCheckBox(Localizer.getString("DialogExport.panel-html-export.button.export-only-current-selected-list")); //$NON-NLS-1$
+        applyCurrentAdvancedSearchSettings = new JCheckBox(Localizer.getString("DialogExport.panel-html-export.button.use-current-advanced-search-settings")); //$NON-NLS-1$
+        
+        JPanel moviesPanel = new JPanel(new GridLayout(2, 1));
+        moviesPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,5,0,0) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                "", //$NON-NLS-1$
+                TitledBorder.DEFAULT_JUSTIFICATION,
+                TitledBorder.DEFAULT_POSITION,
+                new Font(moviesPanel.getFont().getName(),Font.BOLD, moviesPanel.getFont().getSize())),
+                BorderFactory.createEmptyBorder(5,10,5,5))));
+        
+        moviesPanel.add(exportCurrentList);
+        moviesPanel.add(applyCurrentAdvancedSearchSettings);
+        
+        /*Order panel*/
+        orderByMovieTitle = new JRadioButton(Localizer.getString("DialogExport.panel-order-by.button.movie-title")); //$NON-NLS-1$
+        orderByDirectedBy = new JRadioButton(Localizer.getString("DialogExport.panel-order-by.button.direvted-by")); //$NON-NLS-1$
+        orderByRating = new JRadioButton(Localizer.getString("DialogExport.panel-order-by.button.rating")); //$NON-NLS-1$
+        orderByDate = new JRadioButton(Localizer.getString("DialogExport.panel-order-by.button.date")); //$NON-NLS-1$
+        
+        orderByMovieTitle.addItemListener(this);
+        orderByDirectedBy.addItemListener(this);
+        orderByRating.addItemListener(this);
+        orderByDate.addItemListener(this);
+        
+        ButtonGroup orderGroup = new ButtonGroup();
+        orderGroup.add(orderByMovieTitle);
+        orderGroup.add(orderByDirectedBy);
+        orderGroup.add(orderByRating);
+        orderGroup.add(orderByDate);
+        
+        orderByMovieTitle.setSelected(true);
+        
+        JPanel orderByPanel = new JPanel(new GridLayout(2, 1));
+        orderByPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,5,0) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                Localizer.getString("DialogExport.panel-order-by.title"), //$NON-NLS-1$
+                TitledBorder.DEFAULT_JUSTIFICATION,
+                TitledBorder.DEFAULT_POSITION,
+                new Font(orderByPanel.getFont().getName(),Font.BOLD, orderByPanel.getFont().getSize())),
+                BorderFactory.createEmptyBorder(5,5,5,5))));
+        
+        
+        orderByPanel.add(orderByMovieTitle);
+        orderByPanel.add(orderByDirectedBy);
+        orderByPanel.add(orderByRating);
+        orderByPanel.add(orderByDate);
+        
+        
+        /*Export options*/
+        simpleExport = new JRadioButton(Localizer.getString("DialogExport.panel-export-options.button.simple-export")); //$NON-NLS-1$
+        simpleExport.setActionCommand("Simple Export"); //$NON-NLS-1$
+        
+        fullExport = new JRadioButton(Localizer.getString("DialogExport.panel-export-options.button.full-export")); //$NON-NLS-1$
+        fullExport.setActionCommand("Full Export"); //$NON-NLS-1$
+        
+        if (MovieManager.getConfig().getExportType().equals("full")) //$NON-NLS-1$
+            fullExport.setSelected(true);
+        else
+            simpleExport.setSelected(true);
+        
+        /*Group the radio buttons.*/
+        ButtonGroup exportGroup = new ButtonGroup();
+        exportGroup.add(simpleExport);
+        exportGroup.add(fullExport);
+        
+        /*Register a listener for the radio buttons.*/
+        simpleExport.addActionListener(this);
+        fullExport.addActionListener(this);
+        
+        enableXhtml = new JCheckBox("XHTML"); //$NON-NLS-1$
+        enableXhtml.setActionCommand("XHTML"); //$NON-NLS-1$
+        
+        enableAlphabeticSplit = new JCheckBox(Localizer.getString("DialogExport.panel-export-options.button.divide-alphabetically")); //$NON-NLS-1$
+        enableAlphabeticSplit.setActionCommand("Divide alphabetically"); //$NON-NLS-1$
+        enableAlphabeticSplit.setEnabled(false);
+        enableAlphabeticSplit.addItemListener(this);
+        
+        /*Put the radio buttons in a column in a panel.*/
         JPanel exportOptionPanel = new JPanel(new GridLayout(2, 1));
-	
-	exportOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,5,0) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-																						     Localizer.getString("DialogExport.panel-export-options.title"), //$NON-NLS-1$
-																						     TitledBorder.DEFAULT_JUSTIFICATION,
-																						     TitledBorder.DEFAULT_POSITION,
-																						     new Font(exportOptionPanel.getFont().getName(),Font.BOLD, exportOptionPanel.getFont().getSize())),
-																		    BorderFactory.createEmptyBorder(5,5,5,5))));
-	
-	
-	exportOptionPanel.add(simpleExport);
-	exportOptionPanel.add(fullExport);
-	exportOptionPanel.add(enableXhtml);
-	exportOptionPanel.add(enableAlphabeticSplit);
-	
-	JPanel exportPanel = new JPanel();
-	exportPanel.setLayout(new BoxLayout(exportPanel, BoxLayout.PAGE_AXIS));
-	
-	exportPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,3,3,3), BorderFactory.createTitledBorder(
-																					       BorderFactory.createEtchedBorder(), Localizer.getString("DialogExport.panel-html-export.title"), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(exportPanel.getFont().getName(),Font.BOLD, exportPanel.getFont().getSize()) //$NON-NLS-1$
-																					       )), BorderFactory.createEmptyBorder(0,2,2,2)));
-	
-	
-	
-	JPanel titlePanel = new JPanel();
-	
-	titleTextField = new JTextField(16);
-	titleTextField.setEditable(true);
-	
-	JLabel titleLabel = new JLabel(Localizer.getString("DialogExport.title-text-field") + ": "); //$NON-NLS-1$
-	titleLabel.setLabelFor(titleTextField);
-	
-	titlePanel.add(titleLabel);
-	titlePanel.add(titleTextField);
-	
-	exportPanel.add(moviesPanel);
-	exportPanel.add(orderByPanel);
-	exportPanel.add(exportOptionPanel);
-	exportPanel.add(titlePanel);
-	
-	JPanel buttonPanel = new JPanel();
-	buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-	
-	exportButton = new JButton(Localizer.getString("DialogExport.button.export.text")); //$NON-NLS-1$
-	exportButton.setActionCommand("Export"); //$NON-NLS-1$
-	exportButton.addActionListener(this);
-	
-	closeButton = new JButton(Localizer.getString("DialogExport.button.close.text")); //$NON-NLS-1$
-	closeButton.setActionCommand("Close"); //$NON-NLS-1$
-	closeButton.addActionListener(this);
-	
-	buttonPanel.add(exportButton);
-	buttonPanel.add(closeButton);
-	
-    
-    
-    // XML panel
-	
-    JPanel xmlPanel = new JPanel();
-    xmlPanel.setLayout(new BoxLayout(xmlPanel, BoxLayout.PAGE_AXIS));
-    
-    xmlPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,3,3,3), BorderFactory.createTitledBorder(
-                                                                                           BorderFactory.createEtchedBorder(), Localizer.getString("DialogExport.panel-xml-export.title"), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(exportPanel.getFont().getName(),Font.BOLD, exportPanel.getFont().getSize()) //$NON-NLS-1$
-                                                                                           )), BorderFactory.createEmptyBorder(0,2,2,2)));
-    
-    JLabel labelInfo = new JLabel("Export entire collection to XML");
-    xmlPanel.add(labelInfo);
-    
-	Container container = getContentPane();
-    container.setLayout(new BoxLayout(container,BoxLayout.Y_AXIS));
-	
-    tabs = new JTabbedPane();
-    tabs.add(exportPanel, Localizer.getString("DialogExport.panel-html-export.title"));
-    tabs.add(xmlPanel, Localizer.getString("DialogExport.panel-xml-export.title"));
         
-    container.add(tabs);
-    container.add(buttonPanel);
-	
-	setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        exportOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,5,0) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                Localizer.getString("DialogExport.panel-export-options.title"), //$NON-NLS-1$
+                TitledBorder.DEFAULT_JUSTIFICATION,
+                TitledBorder.DEFAULT_POSITION,
+                new Font(exportOptionPanel.getFont().getName(),Font.BOLD, exportOptionPanel.getFont().getSize())),
+                BorderFactory.createEmptyBorder(5,5,5,5))));
         
-	/*Display the window.*/
-	pack();
-	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
-		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
+        
+        exportOptionPanel.add(simpleExport);
+        exportOptionPanel.add(fullExport);
+        exportOptionPanel.add(enableXhtml);
+        exportOptionPanel.add(enableAlphabeticSplit);
+        
+        JPanel exportPanel = new JPanel();
+        exportPanel.setLayout(new BoxLayout(exportPanel, BoxLayout.PAGE_AXIS));
+        
+        exportPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,3,3,3), BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), Localizer.getString("DialogExport.panel-html-export.title"), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(exportPanel.getFont().getName(),Font.BOLD, exportPanel.getFont().getSize()) //$NON-NLS-1$
+        )), BorderFactory.createEmptyBorder(0,2,2,2)));
+        
+        
+        
+        JPanel titlePanel = new JPanel();
+        
+        titleTextField = new JTextField(16);
+        titleTextField.setEditable(true);
+        
+        JLabel titleLabel = new JLabel(Localizer.getString("DialogExport.title-text-field") + ": "); //$NON-NLS-1$
+        titleLabel.setLabelFor(titleTextField);
+        
+        titlePanel.add(titleLabel);
+        titlePanel.add(titleTextField);
+        
+        exportPanel.add(moviesPanel);
+        exportPanel.add(orderByPanel);
+        exportPanel.add(exportOptionPanel);
+        exportPanel.add(titlePanel);
+        
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        
+        exportButton = new JButton(Localizer.getString("DialogExport.button.export.text")); //$NON-NLS-1$
+        exportButton.setActionCommand("Export"); //$NON-NLS-1$
+        exportButton.addActionListener(this);
+        
+        closeButton = new JButton(Localizer.getString("DialogExport.button.close.text")); //$NON-NLS-1$
+        closeButton.setActionCommand("Close"); //$NON-NLS-1$
+        closeButton.addActionListener(this);
+        
+        buttonPanel.add(exportButton);
+        buttonPanel.add(closeButton);
+        
+        
+        
+        // XML panel
+        
+        JPanel xmlPanel = new JPanel();
+        xmlPanel.setLayout(new BoxLayout(xmlPanel, BoxLayout.PAGE_AXIS));
+        
+        xmlPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,3,3,3), BorderFactory.createTitledBorder(
+                BorderFactory.createEtchedBorder(), Localizer.getString("DialogExport.panel-xml-export.title"), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(exportPanel.getFont().getName(),Font.BOLD, exportPanel.getFont().getSize()) //$NON-NLS-1$
+        )), BorderFactory.createEmptyBorder(0,2,2,2)));
+        
+        JLabel labelInfo = new JLabel("Export current movie list to XML");
+        xmlPanel.add(labelInfo);
+               
+        Container container = getContentPane();
+        container.setLayout(new BoxLayout(container,BoxLayout.Y_AXIS));
+        
+        tabs = new JTabbedPane();
+        tabs.add(exportPanel, Localizer.getString("DialogExport.panel-html-export.title"));
+        tabs.add(xmlPanel, Localizer.getString("DialogExport.panel-xml-export.title"));
+        
+        container.add(tabs);
+        container.add(buttonPanel);
+        
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        
+        /*Display the window.*/
+        pack();
+        setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
+                (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
     }
     
     public void actionPerformed(ActionEvent event) {
-	
-	log.debug("ActionPerformed: "+event.getActionCommand()); //$NON-NLS-1$
-	
-	if (event.getSource().equals(closeButton)) {
-	    dispose();
-	    return;
-	}
-	
-	if (event.getSource().equals(exportButton)) {
-	    
-	    dispose();
-	    
-        if (tabs.getSelectedIndex() == 0) {
         
-	    String title = titleTextField.getText();
-	    
-	    String orderBy = "Title"; //$NON-NLS-1$
-	    
-	    if (orderByDirectedBy.isSelected())
-		orderBy = "Directed By"; //$NON-NLS-1$
-	    else if (orderByRating.isSelected())
-		orderBy = "Rating"; //$NON-NLS-1$
-	    else if (orderByDate.isSelected())
-		orderBy = "Date"; //$NON-NLS-1$
-	    
-	    DefaultListModel listModel;
-	    
-	    String currentList = "Show All"; //$NON-NLS-1$
-	    
-	    if (exportCurrentList.isSelected())
-		currentList = MovieManager.getConfig().getCurrentList();
-	    
-	    if (exportCurrentList.isSelected() && !currentList.equals("Show All")) //$NON-NLS-1$
-		listModel = MovieManager.getIt().getDatabase().getMoviesList(orderBy, currentList);
-	    else
-		listModel = MovieManager.getIt().getDatabase().getMoviesList(orderBy);
-	    
-	    if (applyCurrentAdvancedSearchSettings.isSelected()) {
-		ModelDatabaseSearch options = MovieManager.getIt().getFilterOptions();
-		options.setListName(currentList);
-		
-		if (currentList.equals("Show All")) //$NON-NLS-1$
-		    options.setListOption(0);
-		else
-		    options.setListOption(1);
-		
-		listModel = MovieManager.getIt().getDatabase().getMoviesList(options);
-	    }
-	    
-	    if (simpleExport.isSelected()) {
-		if (enableXhtml.isSelected())
-		    new MovieManagerCommandExportToSimpleXHTML(title, listModel).execute();
-		else
-		    new MovieManagerCommandExportToSimpleHTML(title, listModel).execute();
-	    }
-	    else {
-		if (enableAlphabeticSplit.isSelected())
-		    new MovieManagerCommandExportToFullHTML(true, title, listModel).execute();
-		else
-		    new MovieManagerCommandExportToFullHTML(false, title, listModel).execute();
-	    }
+        log.debug("ActionPerformed: "+event.getActionCommand()); //$NON-NLS-1$
+        
+        if (event.getSource().equals(closeButton)) {
+            dispose();
+            return;
         }
-        else {
-        // XML export    
+        
+        if (event.getSource().equals(exportButton)) {
             
-            JFileChooser chooser = new JFileChooser();
-            int returnVal = chooser.showDialog(null, "Save output file");
+            dispose();
+            setVisible(false);
             
-            if (returnVal != JFileChooser.APPROVE_OPTION) {
-                log.warn("Failed to retrieve output file");
-                return;   
-            }
-
-            try {
-                String outputFile = chooser.getSelectedFile().getCanonicalPath();
-            
-                if (!outputFile.toLowerCase().endsWith(".xml"))
-                    outputFile += ".xml";
+            /* HTMl export */
+            if (tabs.getSelectedIndex() == 0) {
+                
+                String title = titleTextField.getText();
+                
+                String orderBy = "Title"; //$NON-NLS-1$
+                
+                if (orderByDirectedBy.isSelected())
+                    orderBy = "Directed By"; //$NON-NLS-1$
+                else if (orderByRating.isSelected())
+                    orderBy = "Rating"; //$NON-NLS-1$
+                else if (orderByDate.isSelected())
+                    orderBy = "Date"; //$NON-NLS-1$
+                
+                DefaultListModel listModel;
+                
+                String currentList = "Show All"; //$NON-NLS-1$
+                
+                if (exportCurrentList.isSelected())
+                    currentList = MovieManager.getConfig().getCurrentList();
+                
+                if (exportCurrentList.isSelected() && !currentList.equals("Show All")) //$NON-NLS-1$
+                    listModel = MovieManager.getIt().getDatabase().getMoviesList(orderBy, currentList);
+                else
+                    listModel = MovieManager.getIt().getDatabase().getMoviesList(orderBy);
+                
+                if (applyCurrentAdvancedSearchSettings.isSelected()) {
+                    ModelDatabaseSearch options = MovieManager.getIt().getFilterOptions();
+                    options.setListName(currentList);
                     
-                MovieManagerCommandExportToXML.execute(outputFile);
-            } catch (IOException e) {
-                log.warn("Failed to retrieve output file");
+                    if (currentList.equals("Show All")) //$NON-NLS-1$
+                        options.setListOption(0);
+                    else
+                        options.setListOption(1);
+                    
+                    listModel = MovieManager.getIt().getDatabase().getMoviesList(options);
+                }
+                
+                if (simpleExport.isSelected()) {
+                    if (enableXhtml.isSelected())
+                        new MovieManagerCommandExportToSimpleXHTML(title, listModel).execute();
+                    else
+                        new MovieManagerCommandExportToSimpleHTML(title, listModel).execute();
+                }
+                else {
+                    if (enableAlphabeticSplit.isSelected())
+                        new MovieManagerCommandExportToFullHTML(true, title, listModel).execute();
+                    else
+                        new MovieManagerCommandExportToFullHTML(false, title, listModel).execute();
+                }
             }
+            else {
+                // XML export    
+                
+                JFileChooser chooser = new JFileChooser();
+                int returnVal = chooser.showDialog(null, "Save output file");
+                
+                if (returnVal != JFileChooser.APPROVE_OPTION) {
+                    log.warn("Failed to retrieve output file");
+                }
+                else {
+                    try {
+                        String outputFile = chooser.getSelectedFile().getCanonicalPath();
+                        
+                        if (!outputFile.toLowerCase().endsWith(".xml"))
+                            outputFile += ".xml";
+                        
+                        MovieManagerCommandExportToXML.execute(outputFile);
+                        return;
+                    } catch (IOException e) {
+                        log.warn("Failed to retrieve output file");
+                    }
+                }
+            }
+            
+            return;
         }
-        return;
-	}
-	
-	if (event.getSource().equals(simpleExport)) {
-	    
-	    enableXhtml.setEnabled(true);
-	    enableAlphabeticSplit.setEnabled(false);
-	    return;
-	}
-	
-	if (event.getSource().equals(fullExport)) {
-	    
-	    enableXhtml.setEnabled(false);
-	    enableAlphabeticSplit.setEnabled(true );
-	    return;
-	}
-	
-	MovieManager.getIt().getMoviesList().requestFocus(true);
+        
+        if (event.getSource().equals(simpleExport)) {
+            
+            enableXhtml.setEnabled(true);
+            enableAlphabeticSplit.setEnabled(false);
+            return;
+        }
+        
+        if (event.getSource().equals(fullExport)) {
+            
+            enableXhtml.setEnabled(false);
+            enableAlphabeticSplit.setEnabled(true );
+            return;
+        }
+        
+        MovieManager.getIt().getMoviesList().requestFocus(true);
     }
     
     public void itemStateChanged(ItemEvent e) {
-	
-	if (e.getSource().equals(enableAlphabeticSplit)) {
-	    
-	    if (enableAlphabeticSplit.isSelected()) {
-		orderByMovieTitle.setSelected(true);
-		enableAlphabeticSplit.setSelected(true);
-	    }
-	}
-	
-	if (e.getSource().equals(orderByDirectedBy) || e.getSource().equals(orderByRating)|| e.getSource().equals(orderByDate)) {
-	    enableAlphabeticSplit.setSelected(false);
-	}
+        
+        if (e.getSource().equals(enableAlphabeticSplit)) {
+            
+            if (enableAlphabeticSplit.isSelected()) {
+                orderByMovieTitle.setSelected(true);
+                enableAlphabeticSplit.setSelected(true);
+            }
+        }
+        
+        if (e.getSource().equals(orderByDirectedBy) || e.getSource().equals(orderByRating)|| e.getSource().equals(orderByDate)) {
+            enableAlphabeticSplit.setSelected(false);
+        }
     }
 }
