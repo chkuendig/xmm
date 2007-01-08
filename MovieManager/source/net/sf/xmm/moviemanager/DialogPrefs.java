@@ -571,8 +571,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
     
 	JPanel titlePanel = new JPanel();
     
-	titlePanel.setLayout(new GridLayout(0,1));
-    
+	//titlePanel.setLayout(new GridLayout(0,1));
+    titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
 	titlePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),"Imported Movie Titles"), BorderFactory.createEmptyBorder(0,5,5,5))); //$NON-NLS-1$
 
     
