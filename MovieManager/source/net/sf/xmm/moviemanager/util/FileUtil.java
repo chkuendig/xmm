@@ -23,11 +23,14 @@ package net.sf.xmm.moviemanager.util;
 import org.apache.log4j.Logger;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFile;
 
 import java.net.*;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.*;
+
+import javax.swing.filechooser.FileSystemView;
 
 public class FileUtil {
     
@@ -36,24 +39,24 @@ public class FileUtil {
     
     public static String getLineSeparator() {
         return System.getProperty("line.separator"); //$NON-NLS-1$
-        }
-
-
-        public static String getDirSeparator() {
+    }
+    
+    
+    public static String getDirSeparator() {
         return File.separator;
-        }
+    }
     
-    
+    /* Mainly used for debugging */
     public static void writeToFile(String fileName, StringBuffer data) {
-	try {
-	    FileOutputStream fileStream = new FileOutputStream(new File(fileName));
-	    for (int u = 0; u < data.length(); u++)
-		fileStream.write(data.charAt(u));
-	    fileStream.close();
-	    
-	} catch (Exception e) {
-	    MovieManager.log.error("Exception:"+ e.getMessage());
-	}
+        try {
+            FileOutputStream fileStream = new FileOutputStream(new File(fileName));
+            for (int u = 0; u < data.length(); u++)
+                fileStream.write(data.charAt(u));
+            fileStream.close();
+            
+        } catch (Exception e) {
+            MovieManager.log.error("Exception:"+ e.getMessage());
+        }
     }
     
     
@@ -63,14 +66,14 @@ public class FileUtil {
      * @param name A resource name.
      **/
     public static InputStream getResourceAsStream(String name) {
-
-	try {
-	    return FileUtil.class.getResourceAsStream(name);
-
-	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	}
-	return null;
+        
+        try {
+            return FileUtil.class.getResourceAsStream(name);
+            
+        } catch (Exception e) {
+            log.error("Exception: " + e.getMessage());
+        }
+        return null;
     }
     
     
@@ -83,118 +86,118 @@ public class FileUtil {
         return null;
     }
     
-     public static URL getFileURL(String fileName) {
-
-    	URL url = null;
-
-	try {
-	    //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
-
-	    if (!MovieManager.isApplet()) {
-		url = new File(getUserDir() + fileName).toURL();
-	    }
-	    else {
-
-		fileName = fileName.replaceAll("\\\\", "/");
-
-		if (fileName.startsWith("/"))
-		    fileName = fileName.replaceFirst("/", "");
-
-		//log.debug("fileName:" + fileName);
-		//log.debug("codebase:"+ _movieManager.applet.getCodeBase());
-
-		url = new URL(MovieManager.applet.getCodeBase(), fileName);
-
-		//log.debug("URL:"+ url.toString());
-		//log.debug("url.getFile():" + url.getFile());
-		//log.debug("getPath():" + url.getPath());
-
-		//log.debug("encode:"+URLEncoder.encode(url.toString() , "UTF-8"));
-	    }
-	    //return new File((java.net.URI) new java.net.URI(URLEncoder.encode(url.toString() , "UTF-8")));
-
-    	} catch(Exception e) {
-	    log.error("Exception:" + e.getMessage());
-	}
-	return url;
-     }
-    
-     /*
-    
-    public static String getUserDir() {
-
-	String path = "";
-
-	try {
-	    java.net.URL url = MovieManager.class.getProtectionDomain().getCodeSource().getLocation();
-	    File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8"));
-
-	    // If running in a jar file the parent is the root dir 
-	    if (file.isFile())
-	    	path = file.getParentFile().getAbsolutePath();
-	    else
-	    	path = file.getAbsolutePath();
-	}
-	catch (UnsupportedEncodingException e) {
-	    path = System.getProperty("user.dir");
-	}
-
-	if (!path.endsWith(getDirSeparator()))
-	    path += getDirSeparator();
-
-	return path;
+    public static URL getFileURL(String fileName) {
+        
+        URL url = null;
+        
+        try {
+            //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
+            
+            if (!MovieManager.isApplet()) {
+                url = new File(getUserDir() + fileName).toURL();
+            }
+            else {
+                
+                fileName = fileName.replaceAll("\\\\", "/");
+                
+                if (fileName.startsWith("/"))
+                    fileName = fileName.replaceFirst("/", "");
+                
+                //log.debug("fileName:" + fileName);
+                //log.debug("codebase:"+ _movieManager.applet.getCodeBase());
+                
+                url = new URL(MovieManager.applet.getCodeBase(), fileName);
+                
+                //log.debug("URL:"+ url.toString());
+                //log.debug("url.getFile():" + url.getFile());
+                //log.debug("getPath():" + url.getPath());
+                
+                //log.debug("encode:"+URLEncoder.encode(url.toString() , "UTF-8"));
+            }
+            //return new File((java.net.URI) new java.net.URI(URLEncoder.encode(url.toString() , "UTF-8")));
+            
+        } catch(Exception e) {
+            log.error("Exception:" + e.getMessage());
+        }
+        return url;
     }
     
+    /*
+     
+     public static String getUserDir() {
+     
+     String path = "";
+     
+     try {
+     java.net.URL url = MovieManager.class.getProtectionDomain().getCodeSource().getLocation();
+     File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8"));
+     
+     // If running in a jar file the parent is the root dir 
+      if (file.isFile())
+      path = file.getParentFile().getAbsolutePath();
+      else
+      path = file.getAbsolutePath();
+      }
+      catch (UnsupportedEncodingException e) {
+      path = System.getProperty("user.dir");
+      }
+      
+      if (!path.endsWith(getDirSeparator()))
+      path += getDirSeparator();
+      
+      return path;
+      }
+      
       public static String getLineSeparator() {
-	return System.getProperty("line.separator");
-    }
-
-
-    public static String getDirSeparator() {
-	return File.separator;
-    }
-    */
+      return System.getProperty("line.separator");
+      }
+      
+      
+      public static String getDirSeparator() {
+      return File.separator;
+      }
+      */
     
     /**
      * Getting the 'root directory' of the app.
      **/
     public static String getUserDir() {
-
-    String path = ""; //$NON-NLS-1$
-
-    try {
-        java.net.URL url = MovieManager.class.getProtectionDomain().getCodeSource().getLocation();
-        File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
-        //File file = new File(java.net.URLDecoder.decode(System.getProperty("user.dir"), "UTF-8"));
         
+        String path = ""; //$NON-NLS-1$
         
-        // If running in a jar file the parent is the root dir 
-        if (file.isFile())
-        path = file.getParentFile().getAbsolutePath();
-        else
-        path = file.getAbsolutePath();
-        
-
-        /* If running in a mac application bundle, we can't write in the application-directory, so we use the home of the user */
-        if (MovieManager.isMac() && path.indexOf(".app/Contents") > -1) {
-        path = System.getProperty("user.home") + "/Library/Application Support/MovieManager/";
-        File dir = new File(path);
-        
-        if (!dir.exists()) {
-            if(!dir.mkdir()) {
-            log.error("Could not create settings folder.");
+        try {
+            java.net.URL url = MovieManager.class.getProtectionDomain().getCodeSource().getLocation();
+            File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
+            //File file = new File(java.net.URLDecoder.decode(System.getProperty("user.dir"), "UTF-8"));
+            
+            
+            // If running in a jar file the parent is the root dir 
+            if (file.isFile())
+                path = file.getParentFile().getAbsolutePath();
+            else
+                path = file.getAbsolutePath();
+            
+            
+            /* If running in a mac application bundle, we can't write in the application-directory, so we use the home of the user */
+            if (MovieManager.isMac() && path.indexOf(".app/Contents") > -1) {
+                path = System.getProperty("user.home") + "/Library/Application Support/MovieManager/";
+                File dir = new File(path);
+                
+                if (!dir.exists()) {
+                    if(!dir.mkdir()) {
+                        log.error("Could not create settings folder.");
+                    }
+                }
             }
         }
+        catch (UnsupportedEncodingException e) {
+            path = System.getProperty("user.dir"); //$NON-NLS-1$
         }
-    }
-    catch (UnsupportedEncodingException e) {
-        path = System.getProperty("user.dir"); //$NON-NLS-1$
-    }
-
-    if (!path.endsWith(getDirSeparator()))
-        path += getDirSeparator();
-
-    return path;
+        
+        if (!path.endsWith(getDirSeparator()))
+            path += getDirSeparator();
+        
+        return path;
     }
     
     
@@ -236,42 +239,67 @@ public class FileUtil {
     public static String getPath(String fileName) {
         String path = ""; //$NON-NLS-1$
         try {
-        path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8"); //$NON-NLS-1$
+            path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8"); //$NON-NLS-1$
         }
         catch (Exception e) {
-        log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
-    }
+            log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
+        }
         return path;
     }
     
     public static File getAppletFile(String fileName) {
-
+        
         try {
             //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
-
+            
             fileName = fileName.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-
+            
             if (fileName.startsWith("/")) //$NON-NLS-1$
-            fileName = fileName.replaceFirst("/", ""); //$NON-NLS-1$ //$NON-NLS-2$
-
+                fileName = fileName.replaceFirst("/", ""); //$NON-NLS-1$ //$NON-NLS-2$
+            
             //log.debug("fileName:" + fileName);
             //log.debug("codebase:"+ _movieManager.applet.getCodeBase());
-
+            
             URL url = new URL(MovieManager.applet.getCodeBase(), fileName);
-
+            
             //log.debug("URL"+ url.toString());
             //log.debug("url.getFile():" + url.getFile());
-
+            
             //log.debug("encode:"+URLEncoder.encode(url.toString() , "UTF-8"));
-
-
+            
+            
             return new File(url.toString());
-
+            
             //return new File((java.net.URI) new java.net.URI(URLEncoder.encode(url.toString() , "UTF-8")));
-
-            } catch(Exception e) {
+            
+        } catch(Exception e) {
             log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
         }
         return null;
+    }
+    
+    
+    public static String getDriveDisplayName(File path) {
+        
+        FileSystemView fsv = new javax.swing.JFileChooser().getFileSystemView();
+        
+        if (fsv != null) {
+            
+            File tmp = path;
+            
+            while (tmp.getParentFile() != null)
+                tmp = tmp.getParentFile();
+            
+            String displayName = fsv.getSystemDisplayName(tmp);
+            displayName = MovieManagerCommandAddMultipleMoviesByFile.performExcludeParantheses(displayName, false);
+            
+            if (!displayName.trim().equals(""))
+                return displayName;
+            
+            return "";
         }
+            
+        return null;
+    }
+    
 } 
