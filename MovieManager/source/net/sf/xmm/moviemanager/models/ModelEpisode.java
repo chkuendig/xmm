@@ -26,13 +26,18 @@ import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 public class ModelEpisode extends ModelEntry {
 
     /*The key to the entry this episode is linked to.*/
-    private int movieKey;
+    private int movieKey = -1;
     
     /*The database key for this episode.*/
     private int episodeNumber;
     
     /* default public constructor for XML export */
     public ModelEpisode() {
+        additionalInfo = new ModelAdditionalInfo();
+    }
+    
+    public ModelEpisode(int movieKey) {
+        this.movieKey = movieKey;
         additionalInfo = new ModelAdditionalInfo();
     }
     

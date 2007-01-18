@@ -106,11 +106,19 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
     }
 
     public void setEnablePlayButton(boolean enable) {
-    
-	buttonPlay.setEnabled(enable);
+        buttonPlay.setEnabled(enable);
     }
 
 
+    public void setEnableButtons(boolean enable) {
+        buttonAdd.setEnabled(enable);
+        buttonRemove.setEnabled(enable);
+        buttonEdit.setEnabled(enable);
+        buttonSearch.setEnabled(enable);
+        buttonPlay.setEnabled(enable);
+        buttonPrint.setEnabled(enable);
+    }
+    
     public JButton getAddButton() {
         return buttonAdd;
     }

@@ -2145,12 +2145,15 @@ abstract public class Database {
     /**
      * Adds the values in fieldValuesList with names in fieldNamesList to movie
      * index in the Extra Info table.
+     * Return values. -1 error, 0 = success, 1 = aborted
      **/
-    public void addExtraInfoEpisode(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
+    public int addExtraInfoEpisode(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
 
 	if (fieldNamesList == null)
-	    return;
+	    return 1;
 
+    int ret = 0;
+    
 	try {
 	    /* Creates an empty row... */
 	    int value = _sql.executeUpdate("INSERT INTO " + quotedExtraInfoEpisodeString + " "+
@@ -2164,11 +2167,12 @@ abstract public class Database {
 	    }
 
 	    if (setExtraInfoEpisode(index, fieldNamesList, fieldValuesList) == 0)
-		throw new Exception("Error occured while adding info to extra info fields");
+	        throw new Exception("Error occured while adding info to extra info fields");
 
 	} catch (Exception e) {
 	    log.error("Exception: ", e);
 	    checkErrorMessage(e);
+        ret = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2177,6 +2181,7 @@ abstract public class Database {
 		log.error("Exception: " + e.getMessage());
 	    }
 	}
+    return ret;
     }
 
 
@@ -2860,216 +2865,219 @@ abstract public class Database {
      * Used by getMoviesList(ModelDatabaseSearch options)
      */
     private String processFilterValues(String table, String filterColumn, Object [] values, ModelDatabaseSearch options, boolean recursive) {
-
-	String queryTemp = "";
-	String value = "";
-
-	for (int i = 0; i < values.length; i++) {
-
-	    value = (String) values[i];
-
-	    if (value.equals("AND") || value.equals("OR") || value.equals("XOR") || value.equals("NOT")) {
-
-		log.debug("value:" + value);
-		log.debug("values[i+1]:" + values[i+1]);
-
-		/* Checking if next value is invalid */
-		if ((values.length-1 > i) && !values[i+1].equals(")") &&
-		    !values[i+1].equals("AND") && !values[i+1].equals("OR") && !values[i+1].equals("XOR")) {
-
-		    if (values[i+1].equals("(") && (values.length-2 > i)) {
-
-			/* If i+2 value is valid */
-			if (!(values[i+2].equals(")") || values[i+2].equals("AND") ||
-			      values[i+2].equals("OR") || values[i+2].equals("XOR")))
-			    queryTemp += " " + value + " ";
-		    }
-		    else if (!values[i+1].equals("(")) {
-
-			if (value.equals("NOT")) {
-			    if ((i > 0) && !(values[i-1].equals("AND") || values[i-1].equals("OR") || values[i-1].equals(")"))) {
-				queryTemp += " " + options.getDefaultOperator();
-			    }
-			}
-			queryTemp += " " + value + " ";
-		    }
-		}
-		else {
-		    errorMessage = "Syntax error (parantheses)";
-		    return null;
-		}
-	    }
-
-	    else if (value.equals("("))
-		queryTemp += " ( ";
-
-	    else if (value.equals(")"))
-		queryTemp += " ) ";
-
-
-	    else if (value.startsWith("{")) {
-
-		value = value.substring(1, value.length()-1);
-
-		/* Invalid */
-		if (value.indexOf(":") == -1) {
-		    errorMessage = "Syntax error (missing ':')";
-		    return null;
-		}
-
-
-		String [] tableField = value.substring(0, value.indexOf(":")).split(",");
-		Object [] values2 = getFilterValues(value.substring(value.indexOf(":")+1, value.length()));
-
-		for (int u = 0; u < tableField.length; u++)
-		    log.debug("tablefield:" + tableField[u] + ":");
-
-		for (int u = 0; u < values2.length; u++)
-		    log.debug("values:" + values2[u] + ":");
-
-		log.debug("tableField.length:" + tableField.length);
-
-		/* Must look up the alias and find the table and column */
-		if (tableField.length == 1) {
-
-		    log.debug("containsValue("+tableField[0] +"):"+ options.getSearchAlias().containsValue(tableField[0]));
-
-		    if (options.getSearchAlias().containsValue(tableField[0])) {
-
-			Set map = (options.getSearchAlias()).entrySet();
-			String setkey;
-			String setValue;
-
-			for (Iterator iterator = map.iterator(); iterator.hasNext();) {
-
-			    Map.Entry entry = (Map.Entry) iterator.next();
-			    setkey = (String) entry.getKey();
-			    setValue = (String) entry.getValue();
-
-			    if (setValue.equals(tableField[0])) {
-				String table2 = setkey.substring(0, setkey.indexOf("."));
-				String column2 = setkey.substring(setkey.indexOf(".")+1, setkey.length());
-
-				if (table2.replaceAll("_", " ").equalsIgnoreCase("General Info"))
-				    table2 = generalInfoString;
-				else if (table2.replaceAll("_", " ").equalsIgnoreCase("Additional Info"))
-				    table2 = additionalInfoString;
-				else if (table2.replaceAll("_", " ").equalsIgnoreCase("Extra Info"))
-				    table2 = extraInfoString;
-
-				if (databaseType.equals("MySQL")) {
-
-				    if (!table2.equals("Extra_Info"))
-					column2 = column2.replaceAll(" ", "_");
-				    else
-					column2 = quote+ column2 +quote;
-				}
-				else {
-				    table2 = quote+ table2 +quote;
-				    column2 = quote+ column2 +quote;
-				}
-				tableField = new String[]{table2, column2};
-			    }
-
-			}
-		    }
-		    else {
-			errorMessage = "Alias '"+ tableField[0] + "' is invalid";
-			return null;
-		    }
-		}
-
-		int len;
-		String filterValues = null;
-
-		if (tableField.length > 0) {
-		    tableField[0] = tableField[0].trim();
-		    len = tableField[0].length();
-
-		    if (len > 0 && tableField[0].charAt(0) == '\"' && tableField[0].charAt(len-1) == '\"')
-			tableField[0] = quote + tableField[0].substring(1, len-1) + quote;
-
-		    if (tableField.length > 1) {
-			tableField[1] = tableField[1].trim();
-			len = tableField[1].length();
-
-			if (len > 0 && tableField[1].charAt(0) == '\"' && tableField[1].charAt(len-1) == '\"')
-			    tableField[1] = quote + tableField[1].substring(1, len-1) + quote;
-		    }
-
-		    filterValues = processFilterValues(tableField[0].trim(), tableField[1].trim(), values2, options, true);
-		}
-
-		if (filterValues == null) {
-		    errorMessage = "Syntax error (parantheses)";
-		    return null;
-		}
-
-
-		if ((i > 0) && !(values[i-1].equals("AND") || values[i-1].equals("OR") ||
-				 values[i-1].equals("XOR") || values[i-1].equals("NOT") ||
-				 values[i-1].equals("(") || values[i-1].equals(")"))) {
-		    queryTemp += " " + options.getDefaultOperator() + " ";
-		}
-
-		queryTemp += " ( " + filterValues + " ) ";
-	    }
-	    else {
-
-		log.debug("i:" + i);
-		if (i > 0)
-		    log.debug("values[i-1]:" + values[i-1]);
-
-
-		if ((i > 0) && !(values[i-1].equals("AND") || values[i-1].equals("OR") ||
-				 values[i-1].equals("XOR") || values[i-1].equals("NOT") ||
-				 values[i-1].equals("(") || values[i-1].equals(")"))) {
-		    queryTemp += " " + options.getDefaultOperator() + " ";
-		}
-
-		boolean caseinsensitive = true;
-
-		if (value.equals("")) {
-
-		    queryTemp += "("+ table +"."+ filterColumn +" LIKE '' ";
-
-		    /* If include aka titles */
-		    if (options.getIncludeAkaTitlesInFilter() && (filterColumn.indexOf("Title") != -1) && !recursive) {
-			queryTemp += "OR "+ table +".Aka LIKE '' ";
-		    }
-		    queryTemp += ") ";
-		}
-		else if (caseinsensitive && databaseType.equals("HSQL")) {
-		    /* Edit */
-		    queryTemp += "(UPPER("+ table + "." + filterColumn + ") LIKE ? ";
-
-		    options.addSearchTerm(value.toUpperCase());
-		    
-		    /* If include aka titles */
-		    if (options.getIncludeAkaTitlesInFilter() && (filterColumn.indexOf("Title") != -1) && !recursive) {
-		    	
-		    	queryTemp += "OR UPPER("+ table +".\"Aka\") LIKE ? ";
-		    	options.addSearchTerm(value.toUpperCase());
-		    }
-		    queryTemp += ") ";
-		}
-		else {
-		    queryTemp += "(" + table + "."+ filterColumn +" LIKE ? ";
-
-		    options.addSearchTerm(value);
-		    
-		    /* If include aka titles */
-		    if (options.getIncludeAkaTitlesInFilter() && !recursive) {
-		    	queryTemp += "OR "+ table +".Aka LIKE ? ";
-		    	options.addSearchTerm(value);
-		    }
-		    queryTemp += ") ";
-		}
-	    }
-	}
-	return queryTemp;
+        
+        String queryTemp = "";
+        String value = "";
+        
+        for (int i = 0; i < values.length; i++) {
+            
+            value = (String) values[i];
+            
+            if (value.equals("AND") || value.equals("OR") || value.equals("XOR") || value.equals("NOT")) {
+                
+                log.debug("value:" + value);
+                log.debug("values[i+1]:" + values[i+1]);
+                
+                /* Checking if next value is invalid */
+                if ((values.length-1 > i) && !values[i+1].equals(")") &&
+                        !values[i+1].equals("AND") && !values[i+1].equals("OR") && !values[i+1].equals("XOR")) {
+                    
+                    if (values[i+1].equals("(") && (values.length-2 > i)) {
+                        
+                        /* If i+2 value is valid */
+                        if (!(values[i+2].equals(")") || values[i+2].equals("AND") ||
+                                values[i+2].equals("OR") || values[i+2].equals("XOR")))
+                            queryTemp += " " + value + " ";
+                    }
+                    else if (!values[i+1].equals("(")) {
+                        
+                        if (value.equals("NOT")) {
+                            if ((i > 0) && !(values[i-1].equals("AND") || values[i-1].equals("OR") || values[i-1].equals(")"))) {
+                                queryTemp += " " + options.getDefaultOperator();
+                            }
+                        }
+                        queryTemp += " " + value + " ";
+                    }
+                }
+                else {
+                    errorMessage = "Syntax error (parantheses)";
+                    return null;
+                }
+            }
+            
+            else if (value.equals("("))
+                queryTemp += " ( ";
+            
+            else if (value.equals(")"))
+                queryTemp += " ) ";
+            
+            
+            else if (value.startsWith("{")) {
+                
+                value = value.substring(1, value.length()-1);
+                
+                /* Invalid */
+                if (value.indexOf(":") == -1) {
+                    errorMessage = "Syntax error (missing ':')";
+                    return null;
+                }
+                
+                
+                String [] tableField = value.substring(0, value.indexOf(":")).split(",");
+                Object [] values2 = getFilterValues(value.substring(value.indexOf(":")+1, value.length()));
+                
+                for (int u = 0; u < tableField.length; u++)
+                    log.debug("tablefield:" + tableField[u] + ":");
+                
+                for (int u = 0; u < values2.length; u++)
+                    log.debug("values:" + values2[u] + ":");
+                
+                log.debug("tableField.length:" + tableField.length);
+                
+                /* Must look up the alias and find the table and column */
+                if (tableField.length == 1) {
+                    
+                    if (options.getSearchAlias().containsValue(tableField[0])) {
+                        
+                        Set map = (options.getSearchAlias()).entrySet();
+                        String setkey;
+                        String setValue;
+                        
+                        for (Iterator iterator = map.iterator(); iterator.hasNext();) {
+                            
+                            Map.Entry entry = (Map.Entry) iterator.next();
+                            setkey = (String) entry.getKey();
+                            setValue = (String) entry.getValue();
+                            
+                            if (setValue.equals(tableField[0])) {
+                            
+                                log.debug("setkey:" + setkey);
+                                log.debug("setValue:" + setValue);
+                                
+                                String table2 = setkey.substring(0, setkey.indexOf("."));
+                                String column2 = setkey.substring(setkey.indexOf(".")+1, setkey.length());
+                                
+                                if (table2.replaceAll("_", " ").equalsIgnoreCase("General Info"))
+                                    table2 = generalInfoString;
+                                else if (table2.replaceAll("_", " ").equalsIgnoreCase("Additional Info"))
+                                    table2 = additionalInfoString;
+                                else if (table2.replaceAll("_", " ").equalsIgnoreCase("Extra Info"))
+                                    table2 = extraInfoString;
+                                
+                                if (databaseType.equals("MySQL")) {
+                                    
+                                    if (!table2.equals("Extra_Info"))
+                                        column2 = column2.replaceAll(" ", "_");
+                                    else
+                                        column2 = quote+ column2 +quote;
+                                }
+                                else {
+                                    table2 = quote+ table2 +quote;
+                                    column2 = quote+ column2 +quote;
+                                }
+                                tableField = new String[]{table2, column2};
+                                break;
+                            }
+                            
+                        }
+                    }
+                    else {
+                        errorMessage = "Alias '"+ tableField[0] + "' is invalid";
+                        return null;
+                    }
+                }
+                
+                int len;
+                String filterValues = null;
+                
+                if (tableField.length > 0) {
+                    tableField[0] = tableField[0].trim();
+                    len = tableField[0].length();
+                    
+                    if (len > 0 && tableField[0].charAt(0) == '\"' && tableField[0].charAt(len-1) == '\"')
+                        tableField[0] = quote + tableField[0].substring(1, len-1) + quote;
+                    
+                    if (tableField.length > 1) {
+                        tableField[1] = tableField[1].trim();
+                        len = tableField[1].length();
+                        
+                        if (len > 0 && tableField[1].charAt(0) == '\"' && tableField[1].charAt(len-1) == '\"')
+                            tableField[1] = quote + tableField[1].substring(1, len-1) + quote;
+                    }
+                    
+                    filterValues = processFilterValues(tableField[0].trim(), tableField[1].trim(), values2, options, true);
+                }
+                
+                if (filterValues == null) {
+                    errorMessage = "Syntax error (parantheses)";
+                    return null;
+                }
+                
+                
+                if ((i > 0) && !(values[i-1].equals("AND") || values[i-1].equals("OR") ||
+                        values[i-1].equals("XOR") || values[i-1].equals("NOT") ||
+                        values[i-1].equals("(") || values[i-1].equals(")"))) {
+                    queryTemp += " " + options.getDefaultOperator() + " ";
+                }
+                
+                queryTemp += " ( " + filterValues + " ) ";
+            }
+            else {
+                
+                log.debug("i:" + i);
+                if (i > 0)
+                    log.debug("values[i-1]:" + values[i-1]);
+                
+                
+                if ((i > 0) && !(values[i-1].equals("AND") || values[i-1].equals("OR") ||
+                        values[i-1].equals("XOR") || values[i-1].equals("NOT") ||
+                        values[i-1].equals("(") || values[i-1].equals(")"))) {
+                    queryTemp += " " + options.getDefaultOperator() + " ";
+                }
+                
+                boolean caseinsensitive = true;
+                
+                if (value.equals("")) {
+                    
+                    queryTemp += "("+ table +"."+ filterColumn +" LIKE '' ";
+                    
+                    /* If include aka titles */
+                    if (options.getIncludeAkaTitlesInFilter() && (filterColumn.indexOf("Title") != -1) && !recursive) {
+                        queryTemp += "OR "+ table +".Aka LIKE '' ";
+                    }
+                    queryTemp += ") ";
+                }
+                else if (caseinsensitive && databaseType.equals("HSQL")) {
+                    /* Edit */
+                    queryTemp += "(UPPER("+ table + "." + filterColumn + ") LIKE ? ";
+                    
+                    options.addSearchTerm(value.toUpperCase());
+                    
+                    /* If include aka titles */
+                    if (options.getIncludeAkaTitlesInFilter() && (filterColumn.indexOf("Title") != -1) && !recursive) {
+                        
+                        queryTemp += "OR UPPER("+ table +".\"Aka\") LIKE ? ";
+                        options.addSearchTerm(value.toUpperCase());
+                    }
+                    queryTemp += ") ";
+                }
+                else {
+                    queryTemp += "(" + table + "."+ filterColumn +" LIKE ? ";
+                    
+                    options.addSearchTerm(value);
+                    
+                    /* If include aka titles */
+                    if (options.getIncludeAkaTitlesInFilter() && !recursive) {
+                        queryTemp += "OR "+ table +".Aka LIKE ? ";
+                        options.addSearchTerm(value);
+                    }
+                    queryTemp += ") ";
+                }
+            }
+        }
+        return queryTemp;
     }
-
+    
 
 
     private String processFilter(ModelDatabaseSearch options, boolean where) {
@@ -3298,7 +3306,7 @@ abstract public class Database {
      **/
     public DefaultListModel getMoviesList(ModelDatabaseSearch options) {
 
-	DefaultListModel listModel = new DefaultListModel();
+        DefaultListModel listModel = new DefaultListModel();
 
 	String sqlAdcanvedOptions = processAdvancedOptions(options);
 
