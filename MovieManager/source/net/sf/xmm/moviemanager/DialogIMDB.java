@@ -658,8 +658,13 @@ public class DialogIMDB extends JDialog {
              */
             modelInfoTmp._hasReadProperties = true;
             modelInfoTmp.getFileInfo(multiAddFile);
-            modelInfoTmp.saveToDatabase(null);
             
+            try {
+                modelInfoTmp.saveToDatabase(null);
+            } catch (Exception e) {
+                log.error("Saving to database failed.", e);
+            }
+                
             MovieManagerCommandSelect.executeAndReload(modelInfoTmp.model, modelInfoTmp._edit, modelInfoTmp.isEpisode, true);
             
             commandAddMovies.setCancel(true);

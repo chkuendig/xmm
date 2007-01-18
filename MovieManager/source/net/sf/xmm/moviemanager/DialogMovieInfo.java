@@ -74,7 +74,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
             }
         });
         
-        movieInfoModel = new ModelMovieInfo(false, true);
+        movieInfoModel = new ModelMovieInfo(false);
         
         setUp(Localizer.getString("DialogMovieInfo.title.add-movie"));
         loadEmptyAdditionalFields();
@@ -85,7 +85,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
     /**
      * Add Episode.
      **/
-    public DialogMovieInfo(ModelMovie model) {
+    public DialogMovieInfo(ModelMovie model) throws Exception {
         /* Dialog creation...*/
         super(MovieManager.getIt());
         /* Close dialog... */
@@ -95,7 +95,10 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
             }
         });
         
-        movieInfoModel = new ModelMovieInfo(true, true);
+        if (model.getKey() == -1)
+            throw new Exception("MovieKey cannot be -1");
+        
+        movieInfoModel = new ModelMovieInfo(model.getKey());
         
         setUp(Localizer.getString("DialogMovieInfo.title.add-episode"));
         
@@ -1571,7 +1574,10 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
             executeCommandAdditionalInfo();
             
             try {
-                movieInfoModel.saveCoverToFile();
+                
+                boolean status = movieInfoModel.saveCoverToFile();
+                System.err.println("saveCoverToFile:" + status);
+                
             } catch (Exception e) {
                 log.warn("Error when saving cover to file: " + movieInfoModel.model.getCover());
                 log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
@@ -1616,8 +1622,12 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
             movieInfoModel.model.setAwards(getAwards().getText());
             
             movieInfoModel.saveAdditionalInfoData();
-            movieInfoModel.saveToDatabase(listName);
             
+            try {
+                movieInfoModel.saveToDatabase(listName);
+            } catch (Exception e) {
+                log.error("Saving to database failed.", e);
+            }
             
         } else {
             DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogMovieInfo.alert.title.alert"),Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1859,6 +1869,12 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
      * Gets the IMDB info for this movie...
      **/
     protected void executeCommandGetIMDBInfo() {
+        
+        
+      System.err.println("org.apache.commons.logging.Log:" + System.getProperty("org.apache.commons.logging.Log"));
+      System.err.println("apache.commons.logging.simplelog.defaultlog:" + System.getProperty("apache.commons.logging.simplelog.defaultlog"));
+               
+        
         /* Checks the movie title... */
         if (!getMovieTitle().getText().equals("")) { //$NON-NLS-1$
             

@@ -45,309 +45,313 @@ public class LookAndFeelManager {
     static Logger log = Logger.getRootLogger();
     
     public static void setLookAndFeel() {
-	
-	MovieManagerConfig config = MovieManager.getConfig();
-
-    UIManager.LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
-    
-	if(config.getLookAndFeelString().equals("")) {
-		LookAndFeel currentLAF = UIManager.getLookAndFeel();
-		if (currentLAF != null) {
-			config.setLookAndFeelString(currentLAF.getName());
-		} else {
-			for(int i = 0;i<installedLookAndFeels.length;i++) {
-				if(installedLookAndFeels[i].getClassName().equals(UIManager.getSystemLookAndFeelClassName())) {
-					config.setLookAndFeelString(installedLookAndFeels[i].getName());
-				}
-			}
-		}
-	}
-
-	try {
-	    config.numberOfLookAndFeels = installedLookAndFeels.length;
-	    
-	    if (getSkinlfThemepackList() != null && config.getLookAndFeelType() == 1) {
-		
-		/* Sets the themepack and then sets the skinlf look and feel */
-		Skin skin = SkinLookAndFeel.loadThemePack(config.getSkinlfThemePackDir()+ config.getSkinlfThemePack());
-		SkinLookAndFeel.setSkin(skin);
-		LookAndFeel laf = new SkinLookAndFeel();
-		UIManager.setLookAndFeel(laf);
-		UIManager.setLookAndFeel("com.l2fprod.gui.plaf.skin.SkinLookAndFeel");
-	    }
-	    
-	    if (getOyoahaThemepackList() != null && config.getLookAndFeelType() == 2 ) {
-	    
-		File theme = new File(config.getOyoahaThemePackDir()+ config.getOyoahaThemePack());
-		OyoahaLookAndFeel lnf = new OyoahaLookAndFeel();
-		
-		if(theme.isFile())
-		    lnf.setOyoahaTheme(theme);
-		
-		UIManager.setLookAndFeel(lnf);
-	    }
-	    
-	    /*Any lookAndFeel but skinlf and oyoaha*/
-	    if (config.getLookAndFeelType() != 1 && config.getLookAndFeelType() != 2) {
-		for (int i = 0; i < installedLookAndFeels.length; i++) {
-		    if (installedLookAndFeels[i].getName().equals(config.getLookAndFeelString())) {
-			UIManager.setLookAndFeel(installedLookAndFeels[i].getClassName());
-			
-			break;
-		    }
-		}
-	    }
-	    
-	    SwingUtilities.updateComponentTreeUI(MovieManager.getIt());
-	    
-	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Look and Feel error", "Look and feel may not be properly installed.", e.getMessage());
-	    ShowGUI.showAndWait(alert, true);
-	}
+        
+        MovieManagerConfig config = MovieManager.getConfig();
+        
+        UIManager.LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+        
+        if(config.getLookAndFeelString().equals("")) {
+            LookAndFeel currentLAF = UIManager.getLookAndFeel();
+            if (currentLAF != null) {
+                config.setLookAndFeelString(currentLAF.getName());
+            } else {
+                for(int i = 0;i<installedLookAndFeels.length;i++) {
+                    if(installedLookAndFeels[i].getClassName().equals(UIManager.getSystemLookAndFeelClassName())) {
+                        config.setLookAndFeelString(installedLookAndFeels[i].getName());
+                    }
+                }
+            }
+        }
+        
+        try {
+            config.numberOfLookAndFeels = installedLookAndFeels.length;
+            
+            if (getSkinlfThemepackList() != null && config.getLookAndFeelType() == 1) {
+                
+                /* Sets the themepack and then sets the skinlf look and feel */
+                Skin skin = SkinLookAndFeel.loadThemePack(config.getSkinlfThemePackDir()+ config.getSkinlfThemePack());
+                SkinLookAndFeel.setSkin(skin);
+                LookAndFeel laf = new SkinLookAndFeel();
+                UIManager.setLookAndFeel(laf);
+                UIManager.setLookAndFeel("com.l2fprod.gui.plaf.skin.SkinLookAndFeel");
+            }
+            
+            if (getOyoahaThemepackList() != null && config.getLookAndFeelType() == 2 ) {
+                
+                File theme = new File(config.getOyoahaThemePackDir()+ config.getOyoahaThemePack());
+                OyoahaLookAndFeel lnf = new OyoahaLookAndFeel();
+                
+                if(theme.isFile())
+                    lnf.setOyoahaTheme(theme);
+                
+                UIManager.setLookAndFeel(lnf);
+            }
+            
+            /*Any lookAndFeel but skinlf and oyoaha*/
+            if (config.getLookAndFeelType() != 1 && config.getLookAndFeelType() != 2) {
+                for (int i = 0; i < installedLookAndFeels.length; i++) {
+                    if (installedLookAndFeels[i].getName().equals(config.getLookAndFeelString())) {
+                        UIManager.setLookAndFeel(installedLookAndFeels[i].getClassName());
+                        
+                        break;
+                    }
+                }
+            }
+            
+            SwingUtilities.updateComponentTreeUI(MovieManager.getIt());
+            
+        } catch (Exception e) {
+            log.error("Exception: " + e.getMessage());
+            DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Look and Feel error", "Look and feel may not be properly installed.", e.getMessage());
+            ShowGUI.showAndWait(alert, true);
+        }
     }
     
     
     public static String [] getSkinlfThemepackList() {
-	
-	try {
-	    File dir;
-	    String dirSep = FileUtil.getDirSeparator();
-	    MovieManagerConfig config = MovieManager.getConfig();
-	    
-	    if (!MovieManager.isApplet()) {
-	    
-		config.setSkinlfThemePackDir(FileUtil.getUserDir() + dirSep + "LookAndFeels" + dirSep + "Skinlf Theme Packs" + dirSep);
-		
-	    	dir = new File(config.getSkinlfThemePackDir());
-		
-		if (!dir.exists() && !MovieManager.isMacAppBundle()) {
-		    dir.mkdirs();
-		
-		    String text = "Here you can add new Skinlf themes."+ FileUtil.getLineSeparator()+
-	    		"Simply put the .zip files into the 'Skinlf Theme Packs' directory.";
-		
-		    File skinlf = null;
-		
-		    skinlf = new File(config.getSkinlfThemePackDir() + "Skinlf.txt");
-			
-		    if (skinlf.createNewFile()) {
-		    
-			/* Writes the skinlf textfile. */
-			FileOutputStream stream = new FileOutputStream(skinlf);
-			for (int i = 0; i < text.length(); i++) {
-			    stream.write(text.charAt(i));
-			}
-			stream.close();
-		    }
-		    return null;
-	    	}
-	    
-	    	String [] list = dir.list();
-		ArrayList themePackList = new ArrayList();
-	    if(list != null) {
-	    	for (int i = 0; i < list.length; i++) {
-		    if (list[i].endsWith(".zip"))
-			themePackList.add(list[i]);
-	    	}
-	    }
-		if (themePackList.size() == 0)
-		    return null;
-	    
-	    	String [] tempList = new String[themePackList.toArray().length];
-	    	tempList = (String[]) themePackList.toArray(tempList);
-	    	return tempList;
-	    }
-	
-	} catch (Exception e) {
-	    log.error("", e);
-	}
-	return null;
+        
+        try {
+            File dir;
+            String dirSep = FileUtil.getDirSeparator();
+            MovieManagerConfig config = MovieManager.getConfig();
+            
+            if (!MovieManager.isApplet()) {
+                
+                config.setSkinlfThemePackDir(FileUtil.getUserDir() + dirSep + "LookAndFeels" + dirSep + "Skinlf Theme Packs" + dirSep);
+                
+                dir = new File(config.getSkinlfThemePackDir());
+                
+                if (!dir.exists() && !MovieManager.isMacAppBundle()) {
+                    dir.mkdirs();
+                    
+                    String text = "Here you can add new Skinlf themes."+ FileUtil.getLineSeparator()+
+                    "Simply put the .zip files into the 'Skinlf Theme Packs' directory.";
+                    
+                    File skinlf = null;
+                    
+                    skinlf = new File(config.getSkinlfThemePackDir() + "Skinlf.txt");
+                    
+                    if (skinlf.createNewFile()) {
+                        
+                        /* Writes the skinlf textfile. */
+                        FileOutputStream stream = new FileOutputStream(skinlf);
+                        for (int i = 0; i < text.length(); i++) {
+                            stream.write(text.charAt(i));
+                        }
+                        stream.close();
+                    }
+                    return null;
+                }
+                
+                String [] list = dir.list();
+                ArrayList themePackList = new ArrayList();
+                if(list != null) {
+                    for (int i = 0; i < list.length; i++) {
+                        if (list[i].endsWith(".zip"))
+                            themePackList.add(list[i]);
+                    }
+                }
+                if (themePackList.size() == 0)
+                    return null;
+                
+                String [] tempList = new String[themePackList.toArray().length];
+                tempList = (String[]) themePackList.toArray(tempList);
+                return tempList;
+            }
+            
+        } catch (Exception e) {
+            log.error("", e);
+        }
+        return null;
     }
     
-
-
+    
+    
     public static String [] getOyoahaThemepackList() {
-	
-	try {
-	    MovieManagerConfig config = MovieManager.getConfig();
-	    String dirSep = FileUtil.getDirSeparator();
-	    
-	    if (!MovieManager.isApplet()) {
-		config.setOyoahaThemePackDir(FileUtil.getUserDir() + dirSep + "LookAndFeels" + dirSep + "Oyoaha Theme Packs" + dirSep);
-		File dir = new File(config.getOyoahaThemePackDir());
-		
-		ArrayList themePackList = new ArrayList();
-	    	themePackList.add("Default Theme");
-		
-	    	if (!dir.exists()) {
-		    dir.mkdir();
-		
-		    String text = "Here you can add new Oyoaha themes."+ FileUtil.getLineSeparator()+
-	    		"Simply put the .zotm files into the 'Oyoaha Theme Packs' directory.";
-		
-		    File oyoaha = null;
-		
-		    oyoaha = new File(config.getOyoahaThemePackDir() + "Oyoaha.txt");
-		    
-		    if (oyoaha.mkdirs() && oyoaha.createNewFile()) {
-			/* Writes the oyoaha textfile. */
-			FileOutputStream stream = new FileOutputStream(oyoaha);
-			for (int i=0; i < text.length(); i++) {
-			    stream.write(text.charAt(i));
-			}
-			stream.close();
-		    }
-	    	}
-	    	else {
-		    String [] list = dir.list();
-		
-		    for (int i = 0; i < list.length; i++) {
-			if (list[i].endsWith(".zotm"))
-			    themePackList.add(list[i]);
-		    }
-	    	}
-	    
-	    	String [] tempList = new String[themePackList.toArray().length];
-	    	tempList = (String[]) themePackList.toArray(tempList);
-	    
-		return tempList;
-	    }
-	} catch (Exception e) {
-	    log.error("", e);
-	}
-	return null;
+        
+        try {
+            MovieManagerConfig config = MovieManager.getConfig();
+            String dirSep = FileUtil.getDirSeparator();
+            
+            if (!MovieManager.isApplet()) {
+                config.setOyoahaThemePackDir(FileUtil.getUserDir() + dirSep + "LookAndFeels" + dirSep + "Oyoaha Theme Packs" + dirSep);
+                File dir = new File(config.getOyoahaThemePackDir());
+                
+                ArrayList themePackList = new ArrayList();
+                themePackList.add("Default Theme");
+                
+                if (!dir.exists()) {
+                    dir.mkdir();
+                    
+                    String text = "Here you can add new Oyoaha themes."+ FileUtil.getLineSeparator()+
+                    "Simply put the .zotm files into the 'Oyoaha Theme Packs' directory.";
+                    
+                    File oyoaha = null;
+                    
+                    oyoaha = new File(config.getOyoahaThemePackDir() + "Oyoaha.txt");
+                    
+                    if (oyoaha.mkdirs() && oyoaha.createNewFile()) {
+                        /* Writes the oyoaha textfile. */
+                        FileOutputStream stream = new FileOutputStream(oyoaha);
+                        for (int i=0; i < text.length(); i++) {
+                            stream.write(text.charAt(i));
+                        }
+                        stream.close();
+                    }
+                }
+                else {
+                    String [] list = dir.list();
+                    
+                    for (int i = 0; i < list.length; i++) {
+                        if (list[i].endsWith(".zotm"))
+                            themePackList.add(list[i]);
+                    }
+                }
+                
+                String [] tempList = new String[themePackList.toArray().length];
+                tempList = (String[]) themePackList.toArray(tempList);
+                
+                return tempList;
+            }
+        } catch (Exception e) {
+            log.error("", e);
+        }
+        return null;
     }
     
     
     protected static void instalLAFs() {
-	
-	try {
-		URL url = null;
-		if(!MovieManager.isMacAppBundle()) {
-			url = FileUtil.getFileURL("LookAndFeels/lookAndFeels.ini");
-		} else {
-			// Search in the absolute Path of the Application Bundle (Search as if we weren't in a Application Bundle)
-			url = FileUtil.getFileURL(System.getProperty("user.dir") + "/LookAndFeels/lookAndFeels.ini");
-		}
-	    BufferedInputStream stream = new BufferedInputStream(url.openStream());
-				
-	    int buffer;
-	    StringBuffer lookAndFeel = new StringBuffer();
-	    
-	    /* Reads the lookAndFeels.ini textfile. */
-	    while ((buffer = stream.read()) != -1) {
-	    	lookAndFeel.append((char)buffer);
-	    }
-	    stream.close();
-	    
-	    String lineSeparator = FileUtil.getLineSeparator();
-	    int start = lookAndFeel.indexOf("#")+2;
-	    
-	    if (start == 1)
-		start = lookAndFeel.indexOf("\"", 0);
-	    
-	    int end = start;
-	    String name = "";
-	    String className = "";
-	    String line;	    
-	    int fileEnd = lookAndFeel.length();
-	    
-	    while (true) {
-		end = lookAndFeel.indexOf(lineSeparator, start+1);
-		
-		/*If the last line has no lineSeparator at the end*/
-		if (end == -1)
-		    end = fileEnd;
-		
-		if (start >= end)
-		    break;
-		
-		line = lookAndFeel.substring(start, end);
-		if (line.startsWith("\"")) {
-		    
-		    end = lookAndFeel.indexOf("\"", start+1);
-		    if (end == -1)
-			break;
-		    
-		    name = lookAndFeel.substring(start+1, end);
-		    start = lookAndFeel.indexOf("\"", end+1);
-		    end = lookAndFeel.indexOf("\"", start+1);
-		    className = lookAndFeel.substring(start+1, end);
-		    
-		    try {
-			UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(name, className));
-		    }
-		    catch (SecurityException s) {
-			log.error("SecurityException: "+ s);
-		    }
-		}
-		start = lookAndFeel.indexOf("\"", end+1);
-		
-		if (start == -1) {
-		    break;
-		}
-	    }
-	}
-	catch (Exception e) {
-	    log.warn("Failed to open lookAndFeels.ini file.");
-	}
+        
+        try {
+            URL url = null;
+            if(!MovieManager.isMacAppBundle()) {
+                url = FileUtil.getFileURL("LookAndFeels/lookAndFeels.ini");
+            } else {
+                // Search in the absolute Path of the Application Bundle (Search as if we weren't in a Application Bundle)
+                url = FileUtil.getFileURL(System.getProperty("user.dir") + "/LookAndFeels/lookAndFeels.ini");
+            }
+            BufferedInputStream stream = new BufferedInputStream(url.openStream());
+            
+            int buffer;
+            StringBuffer lookAndFeel = new StringBuffer();
+            
+            /* Reads the lookAndFeels.ini textfile. */
+            while ((buffer = stream.read()) != -1) {
+                lookAndFeel.append((char)buffer);
+            }
+            stream.close();
+            
+            String lineSeparator = FileUtil.getLineSeparator();
+            int start = lookAndFeel.indexOf("#")+2;
+            
+            if (start == 1)
+                start = lookAndFeel.indexOf("\"", 0);
+            
+            int end = start;
+            String name = "";
+            String className = "";
+            String line;	    
+            int fileEnd = lookAndFeel.length();
+            
+            while (true) {
+                end = lookAndFeel.indexOf(lineSeparator, start+1);
+                
+                /*If the last line has no lineSeparator at the end*/
+                if (end == -1)
+                    end = fileEnd;
+                
+                if (start >= end)
+                    break;
+                
+                line = lookAndFeel.substring(start, end);
+                if (line.startsWith("\"")) {
+                    
+                    end = lookAndFeel.indexOf("\"", start+1);
+                    if (end == -1)
+                        break;
+                    
+                    name = lookAndFeel.substring(start+1, end);
+                    start = lookAndFeel.indexOf("\"", end+1);
+                    end = lookAndFeel.indexOf("\"", start+1);
+                    className = lookAndFeel.substring(start+1, end);
+                    
+                    try {
+                        UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(name, className));
+                    }
+                    catch (SecurityException s) {
+                        log.error("SecurityException: "+ s);
+                    }
+                }
+                start = lookAndFeel.indexOf("\"", end+1);
+                
+                if (start == -1) {
+                    break;
+                }
+            }
+        }
+        catch (Exception e) {
+            log.warn("Failed to open lookAndFeels.ini file.");
+        }
     }
     
     public static void setupOSXLaF() {
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("apple.awt.showGrowBox", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MeD's Movie Manager");
         
-        try {
-            Class quaquaClass = ClassLoader.getSystemClassLoader().loadClass("ch.randelshofer.quaqua.QuaquaLookAndFeel");
-            LookAndFeel quaquqLAF = (LookAndFeel) quaquaClass.newInstance();
-            UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(quaquqLAF.getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel"));
-            // Override system look and feel
-            UIManager.setLookAndFeel(quaquqLAF);
-            System.load(FileUtil.getFile(System.getProperty("user.dir") + "/LookAndFeels/libquaqua.jnilib").getPath());
-            System.setProperty("Quaqua.JNI.isPreloaded","true");
-            log.debug("Quaqua installed");
-        } catch (Exception e) {
-            log.error("Quaqua Look and Feel not installed: " + e);
-        }
-        catch(UnsatisfiedLinkError e) {
-            log.error("Quaqua installed, but without the native parts: " + e);
+        if (MovieManager.isMac()) {
+            
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("apple.awt.showGrowBox", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MeD's Movie Manager");
+            
+            try {
+                Class quaquaClass = ClassLoader.getSystemClassLoader().loadClass("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+                LookAndFeel quaquqLAF = (LookAndFeel) quaquaClass.newInstance();
+                UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(quaquqLAF.getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel"));
+                // Override system look and feel
+                UIManager.setLookAndFeel(quaquqLAF);
+                System.load(FileUtil.getFile(System.getProperty("user.dir") + "/lib/mac/libquaqua.jnilib").getPath());
+                System.setProperty("Quaqua.JNI.isPreloaded","true");
+                log.debug("Quaqua installed");
+            } catch (Exception e) {
+                log.error("Quaqua Look and Feel not installed: " + e);
+            }
+            catch(UnsatisfiedLinkError e) {
+                log.error("Quaqua installed, but without the native parts: " + e);
+            }
         }
     }
     
     public static void macOSXRegistration() {
         if (MovieManager.isMac()) {
-      try {
-        Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass("net.sf.xmm.moviemanager.util.mac.OSXAdapter");
-        
-        Class[] defArgs = {MovieManager.class};
-        Method registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication", defArgs);
-        if (registerMethod != null) {
-          Object[] args = { MovieManager.getIt() };
-          registerMethod.invoke(osxAdapter, args);
+            try {
+                Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass("net.sf.xmm.moviemanager.util.mac.OSXAdapter");
+                
+                Class[] defArgs = {MovieManager.class};
+                Method registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication", defArgs);
+                if (registerMethod != null) {
+                    Object[] args = { MovieManager.getIt() };
+                    registerMethod.invoke(osxAdapter, args);
+                }
+                // This is slightly gross.  to reflectively access methods with boolean args, 
+                // use "boolean.class", then pass a Boolean object in as the arg, which apparently
+                // gets converted for you by the reflection system.
+                defArgs[0] = boolean.class;
+                Method prefsEnableMethod =  osxAdapter.getDeclaredMethod("enablePrefs", defArgs);
+                if (prefsEnableMethod != null) {
+                    Object args[] = {Boolean.TRUE};
+                    prefsEnableMethod.invoke(osxAdapter, args);
+                }
+            } catch (NoClassDefFoundError e) {
+                // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
+                // because OSXAdapter extends ApplicationAdapter in its def
+                log.error("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
+            } catch (ClassNotFoundException e) {
+                // This shouldn't be reached; if there's a problem with the OSXAdapter we should get the 
+                // above NoClassDefFoundError first.
+                log.error("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
+            } catch (Exception e) {
+                log.error("Exception while loading the OSXAdapter:");
+                e.printStackTrace();
+            }
         }
-        // This is slightly gross.  to reflectively access methods with boolean args, 
-        // use "boolean.class", then pass a Boolean object in as the arg, which apparently
-        // gets converted for you by the reflection system.
-        defArgs[0] = boolean.class;
-        Method prefsEnableMethod =  osxAdapter.getDeclaredMethod("enablePrefs", defArgs);
-        if (prefsEnableMethod != null) {
-          Object args[] = {Boolean.TRUE};
-          prefsEnableMethod.invoke(osxAdapter, args);
-        }
-      } catch (NoClassDefFoundError e) {
-        // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
-        // because OSXAdapter extends ApplicationAdapter in its def
-          log.error("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
-      } catch (ClassNotFoundException e) {
-        // This shouldn't be reached; if there's a problem with the OSXAdapter we should get the 
-        // above NoClassDefFoundError first.
-          log.error("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
-      } catch (Exception e) {
-          log.error("Exception while loading the OSXAdapter:");
-        e.printStackTrace();
-      }
-    }
     }
 }
