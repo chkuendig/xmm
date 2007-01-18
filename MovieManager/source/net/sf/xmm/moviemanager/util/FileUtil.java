@@ -68,7 +68,14 @@ public class FileUtil {
     public static InputStream getResourceAsStream(String name) {
         
         try {
-            return FileUtil.class.getResourceAsStream(name);
+            if (MovieManager.isApplet()) {
+                if (!name.startsWith("/"))
+                    name = "/" + name;
+                    
+                return MovieManager.getIt().applet.getClass().getResourceAsStream(name);
+            }
+            else
+                return FileUtil.class.getResourceAsStream(name);
             
         } catch (Exception e) {
             log.error("Exception: " + e.getMessage());
@@ -79,7 +86,7 @@ public class FileUtil {
     
     public static File getFile(String fileName) {
         try {
-            return new File(getFileURL(fileName).toURI());
+            return new File(new URI(getFileURL(fileName).toString()));
         } catch (URISyntaxException e) {
             log.error(e);
         }
@@ -92,9 +99,10 @@ public class FileUtil {
         
         try {
             //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
-            
+           
             if (!MovieManager.isApplet()) {
                 url = new File(getUserDir() + fileName).toURL();
+                System.err.println("Not Applet url:" + url);
             }
             else {
                 
@@ -107,6 +115,8 @@ public class FileUtil {
                 //log.debug("codebase:"+ _movieManager.applet.getCodeBase());
                 
                 url = new URL(MovieManager.applet.getCodeBase(), fileName);
+                
+                System.err.println("Applet url:" + url);
                 
                 //log.debug("URL:"+ url.toString());
                 //log.debug("url.getFile():" + url.getFile());
@@ -122,41 +132,7 @@ public class FileUtil {
         return url;
     }
     
-    /*
-     
-     public static String getUserDir() {
-     
-     String path = "";
-     
-     try {
-     java.net.URL url = MovieManager.class.getProtectionDomain().getCodeSource().getLocation();
-     File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8"));
-     
-     // If running in a jar file the parent is the root dir 
-      if (file.isFile())
-      path = file.getParentFile().getAbsolutePath();
-      else
-      path = file.getAbsolutePath();
-      }
-      catch (UnsupportedEncodingException e) {
-      path = System.getProperty("user.dir");
-      }
-      
-      if (!path.endsWith(getDirSeparator()))
-      path += getDirSeparator();
-      
-      return path;
-      }
-      
-      public static String getLineSeparator() {
-      return System.getProperty("line.separator");
-      }
-      
-      
-      public static String getDirSeparator() {
-      return File.separator;
-      }
-      */
+    
     
     /**
      * Getting the 'root directory' of the app.
@@ -170,6 +146,7 @@ public class FileUtil {
             File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
             //File file = new File(java.net.URLDecoder.decode(System.getProperty("user.dir"), "UTF-8"));
             
+            System.err.println("file:" + file);
             
             // If running in a jar file the parent is the root dir 
             if (file.isFile())
@@ -208,6 +185,8 @@ public class FileUtil {
             
             if (MovieManager.isApplet()) {
                 URL url = MovieManager.getIt().getClass().getResource(imageName);
+                System.err.println("applet getImage url:" + url);
+                
                 image = MovieManager.applet.getImage(url);
             }
             else {

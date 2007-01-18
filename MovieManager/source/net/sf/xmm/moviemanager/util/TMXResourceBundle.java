@@ -98,7 +98,7 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
      *            ISO language identifier (a two- or three-letter code)
      */
     public TMXResourceBundle(String xmlfile, String language) {
-	this(xmlfile, language, "");
+	this(xmlfile, null, language, "");
     }
 
     /**
@@ -124,8 +124,11 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
      *            name of the file used to store cache data for the specified
      *            language
      */
-    public TMXResourceBundle(String xmlfile, String language, String cachefile) {
+    public TMXResourceBundle(String xmlfile, InputStream instream, String language, String cachefile) {
 		
+        System.err.println("xmlfile:" + xmlfile);
+        System.err.println("cachefile:" + cachefile);
+        
 	// try to get data from cachefile (if any)
 	if (cachefile.length() > 0) {
 	    try {
@@ -149,8 +152,13 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
 	int numberOfTUVs = 0; // number of <tuv> elements
 
 	// Create Document with parser
-	Document document = parseXmlFile(xmlfile, false);
-
+	Document document;
+    
+    if (instream != null)
+        document = parseXmlFile(instream, false);
+    else
+        document = parseXmlFile(xmlfile, false);
+    
 	// handle document error
 	if (document == null) {
 	    hashcontents = new Hashtable(); // initialize a void hashtable
@@ -240,11 +248,14 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
      * @return the parsed document
      */
     public Document parseXmlFile(String filename, boolean validating) {
+        
+        System.err.println("parseXmlFile:" + filename);
+        
 	Document doc = null;
 	DocumentBuilderFactory factory = null;
 	// Create a builder factory
 	try {
-	    factory = DocumentBuilderFactory.newInstance();
+        factory = DocumentBuilderFactory.newInstance();
 	} catch (FactoryConfigurationError e) {
 	    System.err.println(e);
 	    return null;
@@ -257,18 +268,23 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
 		InputStream instream = getClass().getResourceAsStream(filename);
 		doc = factory.newDocumentBuilder().parse(instream);
 	    } catch (Exception ejar) {
-		try {
+		try { 
 		    // try to get the file as external URI
 		    doc = factory.newDocumentBuilder().parse(filename);
 		} catch (IOException euri) {
 		    try {
+               
 			// try to get the file as local filename
 			doc = factory.newDocumentBuilder().parse(new File(filename));
 		    } catch (IOException efile) {
 			try {
+               
 			    // try to resolve the path as relative to local
 			    // class folder
 			    String[] classPath = System.getProperties().getProperty("java.class.path", ".").split(";");
+                
+                System.err.println("classPath:" + classPath[0] + "  -  " + classPath[1]);
+                
 			    String newpath = classPath[0] + "/" + filename;
 			    doc = factory.newDocumentBuilder().parse(
 								     new File(newpath));
@@ -279,14 +295,50 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
 		    }
 		}
 	    }
+        
 	} catch (ParserConfigurationException e) {
 	    System.err.println("[" + filename + "] ParserConfigurationException:" + e);
 	} catch (SAXException e) {
 	    System.err.println("[" + filename + "] SAXException:" + e);
 	}
-	return doc;
+    return doc;
     }
 
+    
+    /**
+     * Parses an XML file and returns a DOM document.
+     * 
+     * @param filename
+     *            the name of XML file
+     * @param validating
+     *            If true, the contents is validated against the DTD specified
+     *            in the file.
+     * @return the parsed document
+     */
+    public Document parseXmlFile(InputStream instream, boolean validating) {
+        
+        
+        Document doc = null;
+        DocumentBuilderFactory factory = null;
+        // Create a builder factory
+        try {
+             factory = DocumentBuilderFactory.newInstance();
+        } catch (FactoryConfigurationError e) {
+            System.err.println(e);
+            return null;
+        }
+        factory.setValidating(validating);
+        // Create the builder and parse the file
+        try {
+             // try to get the file from jar
+            doc = factory.newDocumentBuilder().parse(instream);
+        } catch (Exception ejar) {
+            
+        }
+        return doc;
+    }
+    
+    
     /**
      * Get key value, return default if void.
      * 
