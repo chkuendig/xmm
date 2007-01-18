@@ -33,23 +33,28 @@ import javax.swing.tree.DefaultMutableTreeNode;
 class MovieManagerCommandAddEpisode implements ActionListener {
 
     /**
-   * Executes the command.
-   **/
+     * Executes the command.
+     **/
     protected static void execute() {
-	
-	int listIndex = MovieManager.getIt().getMoviesList().getLeadSelectionRow();
-	
-	if (listIndex != -1) {
-	    
-	    ModelMovie model = (ModelMovie) ((DefaultMutableTreeNode) MovieManager.getIt().getMoviesList().getLastSelectedPathComponent()).getUserObject();
-	    
-	    if (model.getKey() != -1) {
-		DialogMovieInfo dialogMovieInfo = new DialogMovieInfo(model); //$NON-NLS-1$
-		ShowGUI.show(dialogMovieInfo, true);
-	    }
-	}
+        
+        int listIndex = MovieManager.getIt().getMoviesList().getLeadSelectionRow();
+        
+        if (listIndex != -1) {
+            
+            ModelMovie model = (ModelMovie) ((DefaultMutableTreeNode) MovieManager.getIt().getMoviesList().getLastSelectedPathComponent()).getUserObject();
+            
+            if (model.getKey() != -1) {
+                
+                try {            
+                    DialogMovieInfo dialogMovieInfo = new DialogMovieInfo(model); //$NON-NLS-1$
+                    ShowGUI.show(dialogMovieInfo, true);
+                } catch (Exception e) {
+                    MovieManager.log.error("Exception:", e);
+                }
+            }
+        }
     }
-  
+    
     /**
    * Invoked when an action occurs.
    **/

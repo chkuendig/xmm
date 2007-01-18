@@ -178,7 +178,12 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 			cancel = false;
 		}
 		else {
-			MovieManagerCommandSelect.executeAndReload(movieInfoModel.saveToDatabase(addToThisList), false, true, false);
+            try {
+                MovieManagerCommandSelect.executeAndReload(movieInfoModel.saveToDatabase(addToThisList), false, true, false);
+            } catch (Exception e) {
+                log.error("Saving to database failed.", e);
+            }
+			
 		    movieInfoModel.model.setTitle("");
 		}
 	    }

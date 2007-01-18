@@ -22,6 +22,7 @@ package net.sf.xmm.moviemanager.commands;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
@@ -66,34 +67,48 @@ public class MovieManagerCommandPlay implements ActionListener{
 	}
 	
 	if (listIndex != -1) {
-
+	    
 	    ModelEntry selected = ((ModelEntry) ((DefaultMutableTreeNode) movieManagerInstance.getMoviesList().
-						 getLastSelectedPathComponent()).getUserObject());
+	            getLastSelectedPathComponent()).getUserObject());
 	    
 	    if (selected.getKey() != -1) {
-				
-		String fileLocation = selected.getAdditionalInfo().getFileLocation();
-		MovieManagerConfig mmc = MovieManager.getConfig();
-		String player = mmc.getMediaPlayerPath();
-				
+	        
+            MovieManagerConfig mmc = MovieManager.getConfig();
+            
+	        String fileLocation = selected.getAdditionalInfo().getFileLocation();
+	        String cmd;
+            
+            if (mmc.getUseDefaultWindowsPlayer()) {
+                cmd = "rundll32 url.dll,FileProtocolHandler ";
+             
+                if (fileLocation.indexOf("*") != -1)
+                    fileLocation = fileLocation.substring(0, fileLocation.indexOf("*"));
                 
-		if (fileLocation.length() == 0)
-		    return;
-				
-		if (player.length() == 0){
-
-		    JFileChooser chooser = new JFileChooser();
-		    int returnVal = chooser.showDialog(null, "Launch");
-		    if(returnVal != JFileChooser.APPROVE_OPTION)
-			return;
-
-		    player = chooser.getSelectedFile().getCanonicalPath();
-		    mmc.setMediaPlayerPath(player);
-		}
-
-		System.out.println("You chose to open this file: " + player);
-		Process p;
-		p = Runtime.getRuntime().exec(player + " " + "\"" +fileLocation + "\"");
+                fileLocation = "file://" + fileLocation;
+                
+            }
+            else {
+                if (fileLocation.indexOf("*") != -1)
+                    fileLocation = fileLocation.replaceAll("\\*", " ");
+                                
+                cmd = mmc.getMediaPlayerPath();
+                
+                if (!new File(cmd).isFile()){
+                    
+                    JFileChooser chooser = new JFileChooser();
+                    int returnVal = chooser.showDialog(null, "Launch");
+                    if(returnVal != JFileChooser.APPROVE_OPTION)
+                        return;
+                    
+                    cmd = chooser.getSelectedFile().getCanonicalPath();
+                    mmc.setMediaPlayerPath(cmd);
+                }
+                cmd += " ";
+            }
+	        	        
+            System.err.println(cmd + fileLocation);
+            
+	        Process p = Runtime.getRuntime().exec(cmd + fileLocation);
 	    }
 	}
     }
