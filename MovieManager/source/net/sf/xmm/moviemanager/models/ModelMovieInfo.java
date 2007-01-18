@@ -47,7 +47,30 @@ public class ModelMovieInfo {
     
     public ModelEntry model;
     
+    /* Loading an empty episode model (adding episode) */
+    public ModelMovieInfo(int movieKey) {
+        
+        isEpisode = true;
+        model = new ModelEpisode(movieKey);
+        
+        initializeAdditionalInfo(true);
+    }
     
+    
+    /* Loading an empty model (movie or episode) */
+    public ModelMovieInfo(boolean episode) {
+        
+        isEpisode = episode;
+        
+        if (isEpisode)
+            model = new ModelEpisode();
+        else
+            model = new ModelMovie();
+        
+        initializeAdditionalInfo(true);
+    }
+    
+    /* Loading an empty model  (movie or episode) */
     public ModelMovieInfo(boolean episode, boolean loadEmptyAdditionalInfoFields) {
         
         isEpisode = episode;
@@ -58,8 +81,11 @@ public class ModelMovieInfo {
             model = new ModelMovie();
         
         initializeAdditionalInfo(loadEmptyAdditionalInfoFields);
+        
+        System.err.println("Constructor - movie key: " + ((ModelEpisode) this.model).getMovieKey());
     }
     
+    /* Initializes with the info from a model (Editing entry) */
     public ModelMovieInfo(ModelEntry model, boolean loadEmptyAdditionalInfoFields) {
         
         if (model instanceof ModelEpisode) {
@@ -73,7 +99,7 @@ public class ModelMovieInfo {
         initializeAdditionalInfo(loadEmptyAdditionalInfoFields);
     }
     
-    
+    /* Edit a movie without additional info (special case) */
     public ModelMovieInfo(ModelMovie model) {
         _edit = true;
         this.model = model;
@@ -281,14 +307,12 @@ public class ModelMovieInfo {
     }
     
     
-    public ModelEntry saveToDatabase(String listName) {
+    public ModelEntry saveToDatabase(String listName) throws Exception {
         
         saveAdditionalInfoData();
         
         Database database = MovieManager.getIt().getDatabase();
         ModelAdditionalInfo additionalInfo = model.getAdditionalInfo();
-        
-        System.err.println("additionalInfo:audiochannels:" + additionalInfo.getAudioChannels());
         
         if (isEpisode) {
             
@@ -300,19 +324,26 @@ public class ModelMovieInfo {
                 database.setExtraInfoEpisode(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
                 
             } else {
+                
+                if (((ModelEpisode) model).getMovieKey() == -1)
+                    throw new Exception("Cannot add episode with MovieKey: -1");
+                
                 /* Adding episode */
                 
                 int episodeindex = database.addGeneralInfoEpisode((ModelEpisode) model);
-                
+                 
                 if (episodeindex != -1) {
                     
-                    /* Adds the additional info... */
-                    database.addAdditionalInfoEpisode(episodeindex, additionalInfo);
+                    int ret;
                     
+                    ((ModelEpisode) model).setKey(episodeindex);
+                    
+                    /* Adds the additional info... */
+                    ret = database.addAdditionalInfoEpisode(episodeindex, additionalInfo);
+                     
                     if (ModelAdditionalInfo.getExtraInfoFieldNames().size() > 0) {
-                        
-                        database.addExtraInfoEpisode(episodeindex, ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
-                    }   
+                        ret = database.addExtraInfoEpisode(episodeindex, ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+                     }   
                 }
             }
         } else {
@@ -456,9 +487,7 @@ public class ModelMovieInfo {
             String audioChannels = properties.getAudioChannels();
             _fieldValues.set(12, audioChannels);
             
-            System.err.println("audioChannels:" + audioChannels);
-            
-            String location = properties.getLocation();
+             String location = properties.getLocation();
             
             /* Adds location only if file exist on writable media */
             if (MovieManager.getConfig().isWritable(new File(location).getParentFile())) {
@@ -726,8 +755,12 @@ public class ModelMovieInfo {
     
     public boolean saveCoverToFile() throws Exception {
         
+        System.err.println("_saveCover:" + _saveCover);
+        
         if (!_saveCover)
             return false;
+        
+        
         
         byte [] cover = model.getCoverData();
         String coverName = model.getCover();
@@ -840,14 +873,25 @@ public class ModelMovieInfo {
         modelChanged(this);
     }
     
-    public void setModel(ModelEntry model) {
-        this.model = model;
+    public void setModel(ModelEntry model, boolean copyMovieKey) {
         
-        if (model instanceof ModelEpisode)
+        if (model instanceof ModelEpisode) {
+                      
+            if (copyMovieKey) {
+               
+                if (isEpisode)
+                    ((ModelEpisode) model).setMovieKey(((ModelEpisode) this.model).getMovieKey());
+                else
+                    ((ModelEpisode) model).setMovieKey(this.model.getKey());
+            }
             isEpisode = true;
+        }
         else
             isEpisode = false;
         
+        this.model = model;
+        
         modelChanged(this);
     }
+    
 }
