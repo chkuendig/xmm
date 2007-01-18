@@ -650,7 +650,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 			    tmpKey = (((String) tableNames.get(5)).toLowerCase() +"."+ (String) generalInfoFields.get(i)).replaceAll("_", " ");
 	    
 			    if (searchAlias.containsKey(tmpKey)) {
-				alias.setText((String) searchAlias.remove(tmpKey));
+			        alias.setText((String) searchAlias.get(tmpKey));
 			    }
 				
 			    generalAliasPanel.add(tableName);   
@@ -681,12 +681,14 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 			    alias = new JTextField(10);
 	    
 			    if (tmpColumn.equals("SubTitles"))
-				tmpColumn = tmpColumn.replaceFirst("SubTitles", "Subtitles");
+			        tmpColumn = tmpColumn.replaceFirst("SubTitles", "Subtitles");
 	    
 			    tmpKey = (table.toLowerCase() +"."+ tmpColumn).replaceAll("_", " ");
 	    
+                //System.err.println("tmpKey:" + tmpKey);
+                
 			    if (searchAlias.containsKey(tmpKey)) {
-				alias.setText((String) searchAlias.remove(tmpKey));
+			        alias.setText((String) searchAlias.get(tmpKey));
 			    }
 				
 			    additionalAliasPanel.add(tableName);   
@@ -696,6 +698,20 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 			    additionalInfoFieldsCount++;
 			}
 	
+            
+            Set map = searchAlias.entrySet();
+            String setkey;
+            String setValue;
+            
+             for (Iterator iterator = map.iterator(); iterator.hasNext();) {
+                 
+                 Map.Entry entry = (Map.Entry) iterator.next();
+                 setkey = (String) entry.getKey();
+                 setValue = (String) entry.getValue();
+                 
+                 System.err.println("(" + setkey + ") : " + setValue);
+             }
+            
 			for (int i = 0;i < extraInfoFields.size(); i++) {
 	    
 			    tableName = new JLabel((String) tableNames.get(2));
@@ -704,8 +720,12 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	    
 			    tmpKey = (((String) tableNames.get(2)).toLowerCase() +"."+ (String) extraInfoFields.get(i)).replaceAll("_", " ");
 	     
+               
+                System.err.println("searchAlias.containsKey("+ tmpKey + "):" + searchAlias.containsKey(tmpKey));
+                System.err.println("searchAlias.containsValue("+ tmpKey + "):" + searchAlias.containsValue(tmpKey));
+                 
 			    if (searchAlias.containsKey(tmpKey)) {
-				alias.setText((String) searchAlias.remove(tmpKey));
+			        alias.setText((String) searchAlias.get(tmpKey));
 			    }
 				
 			    additionalAliasPanel.add(tableName);   
@@ -977,7 +997,8 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	    ModelEntry.sort = 5;
 	    
 	HashMap searchAlias = MovieManager.getConfig().getSearchAlias();
-	    
+    searchAlias.clear();
+    
 	String tmp;
 	int index = 5;
 	    
@@ -997,8 +1018,15 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 
 	    tmp = ((JTextField) additionalAliasPanel.getComponent(index)).getText();
 		
-	    if (!tmp.equals("")) {
-		searchAlias.put((((JLabel) additionalAliasPanel.getComponent(index -2)).getText().replaceAll("_", " ").toLowerCase() +"."+((JLabel) additionalAliasPanel.getComponent(index -1)).getText().replaceAll("_", " ").replaceFirst("SubTitles", "Subtitles")), tmp);
+        String table = ((JLabel) additionalAliasPanel.getComponent(index -2)).getText().replaceAll("_", " ").toLowerCase();
+        String column = ((JLabel) additionalAliasPanel.getComponent(index -1)).getText().replaceFirst("SubTitles", "Subtitles");
+        
+        /* Do not replace underscore with space on extra info columns */
+        if (table.indexOf("extra") == -1)
+            column = column.replaceAll("_", " ");
+        
+        if (!tmp.equals("")) {
+	        searchAlias.put(table + "." + column, tmp);
 	    }
 	    index += 3;
 	}
