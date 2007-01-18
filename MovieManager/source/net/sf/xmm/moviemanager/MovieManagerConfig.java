@@ -107,7 +107,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
     private int preserveCoverAspectRatioSetting = 2;
 
     private String playerPath = "";
+    private String browserPath = "";
     
+    private boolean useDefaultWindowsPlayer = true;
+    
+    private String systemWebBrowser = MovieManager.getDefaultPlatformBrowser();
+       
     private int lastPreferencesTabIndex = 0;
 
     /* 0 = no, 1 = yes if no java parser avaliable, 2 = yes */
@@ -1043,13 +1048,40 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	this.lastPreferencesTabIndex = lastPreferencesTabIndex;
     }
 
-    public String getMediaPlayerPath(){
+    public String getMediaPlayerPath() {
         return this.playerPath;
     }
            
     public void setMediaPlayerPath(String playerPath){
         this.playerPath = playerPath;
     }
+    
+    public String getBrowserPath() {
+        return browserPath;
+    }
+           
+    public void setBrowserPath(String browserPath){
+        this.browserPath = browserPath;
+    }
+    
+    
+    
+    public boolean getUseDefaultWindowsPlayer() {
+        return useDefaultWindowsPlayer;
+    }
+
+    public void setUseDefaultWindowsPlayer(boolean useDefaultWindowsPlayer) {
+        this.useDefaultWindowsPlayer = useDefaultWindowsPlayer;
+    }
+    
+    public String getSystemWebBrowser() {
+        return systemWebBrowser;
+    }
+
+    public void setSystemWebBrowser(String systemWebBrowser) {
+        this.systemWebBrowser = systemWebBrowser;
+    }
+    
     
     /**
      * Loads info from the config file...
@@ -1640,6 +1672,28 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
             setMediaPlayerPath(readFile);
         }
         
+        index = settings.indexOf("browserPath:");
+
+        if (index != -1) {
+            readFile = settings.substring(settings.indexOf(":", index)+1, settings.indexOf(lineSeparator, index));
+            setBrowserPath(readFile);
+        }
+        
+        
+        index = settings.indexOf("useDefaultWindowsPlayer:");
+
+        if (index != -1) {
+            readFile = settings.substring(settings.indexOf(":", index)+1, settings.indexOf(lineSeparator, index));
+            setUseDefaultWindowsPlayer(new Boolean(readFile).booleanValue());
+        }
+        
+        index = settings.indexOf("systemWebBrowser:");
+
+        if (index != -1) {
+            readFile = settings.substring(settings.indexOf(":", index)+1, settings.indexOf(lineSeparator, index));
+            setSystemWebBrowser(readFile);
+        }
+        
         
         index = settings.indexOf("displayPlayButton:");
 
@@ -1921,8 +1975,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	settings.append(lineSeparator);
 	settings.append("useJTreeIcons:" + getUseJTreeIcons());
 
-        settings.append(lineSeparator);
-        settings.append("useJTreeCovers:" + getUseJTreeCovers());
+	settings.append(lineSeparator);
+	settings.append("useJTreeCovers:" + getUseJTreeCovers());
 
 	settings.append(lineSeparator);
 	settings.append("lastPreferencesTabIndex:"+ Integer.toString(getLastPreferencesTabIndex()));
@@ -1969,6 +2023,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
     settings.append(lineSeparator);
     settings.append("playerPath:"+ getMediaPlayerPath());
         
+    settings.append(lineSeparator);
+    settings.append("browserPath:"+ getBrowserPath());
+
+    settings.append(lineSeparator);
+    settings.append("useDefaultWindowsPlayer:"+ getUseDefaultWindowsPlayer());
+
+    settings.append(lineSeparator);
+    settings.append("systemWebBrowser:"+ getSystemWebBrowser());
+
     settings.append(lineSeparator);
     settings.append("displayPlayButton:"+ getDisplayPlayButton());
     

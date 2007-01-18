@@ -110,7 +110,22 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
     private JCheckBox enableStoreCoversLocally;
 
+   
+    private JButton browserBrowse;
     private JTextField mediaPlayerPathField;
+    private JTextField customBrowserPathField;
+    
+    private JRadioButton browserOptionOpera;
+    private JRadioButton browserOptionMozilla;
+    private JRadioButton browserOptionFirefox;
+    private JRadioButton browserOptionNetscape;
+    private JRadioButton browserOptionSafari;
+    private JRadioButton browserOptionIE;
+    
+    
+    private JCheckBox enableUseDefaultWindowsPlayer;
+    private JRadioButton enableUseDefaultWindowsBrowser;
+    private JRadioButton enableCustomBrowser;
     
     private JSlider rowHeightSlider;
     private JTree exampleTree;
@@ -633,8 +648,11 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
     
 	try {
     
-	    URL url = FileUtil.getFileURL("codecs/LanguageCodes.txt");
-	    BufferedInputStream stream = new BufferedInputStream(url.openStream());
+	    InputStream inputStream = FileUtil.getResourceAsStream("codecs/LanguageCodes.txt");
+        
+        //URL url = FileUtil.getFileURL("codecs/LanguageCodes.txt");
+        
+	    BufferedInputStream stream = new BufferedInputStream(inputStream);
 
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
     
@@ -648,7 +666,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		if (line.startsWith(currentLangCode))
 		    index = langCodesList.size();
         
-		line = " " + line.replace("\t", " - ");
+		line = " " + line.replaceFirst("\t", " - ");
         
 		langCodesList.add(line);
 	    }
@@ -658,7 +676,14 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    log.warn(e);
 	}
     
+    akaTitlePanel.add(storeAllAvailableAkaTitles);
+    akaTitlePanel.add(noDuplicateAkaTitles);
+    akaTitlePanel.add(includeAkaLanguageCodes);
+    akaTitlePanel.add(useLanguageSpecificTitle);
+    
 	Object [] languageCodes = langCodesList.toArray();
+    
+    if (languageCodes.length > 0) {
     
 	languageCodeSelector = new JComboBox(languageCodes);
     
@@ -687,12 +712,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	else
 	    languageCodeSelector.setEnabled(false);
     
-	akaTitlePanel.add(storeAllAvailableAkaTitles);
-	akaTitlePanel.add(noDuplicateAkaTitles);
-	akaTitlePanel.add(includeAkaLanguageCodes);
-	akaTitlePanel.add(useLanguageSpecificTitle);
 	akaTitlePanel.add(languageCodeSelector);
-     
+    }
+    
 	titlePanel.add(akaTitlePanel);
 	miscPanel.add(titlePanel);
     
@@ -842,43 +864,53 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         movieListPanel.add(rowHeightPanel);
         updateRowHeightExample();
 
+        
+        
         /* Player panel */
         JPanel playerPanel = new JPanel();
         playerPanel.setLayout(new GridBagLayout());
-        c = new GridBagConstraints();
-        
+                
         playerPanel.setBorder(BorderFactory.createCompoundBorder(
-								 BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Player "),
+								 BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Player Path "),
 								 BorderFactory.createEmptyBorder(12,1,16,1)));
         
-        JLabel label = new JLabel("Default Player Location:");
+        enableUseDefaultWindowsPlayer = new JCheckBox("Use the default Windows player");
+        enableUseDefaultWindowsPlayer.setSelected(config.getUseDefaultWindowsPlayer());
+                
+        if (!MovieManager.isWindows())
+            enableUseDefaultWindowsPlayer.setEnabled(false);
         
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 2;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        playerPanel.add(enableUseDefaultWindowsPlayer, c);
+        
+        JLabel playerLabel = new JLabel("Player Location:");
+        
+        c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
         c.anchor = GridBagConstraints.FIRST_LINE_START;
-        playerPanel.add(label, c);
+        playerPanel.add(playerLabel, c);
         
-        JButton browse = new JButton("Browse...");
+        
         
         mediaPlayerPathField = new JTextField(32);
         mediaPlayerPathField.setText(config.getMediaPlayerPath());
+                
+        JButton mediaPlayerBrowse = new JButton("Browse");
         
-        JPanel filePanel = new JPanel ();
-        filePanel.setLayout(new BoxLayout(filePanel, BoxLayout.X_AXIS));
-        filePanel.add(mediaPlayerPathField);
-        filePanel.add(Box.createHorizontalGlue());
-        filePanel.add(browse);
-        
-        browse.setActionCommand("Browse Player Path");
-        browse.addActionListener(new ActionListener() {
+        mediaPlayerBrowse.setActionCommand("Browse Player Path");
+        mediaPlayerBrowse.addActionListener(new ActionListener() {
             
 		public void actionPerformed(ActionEvent arg0) {
 		    // check if there is a file selected
 
 		    JFileChooser chooser = new JFileChooser();
 		    int returnVal = chooser.showDialog(null, "Choose");
-		    if(returnVal != JFileChooser.APPROVE_OPTION)
-			return;
+		    if (returnVal != JFileChooser.APPROVE_OPTION)
+		        return;
 
 		    try {
 			String location = chooser.getSelectedFile().getCanonicalPath();
@@ -891,13 +923,160 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
                 
 		}});
                 
+        JPanel mediaPlayerFilePanel = new JPanel ();
+        mediaPlayerFilePanel.setLayout(new BoxLayout(mediaPlayerFilePanel, BoxLayout.X_AXIS));
+        mediaPlayerFilePanel.add(mediaPlayerPathField);
+        //mediaPlayerFilePanel.add(Box.createHorizontalGlue());
+        mediaPlayerFilePanel.add(mediaPlayerBrowse);
+        
         c.gridx = 0;
         c.gridy = 1;
-        playerPanel.add(filePanel, c);
-        playerPanel.add(Box.createVerticalGlue());
+        playerPanel.add(mediaPlayerFilePanel, c);
+        
+        /* Browser Path */
+        JPanel browserPanel = new JPanel();
+        browserPanel.setLayout(new GridBagLayout());
+        c = new GridBagConstraints();
+        
+        browserPanel.setBorder(BorderFactory.createCompoundBorder(
+                                 BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Web Browser "),
+                                 BorderFactory.createEmptyBorder(12,3,16,3)));
+        
+        
+        
+        JPanel browserOptionPanel = new JPanel(new GridLayout(4, 2));
+        
+        
+        enableUseDefaultWindowsBrowser = new JRadioButton("Windows default");
+        enableCustomBrowser =            new JRadioButton("Custom browser");
+        browserOptionOpera =             new JRadioButton("Opera");
+        browserOptionFirefox =           new JRadioButton("Firefox");
+        browserOptionMozilla =           new JRadioButton("Mozilla");
+        browserOptionSafari =            new JRadioButton("Safari");
+        browserOptionNetscape =          new JRadioButton("Netscape");
+        browserOptionIE =                new JRadioButton("IE (Internet Explorer)");
+                
+        
+        String browser = config.getSystemWebBrowser();
+        
+        if (browser.equals("Default"))
+            enableUseDefaultWindowsBrowser.setSelected(true);
+        else if (browser.equals("Custom"))
+            enableCustomBrowser.setSelected(true);
+        else if (browser.equals("Opera"))
+            browserOptionOpera.setSelected(true);
+        else if (browser.equals("Firefox"))
+            browserOptionFirefox.setSelected(true);
+        else if (browser.equals("Mozilla"))
+            browserOptionMozilla.setSelected(true);
+        else if (browser.equals("Safari"))
+            browserOptionSafari.setSelected(true);
+        else if (browser.equals("Netscape"))
+            browserOptionNetscape.setSelected(true);
+        else if (browser.equals("IE"))
+            browserOptionIE.setSelected(true);
+                                
+                                
+        ButtonGroup browserOptionGroup = new ButtonGroup();
+        browserOptionGroup.add(browserOptionOpera);
+        browserOptionGroup.add(browserOptionMozilla);
+        browserOptionGroup.add(browserOptionFirefox);
+        browserOptionGroup.add(browserOptionNetscape);
+        browserOptionGroup.add(browserOptionSafari);
+        browserOptionGroup.add(browserOptionIE);
+        browserOptionGroup.add(enableCustomBrowser);
+        browserOptionGroup.add(enableUseDefaultWindowsBrowser);
+         
+        browserOptionPanel.add(browserOptionOpera);
+        browserOptionPanel.add(browserOptionMozilla);
+        browserOptionPanel.add(browserOptionFirefox);
+        browserOptionPanel.add(browserOptionNetscape);
+        browserOptionPanel.add(browserOptionSafari);
+        browserOptionPanel.add(browserOptionIE);
+        browserOptionPanel.add(enableCustomBrowser);
+        browserOptionPanel.add(enableUseDefaultWindowsBrowser);
+        
+        
+        
+       browserOptionOpera.addItemListener(this);
+       browserOptionMozilla.addItemListener(this);
+       browserOptionFirefox.addItemListener(this);
+        browserOptionNetscape.addItemListener(this);
+        browserOptionSafari.addItemListener(this);
+        browserOptionIE.addItemListener(this);
+        enableCustomBrowser.addItemListener(this);
+        enableUseDefaultWindowsBrowser.addItemListener(this);
+        
+        //browserPanel.add(browserOptionPanel);
+        
+        c.gridx = 0;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        browserPanel.add(browserOptionPanel, c);
+        
+        
+        JLabel browserLabel = new JLabel("Browser Location:");
+        
+        c.gridx = 0;
+        c.gridy = 1;
+        c.anchor = GridBagConstraints.FIRST_LINE_START;
+        browserPanel.add(browserLabel, c);
         
        
-       
+        
+        customBrowserPathField = new JTextField(32);
+        customBrowserPathField.setText(config.getBrowserPath());
+        
+        browserBrowse = new JButton("Browse");
+        browserBrowse.setActionCommand("Browse Path");
+        
+        browserBrowse.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+            // check if there is a file selected
+
+            JFileChooser chooser = new JFileChooser();
+            int returnVal = chooser.showDialog(null, "Choose");
+            if (returnVal != JFileChooser.APPROVE_OPTION)
+            return;
+
+            try {
+            String location = chooser.getSelectedFile().getCanonicalPath();
+                
+            if (location != null)
+                customBrowserPathField.setText(location);
+            } catch (IOException e) {
+            log.warn("Failed to retrieve browser path");
+            }
+                
+        }});
+                
+        JPanel browserFilePanel = new JPanel();
+        browserFilePanel.setLayout(new BoxLayout(browserFilePanel, BoxLayout.X_AXIS));
+        browserFilePanel.add(customBrowserPathField);
+        browserFilePanel.add(Box.createHorizontalGlue());
+        browserFilePanel.add(browserBrowse);
+        
+        c.gridx = 0;
+        c.gridy = 2;
+        browserPanel.add(browserFilePanel, c);
+        browserPanel.add(Box.createVerticalGlue());
+        
+        
+        setBrowserComponentsEnabled();
+        
+        /* Program Paths */
+        
+        JPanel programPathsPanel = new JPanel();
+        programPathsPanel.setLayout(new BoxLayout(programPathsPanel, BoxLayout.Y_AXIS));
+        
+        programPathsPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " External Programs "),
+                BorderFactory.createEmptyBorder(12,3,16,3)));
+        
+        programPathsPanel.add(playerPanel);
+        
+        programPathsPanel.add(browserPanel);
+        
         
 	/* OK panel */
 	JPanel okPanel = new JPanel();
@@ -916,14 +1095,14 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	all.add(Localizer.getString("dialogprefs.panel.miscellaneous.title"), miscPanel); //$NON-NLS-1$
 	all.add(Localizer.getString("dialogprefs.panel.cover-settings.title"), coverPanel); //$NON-NLS-1$
 	all.add(Localizer.getString("dialogprefs.panel.movie-list.title"), movieListPanel); //$NON-NLS-1$
-
-	all.add("Media Player", playerPanel);
+	all.add("Program Paths", programPathsPanel);
     
 	all.setSelectedIndex(config.getLastPreferencesTabIndex());
 
 	contentPane = getContentPane();
 	contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.Y_AXIS));
-
+    
+    
 	contentPane.add(all);
 	contentPane.add(okPanel);
 
@@ -937,6 +1116,31 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         updateEnabling();
     }
 
+    
+    void setBrowserComponentsEnabled() {
+        
+        if (!MovieManager.isMac())
+            browserOptionSafari.setEnabled(false);
+        else if (!MovieManager.isWindows())
+            browserOptionIE.setEnabled(false);
+        else {
+            browserOptionSafari.setEnabled(false);
+            browserOptionIE.setEnabled(false);
+        }
+        
+        
+        if (enableCustomBrowser.isSelected()) {
+            customBrowserPathField.setEnabled(true);
+            browserBrowse.setEnabled(true);
+        }
+        else {
+            customBrowserPathField.setEnabled(false);
+            browserBrowse.setEnabled(false);
+        }
+        if (!MovieManager.isWindows())
+            enableUseDefaultWindowsBrowser.setEnabled(false);
+    }
+    
     private void updateRowHeightExample() {
         int rowHeight = rowHeightSlider.getValue();
         exampleConfig.setMovieListRowHeight(rowHeight);
@@ -948,10 +1152,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         exampleTree.updateUI();
     }
 
-    void saveSettings() {
-
-        
-        
+    
+    boolean saveSettings() {
+  
 	/* Saving the tab index */
 	config.setLastPreferencesTabIndex(all.getSelectedIndex());
 
@@ -973,9 +1176,43 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    config.setAuthenticationEnabled(false);
 
 
-	if (mediaPlayerPathField.getText() != null) {
-	    config.setMediaPlayerPath(mediaPlayerPathField.getText());
-	}
+	config.setMediaPlayerPath(mediaPlayerPathField.getText());
+	config.setBrowserPath(customBrowserPathField.getText());
+
+    if (enableUseDefaultWindowsPlayer.isSelected())
+        config.setUseDefaultWindowsPlayer(true);
+    else
+        config.setUseDefaultWindowsPlayer(false);
+        
+    
+    /* Web Browser */
+    if (enableUseDefaultWindowsBrowser.isSelected())
+        config.setSystemWebBrowser("Default");
+    else if (browserOptionOpera.isSelected())
+        config.setSystemWebBrowser("Opera");
+    else if (browserOptionFirefox.isSelected())
+        config.setSystemWebBrowser("Firefox");
+    else if (browserOptionMozilla.isSelected())
+        config.setSystemWebBrowser("Mozilla");
+    else if (browserOptionSafari.isSelected())
+        config.setSystemWebBrowser("Safari");
+    else if (browserOptionNetscape.isSelected())
+        config.setSystemWebBrowser("Netscape");
+    else if (browserOptionIE.isSelected())
+        config.setSystemWebBrowser("IE");
+    else if (enableCustomBrowser.isSelected()) {
+        config.setSystemWebBrowser("Custom");
+        
+        File browser = new File(customBrowserPathField.getText());
+        
+        if (!browser.isFile()) {
+            DialogAlert alert = new DialogAlert(this, Localizer.getString("dialogprefs.alert.title.alert"), "The custom browser path is invalid."); //$NON-NLS-1$ 
+            ShowGUI.showAndWait(alert, true);
+            return false;
+        }
+        
+        config.setBrowserPath(browser.getAbsolutePath());
+    }
     
     
 	/* automatic move of 'The' */
@@ -989,7 +1226,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    config.setAutoMoveAnAndA(true);
 	else
 	    config.setAutoMoveAnAndA(false);
-
     
     
 	if (storeAllAvailableAkaTitles.isSelected())
@@ -1014,17 +1250,11 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    config.setUseLanguageSpecificTitle(true);
         
 	    String value = (String) languageCodeSelector.getSelectedItem();
-        
 	    value = value.substring(1, 3);
-        
 	    config.setTitleLanguageCode(value);
-        
 	}
 	else
 	    config.setUseLanguageSpecificTitle(false);
-    
-    
-    
     
     
 	/* automatically load database at startup */
@@ -1117,11 +1347,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	else
 	    config.setStoreCoversLocally(false);
 
-	MovieManager.getIt().updateJTreeIcons();
-
-	/* Necessary to update the icons in the movielist */
-	MovieManager.getIt().getMoviesList().updateUI();
-	MovieManagerCommandSelect.execute();
+	return true;
     }
 
 
@@ -1371,16 +1597,24 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	/* OK - Saves settings */
 	if (event.getActionCommand().equals("OK")) { //$NON-NLS-1$
-	    saveSettings();
+	    
+       if (saveSettings()) {
+           dispose();
+           
+           MovieManager.getIt().updateJTreeIcons();
 
-	    dispose();
-	    return;
-	}
-
-        if (event.getActionCommand().equals("Enable JTree Icons") || event.getActionCommand().equals("Enable JTree Covers")) { //$NON-NLS-1$ //$NON-NLS-2$
+           /* Necessary to update the icons in the movielist */
+           MovieManager.getIt().getMoviesList().updateUI();
+           MovieManagerCommandSelect.execute();
+           
+           return;
+       }
+    }
+        
+	if (event.getActionCommand().equals("Enable JTree Icons") || event.getActionCommand().equals("Enable JTree Covers")) { //$NON-NLS-1$ //$NON-NLS-2$
 	    updateEnabling();
 	    updateRowHeightExample();
-        }
+	}
 
 	if (event.getActionCommand().equals("Enable LookAndFeel")) { //$NON-NLS-1$
 
@@ -1565,8 +1799,36 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    if (useLanguageSpecificTitle.isSelected())
 		languageCodeSelector.setEnabled(true);
 	    else
-		languageCodeSelector.setEnabled(false);
+	        languageCodeSelector.setEnabled(false);
 	}
+	
+	
+	if (source.equals(browserOptionOpera)) {
+        setBrowserComponentsEnabled();
+	}
+	
+	if (source.equals(browserOptionMozilla)) {
+        setBrowserComponentsEnabled();
+	}
+	
+	if (source.equals(browserOptionFirefox)) {
+        setBrowserComponentsEnabled();
+	}
+	
+	if (source.equals(browserOptionNetscape)) {
+        setBrowserComponentsEnabled();
+	}
+	
+	if (source.equals(browserOptionSafari)) {
+        setBrowserComponentsEnabled();
+	}
+	
+	if (source.equals(enableCustomBrowser)) {
+        setBrowserComponentsEnabled();
+	}   
+	if (source.equals(enableUseDefaultWindowsBrowser)) {
+        setBrowserComponentsEnabled();
+	} 
     }
 }
 
