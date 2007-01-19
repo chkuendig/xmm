@@ -1119,15 +1119,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
     
     void setBrowserComponentsEnabled() {
         
-        if (!MovieManager.isMac())
+        if (!MovieManager.isMac()) {
             browserOptionSafari.setEnabled(false);
-        else if (!MovieManager.isWindows())
-            browserOptionIE.setEnabled(false);
-        else {
-            browserOptionSafari.setEnabled(false);
-            browserOptionIE.setEnabled(false);
-        }
         
+            if (!MovieManager.isWindows())
+                browserOptionIE.setEnabled(false);
+        }
         
         if (enableCustomBrowser.isSelected()) {
             customBrowserPathField.setEnabled(true);
@@ -1137,6 +1134,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
             customBrowserPathField.setEnabled(false);
             browserBrowse.setEnabled(false);
         }
+        
         if (!MovieManager.isWindows())
             enableUseDefaultWindowsBrowser.setEnabled(false);
     }
