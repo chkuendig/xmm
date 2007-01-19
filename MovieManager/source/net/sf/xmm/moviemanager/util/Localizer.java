@@ -2,7 +2,7 @@ package net.sf.xmm.moviemanager.util;
 
 import net.sf.xmm.moviemanager.MovieManager;
 
-import org.xnap.commons.i18n.I18n;
+//import org.xnap.commons.i18n.I18n;
 
 import java.io.File;
 import java.io.InputStream;
@@ -12,7 +12,7 @@ import java.util.MissingResourceException;
 
 public class Localizer {
 
-    static public I18n i18n;
+   // static public I18n i18n;
     
     final static TMXResourceBundle res_en;
     final static TMXResourceBundle res_no = null;
@@ -61,7 +61,7 @@ public class Localizer {
         
         //res_it = new TMXResourceBundle("tmx/sample_tmx.xml", "it", "src/com/tecnick/tmxjavabridge/test/test_tmx_it.obj");
     
-        i18n = new org.xnap.commons.i18n.I18n(res_en);
+        //i18n = new org.xnap.commons.i18n.I18n(res_en);
         }
     }
     
