@@ -439,7 +439,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	
 	if (model != null && !urlKey.equals("")) { //$NON-NLS-1$
 	    if (model instanceof ModelMovie)
-		MovieManager.getIt().getCover().addMouseListener(new MovieManagerCommandOpenPage("http://us.imdb.com/title/tt"+urlKey+"/")); //$NON-NLS-1$ //$NON-NLS-2$
+		MovieManager.getIt().getCover().addMouseListener(new MovieManagerCommandOpenPage("http://imdb.com/title/tt"+urlKey+"/")); //$NON-NLS-1$ //$NON-NLS-2$
 	    else
 		MovieManager.getIt().getCover().addMouseListener(new MovieManagerCommandOpenPage("http://www.tv.com"+urlKey+"summary.html")); //$NON-NLS-1$ //$NON-NLS-2$
 	    
@@ -455,8 +455,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	    MovieManager.getIt().getDateField().setCaretPosition(0);
 	}
 	
-	System.err.println("title:" + title);
-    
 	MovieManager.getIt().getTitleField().setText(title);
 	MovieManager.getIt().getTitleField().setCaretPosition(0);
 	
