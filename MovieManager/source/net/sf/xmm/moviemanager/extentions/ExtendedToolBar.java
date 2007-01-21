@@ -148,13 +148,10 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
         
         //  toolBar.setLayout(new ModifiedFlowLayout(SwingConstants.HORIZONTAL, 4, 4));
 
-	//toolBar.putClientProperty(new String("JToolBar.isRollover"), Boolean.TRUE);
+        toolBar.putClientProperty(new String("JToolBar.isRollover"), Boolean.TRUE);
 
         //toolBar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), BorderFactory.createEmptyBorder(0,0,0,0)));
-
-        //toolBar.setMinimumSize(new Dimension(254, 50));
-        //toolBar.setPreferredSize(new Dimension(254, 60));
-
+ 
         toolBar.setFloatable(false);
 
         toolBar.addMouseListener((ExtendedToolBar) toolBar);
@@ -163,9 +160,10 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
         
         
         /* The Add button. */
-        buttonAdd = new JButton(new ImageIcon(FileUtil.getImage("/images/add.png").getScaledInstance(24, 24, Image.SCALE_SMOOTH))); //$NON-NLS-1$
+        buttonAdd = new JButton(new ImageIcon(FileUtil.getImage("/images/add.png").getScaledInstance(27, 27, Image.SCALE_SMOOTH))); //$NON-NLS-1$
 
-        buttonAdd.setPreferredSize(new Dimension(39, 39));
+        buttonAdd.setPreferredSize(new Dimension(45, 45));
+        buttonAdd.setMinimumSize(new Dimension(45, 45));
         buttonAdd.setMaximumSize(new Dimension(45, 45));
         buttonAdd.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
 
@@ -180,11 +178,11 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
         toolBar.addSeparator(dim);
 
         /* The Remove button. */
-        buttonRemove = new JButton(new ImageIcon(FileUtil.getImage("/images/remove.png").getScaledInstance(26,26,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+        buttonRemove = new JButton(new ImageIcon(FileUtil.getImage("/images/remove.png").getScaledInstance(27,27,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 
         //buttonRemove.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonRemove.getBorder()));
 
-        buttonRemove.setPreferredSize(new Dimension(39, 39));
+        buttonRemove.setPreferredSize(new Dimension(40, 40));
         buttonRemove.setMaximumSize(new Dimension(44, 45));
         buttonRemove.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-remove")); //$NON-NLS-1$
         buttonRemove.setActionCommand("Remove"); //$NON-NLS-1$
@@ -196,11 +194,11 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
         toolBar.addSeparator(dim);
 
         /* The Edit button. */
-        buttonEdit = new JButton(new ImageIcon(FileUtil.getImage("/images/edit.png").getScaledInstance(23,23,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+        buttonEdit = new JButton(new ImageIcon(FileUtil.getImage("/images/edit.png").getScaledInstance(26,26,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 
         buttonEdit.setMargin(new Insets(0,10,0,10));
         
-        buttonEdit.setPreferredSize(new Dimension(39, 39));
+        buttonEdit.setPreferredSize(new Dimension(40, 40));
         buttonEdit.setMaximumSize(new Dimension(44, 45));
         buttonEdit.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-edit")); //$NON-NLS-1$
         buttonEdit.setActionCommand("Edit"); //$NON-NLS-1$
@@ -212,11 +210,11 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
         toolBar.addSeparator(dim);
 
         /* The Search button. */
-        buttonSearch = new JButton(new ImageIcon(FileUtil.getImage("/images/search.png").getScaledInstance(25,25,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+        buttonSearch = new JButton(new ImageIcon(FileUtil.getImage("/images/search.png").getScaledInstance(28,28,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 
         buttonSearch.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonSearch.getBorder()));
 
-        buttonSearch.setPreferredSize(new Dimension(39, 39));
+        buttonSearch.setPreferredSize(new Dimension(40, 40));
         buttonSearch.setMaximumSize(new Dimension(45, 45));
         buttonSearch.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-search")); //$NON-NLS-1$
         buttonSearch.setActionCommand("Search"); //$NON-NLS-1$
@@ -265,14 +263,12 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 
         toolBar.add(panelEntries);
 
-        //toolBar.setPreferredSize(new Dimension(toolBar.getMaximumSize()));
-        //toolBar.setMinimumSize(toolBar.getPreferredSize());
     }
     
     JButton constructPlayButton() {
         JButton buttonPlay = new JButton( 
 					 new ImageIcon(
-						       FileUtil.getImage("/images/play.gif").
+						       FileUtil.getImage("/images/play.png").
 						       getScaledInstance(25,25,Image.SCALE_SMOOTH)));
                    
         buttonPlay.setBorder(BorderFactory.createCompoundBorder(
