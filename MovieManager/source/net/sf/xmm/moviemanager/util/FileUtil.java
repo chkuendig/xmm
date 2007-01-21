@@ -86,11 +86,11 @@ public class FileUtil {
     
     public static File getFile(String fileName) {
         try {
-            return new File(new URI(getFileURL(fileName).toString()));
+            return new File(new URI(null, getFileURL(fileName).toString(), null));
         } catch (URISyntaxException e) {
             log.error(e);
         }
-        return null;
+       return null;
     }
     
     public static URL getFileURL(String fileName) {
@@ -102,8 +102,7 @@ public class FileUtil {
            
             if (!MovieManager.isApplet()) {
                 url = new File(getUserDir() + fileName).toURL();
-                System.err.println("Not Applet url:" + url);
-            }
+	    }
             else {
                 
                 fileName = fileName.replaceAll("\\\\", "/");
@@ -116,9 +115,7 @@ public class FileUtil {
                 
                 url = new URL(MovieManager.applet.getCodeBase(), fileName);
                 
-                System.err.println("Applet url:" + url);
-                
-                //log.debug("URL:"+ url.toString());
+		//log.debug("URL:"+ url.toString());
                 //log.debug("url.getFile():" + url.getFile());
                 //log.debug("getPath():" + url.getPath());
                 
@@ -146,9 +143,7 @@ public class FileUtil {
             File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
             //File file = new File(java.net.URLDecoder.decode(System.getProperty("user.dir"), "UTF-8"));
             
-            System.err.println("file:" + file);
-            
-            // If running in a jar file the parent is the root dir 
+	    // If running in a jar file the parent is the root dir 
             if (file.isFile())
                 path = file.getParentFile().getAbsolutePath();
             else
@@ -185,9 +180,7 @@ public class FileUtil {
             
             if (MovieManager.isApplet()) {
                 URL url = MovieManager.getIt().getClass().getResource(imageName);
-                System.err.println("applet getImage url:" + url);
-                
-                image = MovieManager.applet.getImage(url);
+		image = MovieManager.applet.getImage(url);
             }
             else {
                 String path = "";
