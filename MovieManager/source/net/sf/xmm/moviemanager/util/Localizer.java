@@ -51,7 +51,7 @@ public class Localizer {
             
         }
         else {
-            File file = new File("MovieManager.tmx");
+            File file = FileUtil.getFile("MovieManager.tmx");
             //res_no = new TMXResourceBundle("no_NO.tmx", "no-NO");
             //res_en = new TMXResourceBundle(FileUtil.getFile("MovieManager.tmx").getAbsolutePath(), "en-EN");
             res_en = new TMXResourceBundle(file.toString(), "en-EN");

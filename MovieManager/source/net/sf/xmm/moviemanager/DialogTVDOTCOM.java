@@ -348,7 +348,7 @@ class DialogTVDOTCOM extends JDialog {
                 
                 ModelEpisode episode = TVDOTCOM.getEpisodeInfo((ModelSearchHit) selectedValues[i], streams);
                  
-                modelInfo.setModel(episode, true);
+                modelInfo.setModel(episode, true, false);
                 
                 // The cover... 
                 if (cover != null) {
@@ -380,6 +380,8 @@ class DialogTVDOTCOM extends JDialog {
                 log.error("Saving to database failed.", e);
             }
             dispose();
+            
+            modelInfo.modelChanged(this);
         }
         mode++;
     }

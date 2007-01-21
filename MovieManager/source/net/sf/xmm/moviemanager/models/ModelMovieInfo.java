@@ -81,8 +81,6 @@ public class ModelMovieInfo {
             model = new ModelMovie();
         
         initializeAdditionalInfo(loadEmptyAdditionalInfoFields);
-        
-        System.err.println("Constructor - movie key: " + ((ModelEpisode) this.model).getMovieKey());
     }
     
     /* Initializes with the info from a model (Editing entry) */
@@ -755,13 +753,9 @@ public class ModelMovieInfo {
     
     public boolean saveCoverToFile() throws Exception {
         
-        System.err.println("_saveCover:" + _saveCover);
-        
-        if (!_saveCover)
+	if (!_saveCover)
             return false;
-        
-        
-        
+	
         byte [] cover = model.getCoverData();
         String coverName = model.getCover();
         
@@ -873,7 +867,7 @@ public class ModelMovieInfo {
         modelChanged(this);
     }
     
-    public void setModel(ModelEntry model, boolean copyMovieKey) {
+    public void setModel(ModelEntry model, boolean copyMovieKey, boolean modelChanged) {
         
         if (model instanceof ModelEpisode) {
                       
@@ -891,7 +885,7 @@ public class ModelMovieInfo {
         
         this.model = model;
         
-        modelChanged(this);
+        if (modelChanged)
+            modelChanged(this);
     }
-    
 }
