@@ -365,20 +365,37 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         constraints.insets = new Insets(1,5,1,5);
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(seenID,constraints);
-        JLabel seen = new JLabel(/*new ImageIcon(FileUtil.getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))*/); //$NON-NLS-1$
-        seen.setPreferredSize(new Dimension(18, 18));
-        seen.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent event) {
+        
+        /* Will only change value if seen option is set to editable */
+        JCheckBox seenBox = new JCheckBox() {
+            protected void processMouseEvent(MouseEvent event) {
+                
+                if (event.getID() == MouseEvent.MOUSE_CLICKED)
+                    executeCommandSeen();
+            }
+        };
+        
+            seenBox.setMinimumSize(new Dimension(21, 21));
+        
+        if (MovieManager.getConfig().getUseRegularSeenIcon()) {
+            seenBox.setIcon(new ImageIcon(FileUtil.getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+            seenBox.setSelectedIcon(new ImageIcon(FileUtil.getImage("/images/seen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+        }
+        
+       // JLabel seen = new JLabel(/*new ImageIcon(FileUtil.getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))*/); //$NON-NLS-1$
+       //seen.setPreferredSize(new Dimension(18, 18));
+        //seen.addMouseListener(new MouseAdapter() {
+       /*     public void mouseClicked(MouseEvent event) {
                 log.debug("actionPerformed: MovieInfo - Seen"); //$NON-NLS-1$
                 executeCommandSeen();
             }});
-        
+        */
         constraints = new GridBagConstraints();
         constraints.gridx = 1;
         constraints.gridy = 6;
         constraints.insets = new Insets(1,5,1,50);
         constraints.anchor = GridBagConstraints.WEST;
-        panelGeneralInfo.add(seen,constraints);
+        panelGeneralInfo.add(seenBox,constraints);
         
         JLabel languageID = new JLabel(Localizer.getString("DialogMovieInfo.field.language") + ": "); //$NON-NLS-1$
         languageID.setFont((new Font(languageID.getFont().getName(), 1, fontSize)));
@@ -976,10 +993,10 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
     /**
      * Gets the seen JLabel...
      **/
-    protected JLabel getSeen() {
+    protected JCheckBox getSeen() {
         return    
-        (JLabel)
-        ((JPanel)
+        (JCheckBox)
+            ((JPanel)
                 ((JPanel)getContentPane().getComponent(0)).getComponent(0)).getComponent(17);
     }
     
@@ -1574,11 +1591,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
             executeCommandAdditionalInfo();
             
             try {
-                
-                boolean status = movieInfoModel.saveCoverToFile();
-                System.err.println("saveCoverToFile:" + status);
-                
-            } catch (Exception e) {
+		boolean status = movieInfoModel.saveCoverToFile();
+	    } catch (Exception e) {
                 log.warn("Error when saving cover to file: " + movieInfoModel.model.getCover());
                 log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
                 
@@ -1870,12 +1884,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
      **/
     protected void executeCommandGetIMDBInfo() {
         
-        
-      System.err.println("org.apache.commons.logging.Log:" + System.getProperty("org.apache.commons.logging.Log"));
-      System.err.println("apache.commons.logging.simplelog.defaultlog:" + System.getProperty("apache.commons.logging.simplelog.defaultlog"));
-               
-        
-        /* Checks the movie title... */
+	/* Checks the movie title... */
         if (!getMovieTitle().getText().equals("")) { //$NON-NLS-1$
             
             movieInfoModel.model.setTitle(getMovieTitle().getText());
@@ -2022,10 +2031,10 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         if (cover != null)
             getCover().setIcon(new ImageIcon(cover));
         
-        Image seenImage = movieInfoModel.getSeenImage();
+        //Image seenImage = movieInfoModel.getSeenImage();
         
-        if (seenImage != null)
-            getSeen().setIcon(new ImageIcon(seenImage)); //$NON-NLS-1$
+       
+        getSeen().setSelected(movieInfoModel.model.getSeen());  
     }
 }
 
