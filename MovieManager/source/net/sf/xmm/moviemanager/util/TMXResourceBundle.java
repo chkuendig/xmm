@@ -18,6 +18,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,6 +69,8 @@ import org.xml.sax.SAXException;
 
 public class TMXResourceBundle extends ResourceBundle implements Serializable {
 
+    static Logger log = Logger.getRootLogger();
+    
     /**
      * Serial Version UID
      */
@@ -126,9 +129,6 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
      */
     public TMXResourceBundle(String xmlfile, InputStream instream, String language, String cachefile) {
 		
-        System.err.println("xmlfile:" + xmlfile);
-        System.err.println("cachefile:" + cachefile);
-        
 	// try to get data from cachefile (if any)
 	if (cachefile.length() > 0) {
 	    try {
@@ -138,7 +138,7 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
 		in.close();
 		return;
 	    } catch (Exception e) {
-		System.err.println("Exception:" + e);
+		log.warn("Exception:" + e);
 	    }
 	}
 		
@@ -210,7 +210,7 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
 		    } catch (Exception e) {
 			// in case of error print error message and set value to
 			// void string
-			System.err.println(this.getClass().getName() + "(\""
+			log.debug(this.getClass().getName() + "(\""
 					   + xmlfile + "\", \"" + language + "\") :: "
 					   + "Void <seg> value on <tu tuid=\"" + temp_key
 					   + "\"> key");
@@ -232,7 +232,7 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
 		out.writeObject(this);
 		out.close();
 	    } catch (Exception e) {
-		System.err.println("Exception:" + e);
+		log.warn("Exception:" + e);
 	    }
 	}
     }
@@ -249,15 +249,13 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
      */
     public Document parseXmlFile(String filename, boolean validating) {
         
-        System.err.println("parseXmlFile:" + filename);
-        
 	Document doc = null;
 	DocumentBuilderFactory factory = null;
 	// Create a builder factory
 	try {
         factory = DocumentBuilderFactory.newInstance();
 	} catch (FactoryConfigurationError e) {
-	    System.err.println(e);
+	    log.error(e);
 	    return null;
 	}
 	factory.setValidating(validating);
@@ -283,23 +281,23 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
 			    // class folder
 			    String[] classPath = System.getProperties().getProperty("java.class.path", ".").split(";");
                 
-                System.err.println("classPath:" + classPath[0] + "  -  " + classPath[1]);
+			    log.debug("classPath:" + classPath[0] + "  -  " + classPath[1]);
                 
 			    String newpath = classPath[0] + "/" + filename;
 			    doc = factory.newDocumentBuilder().parse(
 								     new File(newpath));
 			} catch (IOException epath) {
 			    // unable to get the input file
-			    System.err.println("IOException:" + epath);
+			    log.error("IOException:" + epath);
 			}
 		    }
 		}
 	    }
         
 	} catch (ParserConfigurationException e) {
-	    System.err.println("[" + filename + "] ParserConfigurationException:" + e);
+	    log.error("[" + filename + "] ParserConfigurationException:" + e);
 	} catch (SAXException e) {
-	    System.err.println("[" + filename + "] SAXException:" + e);
+	    log.error("[" + filename + "] SAXException:" + e);
 	}
     return doc;
     }
@@ -324,7 +322,7 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
         try {
              factory = DocumentBuilderFactory.newInstance();
         } catch (FactoryConfigurationError e) {
-            System.err.println(e);
+            log.error(e);
             return null;
         }
         factory.setValidating(validating);
