@@ -648,7 +648,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
     
 	try {
     
-	    InputStream inputStream = FileUtil.getResourceAsStream("codecs/LanguageCodes.txt");
+	    InputStream inputStream = FileUtil.getResourceAsStream("/codecs/LanguageCodes.txt");
         
         //URL url = FileUtil.getFileURL("codecs/LanguageCodes.txt");
         
@@ -659,6 +659,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
     
 	    String currentLangCode = config.getTitleLanguageCode();
     
+	    if (currentLangCode.equals(""))
+            currentLangCode = System.getProperty("user.language");
+        
 	    String line;
     
 	    while ((line = reader.readLine()) != null) {
@@ -688,7 +691,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	languageCodeSelector = new JComboBox(languageCodes);
     
 	languageCodeSelector.setMaximumSize(languageCodeSelector.getPreferredSize());
-	languageCodeSelector.setSelectedIndex(index);
+    
+    if (languageCodeSelector.getItemCount() > index)  
+        languageCodeSelector.setSelectedIndex(index);
     
 	storeAllAvailableAkaTitles.addItemListener(this);
 	useLanguageSpecificTitle.addItemListener(this);
