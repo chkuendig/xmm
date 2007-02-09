@@ -682,26 +682,26 @@ public class DatabaseImporter {
                 Mapping mapping = new Mapping();
                 mapping.loadMapping(FileUtil.getFileURL("mapping.xml"));
                 
-                System.err.println("loadMapping");
+                //System.err.println("loadMapping");
                 
                 Unmarshaller unmarshaller = new Unmarshaller(ModelExportXML.class);
                 //unmarshaller.setDebug(true);
                 
-                System.err.println("setMapping");
+                //System.err.println("setMapping");
                 
                 unmarshaller.setMapping(mapping);
                 
-                System.err.println("new Unmarshaller(mapping)");
+                //System.err.println("new Unmarshaller(mapping)");
                 
-                log.debug("mapping set --------------- !!!!!!!");
+		// log.debug("mapping set --------------- !!!!!!!");
                 
-                File xmlFile = new File("output.xml");
+                File xmlFile = new File(filePath);
                 
                 FileReader reader = null;
                 Object tmp = null;
                 
                 if (xmlFile.isFile()) {
-                    System.err.println("xmlFile.isFile()");
+                    //System.err.println("xmlFile.isFile()");
                     reader = new FileReader(xmlFile);
                 }
                 else {
