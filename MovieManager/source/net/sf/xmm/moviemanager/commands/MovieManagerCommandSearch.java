@@ -30,11 +30,15 @@ import net.sf.xmm.moviemanager.util.ShowGUI;
 public class MovieManagerCommandSearch implements ActionListener {
     
     void execute() {
-	
-	if (DialogSearch.getDialogSearch() == null) {
-	    DialogSearch dialogSearch = new DialogSearch();
-	    ShowGUI.show(dialogSearch, true);
-	}
+    
+		if (DialogSearch.getDialogSearch() == null) {
+		    DialogSearch dialogSearch = new DialogSearch();
+		    ShowGUI.show(dialogSearch, true);
+		} else if (DialogSearch.getDialogSearch().isShowing()) {
+			ShowGUI.show(DialogSearch.getDialogSearch(), false);
+		} else {
+			ShowGUI.show(DialogSearch.getDialogSearch(), true);
+		}
     }
     
     /**
