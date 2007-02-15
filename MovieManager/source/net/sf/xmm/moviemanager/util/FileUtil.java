@@ -75,7 +75,7 @@ public class FileUtil {
                 return MovieManager.getIt().applet.getClass().getResourceAsStream(name);
             }
             else
-                return FileUtil.class.getResourceAsStream(name);
+            return FileUtil.class.getResourceAsStream(name);
             
         } catch (Exception e) {
             log.error("Exception: " + e.getMessage());
@@ -90,7 +90,7 @@ public class FileUtil {
         } catch (URISyntaxException e) {
             log.error(e);
         }
-       return null;
+        return null;
     }
     
     public static URL getFileURL(String fileName) {
@@ -99,10 +99,14 @@ public class FileUtil {
         
         try {
             //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
-           
+            
             if (!MovieManager.isApplet()) {
-                url = new File(getUserDir() + fileName).toURL();
-	    }
+            	if(!fileName.startsWith("/")) {
+            		url = new File(getUserDir() + fileName).toURL();
+            	} else {
+            		url = new File(fileName).toURL();
+            	}
+            }
             else {
                 
                 fileName = fileName.replaceAll("\\\\", "/");
@@ -115,7 +119,7 @@ public class FileUtil {
                 
                 url = new URL(MovieManager.applet.getCodeBase(), fileName);
                 
-		//log.debug("URL:"+ url.toString());
+                //log.debug("URL:"+ url.toString());
                 //log.debug("url.getFile():" + url.getFile());
                 //log.debug("getPath():" + url.getPath());
                 
@@ -129,8 +133,8 @@ public class FileUtil {
         return url;
     }
     
-    
-    
+     
+     
     /**
      * Getting the 'root directory' of the app.
      **/
@@ -143,7 +147,8 @@ public class FileUtil {
             File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
             //File file = new File(java.net.URLDecoder.decode(System.getProperty("user.dir"), "UTF-8"));
             
-	    // If running in a jar file the parent is the root dir 
+            
+            // If running in a jar file the parent is the root dir 
             if (file.isFile())
                 path = file.getParentFile().getAbsolutePath();
             else
@@ -180,7 +185,7 @@ public class FileUtil {
             
             if (MovieManager.isApplet()) {
                 URL url = MovieManager.getIt().getClass().getResource(imageName);
-		image = MovieManager.applet.getImage(url);
+                image = MovieManager.applet.getImage(url);
             }
             else {
                 String path = "";

@@ -51,10 +51,10 @@ public class Localizer {
             
         }
         else {
-            File file = FileUtil.getFile("MovieManager.tmx");
-            //res_no = new TMXResourceBundle("no_NO.tmx", "no-NO");
-            //res_en = new TMXResourceBundle(FileUtil.getFile("MovieManager.tmx").getAbsolutePath(), "en-EN");
-            res_en = new TMXResourceBundle(file.toString(), "en-EN");
+            // TMXResourceBundle searches the file in half a dozen places anyway, so it's 
+        	// probably better to not use a path here... (actually, it fails on mac if we don't
+        	// do so)
+        	res_en = new TMXResourceBundle("MovieManager.tmx", "en-EN");
             
             
             //res_it = new TMXResourceBundle("tmx/sample_tmx.xml", "it", "src/com/tecnick/tmxjavabridge/test/test_tmx_it.obj");
