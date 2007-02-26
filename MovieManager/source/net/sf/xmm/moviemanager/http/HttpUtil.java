@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import java.io.*;
 import java.net.Authenticator;
 import java.net.URL;
+import java.util.ArrayList;
 
 class HttpUtil {
     
@@ -196,6 +197,13 @@ class HttpUtil {
 	}
     }
     
+    
+   
+
+
+   
+    
+    
     /**
      * Decodes a html string and returns its unicode string.
      **/
@@ -218,9 +226,43 @@ class HttpUtil {
 	    log.error("", e);
 	} 
 	/* Returns the decoded string... */
-	return decoded;
+	return decoded.trim();
     }
 
+    
+    /**
+     * Decodes a html string and returns its unicode string.
+     **/
+    protected static Object [] decodeHTMLtoArray(String toDecode) {
+    	ArrayList decoded = new ArrayList();
+    	String tmp = "";
+    	
+    	try {
+    		int end = 0;
+    		for (int i=0; i < toDecode.length(); i++) {
+    			if (toDecode.charAt(i)=='&' && toDecode.charAt(i+1)=='#' && (end=toDecode.indexOf(";", i)) != -1) {
+    				tmp += (char) Integer.parseInt(toDecode.substring(i+2,end));
+    				i = end;
+    			} else if (toDecode.charAt(i)=='<' && toDecode.indexOf('>', i) != -1) {
+    				i = toDecode.indexOf('>', i);
+    				System.err.println("tmp:" + tmp);
+    				
+    				if (!tmp.trim().equals(""))
+    					decoded.add(tmp.trim());
+    				
+    				tmp = "";
+    			} else {
+    				tmp += toDecode.charAt(i);
+    			}
+    		}
+    	} catch (Exception e) {
+    		log.error("", e);
+    	} 
+    	/* Returns the decoded string... */
+    	return decoded.toArray();
+    }
+    
+    
     /* Creates the URL and sets the appropriate proxy values */
     //protected static URL makeURL(String url) {
     static void setProxySetting2(HttpClient client) {

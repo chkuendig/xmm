@@ -25,7 +25,7 @@ import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 
@@ -95,7 +95,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
         
     public DialogAddMultipleMovies() {
 	/* Dialog creation...*/
-	super(MovieManager.getIt());
+	super(MovieManager.getDialog());
 	/* Close dialog... */
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
@@ -443,12 +443,12 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 	    
 	    if (moviesPath.getText().equals("")) { //$NON-NLS-1$
-		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogAddMultipleMovies.alert.title.alert"),Localizer.getString("DialogAddMultipleMovies.alert.message.specify-directory-path")); //$NON-NLS-1$ //$NON-NLS-2$
-		ShowGUI.showAndWait(this, true);
+		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogAddMultipleMovies.alert.title.alert"), Localizer.getString("DialogAddMultipleMovies.alert.message.specify-directory-path")); //$NON-NLS-1$ //$NON-NLS-2$
+		GUIUtil.showAndWait(this, true);
 	    }
 	    else if (!new File(moviesPath.getText()).exists()) {
-		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogAddMultipleMovies.alert.title.alert"),Localizer.getString("DialogAddMultipleMovies.alert.message.specified-directory-does-not-exist")); //$NON-NLS-1$ //$NON-NLS-2$
-		ShowGUI.showAndWait(this, true);
+		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogAddMultipleMovies.alert.title.alert"), Localizer.getString("DialogAddMultipleMovies.alert.message.specified-directory-does-not-exist")); //$NON-NLS-1$ //$NON-NLS-2$
+		GUIUtil.showAndWait(this, true);
 	    }
 	    else {
 		executeSave();
@@ -458,12 +458,12 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	
 	if (event.getSource().equals(buttonAddList)) {
 	
-	    MovieManagerCommandLists.execute();
+	    MovieManagerCommandLists.execute(this);
 	    
 	    all.remove(4);
 	    all.add(makeListPanel(), 4);
 	    pack();
-	    ShowGUI.show(this, true);
+	    GUIUtil.show(this, true);
 	}
 	
 	if (event.getSource().equals(enableExludeString)) {

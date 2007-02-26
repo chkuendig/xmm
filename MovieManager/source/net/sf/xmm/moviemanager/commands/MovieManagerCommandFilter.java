@@ -267,8 +267,8 @@ public class MovieManagerCommandFilter implements ActionListener {
 	    listModel = database.getMoviesList(options);
 	    
 	    filterCategory = MovieManager.getConfig().getFilterCategory();
-	    filterString = MovieManager.getIt().getFilter().getText();
-	    movieList = MovieManager.getIt().getMoviesList();
+	    filterString = MovieManager.getDialog().getFilter().getText();
+	    movieList = MovieManager.getDialog().getMoviesList();
 	}
 	else {
 	    listModel = database.getMoviesList("Title");
@@ -294,17 +294,17 @@ public class MovieManagerCommandFilter implements ActionListener {
 	    listModel.addElement(new ModelMovie(-1, "", "", "", databaseEmptyMessage, "", "", "", "", "", "", "", false, "", "", "", "", "", "", "", "", ""));
 		
 	    if (mainFilter) 
-		MovieManager.getIt().setAndShowEntries(0);
+		MovieManager.getDialog().setAndShowEntries(0);
 	}
 	
 	else if (mainFilter) {
 	    /*Uppdates the entries*/
-	    MovieManager.getIt().setAndShowEntries(listModel.size());
+	    MovieManager.getDialog().setAndShowEntries(listModel.size());
 	}
 	
 	/* Replaces the old model... */
 	if (mainFilter) {
-	    ((JTree) movieList).setModel(MovieManager.getIt().createTreeModel(listModel, database.getEpisodeList("movieID")));
+	    ((JTree) movieList).setModel(MovieManager.getDialog().createTreeModel(listModel, database.getEpisodeList("movieID")));
 	    ((JTree) movieList).setSelectionInterval(0, 0);
 	    
 	    MovieManagerCommandSelect.execute();
@@ -325,7 +325,7 @@ public class MovieManagerCommandFilter implements ActionListener {
 	log.debug("ActionPerformed: " + event.getActionCommand());
 	
 	/* The same object is used by the main filter every time, therefore these variables needs to be set back to default */
-	if (event.getSource().equals(MovieManager.getIt().getFilter())) {
+	if (event.getSource().equals(MovieManager.getDialog().getFilter())) {
 	    mainFilter = true;
 	    addEmptyEntry = true;
 	}

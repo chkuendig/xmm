@@ -41,7 +41,7 @@ public class MovieManagerCommandExit implements ActionListener {
 	MovieManager.log.debug("Shutting down...");
 	
 	/* Finalizes the main frame... */
-	MovieManager.getIt().finalize();
+	MovieManager.getDialog().finalize();
 	
 	Database db = MovieManager.getIt().getDatabase();
 	String type = "";
@@ -58,10 +58,7 @@ public class MovieManagerCommandExit implements ActionListener {
 	/* Writes the date. */
 	MovieManager.log.debug("Log End: "+new Date(System.currentTimeMillis()));
 	
-	if (MovieManager.isApplet())
-	    MovieManager.applet.destroy();
-	else
-	    System.exit(0);
+    MovieManager.exit();
     }
     
     /**

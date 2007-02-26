@@ -3,13 +3,9 @@ package net.sf.xmm.moviemanager.util.mac;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
-
 import org.apache.log4j.Logger;
 
-import net.sf.xmm.moviemanager.MovieManager;
-
+import net.sf.xmm.moviemanager.DialogMovieManager;
 import com.apple.eawt.*;
 
 public class OSXAdapter extends ApplicationAdapter {
@@ -23,12 +19,12 @@ public class OSXAdapter extends ApplicationAdapter {
 	private static com.apple.eawt.Application		theApplication;
 
 	// reference to the app where the existing quit, about, prefs code is
-	private MovieManager									mainApp;
+	private DialogMovieManager						mainApp;
 	private JMenuItem aboutButton;
 	private JMenuItem prefsButton;
 	private JMenuItem quitButton;
 	
-	private OSXAdapter (MovieManager inApp) {
+	private OSXAdapter (DialogMovieManager inApp) {
 		mainApp = inApp;
 	
 		JMenu helpMenu = mainApp.getJMenuBar().getMenu(4);
@@ -56,7 +52,7 @@ public class OSXAdapter extends ApplicationAdapter {
 	  // The main entry-point for this functionality.  This is the only method
 	  // that needs to be called at runtime, and it can easily be done using
 	  // reflection (see MyApp.java) 
-	  public static void registerMacOSXApplication(MovieManager inApp) {
+	  public static void registerMacOSXApplication(DialogMovieManager inApp) {
 	    if (theApplication == null) {
 	      theApplication = new com.apple.eawt.Application();
 	    }      

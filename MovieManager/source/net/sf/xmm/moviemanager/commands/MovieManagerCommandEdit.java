@@ -23,7 +23,7 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.DialogMovieInfo;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelEntry;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,25 +39,25 @@ public class MovieManagerCommandEdit implements ActionListener {
 	/* Makes sure a movie is selected... */
 	int listIndex = -1;
 	
-	if (MovieManager.getIt().getMoviesList().getModel().getChildCount(MovieManager.getIt().getMoviesList().getModel().getRoot()) > 0) {
+	if (MovieManager.getDialog().getMoviesList().getModel().getChildCount(MovieManager.getDialog().getMoviesList().getModel().getRoot()) > 0) {
 	    
-	    listIndex = MovieManager.getIt().getMoviesList().getLeadSelectionRow();
+	    listIndex = MovieManager.getDialog().getMoviesList().getLeadSelectionRow();
 	    
 	    if (listIndex == -1)
-		listIndex = MovieManager.getIt().getMoviesList().getMaxSelectionRow();
+		listIndex = MovieManager.getDialog().getMoviesList().getMaxSelectionRow();
 
-	    if (MovieManager.getIt().getMoviesList().getSelectionCount() > 1) {
-		MovieManager.getIt().getMoviesList().setSelectionRow(listIndex);
+	    if (MovieManager.getDialog().getMoviesList().getSelectionCount() > 1) {
+		MovieManager.getDialog().getMoviesList().setSelectionRow(listIndex);
 	    }
 	}
 	
 	if (listIndex != -1) {
 	    
-	    ModelEntry selected = ((ModelEntry) ((DefaultMutableTreeNode) MovieManager.getIt().getMoviesList().getLastSelectedPathComponent()).getUserObject());
+	    ModelEntry selected = ((ModelEntry) ((DefaultMutableTreeNode) MovieManager.getDialog().getMoviesList().getLastSelectedPathComponent()).getUserObject());
 	    
 	    if (selected.getKey() != -1) {
 		DialogMovieInfo dialogMovieInfo = new DialogMovieInfo(selected);
-		ShowGUI.show(dialogMovieInfo, true);
+		GUIUtil.show(dialogMovieInfo, true);
 	    }
 	}
     }

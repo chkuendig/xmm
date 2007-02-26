@@ -24,7 +24,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import java.awt.*;
 
@@ -97,7 +97,7 @@ public class DialogFolders extends JDialog implements ItemListener {
      **/
     public DialogFolders() {
         /* Dialog creation...*/
-        super(MovieManager.getIt());
+        super(MovieManager.getDialog());
         /* Close dialog... */
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -550,14 +550,14 @@ public class DialogFolders extends JDialog implements ItemListener {
                 
                 if ((coversPath.indexOf(FileUtil.getUserDir()) == -1) && (!new File(FileUtil.getUserDir()+ coversPath).isDirectory())) {
                     DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.covers-inside-install.message")); 
-                    ShowGUI.showAndWait(alert, true);
+                    GUIUtil.showAndWait(alert, true);
                     return;
                 }
                 
                 if (coversPath.equals("") || !(coversFolder = new File(coversPath)).isDirectory()) { //$NON-NLS-1$
                     if (coversPath.equals("") || !(coversFolder = new File(FileUtil.getUserDir()+ coversPath)).isDirectory()) { //$NON-NLS-1$
                         DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"),Localizer.getString("DialogFolders.alert-covers-exist")); 
-                        ShowGUI.showAndWait(alert, true);
+                        GUIUtil.showAndWait(alert, true);
                         return;
                     }
                 }
@@ -573,7 +573,7 @@ public class DialogFolders extends JDialog implements ItemListener {
                 
                 if ((coversPath.indexOf(dbPath) == -1) && (!new File(dbPath + FileUtil.getDirSeparator() + coversPath).isDirectory())) {
                     DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert-covers-relative-database")); 
-                    ShowGUI.showAndWait(alert, true);
+                    GUIUtil.showAndWait(alert, true);
                     return;
                 }
                 
@@ -588,7 +588,7 @@ public class DialogFolders extends JDialog implements ItemListener {
             
             if(!coversFolder.isDirectory()) {
                 DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"),Localizer.getString("DialogFolders.alert.covers-doesnt-exist.message")); 
-                ShowGUI.showAndWait(alert, true);
+                GUIUtil.showAndWait(alert, true);
                 return;
             }
             coversPath = coversFolder.getAbsolutePath();
@@ -605,14 +605,14 @@ public class DialogFolders extends JDialog implements ItemListener {
                 if (queriesPath.indexOf(FileUtil.getUserDir()) == -1 && !(new File(FileUtil.getUserDir(), queriesPath)).isDirectory()) {
                     
                     DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.queries-inside-install.message")); 
-                    ShowGUI.showAndWait(alert, true);
+                    GUIUtil.showAndWait(alert, true);
                     return;
                 }
                 
                 if (queriesPath.equals("") || !(queriesFolder = new File(queriesPath)).isDirectory()) { //$NON-NLS-1$
                     if (queriesPath.equals("") || !(queriesFolder = new File(FileUtil.getUserDir(), queriesPath)).isDirectory()) { //$NON-NLS-1$
                         DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.queries-doesnt-exist.message")); 
-                        ShowGUI.showAndWait(alert, true);
+                        GUIUtil.showAndWait(alert, true);
                         return;
                     }
                 }
@@ -628,7 +628,7 @@ public class DialogFolders extends JDialog implements ItemListener {
                 
                 if ((queriesPath.indexOf(dbPath) == -1) && (!new File(dbPath, queriesPath).isDirectory())) {
                     DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.message"), Localizer.getString("DialogFolders.alert.queries-relative-database.message")); 
-                    ShowGUI.showAndWait(alert, true);
+                    GUIUtil.showAndWait(alert, true);
                     return;
                 }
                 
@@ -643,7 +643,7 @@ public class DialogFolders extends JDialog implements ItemListener {
             
             if(!queriesFolder.isDirectory()) {
                 DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert"),Localizer.getString("DialogFolders.alert.message.queries-doesnt-exist")); 
-                ShowGUI.showAndWait(alert, true);
+                GUIUtil.showAndWait(alert, true);
                 return;
             }
             queriesPath = queriesFolder.getAbsolutePath();
@@ -656,7 +656,7 @@ public class DialogFolders extends JDialog implements ItemListener {
             
             if (databasePath.indexOf(FileUtil.getUserDir()) == -1) {
                 DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.database-relative-install.message")); 
-                ShowGUI.showAndWait(alert, true);
+                GUIUtil.showAndWait(alert, true);
                 return;
             }
             else {
@@ -758,7 +758,7 @@ public class DialogFolders extends JDialog implements ItemListener {
         fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogFolders.filechooser.approve.tooltip"));
         fileChooser.setAcceptAllFileFilterUsed(false);
         
-        int returnVal = fileChooser.showOpenDialog(MovieManager.getIt());
+        int returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
         if (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
             
             /* Verifies that it's a directory... */

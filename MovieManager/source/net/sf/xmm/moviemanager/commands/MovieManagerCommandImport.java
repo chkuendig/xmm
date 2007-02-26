@@ -20,13 +20,11 @@
 
 package net.sf.xmm.moviemanager.commands;
 
-import net.sf.xmm.moviemanager.DialogDatabaseImporter;
-import net.sf.xmm.moviemanager.DialogImport;
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
+import net.sf.xmm.moviemanager.*;
 import net.sf.xmm.moviemanager.models.ModelImportSettings;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 
@@ -42,12 +40,14 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
     boolean canceled = true;
     boolean done = false;
         
+
+    
     boolean cancelAll = false;
    
     ModelImportSettings importSettings;
     
     public MovieManagerCommandImport() {
-	super(MovieManager.getIt(), Localizer.getString("MovieManagerCommandImport.dialog-importer.title"), true); //$NON-NLS-1$
+	super(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandImport.dialog-importer.title"), true); //$NON-NLS-1$
     }
     
     void createAndShowGUI() {
@@ -92,7 +92,7 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
 	setLocation((int)mm.getLocation().getX()+(mm.getWidth()- getWidth())/2,
 		    (int)mm.getLocation().getY()+(mm.getHeight()- getHeight())/2);
 	
-	ShowGUI.show(this, true);
+	GUIUtil.show(this, true);
     }
     
     public void setCanceled(boolean canceled) {
@@ -104,7 +104,7 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
     }
     
     public void dispose() {
-	ShowGUI.show(this, false);
+	GUIUtil.show(this, false);
     }
     
     public void setCancelAll(boolean value) {
@@ -121,6 +121,8 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
 	if (cancelAll)
 	    return;
 	
+    
+    
 	importSettings.multiAddSelectOption = importMovie.getMultiAddSelectOption();
        	
 	importSettings.importMode = importMovie.getImportMode();
@@ -132,10 +134,26 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
 	}
 	
 	/* Excel spreadsheet */
-	if (importSettings.importMode == 1)
-	    importSettings.excelColumn = Integer.parseInt(importMovie.getExcelTitleColumn());
+	if (importSettings.importMode == 1) {
+        
+	    importSettings.excelTitleColumn = Integer.parseInt(importMovie.getExcelTitleColumn());
+        
+        if (!importMovie.getExcelLocationColumn().equals(""))
+            importSettings.excelLocationColumn = Integer.parseInt(importMovie.getExcelLocationColumn());
+        
+        
+        File file = new File(importMovie.getPath());
+            
+        if (file.isFile()) {
+            DialogImportTable importTable = new DialogImportTable(this, file);
+            GUIUtil.showAndWait(importTable, true);
+            
+            importSettings = importTable.getSettings();
+	    dispose();
+        }
+	}
 	
-	/* extreme movie manager */
+    /* extreme movie manager */
 	else if (importSettings.importMode == 2) {
 	    if (importMovie.enableOverwriteImportedInfoWithImdbInfo.isSelected())
 		importSettings.overwriteWithImdbInfo = true;

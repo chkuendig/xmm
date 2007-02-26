@@ -2,7 +2,7 @@ package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.DialogIMDB;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandDialogIMDB {
 
@@ -12,7 +12,7 @@ public class MovieManagerCommandDialogIMDB {
       modelInfo.model.setTitle(movieTitle);
       
       DialogIMDB dialogImdb = new DialogIMDB(modelInfo, true);
-      ShowGUI.showAndWait(dialogImdb, true);
+      GUIUtil.showAndWait(dialogImdb, true);
       
       return modelInfo.model.getUrlKey();
     }

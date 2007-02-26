@@ -20,37 +20,24 @@
 
 package net.sf.xmm.moviemanager.commands;
 
-import net.sf.xmm.moviemanager.*;
-import net.sf.xmm.moviemanager.util.*;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.ListModel;
-import javax.swing.WindowConstants;
-
+import net.sf.xmm.moviemanager.DialogAlert;
+import net.sf.xmm.moviemanager.DialogDatabaseConverter;
+import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.database.DatabaseAccess;
 import net.sf.xmm.moviemanager.database.DatabaseHSQL;
-import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
+import net.sf.xmm.moviemanager.util.CustomFileFilter;
+import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
+
+import java.awt.event.*;
+import java.io.*;
+import java.util.ArrayList;
+
+import javax.swing.*;
 
 
 public class MovieManagerCommandConvertDatabase extends JPanel implements ActionListener{
@@ -138,7 +125,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     void createAndShowGUI() {
 	
 	/* Owner, title, modal=true */
-	dbConverter = new JDialog(MovieManager.getIt(), Localizer.getString("MovieManagerCommandConvertDatabase.database-converter.title"), true); //$NON-NLS-1$
+	dbConverter = new JDialog(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.database-converter.title"), true); //$NON-NLS-1$
 	dbConverter.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	
 	final JComponent newContentPane = new DialogDatabaseConverter(newDatabase, movieListModel, episodeList, this);
@@ -187,7 +174,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	
 	dbConverter.setLocation((int)mm.getLocation().getX()+(mm.getWidth()- dbConverter.getWidth())/2,
 				(int)mm.getLocation().getY()+(mm.getHeight()- dbConverter.getHeight())/2);
-	ShowGUI.show(dbConverter, true);
+	GUIUtil.show(dbConverter, true);
     }
     
     void finalizeDatabase() {
@@ -217,7 +204,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     }
     
     public void dispose() {
-	ShowGUI.show(dbConverter, false);
+	GUIUtil.show(dbConverter, false);
     }
     
     protected String getFilePath() {
@@ -227,12 +214,12 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	newDatabaseType = 1;
 	
 	if (MovieManager.getIt().getDatabase() instanceof DatabaseAccess) {
-	    fileChooser.setFileFilter(new CustomFileFilter(new String[]{"mdb"},new String("MS Access Database File (*.mdb)"))); //$NON-NLS-1$ //$NON-NLS-2$
+	    fileChooser.setFileFilter(new CustomFileFilter(new String[]{"mdb", "accdb"},new String("MS Access Database File (*.mdb, *.accdb)"))); //$NON-NLS-1$ //$NON-NLS-2$
 	    fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"properties", "script"},new String("HSQL Database Files (*.properties, *.script)"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}	
 	else {
 	    fileChooser.setFileFilter(new CustomFileFilter(new String[]{"properties", "script"},new String("HSQL Database Files (*.properties, *.script)"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"mdb"},new String("MS Access Database File (*.mdb)"))); //$NON-NLS-1$ //$NON-NLS-2$
+	    fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"mdb", "accdb"},new String("MS Access Database File (*.mdb, *.accdb)"))); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	if (MovieManager.getConfig().getLastDatabaseDir() != null)
@@ -244,20 +231,15 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	fileChooser.setDialogType(1);
 	fileChooser.setAcceptAllFileFilterUsed(false);
 	
-	int returnVal = fileChooser.showDialog(MovieManager.getIt(), Localizer.getString("MovieManagerCommandConvertDatabase.filechooser.approve-button.text"));
+	int returnVal = fileChooser.showDialog(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.filechooser.approve-button.text"));
 	
 	if (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
 	    /* Gets the path... */
 	    String absolutePath = fileChooser.getSelectedFile().getAbsolutePath();
 	    
-	    if (fileChooser.getFileFilter().getDescription().equals("HSQL Database Files (*.properties, *.script)")) //$NON-NLS-1$
+	    if (fileChooser.getFileFilter().getDescription().equals("HSQL Database Files (*.properties, *.script)")) {//$NON-NLS-1$
 		newDatabaseType = 2;
-	    
-	    if (newDatabaseType == 1) {
-		if (!absolutePath.endsWith(".mdb")) //$NON-NLS-1$
-		    absolutePath += ".mdb"; //$NON-NLS-1$
-	    }
-	    else {
+
 		if (absolutePath.endsWith(".properties")) //$NON-NLS-1$
 		    absolutePath = absolutePath.substring(0, absolutePath.length()-11);
 		else if (absolutePath.endsWith(".script")) //$NON-NLS-1$
@@ -273,8 +255,8 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	
 	
 	if (!MovieManager.isWindows()) {
-	    DialogAlert alert = new DialogAlert(MovieManager.getIt(), Localizer.getString("MovieManagerCommandConvertDatabase.alert.windows-only.title"), Localizer.getString("MovieManagerCommandConvertDatabase.alert.windows-only.message"));
-	    ShowGUI.showAndWait(alert, true);
+	    DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.alert.windows-only.title"), Localizer.getString("MovieManagerCommandConvertDatabase.alert.windows-only.message"));
+	    GUIUtil.showAndWait(alert, true);
 	}
 	else {
 	    movieListModel = MovieManager.getIt().getDatabase().getMoviesList("Title"); //$NON-NLS-1$
@@ -283,8 +265,8 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	    int listModelSize = movieListModel.getSize();
 	    
 	    if (listModelSize == 0) {
-		DialogAlert alert = new DialogAlert(MovieManager.getIt(), Localizer.getString("MovieManagerCommandConvertDatabase.alert.empty-database.title"), Localizer.getString("MovieManagerCommandConvertDatabase.alert.empty-database.message"));
-		ShowGUI.showAndWait(alert, true);
+		DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.alert.empty-database.title"), Localizer.getString("MovieManagerCommandConvertDatabase.alert.empty-database.message"));
+		GUIUtil.showAndWait(alert, true);
 	    }
 	    else {
 		filePath = getFilePath();

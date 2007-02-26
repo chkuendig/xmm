@@ -28,6 +28,7 @@ import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
 
+import java.awt.*;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -67,13 +68,22 @@ public class DialogLists extends JDialog {
   
     private java.util.List _originalList;
   
+    
+    public DialogLists(Dialog parent) {
+        super(parent, true);
+        construct();
+    }
+    
+    public DialogLists(Frame parent) {
+        super(parent, true);
+        construct();
+    }
+    
     /**
      * The Constructor.
      **/
-    public DialogLists() {
-	/* Dialog creation...*/
-	super(MovieManager.getIt());
-	/* Close dialog... */
+    public void construct() {
+        /* Close dialog... */
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
 		    dispose();
@@ -297,7 +307,7 @@ public class DialogLists extends JDialog {
 	    MovieManager.getIt().getDatabase().addListsColumn((String)_toAdd.get(i));
 	    
 	/* Loading the listmenu with the existing lists */
-	MovieManager.getIt().loadMenuLists(MovieManager.getIt().getDatabase());
+	MovieManager.getDialog().loadMenuLists(MovieManager.getIt().getDatabase());
 	
 	if (reload)
 	    MovieManagerCommandSelect.executeAndReload(-1);

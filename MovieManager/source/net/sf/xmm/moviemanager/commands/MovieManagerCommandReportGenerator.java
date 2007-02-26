@@ -11,7 +11,7 @@ public class MovieManagerCommandReportGenerator implements ActionListener {
      * Executes the command.
      **/
     protected static void execute() {
-        ReportGenerator dialogPrint = new ReportGenerator(MovieManager.getIt());
+        ReportGenerator dialogPrint = new ReportGenerator(MovieManager.getDialog());
     }
 
     /**

@@ -22,12 +22,11 @@ package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.DatabaseMySQL;
-import net.sf.xmm.moviemanager.extentions.ExtendedJTree;
-import net.sf.xmm.moviemanager.extentions.ExtendedTreeNode;
+import net.sf.xmm.moviemanager.swing.extentions.*;
 import net.sf.xmm.moviemanager.models.*;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 import org.dotuseful.ui.tree.AutomatedTreeNode;
@@ -67,7 +66,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	else
 	    list = MovieManager.getIt().getDatabase().getMoviesList(MovieManager.getConfig().getSortOption(), MovieManager.getConfig().getCurrentList());
 	
-	MovieManager.getIt().getMoviesList().setModel(MovieManager.getIt().createTreeModel(list, MovieManager.getIt().getDatabase().getEpisodeList("movieID"))); //$NON-NLS-1$
+	MovieManager.getDialog().getMoviesList().setModel(MovieManager.getDialog().createTreeModel(list, MovieManager.getIt().getDatabase().getEpisodeList("movieID"))); //$NON-NLS-1$
 	
 	if (selectedIndex < 0 || selectedIndex > list.getSize())
 	    selectedIndex = 0;
@@ -78,8 +77,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		public void run() {
 		    try {
 			ignoreValueChanged = true;
-			MovieManager.getIt().getMoviesList().setSelectionRow(index);
-			MovieManager.getIt().setAndShowEntries();
+			MovieManager.getDialog().getMoviesList().setSelectionRow(index);
+			MovieManager.getDialog().setAndShowEntries();
 			execute();
 			
 			ignoreValueChanged = false;
@@ -100,7 +99,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	
 	//long time = System.currentTimeMillis();
 
-	JTree movieList = MovieManager.getIt().getMoviesList();
+	JTree movieList = MovieManager.getDialog().getMoviesList();
 	
 	/* If Adding */
 	if (!edit) {
@@ -156,21 +155,21 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	    AutomatedTreeNode node = (AutomatedTreeNode) movieList.getLastSelectedPathComponent();
 	    
 	    node.setUserObject(reloadEntry);
-	    ((DefaultTreeModel) MovieManager.getIt().getMoviesList().getModel()).nodeChanged(node.getParent());
+	    ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).nodeChanged(node.getParent());
 	    
 	    movieList.setSelectionPath(new TreePath(node.getPath()));
 	}
 	
-	MovieManager.getIt().setAndShowEntries();
+	MovieManager.getDialog().setAndShowEntries();
 	
 	/* Saves time not to execute when multiadding episodes */
 	if (execute)
 	    execute();
 	
-	MovieManager.getIt().getMoviesList().requestFocus(true);
+	MovieManager.getDialog().getMoviesList().requestFocus(true);
     
 	/*Updates the entries value shown in the right side of the toolbars.*/
-	MovieManager.getIt().setAndShowEntries();
+	MovieManager.getDialog().setAndShowEntries();
     }
 	
 
@@ -226,7 +225,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	boolean noCover = true;
 
 	ModelEntry model = null;
-	JTree movieList = MovieManager.getIt().getMoviesList();
+	JTree movieList = MovieManager.getDialog().getMoviesList();
 	
 	//long time = System.currentTimeMillis();
 
@@ -369,7 +368,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		    }
 		}
         
-		MovieManager.getIt().toolBar.setEnablePlayButton(enable);
+		MovieManager.getDialog().toolBar.setEnablePlayButton(enable);
         
 		if (MovieManager.getIt().getDatabase() != null)
 		    additionalInfoString = MovieManager.getIt().getDatabase().getAdditionalInfoString(additionalInfo);
@@ -404,12 +403,12 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		          
 			if (byteCover && coverData != null) {
 			
-			    MovieManager.getIt().getCover().setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(coverData).getScaledInstance(97, height,Image.SCALE_SMOOTH)));
+			    MovieManager.getDialog().getCover().setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(coverData).getScaledInstance(97, height,Image.SCALE_SMOOTH)));
 			    noCover = false;
 			}
 			else if (!byteCover) {
               
-			    MovieManager.getIt().getCover().setIcon(new ImageIcon(FileUtil.getImage(cover).getScaledInstance(97, height,Image.SCALE_SMOOTH)));
+			    MovieManager.getDialog().getCover().setIcon(new ImageIcon(FileUtil.getImage(cover).getScaledInstance(97, height,Image.SCALE_SMOOTH)));
 			    noCover = false;
 			}
 		    }
@@ -428,46 +427,46 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
    
     
 	if (noCover) {
-	    MovieManager.getIt().getCover().setIcon(new ImageIcon(FileUtil.getImage("/images/" + MovieManager.getConfig().getNoCover()).getScaledInstance(97,97, Image.SCALE_SMOOTH))); //$NON-NLS-1$
+	    MovieManager.getDialog().getCover().setIcon(new ImageIcon(FileUtil.getImage("/images/" + MovieManager.getConfig().getNoCover()).getScaledInstance(97,97, Image.SCALE_SMOOTH))); //$NON-NLS-1$
 	}
 	
 	/* Removes mouse listeners */
-	for (int i = 0; i < MovieManager.getIt().getCover().getMouseListeners().length; i++) {
-	    MovieManager.getIt().getCover().removeMouseListener(MovieManager.getIt().getCover().getMouseListeners()[i]);
+	for (int i = 0; i < MovieManager.getDialog().getCover().getMouseListeners().length; i++) {
+	    MovieManager.getDialog().getCover().removeMouseListener(MovieManager.getDialog().getCover().getMouseListeners()[i]);
 	    i--;
 	}
 	
 	if (model != null && !urlKey.equals("")) { //$NON-NLS-1$
 	    if (model instanceof ModelMovie)
-		MovieManager.getIt().getCover().addMouseListener(new MovieManagerCommandOpenPage("http://imdb.com/title/tt"+urlKey+"/")); //$NON-NLS-1$ //$NON-NLS-2$
+		MovieManager.getDialog().getCover().addMouseListener(new MovieManagerCommandOpenPage("http://imdb.com/title/tt"+urlKey+"/")); //$NON-NLS-1$ //$NON-NLS-2$
 	    else
-		MovieManager.getIt().getCover().addMouseListener(new MovieManagerCommandOpenPage("http://www.tv.com"+urlKey+"summary.html")); //$NON-NLS-1$ //$NON-NLS-2$
+		MovieManager.getDialog().getCover().addMouseListener(new MovieManagerCommandOpenPage("http://www.tv.com"+urlKey+"summary.html")); //$NON-NLS-1$ //$NON-NLS-2$
 	    
-	    MovieManager.getIt().getCover().setToolTipText(Localizer.getString("MovieManagerCommandSelect.show-cover.tooltip.open-in-browser")); //$NON-NLS-1$
+	    MovieManager.getDialog().getCover().setToolTipText(Localizer.getString("MovieManagerCommandSelect.show-cover.tooltip.open-in-browser")); //$NON-NLS-1$
 	} else {
-	    MovieManager.getIt().getCover().setToolTipText(null);
+	    MovieManager.getDialog().getCover().setToolTipText(null);
 	}
 	
 	if (date.equals("")) //$NON-NLS-1$
-	    MovieManager.getIt().getDateField().setText(""); //$NON-NLS-1$
+	    MovieManager.getDialog().getDateField().setText(""); //$NON-NLS-1$
 	else {
-	    MovieManager.getIt().getDateField().setText("("+date+") "); //$NON-NLS-1$ //$NON-NLS-2$
-	    MovieManager.getIt().getDateField().setCaretPosition(0);
+	    MovieManager.getDialog().getDateField().setText("("+date+") "); //$NON-NLS-1$ //$NON-NLS-2$
+	    MovieManager.getDialog().getDateField().setCaretPosition(0);
 	}
 	
-	MovieManager.getIt().getTitleField().setText(title);
-	MovieManager.getIt().getTitleField().setCaretPosition(0);
+	MovieManager.getDialog().getTitleField().setText(title);
+	MovieManager.getDialog().getTitleField().setCaretPosition(0);
 	
-	MovieManager.getIt().getDirectedByField().setText(directedBy);
-	MovieManager.getIt().getDirectedByField().setCaretPosition(0);
+	MovieManager.getDialog().getDirectedByField().setText(directedBy);
+	MovieManager.getDialog().getDirectedByField().setCaretPosition(0);
 	
-	MovieManager.getIt().getWrittenByField().setText(writtenBy);
-	MovieManager.getIt().getWrittenByField().setCaretPosition(0);
+	MovieManager.getDialog().getWrittenByField().setText(writtenBy);
+	MovieManager.getDialog().getWrittenByField().setCaretPosition(0);
 	
-	MovieManager.getIt().getGenreField().setText(genre);
-	MovieManager.getIt().getGenreField().setCaretPosition(0);
+	MovieManager.getDialog().getGenreField().setText(genre);
+	MovieManager.getDialog().getGenreField().setCaretPosition(0);
 	
-	MovieManager.getIt().getRatingField().setText(rating);
+	MovieManager.getDialog().getRatingField().setText(rating);
 	
 	StringBuffer misc = new StringBuffer();
 	
@@ -499,67 +498,67 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	
 	misc.append("</FONT></html>"); //$NON-NLS-1$
 
-	MovieManager.getIt().getMiscellaneous().setText(misc.toString());
-	MovieManager.getIt().getMiscellaneous().setCaretPosition(0);
+	MovieManager.getDialog().getMiscellaneous().setText(misc.toString());
+	MovieManager.getDialog().getMiscellaneous().setCaretPosition(0);
 
 	if (country.equals("")) { //$NON-NLS-1$
-	    MovieManager.getIt().getCountryLabel().setText(""); //$NON-NLS-1$
-	    MovieManager.getIt().getCountryTextField().setText(""); //$NON-NLS-1$
+	    MovieManager.getDialog().getCountryLabel().setText(""); //$NON-NLS-1$
+	    MovieManager.getDialog().getCountryTextField().setText(""); //$NON-NLS-1$
 	}
 	else {
-	    MovieManager.getIt().getCountryLabel().setText(Localizer.getString("moviemanager.movie-info-panel.country")+ ": "); //$NON-NLS-1$
-	    MovieManager.getIt().getCountryTextField().setText(country);
-	    MovieManager.getIt().getCountryTextField().setCaretPosition(0);
+	    MovieManager.getDialog().getCountryLabel().setText(Localizer.getString("moviemanager.movie-info-panel.country")+ ": "); //$NON-NLS-1$
+	    MovieManager.getDialog().getCountryTextField().setText(country);
+	    MovieManager.getDialog().getCountryTextField().setCaretPosition(0);
 	}
       
 	if (language.equals("")) { //$NON-NLS-1$
-	    MovieManager.getIt().getLanguageLabel().setText(""); //$NON-NLS-1$
-	    MovieManager.getIt().getLanguageTextField().setText(""); //$NON-NLS-1$
+	    MovieManager.getDialog().getLanguageLabel().setText(""); //$NON-NLS-1$
+	    MovieManager.getDialog().getLanguageTextField().setText(""); //$NON-NLS-1$
 	}
 	else {
-	    MovieManager.getIt().getLanguageLabel().setText(Localizer.getString("moviemanager.movie-info-panel.language")+ ": "); //$NON-NLS-1$
-	    MovieManager.getIt().getLanguageTextField().setText(language);
-	    MovieManager.getIt().getLanguageTextField().setCaretPosition(0);
+	    MovieManager.getDialog().getLanguageLabel().setText(Localizer.getString("moviemanager.movie-info-panel.language")+ ": "); //$NON-NLS-1$
+	    MovieManager.getDialog().getLanguageTextField().setText(language);
+	    MovieManager.getDialog().getLanguageTextField().setCaretPosition(0);
 	}
 	
 	/* Must be a spaces to avoid the top row from collapsing */
 	if (colour.equals("")) { //$NON-NLS-1$
-	    MovieManager.getIt().getColourLabel().setText(" "); //$NON-NLS-1$
-	    MovieManager.getIt().getColourField().setText(" "); //$NON-NLS-1$
+	    MovieManager.getDialog().getColourLabel().setText(" "); //$NON-NLS-1$
+	    MovieManager.getDialog().getColourField().setText(" "); //$NON-NLS-1$
 	}
 	else {
-	    MovieManager.getIt().getColourLabel().setText(""); //$NON-NLS-1$
-	    MovieManager.getIt().getColourField().setText(colour+ " "); //$NON-NLS-1$
+	    MovieManager.getDialog().getColourLabel().setText(""); //$NON-NLS-1$
+	    MovieManager.getDialog().getColourField().setText(colour+ " "); //$NON-NLS-1$
 	}
       
-	MovieManager.getIt().getSeen().setSelected(seen);
+	MovieManager.getDialog().getSeen().setSelected(seen);
 	
    
     
-	MovieManager.getIt().getPlot().setText(plot);
-	MovieManager.getIt().getPlot().setCaretPosition(0);
+	MovieManager.getDialog().getPlot().setText(plot);
+	MovieManager.getDialog().getPlot().setCaretPosition(0);
 	
-	MovieManager.getIt().getCast().setText(cast);
-	MovieManager.getIt().getCast().setCaretPosition(0);
+	MovieManager.getDialog().getCast().setText(cast);
+	MovieManager.getDialog().getCast().setCaretPosition(0);
 	
 	/* Stores the additional info scollBar position */
-	final int verticalPosition = MovieManager.getIt().getAdditionalInfoScrollPane().getVerticalScrollBar().getValue();
-	MovieManager.getIt().getAdditionalInfo().setText(additionalInfoString);
+	final int verticalPosition = MovieManager.getDialog().getAdditionalInfoScrollPane().getVerticalScrollBar().getValue();
+	MovieManager.getDialog().getAdditionalInfo().setText(additionalInfoString);
       
 	Runnable restoreScrollBarPosition = new Runnable() {
 		public void run() {
-		    MovieManager.getIt().getAdditionalInfoScrollPane().getVerticalScrollBar().setValue(verticalPosition);
+		    MovieManager.getDialog().getAdditionalInfoScrollPane().getVerticalScrollBar().setValue(verticalPosition);
 		}
 	    };
       
 	/* Restores the additional info scollBar position */
 	SwingUtilities.invokeLater(restoreScrollBarPosition);
       
-	MovieManager.getIt().getNotes().setText(notes);
-	MovieManager.getIt().getNotes().setCaretPosition(0);
+	MovieManager.getDialog().getNotes().setText(notes);
+	MovieManager.getDialog().getNotes().setCaretPosition(0);
 
 	TreeNode selected = ((TreeNode) movieList.getLastSelectedPathComponent());
-	int horizontalPosition = MovieManager.getIt().getMoviesListScrollPane().getHorizontalScrollBar().getValue();
+	int horizontalPosition = MovieManager.getDialog().getMoviesListScrollPane().getHorizontalScrollBar().getValue();
 	
 	if (selected != null) {
 	    /* Notifies the JTree model of the updates - 
@@ -585,7 +584,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
      **/
     public void mousePressed(MouseEvent event) {
 	
-	JTree movieList = MovieManager.getIt().getMoviesList();
+	JTree movieList = MovieManager.getDialog().getMoviesList();
 	int rowForLocation = movieList.getRowForLocation(event.getX(), event.getY());
 	
 	/* Button 2 */
@@ -646,13 +645,13 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
     public void actionPerformed(ActionEvent event) {
 	
 	if (event.getSource().equals(change))
-	    MovieManager.getIt().updateSeen(0);
+	    MovieManager.getDialog().updateSeen(0);
 	    
 	else if (event.getSource().equals(setAllToSeen))
-	    MovieManager.getIt().updateSeen(1);
+	    MovieManager.getDialog().updateSeen(1);
 	    
 	else if (event.getSource().equals(setAllToUnseen))
-	    MovieManager.getIt().updateSeen(2);
+	    MovieManager.getDialog().updateSeen(2);
 	
 	else if (menuApplyToLists != null) {
 	    
@@ -681,7 +680,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	    else if (mode == 1)
 		apply = true;
 	    
-	    TreePath[] selectedPaths = MovieManager.getIt().getMoviesList().getSelectionPaths();
+	    TreePath[] selectedPaths = MovieManager.getDialog().getMoviesList().getSelectionPaths();
 	    ModelEntry temp;
 	    
 	    for (int i = 0; i < selectedPaths.length; i++) {
@@ -710,7 +709,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	if (SwingUtilities.isLeftMouseButton(event)) {
 	    if (event.getClickCount() >= 2 && isCtrlPressed(event)) {
 		
-		JTree movieList = MovieManager.getIt().getMoviesList();
+		JTree movieList = MovieManager.getDialog().getMoviesList();
 		int rowForLocation = movieList.getRowForLocation(event.getX(), event.getY());
 		
 		if (movieList.isCollapsed(rowForLocation))
@@ -723,7 +722,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
     
     public void makeMovieListPopupMenu(int x, int y, MouseEvent event, ModelEntry selected, int selectionCount) {
 	
-	JTree movieList = MovieManager.getIt().getMoviesList();
+	JTree movieList = MovieManager.getDialog().getMoviesList();
 	boolean isSeenEditable = MovieManager.getConfig().getSeenEditable();
 	JPopupMenu popupMenu = null;
 	
@@ -793,8 +792,12 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		popupMenu.add(menuApplyToLists);
 		popupMenu.add(menuRemoveFromLists);
 	    }
+        
+        popupMenu.setInvoker(movieList);
+        popupMenu.setLocation(x, y);
+        
 	    popupMenu.show(movieList, x, y);
-	    ShowGUI.show(popupMenu, true);
+	    //GUIUtil.show(popupMenu, true);
 	}
     }
     
@@ -822,12 +825,12 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	}
 	
 	/* Saving the node's changed notes value */
-	if (MovieManager.getIt().getMoviesList().getLeadSelectionRow() != -1) {
+	if (MovieManager.getDialog().getMoviesList().getLeadSelectionRow() != -1) {
 	    
-	    ModelEntry entry = (ModelEntry) ((DefaultMutableTreeNode) MovieManager.getIt().getMoviesList().getLeadSelectionPath().getLastPathComponent()).getUserObject();
+	    ModelEntry entry = (ModelEntry) ((DefaultMutableTreeNode) MovieManager.getDialog().getMoviesList().getLeadSelectionPath().getLastPathComponent()).getUserObject();
 	    
-	    if (! entry.getNotes().equals(MovieManager.getIt().getNotes().getText())) {
-		entry.setNotes(MovieManager.getIt().getNotes().getText());
+	    if (! entry.getNotes().equals(MovieManager.getDialog().getNotes().getText())) {
+		entry.setNotes(MovieManager.getDialog().getNotes().getText());
 		entry.hasChangedNotes = true;
 	    }
 	}

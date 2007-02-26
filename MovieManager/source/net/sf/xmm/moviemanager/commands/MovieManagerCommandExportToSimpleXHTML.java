@@ -29,7 +29,7 @@ import java.io.FileWriter;
 
 import javax.swing.DefaultListModel;
 
-import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 
 import org.apache.log4j.Logger;
@@ -114,7 +114,7 @@ public class MovieManagerCommandExportToSimpleXHTML {
 	fileChooser.setDialogTitle("Export to XHTML - Simple");
 	fileChooser.setApproveButtonToolTipText("Export to file");
 	fileChooser.setAcceptAllFileFilterUsed(false);
-	int returnVal = fileChooser.showDialog(MovieManager.getIt(), "Export");
+	int returnVal = fileChooser.showDialog(MovieManager.getDialog(), "Export");
     
 	while (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
 	    /* Gets the path... */
@@ -129,7 +129,7 @@ public class MovieManagerCommandExportToSimpleXHTML {
 	
 	    if (xhtmlFile.exists()) {
 		DialogQuestion question = new DialogQuestion("File already exists", "A file with the chosen filename already exists. Would you like to overwrite the old file?");
-		ShowGUI.showAndWait(question, true);
+		GUIUtil.showAndWait(question, true);
 	    
 		if (question.getAnswer()) {
 		    xhtmlFile.delete();
@@ -138,7 +138,7 @@ public class MovieManagerCommandExportToSimpleXHTML {
 		}
 	    
 		else {
-		    returnVal = fileChooser.showOpenDialog(MovieManager.getIt());
+		    returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
 		}
 	    }
 	    else {

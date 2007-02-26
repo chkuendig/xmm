@@ -34,7 +34,7 @@ public class MovieManagerCommandSaveChangedNotes implements ActionListener {
      **/
     public static void execute() {
 	
-	DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getIt().getMoviesList().getModel()).getRoot();
+	DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
 	ModelEntry model;
 	DefaultMutableTreeNode node;
 	

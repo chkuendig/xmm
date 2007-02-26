@@ -22,7 +22,7 @@ package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.DialogMovieInfo;
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -33,7 +33,7 @@ public class MovieManagerCommandAdd implements ActionListener {
    **/
     protected static void execute() {
 	DialogMovieInfo dialogMovieInfo = new DialogMovieInfo();
-	ShowGUI.show(dialogMovieInfo, true);
+	GUIUtil.show(dialogMovieInfo, true);
     }
     
     /**

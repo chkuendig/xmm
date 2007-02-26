@@ -20,13 +20,15 @@
 
 package net.sf.xmm.moviemanager;
 
+import net.sf.networktools.proportionlayout.ProportionConstraints;
+import net.sf.networktools.proportionlayout.ProportionLayout;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandImport;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 
@@ -41,22 +43,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 
 
 public class DialogImport extends JDialog implements ActionListener {
@@ -66,6 +53,8 @@ public class DialogImport extends JDialog implements ActionListener {
     private JTextField textFilePath;
     private JTextField excelFilePath;
     private JTextField excelTitleColumn;
+    private JTextField excelLocationColumn;
+    
     private JTextField extremeFilePath;
     private JTextField xmlFilePath;
     
@@ -78,7 +67,7 @@ public class DialogImport extends JDialog implements ActionListener {
     private JButton buttonCancel;
     private JButton buttonAddMovies;
     private JButton buttonAddList;
-    
+        
     private JRadioButton askButton;
     private JRadioButton selectIfOnlyOneHitButton;
     private JRadioButton selectFirstHitButton;
@@ -105,7 +94,7 @@ public class DialogImport extends JDialog implements ActionListener {
         
     public DialogImport(final MovieManagerCommandImport parent) {
 	/* Dialog creation...*/
-	super(MovieManager.getIt());
+	super(MovieManager.getDialog());
 	this.parent = parent;
 	
 	/* Close dialog... */
@@ -213,13 +202,45 @@ public class DialogImport extends JDialog implements ActionListener {
 	excelTitleColumn.setDocument(new DocumentRegExp("(\\d)*",4));
 	excelTitleColumn.setText("0");
 	
-	JLabel excelColumnLabel = new JLabel("Movie title column:");
-	excelColumnLabel.setLabelFor(excelTitleColumn);
-	
+    JLabel excelTitleLabel = new JLabel("Movie title column:");
+    excelTitleLabel.setLabelFor(excelTitleColumn);
+    
+    excelLocationColumn = new JTextField("", 3);
+    excelLocationColumn.setDocument(new DocumentRegExp("(\\d)*",4));
+    
+    JLabel excelLocationLabel = new JLabel("Location column:");
+    excelLocationLabel.setLabelFor(excelLocationColumn);
+    
 	JPanel excelOptionPanel = new JPanel();
-	excelOptionPanel.add(excelColumnLabel);
-	excelOptionPanel.add(excelTitleColumn);
-	
+    excelOptionPanel.setLayout(new BoxLayout(excelOptionPanel, BoxLayout.Y_AXIS));
+    
+    ProportionLayout propLayout = new ProportionLayout();
+    
+    
+    propLayout.appendColumn(10);                                // column 0
+          // Column 0 will be an empty space of width 10
+    propLayout.appendColumn(0, ProportionLayout.NO_PROPORTION); // column 1
+          // Column 1 will always be the greatest preferred width of all it's components
+      
+    propLayout.appendColumn(10); // column 1
+    
+          // Then add all the rows to the ProportionLayout
+    propLayout.appendRow(10);                                // row 0
+          // Row 0 will be an empty space of width 10
+    propLayout.appendRow(0, ProportionLayout.NO_PROPORTION); // row 1
+          // Row 1 will always be the greatest preferred height of all it's components
+          // Row 1 will never get any of the additional height
+    propLayout.appendRow(10);                                // row 2
+    
+        
+    excelOptionPanel.setLayout(propLayout);
+          
+    excelOptionPanel.add(excelTitleLabel, new ProportionConstraints(1, 1));
+    excelOptionPanel.add(excelTitleColumn, new ProportionConstraints(2, 1));
+    excelOptionPanel.add(excelLocationLabel, new ProportionConstraints(1, 2));
+    excelOptionPanel.add(excelLocationColumn, new ProportionConstraints(2, 2));
+            
+    
 	/* Excel file path */
 	excelFilePath = new JTextField(27);
 	excelFilePath.setText(MovieManager.getConfig().getImportExcelfilePath());
@@ -345,7 +366,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	buttonAddMovies.setToolTipText("Add movies in the selected directory");
 	buttonAddMovies.setActionCommand("DialogAddMultipleMovies - Add Movies");
 	buttonAddMovies.addActionListener(this);
-	
+    
 	JPanel buttonPanel = new JPanel();
 	buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 	buttonPanel.add(buttonOk);
@@ -368,7 +389,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
 		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
 	
-	ShowGUI.showAndWait(this, true);
+	GUIUtil.showAndWait(this, true);
     }
     
     JPanel makeListPanel() {
@@ -452,7 +473,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	    }
 	    else if (importMode == 2) {
 		title = "Select eXtreme movie manager database";
-		fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"mdb"},new String("MS Access Database File (*.mdb)")));
+		fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"mdb", "accdb"},new String("MS Access Database File (*.mdb, *.accdb)")));
 	    }
         else if (importMode == 3) {
             title = "Select XML file";
@@ -505,7 +526,7 @@ public class DialogImport extends JDialog implements ActionListener {
     }
     
     public int getImportMode() {
-	return tabbedPane.getSelectedIndex();
+        return tabbedPane.getSelectedIndex();
     }
     
     /*Returns the string in the path textfield*/
@@ -521,7 +542,11 @@ public class DialogImport extends JDialog implements ActionListener {
     }
     
     public String getExcelTitleColumn() {
-	return excelTitleColumn.getText();
+        return excelTitleColumn.getText();
+    }
+    
+    public String getExcelLocationColumn() {
+        return excelLocationColumn.getText();
     }
     
     /*returns the value of the multiAddSelectOption variable.( values 0-2)*/
@@ -576,32 +601,33 @@ public class DialogImport extends JDialog implements ActionListener {
 	    log.debug("ActionPerformed: " + event.getActionCommand());
 	    
 	    if (getPath().equals("")) {
-		DialogAlert alert = new DialogAlert(this, "Alert","Please specify a file path.");
-		ShowGUI.showAndWait(alert, true);
+	        DialogAlert alert = new DialogAlert(this, "Alert","Please specify a file path.");
+	        GUIUtil.showAndWait(alert, true);
 	    }
 	    else if (!new File(getPath()).exists()) {
-		DialogAlert alert = new DialogAlert(this, "Alert","The specified file does not exist.");
-		ShowGUI.showAndWait(alert, true);
+	        DialogAlert alert = new DialogAlert(this, "Alert","The specified file does not exist.");
+	        GUIUtil.showAndWait(alert, true);
 	    }
 	    else if (getImportMode() == 1 && (getExcelTitleColumn() == null || getExcelTitleColumn().equals(""))) {
-		DialogAlert alert = new DialogAlert(this, "Alert","You need to specify a column.");
-		ShowGUI.showAndWait(alert, true);
+	        DialogAlert alert = new DialogAlert(this, "Alert","You need to specify a column.");
+	        GUIUtil.showAndWait(alert, true);
 	    }
 	    else {
-		executeSave();
-		dispose();
+	        executeSave();
+	        dispose();
 	    }
 	}
 	
+   
 	if (event.getSource().equals(buttonAddList)) {
 	
-	    MovieManagerCommandLists.execute();
+	    MovieManagerCommandLists.execute(this);
 	    
 	    all.remove(2);
 	    all.add(makeListPanel(), 2);
 	    pack();
 	    
-	    ShowGUI.show(this, true);
+	    GUIUtil.show(this, true);
 	}
 	
 	if (event.getSource().equals(enableSearchForImdbInfo)) {

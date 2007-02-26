@@ -20,11 +20,28 @@
 
 package net.sf.xmm.moviemanager.models;
 
+import com.lowagie.text.Table;
+
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
+
 public class ModelImportSettings {
+
+    JTable table;
+    
+    public ModelImportSettings() {
+    
+    }
+    
+    public ModelImportSettings(JTable table) {
+        this.table = table;
+    }
+        
     public int multiAddSelectOption = 0;
     public int importMode = 0;
     public boolean overwriteWithImdbInfo = false;
-    public int excelColumn = 0;
+    public int excelTitleColumn = 0;
+    public int excelLocationColumn = -1;
     public String addToThisList = "";
     public String filePath = "";
     public boolean extremeOriginalLanguage = true;

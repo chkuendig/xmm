@@ -23,11 +23,11 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.DialogAlert;
 import net.sf.xmm.moviemanager.DialogQuestion;
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.models.*;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 
@@ -648,7 +648,7 @@ public class MovieManagerCommandExportToFullHTML {
 	fileChooser.setApproveButtonToolTipText("Export to file (a folder \'Covers\' will also be created)");
 	
 	fileChooser.setAcceptAllFileFilterUsed(false);
-	int returnVal = fileChooser.showDialog(MovieManager.getIt(), "Export");
+	int returnVal = fileChooser.showDialog(MovieManager.getDialog(), "Export");
 	
 	while (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
 	    /* Gets the path... */
@@ -667,19 +667,19 @@ public class MovieManagerCommandExportToFullHTML {
 	    
 	    if (htmlFile.exists()) {
 		DialogQuestion fileQuestion = new DialogQuestion("File already exists", "A file with the chosen filename already exists. Would you like to overwrite the old file?");
-		ShowGUI.showAndWait(fileQuestion, true);
+		GUIUtil.showAndWait(fileQuestion, true);
 		
 		if (fileQuestion.getAnswer()) {
 		    if (coversDir.exists()) { 
 			DialogQuestion coverQuestion = new DialogQuestion("Directory already exists.", "The directory to store covers already exists. Put cover images in the existing directory?");
-			ShowGUI.showAndWait(coverQuestion, true);
+			GUIUtil.showAndWait(coverQuestion, true);
 			
 			if (coverQuestion.getAnswer()) {
 			    export(htmlFile, coversPath, coversRelativePath);
 			    break;
 			}
 			else
-			    returnVal = fileChooser.showOpenDialog(MovieManager.getIt());
+			    returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
 			
 		    }
 		    else {
@@ -689,25 +689,25 @@ public class MovieManagerCommandExportToFullHTML {
 		    }
 		}
 		else 
-		    returnVal = fileChooser.showOpenDialog(MovieManager.getIt());
+		    returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
 		
 	    } 
 	    else if (coversDir.exists()) { 
 		DialogQuestion coverQuestion = new DialogQuestion("Directory already exists.", "The directory to store covers already exists. Put cover files in the exisitng directory and overwrite existing files?");
-		ShowGUI.showAndWait(coverQuestion, true);
+		GUIUtil.showAndWait(coverQuestion, true);
 		
 		if (coverQuestion.getAnswer()) {
 		    export(htmlFile, coversPath, coversRelativePath);
 		    break;
 		}
 		else {
-		    returnVal = fileChooser.showOpenDialog(MovieManager.getIt());
+		    returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
 		}
 		
 	    }
 	    else if(!coversDir.mkdir()) {
-		DialogAlert coverAlert = new DialogAlert(MovieManager.getIt(), "Couldn't create directory.", "The directory to store covers could not be created.");
-		ShowGUI.showAndWait(coverAlert, true);
+		DialogAlert coverAlert = new DialogAlert(MovieManager.getDialog(), "Couldn't create directory.", "The directory to store covers could not be created.");
+		GUIUtil.showAndWait(coverAlert, true);
 	    }
 	    else {
 		export(htmlFile, coversPath, coversRelativePath);

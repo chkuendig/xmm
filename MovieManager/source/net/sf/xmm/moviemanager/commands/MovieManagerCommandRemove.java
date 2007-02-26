@@ -23,7 +23,7 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.DialogQuestion;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.*;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,7 +48,7 @@ public class MovieManagerCommandRemove implements ActionListener {
      **/
     protected static void execute() {
 	/* Makes sure a movie is selected... */
-	JTree movieList = MovieManager.getIt().getMoviesList();
+	JTree movieList = MovieManager.getDialog().getMoviesList();
 	
 	DefaultMutableTreeNode selected = (DefaultMutableTreeNode) movieList.getLastSelectedPathComponent();
 	
@@ -79,7 +79,7 @@ public class MovieManagerCommandRemove implements ActionListener {
 		question = new DialogQuestion("Remove Movie", "Are you sure you want to remove '"+ selected.getUserObject() +"'?");
 	    }
 	    
-	    ShowGUI.showAndWait(question, true);
+	    GUIUtil.showAndWait(question, true);
 	    
 	    if (question.getAnswer()) {
 		
@@ -117,7 +117,7 @@ public class MovieManagerCommandRemove implements ActionListener {
 			    /* Removes from the list... */
 			    parent.remove(selected);
 			    
-			    ((DefaultTreeModel) MovieManager.getIt().getMoviesList().getModel()).reload(parent);
+			    ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).reload(parent);
 			    
 			    /* Sets the new selected node (path) */
 			    movieList.setSelectionPath(newSelectionPath);
@@ -174,7 +174,7 @@ public class MovieManagerCommandRemove implements ActionListener {
 			    log.warn("Error deleting entry:"+ entry.getKey() +" "+ entry.toString());
 			}
 		    }
-		    MovieManager.getIt().setAndShowEntries();
+		    MovieManager.getDialog().setAndShowEntries();
 		    MovieManagerCommandSelect.execute();
 		}
 	    }
@@ -187,6 +187,6 @@ public class MovieManagerCommandRemove implements ActionListener {
     public void actionPerformed(ActionEvent event) {
 	log.debug("ActionPerformed: " + event.getActionCommand());
 	execute();
-	MovieManager.getIt().getMoviesList().requestFocus(true);
+	MovieManager.getDialog().getMoviesList().requestFocus(true);
     }
 }

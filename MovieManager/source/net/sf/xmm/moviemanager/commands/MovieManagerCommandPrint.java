@@ -25,7 +25,7 @@ import net.sf.xmm.moviemanager.*;
 
 public class MovieManagerCommandPrint implements ActionListener {
    void execute() {
-       ReportGenerator.printDirect(MovieManager.getIt().getMoviesList());
+       ReportGenerator.printDirect(MovieManager.getDialog().getMoviesList());
    }
 
    /**

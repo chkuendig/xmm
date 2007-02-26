@@ -20,6 +20,8 @@
 
 package net.sf.xmm.moviemanager.models;
 
+import net.sf.xmm.moviemanager.DialogImportTable.FieldModel;
+
 import java.util.*;
 
 public class ModelAdditionalInfo {
@@ -292,4 +294,64 @@ public class ModelAdditionalInfo {
     public void setVideoRate(String videoRate) {
 	this.videoRate = videoRate;
     }        
+    
+    
+    /* Convenience method for setting values */
+    public boolean setValue(FieldModel fieldModel) {
+    
+        String fieldName = fieldModel.getField();
+        String value = fieldModel.getValue();
+        
+        if (fieldModel.getTable().equals("Additional Info")) {
+            
+            if (fieldName.equalsIgnoreCase("SubTitles"))
+                setSubtitles(value);
+            else if (fieldName.equalsIgnoreCase("Duration"))
+                setDuration(Integer.parseInt(value));
+            else if (fieldName.equalsIgnoreCase("File Size"))
+                setFileSize(Integer.parseInt(value));
+            else if (fieldName.equalsIgnoreCase("CDs"))
+                setCDs(Integer.parseInt(value));
+            else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("CD Cases"))
+                setCDCases(Integer.parseInt(value));
+            else if (fieldName.equalsIgnoreCase("Resolution"))
+                setResolution(value);
+            else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Video Codec"))
+                setVideoCodec(value);
+            else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Video Rate"))
+                setVideoRate(value);
+            else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Video Bit Rate"))
+                setVideoBitrate(value);
+            else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Codec"))
+                setAudioCodec(value);
+            else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Rate"))
+                setAudioRate(value);
+            else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Bit Rate"))
+                setAudioBitrate(value);
+            else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Channels"))
+                setAudioChannels(value);
+            else if (fieldName.equalsIgnoreCase("Container"))
+                setContainer(value);
+            else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("File Location"))
+                setFileLocation(value);
+            else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("File Count"))
+                setFileCount(Integer.parseInt(value));
+            else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Media Type"))
+                setMediaType(value);
+            else
+                return false;
+            
+            return true;
+        }
+        else if (fieldModel.getTable().equals("Extra Info")) {
+            
+            for (int i = 0; i < extraInfoFieldNames.size(); i++) {
+                if (fieldName.equals(extraInfoFieldNames.get(i))) {
+                    extraInfoFieldValues.set(i, value);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

@@ -69,7 +69,7 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
     
     public DialogExport() {
         /* Dialog creation...*/
-        super(MovieManager.getIt());
+        super(MovieManager.getDialog());
         /* Close dialog... */
         
         addWindowListener(new WindowAdapter() {
@@ -363,7 +363,7 @@ public class DialogExport extends JDialog implements ActionListener, ItemListene
             return;
         }
         
-        MovieManager.getIt().getMoviesList().requestFocus(true);
+        MovieManager.getDialog().getMoviesList().requestFocus(true);
     }
     
     public void itemStateChanged(ItemEvent e) {

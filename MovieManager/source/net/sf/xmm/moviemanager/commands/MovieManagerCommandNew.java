@@ -24,13 +24,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import net.sf.xmm.moviemanager.*;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandNew implements ActionListener {
     
     protected static void execute() {
 	DialogDatabase dialogDatabase = new DialogDatabase(true);
-	ShowGUI.show(dialogDatabase, true);
+	GUIUtil.show(dialogDatabase, true);
     }
     
     /**

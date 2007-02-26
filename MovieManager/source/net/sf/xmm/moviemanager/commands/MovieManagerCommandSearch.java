@@ -25,7 +25,7 @@ import java.awt.event.ActionListener;
 
 import net.sf.xmm.moviemanager.DialogSearch;
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandSearch implements ActionListener {
     
@@ -33,11 +33,11 @@ public class MovieManagerCommandSearch implements ActionListener {
     
 		if (DialogSearch.getDialogSearch() == null) {
 		    DialogSearch dialogSearch = new DialogSearch();
-		    ShowGUI.show(dialogSearch, true);
+		    GUIUtil.show(dialogSearch, true);
 		} else if (DialogSearch.getDialogSearch().isShowing()) {
-			ShowGUI.show(DialogSearch.getDialogSearch(), false);
+            GUIUtil.show(DialogSearch.getDialogSearch(), false);
 		} else {
-			ShowGUI.show(DialogSearch.getDialogSearch(), true);
+            GUIUtil.show(DialogSearch.getDialogSearch(), true);
 		}
     }
     

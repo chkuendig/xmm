@@ -20,7 +20,6 @@
 
 package net.sf.xmm.moviemanager;
 
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFile;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.models.AdditionalInfoFieldDefaultValues;
 import net.sf.xmm.moviemanager.util.*;
@@ -36,8 +35,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-
-import javax.swing.filechooser.FileSystemView;
 
 public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
@@ -258,7 +255,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
     private boolean defaultLookAndFeelDecorated = false;
 
     MovieManagerConfig() {
-	MovieManager.getIt().newDbHandler.addNewDatabaseLoadedEventListener(this);
+        MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(this);
     }
 
     public void newDatabaseLoadedEvent(NewDatabaseLoadedEvent evt) {
@@ -1925,16 +1922,16 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 
 	settings.append(lineSeparator);
-	settings.append("movieInfoSliderPosition:" + MovieManager.getIt().getMovieInfoSplitPane().getDividerLocation());
+	settings.append("movieInfoSliderPosition:" + MovieManager.getDialog().getMovieInfoSplitPane().getDividerLocation());
 
 	settings.append(lineSeparator);
-	settings.append("movieInfoLastSliderPosition:" + MovieManager.getIt().getMovieInfoSplitPane().getLastDividerLocation());
+	settings.append("movieInfoLastSliderPosition:" + MovieManager.getDialog().getMovieInfoSplitPane().getLastDividerLocation());
 
 	settings.append(lineSeparator);
-	settings.append("addionalInfoNotesSliderPosition:" + MovieManager.getIt().getAdditionalInfoNotesSplitPane().getDividerLocation());
+	settings.append("addionalInfoNotesSliderPosition:" + MovieManager.getDialog().getAdditionalInfoNotesSplitPane().getDividerLocation());
 
 	settings.append(lineSeparator);
-	settings.append("addionalInfoNotesLastSliderPosition:" + MovieManager.getIt().getAdditionalInfoNotesSplitPane().getLastDividerLocation());
+	settings.append("addionalInfoNotesLastSliderPosition:" + MovieManager.getDialog().getAdditionalInfoNotesSplitPane().getLastDividerLocation());
 
 	settings.append(lineSeparator);
 	settings.append("mainWidth:" + ((int) mainSize.getWidth()));

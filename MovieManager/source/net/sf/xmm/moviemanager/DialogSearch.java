@@ -141,7 +141,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
     
     public DialogSearch() {
 	/* Dialog creation...*/
-	super(MovieManager.getIt());
+	super(MovieManager.getDialog());
 	dialogSearch = this;
 	
 	/* Close dialog... */
@@ -602,8 +602,8 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
         
 	/*Display the window.*/
 	pack();
-	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
-		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
+	setLocation((int)MovieManager.getDialog().getLocation().getX()+(MovieManager.getDialog().getWidth()-getWidth())/2,
+		    (int)MovieManager.getDialog().getLocation().getY()+(MovieManager.getDialog().getHeight()-getHeight())/2);
 	
 	
 	try {
@@ -685,8 +685,6 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	    
 			    tmpKey = (table.toLowerCase() +"."+ tmpColumn).replaceAll("_", " ");
 	    
-                //System.err.println("tmpKey:" + tmpKey);
-                
 			    if (searchAlias.containsKey(tmpKey)) {
 			        alias.setText((String) searchAlias.get(tmpKey));
 			    }
@@ -708,8 +706,6 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
                  Map.Entry entry = (Map.Entry) iterator.next();
                  setkey = (String) entry.getKey();
                  setValue = (String) entry.getValue();
-                 
-                 System.err.println("(" + setkey + ") : " + setValue);
              }
             
 			for (int i = 0;i < extraInfoFields.size(); i++) {
@@ -720,10 +716,6 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	    
 			    tmpKey = (((String) tableNames.get(2)).toLowerCase() +"."+ (String) extraInfoFields.get(i)).replaceAll("_", " ");
 	     
-               
-                System.err.println("searchAlias.containsKey("+ tmpKey + "):" + searchAlias.containsKey(tmpKey));
-                System.err.println("searchAlias.containsValue("+ tmpKey + "):" + searchAlias.containsValue(tmpKey));
-                 
 			    if (searchAlias.containsKey(tmpKey)) {
 			        alias.setText((String) searchAlias.get(tmpKey));
 			    }
@@ -874,7 +866,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	    return;
 	}
 	
-	MovieManager.getIt().getMoviesList().requestFocus(true);
+	MovieManager.getDialog().getMoviesList().requestFocus(true);
       }
     
     /*This is for the three enable buttons, seen, rating, date.*/
@@ -1042,6 +1034,23 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
  //$NON-NLS-1$
 	}
     }
+    
+    /* Macs nowadays have widescreens, so we display the search-dialog next
+     * to the main window and not on top of it 
+     * (that could probably be usefull on other platforms as well)
+     */
+    public void setVisible(boolean visible) {
+        if (MovieManager.isMac() && visible && java.awt.Toolkit.getDefaultToolkit().getScreenSize().getWidth() > 1200) {
+            if (MovieManager.getDialog().getLocation().getX() < getWidth() + 25) {
+                MovieManager.getDialog().setLocation(getWidth() + 25, (int) MovieManager.getDialog().getLocation().getY());
+            }
+            setLocation((int) MovieManager.getDialog().getLocation().getX() - getWidth() - 15, (int) MovieManager.getDialog()
+                    .getLocation().getY() + 50);
+        }
+        super.setVisible(visible);
+    }
+
+    
 }
 
 

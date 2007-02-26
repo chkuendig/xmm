@@ -21,7 +21,6 @@
 package net.sf.xmm.moviemanager;
 
 import java.io.*;
-import java.net.URL;
 import java.util.ArrayList;
 
 import java.awt.*;
@@ -134,7 +133,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         
     public DialogPrefs() {
 	/* Dialog creation...*/
-	super(MovieManager.getIt());
+	super(MovieManager.getDialog());
 
 	/* Close dialog... */
 	addWindowListener(new WindowAdapter() {
@@ -854,7 +853,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         scroller.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
         exampleTree.setRootVisible(false);
         exampleTree.setShowsRootHandles(true);
-        exampleTree.setCellRenderer(new ExtendedTreeCellRenderer(MovieManager.getIt(), scroller, exampleConfig));
+        exampleTree.setCellRenderer(new ExtendedTreeCellRenderer(MovieManager.getDialog(), scroller, exampleConfig));
         rowHeightSlider = new JSlider(6, 100, config.getMovieListRowHeight());
         rowHeightSlider.addChangeListener(new ChangeListener() {
 		public void stateChanged(ChangeEvent e) {
@@ -1210,7 +1209,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         
         if (!browser.isFile()) {
             DialogAlert alert = new DialogAlert(this, Localizer.getString("dialogprefs.alert.title.alert"), "The custom browser path is invalid."); //$NON-NLS-1$ 
-            ShowGUI.showAndWait(alert, true);
+            GUIUtil.showAndWait(alert, true);
             return false;
         }
         
@@ -1332,10 +1331,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    if (!(new File(config.getCoversFolder()).isDirectory())) {
 
 		DialogAlert alert = new DialogAlert(this, Localizer.getString("dialogprefs.alert.title.alert"), Localizer.getString("dialogprefs.alert.message.covers-dir-not-existing")); //$NON-NLS-1$ //$NON-NLS-2$
-		ShowGUI.showAndWait(alert, true);
+		GUIUtil.showAndWait(alert, true);
 		
 		DialogFolders dialogFolders = new DialogFolders();
-		ShowGUI.showAndWait(dialogFolders, true);
+		GUIUtil.showAndWait(dialogFolders, true);
 		
 		if (!(new File(config.getCoversFolder()).isDirectory())) {
 		    enableStoreCoversLocally.setSelected(false);
@@ -1401,10 +1400,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	try {
 	    Skin skin = null;
 
-	    if (MovieManager.applet == null)
-		skin = SkinLookAndFeel.loadThemePack(skinlfThemePackPath);
+	    if (MovieManager.isApplet())
+	    	skin = SkinLookAndFeel.loadThemePack(FileUtil.getAppletFile(skinlfThemePackPath).toURL());
 	    else {
-		skin = SkinLookAndFeel.loadThemePack(FileUtil.getAppletFile(skinlfThemePackPath).toURL());
+			skin = SkinLookAndFeel.loadThemePack(skinlfThemePackPath);
 	    }
 	    SkinLookAndFeel.setSkin(skin);
 
@@ -1465,7 +1464,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 
 	DialogAlert alert = new DialogAlert(this, Localizer.getString("dialogprefs.alert.title.laf-error"), message, error); //$NON-NLS-1$
-	ShowGUI.showAndWait(alert, true);
+	GUIUtil.showAndWait(alert, true);
     }
 
     void setLafChooserPreferredSize() {
@@ -1481,34 +1480,34 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
     }
 
     void updateLookAndFeel() throws Exception {
-	MovieManager.getIt().toolBar.updateToolButtonBorder();
+	MovieManager.getDialog().toolBar.updateToolButtonBorder();
 
-	SwingUtilities.updateComponentTreeUI(MovieManager.getIt());
-	MovieManager.getIt().toolBar.updateToolButtonBorder();
+	SwingUtilities.updateComponentTreeUI(MovieManager.getDialog());
+	MovieManager.getDialog().toolBar.updateToolButtonBorder();
 
-	MovieManager.getIt().getDateField().setOpaque(false);
-	MovieManager.getIt().getDateField().setBorder(null);
+	MovieManager.getDialog().getDateField().setOpaque(false);
+	MovieManager.getDialog().getDateField().setBorder(null);
 
-	MovieManager.getIt().getTitleField().setOpaque(false);
-	MovieManager.getIt().getTitleField().setBorder(null);
+	MovieManager.getDialog().getTitleField().setOpaque(false);
+	MovieManager.getDialog().getTitleField().setBorder(null);
 
-	MovieManager.getIt().getDirectedByField().setOpaque(false);
-	MovieManager.getIt().getDirectedByField().setBorder(null);
+	MovieManager.getDialog().getDirectedByField().setOpaque(false);
+	MovieManager.getDialog().getDirectedByField().setBorder(null);
 
-	MovieManager.getIt().getWrittenByField().setOpaque(false);
-	MovieManager.getIt().getWrittenByField().setBorder(null);
+	MovieManager.getDialog().getWrittenByField().setOpaque(false);
+	MovieManager.getDialog().getWrittenByField().setBorder(null);
 
-	MovieManager.getIt().getGenreField().setOpaque(false);
-	MovieManager.getIt().getGenreField().setBorder(null);
+	MovieManager.getDialog().getGenreField().setOpaque(false);
+	MovieManager.getDialog().getGenreField().setBorder(null);
 
-	MovieManager.getIt().getRatingField().setOpaque(false);
-	MovieManager.getIt().getRatingField().setBorder(null);
+	MovieManager.getDialog().getRatingField().setOpaque(false);
+	MovieManager.getDialog().getRatingField().setBorder(null);
 
-	MovieManager.getIt().getCountryTextField().setOpaque(false);
-	MovieManager.getIt().getCountryTextField().setBorder(null);
+	MovieManager.getDialog().getCountryTextField().setOpaque(false);
+	MovieManager.getDialog().getCountryTextField().setBorder(null);
 
-	MovieManager.getIt().getLanguageTextField().setOpaque(false);
-	MovieManager.getIt().getLanguageTextField().setBorder(null);
+	MovieManager.getDialog().getLanguageTextField().setOpaque(false);
+	MovieManager.getDialog().getLanguageTextField().setBorder(null);
 
 	/*If the search dialog is opened it will be updated*/
 	if (DialogSearch.getDialogSearch() != null) {
@@ -1519,9 +1518,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	SwingUtilities.updateComponentTreeUI(this);
 	pack();
 	setLafChooserPreferredSize();
-	MovieManager.getIt().toolBar.updateToolButtonBorder();
+	MovieManager.getDialog().toolBar.updateToolButtonBorder();
 
-	MovieManager.getIt().validate();
+	MovieManager.getDialog().validate();
     }
 
 
@@ -1533,10 +1532,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    javax.swing.JFrame.setDefaultLookAndFeelDecorated(true);
 	    javax.swing.JDialog.setDefaultLookAndFeelDecorated(true);
 
-	    MovieManager.getIt().dispose();
-	    MovieManager.getIt().setUndecorated(true);
-	    MovieManager.getIt().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.FRAME);
-	    ShowGUI.show(MovieManager.getIt(), true);
+	    MovieManager.getDialog().dispose();
+	    MovieManager.getDialog().setUndecorated(true);
+	    MovieManager.getDialog().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.FRAME);
+	    GUIUtil.show(MovieManager.getDialog(), true);
 	    
 	    /* Updating DialogSearch if open */
 	    if (DialogSearch.getDialogSearch() != null) {
@@ -1545,7 +1544,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		DialogSearch.getDialogSearch().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.PLAIN_DIALOG);
 		DialogSearch.getDialogSearch().pack();
 		
-		ShowGUI.show(DialogSearch.getDialogSearch(), true);
+		GUIUtil.show(DialogSearch.getDialogSearch(), true);
 	    }
 
 	    /* This */
@@ -1553,7 +1552,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    setUndecorated(true);
 	    getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.FRAME);
 	    pack();
-	    ShowGUI.show(this, true);
+	    GUIUtil.show(this, true);
 	}
 	else {
 	    config.setDefaultLookAndFeelDecorated(false);
@@ -1561,10 +1560,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    javax.swing.JFrame.setDefaultLookAndFeelDecorated(false);
 	    javax.swing.JDialog.setDefaultLookAndFeelDecorated(false);
 
-	    MovieManager.getIt().dispose();
-	    MovieManager.getIt().setUndecorated(false);
-	    MovieManager.getIt().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.NONE);
-	    ShowGUI.show(MovieManager.getIt(), true);
+	    MovieManager.getDialog().dispose();
+	    MovieManager.getDialog().setUndecorated(false);
+	    MovieManager.getDialog().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.NONE);
+	    GUIUtil.show(MovieManager.getDialog(), true);
 
 	    /* Updating DialogSearch if open */
 	    if (DialogSearch.getDialogSearch() != null) {
@@ -1572,7 +1571,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		DialogSearch.getDialogSearch().setUndecorated(false);
 		DialogSearch.getDialogSearch().getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.NONE);
 		DialogSearch.getDialogSearch().pack();
-		ShowGUI.show(DialogSearch.getDialogSearch(), true);
+		GUIUtil.show(DialogSearch.getDialogSearch(), true);
 	    }
 
 	    /* This */
@@ -1581,7 +1580,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    getRootPane().setWindowDecorationStyle(javax.swing.JRootPane.NONE);
 	    pack();
 	    
-	    ShowGUI.show(this, true);
+	    GUIUtil.show(this, true);
 	}
     }
 
@@ -1604,10 +1603,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
        if (saveSettings()) {
            dispose();
            
-           MovieManager.getIt().updateJTreeIcons();
+           MovieManager.getDialog().updateJTreeIcons();
 
            /* Necessary to update the icons in the movielist */
-           MovieManager.getIt().getMoviesList().updateUI();
+           MovieManager.getDialog().getMoviesList().updateUI();
            MovieManagerCommandSelect.execute();
            
            return;
@@ -1644,7 +1643,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		config.setLookAndFeelType(2);
 		setOyoahaLookAndFeel();
 
-		MovieManager.getIt().toolBar.updateToolButtonBorder();
+		MovieManager.getDialog().toolBar.updateToolButtonBorder();
 	    }
 
 	    else {
@@ -1670,25 +1669,25 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    else
 		config.setRegularToolButtonsUsed(false);
 
-	    MovieManager.getIt().toolBar.updateToolButtonBorder();
+	    MovieManager.getDialog().toolBar.updateToolButtonBorder();
 	}
 
 
 	if (event.getActionCommand().equals("SeenIcon")) { //$NON-NLS-1$
 
 	    if (regularSeenIcon.isSelected()) {
-		MovieManager.getIt().getSeen().setIcon(new ImageIcon(FileUtil.getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
-		MovieManager.getIt().getSeen().setSelectedIcon(new ImageIcon(FileUtil.getImage("/images/seen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+		MovieManager.getDialog().getSeen().setIcon(new ImageIcon(FileUtil.getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+		MovieManager.getDialog().getSeen().setSelectedIcon(new ImageIcon(FileUtil.getImage("/images/seen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 		config.setUseRegularSeenIcon(true);
 
 	    }
 	    else {
-		MovieManager.getIt().getSeen().setIcon(null);
-		MovieManager.getIt().getSeen().setSelectedIcon(null);
+		MovieManager.getDialog().getSeen().setIcon(null);
+		MovieManager.getDialog().getSeen().setSelectedIcon(null);
 		config.setUseRegularSeenIcon(false);
 	    }
 
-	    MovieManager.getIt().getSeen().updateUI();
+	    MovieManager.getDialog().getSeen().updateUI();
 	}
 
 	if (event.getActionCommand().equals("DefaultLafDecorated")) { //$NON-NLS-1$
@@ -1699,19 +1698,19 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	/*Layout*/
 	if (event.getSource().equals(lafChooser)) {
 	    setCustomLookAndFeel(0);
-	    MovieManager.getIt().updateLookAndFeelValues();
+	    MovieManager.getDialog().updateLookAndFeelValues();
 	}
 	if (event.getSource().equals(skinlfThemePackChooser)) {
 	    setSkinlfLookAndFeel();
-	    MovieManager.getIt().updateLookAndFeelValues();
+	    MovieManager.getDialog().updateLookAndFeelValues();
 	}
 
 	if (event.getSource().equals(oyoahaThemePackChooser)) {
 	    setOyoahaLookAndFeel();
-	    MovieManager.getIt().updateLookAndFeelValues();
+	    MovieManager.getDialog().updateLookAndFeelValues();
 	}
 
-	MovieManager.getIt().getMoviesList().requestFocus(true);
+	MovieManager.getDialog().getMoviesList().requestFocus(true);
     }
 
 

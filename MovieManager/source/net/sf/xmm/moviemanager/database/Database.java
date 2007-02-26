@@ -328,7 +328,7 @@ abstract public class Database {
 	    message = "";
 	}
 	if (!message.equals(""))
-	    DialogDatabase.showDatabaseMessage(MovieManager.getIt(), this, "");
+	    DialogDatabase.showDatabaseMessage(MovieManager.getDialog(), this, "");
     }
 
 

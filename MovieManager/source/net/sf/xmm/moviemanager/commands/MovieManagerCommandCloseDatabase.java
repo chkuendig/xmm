@@ -37,9 +37,9 @@ public class MovieManagerCommandCloseDatabase implements ActionListener {
 	    /* Closes the open database... */
 	    database.finalizeDatabase();
 	    
-	    MovieManager.getIt().getMoviesList().setModel(null);
-	    MovieManager.getIt().setDatabaseComponentsEnable(false);
-	    MovieManager.getIt().setAndShowEntries(-1);
+	    MovieManager.getDialog().getMoviesList().setModel(null);
+	    MovieManager.getDialog().setDatabaseComponentsEnable(false);
+	    MovieManager.getDialog().setAndShowEntries(-1);
 	    MovieManager.getIt().setDatabase(null, false);
 	    
 	    MovieManagerCommandSelect.execute();

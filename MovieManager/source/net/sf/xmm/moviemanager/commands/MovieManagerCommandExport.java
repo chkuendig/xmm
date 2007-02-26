@@ -21,7 +21,7 @@
 package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.*;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +31,7 @@ public class MovieManagerCommandExport implements ActionListener {
     void execute() {
 	
 	DialogExport dialogExport = new DialogExport();
-	ShowGUI.show(dialogExport, true);
+	GUIUtil.show(dialogExport, true);
     }
     
     /**

@@ -79,7 +79,7 @@ public class EntryListRemover {
 		    if (parent != null && child != null) {
 			parent.remove(child);
 			listModel.nodeStructureChanged(parent);
-			MovieManager.getIt().setAndShowEntries();
+			MovieManager.getDialog().setAndShowEntries();
 		    }
 		}
 	    };
@@ -105,7 +105,7 @@ public class EntryListRemover {
 	    
 	    try {
 		
-		DefaultMutableTreeNode root = (DefaultMutableTreeNode) MovieManager.getIt().getMoviesList().getModel().getRoot();
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) MovieManager.getDialog().getMoviesList().getModel().getRoot();
 		
 		while (!entries.isEmpty()) {
 		    /* Removes the movie from database... */
@@ -171,7 +171,7 @@ public class EntryListRemover {
 		    moviesList.setSelectionRow(selectedIndex-1);
 		MovieManagerCommandSelect.execute();
 	    }
-	    MovieManager.getIt().setAndShowEntries();
+	    MovieManager.getDialog().setAndShowEntries();
 	}
     }
 }

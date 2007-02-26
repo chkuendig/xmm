@@ -565,6 +565,10 @@ public class ModelMovieInfo {
         
         ModelAdditionalInfo additionalInfo = null;
         
+        _saveLastFieldValue = new ArrayList();
+        _fieldNames = new ArrayList();
+        _fieldValues = new ArrayList();
+        
         if (!loadEmpty) {
             
             if (model.getHasAdditionalInfoData())
@@ -760,7 +764,7 @@ public class ModelMovieInfo {
         String coverName = model.getCover();
         
         if (cover == null || coverName == null || coverName.equals("")) {
-            throw new Exception("Unable to save cover file:" + coverName);
+	    throw new Exception("Unable to save cover file:" + coverName);
         }
         
         /* Saves the cover... */      
@@ -885,6 +889,8 @@ public class ModelMovieInfo {
         
         this.model = model;
         
+        initializeAdditionalInfo(false);
+	
         if (modelChanged)
             modelChanged(this);
     }

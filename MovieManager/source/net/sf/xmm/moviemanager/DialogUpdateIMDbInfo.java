@@ -23,7 +23,7 @@ package net.sf.xmm.moviemanager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandUpdateIMDBInfo;
 import net.sf.xmm.moviemanager.extentions.ButtonGroupNoSelection;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 
@@ -782,7 +782,7 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 	    }
 	    else {
 		DialogAlert alert = new DialogAlert(dialog, "Alert", "At least one of the fields should be checked.");
-		ShowGUI.showAndWait(alert, true);
+		GUIUtil.showAndWait(alert, true);
 
 		startButton.setEnabled(true);
 		cancelButton.setEnabled(false);

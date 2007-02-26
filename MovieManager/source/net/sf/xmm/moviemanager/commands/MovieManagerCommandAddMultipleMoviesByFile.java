@@ -23,7 +23,7 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.*;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 
@@ -67,7 +67,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	cancelAll = false;
 	
 	DialogAddMultipleMovies damm = new DialogAddMultipleMovies();
-	ShowGUI.showAndWait(damm, true);
+	GUIUtil.showAndWait(damm, true);
 	
 	multiAddSelectOption = damm.getMultiAddSelectOption();
 	enableExludeString = damm.getMultiAddExcludeStringEnabled();
@@ -398,8 +398,8 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	if (!searchString.equals("")) { //$NON-NLS-1$
 	    DialogIMDB dialogIMDB = new DialogIMDB(movieInfoModel, searchString, filename, this, multiAddSelectOption);
 	} else {
-	    DialogAlert alert = new DialogAlert(MovieManager.getIt(), Localizer.getString("DialogMovieInfo.alert.title.alert"),Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
-	    ShowGUI.showAndWait(alert, true);
+	    DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.alert"),Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
+	    GUIUtil.showAndWait(alert, true);
 	}
     }
     

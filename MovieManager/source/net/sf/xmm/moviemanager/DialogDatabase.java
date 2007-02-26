@@ -69,7 +69,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     
     public DialogDatabase(boolean mode) {
 	/* Dialog creation...*/
-	super(MovieManager.getIt());
+	super(MovieManager.getDialog());
 	
 	dialogDatabase = this;
 	
@@ -366,7 +366,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     }
     
     
-    /*Opens a filechooser and returns the absolute path to the selected file*/
+    /* Opens a filechooser and returns the absolute path to the selected file */
     private String executeCommandGetFile(int databaseMode, File currentDir) {
 	
 	/* Opens the Open dialog... */
@@ -378,7 +378,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		fileChooser.setFileFilter(new CustomFileFilter(new String[]{"properties", "script", "lck"},new String("HSQL Database Files (*.properties, *.script, *.lck)"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	    } 
 	    else if (databaseMode == 1) {
-		fileChooser.setFileFilter(new CustomFileFilter(new String[]{"mdb"},new String("MS Access Database Files (*.mdb)"))); //$NON-NLS-1$ //$NON-NLS-2$
+		fileChooser.setFileFilter(new CustomFileFilter(new String[]{"mdb", "accdb"},new String("MS Access Database Files (*.mdb, *.accdb)"))); //$NON-NLS-1$ //$NON-NLS-2$
 	    }
 	    
 	    fileChooser.setAcceptAllFileFilterUsed(false);
@@ -395,14 +395,14 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogDatabase.filechooser.approve-button-create-database.tooltip")); //$NON-NLS-1$
 		fileChooser.setDialogTitle(Localizer.getString("DialogDatabase.filechooser.title.create-database")); //$NON-NLS-1$
 		
-		returnVal = fileChooser.showSaveDialog(MovieManager.getIt());
+		returnVal = fileChooser.showSaveDialog(MovieManager.getDialog());
 	    }
 	    else {
 		fileChooser.setApproveButtonText(Localizer.getString("DialogDatabase.filechooser.approve-button-open-database.text")); //$NON-NLS-1$
 		fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogDatabase.filechooser.approve-button-open-database.tooltip")); //$NON-NLS-1$
 		fileChooser.setDialogTitle(Localizer.getString("DialogDatabase.filechooser.title.open-database")); //$NON-NLS-1$
 		
-		returnVal = fileChooser.showOpenDialog(MovieManager.getIt());
+		returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
 	    }
 	    
 	    if (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
@@ -414,12 +414,6 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		    return ""; //$NON-NLS-1$
 		}
 		
-		/* MS Access */
-		if (databaseMode == 1) {
-		    if (!filepath.endsWith(".mdb")) //$NON-NLS-1$
-			filepath += ".mdb"; //$NON-NLS-1$
-		}
-		    
 		return filepath;
 	    }
 	}
@@ -515,18 +509,18 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		
 	    if (databaseNameField.getText().equals("")) { //$NON-NLS-1$
 		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogDatabase.alert.database-name.title"), Localizer.getString("DialogDatabase.alert.database-name.message")); //$NON-NLS-1$ //$NON-NLS-2$
-		ShowGUI.show(alert, true);
+		GUIUtil.show(alert, true);
 		return;
 	    }
 	    if (hostTextField.getText().equals("")) { //$NON-NLS-1$
 		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogDatabase.alert.host-address.title"), Localizer.getString("DialogDatabase.alert.host-address.message")); //$NON-NLS-1$ //$NON-NLS-2$
-		ShowGUI.show(alert, true);
+		GUIUtil.show(alert, true);
 		return;
 	    }
 		
 	    if (portTextField.getText().equals("")) { //$NON-NLS-1$
 		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogDatabase.alert.port.title"), Localizer.getString("DialogDatabase.alert.port.message")); //$NON-NLS-1$ //$NON-NLS-2$
-		ShowGUI.show(alert, true);
+		GUIUtil.show(alert, true);
 		return;
 	    }
 	}
@@ -534,14 +528,14 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	    
 	    if (hsqlFilePath.getText().equals("")) { //$NON-NLS-1$
 		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogDatabase.alert.database-path.title"), Localizer.getString("DialogDatabase.alert.database-path.message")); //$NON-NLS-1$ //$NON-NLS-2$
-		ShowGUI.show(alert, true);
+		GUIUtil.show(alert, true);
 		return;
 	    }
 	}
 	else {
 	    if (accessFilePath.getText().equals("")) { //$NON-NLS-1$
 		DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogDatabase.alert.database-path.title"), Localizer.getString("DialogDatabase.alert.database-path.message")); //$NON-NLS-1$ //$NON-NLS-2$
-		ShowGUI.show(alert, true);
+		GUIUtil.show(alert, true);
 		return;
 	    }
 	}
@@ -592,7 +586,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	progressBar = new SimpleProgressBar(this, true, worker);
 	worker.start();
 	
-	ShowGUI.show(progressBar, true);
+	GUIUtil.show(progressBar, true);
     }
     
     
@@ -944,12 +938,12 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	
 	if (message.equals("Connection reset")) { //$NON-NLS-1$
 	    
-	    MovieManager.getIt().setDatabaseComponentsEnable(false);
+	    MovieManager.getDialog().setDatabaseComponentsEnable(false);
 	    
 	    DialogQuestion question = new DialogQuestion(Localizer.getString("DialogDatabase.alert.title.connection-reset"), "<html>The connection to the MySQL server has been reset.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$
 							 "Reconnect now?</html>"); //$NON-NLS-1$
 	    
-	    ShowGUI.showAndWait(question, true);
+	    GUIUtil.showAndWait(question, true);
 	    
 	    if (question.getAnswer()) {
 		
@@ -976,7 +970,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		    else
 			alert = new DialogAlert((Dialog) parent, title, message);
 		    
-		    ShowGUI.showAndWait(alert, true);
+		    GUIUtil.showAndWait(alert, true);
 		}
 	    }
 	}
@@ -1001,7 +995,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
             else
                 alert = new DialogAlert((Dialog) parent, title, message, true);
 	    
-	    ShowGUI.showAndWait(alert, true);
+	    GUIUtil.showAndWait(alert, true);
 	}
     }
 }

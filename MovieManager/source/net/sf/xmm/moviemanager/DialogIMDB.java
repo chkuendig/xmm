@@ -28,7 +28,7 @@ import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SwingWorker;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 
@@ -53,6 +53,7 @@ public class DialogIMDB extends JDialog {
     JPanel panelMoviesList;
     
     boolean getUrlKeyOnly = false;
+ 
     
     long time;
     
@@ -70,7 +71,7 @@ public class DialogIMDB extends JDialog {
      **/
     public DialogIMDB(ModelMovieInfo modelInfo, boolean getUrlKeyOnly) {
         /* Dialog creation...*/
-        super(MovieManager.getIt());
+        super(MovieManager.getDialog());
         multiAddFile = new File[1];
         this.getUrlKeyOnly = getUrlKeyOnly;
         
@@ -86,10 +87,8 @@ public class DialogIMDB extends JDialog {
         
         /*Enables dispose when pushing escape*/
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-        Action escapeAction = new AbstractAction()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        Action escapeAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         };
@@ -100,12 +99,13 @@ public class DialogIMDB extends JDialog {
     }
     
     
+   
     /**
      * Constructor - When adding multiple movies by file.
      **/
     public DialogIMDB(ModelMovieInfo modelInfo, String searchString, String filename, final MovieManagerCommandAddMultipleMovies commandAddMovies, int multiAddSelectOption) {
         /* Dialog creation...*/
-        super(MovieManager.getIt());
+        super(MovieManager.getDialog());
         multiAddFile = new File[1];
         
         /* Sets parent... */
@@ -383,7 +383,6 @@ public class DialogIMDB extends JDialog {
         model.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.search-in-progress"), null)); //$NON-NLS-1$
         listMovies.setModel(model);
         
-        
         if (isMultiAdd()) { 
             try {
                 DefaultListModel list = IMDB.getSimpleMatches(searchString);
@@ -398,7 +397,7 @@ public class DialogIMDB extends JDialog {
                 listMovies.setSelectedIndex(0);
                 
                 if (executeCommandMultipleMoviesSelectCheck(listSize) == 1) {
-                    ShowGUI.showAndWait(this, true);
+                    GUIUtil.showAndWait(this, true);
                 }
                 
             } catch (Exception e) {
@@ -431,7 +430,7 @@ public class DialogIMDB extends JDialog {
             worker.start();
         }
     }
-    
+
     
     /*The MovieManagerCommandFilter gets the movielist from the database ordered by movie title
      Then uses the searchstring to remove unwanted hits
@@ -600,27 +599,27 @@ public class DialogIMDB extends JDialog {
         
         if (exception.startsWith("Server returned HTTP response code: 407")) { //$NON-NLS-1$
             DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.authentication-required"), Localizer.getString("DialogIMDB.alert.message.proxy-authentication-required")); //$NON-NLS-1$ //$NON-NLS-2$
-            ShowGUI.showAndWait(alert, true);
+            GUIUtil.showAndWait(alert, true);
         }
         
         if (exception.startsWith("Connection timed out")) { //$NON-NLS-1$
             DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.connection-timed-out"), Localizer.getString("DialogIMDB.alert.message.connection-timed-out")); //$NON-NLS-1$ //$NON-NLS-2$
-            ShowGUI.showAndWait(alert, true);
+            GUIUtil.showAndWait(alert, true);
         }
         
         if (exception.startsWith("Connection reset")) { //$NON-NLS-1$
             DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.connection-reset"), Localizer.getString("DialogIMDB.alert.message.connection-reset")); //$NON-NLS-1$ //$NON-NLS-2$
-            ShowGUI.showAndWait(alert, true);
+            GUIUtil.showAndWait(alert, true);
         }
         
         if (exception.startsWith("Server redirected too many  times")) { //$NON-NLS-1$
             DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.access-denied"), Localizer.getString("DialogIMDB.alert.message.username-of-password-invalid")); //$NON-NLS-1$ //$NON-NLS-2$
-            ShowGUI.showAndWait(alert, true);
+            GUIUtil.showAndWait(alert, true);
         }
         
         if (exception.startsWith("The host did not accept the connection within timeout of")) { //$NON-NLS-1$
             DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.connection-timed-out"), exception); //$NON-NLS-1$
-            ShowGUI.showAndWait(alert, true);
+            GUIUtil.showAndWait(alert, true);
         }
     }
     
@@ -684,51 +683,58 @@ public class DialogIMDB extends JDialog {
             else {
                 time = System.currentTimeMillis();
                 
-                IMDB imdb;
-                
-                try {
-                    imdb = new IMDB(model.getKey());
-                } catch (Exception e) {
-                    log.error(e.getMessage()); //$NON-NLS-1$
-                    return;
-                }
-                
-                modelInfo.model.setTitle(imdb.getTitle());
-                modelInfo.model.setDate(imdb.getDate());
-                modelInfo.model.setColour(imdb.getColour());
-                modelInfo.model.setDirectedBy(imdb.getDirectedBy());
-                modelInfo.model.setWrittenBy(imdb.getWrittenBy());
-                modelInfo.model.setGenre(imdb.getGenre());
-                modelInfo.model.setRating(imdb.getRating());
-                modelInfo.model.setCountry(imdb.getCountry());
-                modelInfo.model.setLanguage(imdb.getLanguage());
-                modelInfo.model.setPlot(imdb.getPlot());
-                modelInfo.model.setCast(imdb.getCast());
-                
-                modelInfo.model.setWebRuntime(imdb.getRuntime());
-                modelInfo.model.setWebSoundMix(imdb.getSoundMix());
-                modelInfo.model.setAwards(imdb.getAwards());
-                modelInfo.model.setMpaa(imdb.getMpaa());
-                modelInfo.model.setAka(imdb.getAka());
-                modelInfo.model.setCertification(imdb.getCertification());
-                
-                modelInfo.model.setUrlKey(imdb.getKey());
-                
-                /* The cover... */
-                byte[] coverData = imdb.getCover();
-                
-                if (imdb.getCoverOK()) {
-                    modelInfo.setCover(imdb.getCoverName(), coverData);
-                    modelInfo.setSaveCover(true);
-                } else {
-                    modelInfo.setCover("", null);
-                    modelInfo.setSaveCover(false);
-                }
-                
-                modelInfo.executeTitleModification(imdb.getTitle());
-                
+                getIMDbInfo(modelInfo, model.getKey());
                 dispose();
             }
         }
+    }
+    
+    public static boolean getIMDbInfo(ModelMovieInfo modelInfo, String key) {
+        IMDB imdb;
+        
+        try {
+            imdb = new IMDB(key);
+        } catch (Exception e) {
+            log.error(e.getMessage()); //$NON-NLS-1$
+            return false;
+        }
+        
+        if (key.equals(imdb.getKey())) {
+            
+            modelInfo.model.setTitle(imdb.getTitle());
+            modelInfo.model.setDate(imdb.getDate());
+            modelInfo.model.setColour(imdb.getColour());
+            modelInfo.model.setDirectedBy(imdb.getDirectedBy());
+            modelInfo.model.setWrittenBy(imdb.getWrittenBy());
+            modelInfo.model.setGenre(imdb.getGenre());
+            modelInfo.model.setRating(imdb.getRating());
+            modelInfo.model.setCountry(imdb.getCountry());
+            modelInfo.model.setLanguage(imdb.getLanguage());
+            modelInfo.model.setPlot(imdb.getPlot());
+            modelInfo.model.setCast(imdb.getCast());
+            
+            modelInfo.model.setWebRuntime(imdb.getRuntime());
+            modelInfo.model.setWebSoundMix(imdb.getSoundMix());
+            modelInfo.model.setAwards(imdb.getAwards());
+            modelInfo.model.setMpaa(imdb.getMpaa());
+            modelInfo.model.setAka(imdb.getAka());
+            modelInfo.model.setCertification(imdb.getCertification());
+            
+            modelInfo.model.setUrlKey(imdb.getKey());
+            
+            /* The cover... */
+            byte[] coverData = imdb.getCover();
+            
+            if (imdb.getCoverOK()) {
+                modelInfo.setCover(imdb.getCoverName(), coverData);
+                modelInfo.setSaveCover(true);
+            } else {
+                modelInfo.setCover("", null);
+                modelInfo.setSaveCover(false);
+            }
+            
+            modelInfo.executeTitleModification(imdb.getTitle());
+        }
+        return true;
     }
 }

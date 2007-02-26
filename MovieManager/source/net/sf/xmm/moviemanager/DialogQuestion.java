@@ -70,7 +70,7 @@ public class DialogQuestion extends JDialog  {
      **/
     public DialogQuestion(String title, String questionMsg) {
 	/* Dialog creation...*/
-	super(MovieManager.getIt());
+	super(MovieManager.getDialog());
 	
 	this.title = title;
 	this.questionMsg = questionMsg;
@@ -80,7 +80,7 @@ public class DialogQuestion extends JDialog  {
     
     public DialogQuestion(String title, String questionMsg, Object [] list) {
 	/* Dialog creation...*/
-	super(MovieManager.getIt());
+	super(MovieManager.getDialog());
 	
 	this.title = title;
 	this.questionMsg = questionMsg;
@@ -200,8 +200,8 @@ public class DialogQuestion extends JDialog  {
 	getContentPane().add(panelButtons,BorderLayout.SOUTH);
 	/* Packs and sets location... */
 	pack();
-	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
-		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
+	setLocation((int)MovieManager.getDialog().getLocation().getX()+(MovieManager.getDialog().getWidth()-getWidth())/2,
+		    (int)MovieManager.getDialog().getLocation().getY()+(MovieManager.getDialog().getHeight()-getHeight())/2);
     }
     
     /**

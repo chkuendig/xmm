@@ -23,7 +23,7 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.DialogMovieInfo;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelMovie;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,17 +37,17 @@ class MovieManagerCommandAddEpisode implements ActionListener {
      **/
     protected static void execute() {
         
-        int listIndex = MovieManager.getIt().getMoviesList().getLeadSelectionRow();
+        int listIndex = MovieManager.getDialog().getMoviesList().getLeadSelectionRow();
         
         if (listIndex != -1) {
             
-            ModelMovie model = (ModelMovie) ((DefaultMutableTreeNode) MovieManager.getIt().getMoviesList().getLastSelectedPathComponent()).getUserObject();
+            ModelMovie model = (ModelMovie) ((DefaultMutableTreeNode) MovieManager.getDialog().getMoviesList().getLastSelectedPathComponent()).getUserObject();
             
             if (model.getKey() != -1) {
                 
                 try {            
                     DialogMovieInfo dialogMovieInfo = new DialogMovieInfo(model); //$NON-NLS-1$
-                    ShowGUI.show(dialogMovieInfo, true);
+                    GUIUtil.show(dialogMovieInfo, true);
                 } catch (Exception e) {
                     MovieManager.log.error("Exception:", e);
                 }

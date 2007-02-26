@@ -79,7 +79,7 @@ class DialogTVDOTCOM extends JDialog {
      **/
     protected DialogTVDOTCOM(ModelMovieInfo modelInfo) {
         /* Dialog creation...*/
-        super(MovieManager.getIt());
+        super(MovieManager.getDialog());
         
         this.modelInfo = modelInfo;
         
@@ -186,8 +186,8 @@ class DialogTVDOTCOM extends JDialog {
         pack();
         
         getMoviesList().ensureIndexIsVisible(0);
-        setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
-                (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
+        setLocation((int)MovieManager.getDialog().getLocation().getX()+(MovieManager.getDialog().getWidth()-getWidth())/2,
+                (int)MovieManager.getDialog().getLocation().getY()+(MovieManager.getDialog().getHeight()-getHeight())/2);
         
         DefaultListModel model = new DefaultListModel();
         model.addElement(new ModelMovie(-1, Localizer.getString("DialogTVDOTCOM.list-item.message.search-in-progress"))); //$NON-NLS-1$
@@ -279,22 +279,22 @@ class DialogTVDOTCOM extends JDialog {
         
         if (exception.startsWith("Server returned HTTP response code: 407")) { //$NON-NLS-1$
             DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogTVDOTCOM.alert.title.authentication-requeried"), Localizer.getString("DialogTVDOTCOM.alert.message.proxy-server-requires-authentication")); //$NON-NLS-1$ //$NON-NLS-2$
-            ShowGUI.showAndWait(alert, true);
+            GUIUtil.showAndWait(alert, true);
         }
         
         if (exception.startsWith("Connection timed out")) { //$NON-NLS-1$
             DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogTVDOTCOM.alert.title.connection-timed.out"), Localizer.getString("DialogTVDOTCOM.alert.message.connection-timed.out")); //$NON-NLS-1$ //$NON-NLS-2$
-            ShowGUI.showAndWait(alert, true);
+            GUIUtil.showAndWait(alert, true);
         }
         
         if (exception.startsWith("Connection reset")) { //$NON-NLS-1$
             DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogTVDOTCOM.alert.title.connection-reset"), Localizer.getString("DialogTVDOTCOM.alert.message.connection-reset-by-server")); //$NON-NLS-1$ //$NON-NLS-2$
-            ShowGUI.showAndWait(alert, true);
+            GUIUtil.showAndWait(alert, true);
         }
         
         if (exception.startsWith("Server redirected too many  times")) { //$NON-NLS-1$
             DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogTVDOTCOM.alert.title.access-denied"), Localizer.getString("DialogTVDOTCOM.alert.message.username-or-password-invalid")); //$NON-NLS-1$ //$NON-NLS-2$
-            ShowGUI.showAndWait(alert, true);
+            GUIUtil.showAndWait(alert, true);
         }
     }
     
@@ -334,7 +334,6 @@ class DialogTVDOTCOM extends JDialog {
             
             byte [] cover = TVDOTCOM.getSeriesCover((ModelSearchHit) selectedValues[0]);
             boolean execute = false;
-            boolean coverSaved = false;
             ModelEntry tmpEntry = null;
             
             String coverFileName = ((ModelSearchHit) selectedValues[0]).getUrlTitle() +((ModelSearchHit) selectedValues[0]).getCoverExtension();
@@ -375,7 +374,7 @@ class DialogTVDOTCOM extends JDialog {
             
             try {
                 modelInfo.setSaveCover(true);
-               modelInfo.saveCoverToFile();
+                modelInfo.saveCoverToFile();
             } catch (Exception e) {
                 log.error("Saving to database failed.", e);
             }

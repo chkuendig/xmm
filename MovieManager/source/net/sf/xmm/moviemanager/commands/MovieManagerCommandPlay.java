@@ -29,6 +29,7 @@ import javax.swing.JFileChooser;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
+import net.sf.xmm.moviemanager.DialogMovieManager;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
 import net.sf.xmm.moviemanager.models.ModelEntry;
@@ -49,7 +50,7 @@ public class MovieManagerCommandPlay implements ActionListener{
     protected static void execute() throws IOException, InterruptedException {
 	// check if there is a file selected
 	int listIndex = -1;
-	MovieManager movieManagerInstance = MovieManager.getIt();
+    DialogMovieManager movieManagerInstance = MovieManager.getDialog();
 	TreeModel moviesListTreeModel = movieManagerInstance.getMoviesList().getModel();
 
 	// check whether movies list has entries
@@ -105,10 +106,8 @@ public class MovieManagerCommandPlay implements ActionListener{
                 }
                 cmd += " ";
             }
-	        	        
-            System.err.println(cmd + fileLocation);
-            
-	        Process p = Runtime.getRuntime().exec(cmd + fileLocation);
+	    
+	    Process p = Runtime.getRuntime().exec(cmd + fileLocation);
 	    }
 	}
     }

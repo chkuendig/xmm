@@ -119,7 +119,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
      * @throws Exception
      */
     private void jbInit() throws Exception {
-        setIconImage(MovieManager.getIt().getIconImage());
+        setIconImage(MovieManager.getDialog().getIconImage());
         this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
                 this_componentResized(e);
@@ -244,7 +244,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         }
         else { // tree contains movies
             boolean onlySelected = radioButtonSelectedMovies.isSelected();
-            JTree tree = MovieManager.getIt().getMoviesList();
+            JTree tree = MovieManager.getDialog().getMoviesList();
             DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
             int n = root.getChildCount();
             for (int i = 0; i < n; i++) {

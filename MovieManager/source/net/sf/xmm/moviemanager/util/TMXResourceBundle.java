@@ -248,8 +248,8 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
      * @return the parsed document
      */
     public Document parseXmlFile(String filename, boolean validating) {
-    
-    Document doc = null;
+        
+	Document doc = null;
 	DocumentBuilderFactory factory = null;
 	// Create a builder factory
 	try {
@@ -276,9 +276,16 @@ public class TMXResourceBundle extends ResourceBundle implements Serializable {
 			doc = factory.newDocumentBuilder().parse(new File(filename));
 		    } catch (IOException efile) {
 			try {
+               
 			    // try to resolve the path as relative to local
 			    // class folder
-			    doc = factory.newDocumentBuilder().parse(ClassLoader.getSystemResourceAsStream(filename));
+			    String[] classPath = System.getProperties().getProperty("java.class.path", ".").split(";");
+                
+			    log.debug("classPath:" + classPath[0] + "  -  " + classPath[1]);
+                
+			    String newpath = classPath[0] + "/" + filename;
+			    doc = factory.newDocumentBuilder().parse(
+								     new File(newpath));
 			} catch (IOException epath) {
 			    // unable to get the input file
 			    log.error("IOException:" + epath);

@@ -130,7 +130,7 @@ public class IMDbInfoUpdater {
 	/* Setting the priority of the thread to 4 to give the GUI room to update more often */
 	Thread.currentThread().setPriority(4);
 	    
-	DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getIt().getMoviesList().getModel()).getRoot();
+	DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
 	ModelEntry model;
 	DefaultMutableTreeNode node;
 	
@@ -190,8 +190,7 @@ public class IMDbInfoUpdater {
 
 			    IMDB imdb;
 				
-                System.err.println("(" + model.getUrlKey()+ ")" + model.getTitle());    
-                                
+				
 			    if (model.getUrlKey().equals("")) {
                    log.info("UrlKey is empty");
                    
@@ -250,8 +249,7 @@ public class IMDbInfoUpdater {
 					    }
                         
 					    if (directedBy == 1 || (directedBy == 2 && model.getDirectedBy().equals(""))) {
-                            System.err.println("imdb.getDirectedBy():" + imdb.getDirectedBy());
-						model.setDirectedBy(imdb.getDirectedBy());
+model.setDirectedBy(imdb.getDirectedBy());
 						log.debug("DirectedBy updated");
 					    }
                         

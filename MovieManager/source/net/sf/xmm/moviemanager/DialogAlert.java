@@ -141,7 +141,7 @@ public class DialogAlert extends JDialog {
 	    if (scrollPane.getPreferredSize().getHeight() > 300)
 		scrollPane.setPreferredSize(new Dimension((int)scrollPane.getPreferredSize().getWidth(), 300));
 	    
-	    makeRest(MovieManager.getIt(), panelAlert);
+	    makeRest(MovieManager.getDialog(), panelAlert);
 	
 	} catch (Exception e) {
 	    log.error("Exception:" + e.getMessage());
@@ -183,7 +183,7 @@ public class DialogAlert extends JDialog {
 	panelAlert.add(labelIcon, BorderLayout.WEST);
 	panelAlert.add(alert, BorderLayout.EAST);
 	
-	makeRest(MovieManager.getIt(), panelAlert);
+	makeRest(MovieManager.getDialog(), panelAlert);
     }
     
     

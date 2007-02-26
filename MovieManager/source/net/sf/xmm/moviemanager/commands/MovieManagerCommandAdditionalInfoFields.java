@@ -25,7 +25,7 @@ import java.awt.event.ActionListener;
 
 import net.sf.xmm.moviemanager.DialogAdditionalInfoFields;
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandAdditionalInfoFields implements ActionListener {
 
@@ -34,7 +34,7 @@ public class MovieManagerCommandAdditionalInfoFields implements ActionListener {
    **/
   protected static void execute() {
       DialogAdditionalInfoFields dialogAdditionalInfoFields = new DialogAdditionalInfoFields();
-      ShowGUI.show(dialogAdditionalInfoFields, true);
+      GUIUtil.show(dialogAdditionalInfoFields, true);
   }
   
   /**

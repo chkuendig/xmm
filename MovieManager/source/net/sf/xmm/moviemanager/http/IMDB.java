@@ -28,10 +28,10 @@ import net.sf.xmm.moviemanager.util.FileUtil;
 
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 
@@ -163,7 +163,12 @@ public class IMDB {
 	/* Saves the page data in a string buffer... */
 	StringBuffer data = HttpUtil.readDataToStringBuffer(url);
 	
-	parseData(data);
+    if (data == null) {
+        throw new Exception("Invalid HTTP link");
+    }
+    
+    FileUtil.writeToFile("imdb.html", data);
+    parseData(data);
     }
     
     
@@ -183,55 +188,103 @@ public class IMDB {
 	int stop = 0;
 	int end = 0;
 	
+	Object [] tmpArray;
+	
 	try {
-	    /* Processes the data... */
-	    
-	    /* Gets the title... */
-	    if ((start = data.indexOf("class=\"title\">", start) +14) != 13 &&
-		(end = data.indexOf(" <small>", start)) != -1) {
-		_title = HttpUtil.decodeHTML(data.substring(start,end)).trim();
-		
-		if (MovieManager.getConfig().getAutoMoveThe() && _title.startsWith("The ")) {
-		    _title = _title.substring(_title.indexOf(" ")+1, _title.length())+ ", The";
+		/* Processes the data... */
+
+		/* Gets the title... */
+		if ((start = data.indexOf("<div id=\"tn15title\">", start)) != -1 &&
+				(end = data.indexOf("</div>", start)) != -1) {
+
+			System.err.println("title and date:" + data.substring(start, end));
+			
+			tmpArray = HttpUtil.decodeHTMLtoArray(data.substring(start, end));
+
+			//_title = HttpUtil.decodeHTML(data.substring(start, end)).trim();
+
+			_title = (String) tmpArray[0];
+
+			System.err.println("_title:" + _title);
+
+			if (MovieManager.getConfig().getAutoMoveThe() && _title.startsWith("The ")) {
+				_title = _title.substring(_title.indexOf(" ")+1, _title.length())+ ", The";
+			}
+			else if (MovieManager.getConfig().getAutoMoveAnAndA() && (_title.startsWith("A ") || _title.startsWith("An "))) {
+				_title = _title.substring(_title.indexOf(" ")+1, _title.length())+ ", "+ _title.substring(0, _title.indexOf(" "));
+			}
+			
+			System.err.println("_title:" + _title);
+
+			_date = (String) tmpArray[2];
 		}
-		else if (MovieManager.getConfig().getAutoMoveAnAndA() && (_title.startsWith("A ") || _title.startsWith("An "))) {
-		    _title = _title.substring(_title.indexOf(" ")+1, _title.length())+ ", "+ _title.substring(0, _title.indexOf(" "));
-		}
-	    }
-	    /* Gets the date... */
-	    if ((start = data.indexOf("\">",start) +2) != 1 &&
-		(end=data.indexOf("</",start)) != -1) {
-		_date = HttpUtil.decodeHTML(data.substring(start,end)).trim();
-	    }
-	    
-	    
+
+	    System.err.println("_date:" + _date);
+	 	    
 	    /* Gets the cover url... */
-	    if ((start = data.indexOf("\"poster\"", start)+ 7) != 6 &&
-		(start = data.indexOf("src=\"",start) +5) !=4 &&
-		(end = data.indexOf("\"",start)) != -1) {
-		_coverURL = HttpUtil.decodeHTML(data.substring(start, end));
-        
-        start = _coverURL.lastIndexOf(".");
-        
-        if (start != 0 && start != -1)
-            _coverName = _key + _coverURL.substring(start, _coverURL.length());
-        }
+	    if ((start = data.indexOf("<div class=\"photo\">")) != -1 && 
+	    		(end = data.indexOf("</div>", start)) != -1) {
+	    	
+	    	if (data.substring(start, end).indexOf("Poster Not Submitted") == -1) {
+	    	
+	    		if ((start = data.indexOf("src=\"",start) +5) !=4 &&
+	    			(end = data.indexOf("\"", start)) != -1) {
+	    				_coverURL = HttpUtil.decodeHTML(data.substring(start, end));
+	    			}
+	    			
+	    			System.err.println("_coverURL:" + _coverURL);
+
+	    			start = _coverURL.lastIndexOf(".");
+
+	    			if (start != 0 && start != -1)
+	    				_coverName = _key + _coverURL.substring(start, _coverURL.length());
+	    	}
+	    }
+	    
+	    System.err.println("_coverName:" + _coverName);
+	    
+	    start = 0;
+	    stop = 0;
+	    end = 0;
+	    /* Gets the rating... */
+	    if ((start = data.indexOf("User Rating:", start)+ 12) != 11 &&
+	    		(end = data.indexOf("/10</b>",start)) != -1 &&
+	    		(start = data.indexOf("<b>",end-9) +3) != 2) {
+		
+	    	_rating = HttpUtil.decodeHTML(data.substring(start, end));
+	    }
+	    
+	    System.err.println("_rating:" + _rating);
+	    
 	    
 	    start = 0;
 	    stop = 0;
 	    end = 0;
 	    /* Gets the directed by... */
-	    if ((start = data.indexOf("Directed by",start) + 11) != 10 &&
-		(stop = data.indexOf("<br>\n<br>",start)) != -1) {
-		while (true) {
-		    if ((start = data.indexOf("\">",start) + 2) !=1 &&
-			(end = data.indexOf("</",start)) != -1) {
-			if (end>stop) break;
-			if (!_directedBy.equals("")) _directedBy = _directedBy + ", ";
-			_directedBy = _directedBy + HttpUtil.decodeHTML(data.substring(start,end));
-		    }
-		}
+	    if ((start = data.indexOf("Directed by", start)) != -1 &&
+		(stop = data.indexOf("<br/>", start)) != -1) {
+	    	
+	    	//System.err.println("start:" + start);
+	    	//System.err.println("stop:" + stop);
+	    	
+	    	
+	    	//System.err.println("Directed by:" + data.substring(start, stop));
+	    	
+	    	ArrayList list = getLinkContentName(data.substring(start, stop));
+	    	
+	    	//System.err.println("list:" + list.size());
+	    	 
+	    	while (!list.isEmpty()) {
+	    		if (!_directedBy.equals(""))
+	    			_directedBy += ", ";
+	    			
+	    		_directedBy += list.remove(0);
+	    	}
 	    }
+	
+	    System.err.println("_directedBy:" + _directedBy);
+	    
+	    
 	    start = 0;
 	    stop = 0;
 	    end = 0;
@@ -239,248 +292,64 @@ public class IMDB {
 	    String tmp;
 
 	    /* Gets the written by... */
-	    if ((start = Math.max(data.indexOf("Writing credits", start) + 15, data.indexOf("WGA", start) + 15)) != 14 &&
-		(stop = Math.min(data.indexOf("(more)", start), Math.abs(data.indexOf("</table>", start)))) != -1) {
-		while (true) {
-		    if ((start = data.indexOf("\">", start) + 2) != 1 && (end = data.indexOf("</", start)) != -1) {
-			if (end > stop) 
-			    break;
-			
-			tmp = HttpUtil.decodeHTML(data.substring(start, end));
-			
-			if (!tmp.trim().equals("")) {
-			    if (!_writtenBy.equals("")) 
-				_writtenBy += ", ";
-			    
-			    _writtenBy += tmp;
-			}
-		    }
-		}
+	    if (((start = data.indexOf("Writing credits", start)) != -1) &&
+	    		(stop = data.indexOf("<br/>", start)) != -1) {
+	    	
+	    	ArrayList list = getLinkContentName(data.substring(start, stop));
+	    	
+	    	while (!list.isEmpty()) {
+	    		
+	    			if (!_writtenBy.equals(""))
+	    			_writtenBy += ", ";
+	    			
+	    		_writtenBy += list.remove(0);
+	    	}
 	    }
-	    start = 0;
-	    stop = 0;
-	    end = 0;
-	    /* Gets the Genre... */
-	    if ((start = data.indexOf("Genre:",start) + 6) != 5 &&
-		(stop = Math.min(data.indexOf("(more)", start),Math.abs(data.indexOf("<br><br>",start)))) != -1) {
-		while (true) {
-		    if ((start=data.indexOf("\">",start) + 2) != 1 &&
-			(end=data.indexOf("</",start)) != -1) {
-			if (end>stop) break;
-			if (!_genre.equals("")) _genre = _genre + " / ";
-			_genre = _genre + HttpUtil.decodeHTML(data.substring(start,end));
-		    }
-		}
-	    }
-	    start = 0;
-	    stop = 0;
-	    end = 0;
-	    /* Gets the rating... */
-	    if ((start = data.indexOf("User Rating:", start)+ 12) != 11 &&
-		(end = data.indexOf("/10</b>",start)) != -1 &&
-		(start = data.indexOf("<b>",end-9) +3) != 2) {
-		
-		_rating = HttpUtil.decodeHTML(data.substring(start, end));
-	    }
-	    start = 0;
-	    stop = 0;
-	    end = 0;
-	    /* Gets the plot... */
-	    if ((start=Math.max(data.indexOf("Plot Outline:</b>", start), data.indexOf("Plot Summary:</b>", start)) + 18) != 17 &&
-		(((end=data.indexOf("<",start)) != -1))) {
-		_plot = HttpUtil.decodeHTML(data.substring(start,end));
-	    }
-      
-	    /* Gets the cast... */
-	    if ((start = Math.max(data.indexOf("Cast ",start) + 5, data.indexOf("cast:",start) + 5)) != 4 &&
-		(stop = Math.min(data.indexOf("(more)", start), Math.abs(data.indexOf("</table>",start)))) != -1) {
-		
-		while (true) {
-		    if ((start = data.indexOf("<a href=",start)) == -1) 
-			break;
-		    
-		    if ((start = data.indexOf("\">",start) + 2) == 1) 
-			break;
-		    
-		    if ((end = data.indexOf("</", start)) != -1) {
-			if (end > stop) 
-			    break;
-			
-			tmp = HttpUtil.decodeHTML(data.substring(start, end));
-			
-			if (!_cast.equals("") && !tmp.trim().equals("")) 
-			    _cast += ", ";
-			
-			_cast += tmp; 
-		    }
-		}
-	    }
-      
-	    if ((start = data.indexOf("Also Known As:",start)) != -1) {
-		start += 18;
-	  
-		stop = data.indexOf("<b class=", start)-5;
-	  	  
-		while (true) {
-		    if (start >= stop) break;
-		    start += 4;
-		    end = data.indexOf("<br>", start);
-		    
-            if (!_aka.equals(""))
-		        _aka += "\r\n";
-            
-		    _aka += /*data.substring(start, end); */ HttpUtil.decodeHTML(data.substring(start, end));
-		    start = data.indexOf("<br>", end);
-		}
-		
-	    }
+	    	
+	    System.err.println("_writtenBy:" + _writtenBy);
+	    	    
+	    _genre = getClassInfo(data, "Genre:");
 	    
-	    if ((start = data.indexOf("a href=\"/mpaa\">MPAA</a>:</b>", start)) != -1) {
-		
-		start += 28;
-		end = data.indexOf("<br>",start);
-		_mpaa = data.substring(start, end).trim();
-	    }
+	    System.err.println("_genre:" + _genre);
 	    
-	    if ((start = data.indexOf("Runtime:</b>", start)) != -1) {
-		
-		start += 12;
-		end = data.indexOf("<br>",start);
-		_runtime = data.substring(start, end).trim();
-	    }
+	    _plot = getClassInfo(data, "Plot Outline:");
 	    
-	    if ((start = data.indexOf("Country:",start)) != -1) {
-	  
-		stop = data.indexOf("<br>",start);
-	  
-		while (true) {
-		    if (data.indexOf("/\">",start) > stop) break;
-		    start = data.indexOf("/\">",start) + 3;
-		    end = data.indexOf("</a>",start);
-		    if (!_country.equals(""))
-			_country += "/";
-		    _country += data.substring(start, end);
-		}
-	    }
-      
-	    if ((start = data.indexOf("Language:",start)) != -1) {
-		start+=12;
-		stop = data.indexOf("<br>",start);
-	  
-		while (true) {
-		    if (data.indexOf("/\">",start) > stop) break;
-	      
-		    start = data.indexOf("/\">",start)+3;
-		    end = data.indexOf("</a>",start);
-		    if (!_language.equals(""))
-			_language += "/";
-		    _language += data.substring(start, end);
-		}
-	    }
-      
-	    if ((start = data.indexOf("Color:", start)) != -1) {
-		stop = data.indexOf("<br>", start);
-		
-		if (start < stop) {
-		    _colour = HttpUtil.decodeHTML(data.substring(start+6, stop));
-		    
-		    /* Trimming and removing double spaces */
-		    _colour = _colour.trim().replaceAll("\\s+", " ");
-		}
-	    }
+	    System.err.println("_plot:" + _plot);
 	    
-	    if ((start = data.indexOf("Sound Mix:</b>", start)) != -1) {
-		
-		start += 14;
-		
-		end = data.indexOf("<br>", start);
-
-		StringBuffer temp = new StringBuffer(data.substring(start, end));
-		
-		/* cleaning the string */
-		
-		int soundStart = 0;
-		int soundStop = 0;
-		stop = 0;
-		while (true) {
-		 
-		    if ((soundStart = temp.indexOf("<a href=")) != -1) {
-			
-			soundStop = temp.indexOf("\">")+2;
-			temp.replace(soundStart, soundStop, "");
-			
-			soundStart = temp.indexOf("</a>");
-			temp.replace(soundStart, soundStart+4, "");
-		    }
-		    else if ((soundStart = temp.indexOf("<i>")) != -1) {
-			
-			temp.replace(soundStart, soundStart+3, "");
-			
-			soundStart = temp.indexOf("</i>");
-			temp.replace(soundStart, soundStart+4, "");
-		    }
-		    else
-			break;
-		}
-		
-		_soundMix = temp.toString().trim();
-	    }
+	    _cast = getClassInfo(data, "class=\"cast\">");
 	    
-	    if ((start = data.indexOf("Certification:</b>", start)) != -1) {
-		
-		start += 18;
-		
-		end = data.indexOf("<br>", start);
-
-		StringBuffer temp = new StringBuffer(data.substring(start, end));
-		
-		/* cleaning the string */
-		
-		int soundStart = 0;
-		int soundStop = 0;
-		stop = 0;
-		while (true) {
-		 
-		    if ((soundStart = temp.indexOf("<a href=")) != -1) {
-			
-			soundStop = temp.indexOf("\">")+2;
-			temp.replace(soundStart, soundStop, "");
-			
-			soundStart = temp.indexOf("</a>");
-			temp.replace(soundStart, soundStart+4, "");
-		    }
-		    else if ((soundStart = temp.indexOf("<i>")) != -1) {
-			
-			temp.replace(soundStart, soundStart+3, "");
-			
-			soundStart = temp.indexOf("</i>");
-			temp.replace(soundStart, soundStart+4, "");
-		    }
-		    else
-			break;
-		}
-		_certification = temp.toString().trim();
-	    }
+	    _cast = _cast.replaceAll(" \\.\\.\\.", ",");
 	    
-	    if ((start = data.indexOf("Awards:</b>", start)) != -1) {
-		
-		int awardsStart = 0;
-		
-		start += 11;
-		
-		end = data.indexOf("<br>", start);
-		
-		StringBuffer temp = new StringBuffer(data.substring(start, end));
-		
-		if ((awardsStart = temp.indexOf("<a href=")) != -1) {
-		    
-		    temp.replace(awardsStart, temp.indexOf("</a>")+4, "");
-		}
-		
-		_awards = temp.toString().trim().replaceAll("&amp;", "&");
-	    }
+	    System.err.println("_cast:" + _cast);
 	    
-	    if (1 == 0) {
+	    
+	    _aka = getClassInfo(data, "Also Known As:");
+	    
+	    System.err.println("_aka:" + _aka);
+	    
+	    
+	    _mpaa = getClassInfo(data, "<a href=\"/mpaa\">MPAA</a>:");
+	    	    
+	    System.err.println("_mpaa:" + _mpaa);
+	    
+	    _runtime = getClassInfo(data, "Runtime:");
+    
+	    _country = getClassInfo(data, "Country:");
+	    
+	    _language = getClassInfo(data, "Language:");
+	    
+	    _colour = getClassInfo(data, "Color:");
+	    
+	    _soundMix = getClassInfo(data, "Sound Mix:");
+	    
+	    _certification = getClassInfo(data, "Certification:");
+	    
+	    _awards = getClassInfo(data, "Awards:");
+	    
+	    System.err.println("_awards:" + _awards);
+	    
+	    
+	    if (1 == 1) {
 
 	    /* Gets a bigger plot (if it exists...)
 	       /* Creates the url... */
@@ -496,6 +365,9 @@ public class IMDB {
 		(end=data.indexOf("</p>",start)) != -1) {
 		_plot = HttpUtil.decodeHTML(data.substring(start, end));
 	    }
+	    
+	    System.err.println("_plot:" + _plot);
+		   
 	    }
 	} catch (Exception e) {
 	    log.error("", e);
@@ -841,6 +713,161 @@ public class IMDB {
     
 
     
+    /**
+     * Decodes a html string and returns its unicode string.
+     **/
+    protected static String getClassInfo(StringBuffer data, String className) {
+    	String decoded = null;
+    	String tmp = "";
+
+    	try {
+    		int start = 0;
+    		int end = 0;
+    		boolean found = false;
+    		
+    		while ((start = data.indexOf("<div class=\"info\">", end)) != -1 && 
+    				(end = data.indexOf("</div>", start)) != -1) {
+
+    			tmp = data.substring(start, end);	
+
+    			if (tmp.indexOf(className) != -1) {
+    				
+    				//System.err.println("start1:" + start);
+    				
+    				start = tmp.indexOf(className) + className.length();
+    				tmp = tmp.substring(start, tmp.length());	
+    				
+    				//System.err.println("tmp:" + tmp);
+    				
+    				//System.err.println("start2:" + start);
+    				
+    				//System.err.println("Found:" + className);
+    				found = true;
+    				break;
+    			}
+    		}
+
+    		if (!found)
+    			return "";
+    		
+    		
+    		//end = tmp.indexOf("<a class=\"tn15more inline");
+    		end = tmp.indexOf("<a class=\"tn15more\"");
+    		
+    		
+    		if (end != -1) {
+    			tmp = tmp.substring(0, end);
+    		}
+    		
+    		
+    		
+    		if (className.equals("<a href=\"/mpaa\">MPAA</a>")) {
+    			System.err.println("MPAA-tmp:" + tmp);
+    		}	
+    		
+    		if (className.equals("Also Known As:")) {
+    			System.err.println("Also Known As found");
+    			System.err.println("aka-tmp:" + tmp);
+    			
+    			decoded = decodeAka(tmp);
+    		}
+    		else if (className.equals("class=\"cast\">")) {
+    			decoded = decodeCast(tmp);
+    		}
+    		else
+    			decoded = HttpUtil.decodeHTML(tmp);
+    			
+    		
+    	} catch (Exception e) {
+    		log.error("", e);
+    	} 
+    	/* Returns the decoded string... */
+    	return decoded.trim();
+    }
+    
+    
+    
+    
+    /**
+     * Decodes a html string and returns its unicode string.
+     **/
+    protected static ArrayList getLinkContentName(String toDecode) {
+    	ArrayList decoded = new ArrayList();
+    	String tmp = "";
+		
+	try {
+		int start = 0;
+	    int end = 0;
+	    
+	    while ((start = toDecode.indexOf("<a href=", start)) != -1) {
+	    	
+	    	start = toDecode.indexOf(">", start) +1;
+	    	end = toDecode.indexOf("</a>", start);
+	    	
+	    	tmp = toDecode.substring(start, end);
+	    	decoded.add(HttpUtil.decodeHTML(tmp.trim()));
+	    }
+	} catch (Exception e) {
+	    log.error("", e);
+	} 
+	/* Returns the decoded string... */
+	return decoded;
+    }
+    
+    /**
+     * Decodes a html string and returns its unicode string.
+     **/
+    protected static String decodeAka(String toDecode) {
+	String decoded = "";
+		
+	try {
+		String [] akaTitles = toDecode.split("<br>");
+		
+		for (int i = 0; i < akaTitles.length; i++) {
+			decoded += HttpUtil.decodeHTML(akaTitles[i]) + "\r\n";
+		}
+			
+	} catch (Exception e) {
+	    log.error("", e);
+	} 
+	/* Returns the decoded string... */
+	return decoded.trim();
+    }
+    
+    
+    /**
+     * Decodes a html string and returns its unicode string.
+     **/
+    protected static String decodeCast(String toDecode) {
+	StringBuffer decoded = new StringBuffer();
+		
+	try {
+		String [] castSplit = toDecode.split("<td class=\"hs\">");
+		String [] tmp;
+		
+		for (int i = 0; i < castSplit.length; i++) {
+			
+			tmp = HttpUtil.decodeHTML(castSplit[i]).split(" \\.\\.\\.");
+			
+			if (tmp.length == 2) {
+				decoded.append(tmp[0].trim());
+				decoded.append(" (" + tmp[1].trim() + "), ");
+			}
+			
+				//decoded += decodeHTML(akaTitles[i]) + "\r\n";
+		}
+		
+		System.err.println("cast decoded:" + decoded);
+			
+	} catch (Exception e) {
+	    log.error("", e);
+	} 
+	/* Returns the decoded string... */
+	return decoded.toString();
+    }
+    
+    
+    
     /* Creates the URL and sets the appropriate proxy values */
     protected static URL makeURL(String url) {
 	
@@ -934,43 +961,6 @@ public class IMDB {
 	return result;
     }
     
-    public static URL getFile(String fileName) {
-
-        URL url = null;
-
-    try {
-        //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
-
-        if (!MovieManager.isApplet()) {
-            /* handle paths with leading slash as absolute paths */
-            if (fileName.startsWith("/")) {
-            url = new File(fileName).toURL();
-            } else {
-            url = new File(FileUtil.getUserDir() + fileName).toURL();
-            }
-        }
-        else {
-        fileName = fileName.replaceAll("\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        if (fileName.startsWith("/")) //$NON-NLS-1$
-            fileName = fileName.replaceFirst("/", ""); //$NON-NLS-1$ //$NON-NLS-2$
-
-        //log.debug("fileName:" + fileName);
-        //log.debug("codebase:"+ _movieManager.applet.getCodeBase());
-
-        url = new URL(MovieManager.applet.getCodeBase(), fileName);
-
-        //log.debug("URL:"+ url.toString());
-        //log.debug("url.getFile():" + url.getFile());
-        //log.debug("getPath():" + url.getPath());
-
-        //log.debug("encode:"+URLEncoder.encode(url.toString() , "UTF-8"));
-        }
-        //return new File((java.net.URI) new java.net.URI(URLEncoder.encode(url.toString() , "UTF-8")));
-
-        } catch(Exception e) {
-        log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
-    }
-    return url;
-    }
+    
+    
 }

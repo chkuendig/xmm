@@ -25,7 +25,7 @@ import java.awt.event.ActionListener;
 
 import net.sf.xmm.moviemanager.DialogAbout;
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandAbout implements ActionListener {
 
@@ -34,7 +34,7 @@ public class MovieManagerCommandAbout implements ActionListener {
      **/
     protected static void execute() {
 	DialogAbout dialogAbout = new DialogAbout();
-	ShowGUI.showAndWait(dialogAbout, true);
+	GUIUtil.showAndWait(dialogAbout, true);
     }
 
     /**

@@ -20,6 +20,8 @@
 
 package net.sf.xmm.moviemanager.models;
 
+import net.sf.xmm.moviemanager.DialogImportTable.FieldModel;
+
 
 abstract public class ModelEntry {
     
@@ -244,7 +246,7 @@ abstract public class ModelEntry {
     }
 
     public void setAka(String aka) {
-	this.aka = aka;
+    	this.aka = aka;
     }
     
     public String getCountry() {
@@ -284,7 +286,7 @@ abstract public class ModelEntry {
     }
     
     public void setMpaa(String mpaa) {
-	this.mpaa = mpaa;
+    	this.mpaa = mpaa;
     }
 
     public String getCertification() {
@@ -329,6 +331,63 @@ abstract public class ModelEntry {
     
     public abstract void copyData(ModelEntry model);
     
+    
+    /* Convenience method for setting values */
+    public boolean setValue(FieldModel fieldModel) {
+    
+        if (!fieldModel.getTable().equals("General Info"))
+            return additionalInfo.setValue(fieldModel);
+            
+        String fieldName = fieldModel.getField();
+        String value = fieldModel.getValue();
+        
+        if (fieldName.equalsIgnoreCase("Title"))
+            setTitle(value);
+        else if (fieldName.equalsIgnoreCase("Cover"))
+            setCover(value);
+        else if (fieldName.equalsIgnoreCase("Imdb"))
+            setUrlKey(value);
+        else if (fieldName.equalsIgnoreCase("Date"))
+            setDate(value);
+        else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Directed By"))
+            setDirectedBy(value);
+        else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Written By"))
+            setWrittenBy(value);
+        else if (fieldName.equalsIgnoreCase("Genre"))
+            setGenre(value);
+        else if (fieldName.equalsIgnoreCase("Rating"))
+            setRating(value);
+        else if (fieldName.equalsIgnoreCase("Seen"))
+            setSeen(new Boolean(value).booleanValue());
+        else if (fieldName.equalsIgnoreCase("Plot"))
+            setPlot(value);
+        else if (fieldName.equalsIgnoreCase("Cast"))
+            setCast(value);
+        else if (fieldName.equalsIgnoreCase("Notes"))
+            setNotes(value);
+        else if (fieldName.equalsIgnoreCase("Aka"))
+            setAka(value);
+        else if (fieldName.equalsIgnoreCase("Country"))
+            setCountry(value);
+        else if (fieldName.equalsIgnoreCase("Language"))
+            setLanguage(value);
+        else if (fieldName.equalsIgnoreCase("Colour"))
+            setColour(value);
+        else if (fieldName.equalsIgnoreCase("Certification"))
+            setCertification(value);
+        else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Sound Mix"))
+            setWebSoundMix(value);
+        else if (fieldName.equalsIgnoreCase("Mpaa"))
+            setMpaa(value);
+        else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Web Runtime"))
+            setWebRuntime(value);
+        else if (fieldName.equalsIgnoreCase("Awards"))
+            setAwards(value);
+                        
+        return true;
+    }
+    
+  
     
     public String toString() { 
 	return title;

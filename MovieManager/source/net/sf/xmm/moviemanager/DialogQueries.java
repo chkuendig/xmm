@@ -83,7 +83,7 @@ public class DialogQueries extends JDialog {
     public DialogQueries() {
         
         /* Dialog creation...*/
-        super(MovieManager.getIt());
+        super(MovieManager.getDialog());
         /* Close dialog... */
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {

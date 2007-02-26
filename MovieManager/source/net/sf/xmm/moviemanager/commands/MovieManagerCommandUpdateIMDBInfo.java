@@ -24,7 +24,7 @@ import net.sf.xmm.moviemanager.DialogUpdateIMDbInfo;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelImportSettings;
 import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import java.awt.event.*;
 
@@ -44,7 +44,7 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
     void createAndShowGUI() {
 	
 	/* Owner, title, modal=true */
-	dbImporter = new JDialog(MovieManager.getIt(), Localizer.getString("MovieManagerCommandUpdateIMDBInfo.dialog-imdb-info-updater.title"), true); //$NON-NLS-1$
+	dbImporter = new JDialog(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandUpdateIMDBInfo.dialog-imdb-info-updater.title"), true); //$NON-NLS-1$
 	dbImporter.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	
 	final JComponent newContentPane = new DialogUpdateIMDbInfo(this, dbImporter);
@@ -84,7 +84,7 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
 	
 	dbImporter.setLocation((int)mm.getLocation().getX()+(mm.getWidth()- dbImporter.getWidth())/2,
 			  (int)mm.getLocation().getY()+(mm.getHeight()- dbImporter.getHeight())/2);
-	ShowGUI.show(dbImporter, true);
+	GUIUtil.show(dbImporter, true);
     }
     
     public void setCanceled(boolean canceled) {
@@ -96,7 +96,7 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
     }
     
     public void dispose() {
-	ShowGUI.show(dbImporter, false);
+	GUIUtil.show(dbImporter, false);
     }
     
     public void setCancelAll(boolean value) {

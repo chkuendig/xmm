@@ -27,7 +27,7 @@ import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 import com.oyoaha.swing.plaf.oyoaha.OyoahaLookAndFeel;
 
 import net.sf.xmm.moviemanager.util.FileUtil;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -92,18 +92,17 @@ public class LookAndFeelManager {
                 for (int i = 0; i < installedLookAndFeels.length; i++) {
                     if (installedLookAndFeels[i].getName().equals(config.getLookAndFeelString())) {
                         UIManager.setLookAndFeel(installedLookAndFeels[i].getClassName());
-                        
                         break;
                     }
                 }
             }
             
-            SwingUtilities.updateComponentTreeUI(MovieManager.getIt());
+            SwingUtilities.updateComponentTreeUI(MovieManager.getDialog());
             
         } catch (Exception e) {
             log.error("Exception: " + e.getMessage());
-            DialogAlert alert = new DialogAlert(MovieManager.getIt(), "Look and Feel error", "Look and feel may not be properly installed.", e.getMessage());
-            ShowGUI.showAndWait(alert, true);
+            DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Look and Feel error", "Look and feel may not be properly installed.", e.getMessage());
+            GUIUtil.showAndWait(alert, true);
         }
     }
     

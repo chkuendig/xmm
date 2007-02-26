@@ -22,7 +22,7 @@ package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.DialogQueries;
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,7 +34,7 @@ public class MovieManagerCommandQueries implements ActionListener {
    **/
     protected static void execute() {
 	DialogQueries dialogQueries = new DialogQueries();
-	ShowGUI.show(dialogQueries, true);
+	GUIUtil.show(dialogQueries, true);
     }
   
   /**

@@ -45,7 +45,7 @@ public class MovieManagerCommandExportToXML {
      **/
     public static void execute(String outputFile) {
 	
-	DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getIt().getMoviesList().getModel()).getRoot();
+	DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
 	ModelEntry model;
 	DefaultMutableTreeNode node;
 	
@@ -76,20 +76,16 @@ public class MovieManagerCommandExportToXML {
 	        model = (ModelEntry) node.getUserObject();
 	    
 	        if (!model.getHasGeneralInfoData()) {
-	        	System.err.println("updateGeneralInfoData");
-	        	model.updateGeneralInfoData();
+		    model.updateGeneralInfoData();
 	        }
 	        
 	        if (!model.getHasAdditionalInfoData()) {
-	        	System.err.println("updateAdditionalInfoData");
-	        	model.updateAdditionalInfoData();
+		    model.updateAdditionalInfoData();
 	        }
 	       	        		
 	        /* Has no children */
 	        if (node.isLeaf()) {
-		    
-	            System.err.println(model.getTitle() + ":" + model.getGenre());
-	            exportXML.addModelMovie((ModelMovie) model);
+		    exportXML.addModelMovie((ModelMovie) model);
 	        }
 	        else {
 	            ModelSeries serie = new ModelSeries((ModelMovie) model);

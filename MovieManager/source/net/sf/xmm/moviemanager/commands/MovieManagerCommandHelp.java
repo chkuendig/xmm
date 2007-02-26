@@ -23,7 +23,7 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.DialogAlert;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,8 +34,8 @@ public class MovieManagerCommandHelp implements ActionListener {
    * Executes the command.
    **/
   protected static void execute() {
-      DialogAlert alert = new DialogAlert(MovieManager.getIt(), Localizer.getString("MovieManagerCommandHelp.alert.help.title"), Localizer.getString("MovieManagerCommandHelp.alert.help.message"));
-      ShowGUI.show(alert, true);
+      DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandHelp.alert.help.title"), Localizer.getString("MovieManagerCommandHelp.alert.help.message"));
+      GUIUtil.show(alert, true);
   }
   
   /**

@@ -61,12 +61,29 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
     
     public static final DataFlavor[] flavors = {DataFlavor.javaFileListFlavor};
     
+    
+    JTextField date;
+    JTextField imdb;
+    JTextField colour;
+    JTextField movieTitle;
+    JTextField directed;
+    JTextField written;
+    JTextField genre;
+    JTextField rating;
+    JTextField country;
+    JTextField language;
+    
+    JCheckBox seenBox;
+    JLabel cover;
+    
+    
+    
     /**
      * The Constructor - Add Movie.
      **/
     public DialogMovieInfo() {
         /* Dialog creation...*/
-        super(MovieManager.getIt());
+        super(MovieManager.getDialog());
         /* Close dialog... */
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -87,7 +104,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
      **/
     public DialogMovieInfo(ModelMovie model) throws Exception {
         /* Dialog creation...*/
-        super(MovieManager.getIt());
+        super(MovieManager.getDialog());
         /* Close dialog... */
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -114,7 +131,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
      **/
     public DialogMovieInfo(ModelEntry model) {
         /* Dialog creation...*/
-        super(MovieManager.getIt());
+        super(MovieManager.getDialog());
         /* Close dialog... */
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -180,9 +197,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         panelGeneralInfo.add(dateID,constraints);
         
         //YYYYMMDD, or YYYY/MM/DD or even YYYY-MM-DD, YYYY.MM.DD
-        
-        JTextField date = new JTextField(7);
-        
+        date = new JTextField(6);
         //date.setDocument(new DocumentRegExp("(\\d)*",4));
         constraints = new GridBagConstraints();
         constraints.gridx = 1;
@@ -192,24 +207,75 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         constraints.anchor = GridBagConstraints.WEST;  
         panelGeneralInfo.add(date,constraints);
         
-        JLabel colourID = new JLabel(Localizer.getString("DialogMovieInfo.field.colour") + ": "); //$NON-NLS-1$
-        colourID.setFont((new Font(colourID.getFont().getName(), 1, fontSize)));
+        /* IMDb */
+        JLabel imdbID = new JLabel("IMDb" + ": "); //$NON-NLS-1$
+        imdbID.setFont((new Font(imdbID.getFont().getName(), 1, fontSize)));
         constraints = new GridBagConstraints();
         constraints.gridx = 2;
         constraints.gridy = 0;
         constraints.gridwidth = 1;
         constraints.insets = new Insets(1,5,1,5);
         constraints.anchor = GridBagConstraints.WEST;
-        panelGeneralInfo.add(colourID,constraints);
+        //panelGeneralInfo.add(imdbID, constraints);
         
-        JTextField colour = new JTextField(15);
+        imdb = new JTextField(5);
+        imdb.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    if (!getIMDb().getText().equals("")) { //$NON-NLS-1$
+                        if (!movieInfoModel.isEpisode)
+                            executeCommandGetIMDBInfo(true);
+                    }
+                }
+            }});    
+        
+        
         constraints = new GridBagConstraints();
         constraints.gridx = 3;
         constraints.gridy = 0;
-        constraints.gridwidth = 3;
+        constraints.gridwidth = 2;
+        constraints.insets = new Insets(1,5,1,5);
+        constraints.anchor = GridBagConstraints.WEST;  
+        //panelGeneralInfo.add(imdb, constraints);
+        
+        
+        JLabel colourID = new JLabel(Localizer.getString("DialogMovieInfo.field.colour") + ": "); //$NON-NLS-1$
+        colourID.setFont((new Font(colourID.getFont().getName(), 1, fontSize)));
+        constraints = new GridBagConstraints();
+        constraints.gridx = 5;
+        constraints.gridy = 0;
+        constraints.gridwidth = 1;
         constraints.insets = new Insets(1,5,1,5);
         constraints.anchor = GridBagConstraints.WEST;
-        panelGeneralInfo.add(colour,constraints);
+        //panelGeneralInfo.add(colourID,constraints);
+        
+        colour = new JTextField(8);
+        constraints = new GridBagConstraints();
+        constraints.gridx = 6;
+        constraints.gridy = 0;
+        constraints.gridwidth = 1;
+        constraints.insets = new Insets(1,5,1,5);
+        constraints.anchor = GridBagConstraints.WEST;
+        //panelGeneralInfo.add(colour,constraints);
+        
+        JPanel imdbAndColour = new JPanel(new FlowLayout());
+        
+        if (!movieInfoModel.isEpisode) {
+            imdbAndColour.add(imdbID);   
+            imdbAndColour.add(imdb);   
+        }
+        imdbAndColour.add(colourID);   
+        imdbAndColour.add(colour);   
+        
+        constraints = new GridBagConstraints();
+        constraints.gridx = 2;
+        constraints.gridy = 0;
+        constraints.gridwidth = 3;
+        constraints.insets = new Insets(1,5,1,5);
+        constraints.anchor = GridBagConstraints.EAST;
+        
+        panelGeneralInfo.add(imdbAndColour, constraints);
         
         JLabel movieTitleID = new JLabel(Localizer.getString("DialogMovieInfo.field.title") + ": "); //$NON-NLS-1$
         movieTitleID.setFont((new Font(movieTitleID.getFont().getName(), 1, fontSize)));
@@ -220,12 +286,14 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         constraints.insets = new Insets(1,5,1,5);
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(movieTitleID,constraints);
-        final JTextField movieTitle = new JTextField(28);
+        
+        movieTitle = new JTextField(28);
+        final JTextField movieTitle2 = movieTitle;
         
         /* This makes sure the focus will be on the movie title by default */
         addWindowListener(new WindowAdapter() {
             public void windowOpened( WindowEvent e ){
-                movieTitle.requestFocus();
+                movieTitle2.requestFocus();
             }
         });
         
@@ -244,7 +312,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
                         if (movieInfoModel.isEpisode)
                             executeCommandGetTVDOTCOMInfo();
                         else
-                            executeCommandGetIMDBInfo();
+                            executeCommandGetIMDBInfo(false);
                     }
                 }
             }});
@@ -252,7 +320,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         constraints = new GridBagConstraints();
         constraints.gridx = 1;
         constraints.gridy = 1;
-        constraints.gridwidth = 6;
+        constraints.gridwidth = 7;
         constraints.insets = new Insets(1,5,1,5);
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(movieTitle,constraints);
@@ -267,11 +335,11 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(directedID,constraints);
         
-        JTextField directed = new JTextField(28);
+        directed = new JTextField(28);
         constraints = new GridBagConstraints();
         constraints.gridx = 1;
         constraints.gridy = 2;
-        constraints.gridwidth = 6;
+        constraints.gridwidth = 7;
         constraints.insets = new Insets(1,5,1,5);
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(directed,constraints);
@@ -285,11 +353,12 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         constraints.insets = new Insets(1,5,1,5);
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(writtenID,constraints);
-        JTextField written = new JTextField(28);
+        
+        written = new JTextField(28);
         constraints = new GridBagConstraints();
         constraints.gridx = 1;
         constraints.gridy = 3;
-        constraints.gridwidth = 6;
+        constraints.gridwidth = 7;
         constraints.insets = new Insets(1,5,1,5);
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(written,constraints);
@@ -306,11 +375,11 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(genreID,constraints);
         
-        JTextField genre = new JTextField(28);
+        genre = new JTextField(28);
         constraints = new GridBagConstraints();
         constraints.gridx = 1;
         constraints.gridy = 4;
-        constraints.gridwidth = 6;
+        constraints.gridwidth = 7;
         constraints.insets = new Insets(1,5,1,5);
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(genre,constraints);
@@ -325,7 +394,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(ratingID,constraints);
         
-        JTextField rating = new JTextField(3);
+        rating = new JTextField(3);
         rating.setDocument(new DocumentRegExp("(\\d)*(\\.)?(\\d)*",4)); //$NON-NLS-1$
         constraints = new GridBagConstraints();
         constraints.gridx = 1;
@@ -341,16 +410,16 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         constraints = new GridBagConstraints();
         constraints.gridx = 2;
         constraints.gridy = 5;
-        constraints.gridwidth = 1;
+        constraints.gridwidth = 2;
         constraints.insets = new Insets(1,5,1,5);
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(countryID,constraints);
         
-        JTextField country = new JTextField(15);
+        country = new JTextField(15);
         constraints = new GridBagConstraints();
-        constraints.gridx = 3;
+        constraints.gridx = 4;
         constraints.gridy = 5;
-        constraints.gridwidth = 2;
+        constraints.gridwidth = 4;
         constraints.insets = new Insets(1,5,1,5);
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(country,constraints);
@@ -367,7 +436,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         panelGeneralInfo.add(seenID,constraints);
         
         /* Will only change value if seen option is set to editable */
-        JCheckBox seenBox = new JCheckBox() {
+        seenBox = new JCheckBox() {
             protected void processMouseEvent(MouseEvent event) {
                 
                 if (event.getID() == MouseEvent.MOUSE_CLICKED)
@@ -402,22 +471,22 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         constraints = new GridBagConstraints();
         constraints.gridx = 2;
         constraints.gridy = 6;
-        constraints.gridwidth = 1;
+        constraints.gridwidth = 2;
         constraints.insets = new Insets(1,5,1,5);
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(languageID,constraints);
         
-        JTextField language = new JTextField(15);
+        language = new JTextField(15);
         constraints = new GridBagConstraints();
-        constraints.gridx = 3;
+        constraints.gridx = 4;
         constraints.gridy = 6;
-        constraints.gridwidth = 2;
+        constraints.gridwidth = 4;
         constraints.insets = new Insets(1,5,1,5);
         constraints.anchor = GridBagConstraints.WEST;
         panelGeneralInfo.add(language,constraints);
         
         
-        JLabel cover = new JLabel(/*new ImageIcon(FileUtil.getImage("/images/" + MovieManager.getConfig().getNoCover()).getScaledInstance(97,97,Image.SCALE_SMOOTH))*/); //$NON-NLS-1$
+        cover = new JLabel(/*new ImageIcon(FileUtil.getImage("/images/" + MovieManager.getConfig().getNoCover()).getScaledInstance(97,97,Image.SCALE_SMOOTH))*/); //$NON-NLS-1$
         cover.setBorder(BorderFactory.createEtchedBorder());
         cover.setPreferredSize(new Dimension(97, 145));
         cover.addMouseListener(new MouseAdapter() {
@@ -427,7 +496,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
             }});
         cover.setTransferHandler(new CoverTransferHandler(movieInfoModel));
         constraints = new GridBagConstraints();
-        constraints.gridx = 7;
+        constraints.gridx = 8;
         constraints.gridy = 0;
         constraints.gridheight = 7;
         constraints.insets = new Insets(5,5,5,5);
@@ -846,7 +915,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
                 if (movieInfoModel.isEpisode)
                     executeCommandGetTVDOTCOMInfo();
                 else
-                    executeCommandGetIMDBInfo();
+                    executeCommandGetIMDBInfo(false);
             }});
         panelButtons.add(buttonGetIMDBInfo);
         JButton buttonCancel = new JButton(Localizer.getString("DialogMovieInfo.button-cancel.text")); //$NON-NLS-1$
@@ -913,80 +982,64 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
      * Gets the date JTextField...
      **/
     public JTextField getDate() {
-        return    
-        (JTextField)
-        ((JPanel)
-                ((JPanel)getContentPane().getComponent(0)).getComponent(0)).getComponent(1);
+        return date;
     }
+    
+    /**
+     * Gets the imdb JTextField...
+     **/
+    public JTextField getIMDb() {
+        return imdb;
+    }
+    
     
     /**
      * Gets the colour JTextField...
      **/
     public JTextField getColour() {
-        return    
-        (JTextField)
-        ((JPanel)
-                ((JPanel)getContentPane().getComponent(0)).getComponent(0)).getComponent(3);
+        return colour;
     }
     
     /**
      * Gets the movie title JTextField...
      **/
     public JTextField getMovieTitle() {
-        return    
-        (JTextField)
-        ((JPanel)
-                ((JPanel)getContentPane().getComponent(0)).getComponent(0)).getComponent(5);
+        return movieTitle;
     }
     
     /**
      * Gets the directed by JTextField...
      **/
     public JTextField getDirectedBy() {
-        return    
-        (JTextField)
-        ((JPanel)
-                ((JPanel)getContentPane().getComponent(0)).getComponent(0)).getComponent(7);
+        return directed;
     }
     
     /**
      * Gets the written by JTextField...
      **/
     public JTextField getWrittenBy() {
-        return    
-        (JTextField)
-        ((JPanel)
-                ((JPanel)getContentPane().getComponent(0)).getComponent(0)).getComponent(9);
+        return written;
     }
     
     /**
      * Gets the genre JTextField...
      **/
     public JTextField getGenre() {
-        return    
-        (JTextField)
-        ((JPanel)
-                ((JPanel)getContentPane().getComponent(0)).getComponent(0)).getComponent(11);
+        return genre;
     }
     
     /**
      * Gets the rating JTextField...
      **/
     public JTextField getRating() {
-        return    
-        (JTextField)
-        ((JPanel)
-                ((JPanel)getContentPane().getComponent(0)).getComponent(0)).getComponent(13);
+        return rating;
     }
     
     /**
      * Gets the country JTextField...
      **/
     public JTextField getCountry() {
-        return    
-        (JTextField)
-        ((JPanel)
-                ((JPanel)getContentPane().getComponent(0)).getComponent(0)).getComponent(15);
+        return country;
     }
     
     
@@ -994,30 +1047,21 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
      * Gets the seen JLabel...
      **/
     protected JCheckBox getSeen() {
-        return    
-        (JCheckBox)
-            ((JPanel)
-                ((JPanel)getContentPane().getComponent(0)).getComponent(0)).getComponent(17);
+        return seenBox;
     }
-    
+        
     /**
      * Gets the language JTextField...
      **/
     public JTextField getLanguage() {
-        return    
-        (JTextField)
-        ((JPanel)
-                ((JPanel)getContentPane().getComponent(0)).getComponent(0)).getComponent(19);
+        return language;
     }
     
     /**
      * Gets the cover JLabel...
      **/
     public JLabel getCover() {
-        return    
-        (JLabel)
-        ((JPanel)
-                ((JPanel)getContentPane().getComponent(0)).getComponent(0)).getComponent(20);
+        return cover;
     }
     
     /**
@@ -1601,14 +1645,14 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
                 if (isDisplayable())
                     alert = new DialogAlert(this, Localizer.getString("DialogMovieInfo.alert.title.access-denied"), Localizer.getString("DialogMovieInfo.alert.message.error-when-saving-cover"), e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
                 else
-                    alert = new DialogAlert(MovieManager.getIt(), Localizer.getString("DialogMovieInfo.alert.title.access-denied"), Localizer.getString("DialogMovieInfo.alert.message.error-when-saving-cover"), e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+                    alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.access-denied"), Localizer.getString("DialogMovieInfo.alert.message.error-when-saving-cover"), e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
                 
-                ShowGUI.showAndWait(alert, true);
+                GUIUtil.showAndWait(alert, true);
                 
                 removeCover();
                 
                 DialogFolders dialogFolders = new DialogFolders();
-                ShowGUI.show(dialogFolders, true);
+                GUIUtil.show(dialogFolders, true);
                 
                 //new MovieManagerCommandFolders().execute();
                 
@@ -1618,6 +1662,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
              * Updates the general info on the already existing movie
              */
             movieInfoModel.model.setDate(getDate().getText());
+            movieInfoModel.model.setUrlKey(getIMDb().getText());
             movieInfoModel.model.setTitle(getMovieTitle().getText());
             movieInfoModel.model.setDirectedBy(getDirectedBy().getText());
             movieInfoModel.model.setWrittenBy(getWrittenBy().getText());
@@ -1645,11 +1690,11 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
             
         } else {
             DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogMovieInfo.alert.title.alert"),Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
-            ShowGUI.showAndWait(alert, true);
+            GUIUtil.showAndWait(alert, true);
         }
         
         /* Remove old cover possible cached by JTree cellrenderer */
-        ((ExtendedTreeCellRenderer) MovieManager.getIt().getMoviesList().getCellRenderer()).removeCoverFromCache(movieInfoModel.model.getCover());
+        ((ExtendedTreeCellRenderer) MovieManager.getDialog().getMoviesList().getCellRenderer()).removeCoverFromCache(movieInfoModel.model.getCover());
         
         return movieInfoModel.model;
     }
@@ -1797,7 +1842,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
                 
                 if (ifo == null || ifo.length == 0) {
                     DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogMovieInfo.alert.title.alert"), Localizer.getString("DialogMovieInfo.alert.message.failed-to-locate-the-drive")); //$NON-NLS-1$ //$NON-NLS-2$
-                    ShowGUI.showAndWait(alert, true);
+                    GUIUtil.showAndWait(alert, true);
                 }
                 else {
                     
@@ -1882,17 +1927,26 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
     /**
      * Gets the IMDB info for this movie...
      **/
-    protected void executeCommandGetIMDBInfo() {
+    protected void executeCommandGetIMDBInfo(boolean useImdbKey) {
         
 	/* Checks the movie title... */
-        if (!getMovieTitle().getText().equals("")) { //$NON-NLS-1$
+        if (!getMovieTitle().getText().equals("") || !getIMDb().getText().equals("")) { //$NON-NLS-1$
+            
+            DialogIMDB dialogIMDB;
             
             movieInfoModel.model.setTitle(getMovieTitle().getText());
-            DialogIMDB dialogIMDB = new DialogIMDB(movieInfoModel, false);
-            ShowGUI.show(dialogIMDB, true);
+            
+            if (useImdbKey && !getIMDb().getText().equals("")) {
+                DialogIMDB.getIMDbInfo(movieInfoModel, getIMDb().getText());
+            }
+            else {
+                dialogIMDB = new DialogIMDB(movieInfoModel, false);
+                GUIUtil.show(dialogIMDB, true);
+            }
+            
         } else {
-            DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogMovieInfo.alert.title.alert"),Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
-            ShowGUI.showAndWait(alert, true);
+            DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogMovieInfo.alert.title.alert"), Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
+            GUIUtil.showAndWait(alert, true);
         }
     }
     
@@ -1907,21 +1961,17 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
             movieInfoModel.model.setTitle(getMovieTitle().getText());
             
             DialogTVDOTCOM dialogTVDOTCOM = new DialogTVDOTCOM(movieInfoModel);
-            ShowGUI.showAndWait(dialogTVDOTCOM, true);
+            GUIUtil.showAndWait(dialogTVDOTCOM, true);
             
             if (dialogTVDOTCOM.multipleEpisodesAdded)
                 dispose();
         } else {
             DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogMovieInfo.alert.title.alert"),Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
-            ShowGUI.showAndWait(alert, true);
+            GUIUtil.showAndWait(alert, true);
         }
     }
     
-    protected void setHasReadProperties2(boolean hasReadProperties) {
-        movieInfoModel._hasReadProperties = hasReadProperties;
-    }
-    
-    
+       
     /* Drag & Drop media files in the additional info field panel */
     class FileTransferHandler extends TransferHandler {
         
@@ -1968,18 +2018,22 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
     }
     
     public void modelUpdatedEvent(ModelUpdatedEvent event) {
-        updateGeneralInfoFromModel();
+    	updateGeneralInfoFromModel();
     }
     
     
     public void updateGeneralInfoFromModel() {
         
+    	
         getMovieTitle().setText(movieInfoModel.model.getTitle());
         getMovieTitle().setCaretPosition(0);
         
         getDate().setText(movieInfoModel.model.getDate());
         getDate().setCaretPosition(0);
         
+        getIMDb().setText(movieInfoModel.model.getUrlKey());
+        getIMDb().setCaretPosition(0);
+                
         getColour().setText(movieInfoModel.model.getColour());
         getColour().setCaretPosition(0);
         
@@ -2006,7 +2060,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         
         getCast().setText(movieInfoModel.model.getCast()); 
         getCast().setCaretPosition(0);
-        
+       
         getAka().setText(movieInfoModel.model.getAka());
         getAka().setCaretPosition(0);
         
@@ -2021,6 +2075,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         
         getAwards().setText(movieInfoModel.model.getAwards());
         getAwards().setCaretPosition(0);
+        
+        getMpaa().setText(movieInfoModel.model.getMpaa());
+        getMpaa().setCaretPosition(0);
         
         getNotes().setText(movieInfoModel.model.getNotes());
         getNotes().setCaretPosition(0);

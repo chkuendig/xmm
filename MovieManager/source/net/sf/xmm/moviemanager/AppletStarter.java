@@ -30,11 +30,7 @@ public class AppletStarter extends JApplet {
     
     /** Initializes Applet by adding MovieManager's content pane. */
     public void init() {
-// 	applet = new AppletStarter();
-// 	applet.setSize(400,300);
-// 	applet.moviemanager = new MovieManager(this);
-
-	setSize(400,300);
-	new MovieManager(this);
+        setSize(400,300);
+        new MovieManager(this);
     }
 }

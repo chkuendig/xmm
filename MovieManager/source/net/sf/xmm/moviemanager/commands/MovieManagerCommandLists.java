@@ -21,19 +21,36 @@
 package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.*;
-import net.sf.xmm.moviemanager.util.ShowGUI;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JDialog;
+
 public class MovieManagerCommandLists implements ActionListener {
+    
+    Window parent;
+    
+    public MovieManagerCommandLists(Window dialog) {
+        parent = dialog;
+    }
     
     /**
      * Executes the command.
      **/
-    public static void execute() {
-	DialogLists dialogLists = new DialogLists();
-	ShowGUI.show(dialogLists, true);
+    public static void execute(Window dialog) {
+	DialogLists dialogLists;
+    
+    if (dialog instanceof Dialog)
+        dialogLists = new DialogLists((Dialog) dialog);
+    else
+        dialogLists = new DialogLists((Frame) dialog);
+    
+	GUIUtil.show(dialogLists, true);
     }
     
     /**
@@ -41,6 +58,6 @@ public class MovieManagerCommandLists implements ActionListener {
      **/
     public void actionPerformed(ActionEvent event) {
 	MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
-	execute();
+	execute(parent);
     }
 }

@@ -52,7 +52,7 @@ public class DialogAbout extends JDialog {
      **/
     public DialogAbout() {
 	/* Dialog creation...*/
-	super(MovieManager.getIt());
+	super(MovieManager.getDialog());
 	/* Close dialog... */
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
@@ -81,7 +81,7 @@ public class DialogAbout extends JDialog {
 	JPanel panelInfo = new JPanel();
 	panelInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Info "),
 							       BorderFactory.createEmptyBorder(5,5,5,5)));
-	JLabel labelInfo = new JLabel(" MeD's Movie Manager version "+MovieManager.getIt().getVersion(),
+	JLabel labelInfo = new JLabel(" MeD's Movie Manager version "+MovieManager.getVersion(),
 				      new ImageIcon(FileUtil.getImage("/images/filmFolder.png").getScaledInstance(55,55,Image.SCALE_SMOOTH)),
 				      JLabel.CENTER);
 	labelInfo.setFont(new Font(labelInfo.getFont().getName(),Font.PLAIN,labelInfo.getFont().getSize()));
