@@ -793,23 +793,17 @@ public class MovieManager {
                         
                 /* Must be executed before the JFrame (DialogMovieManager) object is created. */
                 if (config.getDefaultLookAndFeelDecorated()) {
-		    DialogMovieManager.setDefaultLookAndFeelDecorated(true);
+                	DialogMovieManager.setDefaultLookAndFeelDecorated(true);
                 }
                 
-		
-		/* Must be called before the GUI is created */
+                /* Must be called before the GUI is created */
                 if (isMac()) { 
+                	includeJarFilesInClasspath(System.getProperty("user.dir") + "/LookAndFeels");
                     LookAndFeelManager.setupOSXLaF(); 
                 }
                 
-
-		/* Includes the avallable jar files*/
-                if (MovieManager.isMacAppBundle()) {
-		    includeJarFilesInClasspath(System.getProperty("user.dir") + "/LookAndFeels");
-		} else {
-                     includeJarFilesInClasspath("LookAndFeels");
-                }
-                
+				/* Includes the avallable jar files*/
+		        includeJarFilesInClasspath("LookAndFeels");
                 
                 movieManager = new MovieManager();
                 
@@ -819,7 +813,7 @@ public class MovieManager {
                 /* Starts the MovieManager. */
                 MovieManager.getDialog().setUp();
                 
-                
+                /* SetUp the Application Menu */
                 if (MovieManager.isMac()) {
                     LookAndFeelManager.macOSXRegistration();
                 }   

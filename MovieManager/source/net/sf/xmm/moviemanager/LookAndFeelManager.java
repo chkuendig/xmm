@@ -324,10 +324,10 @@ public class LookAndFeelManager {
             try {
                 Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass("net.sf.xmm.moviemanager.util.mac.OSXAdapter");
                 
-                Class[] defArgs = {MovieManager.class};
+                Class[] defArgs = {DialogMovieManager.class};
                 Method registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication", defArgs);
                 if (registerMethod != null) {
-                    Object[] args = { MovieManager.getIt() };
+                    Object[] args = { MovieManager.getDialog() };
                     registerMethod.invoke(osxAdapter, args);
                 }
                 // This is slightly gross.  to reflectively access methods with boolean args, 
