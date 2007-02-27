@@ -24,7 +24,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandLists;
-import net.sf.xmm.moviemanager.extentions.ExtendedFileChooser;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;

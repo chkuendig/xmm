@@ -21,7 +21,7 @@
 package net.sf.xmm.moviemanager;
 
 import net.sf.xmm.moviemanager.commands.*;
-import net.sf.xmm.moviemanager.extentions.JMultiLineToolTip;
+import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
 import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.ModelIMDB;
 import net.sf.xmm.moviemanager.models.ModelMovie;

@@ -36,6 +36,7 @@ import net.sf.xmm.moviemanager.commands.*;
 import net.sf.xmm.moviemanager.database.*;
 import net.sf.xmm.moviemanager.extentions.*;
 import net.sf.xmm.moviemanager.models.*;
+import net.sf.xmm.moviemanager.swing.extentions.*;
 import net.sf.xmm.moviemanager.util.*;
 
 

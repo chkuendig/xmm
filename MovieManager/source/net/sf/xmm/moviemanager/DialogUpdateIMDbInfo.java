@@ -22,7 +22,7 @@ package net.sf.xmm.moviemanager;
 
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandUpdateIMDBInfo;
-import net.sf.xmm.moviemanager.extentions.ButtonGroupNoSelection;
+import net.sf.xmm.moviemanager.swing.extentions.ButtonGroupNoSelection;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;

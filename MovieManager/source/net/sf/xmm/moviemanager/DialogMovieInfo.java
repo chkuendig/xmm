@@ -23,7 +23,7 @@ package net.sf.xmm.moviemanager;
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFile;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
-import net.sf.xmm.moviemanager.extentions.*;
+import net.sf.xmm.moviemanager.swing.extentions.*;
 import net.sf.xmm.moviemanager.fileproperties.FilePropertiesMovie;
 import net.sf.xmm.moviemanager.models.*;
 import net.sf.xmm.moviemanager.util.*;

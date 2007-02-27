@@ -149,7 +149,7 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
             GUIUtil.showAndWait(importTable, true);
             
             importSettings = importTable.getSettings();
-	    dispose();
+            dispose();
         }
 	}
 	
@@ -171,6 +171,7 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
 		    importSettings.coverPath = path + File.separator;
 	    }
 	}
+	
 	createAndShowGUI();
     }
     
