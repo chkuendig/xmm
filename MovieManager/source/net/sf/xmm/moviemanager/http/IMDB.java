@@ -167,7 +167,7 @@ public class IMDB {
         throw new Exception("Invalid HTTP link");
     }
     
-    FileUtil.writeToFile("imdb.html", data);
+    //FileUtil.writeToFile("imdb.html", data);
     parseData(data);
     }
     
