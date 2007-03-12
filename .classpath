@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="source/" kind="src" path="MovieManager"/>
-	<classpathentry kind="src" path="MovieManager/source"/>
+	<classpathentry excluding="net/sf/xmm/moviemanager/util/mac/OSXAdapter.java" kind="src" path="MovieManager/source"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="MovieManager/lib/drivers/mysql-connector-java-3.1.12-bin.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/BrowserLauncher2-10rc4.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/jxl.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/oalnf.jar"/>
@@ -11,7 +12,6 @@
 	<classpathentry kind="lib" path="MovieManager/lib/useful.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/JNative.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/retroweaver-all-1.2.2.jar"/>
-	<classpathentry kind="lib" path="MovieManager/lib/drivers/mysql-connector-java-3.1.12-bin.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/commons-httpclient-3.0.1.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/commons-logging-1.1.jar"/>
@@ -22,5 +22,13 @@
 	<classpathentry kind="lib" path="MovieManager/lib/itext-1.4.5.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/jasperreports-1.2.6.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/poi-2.5.1-final-20040804.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/castor-1.0.5.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/gettext-commons-0.9.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/GroupableTable.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/xml-apis.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/mac/AppleJavaExtensions.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/mac/quaqua-filechooser-only.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/ProportionLayout.jar"/>
 	<classpathentry kind="output" path="MovieManager"/>
 </classpath>
