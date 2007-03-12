@@ -71,7 +71,11 @@ public class ExtendedTreeNode extends AutomatedTreeNode implements Comparable  {
 		return ((ModelEntry) getUserObject()).getDirectedBy().compareToIgnoreCase(((ModelEntry) n.getUserObject()).getDirectedBy());
 	    }
 	    case 3: {
-		return (int) (Double.parseDouble(((ModelEntry) getUserObject()).getSortRating()) - Double.parseDouble(((ModelEntry) n.getUserObject()).getSortRating()));
+	    	
+	    	if (((ModelEntry) getUserObject()).getSortRating().equals("") || ((ModelEntry) n.getUserObject()).getSortRating().equals(""))
+	    		return 0;
+	    	else
+	    		return (int) (Double.parseDouble(((ModelEntry) getUserObject()).getSortRating()) - Double.parseDouble(((ModelEntry) n.getUserObject()).getSortRating()));
 	    }
 	    case 4: {
 		return ((ModelEntry) getUserObject()).getDate().compareToIgnoreCase(((ModelEntry) n.getUserObject()).getDate());

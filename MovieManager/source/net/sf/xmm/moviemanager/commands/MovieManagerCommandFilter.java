@@ -63,6 +63,8 @@ public class MovieManagerCommandFilter implements ActionListener {
     
     
     /* Not used any more as the search functions are done solely by the database */
+    
+    /*
     protected static void applyFilter(DefaultListModel listModel) {
 	
 	int filterNr = 0;
@@ -81,7 +83,7 @@ public class MovieManagerCommandFilter implements ActionListener {
 	    dateValue = -1;
 	}
 	
-	/* If the filter is not empty removes the unwanted items... */
+	// If the filter is not empty removes the unwanted items... 
 	
 	if (filterString.length() > 0) {
 	    
@@ -103,10 +105,10 @@ public class MovieManagerCommandFilter implements ActionListener {
 		filterNr = 5;
 	    
 	    
-	    /* Actual removal... */
+	    // Actual removal... 
 	    switch(filterNr) {
 		
-		/*Movie Title*/
+		//Movie Title
 	    case 1 : {
 		String [] result = filterString.split(" ");
 		for (int i=0; i<listModel.getSize(); i++) {
@@ -122,7 +124,7 @@ public class MovieManagerCommandFilter implements ActionListener {
 	    }
 		break;
 	    
-		/*Directed by*/
+		//Directed by
 	    case 2 : {
 		String [] result = filterString.split(" ");
 		for (int i=0; i<listModel.getSize(); i++) {
@@ -139,7 +141,7 @@ public class MovieManagerCommandFilter implements ActionListener {
 	    }
 		break;
 	    
-		/*Written by*/
+		//Written by
 	    case 3 : {
 		String [] result = filterString.split(" ");
 		for (int i=0; i<listModel.getSize(); i++) {
@@ -155,7 +157,7 @@ public class MovieManagerCommandFilter implements ActionListener {
 	    }
 		break;
 	    
-		/*Genre*/
+		//Genre
 	    case 4 : {
 		String [] result = filterString.split(" ");
 		
@@ -173,7 +175,7 @@ public class MovieManagerCommandFilter implements ActionListener {
 	    }
 		break;
 	    
-		/*Cast*/
+		//Cast
 	    case 5 : {
 		String [] result = filterString.split(" ");
 		
@@ -194,7 +196,7 @@ public class MovieManagerCommandFilter implements ActionListener {
 	}
 	
 	
-	/*removes all movies according to seen, rating or dating options*/
+	// removes all movies according to seen, rating or dating options
 	
 	if (mainFilter) {
 	    
@@ -204,7 +206,7 @@ public class MovieManagerCommandFilter implements ActionListener {
 		    String movieRating = ((ModelMovie)listModel.elementAt(i)).getRating();
 		    int movieDate;
 		    
-		    /*Some movies does not have a date*/
+		    //Some movies does not have a date
 		    try {
 			movieDate = Integer.parseInt(((ModelMovie)listModel.elementAt(i)).getDate());
 		    }
@@ -213,15 +215,15 @@ public class MovieManagerCommandFilter implements ActionListener {
 			movieDate = -1;
 		    }
 		
-		    /*If seen is either 2 or 3 means the seen option is enabled, 
-		      and it checks if the movie should be removed from the listmodel*/
+		    //If seen is either 2 or 3 means the seen option is enabled, 
+		     // and it checks if the movie should be removed from the listmodel
 		    if ((seen == 2 && !((ModelMovie)listModel.elementAt(i)).getSeen()) || (seen == 3 && ((ModelMovie)listModel.elementAt(i)).getSeen())) {
 			listModel.remove(i);
 			i--;
 		    }
 		    
-		    /*If the movie wasn't removed by the seen check, it checks if the ratingOption is enabled (2 or 3),
-		      and removes the movie if both tests are positive*/
+		    //If the movie wasn't removed by the seen check, it checks if the ratingOption is enabled (2 or 3),
+		     // and removes the movie if both tests are positive
 		    
 		    else if ((ratingOption == 2) && (!movieRating.equals("")) && (((Double.parseDouble(movieRating))) < ratingValue)) {
 			listModel.remove(i);
@@ -246,11 +248,12 @@ public class MovieManagerCommandFilter implements ActionListener {
 	    }
 	}
     }
-    
+*/    
+
     /**
      * Executes the command.
      **/
-    public static void execute() {
+    public void execute() {
 	
 	DefaultListModel listModel;
 	Database database = MovieManager.getIt().getDatabase();
@@ -261,9 +264,14 @@ public class MovieManagerCommandFilter implements ActionListener {
 	filterStart = System.currentTimeMillis();
 	databaseEmptyMessage = "Empty Database";
 	
+	System.out.println("mainFilter:" + mainFilter);
+	
 	if (mainFilter) {
 	    
+		
+		
 	    ModelDatabaseSearch options = MovieManager.getIt().getFilterOptions();
+	    System.out.println("options.getOrderCategory:" + options.getOrderCategory());
 	    listModel = database.getMoviesList(options);
 	    
 	    filterCategory = MovieManager.getConfig().getFilterCategory();
@@ -271,7 +279,13 @@ public class MovieManagerCommandFilter implements ActionListener {
 	    movieList = MovieManager.getDialog().getMoviesList();
 	}
 	else {
-	    listModel = database.getMoviesList("Title");
+		ModelDatabaseSearch options = MovieManager.getIt().getFilterOptions();
+		
+		if (options.getListName() != null && !"".equals(options.getListName()))
+			listModel = database.getMoviesList("Title", options.getListName());
+		else
+			listModel = database.getMoviesList("Title");
+		
 	    filterCategory = "Movie Title";
 	}
 	
@@ -294,7 +308,7 @@ public class MovieManagerCommandFilter implements ActionListener {
 	    listModel.addElement(new ModelMovie(-1, "", "", "", databaseEmptyMessage, "", "", "", "", "", "", "", false, "", "", "", "", "", "", "", "", ""));
 		
 	    if (mainFilter) 
-		MovieManager.getDialog().setAndShowEntries(0);
+	    	MovieManager.getDialog().setAndShowEntries(0);
 	}
 	
 	else if (mainFilter) {

@@ -4,6 +4,28 @@ Changelog - MeD's Movie Manager
 ========================================
 
 
+Version 2.5 beta 4 (07-mar-2007)
+
+ - General improvements:
+ - Importing excel spreadsheet should now actually work. 
+ - IMDb Updater now alows skipping of entries that already contains an IMDb ID.
+ - Non ASCII characters in 'directed by' and 'written by' are now converted again.
+
+ - Bug fixes:
+ - Removed a few bugs from the "Add multiple movies by file" function.
+ - Database converter should now work when saving to MS Access.
+
+
+Version 2.5 beta 3 (24-feb-2007)
+
+ - General improvements:
+ - Added new field in the edit window shwowing the IMDb ID.
+ - Excel import is improved.
+
+ - Bug fixes:
+ - Fixed the IMDb parsing issue. 
+
+
 Version 2.5 beta 2 (21-jan-2007)
 
  - General improvements:

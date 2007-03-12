@@ -11,7 +11,7 @@ public class MovieManagerCommandDialogIMDB {
       ModelMovieInfo modelInfo = new ModelMovieInfo(false, true);
       modelInfo.model.setTitle(movieTitle);
       
-      DialogIMDB dialogImdb = new DialogIMDB(modelInfo, true);
+      DialogIMDB dialogImdb = new DialogIMDB(modelInfo, true, movieTitle);
       GUIUtil.showAndWait(dialogImdb, true);
       
       return modelInfo.model.getUrlKey();

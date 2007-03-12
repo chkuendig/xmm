@@ -60,6 +60,7 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
     ArrayList transferred;
     MovieManagerCommandUpdateIMDBInfo parent;
     
+    JCheckBox skipEntriesWithIMDbID;
     
     /* update settings buttons */
     JCheckBox titleUpdate;
@@ -153,260 +154,271 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 																					new Font(updateSettingsPanel.getFont().getName(),Font.PLAIN, updateSettingsPanel.getFont().getSize())),
 																		      BorderFactory.createEmptyBorder(2,5,3,5))));
 	
+	updateSettingsPanel.setLayout(new BoxLayout(updateSettingsPanel, BoxLayout.Y_AXIS));
+	
+	JPanel settings = new JPanel();
+	
+	skipEntriesWithIMDbID = new JCheckBox("Skip entries with IMDb ID");
+	settings.add(skipEntriesWithIMDbID);
+	
+	JPanel infoOptions = new JPanel();
+	
+	updateSettingsPanel.add(settings);
+	updateSettingsPanel.add(infoOptions);
 	
 	double size[][] = {{TableLayout.PREFERRED, 10, TableLayout.PREFERRED, 10, TableLayout.PREFERRED}, 
 			   {TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, TableLayout.PREFERRED, 10, TableLayout.PREFERRED}};
 	
-	updateSettingsPanel.setLayout(new TableLayout(size));
+	infoOptions.setLayout(new TableLayout(size));
 	
 	/* Header */
 	
 	JLabel headerUpdateInfo = new JLabel("Update");
-	updateSettingsPanel.add(headerUpdateInfo, "0, 0, CENTER, CENTER");
+	infoOptions.add(headerUpdateInfo, "0, 0, CENTER, CENTER");
 	
 	JLabel headerIfEmpty = new JLabel("If empty");
-	updateSettingsPanel.add(headerIfEmpty, "2, 0, CENTER, CENTER");
+	infoOptions.add(headerIfEmpty, "2, 0, CENTER, CENTER");
 
 	JLabel headerFiled = new JLabel("Field");
-	updateSettingsPanel.add(headerFiled, "4, 0, CENTER, CENTER");
+	infoOptions.add(headerFiled, "4, 0, CENTER, CENTER");
 	
 	
 	/* Title */
 	ButtonGroupNoSelection titleButtonGroup = new ButtonGroupNoSelection();
 	
 	titleUpdate = new JCheckBox();
-	updateSettingsPanel.add(titleUpdate, "0, 1, CENTER, CENTER");
+	infoOptions.add(titleUpdate, "0, 1, CENTER, CENTER");
 	titleButtonGroup.add(titleUpdate);
 	
 	titleUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(titleUpdateIfEmpty, "2, 1, CENTER, CENTER");
+	infoOptions.add(titleUpdateIfEmpty, "2, 1, CENTER, CENTER");
 	titleButtonGroup.add(titleUpdateIfEmpty);
 	
 	JLabel titleLabel = new JLabel("Title");
-	updateSettingsPanel.add(titleLabel, "4, 1");
+	infoOptions.add(titleLabel, "4, 1");
 	
 	
 	/* Cover */
 	ButtonGroupNoSelection coverButtonGroup = new ButtonGroupNoSelection();
 	
 	coverUpdate = new JCheckBox();
-	updateSettingsPanel.add(coverUpdate, "0, 2, CENTER, CENTER");
+	infoOptions.add(coverUpdate, "0, 2, CENTER, CENTER");
 	coverButtonGroup.add(coverUpdate);
 
 	coverUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(coverUpdateIfEmpty, "2, 2, CENTER, CENTER");
+	infoOptions.add(coverUpdateIfEmpty, "2, 2, CENTER, CENTER");
 	coverButtonGroup.add(coverUpdateIfEmpty);
 
 	JLabel coverLabel = new JLabel("Cover");
-	updateSettingsPanel.add(coverLabel, "4, 2");
+	infoOptions.add(coverLabel, "4, 2");
 	
 	
 	/* date */
 	ButtonGroupNoSelection dateButtonGroup = new ButtonGroupNoSelection();
 	
 	dateUpdate = new JCheckBox();
-	updateSettingsPanel.add(dateUpdate, "0, 3, CENTER, CENTER");
+	infoOptions.add(dateUpdate, "0, 3, CENTER, CENTER");
 	dateButtonGroup.add(dateUpdate);
 
 	dateUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(dateUpdateIfEmpty, "2, 3, CENTER, CENTER");
+	infoOptions.add(dateUpdateIfEmpty, "2, 3, CENTER, CENTER");
 	dateButtonGroup.add(dateUpdateIfEmpty);
 
 	JLabel dateLabel = new JLabel("Date");
-	updateSettingsPanel.add(dateLabel, "4, 3");
+	infoOptions.add(dateLabel, "4, 3");
 	
 	
 	/* colour */
 	ButtonGroupNoSelection colourButtonGroup = new ButtonGroupNoSelection();
 	
 	colourUpdate = new JCheckBox();
-	updateSettingsPanel.add(colourUpdate, "0, 4, CENTER, CENTER");
+	infoOptions.add(colourUpdate, "0, 4, CENTER, CENTER");
 	colourButtonGroup.add(colourUpdate);
 
 	colourUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(colourUpdateIfEmpty, "2, 4, CENTER, CENTER");
+	infoOptions.add(colourUpdateIfEmpty, "2, 4, CENTER, CENTER");
 	colourButtonGroup.add(colourUpdateIfEmpty);
 
 	JLabel colourLabel = new JLabel("Colour");
-	updateSettingsPanel.add(colourLabel, "4, 4");
+	infoOptions.add(colourLabel, "4, 4");
 
 	
 	/* Directed By */
 	ButtonGroupNoSelection directedByButtonGroup = new ButtonGroupNoSelection();
 	
 	directedByUpdate = new JCheckBox();
-	updateSettingsPanel.add(directedByUpdate, "0, 5, CENTER, CENTER");
+	infoOptions.add(directedByUpdate, "0, 5, CENTER, CENTER");
 	directedByButtonGroup.add(directedByUpdate);
 
 	directedByUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(directedByUpdateIfEmpty, "2, 5, CENTER, CENTER");
+	infoOptions.add(directedByUpdateIfEmpty, "2, 5, CENTER, CENTER");
 	directedByButtonGroup.add(directedByUpdateIfEmpty);
 
 	JLabel directedByLabel = new JLabel("Directed By");
-	updateSettingsPanel.add(directedByLabel, "4, 5");
+	infoOptions.add(directedByLabel, "4, 5");
 
 	
 	/* writtenBy */
 	ButtonGroupNoSelection writtenByButtonGroup = new ButtonGroupNoSelection();
 	
 	writtenByUpdate = new JCheckBox();
-	updateSettingsPanel.add(writtenByUpdate, "0, 6, CENTER, CENTER");
+	infoOptions.add(writtenByUpdate, "0, 6, CENTER, CENTER");
 	writtenByButtonGroup.add(writtenByUpdate);
 
 	writtenByUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(writtenByUpdateIfEmpty, "2, 6, CENTER, CENTER");
+	infoOptions.add(writtenByUpdateIfEmpty, "2, 6, CENTER, CENTER");
 	writtenByButtonGroup.add(writtenByUpdateIfEmpty);
 
 	JLabel writtenByLabel = new JLabel("Written By");
-	updateSettingsPanel.add(writtenByLabel, "4, 6");
+	infoOptions.add(writtenByLabel, "4, 6");
 	
 	
 	/* genre */
 	ButtonGroupNoSelection genreButtonGroup = new ButtonGroupNoSelection();
 	
 	genreUpdate = new JCheckBox();
-	updateSettingsPanel.add(genreUpdate, "0, 7, CENTER, CENTER");
+	infoOptions.add(genreUpdate, "0, 7, CENTER, CENTER");
 	genreButtonGroup.add(genreUpdate);
 
 	genreUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(genreUpdateIfEmpty, "2, 7, CENTER, CENTER");
+	infoOptions.add(genreUpdateIfEmpty, "2, 7, CENTER, CENTER");
 	genreButtonGroup.add(genreUpdateIfEmpty);
 
 	JLabel genreLabel = new JLabel("Genre");
-	updateSettingsPanel.add(genreLabel, "4, 7");
+	infoOptions.add(genreLabel, "4, 7");
 
 
 	/* rating */
 	ButtonGroupNoSelection ratingButtonGroup = new ButtonGroupNoSelection();
 	
 	ratingUpdate = new JCheckBox();
-	updateSettingsPanel.add(ratingUpdate, "0, 8, CENTER, CENTER");
+	infoOptions.add(ratingUpdate, "0, 8, CENTER, CENTER");
 	ratingButtonGroup.add(ratingUpdate);
 
 	ratingUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(ratingUpdateIfEmpty, "2, 8, CENTER, CENTER");
+	infoOptions.add(ratingUpdateIfEmpty, "2, 8, CENTER, CENTER");
 	ratingButtonGroup.add(ratingUpdateIfEmpty);
 
 	JLabel ratingLabel = new JLabel("Rating");
-	updateSettingsPanel.add(ratingLabel, "4, 8");
+	infoOptions.add(ratingLabel, "4, 8");
 	
 	/* country */
 	ButtonGroupNoSelection countryButtonGroup = new ButtonGroupNoSelection();
 	
 	countryUpdate = new JCheckBox();
-	updateSettingsPanel.add(countryUpdate, "0, 9, CENTER, CENTER");
+	infoOptions.add(countryUpdate, "0, 9, CENTER, CENTER");
 	countryButtonGroup.add(countryUpdate);
 
 	countryUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(countryUpdateIfEmpty, "2, 9, CENTER, CENTER");
+	infoOptions.add(countryUpdateIfEmpty, "2, 9, CENTER, CENTER");
 	countryButtonGroup.add(countryUpdateIfEmpty);
 
 	JLabel countryLabel = new JLabel("Country");
-	updateSettingsPanel.add(countryLabel, "4, 9");
+	infoOptions.add(countryLabel, "4, 9");
 	
 	/* language */
 	ButtonGroupNoSelection languageButtonGroup = new ButtonGroupNoSelection();
 	
 	languageUpdate = new JCheckBox();
-	updateSettingsPanel.add(languageUpdate, "0, 10, CENTER, CENTER");
+	infoOptions.add(languageUpdate, "0, 10, CENTER, CENTER");
 	languageButtonGroup.add(languageUpdate);
 
 	languageUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(languageUpdateIfEmpty, "2, 10, CENTER, CENTER");
+	infoOptions.add(languageUpdateIfEmpty, "2, 10, CENTER, CENTER");
 	languageButtonGroup.add(languageUpdateIfEmpty);
 
 	JLabel languageLabel = new JLabel("Language");
-	updateSettingsPanel.add(languageLabel, "4, 10");
+	infoOptions.add(languageLabel, "4, 10");
 	
 	
 	/* plot */
 	ButtonGroupNoSelection plotButtonGroup = new ButtonGroupNoSelection();
 	
 	plotUpdate = new JCheckBox();
-	updateSettingsPanel.add(plotUpdate, "0, 11, CENTER, CENTER");
+	infoOptions.add(plotUpdate, "0, 11, CENTER, CENTER");
 	plotButtonGroup.add(plotUpdate);
 
 	plotUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(plotUpdateIfEmpty, "2, 11, CENTER, CENTER");
+	infoOptions.add(plotUpdateIfEmpty, "2, 11, CENTER, CENTER");
 	plotButtonGroup.add(plotUpdateIfEmpty);
 
 	JLabel plotLabel = new JLabel("Plot");
-	updateSettingsPanel.add(plotLabel, "4, 11");
+	infoOptions.add(plotLabel, "4, 11");
 	
 	
 	/* cast */
 	ButtonGroupNoSelection castButtonGroup = new ButtonGroupNoSelection();
 	
 	castUpdate = new JCheckBox();
-	updateSettingsPanel.add(castUpdate, "0, 12, CENTER, CENTER");
+	infoOptions.add(castUpdate, "0, 12, CENTER, CENTER");
 	castButtonGroup.add(castUpdate);
 
 	castUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(castUpdateIfEmpty, "2, 12, CENTER, CENTER");
+	infoOptions.add(castUpdateIfEmpty, "2, 12, CENTER, CENTER");
 	castButtonGroup.add(castUpdateIfEmpty);
 
 	JLabel castLabel = new JLabel("Cast");
-	updateSettingsPanel.add(castLabel, "4, 12");
+	infoOptions.add(castLabel, "4, 12");
 	
 	
 	/* aka */
 	ButtonGroupNoSelection akaButtonGroup = new ButtonGroupNoSelection();
 	
 	akaUpdate = new JCheckBox();
-	updateSettingsPanel.add(akaUpdate, "0, 13, CENTER, CENTER");
+	infoOptions.add(akaUpdate, "0, 13, CENTER, CENTER");
 	akaButtonGroup.add(akaUpdate);
 
 	akaUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(akaUpdateIfEmpty, "2, 13, CENTER, CENTER");
+	infoOptions.add(akaUpdateIfEmpty, "2, 13, CENTER, CENTER");
 	akaButtonGroup.add(akaUpdateIfEmpty);
 
 	JLabel akaLabel = new JLabel("Also Know As");
-	updateSettingsPanel.add(akaLabel, "4, 13");
+	infoOptions.add(akaLabel, "4, 13");
 	
 	
 	/* soundMix */
 	ButtonGroupNoSelection soundMixButtonGroup = new ButtonGroupNoSelection();
 	
 	soundMixUpdate = new JCheckBox();
-	updateSettingsPanel.add(soundMixUpdate, "0, 14, CENTER, CENTER");
+	infoOptions.add(soundMixUpdate, "0, 14, CENTER, CENTER");
 	soundMixButtonGroup.add(soundMixUpdate);
 
 	soundMixUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(soundMixUpdateIfEmpty, "2, 14, CENTER, CENTER");
+	infoOptions.add(soundMixUpdateIfEmpty, "2, 14, CENTER, CENTER");
 	soundMixButtonGroup.add(soundMixUpdateIfEmpty);
 
 	JLabel soundMixLabel = new JLabel("Sound Mix");
-	updateSettingsPanel.add(soundMixLabel, "4, 14");
+	infoOptions.add(soundMixLabel, "4, 14");
 	
 	
 	/* runtime */
 	ButtonGroupNoSelection runtimeButtonGroup = new ButtonGroupNoSelection();
 	
 	runtimeUpdate = new JCheckBox();
-	updateSettingsPanel.add(runtimeUpdate, "0, 15, CENTER, CENTER");
+	infoOptions.add(runtimeUpdate, "0, 15, CENTER, CENTER");
 	runtimeButtonGroup.add(runtimeUpdate);
 
 	runtimeUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(runtimeUpdateIfEmpty, "2, 15, CENTER, CENTER");
+	infoOptions.add(runtimeUpdateIfEmpty, "2, 15, CENTER, CENTER");
 	runtimeButtonGroup.add(runtimeUpdateIfEmpty);
 
 	JLabel runtimeLabel = new JLabel("Runtime");
-	updateSettingsPanel.add(runtimeLabel, "4, 15");
+	infoOptions.add(runtimeLabel, "4, 15");
 	
 	
 	/* awards */
 	ButtonGroupNoSelection awardsButtonGroup = new ButtonGroupNoSelection();
 	
 	awardsUpdate = new JCheckBox();
-	updateSettingsPanel.add(awardsUpdate, "0, 16, CENTER, CENTER");
+	infoOptions.add(awardsUpdate, "0, 16, CENTER, CENTER");
 	awardsButtonGroup.add(awardsUpdate);
 
 	awardsUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(awardsUpdateIfEmpty, "2, 16, CENTER, CENTER");
+	infoOptions.add(awardsUpdateIfEmpty, "2, 16, CENTER, CENTER");
 	awardsButtonGroup.add(awardsUpdateIfEmpty);
 
 	JLabel awardsLabel = new JLabel("Awards");
-	updateSettingsPanel.add(awardsLabel, "4, 16");
+	infoOptions.add(awardsLabel, "4, 16");
 	
 	
 
@@ -414,47 +426,47 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 	ButtonGroupNoSelection mpaaButtonGroup = new ButtonGroupNoSelection();
 	
 	mpaaUpdate = new JCheckBox();
-	updateSettingsPanel.add(mpaaUpdate, "0, 17, CENTER, CENTER");
+	infoOptions.add(mpaaUpdate, "0, 17, CENTER, CENTER");
 	mpaaButtonGroup.add(mpaaUpdate);
 
 	mpaaUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(mpaaUpdateIfEmpty, "2, 17, CENTER, CENTER");
+	infoOptions.add(mpaaUpdateIfEmpty, "2, 17, CENTER, CENTER");
 	mpaaButtonGroup.add(mpaaUpdateIfEmpty);
 
 	JLabel mpaaLabel = new JLabel("MPAA");
-	updateSettingsPanel.add(mpaaLabel, "4, 17");
+	infoOptions.add(mpaaLabel, "4, 17");
 	
 	
 	/* certification */
 	ButtonGroupNoSelection certificationButtonGroup = new ButtonGroupNoSelection();
 	
 	certificationUpdate = new JCheckBox();
-	updateSettingsPanel.add(certificationUpdate, "0, 18, CENTER, CENTER");
+	infoOptions.add(certificationUpdate, "0, 18, CENTER, CENTER");
 	certificationButtonGroup.add(certificationUpdate);
 
 	certificationUpdateIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(certificationUpdateIfEmpty, "2, 18, CENTER, CENTER");
+	infoOptions.add(certificationUpdateIfEmpty, "2, 18, CENTER, CENTER");
 	certificationButtonGroup.add(certificationUpdateIfEmpty);
 
 	JLabel certificationLabel = new JLabel("Certification");
-	updateSettingsPanel.add(certificationLabel, "4, 18");
+	infoOptions.add(certificationLabel, "4, 18");
 
 	
 	/* mark all */
 	ButtonGroupNoSelection markAllButtonGroup = new ButtonGroupNoSelection();
 	
 	markAll = new JCheckBox();
-	updateSettingsPanel.add(markAll, "0, 20, CENTER, CENTER");
+	infoOptions.add(markAll, "0, 20, CENTER, CENTER");
 	markAllButtonGroup.add(markAll);
 	markAll.addItemListener(this);
 	
 	markAllIfEmpty = new JCheckBox();
-	updateSettingsPanel.add(markAllIfEmpty, "2, 20, CENTER, CENTER");
+	infoOptions.add(markAllIfEmpty, "2, 20, CENTER, CENTER");
 	markAllButtonGroup.add(markAllIfEmpty);
 	markAllIfEmpty.addItemListener(this);
 	
 	JLabel markAllLabel = new JLabel("(de)select All");
-	updateSettingsPanel.add(markAllLabel, "4, 20");
+	infoOptions.add(markAllLabel, "4, 20");
 	
 	
 	
@@ -609,6 +621,8 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 	    parent.setCanceled(false);
 	    parent.setDone(false);
 	    
+	    if (skipEntriesWithIMDbID.isSelected())
+	    	imdbInfoUpdater.skipEntriesWithIMDbID = true;
 	    
 	    if (titleUpdate.isSelected()) {
 		imdbInfoUpdater.title = 1;

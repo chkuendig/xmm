@@ -1414,10 +1414,10 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         
         activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
         
-        if (movieInfoModel._lastFieldIndex != -1 && movieInfoModel._saveLastFieldValue.get(movieInfoModel._lastFieldIndex).toString().equals(new Boolean(true).toString())) {
+        if (movieInfoModel.getLastFieldIndex() != -1 && movieInfoModel._saveLastFieldValue.get(movieInfoModel.getLastFieldIndex()).toString().equals(new Boolean(true).toString())) {
             
             /* Saves the info in the _fieldsValues... */
-            if (activeAdditionalInfoFields[movieInfoModel._lastFieldIndex] == 1) {
+            if (activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()] == 1) {
                 
                 /* Saves the duration... */
                 String hours = ((JTextField)getAdditionalInfoValuePanel().getComponent(0)).getText();
@@ -1433,7 +1433,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
                     if (!secds.equals("")) //$NON-NLS-1$
                         time += Integer.parseInt(secds);
                     
-                    movieInfoModel._fieldValues.set(activeAdditionalInfoFields[movieInfoModel._lastFieldIndex], String.valueOf(time));
+                    movieInfoModel._fieldValues.set(activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()], String.valueOf(time));
                 }
                 
                 /* Recreates the JPanel... */
@@ -1445,22 +1445,22 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
                 getAdditionalInfoValuePanel().add(textfield);
                 
             } /* Subtitle, media info, and all the extra info fields */
-            else if (activeAdditionalInfoFields[movieInfoModel._lastFieldIndex] == 0 || activeAdditionalInfoFields[movieInfoModel._lastFieldIndex] >= 16) {
+            else if (activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()] == 0 || activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()] >= 16) {
                 /* Current value in combobox */
                 String value = (String) ((JComboBox) getAdditionalInfoValuePanel().getComponent(0)).getSelectedItem();
                 
                 /* Old value */
-                String oldValue = (String) movieInfoModel._fieldValues.get(activeAdditionalInfoFields[movieInfoModel._lastFieldIndex]);
+                String oldValue = (String) movieInfoModel._fieldValues.get(activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()]);
                 
-                movieInfoModel._fieldValues.set(activeAdditionalInfoFields[movieInfoModel._lastFieldIndex], value);
+                movieInfoModel._fieldValues.set(activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()], value);
                 
-                AdditionalInfoFieldDefaultValues valuesObj = (AdditionalInfoFieldDefaultValues) MovieManager.getConfig().getAdditionalInfoDefaultValues().get(movieInfoModel._fieldNames.get(movieInfoModel._lastFieldIndex));
+                AdditionalInfoFieldDefaultValues valuesObj = (AdditionalInfoFieldDefaultValues) MovieManager.getConfig().getAdditionalInfoDefaultValues().get(movieInfoModel._fieldNames.get(movieInfoModel.getLastFieldIndex()));
                 
                 /* Creating a new entry in the values hashmap */
                 if (valuesObj == null) {
-                    valuesObj = new AdditionalInfoFieldDefaultValues((String) movieInfoModel._fieldNames.get(movieInfoModel._lastFieldIndex));
+                    valuesObj = new AdditionalInfoFieldDefaultValues((String) movieInfoModel._fieldNames.get(movieInfoModel.getLastFieldIndex()));
                     valuesObj.addValue(oldValue);
-                    MovieManager.getConfig().getAdditionalInfoDefaultValues().put(movieInfoModel._fieldNames.get(movieInfoModel._lastFieldIndex), valuesObj);
+                    MovieManager.getConfig().getAdditionalInfoDefaultValues().put(movieInfoModel._fieldNames.get(movieInfoModel.getLastFieldIndex()), valuesObj);
                 }
                 
                 valuesObj.insertValue(value);
@@ -1475,7 +1475,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
             }        
             else {
                 /* Saves the field... */
-                movieInfoModel._fieldValues.set(activeAdditionalInfoFields[movieInfoModel._lastFieldIndex],((JTextField)getAdditionalInfoValuePanel().getComponent(0)).getText());
+                movieInfoModel._fieldValues.set(activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()],((JTextField)getAdditionalInfoValuePanel().getComponent(0)).getText());
             }
         }
         
@@ -1616,7 +1616,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         }
         
         /* updates index... */
-        movieInfoModel._lastFieldIndex = currentFieldIndex;
+        movieInfoModel.setLastFieldIndex(currentFieldIndex);
     }
     
     
@@ -1940,7 +1940,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
                 DialogIMDB.getIMDbInfo(movieInfoModel, getIMDb().getText());
             }
             else {
-                dialogIMDB = new DialogIMDB(movieInfoModel, false);
+                dialogIMDB = new DialogIMDB(movieInfoModel, false, null);
                 GUIUtil.show(dialogIMDB, true);
             }
             

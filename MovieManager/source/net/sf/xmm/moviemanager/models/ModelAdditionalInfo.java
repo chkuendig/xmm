@@ -20,6 +20,7 @@
 
 package net.sf.xmm.moviemanager.models;
 
+import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.DialogImportTable.FieldModel;
 
 import java.util.*;
@@ -353,5 +354,252 @@ public class ModelAdditionalInfo {
             }
         }
         return false;
+    }
+    
+    
+    public String getAdditionalInfoString() {
+    	return getAdditionalInfoString(this);
+    }
+    
+    
+    /**
+     * Returns the additional_info string of this model
+     **/
+    public static String getAdditionalInfoString(ModelAdditionalInfo model) {
+
+    	if (model == null)
+    		return "";
+
+    	//long time = System.currentTimeMillis();
+
+    	StringBuffer data = new StringBuffer("");
+
+    	try {
+    		/* Gets the fixed additional info... */
+
+    		int [] activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
+
+    		for (int i = 0; i < activeAdditionalInfoFields.length; i++) {
+
+    			switch (activeAdditionalInfoFields[i]) {
+
+    			case 0: {
+    				if (data.length() != 0)
+    					data.append("\n");
+    				data.append("Subtitles: ");
+
+    				data.append(model.getSubtitles());
+    				break;
+    			}
+
+    			case 1: {
+    				if (data.length() != 0)
+    					data.append("\n");
+    				data.append("Duration: ");
+
+    				int duration = model.getDuration();
+
+    				if (duration > 0) {
+
+    					int hours = duration / 3600;
+    					int mints = duration / 60 - hours * 60;
+    					int secds = duration - hours * 3600 - mints *60;
+
+    					data.append(hours + ":");
+
+    					if (mints < 10)
+    						data.append("0");
+    					data.append(mints + ":");
+
+    					if (secds < 10)
+    						data.append("0");
+    					data.append(secds);
+    				}
+    				break;
+    			}
+
+    			case 2: {
+    				if (data.length() != 0)
+    					data.append("\n");
+    				data.append("File Size: ");
+
+    				if (model.getFileSize() > 0) {
+    					data.append(model.getFileSize());
+    					data.append(" MB");
+    				}
+    				break;
+    			}
+
+    			case 3: {
+    				if (data.length() != 0)
+    					data.append("\n");
+    				data.append("CDs: ");
+
+    				if (model.getCDs() > 0)
+    					data.append(model.getCDs());
+    				break;
+    			}
+
+    			case 4: {
+    				if (data.length() != 0)
+    					data.append("\n");
+    				data.append("CD Cases: ");
+
+    				if (model.getCDCases() > 0)
+    					data.append(model.getCDCases());
+    				break;
+    			}
+
+    			case 5: {
+    				if (data.length() != 0)
+    					data.append("\n");
+    				data.append("Resolution: ");
+
+    				data.append(model.getResolution());
+    				break;
+    			}
+
+    			case 6: {
+    				if (data.length() != 0)
+    					data.append("\n");
+    				data.append("Video Codec: ");
+
+    				data.append(model.getVideoCodec());
+    				break;
+    			}
+
+    			case 7: {
+    				if (data.length() != 0)
+    					data.append("\n");
+    				data.append("Video Rate: ");
+
+    				if (!"".equals(model.getVideoRate())) {
+    					data.append(model.getVideoRate());
+    					data.append(" fps");
+    				}
+    				break;
+    			}
+
+    			case 8: {
+    				if (data.length() != 0)
+    					data.append("\n");
+
+    				data.append("Video Bit Rate: ");
+
+    				if (!"".equals(model.getVideoBitrate())) {
+    					data.append(model.getVideoBitrate());
+    					data.append(" kbps");
+    				}
+    				break;
+    			}
+
+    			case 9: {
+    				if (data.length() != 0)
+    					data.append("\n");
+
+    				data.append("Audio Codec: ");
+    				data.append(model.getAudioCodec());
+    				break;
+    			}
+
+    			case 10: {
+    				if (data.length() != 0)
+    					data.append("\n");
+
+    				data.append("Audio Rate: ");
+
+    				if (!"".equals(model.getAudioRate())) {
+    					data.append(model.getAudioRate());
+    					data.append(" Hz");
+    				}
+    				break;
+    			}
+
+    			case 11: {
+
+    				if (data.length() != 0)
+    					data.append("\n");
+
+    				data.append("Audio Bit Rate: ");
+
+    				if (!"".equals(model.getAudioBitrate())) {
+    					data.append(model.getAudioBitrate());
+    					data.append(" kbps");
+    				}
+    				break;
+    			}
+
+    			case 12: {
+
+    				if (data.length() != 0)
+    					data.append("\n");
+
+    				data.append("Audio Channels: ");
+    				data.append(model.getAudioChannels());
+
+    				break;
+    			}
+
+    			case 13: {
+
+    				if (data.length() != 0)
+    					data.append("\n");
+
+    				data.append("Location: ");
+    				data.append(model.getFileLocation());
+
+    				break;
+    			}
+
+    			case 14: {
+
+    				if (data.length() != 0)
+    					data.append("\n");
+
+    				data.append("File Count: ");
+    				if (model.getFileCount() > 0)
+    					data.append(String.valueOf(model.getFileCount()));
+    				break;
+    			}
+
+    			case 15: {
+
+    				if (data.length() != 0)
+    					data.append("\n");
+
+    				data.append("Container: ");
+    				data.append(model.getContainer());
+    				break;
+    			}
+
+    			case 16: {
+
+    				if (data.length() != 0)
+    					data.append("\n");
+
+    				data.append("Media Type: ");
+    				data.append(model.getMediaType());
+    				break;
+    			}
+
+    			default : {
+
+    				int columnIndex = activeAdditionalInfoFields[i]-17;
+
+    				if (data.length() != 0)
+    					data.append("\n");
+
+    				data.append(model.getExtraInfoFieldName(columnIndex) + ": ");
+    				data.append(model.getExtraInfoFieldValue(columnIndex));
+    			}	
+    			}
+    		}	
+
+    	} catch (Exception e) {
+    		MovieManager.log.error("Exception: ", e);
+    	}
+
+    	/* Returns the data... */
+    	return data.toString();
     }
 }

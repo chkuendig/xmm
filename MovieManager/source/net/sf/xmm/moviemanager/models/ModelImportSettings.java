@@ -20,14 +20,12 @@
 
 package net.sf.xmm.moviemanager.models;
 
-import com.lowagie.text.Table;
-
 import javax.swing.JTable;
-import javax.swing.table.TableModel;
+
 
 public class ModelImportSettings {
 
-    JTable table;
+    public JTable table;
     
     public ModelImportSettings() {
     
@@ -35,6 +33,7 @@ public class ModelImportSettings {
     
     public ModelImportSettings(JTable table) {
         this.table = table;
+        importMode = 1;
     }
         
     public int multiAddSelectOption = 0;

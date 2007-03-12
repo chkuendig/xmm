@@ -183,6 +183,12 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 		    parent.deleteNewDatabase();
 		    
 		    newDatabase = parent.createNewDatabase();
+		    
+		    if (newDatabase == null) {
+		    	taskOutput.append(newline + "Unable to create new database file" + newline); //$NON-NLS-1$
+			    return;		    	
+		    }
+		    
 		    counter = 0;
 		    movieCounter = 0;
 		    transferred = null;

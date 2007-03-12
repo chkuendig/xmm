@@ -101,12 +101,18 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 	JTree movieList = MovieManager.getDialog().getMoviesList();
 	
+	
+	
 	/* If Adding */
 	if (!edit) {
 	    
+	    //System.err.println("Adding");
+		
 	    /* If movie */
 	    if (!isEpisode) {
 		
+	    	//System.err.println("movie");
+	    	
 		ModelEntry.sortCategory = MovieManager.getConfig().getSortOption();
 		
 		if ("Title".equals(MovieManager.getConfig().getSortOption())) //$NON-NLS-1$
@@ -152,6 +158,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	/* If editing */
 	else {
 	    
+	    //System.err.println("edit");
+		
 	    AutomatedTreeNode node = (AutomatedTreeNode) movieList.getLastSelectedPathComponent();
 	    
 	    node.setUserObject(reloadEntry);
@@ -371,7 +379,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		MovieManager.getDialog().toolBar.setEnablePlayButton(enable);
         
 		if (MovieManager.getIt().getDatabase() != null)
-		    additionalInfoString = MovieManager.getIt().getDatabase().getAdditionalInfoString(additionalInfo);
+		    additionalInfoString = ModelAdditionalInfo.getAdditionalInfoString(additionalInfo);
 	    
 		try {
 		    File coverFile = new File(cover);

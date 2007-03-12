@@ -34,8 +34,8 @@ public class MovieManagerCommandLoadList implements ActionListener {
 	MovieManager.getConfig().setCurrentList(column);
 	MovieManager.getDialog().setListTitle(column);
 	
-	new MovieManagerCommandFilter("", null, true, true);
-    MovieManagerCommandFilter.execute();
+	new MovieManagerCommandFilter("", null, true, true).execute();
+    //MovieManagerCommandFilter.execute();
     }
     
     /**

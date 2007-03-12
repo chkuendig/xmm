@@ -136,19 +136,14 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
 	/* Excel spreadsheet */
 	if (importSettings.importMode == 1) {
         
-	    importSettings.excelTitleColumn = Integer.parseInt(importMovie.getExcelTitleColumn());
-        
-        if (!importMovie.getExcelLocationColumn().equals(""))
-            importSettings.excelLocationColumn = Integer.parseInt(importMovie.getExcelLocationColumn());
-        
-        
         File file = new File(importMovie.getPath());
             
         if (file.isFile()) {
             DialogImportTable importTable = new DialogImportTable(this, file);
             GUIUtil.showAndWait(importTable, true);
             
-            importSettings = importTable.getSettings();
+            importSettings.table = importTable.getSettings().table;
+            	
             dispose();
         }
 	}

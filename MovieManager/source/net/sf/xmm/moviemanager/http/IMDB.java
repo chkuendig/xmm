@@ -191,72 +191,55 @@ public class IMDB {
 	Object [] tmpArray;
 	
 	try {
-		/* Processes the data... */
+	    /* Processes the data... */
 
-		/* Gets the title... */
-		if ((start = data.indexOf("<div id=\"tn15title\">", start)) != -1 &&
-				(end = data.indexOf("</div>", start)) != -1) {
+	    /* Gets the title... */
+	    if ((start = data.indexOf("<div id=\"tn15title\">", start)) != -1 &&
+		(end = data.indexOf("</div>", start)) != -1) {
+	
+		tmpArray = HttpUtil.decodeHTMLtoArray(data.substring(start, end));
 
-			System.err.println("title and date:" + data.substring(start, end));
-			
-			tmpArray = HttpUtil.decodeHTMLtoArray(data.substring(start, end));
+		_title = (String) tmpArray[0];
 
-			//_title = HttpUtil.decodeHTML(data.substring(start, end)).trim();
-
-			_title = (String) tmpArray[0];
-
-			System.err.println("_title:" + _title);
-
-			if (MovieManager.getConfig().getAutoMoveThe() && _title.startsWith("The ")) {
-				_title = _title.substring(_title.indexOf(" ")+1, _title.length())+ ", The";
-			}
-			else if (MovieManager.getConfig().getAutoMoveAnAndA() && (_title.startsWith("A ") || _title.startsWith("An "))) {
-				_title = _title.substring(_title.indexOf(" ")+1, _title.length())+ ", "+ _title.substring(0, _title.indexOf(" "));
-			}
-			
-			System.err.println("_title:" + _title);
-
-			_date = (String) tmpArray[2];
+		if (MovieManager.getConfig().getAutoMoveThe() && _title.startsWith("The ")) {
+		    _title = _title.substring(_title.indexOf(" ")+1, _title.length())+ ", The";
 		}
-
-	    System.err.println("_date:" + _date);
-	 	    
+		else if (MovieManager.getConfig().getAutoMoveAnAndA() && (_title.startsWith("A ") || _title.startsWith("An "))) {
+		    _title = _title.substring(_title.indexOf(" ")+1, _title.length())+ ", "+ _title.substring(0, _title.indexOf(" "));
+		}
+		
+		_date = (String) tmpArray[2];
+	    }
+	    
 	    /* Gets the cover url... */
 	    if ((start = data.indexOf("<div class=\"photo\">")) != -1 && 
-	    		(end = data.indexOf("</div>", start)) != -1) {
+		(end = data.indexOf("</div>", start)) != -1) {
 	    	
 	    	if (data.substring(start, end).indexOf("Poster Not Submitted") == -1) {
 	    	
-	    		if ((start = data.indexOf("src=\"",start) +5) !=4 &&
-	    			(end = data.indexOf("\"", start)) != -1) {
-	    				_coverURL = HttpUtil.decodeHTML(data.substring(start, end));
-	    			}
-	    			
-	    			System.err.println("_coverURL:" + _coverURL);
+		    if ((start = data.indexOf("src=\"",start) +5) !=4 &&
+			(end = data.indexOf("\"", start)) != -1) {
+			_coverURL = HttpUtil.decodeHTML(data.substring(start, end));
+		    }
+	    	
+		    start = _coverURL.lastIndexOf(".");
 
-	    			start = _coverURL.lastIndexOf(".");
-
-	    			if (start != 0 && start != -1)
-	    				_coverName = _key + _coverURL.substring(start, _coverURL.length());
+		    if (start != 0 && start != -1)
+			_coverName = _key + _coverURL.substring(start, _coverURL.length());
 	    	}
 	    }
-	    
-	    System.err.println("_coverName:" + _coverName);
 	    
 	    start = 0;
 	    stop = 0;
 	    end = 0;
 	    /* Gets the rating... */
 	    if ((start = data.indexOf("User Rating:", start)+ 12) != 11 &&
-	    		(end = data.indexOf("/10</b>",start)) != -1 &&
-	    		(start = data.indexOf("<b>",end-9) +3) != 2) {
+		(end = data.indexOf("/10</b>",start)) != -1 &&
+		(start = data.indexOf("<b>",end-9) +3) != 2) {
 		
 	    	_rating = HttpUtil.decodeHTML(data.substring(start, end));
 	    }
-	    
-	    System.err.println("_rating:" + _rating);
-	    
-	    
+	     
 	    start = 0;
 	    stop = 0;
 	    end = 0;
@@ -264,27 +247,16 @@ public class IMDB {
 	    if ((start = data.indexOf("Directed by", start)) != -1 &&
 		(stop = data.indexOf("<br/>", start)) != -1) {
 	    	
-	    	//System.err.println("start:" + start);
-	    	//System.err.println("stop:" + stop);
-	    	
-	    	
-	    	//System.err.println("Directed by:" + data.substring(start, stop));
-	    	
 	    	ArrayList list = getLinkContentName(data.substring(start, stop));
-	    	
-	    	//System.err.println("list:" + list.size());
 	    	 
 	    	while (!list.isEmpty()) {
-	    		if (!_directedBy.equals(""))
-	    			_directedBy += ", ";
+		    if (!_directedBy.equals(""))
+			_directedBy += ", ";
 	    			
-	    		_directedBy += list.remove(0);
+		    _directedBy += list.remove(0);
 	    	}
 	    }
-	
-	    System.err.println("_directedBy:" + _directedBy);
-	    
-	    
+	 
 	    start = 0;
 	    stop = 0;
 	    end = 0;
@@ -293,47 +265,41 @@ public class IMDB {
 
 	    /* Gets the written by... */
 	    if (((start = data.indexOf("Writing credits", start)) != -1) &&
-	    		(stop = data.indexOf("<br/>", start)) != -1) {
+		(stop = data.indexOf("<br/>", start)) != -1) {
 	    	
 	    	ArrayList list = getLinkContentName(data.substring(start, stop));
 	    	
 	    	while (!list.isEmpty()) {
 	    		
-	    			if (!_writtenBy.equals(""))
-	    			_writtenBy += ", ";
+		    if (!_writtenBy.equals(""))
+			_writtenBy += ", ";
 	    			
-	    		_writtenBy += list.remove(0);
+		    _writtenBy += list.remove(0);
 	    	}
 	    }
 	    	
-	    System.err.println("_writtenBy:" + _writtenBy);
-	    	    
 	    _genre = getClassInfo(data, "Genre:");
-	    
-	    System.err.println("_genre:" + _genre);
 	    
 	    _plot = getClassInfo(data, "Plot Outline:");
 	    
-	    System.err.println("_plot:" + _plot);
+	    //System.err.println("_plot:" + _plot);
 	    
 	    _cast = getClassInfo(data, "class=\"cast\">");
 	    
 	    _cast = _cast.replaceAll(" \\.\\.\\.", ",");
 	    
-	    System.err.println("_cast:" + _cast);
-	    
+	    //System.err.println("_cast:" + _cast);
 	    
 	    _aka = getClassInfo(data, "Also Known As:");
 	    
-	    System.err.println("_aka:" + _aka);
-	    
+	    //System.err.println("_aka:" + _aka);
 	    
 	    _mpaa = getClassInfo(data, "<a href=\"/mpaa\">MPAA</a>:");
 	    	    
-	    System.err.println("_mpaa:" + _mpaa);
+	    //System.err.println("_mpaa:" + _mpaa);
 	    
 	    _runtime = getClassInfo(data, "Runtime:");
-    
+	    
 	    _country = getClassInfo(data, "Country:");
 	    
 	    _language = getClassInfo(data, "Language:");
@@ -346,27 +312,27 @@ public class IMDB {
 	    
 	    _awards = getClassInfo(data, "Awards:");
 	    
-	    System.err.println("_awards:" + _awards);
+	    //System.err.println("_awards:" + _awards);
 	    
 	    
 	    if (1 == 1) {
 
-	    /* Gets a bigger plot (if it exists...)
-	       /* Creates the url... */
-	    URL url = new URL("http://akas.imdb.com/title/tt"+_key+"/plotsummary");
+		/* Gets a bigger plot (if it exists...)
+		   /* Creates the url... */
+		URL url = new URL("http://akas.imdb.com/title/tt"+ _key +"/plotsummary");
 	    
-	    data = HttpUtil.readDataToStringBuffer(url);   
+		data = HttpUtil.readDataToStringBuffer(url);   
 	    
-	    /* Processes the data... */
-	    start = 0;
-	    end = 0;
+		/* Processes the data... */
+		start = 0;
+		end = 0;
 	    
-	    if ((start = data.indexOf("class=\"plotpar\">",start)+16) != 15 &&
-		(end=data.indexOf("</p>",start)) != -1) {
-		_plot = HttpUtil.decodeHTML(data.substring(start, end));
-	    }
+		if ((start = data.indexOf("class=\"plotpar\">",start)+16) != 15 &&
+		    (end=data.indexOf("</p>",start)) != -1) {
+		    _plot = HttpUtil.decodeHTML(data.substring(start, end));
+		}
 	    
-	    System.err.println("_plot:" + _plot);
+		//System.err.println("_plot:" + _plot);
 		   
 	    }
 	} catch (Exception e) {
@@ -748,7 +714,7 @@ public class IMDB {
     		}
 
     		if (!found)
-    			return "";
+		    return "";
     		
     		
     		//end = tmp.indexOf("<a class=\"tn15more inline");
@@ -756,18 +722,12 @@ public class IMDB {
     		
     		
     		if (end != -1) {
-    			tmp = tmp.substring(0, end);
+		    tmp = tmp.substring(0, end);
     		}
-    		
-    		
-    		
-    		if (className.equals("<a href=\"/mpaa\">MPAA</a>")) {
-    			System.err.println("MPAA-tmp:" + tmp);
-    		}	
-    		
-    		if (className.equals("Also Known As:")) {
-    			System.err.println("Also Known As found");
-    			System.err.println("aka-tmp:" + tmp);
+		
+		if (className.equals("Also Known As:")) {
+		    //System.err.println("Also Known As found");
+		    //System.err.println("aka-tmp:" + tmp);
     			
     			decoded = decodeAka(tmp);
     		}
@@ -857,7 +817,7 @@ public class IMDB {
 				//decoded += decodeHTML(akaTitles[i]) + "\r\n";
 		}
 		
-		System.err.println("cast decoded:" + decoded);
+		//System.err.println("cast decoded:" + decoded);
 			
 	} catch (Exception e) {
 	    log.error("", e);

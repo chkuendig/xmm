@@ -234,12 +234,7 @@ public class DialogImport extends JDialog implements ActionListener {
     
         
     excelOptionPanel.setLayout(propLayout);
-          
-    excelOptionPanel.add(excelTitleLabel, new ProportionConstraints(1, 1));
-    excelOptionPanel.add(excelTitleColumn, new ProportionConstraints(2, 1));
-    excelOptionPanel.add(excelLocationLabel, new ProportionConstraints(1, 2));
-    excelOptionPanel.add(excelLocationColumn, new ProportionConstraints(2, 2));
-            
+               
     
 	/* Excel file path */
 	excelFilePath = new JTextField(27);

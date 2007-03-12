@@ -23,9 +23,7 @@ package net.sf.xmm.moviemanager;
 import net.sf.xmm.moviemanager.commands.*;
 import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
 import net.sf.xmm.moviemanager.http.IMDB;
-import net.sf.xmm.moviemanager.models.ModelIMDB;
-import net.sf.xmm.moviemanager.models.ModelMovie;
-import net.sf.xmm.moviemanager.models.ModelMovieInfo;
+import net.sf.xmm.moviemanager.models.*;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SwingWorker;
 import net.sf.xmm.moviemanager.util.GUIUtil;
@@ -45,6 +43,8 @@ public class DialogIMDB extends JDialog {
     ModelMovieInfo modelInfo;
     
     JList listMovies;
+    JButton buttonSelect;
+    
     JTextField searchStringField;
     boolean multiAdd = false;
     boolean addInfoToExistingMovie = false;
@@ -54,6 +54,7 @@ public class DialogIMDB extends JDialog {
     
     boolean getUrlKeyOnly = false;
  
+   String addToThisList = null; 
     
     long time;
     
@@ -69,9 +70,15 @@ public class DialogIMDB extends JDialog {
     /**
      * The Constructor.
      **/
-    public DialogIMDB(ModelMovieInfo modelInfo, boolean getUrlKeyOnly) {
+    public DialogIMDB(ModelMovieInfo modelInfo, boolean getUrlKeyOnly, String alternateTitle) {
         /* Dialog creation...*/
         super(MovieManager.getDialog());
+        
+        if (alternateTitle == null)
+        	setTitle(Localizer.getString("DialogIMDB.title")); //$NON-NLS-1$
+        else
+        	setTitle(alternateTitle);
+        	
         multiAddFile = new File[1];
         this.getUrlKeyOnly = getUrlKeyOnly;
         
@@ -103,10 +110,13 @@ public class DialogIMDB extends JDialog {
     /**
      * Constructor - When adding multiple movies by file.
      **/
-    public DialogIMDB(ModelMovieInfo modelInfo, String searchString, String filename, final MovieManagerCommandAddMultipleMovies commandAddMovies, int multiAddSelectOption) {
+    public DialogIMDB(ModelMovieInfo modelInfo, String searchString, String filename, final MovieManagerCommandAddMultipleMovies commandAddMovies, int multiAddSelectOption, String addToThisList) {
         /* Dialog creation...*/
         super(MovieManager.getDialog());
+        setTitle(Localizer.getString("DialogIMDB.title")); //$NON-NLS-1$
+        
         multiAddFile = new File[1];
+        this.addToThisList = addToThisList;
         
         /* Sets parent... */
         this.modelInfo = modelInfo;
@@ -142,7 +152,7 @@ public class DialogIMDB extends JDialog {
     
     void createListDialog(final String searchString, String filename) {
         /* Dialog properties...*/
-        setTitle(Localizer.getString("DialogIMDB.title")); //$NON-NLS-1$
+        
         setModal(true);
         setResizable(false);
         /* Movies List panel...*/
@@ -159,7 +169,7 @@ public class DialogIMDB extends JDialog {
                 String retVal = null;
                 int row = (int) e.getPoint().getY() / (int) getCellBounds(0,0).getHeight();
                 
-                if (row < getModel().getSize())
+                if (row >= 0 && row < getModel().getSize() && getMoviesList().getModel() instanceof ModelIMDB)
                     retVal = ((ModelIMDB) getMoviesList().getModel().getElementAt(row)).getAka();
                 
                 return retVal;
@@ -179,10 +189,17 @@ public class DialogIMDB extends JDialog {
         listMovies.setLayoutOrientation(JList.VERTICAL);
         listMovies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
-        
+        listMovies.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent event) {
+        		if (SwingUtilities.isLeftMouseButton(event) && event.getClickCount() >= 2) {
+        			buttonSelect.doClick();
+        		}
+        	}
+        });
         
         JScrollPane scrollPaneMovies = new JScrollPane(listMovies);
         scrollPaneMovies.setPreferredSize(new Dimension(300,255));
+        scrollPaneMovies.setAutoscrolls(true);
         panelMoviesList.add(scrollPaneMovies);
         
         /* To add outside border... */
@@ -323,7 +340,7 @@ public class DialogIMDB extends JDialog {
             }});
         
         panelRegularButtons.add(buttonMore);
-        JButton buttonSelect = new JButton(Localizer.getString("DialogIMDB.button.select.text")); //$NON-NLS-1$
+        buttonSelect = new JButton(Localizer.getString("DialogIMDB.button.select.text")); //$NON-NLS-1$
         buttonSelect.setToolTipText(Localizer.getString("DialogIMDB.button.select.tooltip")); //$NON-NLS-1$
         buttonSelect.setActionCommand("GetIMDBInfo - Select"); //$NON-NLS-1$
         buttonSelect.addActionListener(new ActionListener() {
@@ -439,11 +456,21 @@ public class DialogIMDB extends JDialog {
      */
     
     void executeEditExistingMovie(String searchString) {
-        MovieManagerCommandFilter mmcf = new MovieManagerCommandFilter(searchString, getMoviesList(), false, true);
-        MovieManagerCommandFilter.execute();
+  
+    	DefaultListModel listModel;
+    	
+    	if (addToThisList != null)
+    		listModel = MovieManager.getIt().getDatabase().getMoviesList("Title", addToThisList);
+    	else
+    		listModel = MovieManager.getIt().getDatabase().getMoviesList("Title");
+    	
+    	listMovies.setModel(listModel);
+        //MovieManagerCommandFilter mmcf = new MovieManagerCommandFilter(searchString, getMoviesList(), false, true);
+        //MovieManagerCommandFilter.execute();
+    	
     }
     
-    /*Checks if the movie list should be retrived from IMDB or the local movie Databse
+    /*Checks if the movie list should be retrived from IMDB or the local movie Database
      */
     void executeSearchMultipleMovies() {
         
@@ -648,13 +675,19 @@ public class DialogIMDB extends JDialog {
             if (model.getKey() == -1)
                 return;
             
-            ModelMovieInfo modelInfoTmp = new ModelMovieInfo(false, true);
+            if (!model.getHasAdditionalInfoData()) {
+		model.updateAdditionalInfoData();
+            }
+            
+	    ModelMovieInfo modelInfoTmp = new ModelMovieInfo(model, false);
+            //ModelMovieInfo modelInfoTmp = new ModelMovieInfo(false, true);
             
             /* Need to set the hasReadProperties variable because when normally 
              calling the getfileinfo the first time it replaces the old additional values with the new ones
              Then the second time it plusses the time and size to match.
              When multiadding the next file info should be directly added to the old, not replace it
              */
+            modelInfoTmp._edit = true;
             modelInfoTmp._hasReadProperties = true;
             modelInfoTmp.getFileInfo(multiAddFile);
             
@@ -664,8 +697,7 @@ public class DialogIMDB extends JDialog {
                 log.error("Saving to database failed.", e);
             }
                 
-            MovieManagerCommandSelect.executeAndReload(modelInfoTmp.model, modelInfoTmp._edit, modelInfoTmp.isEpisode, true);
-            
+	    
             commandAddMovies.setCancel(true);
             dispose();
         }

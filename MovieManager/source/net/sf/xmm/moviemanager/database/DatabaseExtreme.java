@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-class DatabaseExtreme {
+public class DatabaseExtreme {
     
     static Logger log = Logger.getRootLogger();
     
@@ -36,7 +36,7 @@ class DatabaseExtreme {
     private boolean _inicialized = false;
     private boolean setUp = false;
     
-    protected DatabaseExtreme(String filePath) {
+    public DatabaseExtreme(String filePath) {
 	_sql = new SQL(filePath, "MSAccess");
     }
     
@@ -47,7 +47,7 @@ class DatabaseExtreme {
     /**
      * SetUp...
      **/
-    protected void setUp() {
+    public void setUp() {
 	
 	try {
 	    if (!_inicialized) {
@@ -65,7 +65,7 @@ class DatabaseExtreme {
      * Returns a List of MovieModels that contains all the movies in the
      * current database.
      **/
-    protected ArrayList getMovies() {
+    public ArrayList getMovies() {
 	
 	try {
 	    _sql.clear();

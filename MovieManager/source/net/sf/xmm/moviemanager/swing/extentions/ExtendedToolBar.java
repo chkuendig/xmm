@@ -6,6 +6,8 @@ import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
+import org.apache.log4j.Logger;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -15,6 +17,8 @@ import javax.swing.border.EtchedBorder;
 
 public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMotionListener {
 
+	static Logger log = Logger.getRootLogger();
+	
     private JToolBar toolBar;
     public JLabel showEntries;
     
@@ -140,6 +144,9 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
     }
     
     void construct() {
+    	
+    	try {
+    	
         toolBar.setRollover(true);
         
         //  toolBar.setLayout(new ModifiedFlowLayout(SwingConstants.HORIZONTAL, 4, 4));
@@ -259,6 +266,10 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
         panelEntries.add(showEntries);
 
         toolBar.add(panelEntries);
+        
+    	} catch (Exception e) {
+    		log.error(e.getMessage(), e);
+    	}
 
     }
     

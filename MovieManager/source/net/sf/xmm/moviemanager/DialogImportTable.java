@@ -40,18 +40,24 @@ public class DialogImportTable extends JDialog {
        public void mousePressed(MouseEvent e) {
            
            TableColumnModel columnModel = tableHeader.getColumnModel();
-           
            TableColumn newColumn = columnModel.getColumn(currentColumn);
-           TableColumn oldColumn;
-           
+                      
            TableStringCheckBoxMenuItem src = (TableStringCheckBoxMenuItem) e.getSource();
-           newColumn.setHeaderValue(src.getTableString());
-           //String name = src.getText();
            
-           /* Already asigned */
+           Object val = newColumn.getHeaderValue();
+           
+           // The column already has a value. The CheckBox corresponding to that value will be unchecked
+           if (val != null && val instanceof FieldModel) {
+        	   ((FieldModel) val).getCheckBoxMenuItem().setState(false);
+           }
+                               
+           newColumn.setHeaderValue(src.getTableString());
+           
+           /* Already assigned on a different column */
            if (src.getState()) {
-                              
-               Enumeration enumeration = columnModel.getColumns();
+                         
+        	   Enumeration enumeration = columnModel.getColumns();
+               TableColumn oldColumn;
                
                while (enumeration.hasMoreElements()) {
                    oldColumn = (TableColumn) enumeration.nextElement();
@@ -63,7 +69,7 @@ public class DialogImportTable extends JDialog {
                            newColumn.setHeaderValue("");
                        else {
                            oldColumn.setHeaderValue("");
-                           src.setState(false);   
+                           src.setState(false);
                        }
                            
                        break;
@@ -80,18 +86,18 @@ public class DialogImportTable extends JDialog {
     MouseAdapter tablePopupListener = new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
             
-            System.err.println("table mousePressed:" + ((JMenuItem) e.getSource()).getActionCommand());
+            //System.err.println("table mousePressed:" + ((JMenuItem) e.getSource()).getActionCommand());
             
             if ("Delete".equals(((JMenuItem) e.getSource()).getActionCommand())) {
                 int [] rows = table.getSelectedRows();
                 DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
                 
-                System.err.println("getRowCount:"  + tableModel.getRowCount());
-                System.err.println("selectedRows:"  + rows.length);
+		//  System.err.println("getRowCount:"  + tableModel.getRowCount());
+                //System.err.println("selectedRows:"  + rows.length);
                 
                 for (int i = rows.length-1; i >= 0; i--) {
                     tableModel.removeRow(rows[i]);  
-                    System.err.println("deleted row:" + rows[i]);
+                    //System.err.println("deleted row:" + rows[i]);
                 }
                 
                 table.updateUI();
@@ -102,7 +108,7 @@ public class DialogImportTable extends JDialog {
                 int columnCount = table.getModel().getColumnCount();
                 int row = table.getSelectedRow();
                 
-                System.err.println("columnCount:" + columnCount);
+                //System.err.println("columnCount:" + columnCount);
                 
                 TableColumnModel columnModel = table.getColumnModel();
                 
@@ -233,7 +239,7 @@ public class DialogImportTable extends JDialog {
                 if (!jth.getCursor().equals(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR))) {
                     
                     
-                    System.err.println("col:" + col);
+                    //System.err.println("col:" + col);
                     currentColumn = col;
                     
                     setHeaderPopupVisible(event.getX(), event.getY(), event, col);
@@ -406,7 +412,7 @@ public class DialogImportTable extends JDialog {
     }
     
     public ModelImportSettings getSettings() {
-        return new ModelImportSettings(table);
+    	return new ModelImportSettings(table);
     }
     
     void importData() {
@@ -475,6 +481,8 @@ public class DialogImportTable extends JDialog {
         String field;
         String value;
         
+        TableStringCheckBoxMenuItem checkBox = null;
+        
         FieldModel(String table, String field) {
             this.table = table;
             this.field = field;
@@ -496,6 +504,16 @@ public class DialogImportTable extends JDialog {
             return value;
         }
         
+        /*
+        public void setCheckBoxMenuItem(TableStringCheckBoxMenuItem checkBox) {
+            this.checkBox = checkBox;
+         }
+         */
+         public TableStringCheckBoxMenuItem getCheckBoxMenuItem() {
+             return checkBox;
+         }
+        
+        
         public String toString() {
             return field;
         }
@@ -508,6 +526,7 @@ public class DialogImportTable extends JDialog {
         TableStringCheckBoxMenuItem(FieldModel tableString) {
             super(tableString.toString());
             this.fieldModel = tableString;
+            tableString.checkBox = this;
         }
         
         public FieldModel getTableString() {

@@ -32,7 +32,7 @@ public class ModelMovieInfo {
     public boolean _hasReadProperties = false;
     public boolean isEpisode = false;
     
-    public int _lastFieldIndex = -1;
+    private int _lastFieldIndex = -1;
     public List _saveLastFieldValue = new ArrayList();
     public List _fieldNames = new ArrayList();
     public List _fieldValues = new ArrayList();
@@ -113,6 +113,14 @@ public class ModelMovieInfo {
         modelUpdatedHandler.modelChanged(source);
     }
     
+    
+    public void setLastFieldIndex(int index) {
+    	_lastFieldIndex = index;
+    }
+    
+    public int getLastFieldIndex() {
+    	return _lastFieldIndex;
+    }
     
     public Image getCoverImage() {
         
@@ -250,6 +258,9 @@ public class ModelMovieInfo {
     
     public void saveAdditionalInfoData() {
         
+    	if (!saveAdditionalInfo)
+    		return;
+    	
         ModelAdditionalInfo additionalInfo = model.getAdditionalInfo();
         
         /* Sets the additional info... */
@@ -319,8 +330,10 @@ public class ModelMovieInfo {
                 
                 database.setGeneralInfoEpisode(model.getKey(), (ModelEpisode) model);
                 database.setAdditionalInfoEpisode(model.getKey(), additionalInfo);
-                database.setExtraInfoEpisode(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
                 
+                if (ModelAdditionalInfo.getExtraInfoFieldNames().size() > 0) {
+                	database.setExtraInfoEpisode(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+                }
             } else {
                 
                 if (((ModelEpisode) model).getMovieKey() == -1)
@@ -354,7 +367,10 @@ public class ModelMovieInfo {
                 
                 if (saveAdditionalInfo) {
                     database.setAdditionalInfo(model.getKey(), additionalInfo);
-                    database.setExtraInfoMovie(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+                    
+                    if (ModelAdditionalInfo.getExtraInfoFieldNames().size() > 0) {
+                    	database.setExtraInfoMovie(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+                    }
                 }
                 
             } else {
@@ -368,7 +384,9 @@ public class ModelMovieInfo {
                     
                     database.addAdditionalInfo(model.getKey(), additionalInfo);
                     
-                    database.addExtraInfoMovie(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+                    if (ModelAdditionalInfo.getExtraInfoFieldNames().size() > 0) {
+                    	database.addExtraInfoMovie(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+                    }
                     
                     /* Add new row in Lists table with default values */
                     ArrayList listNames = database.getListsColumnNames();
@@ -440,17 +458,25 @@ public class ModelMovieInfo {
             /* Saves info... */
             int duration = properties.getDuration();
             
+            //System.err.println("_hasReadProperties:" + _hasReadProperties);
+            //System.err.println("_fieldValues.get(1):" + _fieldValues.get(1));
+            
             if (_hasReadProperties && duration != -1 && !((String) _fieldValues.get(1)).equals("")) { //$NON-NLS-1$
+            	//System.err.println("old duration:" + Integer.parseInt((String) _fieldValues.get(1)));
                 duration += Integer.parseInt((String) _fieldValues.get(1));
             }
-            if(duration != -1) {
+            
+            if (duration != -1) {
                 _fieldValues.set(1, String.valueOf(duration));
-                _saveLastFieldValue.set(1,new Boolean(false));
+                _saveLastFieldValue.set(1, new Boolean(false));
             } else {
                 _fieldValues.set(1, ""); //$NON-NLS-1$
             }
             
             int fileSize = properties.getFileSize();
+            
+            //System.err.println("file size:" + fileSize);
+            //System.err.println("_fieldValues.get(2):" + _fieldValues.get(2));
             
             if (_hasReadProperties && fileSize != -1 && !((String) _fieldValues.get(2)).equals("")) { //$NON-NLS-1$
                 fileSize += Integer.parseInt((String) _fieldValues.get(2));
@@ -458,7 +484,7 @@ public class ModelMovieInfo {
             
             if (fileSize != -1) {
                 _fieldValues.set(2,String.valueOf(fileSize));
-                _saveLastFieldValue.set(2,new Boolean(false));
+                _saveLastFieldValue.set(2, new Boolean(false));
             } else {
                 _fieldValues.set(2,""); //$NON-NLS-1$
             }
@@ -466,12 +492,12 @@ public class ModelMovieInfo {
             if (fileSize != -1) {
                 int cds = (int)Math.ceil(fileSize / 702.0);
                 _fieldValues.set(3,String.valueOf(cds));
-                _saveLastFieldValue.set(3,new Boolean(false));
+                _saveLastFieldValue.set(3, new Boolean(false));
             }
             
             if (((String) _fieldValues.get(4)).equals("")) { //$NON-NLS-1$
                 _fieldValues.set(4,String.valueOf(1));
-                _saveLastFieldValue.set(4,new Boolean(false));
+                _saveLastFieldValue.set(4, new Boolean(false));
             }
             
             _fieldValues.set(5,properties.getVideoResolution());
@@ -545,8 +571,12 @@ public class ModelMovieInfo {
                 }
             }
             
+            //System.err.println("_lastFieldIndex:" + _lastFieldIndex);
+            
+            if (_lastFieldIndex != -1)
             /* The value currently in the selected index will not be saved, but be replaced by the new info */
             _saveLastFieldValue.set(_lastFieldIndex, new Boolean(false).toString());
+            
             //executeCommandAdditionalInfo();
             for (int u = 0; u < _saveLastFieldValue.size(); u++) {
                 _saveLastFieldValue.set(u, new Boolean(true));
@@ -555,7 +585,7 @@ public class ModelMovieInfo {
             _hasReadProperties = true;
             
         } catch (Exception e) {
-            log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
+            log.error("Exception: " + e.getMessage(), e); //$NON-NLS-1$
         }
         
     }
@@ -563,6 +593,8 @@ public class ModelMovieInfo {
     
     public void initializeAdditionalInfo(boolean loadEmpty) {
         
+    	//System.err.println("loadEmpty:" + loadEmpty);
+    	
         ModelAdditionalInfo additionalInfo = null;
         
         _saveLastFieldValue = new ArrayList();
@@ -597,6 +629,10 @@ public class ModelMovieInfo {
         
         _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("File Size"); //$NON-NLS-1$
+        
+	
+        //if (additionalInfo != null)
+	//  System.err.println(" additionalInfo.getFileSize():" +  additionalInfo.getFileSize());
         
         if (!loadEmpty && additionalInfo.getFileSize() > 0) {
             _fieldValues.add(String.valueOf(additionalInfo.getFileSize()));

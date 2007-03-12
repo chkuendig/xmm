@@ -29,8 +29,6 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JDialog;
-
 public class MovieManagerCommandLists implements ActionListener {
     
     Window parent;
@@ -43,16 +41,16 @@ public class MovieManagerCommandLists implements ActionListener {
      * Executes the command.
      **/
     public static void execute(Window dialog) {
-	DialogLists dialogLists;
-    
-    if (dialog instanceof Dialog)
-        dialogLists = new DialogLists((Dialog) dialog);
-    else
-        dialogLists = new DialogLists((Frame) dialog);
-    
-	GUIUtil.show(dialogLists, true);
+    	DialogLists dialogLists;
+
+    	if (dialog instanceof Dialog)
+    		dialogLists = new DialogLists((Dialog) dialog);
+    	else
+    		dialogLists = new DialogLists((Frame) dialog);
+
+    	GUIUtil.showAndWait(dialogLists, true);
     }
-    
+
     /**
      * Invoked when an action occurs.
      **/

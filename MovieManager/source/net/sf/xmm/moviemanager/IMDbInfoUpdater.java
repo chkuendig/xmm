@@ -53,6 +53,8 @@ public class IMDbInfoUpdater {
     
     Database database = MovieManager.getIt().getDatabase();
     
+    boolean skipEntriesWithIMDbID = false;
+    
    /* 0 = No, 1 = Yes, 2 = Yes, but only if empty */
     
     public int title = 0;
@@ -186,11 +188,10 @@ public class IMDbInfoUpdater {
 			try {
 				
 			    while (!isReady())
-				Thread.sleep(1000);
+			    	Thread.sleep(1000);
 
 			    IMDB imdb;
-				
-				
+								
 			    if (model.getUrlKey().equals("")) {
                    log.info("UrlKey is empty");
                    
@@ -201,7 +202,9 @@ public class IMDbInfoUpdater {
                    else
                        return;
                 }
-                
+			    else if (skipEntriesWithIMDbID) {
+				return;
+			    }
 			    for (int i = 0; i < 5; i++) {
 				    
 				if (httpclient) {
@@ -362,6 +365,7 @@ model.setDirectedBy(imdb.getDirectedBy());
 					        }
                         }
                         
+					    //modelInfo.saveAdditionalInfo = false;
                         modelInfo.saveToDatabase(null);
                         
 					    //database.setGeneralInfo((ModelMovie) model);
@@ -411,15 +415,15 @@ model.setDirectedBy(imdb.getDirectedBy());
 			} finally {
 			    /* Release the connection. */
 			    if (httpclient && method != null) {
-				method.releaseConnection();
-				method = null;
+			    	method.releaseConnection();
+			    	method = null;
 			    }
 			    
 			    decreaseThreadCount();
 			    encreaseSuccess();
-				    
-			    addTransferred(model.getTitle());
 			}
+			
+			addTransferred(model.getTitle());
 			return;
 		    }
 		}
@@ -438,7 +442,7 @@ model.setDirectedBy(imdb.getDirectedBy());
 	    /* Waits untill all the threads are finished */
 	    while (getThreadCount() > 0) {
 		Thread.sleep(400);
-		log.debug("Thread count:" + getThreadCount());
+		//log.debug("Thread count:" + getThreadCount());
 	    }
 	    
 	    log.debug("Done updating list!");
