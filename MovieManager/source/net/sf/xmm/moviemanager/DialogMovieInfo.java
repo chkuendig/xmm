@@ -494,7 +494,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
                 log.debug("actionPerformed: MovieInfo - Cover"); //$NON-NLS-1$
                 executeCommandCover();
             }});
-        cover.setTransferHandler(new CoverTransferHandler(movieInfoModel));
+        cover.setTransferHandler(new CoverTransferHandler(this));
         constraints = new GridBagConstraints();
         constraints.gridx = 8;
         constraints.gridy = 0;
@@ -1222,7 +1222,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
      * Sets _cover and _coverData.
      **/
     public void setCover(String cover, byte[] coverData) {
-        movieInfoModel.setSaveCover(true);
+    	updateModelFromGeneralInfo();
+    	movieInfoModel.setSaveCover(true);
         movieInfoModel.setCover(cover, coverData);
     }
     
@@ -1352,6 +1353,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
      * Changes the seen status...
      **/
     private void executeCommandSeen() {
+    	updateModelFromGeneralInfo();
         movieInfoModel.setSeen(!movieInfoModel.model.getSeen());
     }
     
@@ -1658,27 +1660,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
                 
             }
             
-            /* 
-             * Updates the general info on the already existing movie
-             */
-            movieInfoModel.model.setDate(getDate().getText());
-            movieInfoModel.model.setUrlKey(getIMDb().getText());
-            movieInfoModel.model.setTitle(getMovieTitle().getText());
-            movieInfoModel.model.setDirectedBy(getDirectedBy().getText());
-            movieInfoModel.model.setWrittenBy(getWrittenBy().getText());
-            movieInfoModel.model.setGenre(getGenre().getText());
-            movieInfoModel.model.setRating(getRating().getText());
-            movieInfoModel.model.setPlot(getPlot().getText());
-            movieInfoModel.model.setCast(getCast().getText());
-            movieInfoModel.model.setNotes(getNotes().getText());
-            movieInfoModel.model.setAka(getAka().getText());
-            movieInfoModel.model.setCountry(getCountry().getText());
-            movieInfoModel.model.setLanguage(getLanguage().getText());
-            movieInfoModel.model.setColour(getColour().getText());
-            movieInfoModel.model.setCertification(getCertification().getText());
-            movieInfoModel.model.setWebSoundMix(getWebSoundMix().getText());
-            movieInfoModel.model.setWebRuntime(getWebRuntime().getText());
-            movieInfoModel.model.setAwards(getAwards().getText());
+            updateModelFromGeneralInfo();
             
             movieInfoModel.saveAdditionalInfoData();
             
@@ -1698,6 +1680,33 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         
         return movieInfoModel.model;
     }
+
+	/**
+	 * 
+	 */
+	private void updateModelFromGeneralInfo() {
+		/* 
+		 * Updates the general info on the already existing movie
+		 */
+		movieInfoModel.model.setDate(getDate().getText());
+		movieInfoModel.model.setUrlKey(getIMDb().getText());
+		movieInfoModel.model.setTitle(getMovieTitle().getText());
+		movieInfoModel.model.setDirectedBy(getDirectedBy().getText());
+		movieInfoModel.model.setWrittenBy(getWrittenBy().getText());
+		movieInfoModel.model.setGenre(getGenre().getText());
+		movieInfoModel.model.setRating(getRating().getText());
+		movieInfoModel.model.setPlot(getPlot().getText());
+		movieInfoModel.model.setCast(getCast().getText());
+		movieInfoModel.model.setNotes(getNotes().getText());
+		movieInfoModel.model.setAka(getAka().getText());
+		movieInfoModel.model.setCountry(getCountry().getText());
+		movieInfoModel.model.setLanguage(getLanguage().getText());
+		movieInfoModel.model.setColour(getColour().getText());
+		movieInfoModel.model.setCertification(getCertification().getText());
+		movieInfoModel.model.setWebSoundMix(getWebSoundMix().getText());
+		movieInfoModel.model.setWebRuntime(getWebRuntime().getText());
+		movieInfoModel.model.setAwards(getAwards().getText());
+	}
     
     
     public void executeAndReloadMovieList(ModelEntry reloadEntry) {
@@ -2022,7 +2031,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
     }
     
     
-    public void updateGeneralInfoFromModel() {
+    private void updateGeneralInfoFromModel() {
         
     	
         getMovieTitle().setText(movieInfoModel.model.getTitle());

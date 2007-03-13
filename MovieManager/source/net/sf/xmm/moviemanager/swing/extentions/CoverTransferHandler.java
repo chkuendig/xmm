@@ -8,15 +8,16 @@ import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
 import org.apache.log4j.Logger;
-import net.sf.xmm.moviemanager.models.ModelMovieInfo;
+
+import net.sf.xmm.moviemanager.DialogMovieInfo;
 
 public class CoverTransferHandler extends TransferHandler {
    static Logger log = Logger.getRootLogger();
 
-   private ModelMovieInfo movieInfo;
+   private DialogMovieInfo movieDialog;
    
-   public CoverTransferHandler(ModelMovieInfo info) {
-       this.movieInfo = info;
+   public CoverTransferHandler(DialogMovieInfo dialog) {
+       this.movieDialog = dialog;
    }
 
    
@@ -78,14 +79,12 @@ public class CoverTransferHandler extends TransferHandler {
            inputStream.close();
            ImageIcon image = new ImageIcon(_coverData);
            if (image.getIconHeight() > 1 && image.getIconWidth() > 1) {
-               movieInfo.setCover(coverName, _coverData);
+               movieDialog.setCover(coverName, _coverData);
                /*
                movieInfo.getCover().setIcon(
                        new ImageIcon(Toolkit.getDefaultToolkit().createImage(_coverData).getScaledInstance(97, 145,
                                Image.SCALE_FAST)));
                */
-               
-               movieInfo.setSaveCover(true);
                return true;
 
            } else {
