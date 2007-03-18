@@ -20,17 +20,16 @@
 
 package net.sf.xmm.moviemanager.commands;
 
-import net.sf.xmm.moviemanager.*;
+import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.util.FileUtil;
 
 import org.apache.log4j.Logger;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import edu.stanford.ejalbert.BrowserLauncher;
+
+import java.awt.event.*;
 import java.io.File;
 import java.lang.reflect.Method;
-import edu.stanford.ejalbert.BrowserLauncher;
 
 public class MovieManagerCommandOpenPage extends MouseAdapter implements ActionListener {
     
@@ -86,10 +85,10 @@ public class MovieManagerCommandOpenPage extends MouseAdapter implements ActionL
                         }
                         else {
                             
-                            if (browser.equals("Default") && MovieManager.isWindows()) {
+                            if (browser.equals("Default") && FileUtil.isWindows()) {
                                 Process p = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
                             }
-                            else if (browser.equals("Default") && MovieManager.isMac()) {
+                            else if (browser.equals("Default") && FileUtil.isMac()) {
                                 Class macUtils = Class.forName("com.apple.mrj.MRJFileUtils");
                                 Method openURL = macUtils.getDeclaredMethod("openURL", new Class[] {String.class});
                                 openURL.invoke(null, new Object[] {url});

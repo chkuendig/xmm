@@ -79,11 +79,8 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     			/* Creates a new MS Access database file... */
     			File dataBaseFile = new File(filePath);
 
-    			//System.err.println("filePath:" + filePath);
-    			//System.err.println("dataBaseFile:" + dataBaseFile.getAbsolutePath());
-
     			if (!dataBaseFile.createNewFile()) {
-    				throw new Exception("Cannot create database file."); //$NON-NLS-1$
+			    throw new Exception("Cannot create database file."); //$NON-NLS-1$
     			}
 
     			/* Copies the empty database file in the package to the new file... */
@@ -214,7 +211,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	ExtendedFileChooser fileChooser = new ExtendedFileChooser();
 	newDatabaseType = 1;
 	
-	if (MovieManager.isWindows()) {
+	if (FileUtil.isWindows()) {
 		if (MovieManager.getIt().getDatabase() instanceof DatabaseAccess) {
 			fileChooser.setFileFilter(new CustomFileFilter(new String[]{"mdb", "accdb"},new String("MS Access Database File (*.mdb, *.accdb)"))); //$NON-NLS-1$ //$NON-NLS-2$
 			fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"properties", "script"},new String("HSQL Database Files (*.properties, *.script)"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -258,7 +255,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     
     protected void execute() {
     	
-    	if (!MovieManager.isWindows() && !MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL")) {
+    	if (!FileUtil.isWindows() && !MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL")) {
     		DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.alert.windows-only.title"), Localizer.getString("MovieManagerCommandConvertDatabase.alert.windows-only.message"));
     		GUIUtil.showAndWait(alert, true);
     	}
