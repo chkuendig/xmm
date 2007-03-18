@@ -23,25 +23,20 @@ package net.sf.xmm.moviemanager;
 import net.sf.xmm.moviemanager.DialogImportTable.FieldModel;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMovies;
 import net.sf.xmm.moviemanager.database.DatabaseExtreme;
-import net.sf.xmm.moviemanager.util.FileUtil;
-import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.SwingWorker;
 import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.*;
-import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.*;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Unmarshaller;
 
 import java.awt.Dialog;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
-import javax.swing.*;
+
+import javax.swing.JDialog;
+import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
@@ -78,7 +73,7 @@ public class DatabaseImporter {
                 	importer =  new Importer(importSettings);
                 }
                 catch (Exception e) {
-                    log.warn("Exception:" + e.getMessage());   
+                    log.warn("Exception:" + e.getMessage(), e);   
                 }
                 return importer;
             }
@@ -659,9 +654,7 @@ public class DatabaseImporter {
         
         
         protected ArrayList getMovieList() throws Exception {
-            
-	    //System.err.println("getMovieList():" + importMode);
-        	
+            	
 	    ArrayList movieList = null;
             
             /* Textfile */
@@ -692,13 +685,11 @@ public class DatabaseImporter {
                 /* Excel spreadsheet */
             } else if (importMode == 1) {
                 
-            	//System.err.println("importMode excel");
-            	
                 try {
                     
-                	movieList = new ArrayList(10);
+		    movieList = new ArrayList(10);
                 	
-                	JTable table = importSettings.table;
+		    JTable table = importSettings.table;
                     
                     TableModel tableModel = table.getModel();
                     TableColumnModel columnModel = table.getColumnModel();
@@ -720,13 +711,10 @@ public class DatabaseImporter {
                             tmpColumn = columnModel.getColumn(columnIndex);
                             Object val = tmpColumn.getHeaderValue();
                             
-                            if (! (val instanceof FieldModel)) {
-                                System.err.println("val not instanceof FieldModel:" + val);
+                            if (!(val instanceof FieldModel)) {
                                 continue;
                             }
-                            
-                            //System.err.println("VAL instanceof FieldModel:" + val);
-                            
+                             
                             fieldModel = (FieldModel) val;
                             
                             // column has been assigned an info field 
@@ -737,7 +725,6 @@ public class DatabaseImporter {
                                 
                                 if (tmpMovie.setValue(fieldModel)) {
                                     valueStored = true;
-                                    //System.err.println("Saved:" + fieldModel);
                                 }
                             }
                         }
@@ -790,75 +777,9 @@ public class DatabaseImporter {
 		    movieList = ((ModelExportXML) tmp).getCombindedList();
 		}
 	    }
-            
-            //System.err.println("getMovieList() ENDS");
             return movieList;
         }
-        
-        /*
-        void importData() {
-            
-            ModelImportSettings settings = new ModelImportSettings(table);
-            
-            TableModel tableModel = table.getModel();
-            TableColumnModel columnModel = table.getColumnModel();
-            int columnCount = table.getModel().getColumnCount();
-            
-            ModelMovieInfo movieInfo = new ModelMovieInfo(false, true);
-            TableColumn tmpColumn;
-            FieldModel fieldModel;
-            String tableValue;
-            ModelMovie tmpMovie;
-            boolean valueStored = false;
-            
-            for (int row = 0; row < tableModel.getRowCount(); row++) {
-                
-                tmpMovie = new ModelMovie();
-                
-                for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-                    
-                    tmpColumn = columnModel.getColumn(columnIndex);
-                    Object val = tmpColumn.getHeaderValue();
-                    
-                    if (! (val instanceof FieldModel)) {
-                        System.err.println("val not instanceof FieldModel:" + val);
-                        continue;
-                    }
-                    
-                    //System.err.println("VAL instanceof FieldModel:" + val);
-                    
-                    fieldModel = (FieldModel) val;
-                    
-                    // column has been assigned an info field 
-                    if (!fieldModel.toString().trim().equals("")) {
-                        
-                        tableValue = (String) table.getModel().getValueAt(row, columnIndex);
-                        fieldModel.setValue(tableValue);
-                        
-                        if (tmpMovie.setValue(fieldModel)) {
-                            valueStored = true;
-                            System.err.println("Saved:" + fieldModel);
-                        }
-                       // System.err.println(fieldModel);
-                    }
-                
-                    movieList.add(tmpMovie);
-                }
-                
-                // At least one value has been saved 
-                if (valueStored) {
-                    movieInfo.setModel(tmpMovie, false, false);
-                    
-                    try {
-                        movieInfo.saveToDatabase(null);
-                    } catch (Exception e) {
-                        log.error("Failed to save movie:" + tmpMovie.getTitle(), e);
-                    }
-                    }
-            }
-        
-        }
-        */
+               
 	
         /**
          * Gets the IMDB info for movies (multiAdd)
@@ -870,7 +791,7 @@ public class DatabaseImporter {
             if (!searchString.equals("")) { //$NON-NLS-1$
                 DialogIMDB dialogIMDB = new DialogIMDB(modelMovieInfo, searchString, filename, this, multiAddSelectOption, null);
             } else {
-                DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.alert"),Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
+                DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.alert"), Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
                 GUIUtil.showAndWait(alert, true);
             }
         }
