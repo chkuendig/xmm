@@ -20,10 +20,9 @@
 
 package net.sf.xmm.moviemanager.fileproperties;
 
-import net.sf.xmm.moviemanager.util.FileUtil;
-//import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.mediainfodll.MediaInfo;
-import net.sf.xmm.moviemanager.util.*;
+import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.LibPathHacker;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -35,20 +34,18 @@ class FilePropertiesMediaInfo extends FileProperties {
     FilePropertiesMediaInfo(String filePath) throws Exception {
 	this.filePath = filePath;
 	
-	log.debug("FilePropertiesMediaInfo:");
-	
- 	File jnative = new File((FileUtil.getFile("lib\\JNative.dll")).getPath());
+ 	File jnative = new File((FileUtil.getFile("lib\\JNativeCpp.dll")).getPath());
 	File mediaInfo = new File((FileUtil.getFile("lib\\MediaInfo.dll")).getPath());
 	
 	if (jnative.exists() && mediaInfo.exists()) {
-	    LibPathHacker.addDir(new File("lib").getAbsolutePath());
+	    LibPathHacker.addDir(FileUtil.getFile("lib").getAbsolutePath());
 	    System.load(mediaInfo.getAbsolutePath());
 	}
 	else {
 	    String error = "";
 	    
 	    if (!jnative.exists())
-		error += "JNative.dll";
+		error += "JNativeCpp.dll";
 	    
 	    if (!mediaInfo.exists()) {
 		
@@ -72,8 +69,11 @@ class FilePropertiesMediaInfo extends FileProperties {
 	    
 	    int open = mi.Open(filePath);
 	    String tmp;
-		
+	 
 	    if (open > 0) {
+	    	
+	    	supported = true;
+	    	
 		String audioCodec = "";
 		String audioChannels = "";
 		String audioRate = "";
