@@ -1,3 +1,23 @@
+/**
+ * @(#)ModelMovieInfo.java 29.01.06 (dd.mm.yy)
+ *
+ * Copyright (2003) Bro3
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with 
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Boston, MA 02111.
+ * 
+ * Contact: bro3@users.sourceforge.net
+ **/
+
 package net.sf.xmm.moviemanager.models;
 
 import net.sf.xmm.moviemanager.MovieManager;
@@ -189,7 +209,7 @@ public class ModelMovieInfo {
     }
     
     public void setCover(String cover, byte[] coverData) {
-        model.setCover(cover);
+    	model.setCover(cover);
         model.setCoverData(coverData);
         
         modelChanged(this);
@@ -206,8 +226,8 @@ public class ModelMovieInfo {
     }
     
     public void setGeneralInfoFieldsEmpty() {
-        
-        model.setKey(-1);
+       
+    	model.setKey(-1);
         model.setUrlKey("");
         model.setCover("");
         model.setCoverData(null);
@@ -435,7 +455,7 @@ public class ModelMovieInfo {
             
             try {
                 /* Reads the info... */
-                FilePropertiesMovie properties = new FilePropertiesMovie(file[i].getAbsolutePath(), MovieManager.getConfig().getUseMediaInfoDLL());
+            	FilePropertiesMovie properties = new FilePropertiesMovie(file[i].getAbsolutePath(), MovieManager.getConfig().getUseMediaInfoDLL());
                 
                 getFileInfo(properties);
                 
@@ -450,20 +470,14 @@ public class ModelMovieInfo {
         
         try {
             
-            //executeCommandAdditionalInfo();
-            
             if (!properties.getSubtitles().equals("")) //$NON-NLS-1$
                 _fieldValues.set(0, properties.getSubtitles());
             
             /* Saves info... */
             int duration = properties.getDuration();
-            
-            //System.err.println("_hasReadProperties:" + _hasReadProperties);
-            //System.err.println("_fieldValues.get(1):" + _fieldValues.get(1));
-            
+             
             if (_hasReadProperties && duration != -1 && !((String) _fieldValues.get(1)).equals("")) { //$NON-NLS-1$
-            	//System.err.println("old duration:" + Integer.parseInt((String) _fieldValues.get(1)));
-                duration += Integer.parseInt((String) _fieldValues.get(1));
+            	duration += Integer.parseInt((String) _fieldValues.get(1));
             }
             
             if (duration != -1) {
@@ -474,9 +488,6 @@ public class ModelMovieInfo {
             }
             
             int fileSize = properties.getFileSize();
-            
-            //System.err.println("file size:" + fileSize);
-            //System.err.println("_fieldValues.get(2):" + _fieldValues.get(2));
             
             if (_hasReadProperties && fileSize != -1 && !((String) _fieldValues.get(2)).equals("")) { //$NON-NLS-1$
                 fileSize += Integer.parseInt((String) _fieldValues.get(2));
@@ -571,13 +582,10 @@ public class ModelMovieInfo {
                 }
             }
             
-            //System.err.println("_lastFieldIndex:" + _lastFieldIndex);
-            
             if (_lastFieldIndex != -1)
             /* The value currently in the selected index will not be saved, but be replaced by the new info */
             _saveLastFieldValue.set(_lastFieldIndex, new Boolean(false).toString());
             
-            //executeCommandAdditionalInfo();
             for (int u = 0; u < _saveLastFieldValue.size(); u++) {
                 _saveLastFieldValue.set(u, new Boolean(true));
             }
@@ -592,9 +600,7 @@ public class ModelMovieInfo {
     
     
     public void initializeAdditionalInfo(boolean loadEmpty) {
-        
-    	//System.err.println("loadEmpty:" + loadEmpty);
-    	
+       
         ModelAdditionalInfo additionalInfo = null;
         
         _saveLastFieldValue = new ArrayList();
@@ -630,10 +636,7 @@ public class ModelMovieInfo {
         _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("File Size"); //$NON-NLS-1$
         
-	
-        //if (additionalInfo != null)
-	//  System.err.println(" additionalInfo.getFileSize():" +  additionalInfo.getFileSize());
-        
+	   
         if (!loadEmpty && additionalInfo.getFileSize() > 0) {
             _fieldValues.add(String.valueOf(additionalInfo.getFileSize()));
         } else {
@@ -740,7 +743,6 @@ public class ModelMovieInfo {
             _fieldValues.add(""); //$NON-NLS-1$
         }
         
-        
         _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Container"); //$NON-NLS-1$
         
@@ -763,6 +765,7 @@ public class ModelMovieInfo {
         
         if (!loadEmpty)
             extraFieldValues = additionalInfo.getExtraInfoFieldValues();
+       
         
         for (int i = 0; i < extraFieldNames.size(); i++) {
             
@@ -800,7 +803,7 @@ public class ModelMovieInfo {
         String coverName = model.getCover();
         
         if (cover == null || coverName == null || coverName.equals("")) {
-	    throw new Exception("Unable to save cover file:" + coverName);
+        	throw new Exception("Unable to save cover file:" + coverName);
         }
         
         /* Saves the cover... */      

@@ -1,20 +1,39 @@
+/**
+ * @(#)DialogImportTable.java 29.01.06 (dd.mm.yy)
+ *
+ * Copyright (2003) Bro3
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with 
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Boston, MA 02111.
+ * 
+ * Contact: bro3@users.sourceforge.net
+ **/
+
 package net.sf.xmm.moviemanager;
-
-
 
 import net.sf.xmm.moviemanager.models.ModelImportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
-import net.sf.xmm.moviemanager.swing.util.table.*;
-import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.swing.util.table.ColumnGroup;
+import net.sf.xmm.moviemanager.swing.util.table.GroupableTableColumnModel;
+import net.sf.xmm.moviemanager.swing.util.table.GroupableTableHeader;
+
+import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
-
-import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -37,133 +56,133 @@ public class DialogImportTable extends JDialog {
     ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames();
     
     MouseAdapter headerPopupListener = new MouseAdapter() {
-       public void mousePressed(MouseEvent e) {
+			public void mousePressed(MouseEvent e) {
+				
+				TableColumnModel columnModel = tableHeader.getColumnModel();
+				TableColumn newColumn = columnModel.getColumn(currentColumn);
+				
+				TableStringCheckBoxMenuItem src = (TableStringCheckBoxMenuItem) e.getSource();
            
-           TableColumnModel columnModel = tableHeader.getColumnModel();
-           TableColumn newColumn = columnModel.getColumn(currentColumn);
-                      
-           TableStringCheckBoxMenuItem src = (TableStringCheckBoxMenuItem) e.getSource();
+				Object val = newColumn.getHeaderValue();
            
-           Object val = newColumn.getHeaderValue();
-           
-           // The column already has a value. The CheckBox corresponding to that value will be unchecked
-           if (val != null && val instanceof FieldModel) {
-        	   ((FieldModel) val).getCheckBoxMenuItem().setState(false);
-           }
+				// The column already has a value. The CheckBox corresponding to that value will be unchecked
+				if (val != null && val instanceof FieldModel) {
+					((FieldModel) val).getCheckBoxMenuItem().setState(false);
+				}
                                
-           newColumn.setHeaderValue(src.getTableString());
+				newColumn.setHeaderValue(src.getTableString());
            
-           /* Already assigned on a different column */
-           if (src.getState()) {
+				/* Already assigned on a different column */
+				if (src.getState()) {
                          
-        	   Enumeration enumeration = columnModel.getColumns();
-               TableColumn oldColumn;
+					Enumeration enumeration = columnModel.getColumns();
+					TableColumn oldColumn;
                
-               while (enumeration.hasMoreElements()) {
-                   oldColumn = (TableColumn) enumeration.nextElement();
+					while (enumeration.hasMoreElements()) {
+						oldColumn = (TableColumn) enumeration.nextElement();
                    
-                   if (oldColumn.getHeaderValue().equals(src.getTableString())) {
+						if (oldColumn.getHeaderValue().equals(src.getTableString())) {
                        
-                       /* Removing the title */
-                       if (oldColumn.equals(newColumn))
-                           newColumn.setHeaderValue("");
-                       else {
-                           oldColumn.setHeaderValue("");
-                           src.setState(false);
-                       }
+							/* Removing the title */
+							if (oldColumn.equals(newColumn))
+								newColumn.setHeaderValue("");
+							else {
+								oldColumn.setHeaderValue("");
+								src.setState(false);
+							}
                            
-                       break;
-                   }
-               }
-           }           
-           tableHeader.updateUI();
-       }
-    };
+							break;
+						}
+					}
+				}           
+				tableHeader.updateUI();
+			}
+		};
     
     JPopupMenu headerPopupMenu = makeHeaderPopupMenu();
     
     
     MouseAdapter tablePopupListener = new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
+			public void mousePressed(MouseEvent e) {
             
-            //System.err.println("table mousePressed:" + ((JMenuItem) e.getSource()).getActionCommand());
+				//System.err.println("table mousePressed:" + ((JMenuItem) e.getSource()).getActionCommand());
             
-            if ("Delete".equals(((JMenuItem) e.getSource()).getActionCommand())) {
-                int [] rows = table.getSelectedRows();
-                DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+				if ("Delete".equals(((JMenuItem) e.getSource()).getActionCommand())) {
+					int [] rows = table.getSelectedRows();
+					DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
                 
-		//  System.err.println("getRowCount:"  + tableModel.getRowCount());
-                //System.err.println("selectedRows:"  + rows.length);
+					//  System.err.println("getRowCount:"  + tableModel.getRowCount());
+					//System.err.println("selectedRows:"  + rows.length);
                 
-                for (int i = rows.length-1; i >= 0; i--) {
-                    tableModel.removeRow(rows[i]);  
-                    //System.err.println("deleted row:" + rows[i]);
-                }
+					for (int i = rows.length-1; i >= 0; i--) {
+						tableModel.removeRow(rows[i]);  
+						//System.err.println("deleted row:" + rows[i]);
+					}
                 
-                table.updateUI();
-            }
-            else if (1 == 0){
-                /* Putting row values in the header */
+					table.updateUI();
+				}
+				else if (1 == 0){
+					/* Putting row values in the header */
                 
-                int columnCount = table.getModel().getColumnCount();
-                int row = table.getSelectedRow();
+					int columnCount = table.getModel().getColumnCount();
+					int row = table.getSelectedRow();
                 
-                //System.err.println("columnCount:" + columnCount);
+					//System.err.println("columnCount:" + columnCount);
                 
-                TableColumnModel columnModel = table.getColumnModel();
+					TableColumnModel columnModel = table.getColumnModel();
                 
-                TableColumn column;
-                String tempVal;
+					TableColumn column;
+					String tempVal;
                 
-                GroupableTableColumnModel cm = (GroupableTableColumnModel) table.getColumnModel();
-                GroupableTableHeader header = (GroupableTableHeader)table.getTableHeader();
-                ColumnGroup g_name;
+					GroupableTableColumnModel cm = (GroupableTableColumnModel) table.getColumnModel();
+					GroupableTableHeader header = (GroupableTableHeader)table.getTableHeader();
+					ColumnGroup g_name;
                 
-                for (int i = 0; i < columnCount; i++) {
-                    column = columnModel.getColumn(i);
-                    tempVal = (String) table.getModel().getValueAt(row, i);
+					for (int i = 0; i < columnCount; i++) {
+						column = columnModel.getColumn(i);
+						tempVal = (String) table.getModel().getValueAt(row, i);
                 
-                    //column.setHeaderValue(tempVal);
-                    g_name = new ColumnGroup(tempVal);
-                    g_name.add(cm.getColumn(i));
-                    //cm.addColumnGroup(g_name);
+						//column.setHeaderValue(tempVal);
+						g_name = new ColumnGroup(tempVal);
+						g_name.add(cm.getColumn(i));
+						//cm.addColumnGroup(g_name);
                     
-                    cm.addColumnGroup(g_name);
+						cm.addColumnGroup(g_name);
                     
-                    //System.err.println(tempVal);
-                }
+						//System.err.println(tempVal);
+					}
                 
-                header.setColumnModel(cm);
+					header.setColumnModel(cm);
                 
-                table.getTableHeader().resizeAndRepaint();
-                table.updateUI();
+					table.getTableHeader().resizeAndRepaint();
+					table.updateUI();
                       
-                //pack();
+					//pack();
                 
-                // Setup Column Groups
-                /*
-                GroupableTableColumnModel cm = (GroupableTableColumnModel) table.getColumnModel();
-                ColumnGroup g_name = new ColumnGroup( "Name");
-                g_name.add(cm.getColumn(1));
+					// Setup Column Groups
+					/*
+					  GroupableTableColumnModel cm = (GroupableTableColumnModel) table.getColumnModel();
+					  ColumnGroup g_name = new ColumnGroup( "Name");
+					  g_name.add(cm.getColumn(1));
                 
-                ColumnGroup g_token = new ColumnGroup(new GroupableTableCellRenderer(), "Second");
-                g_name.add(g_token);
-                g_token.add(cm.getColumn(2));
-                g_token.add(cm.getColumn(3));
-                ColumnGroup g_lang = new ColumnGroup("Language");
-                g_lang.add(cm.getColumn(4));
-                ColumnGroup g_other = new ColumnGroup("Others");
-                g_other.add(cm.getColumn(5));
+					  ColumnGroup g_token = new ColumnGroup(new GroupableTableCellRenderer(), "Second");
+					  g_name.add(g_token);
+					  g_token.add(cm.getColumn(2));
+					  g_token.add(cm.getColumn(3));
+					  ColumnGroup g_lang = new ColumnGroup("Language");
+					  g_lang.add(cm.getColumn(4));
+					  ColumnGroup g_other = new ColumnGroup("Others");
+					  g_other.add(cm.getColumn(5));
                
-                GroupableTableHeader header = (GroupableTableHeader)table.getTableHeader();
-                cm.addColumnGroup(g_name);
-                cm.addColumnGroup(g_lang);
-                */
+					  GroupableTableHeader header = (GroupableTableHeader)table.getTableHeader();
+					  cm.addColumnGroup(g_name);
+					  cm.addColumnGroup(g_lang);
+					*/
                 
                 
-            }
-        }
-    };
+				}
+			}
+		};
     
     JPopupMenu tablePopupMenu = makeTablePopupMenu();
     
@@ -174,18 +193,18 @@ public class DialogImportTable extends JDialog {
         
         /* Close dialog... */
         addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
+				public void windowClosing(WindowEvent e) {
+					dispose();
+				}
             });
         
         /* Enables dispose when pushing escape */
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
         Action escapeAction = new AbstractAction()
             {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+				}
             };
         
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
@@ -216,7 +235,7 @@ public class DialogImportTable extends JDialog {
                 
             dm.setDataVector(data, emptyColumnNames);
             
-//          Setup table
+			//          Setup table
             table = new JTable( /*dm, new GroupableTableColumnModel()*/);
             //table.setColumnModel(new GroupableTableColumnModel());
             //table.setTableHeader(new GroupableTableHeader((GroupableTableColumnModel) table.getColumnModel()));
@@ -224,28 +243,28 @@ public class DialogImportTable extends JDialog {
             
             
             table.addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent event) {
-                    setTablePopupVisible(event.getX(), event.getY(), event);
-                }
-            });
+					public void mouseClicked(MouseEvent event) {
+						setTablePopupVisible(event.getX(), event.getY(), event);
+					}
+				});
             
             tableHeader = table.getTableHeader();
             tableHeader.addMouseListener(new MouseAdapter() {
-              public void mouseClicked(MouseEvent event) {
-                JTableHeader jth = (JTableHeader) event.getSource();
-                int col = jth.columnAtPoint(event.getPoint());
+					public void mouseClicked(MouseEvent event) {
+						JTableHeader jth = (JTableHeader) event.getSource();
+						int col = jth.columnAtPoint(event.getPoint());
                 
-                Rectangle r = jth.getHeaderRect(col);
-                if (!jth.getCursor().equals(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR))) {
+						Rectangle r = jth.getHeaderRect(col);
+						if (!jth.getCursor().equals(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR))) {
                     
                     
-                    //System.err.println("col:" + col);
-                    currentColumn = col;
+							//System.err.println("col:" + col);
+							currentColumn = col;
                     
-                    setHeaderPopupVisible(event.getX(), event.getY(), event, col);
-                }
-              }
-            });
+							setHeaderPopupVisible(event.getX(), event.getY(), event, col);
+						}
+					}
+				});
             
            
             
@@ -260,11 +279,11 @@ public class DialogImportTable extends JDialog {
             JButton buttonDone = new JButton("Import Data");
             
             buttonDone.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    dispose();
-                }
-            }
-            );
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				}
+										 );
             
             panelButtons.add(buttonDone);
             
@@ -275,7 +294,7 @@ public class DialogImportTable extends JDialog {
             setSize( 800, 200 );
                             
             setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
-                    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
+						(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
             
         }
         catch (Exception e) {
@@ -290,10 +309,10 @@ public class DialogImportTable extends JDialog {
             return;
         
         SwingUtilities.invokeLater(new Runnable(){
-            public void run() {
-                headerPopupMenu.show((JTableHeader) event.getSource(), x, y);
-            }
-        });
+				public void run() {
+					headerPopupMenu.show((JTableHeader) event.getSource(), x, y);
+				}
+			});
     }
     
     public JPopupMenu makeHeaderPopupMenu() {
@@ -349,16 +368,16 @@ public class DialogImportTable extends JDialog {
             return;
         
         /*
-        if (table.getSelectedRowCount() > 1)
-            tablePopupMenu.getComponent(1).setEnabled(false);
-        else
-            tablePopupMenu.getComponent(1).setEnabled(true);
+		  if (table.getSelectedRowCount() > 1)
+		  tablePopupMenu.getComponent(1).setEnabled(false);
+		  else
+		  tablePopupMenu.getComponent(1).setEnabled(true);
         */
         SwingUtilities.invokeLater(new Runnable(){
-            public void run() {
-                tablePopupMenu.show((JTable) event.getSource(), x, y);
-            }
-        });
+				public void run() {
+					tablePopupMenu.show((JTable) event.getSource(), x, y);
+				}
+			});
     }
     
    
@@ -373,9 +392,9 @@ public class DialogImportTable extends JDialog {
         popupMenu.add(deleteRow);
                 
         /*
-        JMenuItem originalColumnTitles = new JMenuItem("Original Column Titles");
-        originalColumnTitles.addMouseListener(tablePopupListener);
-        popupMenu.add(originalColumnTitles);
+		  JMenuItem originalColumnTitles = new JMenuItem("Original Column Titles");
+		  originalColumnTitles.addMouseListener(tablePopupListener);
+		  popupMenu.add(originalColumnTitles);
         */
         
         return popupMenu;
@@ -417,8 +436,6 @@ public class DialogImportTable extends JDialog {
     
     void importData() {
         
-        //ModelImportSettings settings = new ModelImportSettings(table);
-        
         TableModel tableModel = table.getModel();
         TableColumnModel columnModel = table.getColumnModel();
         int columnCount = table.getModel().getColumnCount();
@@ -440,12 +457,10 @@ public class DialogImportTable extends JDialog {
                 Object val = tmpColumn.getHeaderValue();
                 
                 if (! (val instanceof FieldModel)) {
-                    System.err.println("val not instanceof FieldModel:" + val);
+                    log.debug("val not instanceof FieldModel:" + val);
                     continue;
                 }
-                
-                //System.err.println("VAL instanceof FieldModel:" + val);
-                
+                 
                 fieldModel = (FieldModel) val;
                 
                 // column has been assigned an info field 
@@ -456,9 +471,7 @@ public class DialogImportTable extends JDialog {
                     
                     if (tmpMovie.setValue(fieldModel)) {
                         valueStored = true;
-                        System.err.println("Saved:" + fieldModel);
                     }
-                   // System.err.println(fieldModel);
                 }
             }
             
@@ -471,7 +484,7 @@ public class DialogImportTable extends JDialog {
                 } catch (Exception e) {
                     log.error("Failed to save movie:" + tmpMovie.getTitle(), e);
                 }
-                }
+			}
         }
     }
 
@@ -497,7 +510,7 @@ public class DialogImportTable extends JDialog {
         }
         
         public void setValue(String value) {
-           this.value = value;
+			this.value = value;
         }
         
         public String getValue() {
@@ -505,13 +518,13 @@ public class DialogImportTable extends JDialog {
         }
         
         /*
-        public void setCheckBoxMenuItem(TableStringCheckBoxMenuItem checkBox) {
-            this.checkBox = checkBox;
-         }
-         */
-         public TableStringCheckBoxMenuItem getCheckBoxMenuItem() {
-             return checkBox;
-         }
+		  public void setCheckBoxMenuItem(TableStringCheckBoxMenuItem checkBox) {
+		  this.checkBox = checkBox;
+		  }
+		*/
+		public TableStringCheckBoxMenuItem getCheckBoxMenuItem() {
+			return checkBox;
+		}
         
         
         public String toString() {

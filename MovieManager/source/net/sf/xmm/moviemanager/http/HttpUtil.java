@@ -245,7 +245,6 @@ class HttpUtil {
     				i = end;
     			} else if (toDecode.charAt(i)=='<' && toDecode.indexOf('>', i) != -1) {
     				i = toDecode.indexOf('>', i);
-    				System.err.println("tmp:" + tmp);
     				
     				if (!tmp.trim().equals(""))
     					decoded.add(tmp.trim());
