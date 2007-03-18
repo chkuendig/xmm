@@ -23,8 +23,8 @@ package net.sf.xmm.moviemanager.commands;
 import net.sf.xmm.moviemanager.*;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
-import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
 
@@ -402,6 +402,10 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
 	if (!searchString.equals("")) { //$NON-NLS-1$
 	    DialogIMDB dialogIMDB = new DialogIMDB(movieInfoModel, searchString, filename, this, multiAddSelectOption, addToThisList);
+	    cancel = dialogIMDB.cancelSet;
+	    cancelAll = dialogIMDB.cancelAllSet;
+	    dropImdbInfo = dialogIMDB.dropImdbInfoSet;
+	    
 	} else {
 	    DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.alert"),Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
 	    GUIUtil.showAndWait(alert, true);
