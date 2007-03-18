@@ -101,8 +101,8 @@ public class IMDbInfoUpdater {
     }
     
     /* Stops the importing process */
-    public void stop() {
-	canceled = true;
+    public synchronized void stop() {
+    	canceled = true;
     }
     
     public boolean isDone() {
@@ -152,6 +152,8 @@ public class IMDbInfoUpdater {
 
 	    final HttpClient client = new HttpClient(connectionManager);
 	
+	    final MovieManagerCommandDialogIMDB commandIMDB = new MovieManagerCommandDialogIMDB();
+	    
 	    while (enumeration.hasMoreElements()) {
 		    
 		if (canceled)
@@ -190,21 +192,33 @@ public class IMDbInfoUpdater {
 			    while (!isReady())
 			    	Thread.sleep(1000);
 
+			    if (canceled)
+			    	return;
+			    
 			    IMDB imdb;
 								
 			    if (model.getUrlKey().equals("")) {
                    log.info("UrlKey is empty");
                    
-                   String urlKey = MovieManagerCommandDialogIMDB.getIMDBKey(model.getTitle());
+                   String urlKey = commandIMDB.getIMDBKey(model.getTitle());
                    
-                   if (urlKey != null && !urlKey.equals(""))
-                       model.setUrlKey(urlKey);
-                   else
-                       return;
-                }
-			    else if (skipEntriesWithIMDbID) {
-				return;
+                   if (commandIMDB.cancelAll) {
+                	   canceled = true;
+                	   return;
+                   }
+                    
+                   if (commandIMDB.cancel)
+                	   return;
+                	   
+                   if (urlKey == null || urlKey.equals(""))
+                	   return;
+                   
+                   model.setUrlKey(urlKey);
 			    }
+			    else if (skipEntriesWithIMDbID) {
+			    	return;
+			    }
+			    
 			    for (int i = 0; i < 5; i++) {
 				    
 				if (httpclient) {
@@ -214,7 +228,7 @@ public class IMDbInfoUpdater {
 				    int statusCode = client.executeMethod(method);
 					
 				    if (statusCode != HttpStatus.SC_OK) {
-					log.warn("Method failed: " + method.getStatusLine());
+				    	log.warn("Method failed: " + method.getStatusLine());
 				    }
 				    else {
 					
@@ -238,90 +252,72 @@ public class IMDbInfoUpdater {
 					    
 					    if (title == 1 || (title == 2 && model.getTitle().equals(""))) {
 						model.setTitle(imdb.getTitle());
-						log.debug("title updated");
-					    }
+						 }
                         
 					    if (date == 1 || (date == 2 && model.getDate().equals(""))) {
 						model.setDate(imdb.getDate());
-						log.debug("Date updated");
-					    }
+						 }
                         
 					    if (colour == 1 || (colour == 2 && model.getColour().equals(""))) {
 						model.setColour(imdb.getColour());
-						log.debug("Colour updated");
-					    }
+						 }
                         
 					    if (directedBy == 1 || (directedBy == 2 && model.getDirectedBy().equals(""))) {
 model.setDirectedBy(imdb.getDirectedBy());
-						log.debug("DirectedBy updated");
-					    }
+						 }
                         
 					    if (writtenBy == 1 || (writtenBy == 2 && model.getWrittenBy().equals(""))) {
 						model.setWrittenBy(imdb.getWrittenBy());
-						log.debug("WrittenBy updated");
-					    }
+						 }
                         
 					    if (genre == 1 || (genre == 2 && model.getGenre().equals(""))) {
 						model.setGenre(imdb.getGenre());
-						log.debug("genre updated");
-					    }
+						 }
                         
 					    if (rating == 1 || (rating == 2 && model.getRating().equals(""))) {
 						model.setRating(imdb.getRating());
-						log.debug("rating updated");
-					    }
+						 }
                         
 					    if (country == 1 || (country == 2 && model.getCountry().equals(""))) {
 						model.setCountry(imdb.getCountry());
-						log.debug("country updated");
-					    }
+						 }
                         
 					    if (language == 1 || (language == 2 && model.getLanguage().equals(""))) {
 						model.setLanguage(imdb.getLanguage());
-						log.debug("language updated");
-					    }
+						 }
                         
 					    if (plot == 1 || (plot == 2 && model.getPlot().equals(""))) {
 						model.setPlot(imdb.getPlot());
-						log.debug("plot updated");
-					    }
+						 }
                         
 					    if (cast == 1 || (cast == 2 && model.getCast().equals(""))) {
 						model.setCast(imdb.getCast());
-						log.debug("cast updated");
-					    }
+						}
                         
 					    if (aka == 1 || (aka == 2 && model.getAka().equals(""))) {
 					        model.setAka(imdb.getAka());
 					        modelInfo.executeTitleModification(imdb.getTitle());
-                        
-					        log.debug("aka updated");
-					    }
+                         }
                         
 					    if (soundMix == 1 || (soundMix == 2 && model.getWebSoundMix().equals(""))) {
 						model.setWebSoundMix(imdb.getSoundMix());
-						log.debug("soundMix updated");
-					    }
+						}
                         
 					    if (runtime == 1 || (runtime == 2 && model.getWebRuntime().equals(""))) {
 						model.setWebRuntime(imdb.getRuntime());
-						log.debug("runtime updated");
-					    }
+						}
                         
 					    if (awards == 1 || (awards == 2 && model.getAwards().equals(""))) {
 						model.setAwards(imdb.getAwards());
-						log.debug("awards updated");
-					    }
+						 }
                         
 					    if (mpaa == 1 || (mpaa == 2 && model.getMpaa().equals(""))) {
 						model.setMpaa(imdb.getMpaa());
-						log.debug("mpaa updated");
-					    }
+						 }
                         
 					    if (certification == 1 || (certification == 2 && model.getCertification().equals(""))) {
 						model.setCertification(imdb.getCertification());
-						log.debug("certification updated");
-					    }
+						 }
 
 					    
 					    if (cover == 1 || (cover == 2 && model.getCover().equals(""))) {
@@ -365,11 +361,8 @@ model.setDirectedBy(imdb.getDirectedBy());
 					        }
                         }
                         
-					    //modelInfo.saveAdditionalInfo = false;
-                        modelInfo.saveToDatabase(null);
-                        
-					    //database.setGeneralInfo((ModelMovie) model);
-                                                
+					    modelInfo.saveToDatabase(null);
+                                               
 					} catch (Exception e) {
 					    log.fatal("", e);
 					    error = true;

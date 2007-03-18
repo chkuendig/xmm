@@ -20,13 +20,16 @@
 
 package net.sf.xmm.moviemanager;
 
-import net.sf.xmm.moviemanager.commands.*;
-import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
+import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMovies;
+import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFile;
 import net.sf.xmm.moviemanager.http.IMDB;
-import net.sf.xmm.moviemanager.models.*;
+import net.sf.xmm.moviemanager.models.ModelIMDB;
+import net.sf.xmm.moviemanager.models.ModelMovie;
+import net.sf.xmm.moviemanager.models.ModelMovieInfo;
+import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SwingWorker;
-import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 
@@ -36,6 +39,8 @@ import java.io.File;
 
 import javax.swing.*;
 
+
+/* This class is a total mess */
 public class DialogIMDB extends JDialog {
     
     static Logger log = Logger.getRootLogger();
@@ -54,7 +59,10 @@ public class DialogIMDB extends JDialog {
     
     boolean getUrlKeyOnly = false;
  
-   String addToThisList = null; 
+    String addToThisList = null; 
+    
+    boolean switchBetweenIMDBAndDatabase = false;
+    boolean addWithoutIMDBInfo = false;
     
     long time;
     
@@ -62,13 +70,26 @@ public class DialogIMDB extends JDialog {
         return multiAdd;
     }
     
+        
+    public boolean cancelSet = false;
+    public boolean cancelAllSet = false;
+    public boolean dropImdbInfoSet = false;
+    
+    
+    public void resetFeedbackValues() {
+    	cancelSet = false;
+        cancelAllSet = false;
+        dropImdbInfoSet = false;
+    }
+    
+    
     /*Used only to tell the MovieManagerCommandAddMultipleMovies object
      to abort the multiple add movies method*/
     MovieManagerCommandAddMultipleMovies commandAddMovies = null;
     
     
     /**
-     * The Constructor.
+     * Constructor used by UpdateIMDBInfo
      **/
     public DialogIMDB(ModelMovieInfo modelInfo, boolean getUrlKeyOnly, String alternateTitle) {
         /* Dialog creation...*/
@@ -81,6 +102,7 @@ public class DialogIMDB extends JDialog {
         	
         multiAddFile = new File[1];
         this.getUrlKeyOnly = getUrlKeyOnly;
+        this.multiAdd = true;
         
         /* Sets parent... */
         this.modelInfo = modelInfo;
@@ -102,7 +124,10 @@ public class DialogIMDB extends JDialog {
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
         getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
         
-        createListDialog("not used", "not used"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (multiAdd)
+        	createListDialog(alternateTitle, alternateTitle); //$NON-NLS-1$ //$NON-NLS-2$
+        else
+        	createListDialog("not used", "not used"); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     
@@ -110,7 +135,10 @@ public class DialogIMDB extends JDialog {
     /**
      * Constructor - When adding multiple movies by file.
      **/
-    public DialogIMDB(ModelMovieInfo modelInfo, String searchString, String filename, final MovieManagerCommandAddMultipleMovies commandAddMovies, int multiAddSelectOption, String addToThisList) {
+    public DialogIMDB(ModelMovieInfo modelInfo, String searchString, String filename, 
+    		final MovieManagerCommandAddMultipleMovies commandAddMovies, 
+    		int multiAddSelectOption, String addToThisList) {
+    	    	
         /* Dialog creation...*/
         super(MovieManager.getDialog());
         setTitle(Localizer.getString("DialogIMDB.title")); //$NON-NLS-1$
@@ -123,6 +151,9 @@ public class DialogIMDB extends JDialog {
         this.multiAdd = true;
         this.commandAddMovies = commandAddMovies;
         this.multiAddSelectOption = multiAddSelectOption;
+        
+        switchBetweenIMDBAndDatabase = true;
+        addWithoutIMDBInfo = true;
         
         /* Close dialog... */
         addWindowListener(new WindowAdapter() {
@@ -139,7 +170,7 @@ public class DialogIMDB extends JDialog {
         {
             public void actionPerformed(ActionEvent e)
             {
-                commandAddMovies.setCancel(true);
+                cancelSet = true;
                 dispose();
             }
         };
@@ -148,356 +179,360 @@ public class DialogIMDB extends JDialog {
         
         createListDialog(searchString, filename);
     }
-    
-    
+
+
     void createListDialog(final String searchString, String filename) {
-        /* Dialog properties...*/
-        
-        setModal(true);
-        setResizable(false);
-        /* Movies List panel...*/
-        panelMoviesList = new JPanel();
-        panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
-        
-        listMovies = new JList() {
-            
-            public String getToolTipText(MouseEvent e) {
-                
-                if (getCellBounds(0,0) == null)
-                    return null;
-                
-                String retVal = null;
-                int row = (int) e.getPoint().getY() / (int) getCellBounds(0,0).getHeight();
-                
-                if (row >= 0 && row < getModel().getSize() && getMoviesList().getModel() instanceof ModelIMDB)
-                    retVal = ((ModelIMDB) getMoviesList().getModel().getElementAt(row)).getAka();
-                
-                return retVal;
-            }
-            
-            public JToolTip createToolTip() {
-                
-                JMultiLineToolTip tooltip = new JMultiLineToolTip();
-                tooltip.setComponent(this);
-                return tooltip;
-            }
-        };
-        
-        listMovies.setFixedCellHeight(18);
-        
-        listMovies.setFont(new Font(listMovies.getFont().getName(),Font.PLAIN,listMovies.getFont().getSize()));
-        listMovies.setLayoutOrientation(JList.VERTICAL);
-        listMovies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
-        listMovies.addMouseListener(new MouseAdapter() {
-        	public void mouseClicked(MouseEvent event) {
-        		if (SwingUtilities.isLeftMouseButton(event) && event.getClickCount() >= 2) {
-        			buttonSelect.doClick();
-        		}
-        	}
-        });
-        
-        JScrollPane scrollPaneMovies = new JScrollPane(listMovies);
-        scrollPaneMovies.setPreferredSize(new Dimension(300,255));
-        scrollPaneMovies.setAutoscrolls(true);
-        panelMoviesList.add(scrollPaneMovies);
-        
-        /* To add outside border... */
-        JPanel all = new JPanel();
-        
-        all.setLayout(new BorderLayout());
-        all.add(panelMoviesList, BorderLayout.NORTH);
-        all.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(8,8,0,8), null));
-        
-        /*If running the multiadd feature, here are all the extra buttons added. */
-        if (isMultiAdd()) {
-            
-            setTitle(filename);
-            JPanel searchStringPanel = new JPanel();
-            searchStringPanel.setLayout(new BorderLayout());
-            searchStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-search-string.title")), BorderFactory.createEmptyBorder(4,4,4,4))); //$NON-NLS-1$
-            
-            searchStringField = new JTextField(27);
-            searchStringField.setActionCommand("Search String:"); //$NON-NLS-1$
-            searchStringField.setText(searchString);
-            searchStringField.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-                    executeSearchMultipleMovies();
-                    
-                }
-            });
-            
-            searchStringPanel.add(searchStringField, BorderLayout.NORTH);
-            all.add(searchStringPanel, BorderLayout.CENTER);
-            
-            JPanel multipleMovieButtons = new JPanel();
-            multipleMovieButtons.setLayout(new FlowLayout());
-            
-            
-            /*This button is used to search for on IMDB and for movies in the Database
+    	/* Dialog properties...*/
+
+    	setModal(true);
+    	setResizable(false);
+    	/* Movies List panel...*/
+    	panelMoviesList = new JPanel();
+    	panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+
+    	listMovies = new JList() {
+
+    		public String getToolTipText(MouseEvent e) {
+
+    			if (getCellBounds(0,0) == null)
+    				return null;
+
+    			String retVal = null;
+    			int row = (int) e.getPoint().getY() / (int) getCellBounds(0,0).getHeight();
+
+    			if (row >= 0 && row < getModel().getSize() && getMoviesList().getModel() instanceof ModelIMDB)
+    				retVal = ((ModelIMDB) getMoviesList().getModel().getElementAt(row)).getAka();
+
+    			return retVal;
+    		}
+
+    		public JToolTip createToolTip() {
+
+    			JMultiLineToolTip tooltip = new JMultiLineToolTip();
+    			tooltip.setComponent(this);
+    			return tooltip;
+    		}
+    	};
+
+    	listMovies.setFixedCellHeight(18);
+
+    	listMovies.setFont(new Font(listMovies.getFont().getName(),Font.PLAIN,listMovies.getFont().getSize()));
+    	listMovies.setLayoutOrientation(JList.VERTICAL);
+    	listMovies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+    	listMovies.addMouseListener(new MouseAdapter() {
+    		public void mouseClicked(MouseEvent event) {
+    			if (SwingUtilities.isLeftMouseButton(event) && event.getClickCount() >= 2) {
+    				buttonSelect.doClick();
+    			}
+    		}
+    	});
+
+    	JScrollPane scrollPaneMovies = new JScrollPane(listMovies);
+    	scrollPaneMovies.setPreferredSize(new Dimension(300,255));
+    	scrollPaneMovies.setAutoscrolls(true);
+    	panelMoviesList.add(scrollPaneMovies);
+
+    	/* To add outside border... */
+    	JPanel all = new JPanel();
+
+    	all.setLayout(new BorderLayout());
+    	all.add(panelMoviesList, BorderLayout.NORTH);
+    	all.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(8,8,0,8), null));
+
+    	/*If running the multiadd feature, here are all the extra buttons added. */
+    	if (isMultiAdd()) {
+
+    		setTitle(filename);
+
+    		JPanel searchStringPanel = new JPanel();
+    		searchStringPanel.setLayout(new BorderLayout());
+    		searchStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-search-string.title")), BorderFactory.createEmptyBorder(4,4,4,4))); //$NON-NLS-1$
+
+    		searchStringField = new JTextField(27);
+    		searchStringField.setActionCommand("Search String:"); //$NON-NLS-1$
+    		searchStringField.setText(searchString);
+    		searchStringField.addActionListener(new ActionListener() {
+    			public void actionPerformed(ActionEvent event) {
+    				log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
+    				executeSearchMultipleMovies();
+    			}
+    		});
+
+    		searchStringPanel.add(searchStringField, BorderLayout.NORTH);
+    		all.add(searchStringPanel, BorderLayout.CENTER);
+
+    		JPanel multipleMovieButtons = new JPanel();
+    		multipleMovieButtons.setLayout(new FlowLayout());
+
+
+    		/*This button is used to search for on IMDB and for movies in the Database
              Where to search is desided in the executeSearchMultipleMovies method
-             */
-            JButton buttonSearch = new JButton(Localizer.getString("DialogIMDB.button.search.text")); //$NON-NLS-1$
-            buttonSearch.setToolTipText(Localizer.getString("DialogIMDB.button.search.tooltip")); //$NON-NLS-1$
-            buttonSearch.setActionCommand("GetIMDBInfo - Search again"); //$NON-NLS-1$
-            
-            
-            buttonSearch.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-                    executeSearchMultipleMovies();
-                }});
-            multipleMovieButtons.add(buttonSearch);
-            
-            if (commandAddMovies instanceof MovieManagerCommandAddMultipleMoviesByFile) {
-                
-                /*This button choses between IMDB and local movie database*/
-                final JButton chooseBetweenImdbAndLocalDatabase  = new JButton(Localizer.getString("DialogIMDB.button.add-to-existing-movie.text")); //$NON-NLS-1$
-                chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.getString("DialogIMDB.button.add-to-existing-movie.tooltip")); //$NON-NLS-1$
-                chooseBetweenImdbAndLocalDatabase.setPreferredSize(new Dimension(155, 26));
-                chooseBetweenImdbAndLocalDatabase.setActionCommand("GetIMDBInfo - chooseBetweenImdbAndLocalDatabase"); //$NON-NLS-1$
-                chooseBetweenImdbAndLocalDatabase.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent event) {
-                        log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-                        
-                        if (addInfoToExistingMovie) {
-                            panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
-                            chooseBetweenImdbAndLocalDatabase.setText(Localizer.getString("DialogIMDB.button.add-to-existing-movie.text")); //$NON-NLS-1$
-                            chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.getString("DialogIMDB.button.add-to-existing-movie.tooltip")); //$NON-NLS-1$
-                            addInfoToExistingMovie = false;
-                            executeSearchMultipleMovies();
-                        }
-                        
-                        else {
-                            executeEditExistingMovie(""); //$NON-NLS-1$
-                            chooseBetweenImdbAndLocalDatabase.setText(Localizer.getString("DialogIMDB.button.search-on-IMDb.text")); //$NON-NLS-1$
-                            chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.getString("DialogIMDB.button.search-on-IMDb.tooltip")); //$NON-NLS-1$
-                            addInfoToExistingMovie = true;
-                            
-                            panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-your-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
-                            
-                        }
-                        
-                        multiAddFile[0] = modelInfo.getMultiAddFile();
-                        
-                    }});
-                
-                multipleMovieButtons.add(chooseBetweenImdbAndLocalDatabase);
-            }
-            
-            JButton addWithoutIMDBInfo = new JButton(Localizer.getString("DialogIMDB.button.add-without-web-info.text")); //$NON-NLS-1$
-            addWithoutIMDBInfo.setToolTipText(Localizer.getString("DialogIMDB.button.add-without-web-info.tooltip")); //$NON-NLS-1$
-            addWithoutIMDBInfo.setActionCommand("GetIMDBInfo - addWithoutIMDBInfo"); //$NON-NLS-1$
-            
-            addWithoutIMDBInfo.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
-                    
-                    modelInfo.model.setTitle(searchStringField.getText());
-                    commandAddMovies.setDropImdbInfo(true);
-                    dispose();
-                    return;
-                }});
-            multipleMovieButtons.add(addWithoutIMDBInfo);
-            
-            JButton cancelAll = new JButton(Localizer.getString("DialogIMDB.button.abort.text")); //$NON-NLS-1$
-            cancelAll.setToolTipText(Localizer.getString("DialogIMDB.button.abort.tooltip")); //$NON-NLS-1$
-            cancelAll.setActionCommand("GetIMDBInfo - cancelAll"); //$NON-NLS-1$
-            
-            cancelAll.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
-                    
-                    /*Sets the cancelAll variable in multipleMovies object to true
+    		 */
+    		JButton buttonSearch = new JButton(Localizer.getString("DialogIMDB.button.search.text")); //$NON-NLS-1$
+    		buttonSearch.setToolTipText(Localizer.getString("DialogIMDB.button.search.tooltip")); //$NON-NLS-1$
+    		buttonSearch.setActionCommand("GetIMDBInfo - Search again"); //$NON-NLS-1$
+
+
+    		buttonSearch.addActionListener(new ActionListener() {
+    			public void actionPerformed(ActionEvent event) {
+    				log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
+    				executeSearchMultipleMovies();
+    			}});
+    		multipleMovieButtons.add(buttonSearch);
+
+    		if (switchBetweenIMDBAndDatabase) {
+
+    			if (commandAddMovies instanceof MovieManagerCommandAddMultipleMoviesByFile) {
+
+    				/*This button choses between IMDB and local movie database*/
+    				final JButton chooseBetweenImdbAndLocalDatabase  = new JButton(Localizer.getString("DialogIMDB.button.add-to-existing-movie.text")); //$NON-NLS-1$
+    				chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.getString("DialogIMDB.button.add-to-existing-movie.tooltip")); //$NON-NLS-1$
+    				chooseBetweenImdbAndLocalDatabase.setPreferredSize(new Dimension(155, 26));
+    				chooseBetweenImdbAndLocalDatabase.setActionCommand("GetIMDBInfo - chooseBetweenImdbAndLocalDatabase"); //$NON-NLS-1$
+    				chooseBetweenImdbAndLocalDatabase.addActionListener(new ActionListener() {
+    					public void actionPerformed(ActionEvent event) {
+    						log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
+
+    						if (addInfoToExistingMovie) {
+    							panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+    							chooseBetweenImdbAndLocalDatabase.setText(Localizer.getString("DialogIMDB.button.add-to-existing-movie.text")); //$NON-NLS-1$
+    							chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.getString("DialogIMDB.button.add-to-existing-movie.tooltip")); //$NON-NLS-1$
+    							addInfoToExistingMovie = false;
+    							executeSearchMultipleMovies();
+    						}
+
+    						else {
+    							executeEditExistingMovie(""); //$NON-NLS-1$
+    							chooseBetweenImdbAndLocalDatabase.setText(Localizer.getString("DialogIMDB.button.search-on-IMDb.text")); //$NON-NLS-1$
+    							chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.getString("DialogIMDB.button.search-on-IMDb.tooltip")); //$NON-NLS-1$
+    							addInfoToExistingMovie = true;
+
+    							panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-your-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+
+    						}
+
+    						multiAddFile[0] = modelInfo.getMultiAddFile();
+
+    					}});
+
+    				multipleMovieButtons.add(chooseBetweenImdbAndLocalDatabase);
+    			}
+    		}
+
+    		if (addWithoutIMDBInfo) {
+
+    			JButton addWithoutIMDBInfo = new JButton(Localizer.getString("DialogIMDB.button.add-without-web-info.text")); //$NON-NLS-1$
+    			addWithoutIMDBInfo.setToolTipText(Localizer.getString("DialogIMDB.button.add-without-web-info.tooltip")); //$NON-NLS-1$
+    			addWithoutIMDBInfo.setActionCommand("GetIMDBInfo - addWithoutIMDBInfo"); //$NON-NLS-1$
+
+    			addWithoutIMDBInfo.addActionListener(new ActionListener() {
+    				public void actionPerformed(ActionEvent event) {
+    					log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
+
+    					modelInfo.model.setTitle(searchStringField.getText());
+    					dropImdbInfoSet = true;
+    					dispose();
+    					return;
+    				}});
+    			multipleMovieButtons.add(addWithoutIMDBInfo);
+    		}
+	
+    		JButton cancelAll = new JButton(Localizer.getString("DialogIMDB.button.abort.text")); //$NON-NLS-1$
+    		cancelAll.setToolTipText(Localizer.getString("DialogIMDB.button.abort.tooltip")); //$NON-NLS-1$
+    		cancelAll.setActionCommand("GetIMDBInfo - cancelAll"); //$NON-NLS-1$
+
+    		cancelAll.addActionListener(new ActionListener() {
+    			public void actionPerformed(ActionEvent event) {
+    				log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
+
+    				/*Sets the cancelAll variable in multipleMovies object to true
                      This variable is checked in the multipleMovies object before saving,
                      and the appropriate action is performed.
-                     */
-                    commandAddMovies.setCancelAll(true);
-                    dispose();
-                    return;
-                }});
-            multipleMovieButtons.add(cancelAll);
-            all.add(multipleMovieButtons, BorderLayout.SOUTH);
-        }
-        
-        /* regular Buttons panel...*/
-        JPanel panelRegularButtons = new JPanel();
-        panelRegularButtons.setBorder(BorderFactory.createEmptyBorder(0,0,4,0));
-        panelRegularButtons.setLayout(new FlowLayout());
-        
-        JButton buttonMore = new JButton(Localizer.getString("DialogIMDB.button.more-titles.text")); //$NON-NLS-1$
-        buttonMore.setToolTipText(Localizer.getString("DialogIMDB.button.more-titles.tooltip")); //$NON-NLS-1$
-        buttonMore.setActionCommand("GetIMDBInfo - More"); //$NON-NLS-1$
-        buttonMore.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
-                
-                getButtonMore().setEnabled(false);
-                getButtonSelect().setEnabled(false);
-                executeCommandMore();
-                getMoviesList().setSelectedIndex(0);
-            }});
-        
-        panelRegularButtons.add(buttonMore);
-        buttonSelect = new JButton(Localizer.getString("DialogIMDB.button.select.text")); //$NON-NLS-1$
-        buttonSelect.setToolTipText(Localizer.getString("DialogIMDB.button.select.tooltip")); //$NON-NLS-1$
-        buttonSelect.setActionCommand("GetIMDBInfo - Select"); //$NON-NLS-1$
-        buttonSelect.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
-                
-                if (!getMoviesList().isSelectionEmpty())
-                    executeCommandSelect();
-            }});
-        
-        panelRegularButtons.add(buttonSelect);
-        
-        if (!isMultiAdd()) {
-            buttonSelect.setEnabled(false);
-            buttonMore.setEnabled(false);
-        }
-        
-        JButton buttonCancel;
-        
-        if (isMultiAdd()) {
-            buttonCancel = new JButton(Localizer.getString("DialogIMDB.button.cancel.text.skip-movie")); //$NON-NLS-1$
-            buttonCancel.setToolTipText(Localizer.getString("DialogIMDB.button.cancel.ooltip.cancel")); //$NON-NLS-1$
-        }
-        else {
-            buttonCancel = new JButton(Localizer.getString("DialogIMDB.button.cancel.text.cancel")); //$NON-NLS-1$
-            buttonCancel.setToolTipText(Localizer.getString("DialogIMDB.button.cancel.tooltip.cancel")); //$NON-NLS-1$
-        }
-        
-        buttonCancel.setActionCommand("GetIMDBInfo - Cancel"); //$NON-NLS-1$
-        
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
-                
-                if (isMultiAdd())
-                    commandAddMovies.setCancel(true);
-                dispose();
-            }});
-        
-        panelRegularButtons.add(buttonCancel);
-        /* Adds all and buttonsPanel... */
-        getContentPane().add(all,BorderLayout.NORTH);
-        getContentPane().add(panelRegularButtons,BorderLayout.SOUTH);
-        /* Packs and sets location... */
-        pack();
-        
-        getMoviesList().ensureIndexIsVisible(0);
-        setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
-                (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
-        
-        
-        
-        
-        //listModel.addElement(new ModelIMDB(key, movieTitle, aka));
-        
-        DefaultListModel model = new DefaultListModel();
-        model.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.search-in-progress"), null)); //$NON-NLS-1$
-        listMovies.setModel(model);
-        
-        if (isMultiAdd()) { 
-            try {
-                DefaultListModel list = IMDB.getSimpleMatches(searchString);
-                /*Number of movie hits*/
-                int listSize = list.getSize();
-                
-                if (list.getSize() == 0) {
-                    list.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
-                }
-                
-                listMovies.setModel(list);
-                listMovies.setSelectedIndex(0);
-                
-                if (executeCommandMultipleMoviesSelectCheck(listSize) == 1) {
-                    GUIUtil.showAndWait(this, true);
-                }
-                
-            } catch (Exception e) {
-                executeErrorMessage(e.getMessage());
-                listMovies.setModel(null);
-            }
-        } else {
-            SwingWorker worker = new SwingWorker() {
-                public Object construct() {
-                    try {
-                        DefaultListModel list = IMDB.getSimpleMatches(modelInfo.model.getTitle());
-                        
-                        if (list.getSize() == 0) {
-                            list.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
-                        }
-                        
-                        listMovies.setModel(list);
-                        listMovies.setSelectedIndex(0);
-                        
-                        getButtonMore().setEnabled(true);
-                        getButtonSelect().setEnabled(true);
-                    }
-                    catch (Exception e) {
-                        executeErrorMessage(e.getMessage());
-                        listMovies.setModel(null);
-                    }
-                    return ""; //$NON-NLS-1$
-                }
-            };
-            worker.start();
-        }
+    				 */
+    				cancelAllSet = true;
+    				dispose();
+    			}});
+    		multipleMovieButtons.add(cancelAll);
+    		all.add(multipleMovieButtons, BorderLayout.SOUTH);
+
+    	}
+
+    	/* regular Buttons panel...*/
+    	JPanel panelRegularButtons = new JPanel();
+    	panelRegularButtons.setBorder(BorderFactory.createEmptyBorder(0,0,4,0));
+    	panelRegularButtons.setLayout(new FlowLayout());
+
+    	JButton buttonMore = new JButton(Localizer.getString("DialogIMDB.button.more-titles.text")); //$NON-NLS-1$
+    	buttonMore.setToolTipText(Localizer.getString("DialogIMDB.button.more-titles.tooltip")); //$NON-NLS-1$
+    	buttonMore.setActionCommand("GetIMDBInfo - More"); //$NON-NLS-1$
+    	buttonMore.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent event) {
+    			log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
+
+    			getButtonMore().setEnabled(false);
+    			getButtonSelect().setEnabled(false);
+    			executeCommandMore();
+    			getMoviesList().setSelectedIndex(0);
+    		}});
+
+    	panelRegularButtons.add(buttonMore);
+    	buttonSelect = new JButton(Localizer.getString("DialogIMDB.button.select.text")); //$NON-NLS-1$
+    	buttonSelect.setToolTipText(Localizer.getString("DialogIMDB.button.select.tooltip")); //$NON-NLS-1$
+    	buttonSelect.setActionCommand("GetIMDBInfo - Select"); //$NON-NLS-1$
+    	buttonSelect.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent event) {
+    			log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
+
+    			if (!getMoviesList().isSelectionEmpty())
+    				executeCommandSelect();
+    		}});
+
+    	panelRegularButtons.add(buttonSelect);
+
+    	if (!isMultiAdd()) {
+    		buttonSelect.setEnabled(false);
+    		buttonMore.setEnabled(false);
+    	}
+
+    	JButton buttonCancel;
+
+    	if (isMultiAdd()) {
+    		buttonCancel = new JButton(Localizer.getString("DialogIMDB.button.cancel.text.skip-movie")); //$NON-NLS-1$
+    		buttonCancel.setToolTipText(Localizer.getString("DialogIMDB.button.cancel.ooltip.cancel")); //$NON-NLS-1$
+    	}
+    	else {
+    		buttonCancel = new JButton(Localizer.getString("DialogIMDB.button.cancel.text.cancel")); //$NON-NLS-1$
+    		buttonCancel.setToolTipText(Localizer.getString("DialogIMDB.button.cancel.tooltip.cancel")); //$NON-NLS-1$
+    	}
+
+    	buttonCancel.setActionCommand("GetIMDBInfo - Cancel"); //$NON-NLS-1$
+
+    	buttonCancel.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent event) {
+    			log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
+    			cancelSet = true;
+    			dispose();
+    		}});
+
+    	panelRegularButtons.add(buttonCancel);
+    	/* Adds all and buttonsPanel... */
+    	getContentPane().add(all,BorderLayout.NORTH);
+    	getContentPane().add(panelRegularButtons,BorderLayout.SOUTH);
+    	/* Packs and sets location... */
+    	pack();
+
+    	getMoviesList().ensureIndexIsVisible(0);
+    	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
+    			(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
+
+
+
+
+    	//listModel.addElement(new ModelIMDB(key, movieTitle, aka));
+
+    	DefaultListModel model = new DefaultListModel();
+    	model.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.search-in-progress"), null)); //$NON-NLS-1$
+    	listMovies.setModel(model);
+
+    	if (isMultiAdd() && !getUrlKeyOnly) { 
+    		try {
+    			DefaultListModel list = IMDB.getSimpleMatches(searchString);
+    			/*Number of movie hits*/
+    			int listSize = list.getSize();
+
+    			if (list.getSize() == 0) {
+    				list.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
+    			}
+
+    			listMovies.setModel(list);
+    			listMovies.setSelectedIndex(0);
+
+    			if (executeCommandMultipleMoviesSelectCheck(listSize) == 1) {
+    				GUIUtil.showAndWait(this, true);
+    			}
+
+    		} catch (Exception e) {
+    			executeErrorMessage(e.getMessage());
+    			listMovies.setModel(null);
+    		}
+    	} else {
+    		SwingWorker worker = new SwingWorker() {
+    			public Object construct() {
+    				try {
+    					DefaultListModel list = IMDB.getSimpleMatches(modelInfo.model.getTitle());
+
+    					if (list.getSize() == 0) {
+    						list.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
+    					}
+
+    					listMovies.setModel(list);
+    					listMovies.setSelectedIndex(0);
+
+    					getButtonMore().setEnabled(true);
+    					getButtonSelect().setEnabled(true);
+    				}
+    				catch (Exception e) {
+    					log.error(e.getMessage(), e);
+    					executeErrorMessage(e.getMessage());
+    				}
+    				return ""; //$NON-NLS-1$
+    			}
+    		};
+    		worker.start();
+    	}
     }
 
-    
+
     /*The MovieManagerCommandFilter gets the movielist from the database ordered by movie title
      Then uses the searchstring to remove unwanted hits
      The last boolean argument states if the filter is called from the main search or the IMDB search.
      If called from the main search, it will take in consideration all the advanced search options.
      */
-    
+
     void executeEditExistingMovie(String searchString) {
-  
+
     	DefaultListModel listModel;
-    	
+
     	if (addToThisList != null)
     		listModel = MovieManager.getIt().getDatabase().getMoviesList("Title", addToThisList);
     	else
     		listModel = MovieManager.getIt().getDatabase().getMoviesList("Title");
-    	
+
     	listMovies.setModel(listModel);
-        //MovieManagerCommandFilter mmcf = new MovieManagerCommandFilter(searchString, getMoviesList(), false, true);
-        //MovieManagerCommandFilter.execute();
-    	
+    	//MovieManagerCommandFilter mmcf = new MovieManagerCommandFilter(searchString, getMoviesList(), false, true);
+    	//MovieManagerCommandFilter.execute();
+
     }
-    
+
     /*Checks if the movie list should be retrived from IMDB or the local movie Database
      */
     void executeSearchMultipleMovies() {
-        
-        if (addInfoToExistingMovie)
-            executeEditExistingMovie(searchStringField.getText());
-        
-        else {
-            DefaultListModel listModel = null;
-            
-            try {
-                
-                if (!getButtonMore().getText().equals(Localizer.getString("DialogIMDB.button.more-titles.text"))) //$NON-NLS-1$
-                    listModel = IMDB.getExtendedMatches(searchStringField.getText());
-                else
-                    listModel = IMDB.getSimpleMatches(searchStringField.getText());
-                
-            } catch (Exception e) {
-                
-                executeErrorMessage(e.getMessage());
-                dispose();
-            }
-            
-            getMoviesList().setModel(listModel);
-            getMoviesList().setSelectedIndex(0);
-        }
+
+    	if (addInfoToExistingMovie)
+    		executeEditExistingMovie(searchStringField.getText());
+
+    	else {
+    		DefaultListModel listModel = null;
+
+    		try {
+
+    			if (!getButtonMore().getText().equals(Localizer.getString("DialogIMDB.button.more-titles.text"))) //$NON-NLS-1$
+    				listModel = IMDB.getExtendedMatches(searchStringField.getText());
+    			else
+    				listModel = IMDB.getSimpleMatches(searchStringField.getText());
+
+    		} catch (Exception e) {
+
+    			executeErrorMessage(e.getMessage());
+    			dispose();
+    		}
+
+    		getMoviesList().setModel(listModel);
+    		getMoviesList().setSelectedIndex(0);
+    	}
     }
-    
+
     /**
      * Returns the JList listMovies.
      **/
@@ -698,7 +733,7 @@ public class DialogIMDB extends JDialog {
             }
                 
 	    
-            commandAddMovies.setCancel(true);
+            cancelSet = true;
             dispose();
         }
         else {
