@@ -22,15 +22,12 @@ package net.sf.xmm.moviemanager.util;
 
 import org.apache.log4j.Logger;
 
-import net.sf.xmm.moviemanager.DialogMovieManager;
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFile;
-
-import java.net.*;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.*;
+import java.net.*;
 
+import javax.swing.JApplet;
 import javax.swing.filechooser.FileSystemView;
 
 public class FileUtil {
@@ -56,24 +53,27 @@ public class FileUtil {
             fileStream.close();
             
         } catch (Exception e) {
-            MovieManager.log.error("Exception:"+ e.getMessage());
+            log.error("Exception:"+ e.getMessage());
         }
     }
     
     
+    public static InputStream getResourceAsStream(String name) {
+    	return getResourceAsStream(name, null);
+    }
     /**
      * Returns a resource as a Stream or null if not found.
      *
      * @param name A resource name.
      **/
-    public static InputStream getResourceAsStream(String name) {
+    public static InputStream getResourceAsStream(String name, JApplet applet) {
         
         try {
-            if (MovieManager.isApplet()) {
+            if (applet != null) {
                 if (!name.startsWith("/"))
                     name = "/" + name;
                     
-                return DialogMovieManager.applet.getClass().getResourceAsStream(name);
+                return applet.getClass().getResourceAsStream(name);
             }
             else
                 return FileUtil.class.getResourceAsStream(name);
@@ -95,13 +95,17 @@ public class FileUtil {
     }
     
     public static URL getFileURL(String fileName) {
+    	return getFileURL(fileName, null);
+    }
+    
+    public static URL getFileURL(String fileName, JApplet applet) {
         
         URL url = null;
         
         try {
             //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
            
-            if (!MovieManager.isApplet()) {
+            if (applet == null) {
             	if(!fileName.startsWith("/")) {
             		url = new File(getUserDir() + fileName).toURL();
             	} else {
@@ -118,7 +122,7 @@ public class FileUtil {
                 //log.debug("fileName:" + fileName);
                 //log.debug("codebase:"+ _movieManager.applet.getCodeBase());
                 
-                url = new URL(DialogMovieManager.applet.getCodeBase(), fileName);
+                url = new URL(applet.getCodeBase(), fileName);
                 
 		//log.debug("URL:"+ url.toString());
                 //log.debug("url.getFile():" + url.getFile());
@@ -144,7 +148,8 @@ public class FileUtil {
         String path = ""; //$NON-NLS-1$
         
         try {
-            java.net.URL url = MovieManager.class.getProtectionDomain().getCodeSource().getLocation();
+            //java.net.URL url = MovieManager.class.getProtectionDomain().getCodeSource().getLocation();
+            java.net.URL url = FileUtil.class.getProtectionDomain().getCodeSource().getLocation();
             File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
             //File file = new File(java.net.URLDecoder.decode(System.getProperty("user.dir"), "UTF-8"));
             
@@ -156,7 +161,7 @@ public class FileUtil {
             
             
             /* If running in a mac application bundle, we can't write in the application-directory, so we use the home of the user */
-            if (MovieManager.isMac() && path.indexOf(".app/Contents") > -1) {
+            if (FileUtil.isMac() && path.indexOf(".app/Contents") > -1) {
                 path = System.getProperty("user.home") + "/Library/Application Support/MovieManager/";
                 File dir = new File(path);
                 
@@ -177,15 +182,19 @@ public class FileUtil {
         return path;
     }
     
-    
     public static Image getImage(String imageName) {
+    	return getImage(imageName, null);
+    }
+    
+    public static Image getImage(String imageName, JApplet applet) {
         Image image = null;
         
         try {
             
-            if (MovieManager.isApplet()) {
-                URL url = MovieManager.getIt().getClass().getResource(imageName);
-		image = DialogMovieManager.applet.getImage(url);
+            if (applet != null) {
+                //URL url = MovieManager.getIt().getClass().getResource(imageName);
+            	URL url = FileUtil.class.getResource(imageName);
+                image = applet.getImage(url);
             }
             else {
                 String path = "";
@@ -199,7 +208,8 @@ public class FileUtil {
                 else {
                     
                     try {
-                        URL url = MovieManager.class.getResource(imageName);
+                        //URL url = MovieManager.class.getResource(imageName);
+                        URL url = FileUtil.class.getResource(imageName);
                         image = Toolkit.getDefaultToolkit().getImage(url);
                     }
                     catch (Exception e) {
@@ -217,8 +227,9 @@ public class FileUtil {
     public static String getPath(String fileName) {
         String path = ""; //$NON-NLS-1$
         try {
-            path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8"); //$NON-NLS-1$
-        }
+            //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8"); //$NON-NLS-1$
+            path = URLDecoder.decode(FileUtil.class.getResource(fileName).getPath(), "UTF-8"); //$NON-NLS-1$
+             }
         catch (Exception e) {
             log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
         }
@@ -226,7 +237,7 @@ public class FileUtil {
     }
     
     
-    public static File getAppletFile(String fileName) {
+    public static File getAppletFile(String fileName, JApplet applet) {
         
         try {
             //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
@@ -239,7 +250,7 @@ public class FileUtil {
             //log.debug("fileName:" + fileName);
             //log.debug("codebase:"+ _movieManager.applet.getCodeBase());
             
-            URL url = new URL(DialogMovieManager.applet.getCodeBase(), fileName);
+            URL url = new URL(applet.getCodeBase(), fileName);
             
             //log.debug("URL"+ url.toString());
             //log.debug("url.getFile():" + url.getFile());
@@ -270,8 +281,7 @@ public class FileUtil {
                 tmp = tmp.getParentFile();
             
             String displayName = fsv.getSystemDisplayName(tmp);
-            displayName = MovieManagerCommandAddMultipleMoviesByFile.performExcludeParantheses(displayName, false);
-            
+                        
             if (!displayName.trim().equals(""))
                 return displayName;
             
@@ -281,4 +291,23 @@ public class FileUtil {
         return null;
     }
     
+    public static boolean isMac() {
+        String os = System.getProperty("os.name"); //$NON-NLS-1$
+        return os != null && os.toLowerCase().startsWith("mac") ? true : false; //$NON-NLS-1$
+    }
+    
+    public static boolean isLinux() {
+        String os = System.getProperty("os.name"); //$NON-NLS-1$
+        return os != null && os.toLowerCase().startsWith("linux") ? true : false; //$NON-NLS-1$
+    }
+    
+    public static boolean isSolaris() {
+        String os = System.getProperty("os.name"); //$NON-NLS-1$
+        return os != null && (os.toLowerCase().startsWith("sunos") || os.toLowerCase().startsWith("solaris")) ? true : false; //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    public static boolean isWindows() {
+        String os = System.getProperty("os.name"); //$NON-NLS-1$
+        return os != null && os.toLowerCase().startsWith("windows") ? true : false; //$NON-NLS-1$
+    }
 } 
