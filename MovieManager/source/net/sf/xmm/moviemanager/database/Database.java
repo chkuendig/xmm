@@ -713,9 +713,6 @@ abstract public class Database {
 	    else
 		resultSet = getExtraInfoMovieResultSet(index);
 
-	    //ResultSetMetaData metaData = resultSet.getMetaData();
-
-	    String tempName;
 	    String tempValue;
 
 	    ArrayList extraFieldnames = getExtraInfoFieldNames();
@@ -725,15 +722,12 @@ abstract public class Database {
 	    /* Getting the value for each field */
 	    for (int i = 0; next && i < extraFieldnames.size(); i++) {
 
-		tempName = (String) extraFieldnames.get(i);
-
 		/* First column after the ID column is at index 2 */
 		tempValue = resultSet.getString(i+2);
 
 		if (tempValue == null)
 		    tempValue = "";
 
-		extraInfoFieldNames.add(tempName);
 		extraInfoFieldValues.add(tempValue);
 	    }
 
