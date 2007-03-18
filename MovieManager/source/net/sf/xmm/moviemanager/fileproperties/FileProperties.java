@@ -31,6 +31,7 @@ abstract class FileProperties {
     static Logger log = Logger.getRootLogger();
     
     protected boolean supported = false;
+    protected boolean errorOccured = false;
     
     /**
      * The subtitles.
