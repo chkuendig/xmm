@@ -535,7 +535,7 @@ public class IMDB {
 	    
 			StringBuffer data = HttpUtil.readDataToStringBuffer(url);
 	    
-			FileUtil.writeToFile("direct-simple", data);
+			//FileUtil.writeToFile("direct-simple", data);
         
 			int start = 0, end = 0, stop = 0;
 			String key = "";
