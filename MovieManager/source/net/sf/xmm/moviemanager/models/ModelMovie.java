@@ -24,117 +24,126 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 
 public class ModelMovie extends ModelEntry {
-    
-    /* default public constructor for XML export */
-    public ModelMovie() {
-    	additionalInfo = new ModelAdditionalInfo();
-    }
-    
-    public ModelMovie(ModelMovie model) {
-    	copyData(model);
-    }
-    
-    /**
-     * The constructor.
-     **/
-    public ModelMovie(int key, String urlKey, String cover, String date, String title, String directedBy, String writtenBy, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String mpaa, String webSoundMix, String webRuntime, String awards) {
 
-	this.key = key;
-	this.urlKey = urlKey;
-	this.cover = cover;
-	this.date = date;
-	this.title = title;
-	this.directedBy = directedBy;
-	this.writtenBy = writtenBy;
-	this.genre = genre;
- 	this.rating = rating;
-	this.plot = plot;
-	this.cast = cast;
-	this.notes = notes;
-	this.seen = seen;
-	this.aka = aka;
-	this.country = country;
-	this.language = language;
-	this.colour = colour;
-	this.certification = certification;
-	this.mpaa = mpaa;
-	this.webSoundMix = webSoundMix;
-	this.webRuntime = webRuntime;
-	this.awards = awards;
-
-	hasGeneralInfoData = true;
-    
-    additionalInfo = new ModelAdditionalInfo();
-    }
-
-    public ModelMovie(int key, String title) {
-	this.key = key;
-	this.title = title;
-    }
-
-    public ModelMovie(int key, String title, String urlKey, String cover, String date) {
-	this.key = key;
-	this.title = title;
-	this.urlKey = urlKey;
-        this.cover = cover;
-        this.date = date;
-   }
-
-    public void copyData(ModelEntry model) {
-	this.key = model.getKey();
-	this.urlKey = model.getUrlKey();
-	this.cover = model.getCover();
-	this.date = model.getDate();
-	this.title = model.getTitle();
-	this.directedBy = model.getDirectedBy();
-	this.writtenBy = model.getWrittenBy();
-	this.genre = model.getGenre();
- 	this.rating = model.getRating();
-	this.plot = model.getPlot();
-	this.cast = model.getCast();
-	this.notes = model.getNotes();
-	this.seen = model.getSeen();
-	this.aka = model.getAka();
-	this.country = model.getCountry();
-	this.language = model.getLanguage();
-	this.colour = model.getColour();
-	this.certification = model.getCertification();
-	this.webSoundMix = model.getWebSoundMix();
-	this.webRuntime = model.getWebRuntime();
-	this.awards = model.getAwards();
-
-	coverData =  model.getCoverData();
-	hasGeneralInfoData = model.getHasGeneralInfoData();
-	hasAdditionalInfoData = model.getHasAdditionalInfoData();
-	hasChangedNotes = model.hasChangedNotes;
-	hasAdditionalInfoData = model.getHasAdditionalInfoData();
-
-	additionalInfo = model.getAdditionalInfo();
-    }
-
-     public void updateGeneralInfoData() {
-	ModelEntry model = null;
-
-	model = MovieManager.getIt().getDatabase().getMovie(getKey(), true);
-
-	if (model != null) {
-	    copyData(model);
+	/* default public constructor for XML export */
+	public ModelMovie() {
+		setAdditionalInfo(new ModelAdditionalInfo());
 	}
-    }
 
- public void updateCoverData() {
-         
-         if (MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL"))
-             coverData = ((DatabaseMySQL) MovieManager.getIt().getDatabase()).getCoverDataMovie(getKey());
- }
-     
-    public void updateAdditionalInfoData() {
-
-	ModelAdditionalInfo tmp = MovieManager.getIt().getDatabase().getAdditionalInfo(getKey(), false);
-
-	if (tmp != null) {
-	    additionalInfo = tmp;
-	    hasAdditionalInfoData = true;
+	public ModelMovie(ModelMovie model) {
+		copyData(model);
 	}
-    }
+
+	/**
+	 * The constructor.
+	 **/
+	public ModelMovie(int key, String urlKey, String cover, String date, String title, String directedBy, String writtenBy, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String mpaa, String webSoundMix, String webRuntime, String awards) {
+
+		setKey(key);
+		setUrlKey(urlKey);
+		setCover(cover);
+		setDate(date);
+		setTitle(title);
+		setDirectedBy(directedBy);
+		setWrittenBy(writtenBy);
+		setGenre(genre);
+		setRating(rating);
+		setPlot(plot);
+		setCast(cast);
+		setNotes(notes);
+		setSeen(seen);
+		setAka(aka);
+		setCountry(country);
+		setLanguage(language);
+		setColour(colour);
+		setCertification(certification);
+		setMpaa(mpaa);
+		setWebSoundMix(webSoundMix);
+		setWebRuntime(webRuntime);
+		setAwards(awards);
+
+		hasGeneralInfoData = true;
+
+		setAdditionalInfo(new ModelAdditionalInfo());
+	}
+
+	public ModelMovie(int key, String title) {
+		setKey(key);
+		setTitle(title);
+	}
+
+	public ModelMovie(int key, String title, String urlKey, String cover, String date) {
+		setKey(key);
+		setTitle(title);
+		setUrlKey(urlKey);
+		setCover(cover);
+		setDate(date);
+	}
+
+	public void copyData(ModelEntry model) {
+		setKey(model.getKey());
+		setUrlKey(model.getUrlKey());
+		setCover(model.getCover());
+		setDate(model.getDate());
+		setTitle(model.getTitle());
+		setDirectedBy(model.getDirectedBy());
+		setWrittenBy(model.getWrittenBy());
+		setGenre(model.getGenre());
+		setRating(model.getRating());
+		setPlot(model.getPlot());
+		setCast(model.getCast());
+		setNotes(model.getNotes());
+		setSeen(model.getSeen());
+		setAka(model.getAka());
+		setCountry(model.getCountry());
+		setLanguage(model.getLanguage());
+		setColour(model.getColour());
+		setCertification(model.getCertification());
+		setWebSoundMix(model.getWebSoundMix());
+		setWebRuntime(model.getWebRuntime());
+		setAwards(model.getAwards());
+
+		setCoverData(model.getCoverData());
+		
+		hasGeneralInfoData = model.getHasGeneralInfoData();
+		hasAdditionalInfoData = model.getHasAdditionalInfoData();
+		hasChangedNotes = model.hasChangedNotes;
+		hasAdditionalInfoData = model.getHasAdditionalInfoData();
+
+		setAdditionalInfo(model.getAdditionalInfo());
+	}
+
+	public void updateGeneralInfoData() {
+
+		if (getKey() != -1) {
+
+			ModelEntry model = null;
+			model = MovieManager.getIt().getDatabase().getMovie(getKey(), true);
+
+			if (model != null) {
+				copyData(model);
+			}
+		}
+	}
+
+	public void updateCoverData() {
+
+		if (getKey() != -1) {
+			if (MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL"))
+				setCoverData(((DatabaseMySQL) MovieManager.getIt().getDatabase()).getCoverDataMovie(getKey()));
+		}
+	}
+
+	public void updateAdditionalInfoData() {
+
+		if (getKey() != -1) {
+
+			ModelAdditionalInfo tmp = MovieManager.getIt().getDatabase().getAdditionalInfo(getKey(), false);
+
+			if (tmp != null) {
+				setAdditionalInfo(tmp);
+				hasAdditionalInfoData = true;
+			}
+		}
+	}
 }

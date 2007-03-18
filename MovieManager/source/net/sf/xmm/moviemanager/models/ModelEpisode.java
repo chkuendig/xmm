@@ -25,146 +25,152 @@ import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 
 public class ModelEpisode extends ModelEntry {
 
-    /*The key to the entry this episode is linked to.*/
-    private int movieKey = -1;
-    
-    /*The database key for this episode.*/
-    private int episodeNumber;
-    
-    /* default public constructor for XML export */
-    public ModelEpisode() {
-        additionalInfo = new ModelAdditionalInfo();
-    }
-    
-    public ModelEpisode(int movieKey) {
-        this.movieKey = movieKey;
-        additionalInfo = new ModelAdditionalInfo();
-    }
-    
-    public ModelEpisode(ModelEpisode model) {
-    	copyData(model);
-    }
-    
-    /**
-     * The constructor.
-     **/
-    public ModelEpisode(int key, int movieKey, int episodeNumber, String urlKey, String cover, String date, String title, String directedBy, String writtenBy, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String webSoundMix, String webRuntime, String awards) {
-	
-	this.key = key;
-	this.movieKey = movieKey;
-	this.episodeNumber = episodeNumber;
-	this.urlKey = urlKey;
-	this.cover = cover;
-	this.date = date;
-	this.title = title;
-	this.directedBy = directedBy;
-	this.writtenBy = writtenBy;
-	this.genre = genre;
- 	this.rating = rating;
-	this.plot = plot;
-	this.cast = cast;
-	this.notes = notes;
-	this.seen = seen;
-	this.aka = aka;
-	this.country = country; 
-	this.language = language;
-	this.colour = colour;
-	this.certification = certification;
-	this.webSoundMix = webSoundMix;
-	this.webRuntime = webRuntime;
-	this.awards = awards;
-	
-	hasGeneralInfoData = true;
-    
-    additionalInfo = new ModelAdditionalInfo();
-    }
-    
-    public ModelEpisode(int key, int movieKey, int episodeNumber, String title) {
-	
-	this.key = key;
-	this.movieKey = movieKey;
-	this.episodeNumber = episodeNumber;
-	this.title = title;
-	
-	hasGeneralInfoData = false;
-    }
-    
-    public int getMovieKey() {
-	return movieKey; 
-    }
-    
-    public void setMovieKey(int movieKey) {
-    	this.movieKey = movieKey; 
-    }
-    
-    public int getEpisodeNumber() {
-    	return episodeNumber; 
-    }
-    
-    public void setEpisodeNumber(int episodeNumber) {
-	this.episodeNumber = episodeNumber; 
-    }
+	/*The key to the entry this episode is linked to.*/
+	private int movieKey = -1;
 
-    public void copyData(ModelEntry model) {
-	
-	this.key = model.getKey();
-	this.movieKey = ((ModelEpisode) model).getMovieKey();
-	this.episodeNumber = ((ModelEpisode) model).getEpisodeNumber();
-	this.urlKey = model.getUrlKey();
-	this.cover = model.getCover();
-	this.coverData = model.getCoverData();
-	this.date = model.getDate();
-	this.title = model.getTitle();
-	this.directedBy = model.getDirectedBy();
-	this.writtenBy = model.getWrittenBy();
-	this.genre = model.getGenre();
- 	this.rating = model.getRating();
-	this.plot = model.getPlot();
-	this.cast = model.getCast();
-	this.notes = model.getNotes();
-	this.seen = model.getSeen();
-	this.aka = model.getAka();
-	this.country = model.getCountry(); 
-	this.language = model.getLanguage();
-	this.colour = model.getColour();
-	this.certification = model.getCertification();
-	this.webSoundMix = model.getWebSoundMix();
-	this.webRuntime = model.getWebRuntime();
-	this.awards = model.getAwards();
-	
-	coverData =  model.getCoverData();
-	
-	hasGeneralInfoData = model.getHasGeneralInfoData();
-	hasAdditionalInfoData = model.getHasAdditionalInfoData();
-	hasChangedNotes = model.hasChangedNotes;
-	hasAdditionalInfoData = model.getHasAdditionalInfoData();
-	
-	additionalInfo = model.getAdditionalInfo();
-	 }
-    
-     public void updateGeneralInfoData() {
-	ModelEntry model = null;
-	
-	model = MovieManager.getIt().getDatabase().getEpisode(getKey(), true);
-	
-	if (model != null) {
-	    copyData(model);
+	/*The database key for this episode.*/
+	private int episodeNumber;
+
+	/* default public constructor for XML export */
+	public ModelEpisode() {
+		setAdditionalInfo(new ModelAdditionalInfo());
 	}
-    }
-    
-     public void updateCoverData() {
-         
-         if (MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL"))
-             coverData = ((DatabaseMySQL) MovieManager.getIt().getDatabase()).getCoverDataEpisode(getKey());
-     }
-     
-    public void updateAdditionalInfoData() {
-	
-	ModelAdditionalInfo tmp = MovieManager.getIt().getDatabase().getAdditionalInfo(getKey(), true);
-	
-	if (tmp != null) {
-	    additionalInfo = tmp;
-	    hasAdditionalInfoData = true;
+
+	public ModelEpisode(int movieKey) {
+		this.movieKey = movieKey;
+		setAdditionalInfo(new ModelAdditionalInfo());
 	}
-    }
+
+	public ModelEpisode(ModelEpisode model) {
+		copyData(model);
+	}
+
+	/**
+	 * The constructor.
+	 **/
+	public ModelEpisode(int key, int movieKey, int episodeNumber, String urlKey, String cover, String date, String title, String directedBy, String writtenBy, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String webSoundMix, String webRuntime, String awards) {
+
+		setKey(key);
+		this.movieKey = movieKey;
+		this.episodeNumber = episodeNumber;
+		setUrlKey(urlKey);
+		setCover(cover);
+		setDate(date);
+		setTitle(title);
+		setDirectedBy(directedBy);
+		setWrittenBy(writtenBy);
+		setGenre(genre);
+		setRating(rating);
+		setPlot(plot);
+		setCast(cast);
+		setNotes(notes);
+		setSeen(seen);
+		setAka(aka);
+		setCountry(country); 
+		setLanguage(language);
+		setColour(colour);
+		setCertification(certification);
+		setWebSoundMix(webSoundMix);
+		setWebRuntime(webRuntime);
+		setAwards(awards);
+
+		hasGeneralInfoData = true;
+
+		setAdditionalInfo(new ModelAdditionalInfo());
+	}
+
+	public ModelEpisode(int key, int movieKey, int episodeNumber, String title) {
+
+		setKey(key);
+		this.movieKey = movieKey;
+		this.episodeNumber = episodeNumber;
+		setTitle(title);
+
+		hasGeneralInfoData = false;
+	}
+
+	public int getMovieKey() {
+		return movieKey; 
+	}
+
+	public void setMovieKey(int movieKey) {
+		this.movieKey = movieKey; 
+	}
+
+	public int getEpisodeNumber() {
+		return episodeNumber; 
+	}
+
+	public void setEpisodeNumber(int episodeNumber) {
+		this.episodeNumber = episodeNumber; 
+	}
+
+	public void copyData(ModelEntry model) {
+
+		setKey(model.getKey());
+		this.movieKey = ((ModelEpisode) model).getMovieKey();
+		this.episodeNumber = ((ModelEpisode) model).getEpisodeNumber();
+		setUrlKey(model.getUrlKey());
+		setCover(model.getCover());
+		setCoverData(model.getCoverData());
+		setDate(model.getDate());
+		setTitle(model.getTitle());
+		setDirectedBy(model.getDirectedBy());
+		setWrittenBy(model.getWrittenBy());
+		setGenre(model.getGenre());
+		setRating(model.getRating());
+		setPlot(model.getPlot());
+		setCast(model.getCast());
+		setNotes(model.getNotes());
+		setSeen(model.getSeen());
+		setAka(model.getAka());
+		setCountry(model.getCountry()); 
+		setLanguage(model.getLanguage());
+		setColour(model.getColour());
+		setCertification(model.getCertification());
+		setWebSoundMix(model.getWebSoundMix());
+		setWebRuntime(model.getWebRuntime());
+		setAwards(model.getAwards());
+
+		setCoverData(model.getCoverData());
+
+		hasGeneralInfoData = model.getHasGeneralInfoData();
+		hasAdditionalInfoData = model.getHasAdditionalInfoData();
+		hasChangedNotes = model.hasChangedNotes;
+		hasAdditionalInfoData = model.getHasAdditionalInfoData();
+
+		setAdditionalInfo(model.getAdditionalInfo());
+	}
+
+	public void updateGeneralInfoData() {
+
+		if (getKey() != -1) {
+
+			ModelEntry model = null;
+			model = MovieManager.getIt().getDatabase().getEpisode(getKey(), true);
+
+			if (model != null) {
+				copyData(model);
+			}
+		}
+	}
+
+	public void updateCoverData() {
+
+		if (MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL"))
+			setCoverData(((DatabaseMySQL) MovieManager.getIt().getDatabase()).getCoverDataEpisode(getKey()));
+	}
+
+	public void updateAdditionalInfoData() {
+
+		if (getKey() != -1) {
+			
+			ModelAdditionalInfo tmp = MovieManager.getIt().getDatabase().getAdditionalInfo(getKey(), true);
+
+			if (tmp != null) {
+				setAdditionalInfo(tmp);
+				hasAdditionalInfoData = true;
+			}
+		}
+	}
 }
