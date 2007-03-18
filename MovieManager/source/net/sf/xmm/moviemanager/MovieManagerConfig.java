@@ -20,9 +20,12 @@
 
 package net.sf.xmm.moviemanager;
 
+import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFile;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.models.AdditionalInfoFieldDefaultValues;
-import net.sf.xmm.moviemanager.util.*;
+import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.NewDatabaseLoadedEvent;
+import net.sf.xmm.moviemanager.util.NewDatabaseLoadedEventListener;
 
 import org.apache.log4j.Logger;
 
@@ -316,6 +319,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
     public File getLastDVDDir() {
 
         String displayName = FileUtil.getDriveDisplayName(lastDVDDir);
+        
+        displayName = MovieManagerCommandAddMultipleMoviesByFile.performExcludeParantheses(displayName, false);
         
         if (displayName != null) {
             
