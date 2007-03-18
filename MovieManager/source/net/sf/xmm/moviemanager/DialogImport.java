@@ -20,26 +20,18 @@
 
 package net.sf.xmm.moviemanager;
 
-import net.sf.networktools.proportionlayout.ProportionConstraints;
 import net.sf.networktools.proportionlayout.ProportionLayout;
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.util.CustomFileFilter;
-import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandImport;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
-import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.*;
 
 import org.apache.log4j.Logger;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -338,7 +330,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	tabbedPane.add("Text File", textFilePanel);
 	tabbedPane.add("Excel Spreadsheet", excelFilePanel);
 	
-	if (MovieManager.isWindows())
+	if (FileUtil.isWindows())
 	    tabbedPane.add("Extreme Movie Manager database|", extremePanel);
 	
     tabbedPane.add("XML File", xmlFilePanel);

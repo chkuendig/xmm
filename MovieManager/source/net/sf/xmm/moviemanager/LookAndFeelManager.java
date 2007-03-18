@@ -20,14 +20,14 @@
 
 package net.sf.xmm.moviemanager;
 
+import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.GUIUtil;
+
 import org.apache.log4j.Logger;
 
 import com.l2fprod.gui.plaf.skin.Skin;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 import com.oyoaha.swing.plaf.oyoaha.OyoahaLookAndFeel;
-
-import net.sf.xmm.moviemanager.util.FileUtil;
-import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -295,7 +295,7 @@ public class LookAndFeelManager {
     
     public static void setupOSXLaF() {
         
-        if (MovieManager.isMac()) {
+        if (FileUtil.isMac()) {
             
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("apple.awt.showGrowBox", "true");
@@ -320,7 +320,7 @@ public class LookAndFeelManager {
     }
     
     public static void macOSXRegistration() {
-        if (MovieManager.isMac()) {
+        if (FileUtil.isMac()) {
             try {
                 Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass("net.sf.xmm.moviemanager.util.mac.OSXAdapter");
                 

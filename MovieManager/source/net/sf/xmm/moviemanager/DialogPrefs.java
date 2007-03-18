@@ -20,25 +20,28 @@
 
 package net.sf.xmm.moviemanager;
 
-import java.io.*;
-import java.util.ArrayList;
+import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
+import net.sf.xmm.moviemanager.database.DatabaseMySQL;
+import net.sf.xmm.moviemanager.models.ModelMovie;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
+import net.sf.xmm.moviemanager.util.*;
+
+import org.apache.log4j.Logger;
+
+import com.l2fprod.gui.plaf.skin.Skin;
+import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
+import com.oyoaha.swing.plaf.oyoaha.OyoahaLookAndFeel;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import java.util.ArrayList;
 
 import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
-
-import org.apache.log4j.*;
-import com.l2fprod.gui.plaf.skin.*;
-import com.oyoaha.swing.plaf.oyoaha.*;
-import net.sf.xmm.moviemanager.commands.*;
-import net.sf.xmm.moviemanager.database.*;
-import net.sf.xmm.moviemanager.swing.extentions.*;
-import net.sf.xmm.moviemanager.models.*;
-import net.sf.xmm.moviemanager.util.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class DialogPrefs extends JDialog implements ActionListener, ItemListener {
 
@@ -881,7 +884,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         enableUseDefaultWindowsPlayer = new JCheckBox("Use the default Windows player");
         enableUseDefaultWindowsPlayer.setSelected(config.getUseDefaultWindowsPlayer());
                 
-        if (!MovieManager.isWindows())
+        if (!FileUtil.isWindows())
             enableUseDefaultWindowsPlayer.setEnabled(false);
         
         c = new GridBagConstraints();
@@ -1123,10 +1126,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
     
     void setBrowserComponentsEnabled() {
         
-        if (!MovieManager.isMac()) {
+        if (!FileUtil.isMac()) {
             browserOptionSafari.setEnabled(false);
         
-            if (!MovieManager.isWindows())
+            if (!FileUtil.isWindows())
                 browserOptionIE.setEnabled(false);
         }
         
@@ -1139,7 +1142,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
             browserBrowse.setEnabled(false);
         }
         
-        if (!MovieManager.isWindows())
+        if (!FileUtil.isWindows())
             enableUseDefaultWindowsBrowser.setEnabled(false);
     }
     
@@ -1401,7 +1404,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	    Skin skin = null;
 
 	    if (MovieManager.isApplet())
-	    	skin = SkinLookAndFeel.loadThemePack(FileUtil.getAppletFile(skinlfThemePackPath).toURL());
+	    	skin = SkinLookAndFeel.loadThemePack(FileUtil.getAppletFile(skinlfThemePackPath, DialogMovieManager.applet).toURL());
 	    else {
 			skin = SkinLookAndFeel.loadThemePack(skinlfThemePackPath);
 	    }

@@ -26,20 +26,9 @@ import net.sf.xmm.moviemanager.util.*;
 
 import org.apache.log4j.Logger;
 
+import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
-
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -1040,7 +1029,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
      * (that could probably be usefull on other platforms as well)
      */
     public void setVisible(boolean visible) {
-        if (MovieManager.isMac() && visible && java.awt.Toolkit.getDefaultToolkit().getScreenSize().getWidth() > 1200) {
+        if (FileUtil.isMac() && visible && java.awt.Toolkit.getDefaultToolkit().getScreenSize().getWidth() > 1200) {
             if (MovieManager.getDialog().getLocation().getX() < getWidth() + 25) {
                 MovieManager.getDialog().setLocation(getWidth() + 25, (int) MovieManager.getDialog().getLocation().getY());
             }

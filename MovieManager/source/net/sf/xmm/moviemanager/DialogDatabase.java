@@ -323,7 +323,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	tabbedPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 	tabbedPane.add(Localizer.getString("DialogDatabase.tabbed-pane.hsql-database"), hsqlPanel); //$NON-NLS-1$
 	
-	if (MovieManager.isWindows())
+	if (FileUtil.isWindows())
 	    tabbedPane.add(Localizer.getString("DialogDatabase.tabbed-pane.msaccess-database"), accessPanel); //$NON-NLS-1$
 	
 	tabbedPane.add(Localizer.getString("DialogDatabase.tabbed-pane.mysql-database"), mysqlPanel); //$NON-NLS-1$

@@ -3,10 +3,10 @@ package net.sf.xmm.moviemanager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandExit;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.database.*;
-import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeNode;
 import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
 import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
 import net.sf.xmm.moviemanager.models.ModelMovie;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeNode;
 import net.sf.xmm.moviemanager.util.*;
 
 import org.apache.log4j.BasicConfigurator;
@@ -14,7 +14,8 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.dotuseful.ui.tree.AutomatedTreeModel;
 
-import java.awt.*;
+import java.awt.EventQueue;
+import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
@@ -250,36 +251,18 @@ public class MovieManager {
  
  
  public static boolean isMacAppBundle() {
-     return isMac() & (MovieManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().indexOf(".app/Contents/Resources") > -1);
+     return FileUtil.isMac() & (MovieManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().indexOf(".app/Contents/Resources") > -1);
  }
  
  
- public static boolean isMac() {
-     String os = System.getProperty("os.name"); //$NON-NLS-1$
-     return os != null && os.toLowerCase().startsWith("mac") ? true : false; //$NON-NLS-1$
- }
  
- public static boolean isLinux() {
-     String os = System.getProperty("os.name"); //$NON-NLS-1$
-     return os != null && os.toLowerCase().startsWith("linux") ? true : false; //$NON-NLS-1$
- }
- 
- public static boolean isSolaris() {
-     String os = System.getProperty("os.name"); //$NON-NLS-1$
-     return os != null && (os.toLowerCase().startsWith("sunos") || os.toLowerCase().startsWith("solaris")) ? true : false; //$NON-NLS-1$ //$NON-NLS-2$
- }
- 
- public static boolean isWindows() {
-     String os = System.getProperty("os.name"); //$NON-NLS-1$
-     return os != null && os.toLowerCase().startsWith("windows") ? true : false; //$NON-NLS-1$
- }
  
  public static String getDefaultPlatformBrowser() {
      String browser = "";
      
-     if (isWindows())
+     if (FileUtil.isWindows())
          browser = "Default";
-     else if (isMac())
+     else if (FileUtil.isMac())
          browser = "Safari";
      else
          browser = "Firefox";
@@ -746,7 +729,7 @@ public class MovieManager {
                     absolutePath = jarList[i].getAbsolutePath();
                     
                     if (absolutePath.endsWith(".jar")) { //$NON-NLS-1$
-                        ClassPathHacker.addFile(absolutePath);
+                    	net.sf.xmm.moviemanager.util.ClassPathHacker.addFile(absolutePath);
                         log.debug(absolutePath+ " added to classpath"); //$NON-NLS-1$
                     }
                 }
@@ -797,7 +780,7 @@ public class MovieManager {
                 }
                 
                 /* Must be called before the GUI is created */
-                if (isMac()) { 
+                if (FileUtil.isMac()) { 
                 	includeJarFilesInClasspath(System.getProperty("user.dir") + "/LookAndFeels");
                     LookAndFeelManager.setupOSXLaF(); 
                 }
@@ -814,7 +797,7 @@ public class MovieManager {
                 MovieManager.getDialog().setUp();
                 
                 /* SetUp the Application Menu */
-                if (MovieManager.isMac()) {
+                if (FileUtil.isMac()) {
                     LookAndFeelManager.macOSXRegistration();
                 }   
                 
