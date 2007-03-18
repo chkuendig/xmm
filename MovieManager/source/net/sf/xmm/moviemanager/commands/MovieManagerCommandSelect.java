@@ -22,11 +22,12 @@ package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.DatabaseMySQL;
-import net.sf.xmm.moviemanager.swing.extentions.*;
 import net.sf.xmm.moviemanager.models.*;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeNode;
+import net.sf.xmm.moviemanager.util.DriveInfo;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 import org.dotuseful.ui.tree.AutomatedTreeNode;
@@ -96,103 +97,95 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
      * index visible).
      **/
     public static void executeAndReload(ModelEntry reloadEntry, boolean edit, boolean isEpisode, boolean execute) {
-	
-	//long time = System.currentTimeMillis();
 
-	JTree movieList = MovieManager.getDialog().getMoviesList();
-	
-	
-	
-	/* If Adding */
-	if (!edit) {
-	    
-	    //System.err.println("Adding");
-		
-	    /* If movie */
-	    if (!isEpisode) {
-		
-	    	//System.err.println("movie");
-	    	
-		ModelEntry.sortCategory = MovieManager.getConfig().getSortOption();
-		
-		if ("Title".equals(MovieManager.getConfig().getSortOption())) //$NON-NLS-1$
-		    ModelEntry.sort = 1;
-		else if ("directed".equals(MovieManager.getConfig().getSortOption())) //$NON-NLS-1$
-		    ModelEntry.sort = 2;
-		else if ("Rating".equals(MovieManager.getConfig().getSortOption())) //$NON-NLS-1$
-		    ModelEntry.sort = 3;
-		else if ("Date".equals(MovieManager.getConfig().getSortOption())) //$NON-NLS-1$
-		    ModelEntry.sort = 4;
-		else if ("Duration".equals(MovieManager.getConfig().getSortOption())) //$NON-NLS-1$
-		    ModelEntry.sort = 5;
-		
-		ExtendedTreeNode root = ((ExtendedTreeNode) movieList.getModel().getRoot());
-        
-		if (root.getChildCount() == 1 && ((ModelEntry) ((ExtendedTreeNode) root.getFirstChild()).getUserObject()).getKey() == -1)
-		    root.removeAllChildren();
-        
-		ExtendedTreeNode newNode = new ExtendedTreeNode(reloadEntry);
-		root.addNode(newNode);
-		
-		movieList.setSelectionPath(new TreePath(newNode.getPath()));
-	    }
-	    else {
-		/* If adding episode */
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) movieList.getLastSelectedPathComponent();
-		
-		if (node != null && node.getParent() != null) {
-		    
-		    if (!((DefaultMutableTreeNode) node.getParent()).isRoot())
-			node = (DefaultMutableTreeNode) node.getParent();
-		    ExtendedTreeNode child = new ExtendedTreeNode(reloadEntry);
-		    
-		    /* Adds the new child to the node */
-		    node.add(child);
-		    
-		    /* expands the node and selects the new child */
-		    if (execute) 
-			movieList.setSelectionPath(new TreePath(new Object[] {node.getParent(), node, child}));
-		}
-	    }
-	}
-	/* If editing */
-	else {
-	    
-	    //System.err.println("edit");
-		
-	    AutomatedTreeNode node = (AutomatedTreeNode) movieList.getLastSelectedPathComponent();
-	    
-	    node.setUserObject(reloadEntry);
-	    ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).nodeChanged(node.getParent());
-	    
-	    movieList.setSelectionPath(new TreePath(node.getPath()));
-	}
-	
-	MovieManager.getDialog().setAndShowEntries();
-	
-	/* Saves time not to execute when multiadding episodes */
-	if (execute)
-	    execute();
-	
-	MovieManager.getDialog().getMoviesList().requestFocus(true);
-    
-	/*Updates the entries value shown in the right side of the toolbars.*/
-	MovieManager.getDialog().setAndShowEntries();
+    	//long time = System.currentTimeMillis();
+
+    	JTree movieList = MovieManager.getDialog().getMoviesList();
+
+    	/* If Adding */
+    	if (!edit) {
+
+    		/* If movie */
+    		if (!isEpisode) {
+
+    			ModelEntry.sortCategory = MovieManager.getConfig().getSortOption();
+
+    			if ("Title".equals(MovieManager.getConfig().getSortOption())) //$NON-NLS-1$
+    				ModelEntry.sort = 1;
+    			else if ("directed".equals(MovieManager.getConfig().getSortOption())) //$NON-NLS-1$
+    				ModelEntry.sort = 2;
+    			else if ("Rating".equals(MovieManager.getConfig().getSortOption())) //$NON-NLS-1$
+    				ModelEntry.sort = 3;
+    			else if ("Date".equals(MovieManager.getConfig().getSortOption())) //$NON-NLS-1$
+    				ModelEntry.sort = 4;
+    			else if ("Duration".equals(MovieManager.getConfig().getSortOption())) //$NON-NLS-1$
+    				ModelEntry.sort = 5;
+
+    			ExtendedTreeNode root = ((ExtendedTreeNode) movieList.getModel().getRoot());
+
+    			if (root.getChildCount() == 1 && ((ModelEntry) ((ExtendedTreeNode) root.getFirstChild()).getUserObject()).getKey() == -1)
+    				root.removeAllChildren();
+
+    			ExtendedTreeNode newNode = new ExtendedTreeNode(reloadEntry);
+    			root.addNode(newNode);
+
+    			movieList.setSelectionPath(new TreePath(newNode.getPath()));
+    		}
+    		else {
+    			/* If adding episode */
+    			DefaultMutableTreeNode node = (DefaultMutableTreeNode) movieList.getLastSelectedPathComponent();
+
+    			if (node != null && node.getParent() != null) {
+
+    				if (!((DefaultMutableTreeNode) node.getParent()).isRoot())
+    					node = (DefaultMutableTreeNode) node.getParent();
+    				ExtendedTreeNode child = new ExtendedTreeNode(reloadEntry);
+
+    				/* Adds the new child to the node */
+    				node.add(child);
+
+    				/* expands the node and selects the new child */
+    				if (execute) 
+    					movieList.setSelectionPath(new TreePath(new Object[] {node.getParent(), node, child}));
+    			}
+    		}
+    	}
+    	/* If editing */
+    	else {
+
+    		AutomatedTreeNode node = (AutomatedTreeNode) movieList.getLastSelectedPathComponent();
+
+    		node.setUserObject(reloadEntry);
+    		((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).nodeChanged(node.getParent());
+
+    		movieList.setSelectionPath(new TreePath(node.getPath()));
+    	}
+
+    	MovieManager.getDialog().setAndShowEntries();
+
+    	/* Saves time not to execute when multiadding episodes */
+    	if (execute)
+    		execute();
+
+    	MovieManager.getDialog().getMoviesList().requestFocus(true);
+
+    	/*Updates the entries value shown in the right side of the toolbars.*/
+    	MovieManager.getDialog().setAndShowEntries();
     }
-	
+
 
     protected static ArrayList createNodeList(TreeModel model) {
-	
-	DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) model).getRoot();
-	int childCount = root.getChildCount();
-	ArrayList list = new ArrayList(childCount);
-	
-	for (int i = 0; i < childCount; i++) {
-	    if (!((DefaultMutableTreeNode) root.getChildAt(i)).isLeaf())
-		list.add(root.getChildAt(i));
-	}
-	
-	return list;
+
+    	DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) model).getRoot();
+    	int childCount = root.getChildCount();
+    	ArrayList list = new ArrayList(childCount);
+
+    	for (int i = 0; i < childCount; i++) {
+    		if (!((DefaultMutableTreeNode) root.getChildAt(i)).isLeaf())
+    			list.add(root.getChildAt(i));
+    	}
+
+    	return list;
     }
     
 	
@@ -253,20 +246,20 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	    
 	    if (model.getKey() != -1) {
 		
-		/* If not MySQL */
-		if (!(MovieManager.getIt().getDatabase() instanceof DatabaseMySQL)) {
-		
-		    if (!model.getHasGeneralInfoData()) {
-			ModelEntry tmpModel;
-		    
-			if (model instanceof ModelMovie)
-			    tmpModel = MovieManager.getIt().getDatabase().getMovie(model.getKey(), false);
-			else
-			    tmpModel = MovieManager.getIt().getDatabase().getEpisode(model.getKey(), false);
-		    
-			model.copyData(tmpModel);
-		    }
-		}
+	    	/* If not MySQL */
+	    	if (!(MovieManager.getIt().getDatabase() instanceof DatabaseMySQL)) {
+
+	    		if (!model.getHasGeneralInfoData()) {
+	    			ModelEntry tmpModel;
+
+	    			if (model instanceof ModelMovie)
+	    				tmpModel = MovieManager.getIt().getDatabase().getMovie(model.getKey(), false);
+	    			else
+	    				tmpModel = MovieManager.getIt().getDatabase().getEpisode(model.getKey(), false);
+
+	    			model.copyData(tmpModel);
+	    		}
+	    	}
 		else {
 		    /* If MySQL */
 		
@@ -368,13 +361,31 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		/* Experimental - needs more work */
 		StringTokenizer tokenizer = new StringTokenizer(additionalInfo.getFileLocation(), "*");
 		boolean enable = false;
-        
-		while (tokenizer.hasMoreElements()) {
-		    if (new File(tokenizer.nextToken()).isFile()) {
-			enable = true;
-			break;
-		    }
-		}
+        String tmp;
+		
+        while (tokenizer.hasMoreElements()) {
+
+        	tmp = tokenizer.nextToken();
+
+        	if (FileUtil.isWindows()) {
+
+        		String drive = tmp.substring(0, tmp.indexOf(":") + 1);
+        		
+        		if (drive.length() == 0)
+        			continue;
+        		
+        		DriveInfo d = new DriveInfo(drive);
+
+        		if (d.isInitialized() && d.isValid() && !d.isRemovable()) {
+        			enable = true;
+        			break;
+        		}
+        	}
+        	else if (new File(tmp).exists()) {
+        		enable = true;
+        		break;
+        	}
+        }
         
 		MovieManager.getDialog().toolBar.setEnablePlayButton(enable);
         
