@@ -32,17 +32,6 @@ abstract public class MovieManagerCommandAddMultipleMovies {
     protected boolean cancel = false;
     protected boolean dropImdbInfo = false;
     
-    public void setCancelAll(boolean value) {
-	cancelAll = value;
-    }
-    
-    public void setCancel(boolean value) {
-	cancel = value;
-    }
-    
-    public void setDropImdbInfo(boolean value) {
-	dropImdbInfo = value;
-    }
 }
 
 
