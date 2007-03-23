@@ -1679,10 +1679,9 @@ public class DialogMovieInfo extends JDialog implements
 
 				SteppedComboBox fields;
 
-				/* Temporary till the office LnFs supports the SteppedComboBox */
-				if (MovieManager.getConfig().getLookAndFeelType() == 0
-						&& MovieManager.getConfig().getLookAndFeelString()
-								.startsWith("Office")) { //$NON-NLS-1$
+				/* Temporary till the office LnFs supports the SteppedComboBox, final for mac */
+				if ((MovieManager.getConfig().getLookAndFeelType() == 0 && MovieManager.getConfig()
+						.getLookAndFeelString().startsWith("Office")) || FileUtil.isMac()) { //$NON-NLS-1$
 					fields = new SteppedComboBox(new String[] { "", "" }, 0); //$NON-NLS-1$ //$NON-NLS-2$
 				} else
 					fields = new SteppedComboBox(new String[] { "", "" }); //$NON-NLS-1$ //$NON-NLS-2$
