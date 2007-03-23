@@ -962,8 +962,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         JPanel miscellaneous = createMiscellaneous();
         
         JPanel plotAndCast = new JPanel();
+        plotAndCast.setOpaque(false);
         plotAndCast.setLayout(new GridLayout(2,1));
-        
         plotAndCast.add(createPlot());
         plotAndCast.add(createCast());
         
@@ -1338,7 +1338,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     protected JPanel createPlot() {
         log.debug("Start creation of the Plot panel."); //$NON-NLS-1$
         JPanel plot = new JPanel();
-        
+        plot.setOpaque(false);
         plot.setLayout(new BorderLayout());
         
         plot.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder() /*BorderFactory.createEmptyBorder()*/,
@@ -1370,7 +1370,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     protected JPanel createCast() {
         log.debug("Start creation of the Cast panel."); //$NON-NLS-1$
         JPanel cast = new JPanel();
-        
+        cast.setOpaque(false);
         cast.setLayout(new BorderLayout());
         
         cast.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
@@ -1403,7 +1403,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     protected JPanel createMiscellaneous() {
         
         JPanel miscellaenous = new JPanel();
-        
+        miscellaenous.setOpaque(false);
         miscellaenous.setLayout(new BorderLayout());
         
         miscellaenous.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),

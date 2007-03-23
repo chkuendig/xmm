@@ -526,6 +526,8 @@ public class DialogMovieInfo extends JDialog implements
 
 		/* Creates the plot... */
 		JPanel panelPlot = new JPanel();
+        panelPlot.setLayout(new GridLayout(1,1));
+        panelPlot.setOpaque(false);
 		panelPlot.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 Localizer.getString("DialogMovieInfo.panel-plot.title."), //$NON-NLS-1$
 												TitledBorder.DEFAULT_JUSTIFICATION,
@@ -538,12 +540,14 @@ public class DialogMovieInfo extends JDialog implements
 		textAreaPlot.setLineWrap(true);
 		textAreaPlot.setWrapStyleWord(true);
 		JScrollPane scrollPanePlot = new JScrollPane(textAreaPlot);
+		scrollPanePlot.setOpaque(false);
 		scrollPanePlot
 				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		panelPlot.add(scrollPanePlot);
 
 		/* Creates the cast... */
 		JPanel panelCast = new JPanel();
+        panelCast.setLayout(new GridLayout(1,1));
 		panelCast.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 Localizer.getString("DialogMovieInfo.panel-cast.title."), //$NON-NLS-1$
 												TitledBorder.DEFAULT_JUSTIFICATION,
@@ -562,6 +566,7 @@ public class DialogMovieInfo extends JDialog implements
 		panelCast.add(scrollPaneCast);
 
 		JPanel panelPlotAndCast = new JPanel();
+		panelPlotAndCast.setOpaque(false);
 		panelPlotAndCast.setLayout(new BoxLayout(panelPlotAndCast,
 				BoxLayout.Y_AXIS));
 		panelPlotAndCast.setBorder(BorderFactory.createEmptyBorder(5, 3, 2, 3));
@@ -892,9 +897,11 @@ public class DialogMovieInfo extends JDialog implements
 
 		int insetsMargin = 8;
 		Insets insets = buttonSaveAndClose.getMargin();
-		buttonSaveAndClose.setMargin(new Insets(insets.top, insets.left
+		/* whatever this is good for, it doesn't work very well on mac (buttons look very odd with it) */
+		if(!FileUtil.isMac()) {
+			buttonSaveAndClose.setMargin(new Insets(insets.top, insets.left
 				- insetsMargin, insets.bottom, insets.right - insetsMargin));
-
+		} 
 		buttonSaveAndClose.setToolTipText("Save and Close the window"); //$NON-NLS-1$
 		buttonSaveAndClose.setActionCommand("MovieInfo - Save and Close"); //$NON-NLS-1$
 		buttonSaveAndClose.setMnemonic(KeyEvent.VK_S);
@@ -940,9 +947,11 @@ public class DialogMovieInfo extends JDialog implements
 		});
 
 		insets = buttonGetDVDInfo.getMargin();
-		buttonGetDVDInfo.setMargin(new Insets(insets.top, insets.left
+		/* whatever this is good for, it doesn't work very well on mac (buttons look very odd with it) */
+		if(!FileUtil.isMac()) {
+			buttonGetDVDInfo.setMargin(new Insets(insets.top, insets.left
 				- insetsMargin, insets.bottom, insets.right - insetsMargin));
-
+		}
 		panelButtons.add(buttonGetDVDInfo);
 
 		JButton buttonGetFileInfo = new JButton(Localizer
@@ -961,9 +970,12 @@ public class DialogMovieInfo extends JDialog implements
 		});
 
 		insets = buttonGetFileInfo.getMargin();
-		buttonGetFileInfo.setMargin(new Insets(insets.top, insets.left
+		/* whatever this is good for, it doesn't work very well on mac (buttons look very odd with it) */
+		if(!FileUtil.isMac()) {
+			buttonGetFileInfo.setMargin(new Insets(insets.top, insets.left
 				- insetsMargin, insets.bottom, insets.right - insetsMargin));
-
+		}
+		
 		panelButtons.add(buttonGetFileInfo);
 
 		JButton buttonGetIMDBInfo;
@@ -993,9 +1005,13 @@ public class DialogMovieInfo extends JDialog implements
 		});
 
 		insets = buttonGetIMDBInfo.getMargin();
-		buttonGetIMDBInfo.setMargin(new Insets(insets.top, insets.left
-				- insetsMargin, insets.bottom, insets.right - insetsMargin));
 
+		/* whatever this is good for, it doesn't work very well on mac (buttons look very odd with it) */
+		if(!FileUtil.isMac()) {
+			buttonGetIMDBInfo.setMargin(new Insets(insets.top, insets.left
+				- insetsMargin, insets.bottom, insets.right - insetsMargin));
+		}
+		
 		panelButtons.add(buttonGetIMDBInfo);
 
 		JButton buttonCancel = new JButton(Localizer
@@ -1007,9 +1023,12 @@ public class DialogMovieInfo extends JDialog implements
 		buttonCancel.addActionListener(new CommandDialogDispose(this));
 
 		insets = buttonCancel.getMargin();
-		buttonCancel.setMargin(new Insets(insets.top, insets.left
+		/* whatever this is good for, it doesn't work very well on mac (buttons look very odd with it) */
+		if(!FileUtil.isMac()) {
+			buttonCancel.setMargin(new Insets(insets.top, insets.left
 				- insetsMargin, insets.bottom, insets.right - insetsMargin));
-
+		}
+		
 		panelButtons.add(buttonCancel);
 
 		/* Adds all and buttonsPanel... */
