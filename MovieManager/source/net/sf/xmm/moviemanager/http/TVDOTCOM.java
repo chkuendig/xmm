@@ -22,6 +22,8 @@ package net.sf.xmm.moviemanager.http;
 
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelSearchHit;
+import net.sf.xmm.moviemanager.util.FileUtil;
+
 import org.apache.log4j.Logger;
 
 import java.net.SocketTimeoutException;
@@ -212,11 +214,14 @@ public class TVDOTCOM {
 	    //URL url = makeURL(urlType);
 	    URL url = new URL(urlType);
 	    
+		log.debug("coverUrl:"+coverUrl);
+		
 	    StringBuffer data = HttpUtil.readDataToStringBuffer(url);
+	    
+	    //FileUtil.writeToFile("episode.html", data);
 	    
 	    int index = data.indexOf("http://image.com.com/tv/images/processed/thumb/");
 	    int index2 = data.indexOf("\"", index);
-	    
 	    
 	    if (index == -1 || index2 == -1)
 		return null;
@@ -224,9 +229,6 @@ public class TVDOTCOM {
 	    coverUrl = data.substring(index, index2);
 	    
 	    modelSeries.setCoverExtension(coverUrl.substring(coverUrl.lastIndexOf(".")));
-	    
-	    log.debug("coverUrl:"+coverUrl);
-	    
 	    
 	} catch (Exception e) {
 	    log.error("", e);
@@ -746,7 +748,7 @@ public class TVDOTCOM {
 	} 
 	
 	/* Returns the model... */
-	return new ModelEpisode(0, 0, episodeNumber, episodeUrlKey, "", date, episode.getTitle(), director, writer, "", rating, plot, guestStar, "", false, "", "", "", "", "", "", "", "");
+	return new ModelEpisode(-1, -1, episodeNumber, episodeUrlKey, "", date, episode.getTitle(), director, writer, "", rating, plot, guestStar, "", false, "", "", "", "", "", "", "", "");
     }
     
     
