@@ -14,16 +14,20 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.dotuseful.ui.tree.AutomatedTreeModel;
 
+import spin.Spin;
+
 import java.awt.EventQueue;
 import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.DefaultListModel;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
 
 public class MovieManager {
@@ -50,7 +54,7 @@ public class MovieManager {
     /**
      * The current version of the program.
      **/
-    private static String _version = "2.5 beta 4"; //$NON-NLS-1$
+    private static String _version = "2.5 beta 5"; //$NON-NLS-1$
     
     /**
      * The current database object.
@@ -227,6 +231,9 @@ public class MovieManager {
         
         options.setSearchAlias(config.getSearchAlias());
         
+        if (database.getDatabaseType().equals("MySQL"))
+        	options.getFullGeneralInfo = false;
+        
         return options;
     }
  
@@ -254,9 +261,6 @@ public class MovieManager {
      return FileUtil.isMac() & (MovieManager.class.getProtectionDomain().getCodeSource().getLocation().getPath().indexOf(".app/Contents/Resources") > -1);
  }
  
- 
- 
- 
  public static String getDefaultPlatformBrowser() {
      String browser = "";
      
@@ -272,21 +276,25 @@ public class MovieManager {
  
     
     
+ 	public boolean setDatabase(Database _database, boolean cancelRelativePaths) {
+ 		return setDatabase(_database, null, cancelRelativePaths);
+ 	}
+ 
     /**
-     * Sets the current database.
+     * * Sets the current database.
      *
      * @param The current database.
      **/
-    public boolean setDatabase(Database _database, boolean cancelRelativePaths) {
-        
+    public boolean setDatabase(Database _database, ProgressBean progressBean, boolean cancelRelativePaths) {
+       	
         if (_database != null) {
             
             boolean databaseUpdateAllowed = false;
             
-            if (Thread.currentThread().isInterrupted()) {
-                return false;
+            if (progressBean != null && progressBean.getCancelled()) {
+            	return false;
             }
-            
+             
             /* Check if script file needs update (v2.1) */
             if (_database instanceof DatabaseHSQL) {
                 if (((DatabaseHSQL) _database).isScriptOutOfDate()) {
@@ -308,9 +316,9 @@ public class MovieManager {
                     databaseUpdateAllowed = true;
                 }
             }
-            
-            if (Thread.currentThread().isInterrupted()) {
-                return false;
+             
+            if (progressBean != null && progressBean.getCancelled()) {
+            	 return false;
             }
             
             if (!_database.isSetUp()) {
@@ -321,8 +329,8 @@ public class MovieManager {
                 }
             }
             
-            if (Thread.currentThread().isInterrupted()) {
-                return false;
+            if (progressBean != null && progressBean.getCancelled()) {
+            	return false;
             }
             
             /* If it went ok. */
@@ -351,15 +359,10 @@ public class MovieManager {
                     }
                 }
                 
-                if (Thread.currentThread().isInterrupted()) {
-                    return false;
+                if (progressBean != null && progressBean.getCancelled()) {
+                	return false;
                 }
-                
-                //long time = System.currentTimeMillis();
-                
-                /* Resetting the covers and queries paths */
-                //config.resetCoverAndQueries();
-                
+                 
                 newDbHandler.newDatabaseLoaded(this);
                 
                 setActiveAdditionalInfoFields(_database.getActiveAdditionalInfoFields());
@@ -393,6 +396,9 @@ public class MovieManager {
                     config.setCurrentList("Show All"); //$NON-NLS-1$
                 }
                 
+                if (_database.getDatabaseType().equals("MySQL"))
+                	options.getFullGeneralInfo = false;
+                	
                 options.setFilterString(""); //$NON-NLS-1$
                 options.setOrderCategory("Title"); //$NON-NLS-1$
                 options.setSeen(0);
@@ -400,12 +406,14 @@ public class MovieManager {
                 options.setDateOption(0);
                 options.setSearchAlias(config.getSearchAlias());
                 
-                if (Thread.currentThread().isInterrupted()) {
-                    return false;
+                if (progressBean != null && progressBean.getCancelled()) {
+                	return false;
                 }
                 
                 DefaultListModel moviesList = _database.getMoviesList(options);
+                
                 ArrayList episodesList = _database.getEpisodeList("movieID"); //$NON-NLS-1$
+                 
                 DefaultTreeModel treeModel = dialogMovieManager.createTreeModel(moviesList, episodesList);
                 
                 dialogMovieManager.getMoviesList().setRootVisible(false);
@@ -434,7 +442,7 @@ public class MovieManager {
                  If the database is set at the top and the  method returns because of an error after the database is set, 
                  a faulty database will then be stored and used */
                 database = _database;
-                
+                 
                 /* Loads the movies list. */
                 dialogMovieManager.getMoviesList().setModel(treeModel);
                 
@@ -451,7 +459,7 @@ public class MovieManager {
                 
         if (_database != null) {
             
-            Runnable showProgress = new Runnable() {
+            Runnable selectMovie = new Runnable() {
                 public void run() {
                     
                     /* Selects the first movie in the list and loads its info. */
@@ -460,7 +468,7 @@ public class MovieManager {
                     
                     MovieManagerCommandSelect.execute();
                 }};
-                GUIUtil.invokeLater(showProgress);
+                GUIUtil.invokeLater(selectMovie);
         }
         
         return _database != null;
@@ -590,16 +598,19 @@ public class MovieManager {
         if (!config.getLoadDatabaseOnStartup())
             return;
         
-        SwingWorker worker = new SwingWorker() {
-            SimpleProgressBar progressBar;
-            
-            public Object construct() {
+        
+        ProgressBean worker = new ProgressBeanImpl() {
+        
+            public void start() {
                 
+            	//Thread.currentThread().setPriority(8);
+            		
                 String databasePath = config.getDatabasePath(true);
                 String type = ""; //$NON-NLS-1$
                 
                 if (databasePath == null || databasePath.equals("null")) { //$NON-NLS-1$
-                    return null;
+                	listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
+                    return;
                 }
                 
                 log.debug("Start loading database."); //$NON-NLS-1$
@@ -620,17 +631,14 @@ public class MovieManager {
                 }
                 else {
                     log.debug("database path is empty"); //$NON-NLS-1$
-                    return null;
+                    listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
+                    return;
                 }
                 
-                progressBar = new SimpleProgressBar(MovieManager.getDialog(), true, this);
-                
-                GUIUtil.show(progressBar, true);
-                
                 if (type.equals("MySQL")) //$NON-NLS-1$
-                    DialogDatabase.updateProgress(progressBar, Localizer.getString("moviemanager.progress.connecting-to-database")); //$NON-NLS-1$
+                	this.listener.propertyChange(new PropertyChangeEvent(this, "value", null, Localizer.getString("moviemanager.progress.connecting-to-database")));
                 else
-                    DialogDatabase.updateProgress(progressBar, Localizer.getString("moviemanager.progress.creating-connection")); //$NON-NLS-1$
+                	listener.propertyChange(new PropertyChangeEvent(this, "value", null, Localizer.getString("moviemanager.progress.creating-connection")));
                 
                 
                 log.info("Loading " +type+ ":" + databasePath); //$NON-NLS-1$ //$NON-NLS-2$
@@ -640,6 +648,10 @@ public class MovieManager {
                     databasePath = FileUtil.getUserDir() + databasePath;
                 
                 Database db = null;
+                
+                if (getCancelled()) {
+                		return;
+                }
                 
                 try {
                     
@@ -668,6 +680,9 @@ public class MovieManager {
                     log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
                 }
                 
+                if (getCancelled()) {
+                		return;
+                }
                 
                 if (db != null) {
                     
@@ -692,18 +707,27 @@ public class MovieManager {
                     
                     long time = System.currentTimeMillis();
                     
-                    DialogDatabase.updateProgress(progressBar, Localizer.getString("moviemanager.progress.retrieving-movie-list")); //$NON-NLS-1$
+                    //DialogDatabase.updateProgress(progressBar, Localizer.getString("moviemanager.progress.retrieving-movie-list")); //$NON-NLS-1$
                     
+                    listener.propertyChange(new PropertyChangeEvent(this, "value", null, Localizer.getString("moviemanager.progress.retrieving-movie-list")));
+                     
                     if (setDatabase(db, false))
                         log.debug("Database loaded in:" + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
                     else
                         log.debug("Failed to load database"); //$NON-NLS-1$
                 }
                 
-                progressBar.dispose();
-                return null;
+                listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
+                //return;
             }
         };
+        worker = (ProgressBean) Spin.off(worker);
+        
+        SimpleProgressBar progressBar = new SimpleProgressBar(MovieManager.getDialog(), "Loading Database", true, worker);
+        GUIUtil.show(progressBar, true);        
+        
+        //worker.addPropertyChangeListener(progressBar);
+        
         worker.start();
     }
     
@@ -727,7 +751,7 @@ public class MovieManager {
                 for (int i = 0; i < jarList.length; i++) {
                     
                     absolutePath = jarList[i].getAbsolutePath();
-                    
+                     
                     if (absolutePath.endsWith(".jar")) { //$NON-NLS-1$
                     	net.sf.xmm.moviemanager.util.ClassPathHacker.addFile(absolutePath);
                         log.debug(absolutePath+ " added to classpath"); //$NON-NLS-1$
