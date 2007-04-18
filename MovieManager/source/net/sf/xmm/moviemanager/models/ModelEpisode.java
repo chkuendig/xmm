@@ -33,13 +33,13 @@ public class ModelEpisode extends ModelEntry {
 
 	/* default public constructor for XML export */
 	public ModelEpisode() {
-		setAdditionalInfo(new ModelAdditionalInfo());
+		additionalInfo = new ModelAdditionalInfo();
 	}
 
 	public ModelEpisode(int movieKey) {
 		this.movieKey = movieKey;
-		setAdditionalInfo(new ModelAdditionalInfo());
-	}
+		additionalInfo = new ModelAdditionalInfo();	
+	}	
 
 	public ModelEpisode(ModelEpisode model) {
 		copyData(model);
@@ -73,10 +73,6 @@ public class ModelEpisode extends ModelEntry {
 		setWebSoundMix(webSoundMix);
 		setWebRuntime(webRuntime);
 		setAwards(awards);
-
-		hasGeneralInfoData = true;
-
-		setAdditionalInfo(new ModelAdditionalInfo());
 	}
 
 	public ModelEpisode(int key, int movieKey, int episodeNumber, String title) {
@@ -85,10 +81,12 @@ public class ModelEpisode extends ModelEntry {
 		this.movieKey = movieKey;
 		this.episodeNumber = episodeNumber;
 		setTitle(title);
-
-		hasGeneralInfoData = false;
 	}
 
+	public boolean isEpisode() {
+		return true;
+	}
+	
 	public int getMovieKey() {
 		return movieKey; 
 	}
@@ -135,11 +133,12 @@ public class ModelEpisode extends ModelEntry {
 		setCoverData(model.getCoverData());
 
 		hasGeneralInfoData = model.getHasGeneralInfoData();
-		hasAdditionalInfoData = model.getHasAdditionalInfoData();
+		
+		if (model.getHasAdditionalInfoData())
+			setAdditionalInfo(model.getAdditionalInfo());
+		
 		hasChangedNotes = model.hasChangedNotes;
-		hasAdditionalInfoData = model.getHasAdditionalInfoData();
-
-		setAdditionalInfo(model.getAdditionalInfo());
+		
 	}
 
 	public void updateGeneralInfoData() {
@@ -172,5 +171,8 @@ public class ModelEpisode extends ModelEntry {
 				hasAdditionalInfoData = true;
 			}
 		}
+		
+		if (additionalInfo == null)
+			additionalInfo = new ModelAdditionalInfo();
 	}
 }

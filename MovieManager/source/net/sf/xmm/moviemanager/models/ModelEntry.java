@@ -63,8 +63,9 @@ abstract public class ModelEntry {
 	/* Changed notes that aren't saved to the database */
 	public boolean hasChangedNotes = false;
 
-	private ModelAdditionalInfo additionalInfo = null;
+	ModelAdditionalInfo additionalInfo = null;
 
+	public abstract boolean isEpisode();
 
 	public boolean getHasGeneralInfoData() {
 		return hasGeneralInfoData;

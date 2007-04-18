@@ -28,6 +28,7 @@ import net.sf.xmm.moviemanager.fileproperties.FilePropertiesMovie;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.ModelUpdatedEventListener;
 import net.sf.xmm.moviemanager.util.ModelUpdatedHandler;
+import net.sf.xmm.moviemanager.util.ModelUpdatedEvent.IllegalEventTypeException;
 
 import org.apache.log4j.Logger;
 
@@ -67,14 +68,17 @@ public class ModelMovieInfo {
     
     public ModelEntry model;
     
+    public ModelSeries modelSeries = null;
+    
     /* Loading an empty episode model (adding episode) */
-    public ModelMovieInfo(int movieKey) {
-        
+    public ModelMovieInfo(ModelSeries modelSeries) {
+        this.modelSeries = modelSeries;
+    	     	
         isEpisode = true;
-        model = new ModelEpisode(movieKey);
+        model = new ModelEpisode(modelSeries.getMovieKey());
         
         initializeAdditionalInfo(true);
-    }
+	}
     
     
     /* Loading an empty model (movie or episode) */
@@ -129,8 +133,8 @@ public class ModelMovieInfo {
         modelUpdatedHandler.addModelChangedEventListenener(listener);
     }
     
-    public void modelChanged(Object source) {
-        modelUpdatedHandler.modelChanged(source);
+    public void modelChanged(Object source, String type) throws IllegalEventTypeException {
+        modelUpdatedHandler.modelChanged(source, type);
     }
     
     
@@ -212,17 +216,31 @@ public class ModelMovieInfo {
     	model.setCover(cover);
         model.setCoverData(coverData);
         
-        modelChanged(this);
+        try {
+        	modelChanged(this, "GeneralInfo");
+        } catch (IllegalEventTypeException e) {
+        	log.error("IllegalEventTypeException:" + e.getMessage());
+        }
     }	
     
     public void setTitle(String title) {
         model.setTitle(title);
-        modelChanged(this);
+        
+        try {
+        	modelChanged(this, "GeneralInfo");
+        } catch (IllegalEventTypeException e) {
+        	log.error("IllegalEventTypeException:" + e.getMessage());
+        }
     }
     
     public void setSeen(boolean seen) {
         model.setSeen(seen);
-        modelChanged(this);
+        
+        try {
+        	modelChanged(this, "GeneralInfo");
+        } catch (IllegalEventTypeException e) {
+        	log.error("IllegalEventTypeException:" + e.getMessage());
+        }
     }
     
     public void setGeneralInfoFieldsEmpty() {
@@ -255,7 +273,11 @@ public class ModelMovieInfo {
             ((ModelEpisode) model).setEpisodeNumber(-1);
         }
         
-        modelChanged(this);
+        try {
+        	modelChanged(this, "GeneralInfo");
+        } catch (IllegalEventTypeException e) {
+        	log.error("IllegalEventTypeException:" + e.getMessage());
+        }
     }
     
     /**
@@ -273,7 +295,11 @@ public class ModelMovieInfo {
             _hasReadProperties = false;
         }
         
-        modelChanged(this);
+        try {
+        	modelChanged(this, "AdditionalInfo");
+        } catch (IllegalEventTypeException e) {
+        	log.error("IllegalEventTypeException:" + e.getMessage());
+        }
     }
     
     public void saveAdditionalInfoData() {
@@ -310,7 +336,7 @@ public class ModelMovieInfo {
             additionalInfo.setFileCount(Integer.parseInt((String) _fieldValues.get(14)));
             
         }
-        
+		
         additionalInfo.setSubtitles((String) _fieldValues.get(0));
         additionalInfo.setResolution((String) _fieldValues.get(5));
         additionalInfo.setVideoCodec((String) _fieldValues.get(6));
@@ -592,6 +618,8 @@ public class ModelMovieInfo {
             
             _hasReadProperties = true;
             
+            modelChanged(this, "AdditionalInfo");
+            
         } catch (Exception e) {
             log.error("Exception: " + e.getMessage(), e); //$NON-NLS-1$
         }
@@ -608,8 +636,8 @@ public class ModelMovieInfo {
         _fieldValues = new ArrayList();
         
         if (!loadEmpty) {
-            
-            if (model.getHasAdditionalInfoData())
+                   	
+            if (!model.getHasAdditionalInfoData())
                 model.updateAdditionalInfoData();
             
             additionalInfo = model.getAdditionalInfo();
@@ -632,7 +660,7 @@ public class ModelMovieInfo {
         } else {
             _fieldValues.add(""); //$NON-NLS-1$
         }
-        
+         
         _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("File Size"); //$NON-NLS-1$
         
@@ -795,9 +823,9 @@ public class ModelMovieInfo {
     
     
     public boolean saveCoverToFile() throws Exception {
-        
-	if (!_saveCover)
-            return false;
+       	
+		if (!_saveCover)
+			return false;
 	
         byte [] cover = model.getCoverData();
         String coverName = model.getCover();
@@ -895,31 +923,51 @@ public class ModelMovieInfo {
             }   
             
             model.setAka(newAkaTitles.trim());
-            modelChanged(this);
+            
+            try {
+            	modelChanged(this, "GeneralInfo");
+            } catch (IllegalEventTypeException e) {
+            	log.error("IllegalEventTypeException:" + e.getMessage());
+            }
         }
     }
     
     
     public void clearModel() {
-        
-        if (isEpisode)
-            model = new ModelEpisode();
-        else
-            model = new ModelMovie();
-        
-        modelChanged(this);
+    	clearModel(false);
     }
     
-    public void setModel(ModelEntry model, boolean copyMovieKey, boolean modelChanged) {
+    /**
+     * *
+     * * @param addNewEpisode     true is a new episode will be added
+     */
+    public void clearModel(boolean addNewEpisode) {
         
-        if (model instanceof ModelEpisode) {
-                      
-            if (copyMovieKey) {
+        if (isEpisode) {
+         
+        	if (addNewEpisode) {
+        		model = new ModelEpisode(modelSeries.getMovieKey());
+        		model.setTitle(modelSeries.getMovie().getTitle());
+        	}
+        	else
+        		model = new ModelEpisode();
+        }
+        else
+            model = new ModelMovie();
                
-                if (isEpisode)
-                    ((ModelEpisode) model).setMovieKey(((ModelEpisode) this.model).getMovieKey());
-                else
-                    ((ModelEpisode) model).setMovieKey(this.model.getKey());
+        try {
+        	modelChanged(this, "GeneralInfo");
+        } catch (IllegalEventTypeException e) {
+        	log.error("IllegalEventTypeException:" + e.getMessage());
+        }
+    }
+    
+    public void setModel(ModelEntry model, boolean copySeriesKey, boolean modelChanged) {
+        
+        if (model.isEpisode()) {
+                      
+            if (copySeriesKey) {
+            	((ModelEpisode) model).setMovieKey(modelSeries.getMovieKey());
             }
             isEpisode = true;
         }
@@ -927,10 +975,15 @@ public class ModelMovieInfo {
             isEpisode = false;
         
         this.model = model;
-        
+                
         initializeAdditionalInfo(false);
 	
-        if (modelChanged)
-            modelChanged(this);
+        if (modelChanged) {
+        	try {
+            	modelChanged(this, "GeneralInfo");
+            } catch (IllegalEventTypeException e) {
+            	log.error("IllegalEventTypeException:" + e.getMessage());
+            }
+        }
     }
 }

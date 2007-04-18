@@ -41,6 +41,8 @@ public class ModelDatabaseSearch {
     
     public ArrayList searchTerms = new ArrayList();
     
+    public boolean getFullGeneralInfo = true;
+    
     public void addSearchTerm(String term) {
 	searchTerms.add(term);
     }

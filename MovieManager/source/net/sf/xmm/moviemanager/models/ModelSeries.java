@@ -35,6 +35,10 @@ public class ModelSeries {
         this.movie = movie;
     }
     
+    public int getMovieKey() {
+    	return movie.getKey();
+    }
+    
     public ModelMovie getMovie() {
         return movie;
     }

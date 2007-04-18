@@ -27,7 +27,7 @@ public class ModelMovie extends ModelEntry {
 
 	/* default public constructor for XML export */
 	public ModelMovie() {
-		setAdditionalInfo(new ModelAdditionalInfo());
+		additionalInfo = new ModelAdditionalInfo();
 	}
 
 	public ModelMovie(ModelMovie model) {
@@ -63,8 +63,6 @@ public class ModelMovie extends ModelEntry {
 		setAwards(awards);
 
 		hasGeneralInfoData = true;
-
-		setAdditionalInfo(new ModelAdditionalInfo());
 	}
 
 	public ModelMovie(int key, String title) {
@@ -106,13 +104,19 @@ public class ModelMovie extends ModelEntry {
 		setCoverData(model.getCoverData());
 		
 		hasGeneralInfoData = model.getHasGeneralInfoData();
-		hasAdditionalInfoData = model.getHasAdditionalInfoData();
+		
+		if (model.getHasAdditionalInfoData())
+			setAdditionalInfo(model.getAdditionalInfo());
+		else
+			setAdditionalInfo(new ModelAdditionalInfo());
+		
 		hasChangedNotes = model.hasChangedNotes;
-		hasAdditionalInfoData = model.getHasAdditionalInfoData();
-
-		setAdditionalInfo(model.getAdditionalInfo());
 	}
 
+	public boolean isEpisode() {
+		return false;
+	}
+	
 	public void updateGeneralInfoData() {
 
 		if (getKey() != -1) {
@@ -135,7 +139,7 @@ public class ModelMovie extends ModelEntry {
 	}
 
 	public void updateAdditionalInfoData() {
-
+	
 		if (getKey() != -1) {
 
 			ModelAdditionalInfo tmp = MovieManager.getIt().getDatabase().getAdditionalInfo(getKey(), false);
@@ -145,5 +149,8 @@ public class ModelMovie extends ModelEntry {
 				hasAdditionalInfoData = true;
 			}
 		}
+		
+		if (additionalInfo == null)
+			additionalInfo = new ModelAdditionalInfo();
 	}
 }

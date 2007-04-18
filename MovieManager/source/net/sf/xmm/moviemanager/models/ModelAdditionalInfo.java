@@ -218,19 +218,16 @@ public class ModelAdditionalInfo {
 	}
 
 	public static void setExtraInfoFieldNames(ArrayList extraInfoFieldNames) {
-
-		if (hasOldExtraInfoFieldNames) {
-			ModelAdditionalInfo.extraInfoFieldNames = extraInfoFieldNames;
-			hasOldExtraInfoFieldNames = false;
-		}
+		ModelAdditionalInfo.extraInfoFieldNames = extraInfoFieldNames;
+		hasOldExtraInfoFieldNames = false;
 	}
 
 	public void setExtraInfoFieldValues(ArrayList extraInfoFieldValues) {
 		 
-		if (extraInfoFieldValues.size() !=  extraInfoFieldNames.size()) {
+		if (extraInfoFieldValues.size() != extraInfoFieldNames.size()) {
 			
 			try {
-				throw new Exception();
+				throw new Exception("extraInfoFieldValues.size(" + extraInfoFieldValues.size()+ ") != extraInfoFieldNames.size(" + extraInfoFieldNames.size()+ ")");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -488,7 +485,7 @@ public class ModelAdditionalInfo {
 						data.append("\n");
 					data.append("Video Rate: ");
 
-					if (!"".equals(model.getVideoRate())) {
+					if (model.getVideoRate() != null && !"".equals(model.getVideoRate())) {
 						data.append(model.getVideoRate());
 						data.append(" fps");
 					}
@@ -501,7 +498,7 @@ public class ModelAdditionalInfo {
 
 					data.append("Video Bit Rate: ");
 
-					if (!"".equals(model.getVideoBitrate())) {
+					if (model.getVideoBitrate() != null && !"".equals(model.getVideoBitrate())) {
 						data.append(model.getVideoBitrate());
 						data.append(" kbps");
 					}
@@ -523,7 +520,7 @@ public class ModelAdditionalInfo {
 
 					data.append("Audio Rate: ");
 
-					if (!"".equals(model.getAudioRate())) {
+					if (model.getAudioRate() != null && !"".equals(model.getAudioRate())) {
 						data.append(model.getAudioRate());
 						data.append(" Hz");
 					}
@@ -537,7 +534,7 @@ public class ModelAdditionalInfo {
 
 					data.append("Audio Bit Rate: ");
 
-					if (!"".equals(model.getAudioBitrate())) {
+					if (model.getAudioBitrate() != null && !"".equals(model.getAudioBitrate())) {
 						data.append(model.getAudioBitrate());
 						data.append(" kbps");
 					}
