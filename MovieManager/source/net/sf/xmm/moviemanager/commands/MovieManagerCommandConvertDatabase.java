@@ -248,7 +248,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	    		absolutePath = absolutePath.substring(0, absolutePath.length()-7);
 	    }
 	    else {
-	    	if (!absolutePath.endsWith(".mdb") && !absolutePath.endsWith(".accdb") //$NON-NLS-1$
+	    	if (!absolutePath.endsWith(".mdb") && !absolutePath.endsWith(".accdb")) //$NON-NLS-1$
 	    		absolutePath += ".mdb";
 	    }
 	    return absolutePath;
