@@ -176,7 +176,7 @@ public class IMDB {
 	
 		_key = key;
 	
-		//FileUtil.writeToFile("imdb.html", data);
+		FileUtil.writeToFile("imdb.html", data);
 	
 		parseData(data);
     }
@@ -244,10 +244,13 @@ public class IMDB {
 			stop = 0;
 			end = 0;
 			/* Gets the directed by... */
-			if ((start = data.indexOf("Directed by", start)) != -1 &&
+			if ((start = data.indexOf("Director", start)) != -1 &&
 				(stop = data.indexOf("<br/>", start)) != -1) {
 	    	
-				ArrayList list = getLinkContentName(data.substring(start, stop));
+				String tmp = data.substring(start, stop);
+				tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
+				
+				ArrayList list = getLinkContentName(tmp);
 	    	 
 				while (!list.isEmpty()) {
 					if (!_directedBy.equals(""))
@@ -261,13 +264,14 @@ public class IMDB {
 			stop = 0;
 			end = 0;
 	    
-			String tmp;
-
 			/* Gets the written by... */
-			if (((start = data.indexOf("Writing credits", start)) != -1) &&
+			if (((start = data.indexOf("Writer", start)) != -1) &&
 				(stop = data.indexOf("<br/>", start)) != -1) {
 	    	
-				ArrayList list = getLinkContentName(data.substring(start, stop));
+				String tmp = data.substring(start, stop);
+				tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
+				
+				ArrayList list = getLinkContentName(tmp);
 	    	
 				while (!list.isEmpty()) {
 	    		
@@ -285,7 +289,7 @@ public class IMDB {
 			_cast = getClassInfo(data, "class=\"cast\">");
 	    
 			_cast = _cast.replaceAll(" \\.\\.\\.", ",");
-	    
+							
 			_aka = getClassInfo(data, "Also Known As:");
 	    
 			_mpaa = getClassInfo(data, "<a href=\"/mpaa\">MPAA</a>:");
@@ -318,9 +322,16 @@ public class IMDB {
 			if ((start = data.indexOf("class=\"plotpar\">",start)+16) != 15 &&
 				(end=data.indexOf("</p>",start)) != -1) {
 				_plot = HttpUtil.decodeHTML(data.substring(start, end));
+				
+				if (_plot.indexOf("Written by") != -1)
+					_plot = _plot.substring(0, _plot.indexOf("Written by"));
 			}
 	   	   
-	    
+			if (_plot.endsWith("more"))
+				_plot = _plot.substring(0, _plot.indexOf("more"));
+			
+			_plot = _plot.trim();
+			
 		} catch (Exception e) {
 			log.error("", e);
 		}
