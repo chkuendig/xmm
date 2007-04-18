@@ -48,8 +48,7 @@ import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
-public class DialogMovieInfo extends JDialog implements
-		ModelUpdatedEventListener {
+public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListener {
 
 	static Logger log = Logger.getRootLogger();
 
@@ -130,7 +129,7 @@ public class DialogMovieInfo extends JDialog implements
 		if (model.getKey() == -1)
 			throw new Exception("MovieKey cannot be -1");
 
-		movieInfoModel = new ModelMovieInfo(model.getKey());
+		movieInfoModel = new ModelMovieInfo(new ModelSeries(model));
 
 		setUp(Localizer.getString("DialogMovieInfo.title.add-episode"));
 
@@ -526,8 +525,9 @@ public class DialogMovieInfo extends JDialog implements
 
 		/* Creates the plot... */
 		JPanel panelPlot = new JPanel();
-        panelPlot.setLayout(new GridLayout(1,1));
-        panelPlot.setOpaque(false);
+		panelPlot.setLayout(new GridLayout(1,1));
+		panelPlot.setOpaque(false);
+
 		panelPlot.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 Localizer.getString("DialogMovieInfo.panel-plot.title."), //$NON-NLS-1$
 												TitledBorder.DEFAULT_JUSTIFICATION,
@@ -540,14 +540,12 @@ public class DialogMovieInfo extends JDialog implements
 		textAreaPlot.setLineWrap(true);
 		textAreaPlot.setWrapStyleWord(true);
 		JScrollPane scrollPanePlot = new JScrollPane(textAreaPlot);
-		scrollPanePlot.setOpaque(false);
 		scrollPanePlot
 				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		panelPlot.add(scrollPanePlot);
 
 		/* Creates the cast... */
 		JPanel panelCast = new JPanel();
-        panelCast.setLayout(new GridLayout(1,1));
 		panelCast.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 Localizer.getString("DialogMovieInfo.panel-cast.title."), //$NON-NLS-1$
 												TitledBorder.DEFAULT_JUSTIFICATION,
@@ -566,7 +564,6 @@ public class DialogMovieInfo extends JDialog implements
 		panelCast.add(scrollPaneCast);
 
 		JPanel panelPlotAndCast = new JPanel();
-		panelPlotAndCast.setOpaque(false);
 		panelPlotAndCast.setLayout(new BoxLayout(panelPlotAndCast,
 				BoxLayout.Y_AXIS));
 		panelPlotAndCast.setBorder(BorderFactory.createEmptyBorder(5, 3, 2, 3));
@@ -897,11 +894,10 @@ public class DialogMovieInfo extends JDialog implements
 
 		int insetsMargin = 8;
 		Insets insets = buttonSaveAndClose.getMargin();
-		/* whatever this is good for, it doesn't work very well on mac (buttons look very odd with it) */
-		if(!FileUtil.isMac()) {
-			buttonSaveAndClose.setMargin(new Insets(insets.top, insets.left
-				- insetsMargin, insets.bottom, insets.right - insetsMargin));
-		} 
+		
+		//buttonSaveAndClose.setMargin(new Insets(insets.top, insets.left
+		//	- insetsMargin, insets.bottom, insets.right - insetsMargin));
+
 		buttonSaveAndClose.setToolTipText("Save and Close the window"); //$NON-NLS-1$
 		buttonSaveAndClose.setActionCommand("MovieInfo - Save and Close"); //$NON-NLS-1$
 		buttonSaveAndClose.setMnemonic(KeyEvent.VK_S);
@@ -928,7 +924,7 @@ public class DialogMovieInfo extends JDialog implements
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 				reloadMovieList(executeCommandSave(MovieManager.getConfig()
 						.getCurrentList()));
-				movieInfoModel.clearModel();
+				movieInfoModel.clearModel(true);
 			}
 		});
 		panelButtons.add(buttonSave);
@@ -947,11 +943,9 @@ public class DialogMovieInfo extends JDialog implements
 		});
 
 		insets = buttonGetDVDInfo.getMargin();
-		/* whatever this is good for, it doesn't work very well on mac (buttons look very odd with it) */
-		if(!FileUtil.isMac()) {
-			buttonGetDVDInfo.setMargin(new Insets(insets.top, insets.left
+		buttonGetDVDInfo.setMargin(new Insets(insets.top, insets.left
 				- insetsMargin, insets.bottom, insets.right - insetsMargin));
-		}
+
 		panelButtons.add(buttonGetDVDInfo);
 
 		JButton buttonGetFileInfo = new JButton(Localizer
@@ -970,12 +964,9 @@ public class DialogMovieInfo extends JDialog implements
 		});
 
 		insets = buttonGetFileInfo.getMargin();
-		/* whatever this is good for, it doesn't work very well on mac (buttons look very odd with it) */
-		if(!FileUtil.isMac()) {
-			buttonGetFileInfo.setMargin(new Insets(insets.top, insets.left
+		buttonGetFileInfo.setMargin(new Insets(insets.top, insets.left
 				- insetsMargin, insets.bottom, insets.right - insetsMargin));
-		}
-		
+
 		panelButtons.add(buttonGetFileInfo);
 
 		JButton buttonGetIMDBInfo;
@@ -1005,13 +996,9 @@ public class DialogMovieInfo extends JDialog implements
 		});
 
 		insets = buttonGetIMDBInfo.getMargin();
-
-		/* whatever this is good for, it doesn't work very well on mac (buttons look very odd with it) */
-		if(!FileUtil.isMac()) {
-			buttonGetIMDBInfo.setMargin(new Insets(insets.top, insets.left
+		buttonGetIMDBInfo.setMargin(new Insets(insets.top, insets.left
 				- insetsMargin, insets.bottom, insets.right - insetsMargin));
-		}
-		
+
 		panelButtons.add(buttonGetIMDBInfo);
 
 		JButton buttonCancel = new JButton(Localizer
@@ -1023,12 +1010,9 @@ public class DialogMovieInfo extends JDialog implements
 		buttonCancel.addActionListener(new CommandDialogDispose(this));
 
 		insets = buttonCancel.getMargin();
-		/* whatever this is good for, it doesn't work very well on mac (buttons look very odd with it) */
-		if(!FileUtil.isMac()) {
-			buttonCancel.setMargin(new Insets(insets.top, insets.left
+		buttonCancel.setMargin(new Insets(insets.top, insets.left
 				- insetsMargin, insets.bottom, insets.right - insetsMargin));
-		}
-		
+
 		panelButtons.add(buttonCancel);
 
 		/* Adds all and buttonsPanel... */
@@ -1330,6 +1314,7 @@ public class DialogMovieInfo extends JDialog implements
 
 		/* Gets the general info... */
 		updateGeneralInfoFromModel();
+		updateCurrentAdditionalInfoFieldFromModel();
 	}
 
 	/**
@@ -1340,7 +1325,7 @@ public class DialogMovieInfo extends JDialog implements
 	}
 
 	protected void loadAdditionalFields() {
-
+	
 		/* loads the additional info... */
 
 		_fieldUnits.add(""); //$NON-NLS-1$
@@ -1534,10 +1519,9 @@ public class DialogMovieInfo extends JDialog implements
 	 */
 	private void executeCommandAdditionalInfo() {
 
-		int[] activeAdditionalInfoFields;
+		int [] activeAdditionalInfoFields;
 
-		activeAdditionalInfoFields = MovieManager.getIt()
-				.getActiveAdditionalInfoFields();
+		activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
 
 		if (movieInfoModel.getLastFieldIndex() != -1
 				&& movieInfoModel._saveLastFieldValue.get(
@@ -1578,10 +1562,8 @@ public class DialogMovieInfo extends JDialog implements
 				getAdditionalInfoValuePanel().add(textfield);
 
 			} /* Subtitle, media info, and all the extra info fields */
-			else if (activeAdditionalInfoFields[movieInfoModel
-					.getLastFieldIndex()] == 0
-					|| activeAdditionalInfoFields[movieInfoModel
-							.getLastFieldIndex()] >= 16) {
+			else if (activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()] == 0
+					|| activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()] >= 16) {
 				/* Current value in combobox */
 				String value = (String) ((JComboBox) getAdditionalInfoValuePanel()
 						.getComponent(0)).getSelectedItem();
@@ -1631,16 +1613,22 @@ public class DialogMovieInfo extends JDialog implements
 						((JTextField) getAdditionalInfoValuePanel()
 								.getComponent(0)).getText());
 			}
+			
+			updateCurrentAdditionalInfoFieldFromModel();
 		}
+	}
 
+	public void updateCurrentAdditionalInfoFieldFromModel() {
+
+		int [] activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
+		
 		int currentFieldIndex = getAdditionalInfoFields().getSelectedIndex();
 		String currentFieldIndexValue = ""; //$NON-NLS-1$
 
 		if (currentFieldIndex != -1) {
-			currentFieldIndexValue = (String) movieInfoModel._fieldValues
-					.get(activeAdditionalInfoFields[currentFieldIndex]);
+			currentFieldIndexValue = (String) movieInfoModel._fieldValues.get(activeAdditionalInfoFields[currentFieldIndex]);
 
-			/* Displays the new info... */
+			/* Duration - Displays the new info... */
 			if (activeAdditionalInfoFields[currentFieldIndex] == 1) {
 				/* Recreates the panel... */
 				getAdditionalInfoValuePanel().removeAll();
@@ -1677,13 +1665,10 @@ public class DialogMovieInfo extends JDialog implements
 				getAdditionalInfoValuePanel().add(separatorThree);
 
 				/* Displays... */
-				if (!movieInfoModel._fieldValues.get(
-						activeAdditionalInfoFields[currentFieldIndex]).equals(
-						"")) { //$NON-NLS-1$
+				if (!movieInfoModel._fieldValues.get(activeAdditionalInfoFields[currentFieldIndex]).equals(
+				"")) { //$NON-NLS-1$
 
-					int time = Integer
-							.parseInt((String) movieInfoModel._fieldValues
-									.get(activeAdditionalInfoFields[currentFieldIndex]));
+					int time = Integer.parseInt((String) movieInfoModel._fieldValues.get(activeAdditionalInfoFields[currentFieldIndex]));
 					int hours = time / 3600;
 					int mints = time / 60 - hours * 60;
 					int secds = time - hours * 3600 - mints * 60;
@@ -1691,6 +1676,7 @@ public class DialogMovieInfo extends JDialog implements
 					mintsText.setText(String.valueOf(mints));
 					secdsText.setText(String.valueOf(secds));
 				}
+				// Any extra info fields 
 			} else if (activeAdditionalInfoFields[currentFieldIndex] == 0
 					|| activeAdditionalInfoFields[currentFieldIndex] >= 16) {
 
@@ -1698,9 +1684,10 @@ public class DialogMovieInfo extends JDialog implements
 
 				SteppedComboBox fields;
 
-				/* Temporary till the office LnFs supports the SteppedComboBox, final for mac */
-				if ((MovieManager.getConfig().getLookAndFeelType() == 0 && MovieManager.getConfig()
-						.getLookAndFeelString().startsWith("Office")) || FileUtil.isMac()) { //$NON-NLS-1$
+				/* Temporary till the office LnFs supports the SteppedComboBox */
+				if (MovieManager.getConfig().getLookAndFeelType() == 0
+						&& MovieManager.getConfig().getLookAndFeelString()
+						.startsWith("Office")) { //$NON-NLS-1$
 					fields = new SteppedComboBox(new String[] { "", "" }, 0); //$NON-NLS-1$ //$NON-NLS-2$
 				} else
 					fields = new SteppedComboBox(new String[] { "", "" }); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1724,17 +1711,17 @@ public class DialogMovieInfo extends JDialog implements
 
 				/* Getting the stored additional info values */
 				AdditionalInfoFieldDefaultValues valuesObj = (AdditionalInfoFieldDefaultValues) MovieManager
-						.getConfig().getAdditionalInfoDefaultValues().get(
-								movieInfoModel._fieldNames
-										.get(currentFieldIndex));
+				.getConfig().getAdditionalInfoDefaultValues().get(
+						movieInfoModel._fieldNames
+						.get(currentFieldIndex));
 
 				comboBoxModel.addElement(currentFieldIndexValue);
 
 				FontMetrics fontmetrics = getFontMetrics(getFont());
 				int line_widths;
 				int maxPopupWidth = fontmetrics
-						.stringWidth(currentFieldIndexValue);
-				;
+				.stringWidth(currentFieldIndexValue);
+
 
 				if (valuesObj != null) {
 
@@ -1770,27 +1757,23 @@ public class DialogMovieInfo extends JDialog implements
 
 				/* Setting the caret position of the combobox */
 				((JTextField) fields.getEditor().getEditorComponent())
-						.setCaretPosition(0);
+				.setCaretPosition(0);
 
 				getAdditionalInfoValuePanel().add(fields);
 
 				getAdditionalInfoPanel().validate();
+
+				// any regular additional info fields
 			} else {
 				/* Adds document... */
-				((JTextField) getAdditionalInfoValuePanel().getComponent(0))
-						.setDocument((Document) _fieldDocuments
-								.get(activeAdditionalInfoFields[currentFieldIndex]));
-				((JTextField) getAdditionalInfoValuePanel().getComponent(0))
-						.setText(currentFieldIndexValue);
-				((JTextField) getAdditionalInfoValuePanel().getComponent(0))
-						.setCaretPosition(0);
+				((JTextField) getAdditionalInfoValuePanel().
+						getComponent(0)).setDocument((Document) _fieldDocuments.get(activeAdditionalInfoFields[currentFieldIndex]));
+				((JTextField) getAdditionalInfoValuePanel().getComponent(0)).setText(currentFieldIndexValue);
+				((JTextField) getAdditionalInfoValuePanel().getComponent(0)).setCaretPosition(0);
 			}
 
 			/* Changes units... */
-			getAdditionalInfoUnits()
-					.setText(
-							(String) _fieldUnits
-									.get(activeAdditionalInfoFields[currentFieldIndex]));
+			getAdditionalInfoUnits().setText((String) _fieldUnits.get(activeAdditionalInfoFields[currentFieldIndex]));
 			/* Revalidates... */
 			getAdditionalInfoUnits().revalidate();
 		}
@@ -2268,7 +2251,11 @@ public class DialogMovieInfo extends JDialog implements
 	}
 
 	public void modelUpdatedEvent(ModelUpdatedEvent event) {
-		updateGeneralInfoFromModel();
+		
+		if (event.getUpdateType().equals("GeneralInfo"))
+			updateGeneralInfoFromModel();
+		else
+			updateCurrentAdditionalInfoFieldFromModel();
 	}
 
 	public void updateGeneralInfoFromModel() {
