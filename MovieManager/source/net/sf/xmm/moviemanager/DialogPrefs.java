@@ -914,7 +914,15 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		public void actionPerformed(ActionEvent arg0) {
 		    // check if there is a file selected
 
-		    JFileChooser chooser = new JFileChooser();
+			String path = mediaPlayerPathField.getText();
+			File parent = new File(path).getParentFile();
+			
+			if (parent != null && parent.isDirectory())
+				path = parent.getParent();
+			else 
+				path = "";
+			
+		    JFileChooser chooser = new JFileChooser(path);
 		    int returnVal = chooser.showDialog(null, "Choose");
 		    if (returnVal != JFileChooser.APPROVE_OPTION)
 		        return;
@@ -1022,7 +1030,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         browserPanel.add(browserOptionPanel, c);
         
         
-        JLabel browserLabel = new JLabel("Browser Location:");
+        JLabel browserLabel = new JLabel("Custom Browser Location:");
         
         c.gridx = 0;
         c.gridy = 1;
@@ -1412,8 +1420,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	    LookAndFeel laf = new SkinLookAndFeel();
 	    UIManager.setLookAndFeel(laf);
-	    UIManager.setLookAndFeel("com.l2fprod.gui.plaf.skin.SkinLookAndFeel"); //$NON-NLS-1$
-
+	    	    
 	    updateLookAndFeel();
 
 	} catch (Exception e) {
@@ -1486,11 +1493,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	MovieManager.getDialog().toolBar.updateToolButtonBorder();
 
 	SwingUtilities.updateComponentTreeUI(MovieManager.getDialog());
+	
 	MovieManager.getDialog().toolBar.updateToolButtonBorder();
 
 	MovieManager.getDialog().getDateField().setOpaque(false);
 	MovieManager.getDialog().getDateField().setBorder(null);
-
+		
 	MovieManager.getDialog().getTitleField().setOpaque(false);
 	MovieManager.getDialog().getTitleField().setBorder(null);
 
