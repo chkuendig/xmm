@@ -32,7 +32,7 @@ public class GUIUtil {
     static Logger log = Logger.getRootLogger();
     
     public static void show(final Container container, final boolean visible) {
-        
+     	
         SwingUtilities.invokeLater(new Runnable(){
             public void run() {
                 container.setVisible(visible);
@@ -62,7 +62,25 @@ public class GUIUtil {
    
     
     public static void invokeLater(Runnable runnable) {
-        SwingUtilities.invokeLater(runnable);
+    	
+    	if (!SwingUtilities.isEventDispatchThread())
+    		SwingUtilities.invokeLater(runnable);
+    	else
+    		runnable.run();
     }
     
-} 
+    public static void isEDT() {
+        if (!SwingUtilities.isEventDispatchThread()) {
+          throw new Error("assertion failed: not on EDT");
+        }
+      }
+      
+      /**
+       * Must not be executed on the EDT.
+       */  
+      public static void isNotEDT() {
+        if (SwingUtilities.isEventDispatchThread()) {
+          throw new Error("assertion failed: on EDT");
+        }
+      }
+    } 
