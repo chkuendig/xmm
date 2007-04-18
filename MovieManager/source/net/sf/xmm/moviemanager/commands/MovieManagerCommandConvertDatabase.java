@@ -240,12 +240,16 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	    String absolutePath = fileChooser.getSelectedFile().getAbsolutePath();
 	    
 	    if (fileChooser.getFileFilter().getDescription().equals("HSQL Database Files (*.properties, *.script)")) {//$NON-NLS-1$
-		newDatabaseType = 2;
+	    	newDatabaseType = 2;
 
-		if (absolutePath.endsWith(".properties")) //$NON-NLS-1$
-		    absolutePath = absolutePath.substring(0, absolutePath.length()-11);
-		else if (absolutePath.endsWith(".script")) //$NON-NLS-1$
-		    absolutePath = absolutePath.substring(0, absolutePath.length()-7);
+	    	if (absolutePath.endsWith(".properties")) //$NON-NLS-1$
+	    		absolutePath = absolutePath.substring(0, absolutePath.length()-11);
+	    	else if (absolutePath.endsWith(".script")) //$NON-NLS-1$
+	    		absolutePath = absolutePath.substring(0, absolutePath.length()-7);
+	    }
+	    else {
+	    	if (!absolutePath.endsWith(".mdb") && !absolutePath.endsWith(".accdb") //$NON-NLS-1$
+	    		absolutePath += ".mdb";
 	    }
 	    return absolutePath;
 	}

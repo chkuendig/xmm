@@ -23,7 +23,26 @@ package net.sf.xmm.moviemanager.util;
 import java.util.EventObject;
 
 public class ModelUpdatedEvent extends EventObject {
-    public ModelUpdatedEvent(Object source) {
-	super(source);
-    }
+	
+	String eventType;
+	
+	public ModelUpdatedEvent(Object source, String updateEventType) throws IllegalEventTypeException {
+		super(source);
+
+		eventType = updateEventType;
+		
+		if (!"GeneralInfo".equals(updateEventType) && !"AdditionalInfo".equals(updateEventType))
+			throw new IllegalEventTypeException("Type must be either GeneralInfo or AdditionalInfo");
+	}
+
+	public String getUpdateType() {
+		return eventType;
+	}
+	
+	public class IllegalEventTypeException extends Exception {
+
+		public IllegalEventTypeException(String type) {
+			super(type);
+		}
+	}
 } 

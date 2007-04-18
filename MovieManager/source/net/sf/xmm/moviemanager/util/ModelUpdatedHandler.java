@@ -20,6 +20,8 @@
 
 package net.sf.xmm.moviemanager.util;
 
+import net.sf.xmm.moviemanager.util.ModelUpdatedEvent.IllegalEventTypeException;
+
 // Add the event registration and notification code to a class.
 public class ModelUpdatedHandler {
     
@@ -49,7 +51,7 @@ public class ModelUpdatedHandler {
 	}
     }
 
-    public void modelChanged(Object source) {
-    	fireModelChangedEvent(new ModelUpdatedEvent(source));
+    public void modelChanged(Object source, String type) throws IllegalEventTypeException {
+    	fireModelChangedEvent(new ModelUpdatedEvent(source, type));
     }
 }
