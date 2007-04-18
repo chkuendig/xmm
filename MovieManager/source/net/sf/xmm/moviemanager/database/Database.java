@@ -3083,8 +3083,6 @@ abstract public class Database {
     	if (databaseType.equals("MySQL"))
     		orderBy = orderBy.replaceAll(" ", "_");
 
-
-
     	/* if MSAccess, have to convert rating with the Val function */
     	if (databaseType.equals("MSAccess") && orderBy.equals("Rating")) {
     		orderBy = "ORDER BY Val("+ orderBy +"), \"Title\"";
@@ -3092,9 +3090,7 @@ abstract public class Database {
     	else
     		orderBy = "ORDER BY " +quote+ orderBy +quote+ ", " +quote+ "Title" +quote;
 
-    	//sqlQuery += orderBy + "";
-
-    	
+    	sqlQuery += orderBy + ";";
     	
     	log.debug("sqlQuery:\n" + sqlQuery);
 
