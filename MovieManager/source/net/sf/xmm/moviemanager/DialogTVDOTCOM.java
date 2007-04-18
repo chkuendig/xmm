@@ -20,38 +20,20 @@
 
 package net.sf.xmm.moviemanager;
 
-import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.http.TVDOTCOM;
 import net.sf.xmm.moviemanager.models.*;
-import net.sf.xmm.moviemanager.util.*;
+import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.Localizer;
+import net.sf.xmm.moviemanager.util.SwingWorker;
+import net.sf.xmm.moviemanager.util.ModelUpdatedEvent.IllegalEventTypeException;
 
 import org.apache.log4j.Logger;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.*;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 class DialogTVDOTCOM extends JDialog {
     
@@ -347,13 +329,15 @@ class DialogTVDOTCOM extends JDialog {
                 
                 ModelEpisode episode = TVDOTCOM.getEpisodeInfo((ModelSearchHit) selectedValues[i], streams);
                  
-                modelInfo.setModel(episode, true, false);
+				modelInfo.setModel(episode, true, false);
                 
                 // The cover... 
                 if (cover != null) {
                     modelInfo.setCover(coverFileName, cover);
+                    modelInfo.setSaveCover(true);
                 } else {
                     modelInfo.setCover("", null);
+                    modelInfo.setSaveCover(false);
                 }
                 
                 if (multipleEpisodesAdded) {
@@ -373,15 +357,19 @@ class DialogTVDOTCOM extends JDialog {
             }
             
             try {
-                modelInfo.setSaveCover(true);
-                modelInfo.saveCoverToFile();
+            	modelInfo.saveCoverToFile();
             } catch (Exception e) {
-                log.error("Saving to database failed.", e);
+                log.error("Saving cover file failed.", e);
             }
             dispose();
             
-            modelInfo.modelChanged(this);
-        }
+            try {
+            	modelInfo.modelChanged(this, "GeneralInfo");
+            } catch (IllegalEventTypeException e) {
+            	log.error("IllegalEventTypeException:" + e.getMessage());
+            }
+            
+            }
         mode++;
     }
 }

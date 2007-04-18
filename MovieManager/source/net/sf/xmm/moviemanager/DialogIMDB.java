@@ -102,8 +102,7 @@ public class DialogIMDB extends JDialog {
         	
         multiAddFile = new File[1];
         this.getUrlKeyOnly = getUrlKeyOnly;
-        this.multiAdd = true;
-        
+                
         /* Sets parent... */
         this.modelInfo = modelInfo;
         
@@ -124,7 +123,7 @@ public class DialogIMDB extends JDialog {
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
         getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
         
-        if (multiAdd)
+        if (getUrlKeyOnly)
         	createListDialog(alternateTitle, alternateTitle); //$NON-NLS-1$ //$NON-NLS-2$
         else
         	createListDialog("not used", "not used"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -228,6 +227,14 @@ public class DialogIMDB extends JDialog {
     		}
     	});
 
+    	KeyStroke enterKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0,true);
+    	ActionListener listKeyBoardActionListener = new ActionListener() {
+    		public void actionPerformed(ActionEvent ae) {
+    			buttonSelect.doClick();
+    		}
+    	};
+    	listMovies.registerKeyboardAction(listKeyBoardActionListener,enterKeyStroke, JComponent.WHEN_FOCUSED);
+    	    	
     	JScrollPane scrollPaneMovies = new JScrollPane(listMovies);
     	scrollPaneMovies.setPreferredSize(new Dimension(300,255));
     	scrollPaneMovies.setAutoscrolls(true);
@@ -241,7 +248,7 @@ public class DialogIMDB extends JDialog {
     	all.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(8,8,0,8), null));
 
     	/*If running the multiadd feature, here are all the extra buttons added. */
-    	if (isMultiAdd()) {
+    	if (isMultiAdd() || getUrlKeyOnly) {
 
     		setTitle(filename);
 
@@ -397,7 +404,7 @@ public class DialogIMDB extends JDialog {
 
     	JButton buttonCancel;
 
-    	if (isMultiAdd()) {
+    	if (isMultiAdd() || getUrlKeyOnly) {
     		buttonCancel = new JButton(Localizer.getString("DialogIMDB.button.cancel.text.skip-movie")); //$NON-NLS-1$
     		buttonCancel.setToolTipText(Localizer.getString("DialogIMDB.button.cancel.ooltip.cancel")); //$NON-NLS-1$
     	}
@@ -434,7 +441,7 @@ public class DialogIMDB extends JDialog {
     	DefaultListModel model = new DefaultListModel();
     	model.addElement(new ModelIMDB(null, Localizer.getString("DialogIMDB.list-element.messsage.search-in-progress"), null)); //$NON-NLS-1$
     	listMovies.setModel(model);
-
+	
     	if (isMultiAdd() && !getUrlKeyOnly) { 
     		try {
     			DefaultListModel list = IMDB.getSimpleMatches(searchString);
@@ -711,7 +718,7 @@ public class DialogIMDB extends JDialog {
                 return;
             
             if (!model.getHasAdditionalInfoData()) {
-		model.updateAdditionalInfoData();
+            	model.updateAdditionalInfoData();
             }
             
 	    ModelMovieInfo modelInfoTmp = new ModelMovieInfo(model, false);
