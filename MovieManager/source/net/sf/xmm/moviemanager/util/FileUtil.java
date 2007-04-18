@@ -94,23 +94,50 @@ public class FileUtil {
        return null;
     }
     
+
     public static URL getFileURL(String fileName) {
     	return getFileURL(fileName, null);
     }
     
+
     public static URL getFileURL(String fileName, JApplet applet) {
         
         URL url = null;
-        
+		
         try {
-            //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8");
-           
-            if (applet == null) {
-            	if(!fileName.startsWith("/")) {
-            		url = new File(getUserDir() + fileName).toURL();
-            	} else {
-            		url = new File(fileName).toURL();
-            	}
+	    //URL p = FileUtil.class.getResource(fileName);
+	    //String path = URLDecoder.decode(fileName, "UTF-8");
+	   
+	    if (applet == null) {
+		
+		File f;
+            	
+		if (fileName.startsWith("/")) {
+		    f = new File(fileName);
+		    System.err.println("url1:" + f + " (" + new File(fileName).exists() + ")");
+		} else {
+		    f = new File(getUserDir() + fileName);
+		    System.err.println("url2:" + f + " (" + new File(getUserDir() + fileName).exists() + ")");
+		}
+		
+		url = f.toURL();
+		
+		/*
+		// If it exists inside the jar 
+		if (!f.exists()) {
+		    url = FileUtil.class.getResource("/" + fileName);
+		    
+		    System.err.println("ur3:" + url + "  ("+ new File(url.toString()).isFile() +")" );
+		    
+		    //url = new File("/MovieManager.tmx").toURL();
+		    
+		    
+		    //f = new File("/" + fileName);
+		    //System.err.println("url3:" + f + " (" + new File("/" + fileName).exists() + ")");
+		    //System.err.println("url3:"+ url);
+		}
+		*/
+		
             }
             else {
                 
@@ -133,7 +160,7 @@ public class FileUtil {
             //return new File((java.net.URI) new java.net.URI(URLEncoder.encode(url.toString() , "UTF-8")));
             
         } catch(Exception e) {
-            log.error("Exception:" + e.getMessage());
+            log.error("Exception:" + e.getMessage(), e);
         }
         return url;
     }
