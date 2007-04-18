@@ -20,20 +20,19 @@
 
 package net.sf.xmm.moviemanager.commands;
 
+import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.database.Database;
+import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
+import net.sf.xmm.moviemanager.models.ModelMovie;
+
+import org.apache.log4j.Logger;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JTree;
-
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
-import net.sf.xmm.moviemanager.models.ModelMovie;
-import net.sf.xmm.moviemanager.database.Database;
-
-import org.apache.log4j.Logger;
 
 public class MovieManagerCommandFilter implements ActionListener {
     
@@ -267,11 +266,9 @@ public class MovieManagerCommandFilter implements ActionListener {
 	System.out.println("mainFilter:" + mainFilter);
 	
 	if (mainFilter) {
-	    
-		
 		
 	    ModelDatabaseSearch options = MovieManager.getIt().getFilterOptions();
-	    System.out.println("options.getOrderCategory:" + options.getOrderCategory());
+		
 	    listModel = database.getMoviesList(options);
 	    
 	    filterCategory = MovieManager.getConfig().getFilterCategory();
