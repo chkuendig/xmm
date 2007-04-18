@@ -4,6 +4,17 @@ Changelog - MeD's Movie Manager
 ========================================
 
 
+Version 2.5 (18-april-2007)
+
+ - General improvements:
+ - Included a lot more Look & Feels. 
+
+ - Bug fixes:
+ - Bug fixed where info in add/edit was zeroed out when changing seen/unseen or cover. (Thanks to kreegee).
+ - Bugfixes for the Mac GUI. (Thanks to kreegee).
+ - Fixed IMDb html parsing. Now retrieves 'directed by' and 'written by'
+
+
 Version 2.5 beta 4 (07-mar-2007)
 
  - General improvements:
