@@ -26,8 +26,11 @@ import net.sf.xmm.moviemanager.util.*;
 
 import org.apache.log4j.Logger;
 
+import spin.Spin;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
 import java.io.*;
 
 import javax.swing.*;
@@ -541,70 +544,82 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	}
 	
 	executeSave();
-	    
+
+	ProgressBean worker = new ProgressBeanImpl() {
+
+		public void start() {
+
+			/*
 	final SwingWorker worker = new SwingWorker() {
 		public Object construct() {
-		    
-		    try {
-			Thread.currentThread().setPriority(5);
-			Database database = connectToDatabase(dialogDatabase, null);
-			
-			if (database != null) {
-			
-			    if (!database.setUp()) {
-				progressBar.close();
-				showDatabaseMessage(dialogDatabase, database, null);
-			    }
-			    
-			    if (database != null && database.isInitialized()) {
-				
-				MovieManager.getConfig().setCurrentList("Show All"); //$NON-NLS-1$
-				
-				/* Loads the database... */
-				updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.retrieving-movie-list")); //$NON-NLS-1$
-				MovieManager.getIt().setDatabase(database, true);
-				
-				if (database.isSetUp()) {
-				    progressBar.dispose();
-				    dispose();
+			 */
+			try {
+				Thread.currentThread().setPriority(3);
+				Database database = connectToDatabase(dialogDatabase, null);
+	
+				if (database != null) {
+
+					if (!database.setUp()) {
+						listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
+						showDatabaseMessage(dialogDatabase, database, null);
+					}
+	
+					if (database != null && database.isInitialized()) {
+	
+						MovieManager.getConfig().setCurrentList("Show All"); //$NON-NLS-1$
+
+						/* Loads the database... */
+						updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.retrieving-movie-list")); //$NON-NLS-1$
+						MovieManager.getIt().setDatabase(database, true);
+	
+						if (database.isSetUp()) {
+							GUIUtil.invokeLater(new Runnable() {public void run() {
+							listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
+							}});
+							dispose();
+						}
+					}
+	
+					/* Sets the last path... */
+					if ((!MovieManager.isApplet()) && new File(getPath()).exists())
+						MovieManager.getConfig().setLastDatabaseDir(new File(getPath()).getParentFile());
 				}
-			    }
-			    
-			    /* Sets the last path... */
-			    if ((!MovieManager.isApplet()) && new File(getPath()).exists())
-				MovieManager.getConfig().setLastDatabaseDir(new File(getPath()).getParentFile());
 			}
-			progressBar.close();
-		    }
-		    catch (Exception e) {
-			;
-		    }
-		    return this;
+			catch (Exception e) {
+				GUIUtil.invokeLater(new Runnable() {public void run() {
+					listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
+				}});
+			}
+			GUIUtil.invokeLater(new Runnable() {public void run() {
+				listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
+			}});
 		}
-	    };
+	};
+
+	final ProgressBean worker2 = (ProgressBean) Spin.off(worker);
 	
-	progressBar = new SimpleProgressBar(this, true, worker);
-	worker.start();
+	final SimpleProgressBar progressBar = new SimpleProgressBar(MovieManager.getDialog(), "Loading Database", true, worker2);
+	GUIUtil.show(progressBar, true);        
 	
-	GUIUtil.show(progressBar, true);
+	worker2.start();	
+  }
+    
+
+    static synchronized void updateProgress(final SimpleProgressBar progressBar, final String str) {
+
+    	Runnable updateProgress = new Runnable() {
+    		public void run() {
+    			try {
+    				progressBar.setString(str);
+
+    			} catch (Exception e) {
+    				log.error(e.getMessage());
+    			}
+    		}};
+    		SwingUtilities.invokeLater(updateProgress);
     }
-    
-    
-    static void updateProgress(final SimpleProgressBar progressBar, final String str) {
-	
-	Runnable updateProgress = new Runnable() {
-		public void run() {
-		    try {
-			progressBar.setString(str);
-			
-		    } catch (Exception e) {
-			log.error(e.getMessage());
-		    }
-		}};
-	SwingUtilities.invokeLater(updateProgress);
-    }
-    
-    
+    	
+
     static protected Database connectToDatabase(Window parent, String path) throws Exception {
 	
 	if (getType().equals("MySQL")) //$NON-NLS-1$
