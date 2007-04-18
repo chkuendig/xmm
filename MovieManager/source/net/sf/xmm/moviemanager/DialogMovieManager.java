@@ -135,6 +135,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         if (!MovieManager.isApplet())
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         
+        
+        
         setTitle(" MeD's Movie Manager v" + MovieManager.getVersion()); //$NON-NLS-1$
         
         setIconImage(FileUtil.getImage("/images/film.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH)); //$NON-NLS-1$
@@ -257,7 +259,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     public void componentShown(ComponentEvent e) {}
     
     public void componentResized(ComponentEvent e) {
-        movieListWidth = (int) getMoviesList().getSize().getWidth();
+    	
+    	movieListWidth = (int) getMoviesList().getSize().getWidth();
         
         /* Maximized */
         if (getExtendedState() == JFrame.MAXIMIZED_BOTH) {
@@ -753,6 +756,10 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         log.debug("Start creation of the WorkingArea."); //$NON-NLS-1$
         JPanel workingArea = new JPanel();
         
+        /* The minimum size of the main window is honoured only when using L&F border (title bar decorated) 
+         Makes sure the minimum size is small so that it's not fixed at a too big default value.*/
+        workingArea.setMinimumSize(new Dimension(100, 100));
+        
         workingArea.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
        
         double size[][] = {{0.33, info.clearthought.layout.TableLayout.FILL}, {info.clearthought.layout.TableLayout.FILL}};
@@ -962,8 +969,12 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         JPanel miscellaneous = createMiscellaneous();
         
         JPanel plotAndCast = new JPanel();
-        plotAndCast.setOpaque(false);
+        
+        if (FileUtil.isMac())
+        	plotAndCast.setOpaque(false);
+        
         plotAndCast.setLayout(new GridLayout(2,1));
+        
         plotAndCast.add(createPlot());
         plotAndCast.add(createCast());
         
@@ -1338,7 +1349,10 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     protected JPanel createPlot() {
         log.debug("Start creation of the Plot panel."); //$NON-NLS-1$
         JPanel plot = new JPanel();
-        plot.setOpaque(false);
+        
+        if (FileUtil.isMac())
+        	plot.setOpaque(false);
+        
         plot.setLayout(new BorderLayout());
         
         plot.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder() /*BorderFactory.createEmptyBorder()*/,
@@ -1370,7 +1384,10 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     protected JPanel createCast() {
         log.debug("Start creation of the Cast panel."); //$NON-NLS-1$
         JPanel cast = new JPanel();
-        cast.setOpaque(false);
+        
+        if (FileUtil.isMac())
+        	cast.setOpaque(false);
+        
         cast.setLayout(new BorderLayout());
         
         cast.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
@@ -1403,7 +1420,10 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     protected JPanel createMiscellaneous() {
         
         JPanel miscellaenous = new JPanel();
-        miscellaenous.setOpaque(false);
+        
+        if (FileUtil.isMac())
+        	miscellaenous.setOpaque(false);
+       
         miscellaenous.setLayout(new BorderLayout());
         
         miscellaenous.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
