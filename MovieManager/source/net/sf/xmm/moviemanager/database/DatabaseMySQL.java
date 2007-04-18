@@ -53,6 +53,12 @@ public class DatabaseMySQL extends Database {
 	quotedGeneralInfoEpisodeString = quote + generalInfoEpisodeString + quote;
 	quotedAdditionalInfoEpisodeString = quote + additionalInfoEpisodeString + quote;
 	quotedExtraInfoEpisodeString = quote + extraInfoEpisodeString + quote;
+	
+	directedByString = "Directed_By";
+	writtenByString = "Written_By";
+	
+	soundMixString = "Sound_Mix";
+	webRuntimeString = "Web_Runtime";
     }
     
     
@@ -1379,6 +1385,36 @@ public class DatabaseMySQL extends Database {
 	}
 	/* Returns the updated records... */
 	return value;
+    }
+    
+    
+    public String getMoviesSelectStatement() {
+
+    	String select = "SELECT General_Info.ID, "+
+    	"General_Info.Imdb, "+
+    	"General_Info.Cover, "+
+    	"General_Info.Date, "+
+    	"General_Info.Title, "+
+    	"General_Info.Directed_By, "+
+    	"General_Info.Written_By, "+
+    	"General_Info.Genre, "+
+    	"General_Info.Rating, "+
+    	"General_Info.Plot, "+
+    	"General_Info.Cast, "+
+    	"General_Info.Notes, "+
+    	"General_Info.Seen, "+
+    	"General_Info.Aka, "+
+    	"General_Info.Country, "+
+    	"General_Info.Language, "+
+    	"General_Info.Colour, "+ 
+    	"General_Info.Certification, "+
+    	"General_Info.Mpaa, "+ 
+    	"General_Info.Sound_Mix, "+ 
+    	"General_Info.Web_Runtime, "+ 
+    	"General_Info.Awards "+ 
+    	"FROM General_Info "; 
+    
+    	return select;
     }
     
     

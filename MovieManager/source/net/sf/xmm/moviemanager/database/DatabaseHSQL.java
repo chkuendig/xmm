@@ -46,76 +46,52 @@ public class DatabaseHSQL extends Database {
      * SetUp...
      **/
     public boolean setUp() {
-	
-	String message = "";
-	
-	Exception exception = null;
-	try {
-	    if (!_initialized) {
-		_sql.setUp();
-		_initialized = true;
-		setUp = true;
-	    }
-	} catch (Exception e) {
-	    log.warn(e);
-	    message = e.getMessage();
-	    
-	    exception = e;
-	    _initialized = false;
-	}
-	
-	
-	/* The jar file was not included in the classpath */
-	if (!_initialized && message.equals("org.hsqldb.jdbcDriver")) {
-	    
-	    MovieManager.includeJarFilesInClasspath(new File("lib" , "drivers").getPath());
-	    
-	    try {
-		if (!_initialized) {
-		    _sql.setUp();
-		    _initialized = true;
-		    setUp = true;
-		}
-	    } catch (Exception e) {
-		log.warn("Exception: " + e);
-		message = e.getMessage();
-		
-		if (e.getMessage().equals("org.hsqldb.jdbcDriver"))
-		    errorMessage = "org.hsqldb.jdbcDriver";
-		
-		exception = e;
-		_initialized = false;
-	    }
-	}
-	
-	/* If the moviemanager was shut down improperly 
-	   the db files can't be opened in a few seconds
-	   Tries again after sleeping. */
-	String eMessage = "The database is already in use by another process";
-	
-	if (!_initialized && exception.getMessage().startsWith(eMessage)) {
-	    
-	    errorMessage = eMessage;
-	    
-	    for (int i = 2; i < 10; i++) {
-		try {
-		    Thread.sleep(2000);
-		    if (!_initialized) {
-			_sql.setUp();
-			_initialized = true;
-			errorMessage = "";
-			log.info("Succsesfully connected to HSQL database on the " +i+ "th try");
-			break;
-		    }
-		} catch (Exception e) {
-		    log.warn("Exception:" + e.getMessage());
-		    _initialized = false;
-		}
-	    }
-	}
-	return _initialized;
+
+    	String message = "";
+
+    	Exception exception = null;
+    	try {
+    		if (!_initialized) {
+    			_sql.setUp();
+    			_initialized = true;
+    			setUp = true;
+    		}
+    	} catch (Exception e) {
+    		log.warn(e);
+    		message = e.getMessage();
+
+    		exception = e;
+    		_initialized = false;
+    	}
+
+    	/* If the moviemanager was shut down improperly 
+	   	the db files can't be opened in a few seconds
+	   	Tries again after sleeping. */
+    	String eMessage = "The database is already in use by another process";
+
+    	if (!_initialized && exception.getMessage().startsWith(eMessage)) {
+
+    		errorMessage = eMessage;
+
+    		for (int i = 2; i < 10; i++) {
+    			try {
+    				Thread.sleep(2000);
+    				if (!_initialized) {
+    					_sql.setUp();
+    					_initialized = true;
+    					errorMessage = "";
+    					log.info("Succsesfully connected to HSQL database on the " +i+ "th try");
+    					break;
+    				}
+    			} catch (Exception e) {
+    				log.warn("Exception:" + e.getMessage());
+    				_initialized = false;
+    			}
+    		}
+    	}
+    	return _initialized;
     }
-    
+
     
     /**
      * Removes the movie from the general info table (Additional info/ extra info nad lists are removed by cascade delete) at index 'index' and returns number of updated rows.

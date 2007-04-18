@@ -80,92 +80,31 @@ class SQL {
 	if (!_connected) {
 	    
 	    if (databaseType.equals("MSAccess")) {
-		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-		_conn = DriverManager.getConnection(_url,"","");
-		log.info("Connected to MS Access database");
-		_connected = true;
+	    	Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+	    	_conn = DriverManager.getConnection(_url,"","");
+	    	log.info("Connected to MS Access database");
+	    	_connected = true;
 	    }
 	    else if (databaseType.equals("HSQL")) {
-		Class.forName("org.hsqldb.jdbcDriver");
+	    	Class.forName("org.hsqldb.jdbcDriver");
 		
-		_conn = DriverManager.getConnection(_url,"sa","");
+	    	_conn = DriverManager.getConnection(_url,"sa","");
 		
-		log.info("Connected to HSQL database");
-		_connected = true;
+	    	log.info("Connected to HSQL database");
+	    	_connected = true;
 	    }
 	    else if (databaseType.equals("MySQL")) {
+	    	
+	    	Class.forName("com.mysql.jdbc.Driver").newInstance();
 		
-		Class.forName("com.mysql.jdbc.Driver").newInstance();
+			_conn = DriverManager.getConnection(_url);
 		
-		_conn = DriverManager.getConnection(_url);
-		
-		log.info("Connected to MySQL database");
-		_connected = true;
+			log.info("Connected to MySQL database");
+			_connected = true;
 	    }
 	}
     }
     
-    /*Creates the URL and sets the appropriate proxy values*/
-    protected static java.util.Properties makeProperties() {
-	
-	MovieManagerConfig mm = MovieManager.getConfig();
-	java.util.Properties systemSettings = null;
-	
-	try {
-	    if (mm.getProxyEnabled()) {
-		
-		String host = mm.getProxyHost();
-		String port = mm.getProxyPort();
-		
-		/*Adds proxy settings*/
-		systemSettings = System.getProperties();
-		
-		if (mm.getProxyType().equals("HTTP")) {
-		    systemSettings.put("proxySet", "true");
-		    systemSettings.put("proxyHost", host);
-		    systemSettings.put("proxyPort", port);
-		}
-		else {
-		    systemSettings.put("socksProxySet", "true");
-		    systemSettings.put("socksProxyHost", host);
-		    systemSettings.put("socksProxyPort", port);
-		}
-		
-		/*Saves proxy settings*/
-		System.setProperties(systemSettings);
-		
-		if (mm.getAuthenticationEnabled()) {
-		    String user = mm.getProxyUser();
-		    String password = mm.getProxyPassword();
-		    
-		    /*Adds authentication*/
-		    Authenticator.setDefault(new MyAuth(user, password));
-		}
-		else
-		    Authenticator.setDefault(null);/*Removes authentication*/
-	    }
-	    else {
-		/*Removes proxy settings*/
-		systemSettings = System.getProperties();
-		systemSettings.remove("proxySet");
-		systemSettings.remove("proxyHost"); 
-		systemSettings.remove("proxyPort");
-		
-		systemSettings.remove("socksProxySet");
-		systemSettings.remove("socksProxyHost"); 
-		systemSettings.remove("socksProxyPort");
-		System.setProperties(systemSettings);
-		
-		/*Removes authentication*/
-		Authenticator.setDefault(null);
-	    }
-	    
-	}
-	catch (Exception e) {
-	    log.error("", e);
-	}
-	return systemSettings;
-    }
     
     /**
      * Closes the connection.
