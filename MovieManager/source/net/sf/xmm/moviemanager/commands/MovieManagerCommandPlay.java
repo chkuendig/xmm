@@ -1,5 +1,5 @@
 /**
- * @(#)DialogExport.java 1.0 10.10.06 (dd.mm.yy)
+ * @(#)MovieManagerCommandPlay 1.0 10.10.06 (dd.mm.yy)
  *
  * Copyright (2003) 
  * 
@@ -29,13 +29,18 @@ import javax.swing.JFileChooser;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.DialogMovieManager;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
 import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.util.FileUtil;
 
 public class MovieManagerCommandPlay implements ActionListener{
 
+	static Logger log = Logger.getRootLogger();
+	
     public void actionPerformed(ActionEvent e) {
 
 	MovieManager.log.debug("ActionPerformed: " + e.getActionCommand());
@@ -79,7 +84,7 @@ public class MovieManagerCommandPlay implements ActionListener{
 	        String fileLocation = selected.getAdditionalInfo().getFileLocation();
 	        String cmd;
             
-            if (mmc.getUseDefaultWindowsPlayer()) {
+            if (FileUtil.isWindows() && mmc.getUseDefaultWindowsPlayer()) {
                 cmd = "rundll32 url.dll,FileProtocolHandler ";
              
                 if (fileLocation.indexOf("*") != -1)
@@ -89,12 +94,21 @@ public class MovieManagerCommandPlay implements ActionListener{
                 
             }
             else {
-                if (fileLocation.indexOf("*") != -1)
-                    fileLocation = fileLocation.replaceAll("\\*", " ");
-                                
+                if (fileLocation.indexOf("*") != -1) {
+                	String [] files = fileLocation.split("\\*");
+                	fileLocation = "";
+                	
+                	for (int i = 0; i < files.length; i++)
+                		fileLocation += "\"" + files[i] + "\" ";
+                }
+                else
+                	fileLocation = "\"" + fileLocation + "\"";
+                
                 cmd = mmc.getMediaPlayerPath();
                 
-                if (!new File(cmd).isFile()){
+                System.err.println("cmd:" + cmd);
+                
+                if (!new File(cmd).isFile() && 1 == 0){
                     
                     JFileChooser chooser = new JFileChooser();
                     int returnVal = chooser.showDialog(null, "Launch");
@@ -107,7 +121,18 @@ public class MovieManagerCommandPlay implements ActionListener{
                 cmd += " ";
             }
 	    
-	    Process p = Runtime.getRuntime().exec(cmd + fileLocation);
+            //fileLocation = "\"" + fileLocation + "\"";
+            
+            //fileLocation = "/uio/aristoteles/s06/bendiko/movieManager/media\\ files/inputSmall2.avi";
+            
+            String [] args = new String[] {cmd, fileLocation};
+            
+            System.err.println("CMD1:" + cmd);
+            
+            cmd = cmd + fileLocation;
+            
+            log.debug("CMD2:" + cmd);
+	    Process p = Runtime.getRuntime().exec(cmd);
 	    }
 	}
     }
