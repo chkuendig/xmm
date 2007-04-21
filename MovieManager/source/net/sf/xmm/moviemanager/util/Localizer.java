@@ -53,8 +53,12 @@ public class Localizer {
 			// probably better to not use a path here... (actually, it fails on mac if we don't
 			// do so)
 
-
+			
 			File f = FileUtil.getFile("MovieManager.tmx");
+			
+			if (f == null || !f.isFile()) {
+				 f = new File(FileUtil.getFileURL(System.getProperty("user.dir") + "/MovieManager.tmx").getPath());
+			}
 
 			if (f == null || !f.isFile()) {
 				InputStream inpuStream = FileUtil.getResourceAsStream("/MovieManager.tmx");

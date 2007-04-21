@@ -17,6 +17,8 @@ import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
 import javax.swing.plaf.basic.ComboPopup;
 
+import net.sf.xmm.moviemanager.util.FileUtil;
+
 /**
  * @version 1.0 12/12/98
  */
@@ -57,13 +59,17 @@ public class SteppedComboBox extends JComboBox {
   
     public SteppedComboBox(ComboBoxModel aModel) {
 	super(aModel);
-	setUI(new SteppedComboBoxUI());
+	if(!FileUtil.isMac()) {
+		setUI(new SteppedComboBoxUI());
+	}
 	popupWidth = 0;
     }
 
     public SteppedComboBox(final Object[] items) {
 	super(items);
-	setUI(new SteppedComboBoxUI());
+	if(!FileUtil.isMac()) {
+		setUI(new SteppedComboBoxUI());
+	}
 	popupWidth = 0;
     }
     
@@ -75,7 +81,9 @@ public class SteppedComboBox extends JComboBox {
   
     public SteppedComboBox(Vector items) {
 	super(items);
-	setUI(new SteppedComboBoxUI());
+	if(!FileUtil.isMac()) {
+		setUI(new SteppedComboBoxUI());
+	}
 	popupWidth = 0;
     }
   

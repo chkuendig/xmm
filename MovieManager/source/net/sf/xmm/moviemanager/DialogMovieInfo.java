@@ -539,13 +539,18 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		JTextArea textAreaPlot = new JTextArea("", 4, 43); //$NON-NLS-1$
 		textAreaPlot.setLineWrap(true);
 		textAreaPlot.setWrapStyleWord(true);
+		textAreaPlot.setOpaque(false);
 		JScrollPane scrollPanePlot = new JScrollPane(textAreaPlot);
 		scrollPanePlot
 				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPanePlot.setOpaque(false);
 		panelPlot.add(scrollPanePlot);
 
 		/* Creates the cast... */
 		JPanel panelCast = new JPanel();
+		panelCast.setLayout(new GridLayout(1,1));
+		panelCast.setOpaque(false);
+		
 		panelCast.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 Localizer.getString("DialogMovieInfo.panel-cast.title."), //$NON-NLS-1$
 												TitledBorder.DEFAULT_JUSTIFICATION,
@@ -558,6 +563,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		JTextArea textAreaCast = new JTextArea("", 4, 43); //$NON-NLS-1$
 		textAreaCast.setLineWrap(true);
 		textAreaCast.setWrapStyleWord(true);
+		textAreaCast.setOpaque(false);
 		JScrollPane scrollPaneCast = new JScrollPane(textAreaCast);
 		scrollPaneCast
 				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -569,13 +575,14 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelPlotAndCast.setBorder(BorderFactory.createEmptyBorder(5, 3, 2, 3));
 		panelPlotAndCast.add(panelPlot);
 		panelPlotAndCast.add(panelCast);
+		panelPlotAndCast.setOpaque(false);
 
 		/* Miscellaneous */
 
 		JPanel panelMisc = new JPanel();
 		panelMisc.setLayout(new GridBagLayout());
 		panelMisc.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
-
+		panelMisc.setOpaque(false);
 		JLabel webRuntimeID = new JLabel(Localizer
 				.getString("DialogMovieInfo.field.web-runtime") + ": "); //$NON-NLS-1$
 		webRuntimeID.setFont((new Font(webRuntimeID.getFont().getName(), 1,
@@ -771,6 +778,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.gridwidth = 2;
 		constraints.insets = new Insets(0, -1, 5, -1);
 		constraints.anchor = GridBagConstraints.CENTER;
+		allTabbedInfo.setOpaque(true);
 		panelMovieInfo.add(allTabbedInfo, constraints);
 
 		/* Creates the Additional Info... */
@@ -942,10 +950,11 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			}
 		});
 
-		insets = buttonGetDVDInfo.getMargin();
-		buttonGetDVDInfo.setMargin(new Insets(insets.top, insets.left
-				- insetsMargin, insets.bottom, insets.right - insetsMargin));
-
+		if(!FileUtil.isMac()) {
+			insets = buttonGetDVDInfo.getMargin();
+			buttonGetDVDInfo.setMargin(new Insets(insets.top, insets.left
+					- insetsMargin, insets.bottom, insets.right - insetsMargin));
+		}
 		panelButtons.add(buttonGetDVDInfo);
 
 		JButton buttonGetFileInfo = new JButton(Localizer
@@ -963,10 +972,11 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			}
 		});
 
-		insets = buttonGetFileInfo.getMargin();
-		buttonGetFileInfo.setMargin(new Insets(insets.top, insets.left
-				- insetsMargin, insets.bottom, insets.right - insetsMargin));
-
+		if(!FileUtil.isMac()) {
+			insets = buttonGetFileInfo.getMargin();
+			buttonGetFileInfo.setMargin(new Insets(insets.top, insets.left
+					- insetsMargin, insets.bottom, insets.right - insetsMargin));
+		}
 		panelButtons.add(buttonGetFileInfo);
 
 		JButton buttonGetIMDBInfo;
@@ -995,10 +1005,11 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			}
 		});
 
-		insets = buttonGetIMDBInfo.getMargin();
-		buttonGetIMDBInfo.setMargin(new Insets(insets.top, insets.left
-				- insetsMargin, insets.bottom, insets.right - insetsMargin));
-
+		if(!FileUtil.isMac()) {
+			insets = buttonGetIMDBInfo.getMargin();
+			buttonGetIMDBInfo.setMargin(new Insets(insets.top, insets.left
+					- insetsMargin, insets.bottom, insets.right - insetsMargin));
+		}
 		panelButtons.add(buttonGetIMDBInfo);
 
 		JButton buttonCancel = new JButton(Localizer
@@ -1009,10 +1020,11 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		buttonCancel.setActionCommand("MovieInfo - Cancel"); //$NON-NLS-1$
 		buttonCancel.addActionListener(new CommandDialogDispose(this));
 
-		insets = buttonCancel.getMargin();
-		buttonCancel.setMargin(new Insets(insets.top, insets.left
-				- insetsMargin, insets.bottom, insets.right - insetsMargin));
-
+		if(!FileUtil.isMac()) {
+			insets = buttonCancel.getMargin();
+			buttonCancel.setMargin(new Insets(insets.top, insets.left
+					- insetsMargin, insets.bottom, insets.right - insetsMargin));
+		}
 		panelButtons.add(buttonCancel);
 
 		/* Adds all and buttonsPanel... */
