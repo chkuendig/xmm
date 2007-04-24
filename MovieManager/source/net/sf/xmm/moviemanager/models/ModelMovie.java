@@ -106,9 +106,9 @@ public class ModelMovie extends ModelEntry {
 		hasGeneralInfoData = model.getHasGeneralInfoData();
 		
 		if (model.getHasAdditionalInfoData())
-			additionalInfo = model.getAdditionalInfo();
+			setAdditionalInfo(model.getAdditionalInfo());
 		else
-			additionalInfo = new ModelAdditionalInfo ();
+			setAdditionalInfo(new ModelAdditionalInfo());
 		
 		hasChangedNotes = model.hasChangedNotes;
 	}
@@ -140,12 +140,14 @@ public class ModelMovie extends ModelEntry {
 
 	public void updateAdditionalInfoData() {
 	
+		if (additionalInfo.hasOldExtraInfoFieldNames())
+			additionalInfo.updateExtraInfoFieldNames();
 		if (getKey() != -1) {
 
 			ModelAdditionalInfo tmp = MovieManager.getIt().getDatabase().getAdditionalInfo(getKey(), false);
 
 			if (tmp != null) {
-				additionalInfo = tmp;
+				setAdditionalInfo(tmp);
 				hasAdditionalInfoData = true;
 			}
 		}

@@ -162,6 +162,9 @@ public class ModelEpisode extends ModelEntry {
 
 	public void updateAdditionalInfoData() {
 
+		if (additionalInfo.hasOldExtraInfoFieldNames())
+			additionalInfo.updateExtraInfoFieldNames();
+			
 		if (getKey() != -1) {
 			
 			ModelAdditionalInfo tmp = MovieManager.getIt().getDatabase().getAdditionalInfo(getKey(), true);

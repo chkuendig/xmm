@@ -55,8 +55,8 @@ public class ModelMovieInfo {
     
     private int _lastFieldIndex = -1;
     public List _saveLastFieldValue = new ArrayList();
-    public List _fieldNames = new ArrayList();
-    public List _fieldValues = new ArrayList();
+    private List _fieldNames = new ArrayList();
+    private List _fieldValues = new ArrayList();
     
     public boolean saveAdditionalInfo = true;
     
@@ -128,6 +128,30 @@ public class ModelMovieInfo {
         saveAdditionalInfo = false;
     }
     
+    
+    public List getFieldNames() {
+    	
+    	if (model.getHasAdditionalInfoData());
+    		model.updateAdditionalInfoData();
+    	
+    	return  _fieldNames;    	
+    }
+    
+    public void setFieldNames(List fieldNames) {
+    	_fieldNames = fieldNames;
+    }
+    
+    public List getFieldValues() {
+    	
+    	if (model.getHasAdditionalInfoData());
+			model.updateAdditionalInfoData();	
+    	
+    	return _fieldValues;
+    }
+    
+    public void setFieldValues(List fieldValues) {
+    	 _fieldValues = fieldValues;
+    }
     
     public void addModelChangedEventListenener(ModelUpdatedEventListener listener) {
         modelUpdatedHandler.addModelChangedEventListenener(listener);

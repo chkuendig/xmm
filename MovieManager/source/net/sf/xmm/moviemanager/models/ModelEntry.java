@@ -72,9 +72,13 @@ abstract public class ModelEntry {
 	}
 
 	public boolean getHasAdditionalInfoData() {
-		return hasAdditionalInfoData && !ModelAdditionalInfo.hasOldExtraInfoFieldNames;
+		return hasAdditionalInfoData && !additionalInfo.hasOldExtraInfoFieldNames();
 	}
 
+	public boolean hasOldExtraInfoFieldNames() {
+		return additionalInfo.hasOldExtraInfoFieldNames();
+	}
+	
 	public abstract void updateAdditionalInfoData();
 
 	public abstract void updateGeneralInfoData();
@@ -87,7 +91,7 @@ abstract public class ModelEntry {
 		this.additionalInfo = additionalInfo;
 		hasAdditionalInfoData = true;
 	}
-
+	
 	public String getSortCategory() {
 		return sortCategory;
 	}
