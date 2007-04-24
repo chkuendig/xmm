@@ -334,11 +334,10 @@ public class DatabaseImporter {
             /* MPAA */
             modelMovieInfo.model.setMpaa(((ModelExtremeMovie) movielist.get(i)).mpaa);
             
-            
-            modelMovieInfo._fieldValues = new ArrayList();
+            modelMovieInfo.setFieldValues(new ArrayList());
             
             /* Subtitles */
-            modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).subtitles);
+            modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).subtitles);
             
             String duration;
             try {
@@ -355,26 +354,26 @@ public class DatabaseImporter {
                 duration = "";
             }
             
-            modelMovieInfo._fieldValues.add(duration); /* Duration */
-            modelMovieInfo._fieldValues.add(cleanInt(((ModelExtremeMovie) movielist.get(i)).filesize, 0));
-            modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).cds); /* CDs */ 
-            modelMovieInfo._fieldValues.add("1"); /* CD cases */
-            modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).resolution);
-            modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).codec);
-            modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).videoRate);
-            modelMovieInfo._fieldValues.add(cleanInt(((ModelExtremeMovie) movielist.get(i)).bitrate, 0));
-            modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).audioCodec);
-            modelMovieInfo._fieldValues.add(cleanInt(((ModelExtremeMovie) movielist.get(i)).sampleRate, 0));
-            modelMovieInfo._fieldValues.add(cleanInt(((ModelExtremeMovie) movielist.get(i)).audioBitrate, 0));
-            modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).channels);
-            modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).filePath); /* Location */
-            modelMovieInfo._fieldValues.add(String.valueOf(((ModelExtremeMovie) movielist.get(i)).fileCount));
-            modelMovieInfo._fieldValues.add(""); /* Container */
-            modelMovieInfo._fieldValues.add(((ModelExtremeMovie) movielist.get(i)).media);
+            modelMovieInfo.getFieldValues().add(duration); /* Duration */
+            modelMovieInfo.getFieldValues().add(cleanInt(((ModelExtremeMovie) movielist.get(i)).filesize, 0));
+            modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).cds); /* CDs */ 
+            modelMovieInfo.getFieldValues().add("1"); /* CD cases */
+            modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).resolution);
+            modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).codec);
+            modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).videoRate);
+            modelMovieInfo.getFieldValues().add(cleanInt(((ModelExtremeMovie) movielist.get(i)).bitrate, 0));
+            modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).audioCodec);
+            modelMovieInfo.getFieldValues().add(cleanInt(((ModelExtremeMovie) movielist.get(i)).sampleRate, 0));
+            modelMovieInfo.getFieldValues().add(cleanInt(((ModelExtremeMovie) movielist.get(i)).audioBitrate, 0));
+            modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).channels);
+            modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).filePath); /* Location */
+            modelMovieInfo.getFieldValues().add(String.valueOf(((ModelExtremeMovie) movielist.get(i)).fileCount));
+            modelMovieInfo.getFieldValues().add(""); /* Container */
+            modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).media);
             
             /* Adding empty values for the extra info fields */
             for (int u = 0; u < extraInfoFieldsCount; u++)
-                modelMovieInfo._fieldValues.add("");
+                modelMovieInfo.getFieldValues().add("");
             
             if (((ModelExtremeMovie) movielist.get(i)).scriptUsed.indexOf("IMDB.COM") != -1)
                 modelMovieInfo.model.setUrlKey(((ModelExtremeMovie) movielist.get(i)).imdb);
@@ -525,32 +524,32 @@ public class DatabaseImporter {
             
             ModelAdditionalInfo additionalInfo = movie.getAdditionalInfo();
             
-            modelMovieInfo._fieldValues = new ArrayList();
+            modelMovieInfo.setFieldValues(new ArrayList());
             
 	    if (additionalInfo != null) {
                 
                 /* Subtitles */
-                modelMovieInfo._fieldValues.add(additionalInfo.getSubtitles());
-                modelMovieInfo._fieldValues.add(String.valueOf(additionalInfo.getDuration()));
-                modelMovieInfo._fieldValues.add(String.valueOf(additionalInfo.getFileSize()));
-                modelMovieInfo._fieldValues.add(String.valueOf(additionalInfo.getCDs())); /* CDs */ 
-                modelMovieInfo._fieldValues.add(String.valueOf(additionalInfo.getCDCases())); /* CD cases */
-                modelMovieInfo._fieldValues.add(additionalInfo.getResolution());
-                modelMovieInfo._fieldValues.add(additionalInfo.getVideoCodec());
-                modelMovieInfo._fieldValues.add(additionalInfo.getVideoRate());
-                modelMovieInfo._fieldValues.add(additionalInfo.getVideoBitrate());
-                modelMovieInfo._fieldValues.add(additionalInfo.getAudioCodec());
-                modelMovieInfo._fieldValues.add(additionalInfo.getAudioRate());
-                modelMovieInfo._fieldValues.add(additionalInfo.getAudioBitrate());
-                modelMovieInfo._fieldValues.add(additionalInfo.getAudioChannels());
-                modelMovieInfo._fieldValues.add(additionalInfo.getFileLocation()); /* Location */
-                modelMovieInfo._fieldValues.add(String.valueOf(additionalInfo.getFileCount()));
-                modelMovieInfo._fieldValues.add(additionalInfo.getContainer());
-                modelMovieInfo._fieldValues.add(additionalInfo.getMediaType());
+                modelMovieInfo.getFieldValues().add(additionalInfo.getSubtitles());
+                modelMovieInfo.getFieldValues().add(String.valueOf(additionalInfo.getDuration()));
+                modelMovieInfo.getFieldValues().add(String.valueOf(additionalInfo.getFileSize()));
+                modelMovieInfo.getFieldValues().add(String.valueOf(additionalInfo.getCDs())); /* CDs */ 
+                modelMovieInfo.getFieldValues().add(String.valueOf(additionalInfo.getCDCases())); /* CD cases */
+                modelMovieInfo.getFieldValues().add(additionalInfo.getResolution());
+                modelMovieInfo.getFieldValues().add(additionalInfo.getVideoCodec());
+                modelMovieInfo.getFieldValues().add(additionalInfo.getVideoRate());
+                modelMovieInfo.getFieldValues().add(additionalInfo.getVideoBitrate());
+                modelMovieInfo.getFieldValues().add(additionalInfo.getAudioCodec());
+                modelMovieInfo.getFieldValues().add(additionalInfo.getAudioRate());
+                modelMovieInfo.getFieldValues().add(additionalInfo.getAudioBitrate());
+                modelMovieInfo.getFieldValues().add(additionalInfo.getAudioChannels());
+                modelMovieInfo.getFieldValues().add(additionalInfo.getFileLocation()); /* Location */
+                modelMovieInfo.getFieldValues().add(String.valueOf(additionalInfo.getFileCount()));
+                modelMovieInfo.getFieldValues().add(additionalInfo.getContainer());
+                modelMovieInfo.getFieldValues().add(additionalInfo.getMediaType());
                 
                 /* Adding empty values for the extra info fields */
                 for (int u = 0; u < extraInfoFieldsCount; u++)
-                    modelMovieInfo._fieldValues.add("");
+                    modelMovieInfo.getFieldValues().add("");
                 
                 
                 File tempFile = new File(coverPath + movie.getCover());
