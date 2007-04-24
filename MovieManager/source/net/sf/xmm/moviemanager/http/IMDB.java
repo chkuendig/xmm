@@ -283,9 +283,9 @@ public class IMDB {
 			}
 	    	
 			_genre = getClassInfo(data, "Genre:");
-			
-			_genre = _genre.replace(" more", "");
 	    
+			_genre = _genre.replaceAll("(more)$", "");
+			
 			_plot = getClassInfo(data, "Plot Outline:");
 	     
 			_cast = getClassInfo(data, "class=\"cast\">");
@@ -309,7 +309,7 @@ public class IMDB {
 			_certification = getClassInfo(data, "Certification:");
 	    
 			_awards = getClassInfo(data, "Awards:");
-	    
+			_awards = _genre.replaceAll("(more)$", "");
 	  
 			/* Gets a bigger plot (if it exists...)
 			   /* Creates the url... */
@@ -329,10 +329,8 @@ public class IMDB {
 					_plot = _plot.substring(0, _plot.indexOf("Written by"));
 			}
 	   	   
-			if (_plot.endsWith("more"))
-				_plot = _plot.substring(0, _plot.indexOf("more"));
-			
 			_plot = _plot.trim();
+			_plot = _genre.replaceAll("(more)$", "");
 			
 		} catch (Exception e) {
 			log.error("", e);
