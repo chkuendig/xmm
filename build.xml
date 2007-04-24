@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="targets" name="MeD's Movie Manager">
+
+  <target name="targets">
+    <echo>
+      =====================================
+      === MeD's Movie Manager build.xml ===
+      =====================================
+      
+      targets available:
+      ==================
+      clean             clears all generated files (deletes build directory)
+      compile           compiles all java files
+      javadoc           compiles the Javadoc
+      all               builds everything
+      jar               builds a jar file
+      run               runs the moviemanager
+    </echo>
+  </target>
+
+
+  <!-- An "init" target is commonly used to setup variables, paths and timestamps -->
+  <target name="init">
+    <property name="package" value="moviemanager"/>
+    <property name="release_version" value="2.5.1"/>
+    <property name="base" value="MovieManager"/>
+    <property name="source" value="${base}/source"/>
+    <property name="build" value="${base}/build"/>
+    <property name="classes" value="${build}/classes"/>
+    <property name="javadoc" value="${build}/javadoc"/>
+    <property name="basepackage" value="net.sf.xmm"/>
+    <property name="distdir" value="${package}-${release_version}"/>
+    <property name="java_home" value="${java.home}/.."/>
+
+    <!-- Passwords for signing -->
+    <!-- DON'T commit to CVS with real passwords -->
+    <property name="keypass" value="yourpassword"/>
+    <property name="storepass" value="yourpassword2"/>
+
+    <!-- Check whether keys exist -->
+    <available file="keys" type="file" property="keys"/>
+
+    <!-- Needed for reusing the library path in the manifest -->
+    <property name="lib-all" location="${base}/lib"/>
+    <fileset id="libs" dir="${lib-all}">
+      <include name="**/*.jar" />
+    </fileset>
+
+    <!-- The libpath -->
+    <path id="project.libpath">
+      <fileset refid="libs"/>
+    </path>
+
+    <!-- Conversion for the manifest -->
+    <pathconvert property="libpath" refid="project.libpath"
+      pathsep=" " dirsep="/">
+      <map from="${lib-all}" to="lib" />
+     </pathconvert>
+    
+    <path id="project.classpath">
+      <pathelement path="${classes}"/>
+      <path refid="project.libpath"/>
+    </path>  
+    
+  </target>
+    
+  <!-- "Prepare creates directories needed for other targets -->
+  <target name="prepare" depends="init">
+    <mkdir dir="${build}"/>
+    <mkdir dir="${classes}"/>
+    <mkdir dir="${javadoc}"/>
+  </target>
+
+  <!-- Removes all generated files -->
+  <target name="clean" depends="init"
+    description="deletes all generated classes">
+    <delete dir="${build}"/>
+    <delete file="${base}/MovieManager.jar"/>
+    <delete file="MovieManager.jar"/>
+    <delete file="MovieManager.cer"/>
+  </target>
+
+  <!-- compiles all classes -->
+  <!--  Maybe later crlf can be called as well:
+  <target name="compile" depends="prepare, remove-crlf" -->
+  <target name="compile" depends="prepare"
+    description="Compiles all source files">
+    <javac destdir="${classes}" classpathref="project.classpath" debug="yes" 
+     includeAntRuntime="no" includeJavaRuntime="no">
+      <src path="${source}"/>
+    </javac>
+  </target>
+  
+  <!-- removes all tabs replaces those with spaces and removes unqualified EOL
+       and replaces those with the correct EOL -->
+  <target name="remove-crlf" depends="init" description="removes all tabs and 
+    unqualified end of lines">
+    <fixcrlf srcdir="${source}"
+      eol="lf"
+      tab="remove"
+      tablength="4"
+      javafiles="yes"
+      includes="**/*.java"
+      />
+  </target>
+
+
+  <!-- builds everything -->
+  <target name="all" depends="javadoc, compile, jar" 
+    description="builds everything"/>
+
+  <!-- generates the javadoc -->
+  <target name="javadoc" depends="compile">
+    <javadoc 
+      destdir="${javadoc}"
+      author="true"
+      version="true"
+      private="true"
+      use="true"
+      windowtitle="MeD's Movie Manager Javadoc"
+      classpathref="project.classpath" 
+      sourcepath="${source}" 
+      packagenames="net.sf.*">
+      <doctitle>MeD's Movie Manager API Documentation</doctitle>
+    </javadoc>
+  </target> 
+  
+  <!-- JAR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->  
+  <target name="jar" depends="compile"
+    description="Build a .jar archive from the compiled classes">
+    <jar destfile="${base}/MovieManager.jar">
+      <fileset dir="${classes}" excludes="Config.ini"/>
+      <fileset dir="${base}" includes="codecs/** images/** queries/** MovieManager.tmx"/>
+      <manifest>
+	<attribute name="Main-Class" value="${basepackage}.moviemanager.MovieManager"/>
+	<attribute name="Class-Path" value="${libpath}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="run" depends="compile"
+    description="Runs the compiled moviemanager">
+    <java
+      classname="${basepackage}.moviemanager.MovieManager"
+      classpathref="project.classpath"
+      fork="true" spawn="true" dir="${base}"
+    />
+  </target>
+
+  <target name="sign" depends="jar, generate-keys"
+    description="Signs the generated jar file">
+    <signjar
+      jar="${base}/MovieManager.jar"
+      keystore="keys"
+      storepass="${storepass}"
+      keypass="${keypass}"
+      signedjar="MovieManager.jar"
+      alias="signFiles"
+      />
+    <exec executable="keytool">
+      <arg line="-export"/>
+      <arg line="-keystore keys"/>
+      <arg line="-storepass ${storepass}"/>
+      <arg line="-alias signFiles"/>
+      <arg line="-file MovieManager.cer"/>
+    </exec>
+  </target>
+
+  <target name="generate-keys"
+    description="Generates keys if they don't exist"
+    unless="keys">
+    <genkey
+      alias="signFiles"
+      keystore="keys"
+      keypass="${keypass}"
+      storepass="${storepass}"
+      dname="CN=MeDs Movie Manager, OU=MeD's Movie Manager, O=xmm.sf.net, C=INT"
+    />
+  </target>
+
+
+</project>
+
