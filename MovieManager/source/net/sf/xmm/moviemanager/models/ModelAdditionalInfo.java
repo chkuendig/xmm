@@ -49,7 +49,10 @@ public class ModelAdditionalInfo {
 	private String container = null;
 	private String mediaType = null;
 
-	protected static boolean hasOldExtraInfoFieldNames = true;
+	// Each time a new additionial info field is added, this is encreased so that each ModelEntry knows that the additional info it already has needs to be updated from the database.
+	private static int extraInfoChanged = 0;
+	private int lastExtraInfoCount = 0;
+	private static boolean oldExtraInfoFieldNames = true;
 	static private ArrayList extraInfoFieldNames = null;
 	private ArrayList extraInfoFieldValues = new ArrayList();
 
@@ -201,7 +204,15 @@ public class ModelAdditionalInfo {
 			return (String) extraInfoFieldValues.get(index);
 	}
 
+	public static void updateExtraInfoFieldNames() {
+		getExtraInfoFieldNames();
+	}
+	
 	public static ArrayList getExtraInfoFieldNames() {
+		
+		if (oldExtraInfoFieldNames)
+				setExtraInfoFieldNames(MovieManager.getIt().getDatabase().getExtraInfoFieldNames());
+		
 		return extraInfoFieldNames;
 	}
 
@@ -209,17 +220,23 @@ public class ModelAdditionalInfo {
 		return extraInfoFieldValues;
 	}
 
-	public static boolean hasOldExtraInfoFieldNames() {
-		return hasOldExtraInfoFieldNames;
+	public boolean hasOldExtraInfoFieldNames() {
+		return extraInfoChanged != lastExtraInfoCount;
 	}
 
-	public static void setHasOldExtraInfoFieldNames(boolean hasOldExtraInfoFieldNames) {
-		ModelAdditionalInfo.hasOldExtraInfoFieldNames = hasOldExtraInfoFieldNames;
+	public static void setExtraInfoFieldNamesChanged() {
+		oldExtraInfoFieldNames = true;
+		extraInfoChanged++;
+	}
+	
+	public void setExtraInfoFieldNamesUpdated() {
+		lastExtraInfoCount = extraInfoChanged;
+		oldExtraInfoFieldNames = false;
 	}
 
 	public static void setExtraInfoFieldNames(ArrayList extraInfoFieldNames) {
 		ModelAdditionalInfo.extraInfoFieldNames = extraInfoFieldNames;
-		hasOldExtraInfoFieldNames = false;
+		setExtraInfoFieldNamesChanged();
 	}
 
 	public void setExtraInfoFieldValues(ArrayList extraInfoFieldValues) {
