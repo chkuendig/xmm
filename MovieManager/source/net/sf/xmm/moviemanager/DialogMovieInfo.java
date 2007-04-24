@@ -1465,15 +1465,16 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 * Changes the value JPanel and the JLabel unit and the...
 	 */
 	private void executeCommandAdditionalInfo() {
-
+		
 		int [] activeAdditionalInfoFields;
 
 		activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
-
+		
 		if (movieInfoModel.getLastFieldIndex() != -1
 				&& movieInfoModel._saveLastFieldValue.get(movieInfoModel.getLastFieldIndex()).toString().equals(new Boolean(true).toString())) {
 
-			/* Saves the info in the _fieldsValues... */
+			
+			/* Duration... */
 			if (activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()] == 1) {
 
 				/* Saves the duration... */
@@ -1513,13 +1514,13 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				movieInfoModel.getFieldValues().set(activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()], value);
 
 				AdditionalInfoFieldDefaultValues valuesObj = (AdditionalInfoFieldDefaultValues) 
-					MovieManager.getConfig().getAdditionalInfoDefaultValues().get(movieInfoModel.getFieldNames().get(movieInfoModel	.getLastFieldIndex()));
+					MovieManager.getConfig().getAdditionalInfoDefaultValues().get(movieInfoModel.getFieldValues().get(movieInfoModel.getLastFieldIndex()));
 
 				/* Creating a new entry in the values hashmap */
 				if (valuesObj == null) {
-					valuesObj = new AdditionalInfoFieldDefaultValues((String) movieInfoModel.getFieldNames().get(movieInfoModel.getLastFieldIndex()));
+					valuesObj = new AdditionalInfoFieldDefaultValues((String) movieInfoModel.getFieldValues().get(movieInfoModel.getLastFieldIndex()));
 					valuesObj.addValue(oldValue);
-					MovieManager.getConfig().getAdditionalInfoDefaultValues().put(movieInfoModel.getFieldNames().get(movieInfoModel.getLastFieldIndex()), valuesObj);
+					MovieManager.getConfig().getAdditionalInfoDefaultValues().put(movieInfoModel.getFieldValues().get(movieInfoModel.getLastFieldIndex()), valuesObj);
 				}
 
 				valuesObj.insertValue(value);
@@ -1532,8 +1533,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				textfield.setFont(font);
 				getAdditionalInfoValuePanel().add(textfield);
 			} else {
+				
 				/* Saves the field... */
-				movieInfoModel.getFieldNames().set(activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()], 
+				movieInfoModel.getFieldValues().set(activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()], 
 												((JTextField) getAdditionalInfoValuePanel().getComponent(0)).getText());
 			}
 		}
@@ -1584,9 +1586,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				getAdditionalInfoValuePanel().add(separatorThree);
 
 				/* Displays... */
-				if (!movieInfoModel.getFieldNames().get(activeAdditionalInfoFields[currentFieldIndex]).equals("")) { //$NON-NLS-1$
+				if (!movieInfoModel.getFieldValues().get(activeAdditionalInfoFields[currentFieldIndex]).equals("")) { //$NON-NLS-1$
 					
-					int time = Integer.parseInt((String) movieInfoModel.getFieldNames().get(activeAdditionalInfoFields[currentFieldIndex]));
+					int time = Integer.parseInt((String) movieInfoModel.getFieldValues().get(activeAdditionalInfoFields[currentFieldIndex]));
 					int hours = time / 3600;
 					int mints = time / 60 - hours * 60;
 					int secds = time - hours * 3600 - mints * 60;
