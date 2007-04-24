@@ -572,11 +572,8 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	settings.add(radioDatePanel);
 	
 	allTabbedPanes = new JTabbedPane();
-	allTabbedPanes.setBorder(BorderFactory.createEmptyBorder(8,8,5,8));
-    allTabbedPanes.add(Localizer.getString("DialogSearch.tab.settings.title"), settings);
-	
-    allTabbedPanes.add(Localizer.getString("DialogSearch.tab.loading-alias-list"), null);
-    allTabbedPanes.add(Localizer.getString("DialogSearch.tab.loading-alias-list"), null);
+	allTabbedPanes.setBorder(BorderFactory.createEmptyBorder(8,8,5,8));    allTabbedPanes.add(Localizer.getString("DialogSearch.tab.settings.title"), settings);
+	    allTabbedPanes.add(Localizer.getString("DialogSearch.tab.loading-alias-list"), null);    allTabbedPanes.add(Localizer.getString("DialogSearch.tab.loading-alias-list"), null);
 	
 	allTabbedPanes.setEnabledAt(1, false);
 	allTabbedPanes.setEnabledAt(2, false);
@@ -608,7 +605,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	
     public void run() {
 	
-	SwingWorker worker = new SwingWorker() {
+	net.sf.xmm.moviemanager.util.SwingWorker worker = new net.sf.xmm.moviemanager.util.SwingWorker() {
 		public Object construct() {
 		    try {
 			Thread.currentThread().setPriority(4);
@@ -1019,8 +1016,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	}
 	else {
 	    dialogSearch = null;
-	    dispose();
- //$NON-NLS-1$
+	    dispose(); //$NON-NLS-1$
 	}
     }
     
