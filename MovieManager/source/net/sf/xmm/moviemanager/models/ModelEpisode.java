@@ -70,6 +70,7 @@ public class ModelEpisode extends ModelEntry {
 		setLanguage(language);
 		setColour(colour);
 		setCertification(certification);
+		setMpaa(mpaa);
 		setWebSoundMix(webSoundMix);
 		setWebRuntime(webRuntime);
 		setAwards(awards);
@@ -110,7 +111,6 @@ public class ModelEpisode extends ModelEntry {
 		this.episodeNumber = ((ModelEpisode) model).getEpisodeNumber();
 		setUrlKey(model.getUrlKey());
 		setCover(model.getCover());
-		setCoverData(model.getCoverData());
 		setDate(model.getDate());
 		setTitle(model.getTitle());
 		setDirectedBy(model.getDirectedBy());
