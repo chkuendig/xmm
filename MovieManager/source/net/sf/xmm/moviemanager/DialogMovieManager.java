@@ -50,6 +50,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     public JPanel moviesList;
     public ExtendedToolBar toolBar;
         
+    private boolean useOpaqueOnCastAndPlotAndMisc = true;
+    
     /*Number of entries in the list*/
     private int entries;
     
@@ -135,7 +137,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         if (!MovieManager.isApplet())
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         
-        
+        if (FileUtil.isMac())
+        	useOpaqueOnCastAndPlotAndMisc = false;   
         
         setTitle(" MeD's Movie Manager v" + MovieManager.getVersion()); //$NON-NLS-1$
         
@@ -970,8 +973,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         JPanel plotAndCast = new JPanel();
         
-        if (FileUtil.isMac())
-        	plotAndCast.setOpaque(false);
+        plotAndCast.setOpaque(useOpaqueOnCastAndPlotAndMisc);
         
         plotAndCast.setLayout(new GridLayout(2,1));
         
@@ -1350,9 +1352,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         log.debug("Start creation of the Plot panel."); //$NON-NLS-1$
         JPanel plot = new JPanel();
         
-        if (FileUtil.isMac())
-        	plot.setOpaque(false);
-        
+        plot.setOpaque(useOpaqueOnCastAndPlotAndMisc);
         plot.setLayout(new BorderLayout());
         
         plot.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder() /*BorderFactory.createEmptyBorder()*/,
@@ -1385,9 +1385,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         log.debug("Start creation of the Cast panel."); //$NON-NLS-1$
         JPanel cast = new JPanel();
         
-        if (FileUtil.isMac())
-        	cast.setOpaque(false);
-        
+        cast.setOpaque(useOpaqueOnCastAndPlotAndMisc);
         cast.setLayout(new BorderLayout());
         
         cast.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
@@ -1421,9 +1419,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         JPanel miscellaenous = new JPanel();
         
-        if (FileUtil.isMac())
-        	miscellaenous.setOpaque(false);
-       
+        miscellaenous.setOpaque(useOpaqueOnCastAndPlotAndMisc);
         miscellaenous.setLayout(new BorderLayout());
         
         miscellaenous.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
