@@ -76,8 +76,7 @@
     description="deletes all generated classes">
     <delete dir="${build}"/>
     <delete file="${base}/MovieManager.jar"/>
-    <delete file="MovieManager.jar"/>
-    <delete file="MovieManager.cer"/>
+    <delete file="${base}/MovieManager.cer"/>
   </target>
 
   <!-- compiles all classes -->
@@ -164,6 +163,10 @@
       <arg line="-alias signFiles"/>
       <arg line="-file MovieManager.cer"/>
     </exec>
+    <delete file="${base}/MovieManager.jar"/>
+    <delete file="${base}/MovieManager.cer"/>
+    <move file="MovieManager.jar" todir="${base}"/>
+    <move file="MovieManager.cer" todir="${base}"/>
   </target>
 
   <target name="generate-keys"
