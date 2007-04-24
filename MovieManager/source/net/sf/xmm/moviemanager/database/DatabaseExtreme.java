@@ -74,6 +74,8 @@ public class DatabaseExtreme {
 	    log.error(e.getMessage());
 	}
 	
+		int counter = 0;
+	
 	ArrayList list = new ArrayList(100);
 	
 	try {
@@ -126,7 +128,7 @@ public class DatabaseExtreme {
 	    while (resultSet.next()) {
 	    	
 		list.add(new ModelExtremeMovie(resultSet.getString("InternetID"), resultSet.getString("ScriptUsed"), resultSet.getString("Cover"), resultSet.getString("Year"), resultSet.getString("Title"), resultSet.getString("Director"), resultSet.getString("Writer"), resultSet.getString("Genre"), resultSet.getString("Subgenre"), resultSet.getString("Rating"), resultSet.getString("PersonalRating"), resultSet.getString("Plot"), resultSet.getString("Actors"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("OriginalTitle"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("OriginalLanguage"), resultSet.getString("MPAA"), resultSet.getString("Color"), resultSet.getString("Subtitles"), resultSet.getString("Length"), resultSet.getString("Disk"), resultSet.getString("Codec"), resultSet.getString("Resolution"), resultSet.getString("FPS"), resultSet.getString("Bitrate"), resultSet.getString("AudioCodec"), resultSet.getString("Filesize"), resultSet.getString("SampleRate"), resultSet.getString("AudioBitRate"), resultSet.getString("Channels"), resultSet.getString("Media"), resultSet.getString("VideoDVD"), resultSet.getString("AudioDVD"), resultSet.getString("MovieFile1"), resultSet.getString("MovieFile2"), resultSet.getString("MovieFile3"), resultSet.getString("MovieFile4"), resultSet.getString("MovieFile5"), resultSet.getString("MovieFile5")));
-		
+		counter++;
 	    }
 	} catch (Exception e) {
 	    log.error("Exception: " + e);
@@ -138,6 +140,7 @@ public class DatabaseExtreme {
 		log.error("Exception: " + e);
 	    }
 	}
+	
     /* Returns the list model... */
     return list;
     }
