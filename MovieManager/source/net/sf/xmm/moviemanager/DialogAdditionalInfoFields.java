@@ -542,7 +542,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 	
 	/* Means the fields in the ModelAdditionalInfo must be updated */
 	if (_toRemove.size() != 0 || _toAdd.size() != 0) {
-	    ModelAdditionalInfo.setHasOldExtraInfoFieldNames(true);
+	    ModelAdditionalInfo.setExtraInfoFieldNamesChanged();
 	}
 	MovieManagerCommandSelect.execute();
 	dispose();

@@ -716,38 +716,32 @@ abstract public class Database {
 
 	    _sql.clear();
 
-	    ArrayList extraInfoFieldNames = new ArrayList();
-	    ArrayList extraInfoFieldValues = new ArrayList();
-
 	    if (episode)
-		resultSet = getExtraInfoEpisodeResultSet(index);
+	    	resultSet = getExtraInfoEpisodeResultSet(index);
 	    else
-		resultSet = getExtraInfoMovieResultSet(index);
+	    	resultSet = getExtraInfoMovieResultSet(index);
 
 	    String tempValue;
 
-	    ArrayList extraFieldnames = getExtraInfoFieldNames();
-
+	    ArrayList extraFieldFieldnames = ModelAdditionalInfo.getExtraInfoFieldNames();
+	    ArrayList extraInfoFieldValues = new ArrayList();
+	    
 	    boolean next = resultSet.next();
-
 	     
 	    /* Getting the value for each field */
-	    for (int i = 0; next && i < extraFieldnames.size(); i++) {
+	    for (int i = 0; next && i < extraFieldFieldnames.size(); i++) {
 
-		/* First column after the ID column is at index 2 */
-		tempValue = resultSet.getString(i+2);
+	    	/* First column after the ID column is at index 2 */
+	    	tempValue = resultSet.getString(i+2);
 
-		if (tempValue == null)
-		    tempValue = "";
+	    	if (tempValue == null)
+	    		tempValue = "";
 
-		extraInfoFieldValues.add(tempValue);
+	    	extraInfoFieldValues.add(tempValue);
 	    }
 
 	    additionalInfo = new ModelAdditionalInfo(subtitles, duration, fileSize, cDs, cDCases, resolution, videoCodec, videoRate, videoBitrate, audioCodec, audioRate, audioBitrate, audioChannels, fileLocation, fileCount, container, mediaType);
-
-	    ModelAdditionalInfo.setExtraInfoFieldNames(extraFieldnames);
 	    additionalInfo.setExtraInfoFieldValues(extraInfoFieldValues);
-	    
 
 	} catch (Exception e) {
 	    log.error("Exception: ", e);
