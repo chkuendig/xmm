@@ -53,13 +53,15 @@ public class Localizer {
 			// probably better to not use a path here... (actually, it fails on mac if we don't
 			// do so)
 
-			
+			// First try to get the file from the current dir
 			File f = FileUtil.getFile("MovieManager.tmx");
+			
 			
 			if (f == null || !f.isFile()) {
 				 f = new File(FileUtil.getFileURL(System.getProperty("user.dir") + "/MovieManager.tmx").getPath());
 			}
 
+			// If no success the MovieManager.tmx is grabbed from the MovieManager.jar file.
 			if (f == null || !f.isFile()) {
 				InputStream inpuStream = FileUtil.getResourceAsStream("/MovieManager.tmx");
 
