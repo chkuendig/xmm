@@ -1,17 +1,20 @@
+DivX503b2207	DivX 6.5.1
+DivX503b2201	DivX 6.5.0
+DivX503b2086	DivX 6.4.0	(03/10/2006)
 DivX503b2081	DivX 6.4.0 Beta 1	(27/09/2006)
 DivX503b1988	DivX 6.2.5
 DivX503b1977	DivX 6.2.5	(16/06/2006)	
 DivX503b1920	DivX 6.2.2	(26/04/2006)	
 DivX503b1915	DivX 6.2.1 Patch 1 Beta	
 DivX503b1913	DivX 6.2.1	
-DivX503b1910	DivX 6.2.0 	(11/04/2006)	
+DivX503b1910	DivX 6.2.0	(11/04/2006)	
 DivX503b1893	DivX 6.2.0 Beta 1	
 DivX503b1828	DivX 6.1.1	(01/02/2006)	
 DivX503b1786	DivX 6.1.0	(12/12/2005)	
 DivX503b1737	DivX He-3 (TwinTurbocharger)	
 DivX503b1697	DivX 6.0.3 Fusion (ThermonuclearFusion)	(18/10/2005)	
-DivX503b1612	DivX 6 Helium (GodFatherOfSoul)	(15/06/2005)	
-DivX503b1599	DivX 6 Helium	
+DivX503b1612	DivX 6 Helium (GodFatherOfSoul)		(15/06/2005)	
+DivX503b1599	DivX 6 Helium
 DivX503b1594	DivX 6.0.0	(DivX Converter 1.0)	
 DivX503b1571	DivX 6.0.0	(15/06/2005)	
 DivX503b1528	DivX 5.9 Fusion (HiggsBoson)	(23/03/2005)	
@@ -45,7 +48,9 @@ DivX501b484	DivX 5.0.2 	(16/05/2002)
 DivX501b481	DivX 5.0.2 	
 DivX501b450	DivX 5.0.1 	(09/04/2002)
 DivX501b413	DivX 5.0.0 	(04/03/2002)
-¨
+
+XviD0047	XviD 1.2.-127 (dev)	(01/11/2006)
+XviD0046	XviD 1.1.2 Final	(01/11/2006)
 XviD0045	XviD 1.2.-127	(10/07/2006)
 XviD0044	XviD 1.1 1	(10/07/2006)
 XviD0043	XviD 1.2 SMP	(08/01/2006)	
