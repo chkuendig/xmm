@@ -54,7 +54,7 @@ public class MovieManager {
     /**
      * The current version of the program.
      **/
-    private static String _version = "2.5"; //$NON-NLS-1$
+    private static String _version = "2.5.1"; //$NON-NLS-1$
     
     /**
      * The current database object.
@@ -379,7 +379,7 @@ public class MovieManager {
                 }
                 
                 /* Resets the additonal info fields names stored in ModelAdditionalInfo */
-                ModelAdditionalInfo.setHasOldExtraInfoFieldNames(true);
+                ModelAdditionalInfo.setExtraInfoFieldNamesChanged();
                 
                 log.info("Loads the movies list"); //$NON-NLS-1$
                 
