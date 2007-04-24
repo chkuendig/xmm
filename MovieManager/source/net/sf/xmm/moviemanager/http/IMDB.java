@@ -283,6 +283,8 @@ public class IMDB {
 			}
 	    	
 			_genre = getClassInfo(data, "Genre:");
+			
+			_genre = _genre.replace(" more", "");
 	    
 			_plot = getClassInfo(data, "Plot Outline:");
 	     
