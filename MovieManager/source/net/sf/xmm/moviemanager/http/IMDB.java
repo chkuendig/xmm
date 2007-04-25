@@ -309,7 +309,7 @@ public class IMDB {
 			_certification = getClassInfo(data, "Certification:");
 	    
 			_awards = getClassInfo(data, "Awards:");
-			_awards = _genre.replaceAll("(more)$", "");
+			_awards = _awards.replaceAll("(more)$", "");
 	  
 			/* Gets a bigger plot (if it exists...)
 			   /* Creates the url... */
@@ -330,7 +330,7 @@ public class IMDB {
 			}
 	   	   
 			_plot = _plot.trim();
-			_plot = _genre.replaceAll("(more)$", "");
+			_plot = _plot.replaceAll("(more)$", "");
 			
 		} catch (Exception e) {
 			log.error("", e);
