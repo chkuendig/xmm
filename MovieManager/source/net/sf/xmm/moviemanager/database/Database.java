@@ -3167,7 +3167,7 @@ abstract public class Database {
     				"\"General Info Episodes\".\"Language\","+
     				"\"General Info Episodes\".\"Colour\","+
     				"\"General Info Episodes\".\"Certification\","+
-    				"\"General Info Episodes\".\"Mpaa\","+
+    				//"\"General Info Episodes\".\"Mpaa\","+
     				"\"General Info Episodes\".\"Sound Mix\","+
     				"\"General Info Episodes\".\"Web Runtime\","+
     				"\"General Info Episodes\".\"Awards\" "+
@@ -3177,7 +3177,7 @@ abstract public class Database {
 
     		/* Processes the result set till the end... */
     		while (resultSet.next()) {
-    			list.add(new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
+    			list.add(new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), /*resultSet.getString("Mpaa"),*/ resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
     		}
     	} catch (Exception e) {
     		log.error("Exception: ", e);
@@ -3258,7 +3258,7 @@ abstract public class Database {
 						    "\"General Info Episodes\".\"Language\","+
 						    "\"General Info Episodes\".\"Colour\", "+
 						    "\"General Info Episodes\".\"Certification\", "+
-						    "\"General Info Episodes\".\"Mpaa\", "+
+						  //  "\"General Info Episodes\".\"Mpaa\", "+
 						    "\"General Info Episodes\".\"Sound Mix\", "+
 						    "\"General Info Episodes\".\"Web Runtime\", "+
 						    "\"General Info Episodes\".\"Awards\" "+
@@ -3266,7 +3266,7 @@ abstract public class Database {
 
 	    /* Processes the result set till the end... */
 	    if (resultSet.next()) {
-		episode = new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), ""/*("Aka")*/, resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards"));
+		episode = new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), ""/*("Aka")*/, resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), /*resultSet.getString("Mpaa"), */resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards"));
 	    }
 	} catch (Exception e) {
 	    log.error("Exception: ", e);

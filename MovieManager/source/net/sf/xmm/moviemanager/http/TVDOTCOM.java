@@ -748,7 +748,7 @@ public class TVDOTCOM {
 	} 
 	
 	/* Returns the model... */
-	return new ModelEpisode(-1, -1, episodeNumber, episodeUrlKey, "", date, episode.getTitle(), director, writer, "", rating, plot, guestStar, "", false, "", "", "", "", "", "", "", "", "");
+	return new ModelEpisode(-1, -1, episodeNumber, episodeUrlKey, "", date, episode.getTitle(), director, writer, "", rating, plot, guestStar, "", false, "", "", "", "", "", "", "", "");
     }
     
     

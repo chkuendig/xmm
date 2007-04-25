@@ -463,7 +463,7 @@ public class DatabaseMySQL extends Database {
 				       "Language          TEXT, "+
 				       "Colour            TEXT, "+
 				       "Certification     TEXT, "+
-				       "Mpaa              TEXT, "+
+				  //     "Mpaa              TEXT, "+
 				       "Sound_Mix         TEXT, "+
 				       "Web_Runtime       TEXT, "+
 				       "Awards            TEXT," +
@@ -1718,7 +1718,7 @@ public class DatabaseMySQL extends Database {
 		"General_Info_Episodes.Language,"+
 		"General_Info_Episodes.Colour, "+
 		"General_Info_Episodes.Certification, "+ 
-		"General_Info_Episodes.Mpaa, "+ 
+		//"General_Info_Episodes.Mpaa, "+ 
 		"General_Info_Episodes.Sound_Mix, "+ 
 		"General_Info_Episodes.Web_Runtime, "+ 
 		"General_Info_Episodes.Awards "+ 
@@ -1737,7 +1737,7 @@ public class DatabaseMySQL extends Database {
 		if (rating.equals("-1"))
 		    rating = "";
 		
-		episode = new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed_By"), resultSet.getString("Written_By"), resultSet.getString("Genre"), rating, resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound_Mix"), resultSet.getString("Web_Runtime"), resultSet.getString("Awards"));
+		episode = new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed_By"), resultSet.getString("Written_By"), resultSet.getString("Genre"), rating, resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), /*resultSet.getString("Mpaa"),*/ resultSet.getString("Sound_Mix"), resultSet.getString("Web_Runtime"), resultSet.getString("Awards"));
 		
 		if (getCoverData)
 		    episode.setCoverData(resultSet.getBytes("CoverData"));
