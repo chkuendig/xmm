@@ -243,7 +243,7 @@ public class DatabaseHSQL extends Database {
 				       "\"Language\"          LONGVARCHAR,"+
 				       "\"Colour\"            LONGVARCHAR,"+
 				       "\"Certification\"     LONGVARCHAR,"+
-				      // "\"Mpaa\"              LONGVARCHAR,"+
+				       "\"Mpaa\"              LONGVARCHAR,"+
 				       "\"Sound Mix\"         LONGVARCHAR,"+
 				       "\"Web Runtime\"       LONGVARCHAR,"+
 				       "\"Awards\"            LONGVARCHAR,"+
