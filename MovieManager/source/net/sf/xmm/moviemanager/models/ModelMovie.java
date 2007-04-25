@@ -32,6 +32,7 @@ public class ModelMovie extends ModelEntry {
 
 	public ModelMovie(ModelMovie model) {
 		copyData(model);
+		additionalInfo = new ModelAdditionalInfo();
 	}
 
 	/**
@@ -63,6 +64,7 @@ public class ModelMovie extends ModelEntry {
 		setAwards(awards);
 
 		hasGeneralInfoData = true;
+		additionalInfo = new ModelAdditionalInfo();
 	}
 
 	public ModelMovie(int key, String title) {

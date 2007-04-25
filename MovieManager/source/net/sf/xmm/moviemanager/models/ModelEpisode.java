@@ -43,12 +43,13 @@ public class ModelEpisode extends ModelEntry {
 
 	public ModelEpisode(ModelEpisode model) {
 		copyData(model);
+		additionalInfo = new ModelAdditionalInfo();
 	}
 
 	/**
 	 * The constructor.
 	 **/
-	public ModelEpisode(int key, int movieKey, int episodeNumber, String urlKey, String cover, String date, String title, String directedBy, String writtenBy, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String mpaa, String webSoundMix, String webRuntime, String awards) {
+	public ModelEpisode(int key, int movieKey, int episodeNumber, String urlKey, String cover, String date, String title, String directedBy, String writtenBy, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String webSoundMix, String webRuntime, String awards) {
 
 		setKey(key);
 		this.movieKey = movieKey;
@@ -70,10 +71,12 @@ public class ModelEpisode extends ModelEntry {
 		setLanguage(language);
 		setColour(colour);
 		setCertification(certification);
-		setMpaa(mpaa);
+		//setMpaa(mpaa);
 		setWebSoundMix(webSoundMix);
 		setWebRuntime(webRuntime);
 		setAwards(awards);
+		
+		additionalInfo = new ModelAdditionalInfo();
 	}
 
 	public ModelEpisode(int key, int movieKey, int episodeNumber, String title) {
