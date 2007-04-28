@@ -463,7 +463,7 @@ public class DatabaseMySQL extends Database {
 				       "Language          TEXT, "+
 				       "Colour            TEXT, "+
 				       "Certification     TEXT, "+
-				  //     "Mpaa              TEXT, "+
+				       //"Mpaa              TEXT, "+
 				       "Sound_Mix         TEXT, "+
 				       "Web_Runtime       TEXT, "+
 				       "Awards            TEXT," +
@@ -930,42 +930,32 @@ public class DatabaseMySQL extends Database {
 	    
 		_sql.clear();
 	    
-		ArrayList extraInfoFieldNames = new ArrayList();
-		ArrayList extraInfoFieldValues = new ArrayList();
+		String tempValue = "";
+
+		ArrayList extraFieldFieldNames = ModelAdditionalInfo.getExtraInfoFieldNames();
+	    ArrayList extraInfoFieldValues = new ArrayList();
 	    
 		if (episode)
 		    resultSet = getExtraInfoEpisodeResultSet(index);
 		else
 		    resultSet = getExtraInfoMovieResultSet(index);
 	    
-		//ResultSetMetaData metaData = resultSet.getMetaData();
-		
-		String tempName;
-		String tempValue;
-		
-		ArrayList extraFieldnames = getExtraInfoFieldNames();
-		
 		boolean next = resultSet.next();
 		
 		/* Getting the value for each field */
-		for (int i = 0; next && i < extraFieldnames.size(); i++) {
+		for (int i = 0; i < extraFieldFieldNames.size(); i++) {
 		    
-		    tempName = (String) extraFieldnames.get(i);
-		    
-		    /* First column after the ID column is at index 2 */
-		    tempValue = resultSet.getString(i+2);
-		    
-		    if (tempValue == null)
-			tempValue = "";
+			if (next)/* First column after the ID column is at index 2 */
+	    		tempValue = resultSet.getString(i+2);
+	    	
+	    	if (tempValue == null)
+	    		tempValue = "";
 			
-		    extraInfoFieldNames.add(tempName);
-		    extraInfoFieldValues.add(tempValue);
+	    	extraInfoFieldValues.add(tempValue);
 		}
 		
 		additionalInfo = new ModelAdditionalInfo(subtitles, duration, fileSize, cDs, cDCases, resolution, videoCodec, videoRate, videoBitrate, audioCodec, audioRate, audioBitrate, audioChannels, fileLocation, fileCount, container, mediaType);
-		
 		additionalInfo.setExtraInfoFieldValues(extraInfoFieldValues);
-		ModelAdditionalInfo.setExtraInfoFieldNames(extraInfoFieldNames);
 	    }
 	} catch (Exception e) {
 	    log.error("", e);
