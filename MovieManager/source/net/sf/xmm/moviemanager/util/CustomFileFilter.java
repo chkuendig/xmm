@@ -41,7 +41,8 @@ public class CustomFileFilter extends javax.swing.filechooser.FileFilter {
      * The filter description.
      **/
     private String _description;
-	
+	private String identifier = "";
+    
     
     /* Accepts only directores */
     public CustomFileFilter(int fileMode, String description) {
@@ -52,10 +53,18 @@ public class CustomFileFilter extends javax.swing.filechooser.FileFilter {
     /**
      * Initializes the private vars.
      **/
+    public CustomFileFilter(String[] extensions, String description, String identifier) {
+    	this(extensions, description);
+    	this.identifier = identifier;
+    }
+    
+    /**
+     * Initializes the private vars.
+     **/
     public CustomFileFilter(String[] extensions, String description) {
-	super();
-	_extensions = extensions;
-	_description = description;
+    	super();
+    	_extensions = extensions;
+    	_description = description;
     }
   
     /**
@@ -99,6 +108,13 @@ public class CustomFileFilter extends javax.swing.filechooser.FileFilter {
      **/
     public String getDescription() {
 	return _description;
+    }
+    
+    /**
+     * The description of this filter.
+     **/
+    public String getIdentifier() {
+	return identifier;
     }
 
     /**
