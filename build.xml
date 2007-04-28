@@ -137,12 +137,13 @@
     </jar>
   </target>
 
-  <target name="run" depends="compile"
+  <target name="run" depends="jar"
     description="Runs the compiled moviemanager">
     <java
       classname="${basepackage}.moviemanager.MovieManager"
-      classpathref="project.classpath"
-      fork="true" spawn="true" dir="${base}"
+      classpathref="project.libpath"
+      classpath="MovieManager/MovieManager.jar"
+      fork="true" spawn="true"
     />
   </target>
 
