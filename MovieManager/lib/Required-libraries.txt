@@ -1,5 +1,7 @@
 Required libraries for MeD's Movie Manager v2.5 beta 5
 
+These libraries can be found in the MovieManager binary or source release.
+
 BrowserLauncher2-10rc4.jar		- Browser launcher java library
 commons-httpclient-3.0.1.jar	- HTTP java library
 commons-logging-1.1.jar			- logging library required by other libraries.
