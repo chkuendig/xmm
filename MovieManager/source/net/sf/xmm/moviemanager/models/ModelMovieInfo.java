@@ -438,10 +438,9 @@ public class ModelMovieInfo {
                 if (saveAdditionalInfo) {
                     database.setAdditionalInfo(model.getKey(), additionalInfo);
                     
-                    if (ModelAdditionalInfo.getExtraInfoFieldNames().size() > 0) {
-                    	database.setExtraInfoMovie(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
-                    }
-                }
+					// Must save to extra info even though there are no extra info fields. Tge rows must still be created in the database
+					database.setExtraInfoMovie(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+				}
                 
             } else {
                 /* Adding new movie */
@@ -454,9 +453,9 @@ public class ModelMovieInfo {
                     
                     database.addAdditionalInfo(model.getKey(), additionalInfo);
                     
-                    if (ModelAdditionalInfo.getExtraInfoFieldNames().size() > 0) {
-                    	database.addExtraInfoMovie(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
-                    }
+					// Must save to extra info even though there are no extra info fields. Tge rows must still be created in the database
+					database.addExtraInfoMovie(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+                    
                     
                     /* Add new row in Lists table with default values */
                     ArrayList listNames = database.getListsColumnNames();
@@ -620,7 +619,7 @@ public class ModelMovieInfo {
             if (model.getTitle().equals("")) { //$NON-NLS-1$
                 
                 if (!properties.getMetaDataTagInfo("INAM").equals("")) //$NON-NLS-1$ //$NON-NLS-2$
-                    model.setTitle(properties.getMetaDataTagInfo("INAM")); //$NON-NLS-1$
+                    setTitle(properties.getMetaDataTagInfo("INAM")); //$NON-NLS-1$
                 
                 else {
                     String title = properties.getFileName();
