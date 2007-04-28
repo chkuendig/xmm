@@ -23,19 +23,13 @@ package net.sf.xmm.moviemanager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFile;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.models.AdditionalInfoFieldDefaultValues;
-import net.sf.xmm.moviemanager.util.FileUtil;
-import net.sf.xmm.moviemanager.util.NewDatabaseLoadedEvent;
-import net.sf.xmm.moviemanager.util.NewDatabaseLoadedEventListener;
+import net.sf.xmm.moviemanager.util.*;
 
 import org.apache.log4j.Logger;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -300,10 +294,25 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	 **/
 	public File getLastFileDir() {
 
-		/* If directory is writable it will be returned */
-		if (isWritable(lastFileDir))
+		if (FileUtil.isWindows()) {
+			String tmp = lastFileDir.getAbsolutePath();
+			
+			if (tmp.indexOf(":") != -1) {
+				String drive = tmp.substring(0, tmp.indexOf(":") + 1);
+				
+				if (drive.length() != 0) {
+					DriveInfo d = new DriveInfo(drive);
+					
+					if (d.isInitialized() && d.isValid() && lastFileDir.exists() ) {
+						return lastFileDir;
+					}
+				}
+			}
+		}
+		else if (lastFileDir.exists()) {
 			return lastFileDir;
-
+		}
+		
 		return new File("");
 	}
 
