@@ -22,53 +22,66 @@ package net.sf.xmm.moviemanager.commands;
 
 import net.sf.xmm.moviemanager.models.*;
 import net.sf.xmm.moviemanager.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.tree.*;
+
 import java.util.*;
 
 public class MovieManagerCommandSaveChangedNotes implements ActionListener {
-    
-    /**
-     * Executes the command.
-     **/
-    public static void execute() {
-	
-	DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
-	ModelEntry model;
-	DefaultMutableTreeNode node;
-	
-	Enumeration enumeration = root.children();
-	
-	while (enumeration.hasMoreElements()) {
-	    
-	    node = ((DefaultMutableTreeNode) enumeration.nextElement());
-	    model = (ModelEntry) node.getUserObject();
-	    
-	    if (model.hasChangedNotes) {
-		MovieManager.getIt().getDatabase().setGeneralInfo((ModelMovie) model);
-	    }
-	    
-	    /* Has children */
-	    if (!node.isLeaf()) {
-		Enumeration episodeEnumeration = node.children();
-		
-		while (episodeEnumeration.hasMoreElements()) {
-		    model = (ModelEntry) ((DefaultMutableTreeNode) episodeEnumeration.nextElement()).getUserObject();
-		    
-		    if (model.hasChangedNotes) {
-			MovieManager.getIt().getDatabase().setGeneralInfoEpisode((ModelEpisode) model);
-		    }
+
+	/**
+	 * Executes the command.
+	 **/
+	public static void execute() {
+
+
+		/* Saving the node's changed notes value */
+		if (MovieManager.getDialog().getMoviesList().getLeadSelectionRow() != -1) {
+
+			ModelEntry entry = (ModelEntry) ((DefaultMutableTreeNode) MovieManager.getDialog().getMoviesList().getLeadSelectionPath().getLastPathComponent()).getUserObject();
+			if (!entry.getNotes().equals(MovieManager.getDialog().getNotes().getText())) {
+				entry.setNotes(MovieManager.getDialog().getNotes().getText());
+				entry.hasChangedNotes = true;
+			}
 		}
-	    }
+
+
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
+		ModelEntry model;
+		DefaultMutableTreeNode node;
+		Enumeration enumeration = root.children();
+
+		while (enumeration.hasMoreElements()) {
+
+			node = ((DefaultMutableTreeNode) enumeration.nextElement());
+			model = (ModelEntry) node.getUserObject();
+
+			if (model.hasChangedNotes) {
+				MovieManager.getIt().getDatabase().setGeneralInfo((ModelMovie) model);
+			}
+
+			/* Has children */
+			if (!node.isLeaf()) {
+				Enumeration episodeEnumeration = node.children();
+
+				while (episodeEnumeration.hasMoreElements()) {
+					model = (ModelEntry) ((DefaultMutableTreeNode) episodeEnumeration.nextElement()).getUserObject();
+
+					if (model.hasChangedNotes) {
+						MovieManager.getIt().getDatabase().setGeneralInfoEpisode((ModelEpisode) model);
+					}
+				}
+			}
+		}
 	}
-    }
-    
-    /**
-     * Invoked when an action occurs.
-     **/
-    public void actionPerformed(ActionEvent event) {
-	MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
-	execute();
-    }
+
+	/**
+	 * Invoked when an action occurs.
+	 **/
+	public void actionPerformed(ActionEvent event) {
+		MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
+		execute();
+	}
 }
