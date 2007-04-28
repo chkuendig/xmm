@@ -94,16 +94,13 @@ public class MovieManagerCommandPlay implements ActionListener{
                 
             }
             else {
-                if (fileLocation.indexOf("*") != -1) {
-                	String [] files = fileLocation.split("\\*");
-                	fileLocation = "";
-                	
-                	for (int i = 0; i < files.length; i++)
-                		fileLocation += "\"" + files[i] + "\" ";
-                }
-                else
-                	fileLocation = "\"" + fileLocation + "\"";
+                // Splitting on *, each file is enclosed by quotes.	
+                String [] files = fileLocation.split("\\*");
+                fileLocation = "";
                 
+                for (int i = 0; i < files.length; i++)
+                	fileLocation += "\"" + files[i] + "\" ";
+                                
                 cmd = mmc.getMediaPlayerPath();
                 
                 System.err.println("cmd:" + cmd);
