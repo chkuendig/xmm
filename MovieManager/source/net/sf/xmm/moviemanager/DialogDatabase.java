@@ -378,10 +378,10 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	    fileChooser.setFileSelectionMode(ExtendedFileChooser.FILES_ONLY);
 	    
 	    if (databaseMode == 0) {
-		fileChooser.setFileFilter(new CustomFileFilter(new String[]{"properties", "script", "lck"},new String("HSQL Database Files (*.properties, *.script, *.lck)"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		fileChooser.setFileFilter(new CustomFileFilter(new String[]{"properties", "script", "lck"},new String("HSQL Database Files (*.properties, *.script, *.lck)"), "HSQL")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	    } 
 	    else if (databaseMode == 1) {
-		fileChooser.setFileFilter(new CustomFileFilter(new String[]{"mdb", "accdb"},new String("MS Access Database Files (*.mdb, *.accdb)"))); //$NON-NLS-1$ //$NON-NLS-2$
+	    	fileChooser.setFileFilter(new CustomFileFilter(new String[]{"mdb", "accdb"},new String("MS Access Database Files (*.mdb, *.accdb)"), "MSAccess")); //$NON-NLS-1$ //$NON-NLS-2$
 	    }
 	    
 	    fileChooser.setAcceptAllFileFilterUsed(false);
@@ -389,35 +389,40 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	    fileChooser.setFocusTraversalKeysEnabled(false);
 	    
 	    int returnVal;
-	    
+
 	    if (newDatabase) {
-		fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
-		fileChooser.setFileAlreadyExistWarningMessage("Database "); //$NON-NLS-1$
-		
-		fileChooser.setApproveButtonText(Localizer.getString("DialogDatabase.filechooser.approve-button-create-database.text")); //$NON-NLS-1$
-		fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogDatabase.filechooser.approve-button-create-database.tooltip")); //$NON-NLS-1$
-		fileChooser.setDialogTitle(Localizer.getString("DialogDatabase.filechooser.title.create-database")); //$NON-NLS-1$
-		
-		returnVal = fileChooser.showSaveDialog(MovieManager.getDialog());
+	    	fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+	    	fileChooser.setFileAlreadyExistWarningMessage("Database "); //$NON-NLS-1$
+
+	    	fileChooser.setApproveButtonText(Localizer.getString("DialogDatabase.filechooser.approve-button-create-database.text")); //$NON-NLS-1$
+	    	fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogDatabase.filechooser.approve-button-create-database.tooltip")); //$NON-NLS-1$
+	    	fileChooser.setDialogTitle(Localizer.getString("DialogDatabase.filechooser.title.create-database")); //$NON-NLS-1$
+
+	    	returnVal = fileChooser.showSaveDialog(MovieManager.getDialog());
 	    }
 	    else {
-		fileChooser.setApproveButtonText(Localizer.getString("DialogDatabase.filechooser.approve-button-open-database.text")); //$NON-NLS-1$
-		fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogDatabase.filechooser.approve-button-open-database.tooltip")); //$NON-NLS-1$
-		fileChooser.setDialogTitle(Localizer.getString("DialogDatabase.filechooser.title.open-database")); //$NON-NLS-1$
-		
-		returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
+	    	fileChooser.setApproveButtonText(Localizer.getString("DialogDatabase.filechooser.approve-button-open-database.text")); //$NON-NLS-1$
+	    	fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogDatabase.filechooser.approve-button-open-database.tooltip")); //$NON-NLS-1$
+	    	fileChooser.setDialogTitle(Localizer.getString("DialogDatabase.filechooser.title.open-database")); //$NON-NLS-1$
+
+	    	returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
 	    }
-	    
+
 	    if (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
-		
-		/* Gets the path... */
-		String filepath = fileChooser.getSelectedFile().getAbsolutePath();
-		
-		if (!newDatabase && !(new File(filepath).exists())) {
-		    return ""; //$NON-NLS-1$
-		}
-		
-		return filepath;
+
+	    	/* Gets the path... */
+	    	String filepath = fileChooser.getSelectedFile().getAbsolutePath();
+
+	    	if (!newDatabase && !(new File(filepath).exists()))
+	    		return ""; //$NON-NLS-1$
+	    	else {
+	    		if (((CustomFileFilter) fileChooser.getFileFilter()).getIdentifier().equals("MSAccess")) {
+	    			if (!filepath.endsWith(".mdb") && !filepath.endsWith(".accdb"))
+	    				filepath += ".mdb";
+	    		}
+	    	}
+	    	
+	    return filepath;
 	    }
 	}
 	catch (Exception e) {
