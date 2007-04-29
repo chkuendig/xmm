@@ -105,6 +105,9 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
     
     protected void execute() {
 	
+//   	 If any notes have been changed, they will be saved before updating list
+    	 MovieManagerCommandSaveChangedNotes.execute();
+		 
 	cancelAll = false;
 	
 	DialogUpdateIMDbInfo importMovie = new DialogUpdateIMDbInfo(this, dbImporter);

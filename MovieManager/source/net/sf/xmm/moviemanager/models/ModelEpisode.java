@@ -25,6 +25,8 @@ import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 
 public class ModelEpisode extends ModelEntry {
 
+	public static boolean notesHaveBeenChanged = false;
+	
 	/*The key to the entry this episode is linked to.*/
 	private int movieKey = -1;
 

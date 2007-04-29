@@ -850,6 +850,11 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			if (! entry.getNotes().equals(MovieManager.getDialog().getNotes().getText())) {
 				entry.setNotes(MovieManager.getDialog().getNotes().getText());
 				entry.hasChangedNotes = true;
+				
+				if (entry.isEpisode())
+					ModelEpisode.notesHaveBeenChanged = true;
+				else
+					ModelMovie.notesHaveBeenChanged = true;
 			}
 		}
 

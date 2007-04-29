@@ -31,6 +31,9 @@ public class MovieManagerCommandLoadList implements ActionListener {
     
     void execute(String column) {
 	
+    	// If any notes have been changed, they will be saved before loading list
+    	MovieManagerCommandSaveChangedNotes.execute();
+    	
 	MovieManager.getConfig().setCurrentList(column);
 	MovieManager.getDialog().setListTitle(column);
 	

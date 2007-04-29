@@ -113,6 +113,9 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
     
     protected void execute() {
 	
+//   	 If any notes have been changed, they will be saved before changing list
+    	MovieManagerCommandSaveChangedNotes.execute();
+    	
 	cancelAll = false;
 	
 	DialogImport importMovie = new DialogImport(this);

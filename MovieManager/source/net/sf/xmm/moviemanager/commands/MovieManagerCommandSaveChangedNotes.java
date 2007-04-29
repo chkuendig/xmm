@@ -36,8 +36,7 @@ public class MovieManagerCommandSaveChangedNotes implements ActionListener {
 	 **/
 	public static void execute() {
 
-
-		/* Saving the node's changed notes value */
+		/* Saving the current selected node's changed notes value */
 		if (MovieManager.getDialog().getMoviesList().getLeadSelectionRow() != -1) {
 
 			ModelEntry entry = (ModelEntry) ((DefaultMutableTreeNode) MovieManager.getDialog().getMoviesList().getLeadSelectionPath().getLastPathComponent()).getUserObject();
@@ -47,36 +46,40 @@ public class MovieManagerCommandSaveChangedNotes implements ActionListener {
 			}
 		}
 
+		if (ModelMovie.notesHaveBeenChanged || ModelEpisode.notesHaveBeenChanged) {
 
-		DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
-		ModelEntry model;
-		DefaultMutableTreeNode node;
-		Enumeration enumeration = root.children();
+			DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
+			ModelEntry model;
+			DefaultMutableTreeNode node;
+			Enumeration enumeration = root.children();
 
-		while (enumeration.hasMoreElements()) {
+			while (enumeration.hasMoreElements()) {
 
-			node = ((DefaultMutableTreeNode) enumeration.nextElement());
-			model = (ModelEntry) node.getUserObject();
+				node = ((DefaultMutableTreeNode) enumeration.nextElement());
+				model = (ModelEntry) node.getUserObject();
 
-			if (model.hasChangedNotes) {
-				MovieManager.getIt().getDatabase().setGeneralInfo((ModelMovie) model);
-			}
+				if (model.hasChangedNotes) {
+					MovieManager.getIt().getDatabase().setGeneralInfo((ModelMovie) model);
+				}
 
-			/* Has children */
-			if (!node.isLeaf()) {
-				Enumeration episodeEnumeration = node.children();
+				/* Has children */
+				if (ModelEpisode.notesHaveBeenChanged && !node.isLeaf()) {
+					Enumeration episodeEnumeration = node.children();
 
-				while (episodeEnumeration.hasMoreElements()) {
-					model = (ModelEntry) ((DefaultMutableTreeNode) episodeEnumeration.nextElement()).getUserObject();
+					while (episodeEnumeration.hasMoreElements()) {
+						model = (ModelEntry) ((DefaultMutableTreeNode) episodeEnumeration.nextElement()).getUserObject();
 
-					if (model.hasChangedNotes) {
-						MovieManager.getIt().getDatabase().setGeneralInfoEpisode((ModelEpisode) model);
+						if (model.hasChangedNotes) {
+							MovieManager.getIt().getDatabase().setGeneralInfoEpisode((ModelEpisode) model);
+						}
 					}
 				}
 			}
+			ModelMovie.notesHaveBeenChanged = false;
+			ModelEpisode.notesHaveBeenChanged = false;
 		}
 	}
-
+	
 	/**
 	 * Invoked when an action occurs.
 	 **/

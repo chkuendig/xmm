@@ -34,6 +34,9 @@ public class MovieManagerCommandExit implements ActionListener {
      **/
     public static void execute() {
 	
+    	// If any notes have been changed, they will be saved before exiting
+    	 MovieManagerCommandSaveChangedNotes.execute();
+    	
 	MovieManager.getConfig().saveConfig();
 	
 	long time = System.currentTimeMillis();

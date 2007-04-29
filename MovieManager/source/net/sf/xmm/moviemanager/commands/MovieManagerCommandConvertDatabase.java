@@ -259,6 +259,9 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     
     protected void execute() {
     	
+//    	 If any notes have been changed, they will be saved before converting database.
+    	MovieManagerCommandSaveChangedNotes.execute();
+    	
     	if (!FileUtil.isWindows() && !MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL")) {
     		DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.alert.windows-only.title"), Localizer.getString("MovieManagerCommandConvertDatabase.alert.windows-only.message"));
     		GUIUtil.showAndWait(alert, true);

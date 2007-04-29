@@ -25,6 +25,8 @@ import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 
 public class ModelMovie extends ModelEntry {
 
+	public static boolean notesHaveBeenChanged = false;
+	
 	/* default public constructor for XML export */
 	public ModelMovie() {
 		additionalInfo = new ModelAdditionalInfo();
@@ -144,6 +146,7 @@ public class ModelMovie extends ModelEntry {
 	
 		if (additionalInfo.hasOldExtraInfoFieldNames())
 			additionalInfo.updateExtraInfoFieldNames();
+		
 		if (getKey() != -1) {
 
 			ModelAdditionalInfo tmp = MovieManager.getIt().getDatabase().getAdditionalInfo(getKey(), false);

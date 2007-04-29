@@ -63,6 +63,9 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
      **/
     protected void execute() {
 	
+//    	 If any notes have been changed, they will be saved before changing list
+    	MovieManagerCommandSaveChangedNotes.execute();
+    	
         movieInfoModel = new ModelMovieInfo(false, true);
         
 	cancelAll = false;

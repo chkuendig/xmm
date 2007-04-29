@@ -254,6 +254,9 @@ public class MovieManagerCommandFilter implements ActionListener {
      **/
     public void execute() {
 	
+    	// If any notes have been changed, they will be saved before seaching
+    	MovieManagerCommandSaveChangedNotes.execute();
+    	
 	DefaultListModel listModel;
 	Database database = MovieManager.getIt().getDatabase();
 	
