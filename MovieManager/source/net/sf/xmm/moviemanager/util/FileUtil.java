@@ -188,7 +188,7 @@ public class FileUtil {
             
             
             /* If running in a mac application bundle, we can't write in the application-directory, so we use the home of the user */
-            if (FileUtil.isMac() && path.indexOf(".app/Contents") > -1) {
+            if (FileUtil.isMac() /* && path.indexOf(".app/Contents") > -1 */) {
                 path = System.getProperty("user.home") + "/Library/Application Support/MovieManager/";
                 File dir = new File(path);
                 
