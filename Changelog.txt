@@ -4,6 +4,21 @@ Changelog - MeD's Movie Manager
 ========================================
 
 
+Version 2.5.2 (29-april-2007)
+
+ - General improvements:
+ - No longer necessary to save changed notes manually.
+
+ - Bug fixes:
+ - A bunch of smaller issues.
+
+
+Version 2.5.1 (18-april-2007)
+
+ - Bug fixes:
+ - The movie list was not sorted.
+ 
+
 Version 2.5 (18-april-2007)
 
  - General improvements:
