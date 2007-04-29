@@ -294,6 +294,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	 **/
 	public File getLastFileDir() {
 
+		if (lastFileDir == null)
+			return null;
+		
 		if (FileUtil.isWindows()) {
 			String tmp = lastFileDir.getAbsolutePath();
 			
