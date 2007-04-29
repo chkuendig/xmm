@@ -51,8 +51,6 @@ import javax.swing.text.PlainDocument;
 public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListener {
 
 	static Logger log = Logger.getRootLogger();
-
-	private boolean useOpaque = true;
 	
 	private int fontSize = 12;
 
@@ -93,6 +91,15 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	JCheckBox seenBox;
 
 	JLabel cover;
+
+	private JTextArea textAreaPlot;
+	private JTextArea textAreaCast;
+	private JTextArea textAreaAka;
+	private JTextArea textAreaCertification;
+	private JTextField textFieldSoundMix;
+	private JTextField textFieldAwards;
+	private JTextField textFieldMpaa;
+	private JTextField textFieldWebRuntime;
 
 	/**
 	 * The Constructor - Add Movie.
@@ -180,9 +187,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		setModal(true);
 		setResizable(true);
 
-		if (FileUtil.isMac())
-			useOpaque = false;
-		
 		/* Enables dispose when pushing escape */
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		Action escapeAction = new AbstractAction() {
@@ -505,8 +509,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		/* Creates the plot... */
 		JPanel panelPlot = new JPanel();
 		panelPlot.setLayout(new GridLayout(1,1));
-		panelPlot.setOpaque(useOpaque);
-
+		
 		panelPlot.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 Localizer.getString("DialogMovieInfo.panel-plot.title."), //$NON-NLS-1$
 												TitledBorder.DEFAULT_JUSTIFICATION,
@@ -515,21 +518,17 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 														.getName(), Font.PLAIN,
 														fontSize)),
 								BorderFactory.createEmptyBorder(0, 5, 5, 5)));
-		JTextArea textAreaPlot = new JTextArea("", 4, 43); //$NON-NLS-1$
+		this.textAreaPlot = new JTextArea("", 4, 43); //$NON-NLS-1$
 		textAreaPlot.setLineWrap(true);
 		textAreaPlot.setWrapStyleWord(true);
-		textAreaPlot.setOpaque(useOpaque);
 				
 		JScrollPane scrollPanePlot = new JScrollPane(textAreaPlot);
 		scrollPanePlot.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPanePlot.setOpaque(useOpaque);
 		panelPlot.add(scrollPanePlot);
 
 		/* Creates the cast... */
 		JPanel panelCast = new JPanel();
 		panelCast.setLayout(new GridLayout(1,1));
-		panelCast.setOpaque(useOpaque);
-		
 		
 		panelCast.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 Localizer.getString("DialogMovieInfo.panel-cast.title."), //$NON-NLS-1$
@@ -540,10 +539,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 														fontSize)),
 								BorderFactory.createEmptyBorder(0, 5, 5, 5)));
 
-		JTextArea textAreaCast = new JTextArea("", 4, 43); //$NON-NLS-1$
+		this.textAreaCast = new JTextArea("", 4, 43); //$NON-NLS-1$
 		textAreaCast.setLineWrap(true);
 		textAreaCast.setWrapStyleWord(true);
-		textAreaCast.setOpaque(useOpaque);
 				
 		JScrollPane scrollPaneCast = new JScrollPane(textAreaCast);
 		scrollPaneCast.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -554,14 +552,12 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelPlotAndCast.setBorder(BorderFactory.createEmptyBorder(5, 3, 2, 3));
 		panelPlotAndCast.add(panelPlot);
 		panelPlotAndCast.add(panelCast);
-		panelPlotAndCast.setOpaque(useOpaque);
 		
 		/* Miscellaneous */
 
 		JPanel panelMisc = new JPanel();
 		panelMisc.setLayout(new GridBagLayout());
 		panelMisc.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
-		panelMisc.setOpaque(useOpaque);
 				
 		JLabel webRuntimeID = new JLabel(Localizer.getString("DialogMovieInfo.field.web-runtime") + ": "); //$NON-NLS-1$
 		webRuntimeID.setFont((new Font(webRuntimeID.getFont().getName(), 1,	fontSize)));
@@ -574,9 +570,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelMisc.add(webRuntimeID, constraints);
 
-		JTextField webRuntime = new JTextField();
-		webRuntime.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		webRuntime.setMinimumSize(webRuntime.getPreferredSize());
+		this.textFieldWebRuntime = new JTextField();
+		textFieldWebRuntime.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		textFieldWebRuntime.setMinimumSize(textFieldWebRuntime.getPreferredSize());
 
 		constraints = new GridBagConstraints();
 		constraints.gridx = 1;
@@ -586,7 +582,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.insets = new Insets(0, 0, 1, 0);
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.anchor = GridBagConstraints.EAST;
-		panelMisc.add(webRuntime, constraints);
+		panelMisc.add(textFieldWebRuntime, constraints);
 
 		JLabel soundMixID = new JLabel(Localizer.getString("DialogMovieInfo.field.sound-mix") + ": "); //$NON-NLS-1$
 		soundMixID.setFont((new Font(soundMixID.getFont().getName(), 1,	fontSize)));
@@ -599,9 +595,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelMisc.add(soundMixID, constraints);
 
-		JTextField soundMix = new JTextField();
-		soundMix.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		soundMix.setMinimumSize(soundMix.getPreferredSize());
+		this.textFieldSoundMix = new JTextField();
+		textFieldSoundMix.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		textFieldSoundMix.setMinimumSize(textFieldSoundMix.getPreferredSize());
 
 		constraints = new GridBagConstraints();
 		constraints.gridx = 1;
@@ -611,7 +607,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.insets = new Insets(1, 0, 1, 0);
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.anchor = GridBagConstraints.EAST;
-		panelMisc.add(soundMix, constraints);
+		panelMisc.add(textFieldSoundMix, constraints);
 
 		JLabel awardsID = new JLabel(Localizer.getString("DialogMovieInfo.field.awards") + ": "); //$NON-NLS-1$
 		awardsID.setFont((new Font(awardsID.getFont().getName(), 1, fontSize)));
@@ -624,9 +620,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelMisc.add(awardsID, constraints);
 
-		JTextField awards = new JTextField();
-		awards.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		awards.setMinimumSize(awards.getPreferredSize());
+		this.textFieldAwards = new JTextField();
+		textFieldAwards.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		textFieldAwards.setMinimumSize(textFieldAwards.getPreferredSize());
 
 		constraints = new GridBagConstraints();
 		constraints.gridx = 1;
@@ -636,7 +632,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.insets = new Insets(1, 0, 1, 0);
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.anchor = GridBagConstraints.EAST;
-		panelMisc.add(awards, constraints);
+		panelMisc.add(textFieldAwards, constraints);
 
 		JLabel mpaaID = new JLabel(Localizer.getString("DialogMovieInfo.field.MPAA") + ": "); //$NON-NLS-1$
 		mpaaID.setFont((new Font(mpaaID.getFont().getName(), 1, fontSize)));
@@ -649,9 +645,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelMisc.add(mpaaID, constraints);
 
-		JTextField mpaa = new JTextField();
-		mpaa.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-		mpaa.setMinimumSize(mpaa.getPreferredSize());
+		this.textFieldMpaa = new JTextField();
+		textFieldMpaa.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		textFieldMpaa.setMinimumSize(textFieldMpaa.getPreferredSize());
 
 		constraints = new GridBagConstraints();
 		constraints.gridx = 1;
@@ -661,7 +657,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.insets = new Insets(1, 0, 1, 0);
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.anchor = GridBagConstraints.EAST;
-		panelMisc.add(mpaa, constraints);
+		panelMisc.add(textFieldMpaa, constraints);
 
 		JLabel akaID = new JLabel(Localizer.getString("DialogMovieInfo.field.also-known-as") + ": "); //$NON-NLS-1$
 		akaID.setFont((new Font(akaID.getFont().getName(), 1, fontSize)));
@@ -675,7 +671,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelMisc.add(akaID, constraints);
 
-		JTextArea textAreaAka = new JTextArea("", 4, 10);
+		this.textAreaAka = new JTextArea("", 4, 10);
 		// textAreaAka.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		textAreaAka.setLineWrap(true);
 		textAreaAka.setWrapStyleWord(true);
@@ -706,7 +702,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelMisc.add(certificationID, constraints);
 
-		JTextArea textAreaCertification = new JTextArea("", 4, 30);
+		this.textAreaCertification = new JTextArea("", 4, 30);
 		// textAreaCertification.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		textAreaCertification.setLineWrap(true);
 		textAreaCertification.setWrapStyleWord(true);
@@ -737,9 +733,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.gridwidth = 2;
 		constraints.insets = new Insets(0, -1, 5, -1);
 		constraints.anchor = GridBagConstraints.CENTER;
-		
-		allTabbedInfo.setOpaque(useOpaque);
-		
+	
 		panelMovieInfo.add(allTabbedInfo, constraints);
 
 		/* Creates the Additional Info... */
@@ -984,10 +978,10 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		/* Packs and sets location... */
 		pack();
 
-		webRuntime.setPreferredSize(new Dimension(panelMovieInfo.getWidth() - 150, 22));
-		soundMix.setPreferredSize(new Dimension(panelMovieInfo.getWidth() - 150, 22));
-		awards.setPreferredSize(new Dimension(panelMovieInfo.getWidth() - 150, 22));
-		mpaa.setPreferredSize(new Dimension(panelMovieInfo.getWidth() - 150, 22));
+		textFieldWebRuntime.setPreferredSize(new Dimension(panelMovieInfo.getWidth() - 150, 22));
+		textFieldSoundMix.setPreferredSize(new Dimension(panelMovieInfo.getWidth() - 150, 22));
+		textFieldAwards.setPreferredSize(new Dimension(panelMovieInfo.getWidth() - 150, 22));
+		textFieldMpaa.setPreferredSize(new Dimension(panelMovieInfo.getWidth() - 150, 22));
 		scrollPaneAka.setPreferredSize(new Dimension(panelMovieInfo.getWidth() - 150, 64));
 		scrollPaneCertification.setPreferredSize(new Dimension(panelMovieInfo.getWidth() - 150, 52));
 
@@ -1119,88 +1113,96 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 * Gets the plot JTextArea...
 	 */
 	public JTextArea getPlot() {
-		return (JTextArea) 
+		return this.textAreaPlot;
+		/*return (JTextArea) 
 			((JScrollPane) 
 			 ((JPanel) 
 			  ((JPanel) 
 			   ((JTabbedPane) 
 				((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(0))
-			  .getComponent(0)).getComponent(0)).getViewport().getComponent(0);
+			  .getComponent(0)).getComponent(0)).getViewport().getComponent(0);*/
 	}
 
 	/**
 	 * Gets the cast JTextArea...
 	 */
 	public JTextArea getCast() {
-		return (JTextArea) 
+		return this.textAreaCast;
+	/*	return (JTextArea) 
 			((JScrollPane) 
 			 ((JPanel) 
 			  ((JPanel) 
 			   ((JTabbedPane) 
 				((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(0))
-			  .getComponent(1)).getComponent(0)).getViewport().getComponent(0);
+			  .getComponent(1)).getComponent(0)).getViewport().getComponent(0);*/
 	}
 
 	/**
 	 * Gets the web-runtime JTextArea...
 	 */
 	public JTextField getWebRuntime() {
-		return (JTextField) 
+		return this.textFieldWebRuntime;
+		/*return (JTextField) 
 			((JPanel) 
 			 ((JTabbedPane) 
-			  ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(1);
+			  ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(1);*/
 	}
 
 	/**
 	 * Gets the web-sound mix JTextArea...
 	 */
 	protected JTextField getWebSoundMix() {
-		return (JTextField)
+		return this.textFieldSoundMix;
+		/*return (JTextField)
 			((JPanel) 
 			 ((JTabbedPane) 
-			  ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(3);
+			  ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(3);*/
 	}
 
 	/**
 	 * Gets the awards JTextArea...
 	 */
 	protected JTextField getAwards() {
-		return (JTextField) 
+		return this.textFieldAwards;
+		/* return (JTextField) 
 			((JPanel) 
 			 ((JTabbedPane) 
-			  ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(5);
+			  ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(5);*/
 	}
 
 	/**
 	 * Gets the MPAA JTextArea...
 	 */
 	public JTextField getMpaa() {
-		return (JTextField) 
+		return this.textFieldMpaa;
+		/*return (JTextField) 
 			((JPanel)
 			 ((JTabbedPane) 
-			  ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(7);
+			  ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(7);*/
 	}
 
 	/**
 	 * Gets the Also known as JTextArea...
 	 */
 	public JTextArea getAka() {
-		return (JTextArea) 
+		return this.textAreaAka;
+		/*return (JTextArea) 
 			((JScrollPane) 
 			 ((JPanel) 
 			  ((JTabbedPane) 
-			   ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(9)).getViewport().getComponent(0);
+			   ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(9)).getViewport().getComponent(0);*/
 	}
 
 	/**
 	 * Gets the Also known as JTextArea...
 	 */
 	protected JTextArea getCertification() {
-		return (JTextArea) 
+		return this.textAreaCertification;
+		/*return (JTextArea) 
 			((JScrollPane) 
 			 ((JPanel) 
 			  ((JTabbedPane) 
-			   ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(11)).getViewport().getComponent(0);
+			   ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(11)).getViewport().getComponent(0);*/
 	}
 
 	/**

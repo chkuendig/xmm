@@ -49,9 +49,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     public JPanel filterPanel;
     public JPanel moviesList;
     public ExtendedToolBar toolBar;
-        
-    private boolean useOpaqueOnCastAndPlotAndMisc = true;
-    
+            
     /*Number of entries in the list*/
     private int entries;
     
@@ -60,6 +58,10 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     private int movieListWidth = 0;
     
     private JLabel showEntries;
+
+	private JTextPane textAreaMiscellaenous;
+	private JTextArea textAreaPlot;
+	private JTextArea textAreaCast;
     
     public static JApplet applet = null;
 
@@ -136,9 +138,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         if (!MovieManager.isApplet())
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-        
-        if (FileUtil.isMac())
-        	useOpaqueOnCastAndPlotAndMisc = false;   
         
         setTitle(" MeD's Movie Manager v" + MovieManager.getVersion()); //$NON-NLS-1$
         
@@ -973,8 +972,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         JPanel plotAndCast = new JPanel();
         
-        plotAndCast.setOpaque(useOpaqueOnCastAndPlotAndMisc);
-        
         plotAndCast.setLayout(new GridLayout(2,1));
         
         plotAndCast.add(createPlot());
@@ -1352,7 +1349,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         log.debug("Start creation of the Plot panel."); //$NON-NLS-1$
         JPanel plot = new JPanel();
         
-        plot.setOpaque(useOpaqueOnCastAndPlotAndMisc);
         plot.setLayout(new BorderLayout());
         
         plot.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder() /*BorderFactory.createEmptyBorder()*/,
@@ -1362,7 +1358,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
                 new Font(plot.getFont().getName(),Font.PLAIN, fontSize)),
                 BorderFactory.createEmptyBorder(2,5,3,5))));
         
-        JTextArea textAreaPlot = new JTextArea(""); //$NON-NLS-1$
+        this.textAreaPlot = new JTextArea(""); //$NON-NLS-1$
         textAreaPlot.setEditable(false);
         textAreaPlot.setFocusable(true);
         textAreaPlot.setLineWrap(true);
@@ -1385,7 +1381,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         log.debug("Start creation of the Cast panel."); //$NON-NLS-1$
         JPanel cast = new JPanel();
         
-        cast.setOpaque(useOpaqueOnCastAndPlotAndMisc);
         cast.setLayout(new BorderLayout());
         
         cast.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
@@ -1394,7 +1389,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
                 TitledBorder.DEFAULT_POSITION,
                 new Font(cast.getFont().getName(),Font.PLAIN, fontSize)),
                 BorderFactory.createEmptyBorder(2,5,3,5))));
-        JTextArea textAreaCast = new JTextArea();
+        this.textAreaCast = new JTextArea();
         textAreaCast.setEditable(false);
         textAreaCast.setFocusable(true);
         textAreaCast.setLineWrap(true);
@@ -1419,7 +1414,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         JPanel miscellaenous = new JPanel();
         
-        miscellaenous.setOpaque(useOpaqueOnCastAndPlotAndMisc);
         miscellaenous.setLayout(new BorderLayout());
         
         miscellaenous.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
@@ -1430,7 +1424,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
                 BorderFactory.createEmptyBorder(2,5,3,5))));
         
         
-        JTextPane textAreaMiscellaenous = new JTextPane();
+        this.textAreaMiscellaenous = new JTextPane();
         textAreaMiscellaenous.setContentType("text/html"); //$NON-NLS-1$
         textAreaMiscellaenous.setBackground((Color) UIManager.get("TextArea.background")); //$NON-NLS-1$
         textAreaMiscellaenous.setEditable(false);
@@ -1602,25 +1596,25 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     }
     
     public JTextArea getPlot() {
-        return
-        ((JTextArea)
+        return this.textAreaPlot;
+      /*  ((JTextArea)
                 ((JScrollPane)
-                        getPlotPanel().getComponent(0)).getViewport().getComponent(0));
+                        getPlotPanel().getComponent(0)).getViewport().getComponent(0)); */
     }
     
     public JTextArea getCast() {
-        return
-        ((JTextArea)
+        return this.textAreaCast;
+/*        ((JTextArea)
                 ((JScrollPane)
                         getCastPanel().getComponent(0)).getViewport().getComponent(0));
-    }
+    */}
     
     public JTextPane getMiscellaneous() {
-        return
-        ((JTextPane)
+        return this.textAreaMiscellaenous;
+      /*  ((JTextPane)
                 ((JScrollPane)
                         getMiscellaneousPanel().getComponent(0)).getViewport().getComponent(0));
-    }
+    */}
     
     /**
      * Gets the AdditionalInfo JTextArea.
