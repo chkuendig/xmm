@@ -572,38 +572,30 @@ public class ModelMovieInfo {
             _fieldValues.set(12, audioChannels);
             
              String location = properties.getLocation();
-            
-            /* Adds location only if file exist on writable media */
-            if (MovieManager.getConfig().isWritable(new File(location).getParentFile())) {
-                
-                String currentValue = (String) _fieldValues.get(13);
-                
-                if (currentValue.equals("")) { //$NON-NLS-1$
-                    _fieldValues.set(13, location);
-                }
-                else {
-                    if (_hasReadProperties) {
-                        
-                        StringTokenizer tokenizer = new StringTokenizer(currentValue, "*"); //$NON-NLS-1$
-                        boolean fileAlreadyAdded = false;
-                        
-                        while (tokenizer.hasMoreTokens()) {
-                            if (tokenizer.nextToken().equals(location))
-                                fileAlreadyAdded = true;
-                        }
-                        
-                        if (fileAlreadyAdded)
-                            log.warn("file already added"); //$NON-NLS-1$
-                        else {
-                            currentValue += "*" + location; //$NON-NLS-1$
-                            _fieldValues.set(13, currentValue);
-                        }
-                    }
-                    else 
-                        _fieldValues.set(13, location);
-                }
-            }
-            
+
+             String currentValue = (String) _fieldValues.get(13);
+
+             if (!currentValue.equals("") && _hasReadProperties) {
+
+            	 StringTokenizer tokenizer = new StringTokenizer(currentValue, "*"); //$NON-NLS-1$
+            	 boolean fileAlreadyAdded = false;
+
+            	 while (tokenizer.hasMoreTokens()) {
+            		 if (tokenizer.nextToken().equals(location))
+            			 fileAlreadyAdded = true;
+            	 }
+
+            	 if (fileAlreadyAdded)
+            		 log.warn("file already added"); //$NON-NLS-1$
+            	 else {
+            		 currentValue += "*" + location; //$NON-NLS-1$
+            		 _fieldValues.set(13, currentValue);
+            	 }
+             }
+             else 
+            	 _fieldValues.set(13, location);
+
+             
             int fileCount = 1;
             if (_hasReadProperties && !((String) _fieldValues.get(14)).equals("")) { //$NON-NLS-1$
                 fileCount += Integer.parseInt((String) _fieldValues.get(14));
