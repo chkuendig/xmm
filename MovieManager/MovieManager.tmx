@@ -7026,13 +7026,13 @@
                 <seg>The database is empty! </seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="MovieManagerCommandConvertDatabase.alert.message.windows-only">
+        <tu datatype="Text" tuid="MovieManagerCommandConvertDatabase.alert.windows-only.message">
             <prop type="x-Group">MovieManagerCommand</prop>
             <tuv changedate="20070108T195557Z" changeid=""
                 creationdate="20070108T195557Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>This function is available on windows only</seg>
+                <seg>This function is available on windows only! </seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="MovieManagerCommandConvertDatabase.alert.title.empty-database">
@@ -7044,7 +7044,7 @@
                 <seg>Empty Database</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="MovieManagerCommandConvertDatabase.alert.title.windows-only">
+        <tu datatype="Text" tuid="MovieManagerCommandConvertDatabase.alert.windows-only.title">
             <prop type="x-Group">MovieManagerCommand</prop>
             <tuv changedate="20070108T195557Z" changeid=""
                 creationdate="20070108T195557Z" creationid="" xml:lang="en-EN">

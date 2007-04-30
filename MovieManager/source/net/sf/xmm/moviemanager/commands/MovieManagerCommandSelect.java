@@ -725,15 +725,21 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 		/* If Button1 and more than 1 click the node is expanded/collapsed */
 		if (SwingUtilities.isLeftMouseButton(event)) {
-			if (event.getClickCount() >= 2 && isCtrlPressed(event)) {
-
+			if (event.getClickCount() >= 2) {
 				JTree movieList = MovieManager.getDialog().getMoviesList();
 				int rowForLocation = movieList.getRowForLocation(event.getX(), event.getY());
 
-				if (movieList.isCollapsed(rowForLocation))
-					movieList.expandRow(rowForLocation);
-				else
-					movieList.collapseRow(rowForLocation);
+				// Open edit dialog on double click, if clicked entry has no children
+				if (((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).isLeaf())
+					MovieManagerCommandEdit.execute();
+
+				// otherwise, expand/collapse row (also works without Ctrl pressed)
+				else if (isCtrlPressed(event)) {
+					if (movieList.isCollapsed(rowForLocation))
+						movieList.expandRow(rowForLocation);
+					else
+						movieList.collapseRow(rowForLocation);
+				}
 			}
 		}
 	}
