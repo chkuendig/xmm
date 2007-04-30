@@ -28,9 +28,9 @@ MediaInfo.dll
 
 spin.jar						- For Spinning GUI-threads. Replacement for SwingWorker.
 
-AppleJavaExtensions.jar			- Needed for Mac OS X adaption.
-libquaqua.jnilib				- Needed for Quaqua L&F
-quaqua-filechooser-only.jar		- Needed for Quaqua L&F
+AppleJavaExtensions.jar			- Needed for compilation of Mac OS X adapter on windows/linux. Only required at compile-time.
+libquaqua.jnilib				- Needed for Quaqua L&F (only on mac, only at runtime)
+quaqua.jar						- Needed for Quaqua L&F (only on mac, only at runtime)
 
 jasperreports-1.2.6.jar			- Report creation utility
 poi-2.5.1-final-20040804.jar	- Needed for jasperreports
