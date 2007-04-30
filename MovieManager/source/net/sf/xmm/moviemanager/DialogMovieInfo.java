@@ -1787,6 +1787,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		movieInfoModel.model.setWebSoundMix(getWebSoundMix().getText());
 		movieInfoModel.model.setWebRuntime(getWebRuntime().getText());
 		movieInfoModel.model.setAwards(getAwards().getText());
+		movieInfoModel.model.setMpaa(getMpaa().getText());
 	}
 
 	public void reloadMovieList(ModelEntry reloadEntry) {

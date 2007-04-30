@@ -104,6 +104,7 @@ public class ModelMovie extends ModelEntry {
 		setWebSoundMix(model.getWebSoundMix());
 		setWebRuntime(model.getWebRuntime());
 		setAwards(model.getAwards());
+		setMpaa(model.getMpaa());
 
 		setCoverData(model.getCoverData());
 		
