@@ -631,14 +631,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         convertDatabase.addActionListener(new MovieManagerCommandConvertDatabase());
         menuDatabase.add(convertDatabase);
         
-        /* MenuItem Save changed notes. */
-        JMenuItem saveNotes = new JMenuItem(Localizer.getString("moviemanager.menu.database.savechanhednotes"),'S'); //$NON-NLS-1$
-        saveNotes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        saveNotes.setActionCommand("Save changed notes"); //$NON-NLS-1$
-        saveNotes.addActionListener(new MovieManagerCommandSaveChangedNotes());
-        menuDatabase.add(saveNotes);
-        
-        /* All done. */
+		/* All done. */
         log.debug("Creation of the Database menu done."); //$NON-NLS-1$
         return menuDatabase;
     }
@@ -1597,24 +1590,15 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     
     public JTextArea getPlot() {
         return this.textAreaPlot;
-      /*  ((JTextArea)
-                ((JScrollPane)
-                        getPlotPanel().getComponent(0)).getViewport().getComponent(0)); */
-    }
+	}
     
     public JTextArea getCast() {
         return this.textAreaCast;
-/*        ((JTextArea)
-                ((JScrollPane)
-                        getCastPanel().getComponent(0)).getViewport().getComponent(0));
-    */}
+	}
     
     public JTextPane getMiscellaneous() {
         return this.textAreaMiscellaenous;
-      /*  ((JTextPane)
-                ((JScrollPane)
-                        getMiscellaneousPanel().getComponent(0)).getViewport().getComponent(0));
-    */}
+    }
     
     /**
      * Gets the AdditionalInfo JTextArea.
