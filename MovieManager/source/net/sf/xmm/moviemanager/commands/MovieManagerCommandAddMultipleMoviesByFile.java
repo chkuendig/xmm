@@ -54,6 +54,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
     boolean enableExludeCodecInfo = false;
     boolean searchInSubdirectories = false;
     boolean addMovieToList = false;
+	boolean titleOption = false;
     String addToThisList = null;
     
     /**
@@ -102,6 +103,10 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	if (damm.enableSearchInSubdirectories.isSelected())
 	    searchInSubdirectories = true;
 	
+	if (damm.titleOption.isSelected()) {
+           titleOption = true;
+           log.debug("Using Folder Name");
+       }
 	if (damm.enableAddMoviesToList != null && damm.enableAddMoviesToList.isSelected()) {
 	    addMovieToList = true;
 	    addToThisList = (String) damm.listChooser.getSelectedItem();
@@ -123,15 +128,17 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	extensionList.add(".ogm");
 	
 	File [] tempFile = new File[1];
+	String searchString = null; /*Used to search on imdb*/
+	String path = null; /* Path of the file */
 	
 	while (!fileList.isEmpty()) {
 		
 	    tempFile[0] = (File) fileList.get(0);
-	    String fileName = tempFile[0].getName();
+	    String searchTitle = tempFile[0].getName();
 	    
-	    if (fileName.lastIndexOf(".") != -1 && extensionList.contains(fileName.substring(fileName.lastIndexOf("."), fileName.length()).toLowerCase())) {
+	    if (searchTitle.lastIndexOf(".") != -1 && extensionList.contains(searchTitle.substring(searchTitle.lastIndexOf("."), searchTitle.length()).toLowerCase())) {
 		
-		log.debug("Processing:" + fileName);
+		log.debug("Processing:" + searchTitle);
 		
 		movieInfoModel.setAdditionalInfoFieldsEmpty();
 		
@@ -142,8 +149,33 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		movieInfoModel.setMultiAddFile(tempFile[0]);
 		
 		/*Used to set the title of the DialogIMDB window*/
-		String searchString = fileName;/*Used to search on imdb*/
-		
+		searchString = searchTitle;/*Used to search on imdb*/
+		 /* Sets up search string as Folder name or file name */
+               if (titleOption) {
+            	   
+            	   
+                       path = tempFile[0].getPath();
+                       int slash = path.lastIndexOf('\\');
+
+                       if (slash == -1) {
+                    	   searchString = path;
+                       }
+                       else {
+                               path = path.substring(0, slash);
+                               slash = path.lastIndexOf('\\');
+
+                               if (slash == -1) {
+                                       searchString = path;
+                               }
+                               else {
+                                       searchString = path.substring(slash+1);
+                               }
+                       }
+                       searchTitle = searchString;
+           }
+          
+        System.err.println("searchString:" + searchString);
+               
 		if (enableExludeString)
  		    searchString = performExcludeString(searchString);
 		
@@ -162,7 +194,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		/*removes dots, double spaces, underscore...*/
 		searchString = removeVarious(searchString);
 		
-		executeCommandGetIMDBInfoMultiMovies(searchString, fileName, multiAddSelectOption, addToThisList);
+		executeCommandGetIMDBInfoMultiMovies(searchString, searchTitle, multiAddSelectOption, addToThisList);
 		
 		if (dropImdbInfo)
 			movieInfoModel.setGeneralInfoFieldsEmpty();
@@ -327,8 +359,11 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
     
     /*Removes all integers from the search string*/
     private String performExcludeIntegers(String searchString) {
-	
-	int length = searchString.length()-4;/* "-4" - Don't need to check the extension*/
+	 /* If folder name is extension, no '.' in file */
+       int length = searchString.lastIndexOf('.');
+       if (length == -1) {
+               length = searchString.length();
+       }
 	int index = 0;
 	
 	while (index < length) {
@@ -347,7 +382,9 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
     String removeVarious(String searchString) {
 	
 	/*Removes extension*/
+	 if (searchString.lastIndexOf('.') > -1) {
 	searchString = searchString.substring(0, searchString.lastIndexOf('.'));
+	}
 	
 	/*Removes various*/
 	searchString = searchString.replace('.', ' ');

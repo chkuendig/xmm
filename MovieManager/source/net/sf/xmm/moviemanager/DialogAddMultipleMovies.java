@@ -79,6 +79,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
     public JCheckBox enableExludeIntegers;
     public JCheckBox enableExludeCodecInfo;
     public JCheckBox enableSearchInSubdirectories;
+	public JCheckBox titleOption;
     
     private JCheckBox enableExludeString;
     
@@ -191,7 +192,25 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	searchInSubdirectoriesCheckBoxPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogAddMultipleMovies.panel-subdirs.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 	
 	searchInSubdirectoriesCheckBoxPanel.add(enableSearchInSubdirectories);
-	
+
+
+
+/***************** Added ********************/
+
+       titleOption = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming.text")); //$NON-NLS-1$
+       titleOption.setActionCommand("enableFolderTitle"); //$NON-NLS-1$
+       titleOption.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-tooltip")); //$NON-NLS-1$
+       titleOption.addActionListener(this);
+
+       JPanel titleOptionPanel = new JPanel(new GridLayout(0, 1));
+       titleOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),"Title Options"), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+
+       titleOptionPanel.add(titleOption);
+
+/********************************************/	
+
+
+
 	/*Exclude String, a checkbox to enable and the TextField
 	  DocumentRegExp makes sure illigal characters can't be entered.
 	 */
@@ -270,6 +289,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	all.setLayout(new BoxLayout(all, BoxLayout.Y_AXIS));
 	all.add(radioButtonPanel);
 	all.add(removeCheckBoxPanel);
+	all.add(titleOptionPanel);
 	all.add(searchInSubdirectoriesCheckBoxPanel);
 	all.add(excludeStringPanel);
 	all.add(listPanel);
