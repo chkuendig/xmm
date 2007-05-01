@@ -55,6 +55,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 	private static boolean ignoreValueChanged = false;
 
+	private static ModelEntry lastSelectedEntry = null;
+	
 	/**
 	 * Executes the command, and reloads the list with the selectedIndex select. 
 	 **/
@@ -357,7 +359,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 				awards = model.getAwards();
 
 				ModelAdditionalInfo additionalInfo = model.getAdditionalInfo();
-
+				
 				/* Experimental - needs more work */
 				StringTokenizer tokenizer = new StringTokenizer(additionalInfo.getFileLocation(), "*");
 				boolean enable = false;
@@ -821,7 +823,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			popupMenu.setLocation(x, y);
 
 			popupMenu.show(movieList, x, y);
-			//GUIUtil.show(popupMenu, true);
 		}
 	}
 
@@ -849,21 +850,26 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		}
 
 		/* Saving the node's changed notes value */
-		if (MovieManager.getDialog().getMoviesList().getLeadSelectionRow() != -1) {
-
-			ModelEntry entry = (ModelEntry) ((DefaultMutableTreeNode) MovieManager.getDialog().getMoviesList().getLeadSelectionPath().getLastPathComponent()).getUserObject();
-
-			if (! entry.getNotes().equals(MovieManager.getDialog().getNotes().getText())) {
-				entry.setNotes(MovieManager.getDialog().getNotes().getText());
-				entry.hasChangedNotes = true;
+		if (lastSelectedEntry != null) {
+			
+			if (!lastSelectedEntry.getNotes().equals(MovieManager.getDialog().getNotes().getText())) {
+				lastSelectedEntry.setNotes(MovieManager.getDialog().getNotes().getText());
+				lastSelectedEntry.hasChangedNotes = true;
 				
-				if (entry.isEpisode())
+				if (lastSelectedEntry.isEpisode())
 					ModelEpisode.notesHaveBeenChanged = true;
 				else
 					ModelMovie.notesHaveBeenChanged = true;
 			}
 		}
-
+		
+		TreePath path = (TreePath) MovieManager.getDialog().getMoviesList().getSelectionPath();
+		
+		if (path != null) {
+			ModelEntry entry = (ModelEntry) ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
+			lastSelectedEntry = entry;
+		}
+			
 		if (!MovieManager.getIt().isDeleting()) {
 			execute();
 		}
