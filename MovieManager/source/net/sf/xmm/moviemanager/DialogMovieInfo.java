@@ -886,6 +886,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 				reloadMovieList(executeCommandSave(MovieManager.getConfig().getCurrentList()));
 				movieInfoModel.clearModel(true);
+				movieTitle2.requestFocus();
+				
 			}
 		});
 		panelButtons.add(buttonSave);
