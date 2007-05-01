@@ -173,9 +173,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
                        }
                        searchTitle = searchString;
            }
-          
-        System.err.println("searchString:" + searchString);
-               
+              
 		if (enableExludeString)
  		    searchString = performExcludeString(searchString);
 		
