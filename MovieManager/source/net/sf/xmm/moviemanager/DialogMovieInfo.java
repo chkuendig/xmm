@@ -87,7 +87,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	JTextField country;
 
 	JTextField language;
-
+		
 	JCheckBox seenBox;
 
 	JLabel cover;
@@ -184,7 +184,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		/* Dialog properties... */
 		setTitle(dialogTitle);
-		setModal(true);
+		setModal(false);
 		setResizable(true);
 
 		/* Enables dispose when pushing escape */
@@ -848,6 +848,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.EAST;
 		panelMovieInfo.add(panelNotes, constraints);
 
+
 		/* Buttons panel... */
 		JPanel panelButtons = new JPanel();
 		panelButtons.setBorder(BorderFactory.createEmptyBorder(15, 5, 5, 5));
@@ -912,13 +913,15 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		buttonGetFileInfo.setToolTipText(Localizer.getString("DialogMovieInfo.button-get-file-info.tooltip")); //$NON-NLS-1$
 		buttonGetFileInfo.setActionCommand("MovieInfo - GetFileInfo"); //$NON-NLS-1$
 		buttonGetFileInfo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-				File[] file = executeGetFile();
-				if (file != null)
-					movieInfoModel.getFileInfo(file);
-			}
-		});
+				public void actionPerformed(ActionEvent event) {
+					log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
+					
+					File[] file = executeGetFile();
+					if (file != null) {
+						movieInfoModel.getFileInfo(file);
+					}
+				}
+			});
 
 		/* Reduces the width of the button (less empty space between borders adn text) to avoid the window getting to wide */
 		if (!FileUtil.isMac()) {
@@ -1918,23 +1921,20 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				/* Gets the path... */
 				File selectedFile = fileChooser.getSelectedFile();
 
-				if (selectedFile.getName().equals("AUDIO_TS")) { //$NON-NLS-1$
+				if (selectedFile.getName().equalsIgnoreCase("AUDIO_TS") || selectedFile.getName().equalsIgnoreCase("VIDEO_TS")) { //$NON-NLS-1$
 					selectedFile = selectedFile.getParentFile();
-				}
+				} 
 
-				if (!selectedFile.getName().equals("VIDEO_TS")) { //$NON-NLS-1$
-					File tmp = new File(selectedFile.getAbsolutePath(),"VIDEO_TS"); //$NON-NLS-1$
-
-					if (tmp.isDirectory())
-						selectedFile = tmp;
-				}
-
-				if (!selectedFile.getName().equals("VIDEO_TS")) { //$NON-NLS-1$
+				File tmp = new File(selectedFile.getAbsolutePath(), "VIDEO_TS"); //$NON-NLS-1$
+								
+				if ((tmp = new File(selectedFile.getAbsolutePath(), "VIDEO_TS")).getName().equalsIgnoreCase("VIDEO_TS"))
+					selectedFile = tmp;
+				
+				if (!selectedFile.getName().equalsIgnoreCase("VIDEO_TS")) { //$NON-NLS-1$
 					throw new Exception("DVD drive not found:" + fileChooser.getSelectedFile()); //$NON-NLS-1$
 				}
 
-				MovieManager.getConfig().setLastDVDDir(
-						selectedFile.getParentFile());
+				MovieManager.getConfig().setLastDVDDir(selectedFile.getParentFile());
 
 				/* Get the ifo files */
 				File[] list = selectedFile.listFiles();
@@ -2000,7 +2000,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 					if (fsv != null) {
 
-						File tmp = ifo[mainIfoIndex];
+						tmp = ifo[mainIfoIndex];
 
 						while (tmp.getParentFile() != null)
 							tmp = tmp.getParentFile();
