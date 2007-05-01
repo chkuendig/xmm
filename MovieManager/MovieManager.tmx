@@ -254,7 +254,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Add to lis</seg>
+                <seg>Add to list</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
@@ -337,8 +337,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Remove parantheses and it&apos;s content (
-                    &quot;()&quot; , &quot;[]&quot; , &quot;{}&quot; )</seg>
+                <seg>Remove parantheses and it&apos;s content ( &quot;()&quot; , &quot;[]&quot; , &quot;{}&quot; )</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
