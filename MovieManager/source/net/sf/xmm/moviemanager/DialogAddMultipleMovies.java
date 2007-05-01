@@ -161,19 +161,23 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	enableExludeParantheses = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-parantheses.text")); //$NON-NLS-1$
 	enableExludeParantheses.setActionCommand("enableExludeParantheses"); //$NON-NLS-1$
 	enableExludeParantheses.addActionListener(this);
+	enableExludeParantheses.setSelected(MovieManager.getIt().getConfig().getMultiAddEnableExludeParantheses());
 	
 	enableExludeCDNotation = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-cd-notation.text")); //$NON-NLS-1$
 	enableExludeCDNotation.setActionCommand("enableExludeCDNotation"); //$NON-NLS-1$
 	enableExludeCDNotation.addActionListener(this);
+	enableExludeCDNotation.setSelected(MovieManager.getIt().getConfig().getMultiAddEnableExludeCDNotation());
 	
 	enableExludeIntegers = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-integers.text")); //$NON-NLS-1$
 	enableExludeIntegers.setActionCommand("enableExludeInteger"); //$NON-NLS-1$
 	enableExludeIntegers.addActionListener(this);
+	enableExludeIntegers.setSelected(MovieManager.getIt().getConfig().getMultiAddEnableExludeIntegers());
 	
 	enableExludeCodecInfo = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-predefined-codec-info.text")); //$NON-NLS-1$
 	enableExludeCodecInfo.setActionCommand("enableExludeCodecInfo"); //$NON-NLS-1$
 	enableExludeCodecInfo.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-predefined-codec-info-tooltip")); //$NON-NLS-1$
 	enableExludeCodecInfo.addActionListener(this);
+	enableExludeCodecInfo.setSelected(MovieManager.getIt().getConfig().getMultiAddEnableExludeCodecInfo());
 	
 	JPanel removeCheckBoxPanel = new JPanel(new GridLayout(0, 1));
 	removeCheckBoxPanel.add(enableExludeParantheses);
@@ -187,13 +191,15 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	enableSearchInSubdirectories.setActionCommand("enableSearchInSubdirectories"); //$NON-NLS-1$
 	enableSearchInSubdirectories.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-subdirs.search-through-subdirs.tooltip")); //$NON-NLS-1$
 	enableSearchInSubdirectories.addActionListener(this);
+	enableSearchInSubdirectories.setSelected(MovieManager.getIt().getConfig().getMultiAddEnableSearchInSubdirectories());
 	
 	JPanel searchInSubdirectoriesCheckBoxPanel = new JPanel(new GridLayout(0, 1));
 	searchInSubdirectoriesCheckBoxPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogAddMultipleMovies.panel-subdirs.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 	
 	searchInSubdirectoriesCheckBoxPanel.add(enableSearchInSubdirectories);
 
-
+	
+											
 
 /***************** Added ********************/
 
@@ -201,7 +207,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
        titleOption.setActionCommand("enableFolderTitle"); //$NON-NLS-1$
        titleOption.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-tooltip")); //$NON-NLS-1$
        titleOption.addActionListener(this);
-
+       titleOption.setSelected(MovieManager.getIt().getConfig().getMultiAddTitleOption());
+       
        JPanel titleOptionPanel = new JPanel(new GridLayout(0, 1));
        titleOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),"Title Options"), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
@@ -209,7 +216,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 
 /********************************************/	
 
-
+       
 
 	/*Exclude String, a checkbox to enable and the TextField
 	  DocumentRegExp makes sure illigal characters can't be entered.
@@ -417,8 +424,15 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	}
 	
 	MovieManager.getConfig().setMultiAddSelectOption(multiAddSelectOption);
+	MovieManager.getConfig().setMultiAddEnableExludeParantheses(enableExludeParantheses.isSelected());
+	MovieManager.getConfig().setMultiAddEnableExludeCDNotation(enableExludeCDNotation.isSelected());
+	MovieManager.getConfig().setMultiAddEnableExludeIntegers(enableExludeIntegers.isSelected());
+	MovieManager.getConfig().setMultiAddEnableExludeCodecInfo(enableExludeCodecInfo.isSelected());
+	MovieManager.getConfig().setMultiAddEnableSearchInSubdirectories(enableSearchInSubdirectories.isSelected());
+	MovieManager.getConfig().setMultiAddTitleOption(titleOption.isSelected());
     }
-    
+	
+	
     /*Returns the string in the path textfield*/
     public String getPath() {
 	return moviesPath.getText();

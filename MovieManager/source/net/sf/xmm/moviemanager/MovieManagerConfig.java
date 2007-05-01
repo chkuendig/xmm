@@ -184,7 +184,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String multiAddExcludeString = "";
 	private boolean multiAddExcludeStringEnabled = false;
 	private int multiAddSelectOption = 0;
-
+	private boolean multiAddEnableExludeParantheses;
+	private boolean multiAddEnableExludeCDNotation;
+	private boolean multiAddEnableExludeIntegers;
+	private boolean multiAddEnableExludeCodecInfo;
+	private boolean multiAddEnableSearchInSubdirectories;
+	private boolean multiAddTitleOption;
+	
+		
 	/* Import */
 	private String importTextfilePath = "";
 	private String importExcelfilePath = "";
@@ -787,6 +794,64 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		multiAddSelectOption = o;
 	}
 
+	
+	public boolean getMultiAddEnableExludeParantheses() {
+		return multiAddEnableExludeParantheses;
+	}
+
+	public void setMultiAddEnableExludeParantheses(boolean val) {
+		multiAddEnableExludeParantheses = val;
+	}
+	
+	
+	public boolean getMultiAddEnableExludeCDNotation() {
+		return multiAddEnableExludeCDNotation;
+	}
+
+	public void setMultiAddEnableExludeCDNotation(boolean val) {
+		multiAddEnableExludeCDNotation = val;
+	}
+	
+	
+	public boolean getMultiAddEnableExludeIntegers() {
+		return multiAddEnableExludeIntegers;
+	}
+
+	public void setMultiAddEnableExludeIntegers(boolean val) {
+		multiAddEnableExludeIntegers = val;
+	}
+	
+	
+	public boolean getMultiAddEnableExludeCodecInfo() {
+		return multiAddEnableExludeCodecInfo;
+	}
+
+	public void setMultiAddEnableExludeCodecInfo(boolean val) {
+		multiAddEnableExludeCodecInfo = val;
+	}
+	
+	
+	public boolean getMultiAddEnableSearchInSubdirectories() {
+		return multiAddEnableSearchInSubdirectories;
+	}
+
+	public void setMultiAddEnableSearchInSubdirectories(boolean val) {
+		multiAddEnableSearchInSubdirectories = val;
+	}
+	
+	
+	
+	public boolean getMultiAddTitleOption() {
+		return multiAddTitleOption;
+	}
+
+	public void setMultiAddTitleOption(boolean val) {
+		multiAddTitleOption = val;
+	}
+	
+	
+	
+	
 	public boolean getDefaultLookAndFeelDecorated() {
 		return defaultLookAndFeelDecorated;
 	}
@@ -1336,6 +1401,48 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 
 
+			value = (String) config.get("multiAddEnableExludeParantheses:");
+
+			if (value != null) {
+				setMultiAddEnableExludeParantheses(new Boolean(value).booleanValue());
+			}
+			
+			
+			value = (String) config.get("multiAddEnableExludeCDNotation:");
+
+			if (value != null) {
+				setMultiAddEnableExludeCDNotation(new Boolean(value).booleanValue());
+			}
+			
+			
+			value = (String) config.get("multiAddEnableExludeIntegers:");
+
+			if (value != null) {
+				setMultiAddEnableExludeIntegers(new Boolean(value).booleanValue());
+			}
+			
+			
+			value = (String) config.get("multiAddEnableExludeCodecInfo:");
+
+			if (value != null) {
+				setMultiAddEnableExludeCodecInfo(new Boolean(value).booleanValue());
+			}
+			
+			
+			value = (String) config.get("multiAddEnableSearchInSubdirectories:");
+
+			if (value != null) {
+				setMultiAddEnableSearchInSubdirectories(new Boolean(value).booleanValue());
+			}
+			
+			
+			value = (String) config.get("multiAddTitleOption:");
+
+			if (value != null) {
+				setMultiAddTitleOption(new Boolean(value).booleanValue());
+			}
+								
+			
 			value = (String) config.get("proxyEnabled:");
 
 			if (value != null) {
@@ -1885,6 +1992,25 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append(lineSeparator);
 		 settings.append("multiAddSelectOption:" + getMultiAddSelectOption());
 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddEnableExludeParantheses:" + getMultiAddEnableExludeParantheses());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddEnableExludeCDNotation:" + getMultiAddEnableExludeCDNotation());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddEnableExludeIntegers:" + getMultiAddEnableExludeIntegers());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddEnableExludeCodecInfo:" + getMultiAddEnableExludeCodecInfo());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddEnableSearchInSubdirectories:" + getMultiAddEnableSearchInSubdirectories());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddTitleOption:" + getMultiAddEnableSearchInSubdirectories());
+		 
+				 
 		 settings.append(lineSeparator);
 		 settings.append("proxyEnabled:" + getProxyEnabled());
 
