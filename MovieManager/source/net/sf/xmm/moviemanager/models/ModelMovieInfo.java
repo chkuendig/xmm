@@ -400,10 +400,10 @@ public class ModelMovieInfo {
                 
                 database.setGeneralInfoEpisode(model.getKey(), (ModelEpisode) model);
                 database.setAdditionalInfoEpisode(model.getKey(), additionalInfo);
-                
-                if (ModelAdditionalInfo.getExtraInfoFieldNames().size() > 0) {
-                	database.setExtraInfoEpisode(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
-                }
+                	
+                //Must save to extra info even though there are no extra info fields. Tge rows must still be created in the database
+                database.setExtraInfoEpisode(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+               
             } else {
                 
                 if (((ModelEpisode) model).getMovieKey() == -1)
@@ -422,9 +422,9 @@ public class ModelMovieInfo {
                     /* Adds the additional info... */
                     ret = database.addAdditionalInfoEpisode(episodeindex, additionalInfo);
                      
-                    if (ModelAdditionalInfo.getExtraInfoFieldNames().size() > 0) {
-                        ret = database.addExtraInfoEpisode(episodeindex, ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
-                     }   
+                    //Must save to extra info even though there are no extra info fields. Tge rows must still be created in the database
+                    ret = database.addExtraInfoEpisode(episodeindex, ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+                      
                 }
             }
         } else {
