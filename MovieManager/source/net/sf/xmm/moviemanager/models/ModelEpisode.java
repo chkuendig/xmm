@@ -73,7 +73,7 @@ public class ModelEpisode extends ModelEntry {
 		setLanguage(language);
 		setColour(colour);
 		setCertification(certification);
-		//setMpaa(mpaa);
+		//setMpaa(mpaa); Not yet implemented in Episodes (database field is missing)
 		setWebSoundMix(webSoundMix);
 		setWebRuntime(webRuntime);
 		setAwards(awards);
@@ -135,6 +135,7 @@ public class ModelEpisode extends ModelEntry {
 		setWebRuntime(model.getWebRuntime());
 		setAwards(model.getAwards());
 
+		//setMpaa(model.getMpaa());
 		setCoverData(model.getCoverData());
 
 		hasGeneralInfoData = model.getHasGeneralInfoData();
