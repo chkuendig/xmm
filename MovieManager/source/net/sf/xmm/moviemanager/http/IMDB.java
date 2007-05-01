@@ -187,7 +187,7 @@ public class IMDB {
 	
 		Object [] tmpArray;
 	
-		//FileUtil.writeToFile("imdb.html", data);
+		FileUtil.writeToFile("imdb.html", data);
 		
 		try {
 			/* Processes the data... */
@@ -687,6 +687,7 @@ public class IMDB {
     				tmp = tmp.trim();
     				break;
     			}
+    			tmp = "";
     		}
     	return tmp;
     }
