@@ -7084,7 +7084,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>This function is available on windows only! </seg>
+                <seg>Windows Only</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="MovieManagerCommandConvertDatabase.alert.title.empty-database">
@@ -7102,7 +7102,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Windows Only</seg>
+                <seg>This function is available on windows only! </seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="MovieManagerCommandConvertDatabase.database-converter.title">
