@@ -30,6 +30,10 @@ public class MovieManagerCommandOpen implements ActionListener {
     
     
     protected static void execute() {
+    	
+//    	 If any notes have been changed, they will be saved before seaching
+    	MovieManagerCommandSaveChangedNotes.execute();
+    	
 	DialogDatabase dialogDatabase = new DialogDatabase(false);
 	GUIUtil.show(dialogDatabase, true);
     }
