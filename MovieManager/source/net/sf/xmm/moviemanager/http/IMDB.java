@@ -167,7 +167,6 @@ public class IMDB {
 			throw new Exception("Invalid HTTP link");
 		}
     
-		//FileUtil.writeToFile("imdb.html", data);
 		parseData(data);
     }
     
@@ -175,8 +174,6 @@ public class IMDB {
     public IMDB(String key, StringBuffer data) throws Exception {
 	
 		_key = key;
-	
-		FileUtil.writeToFile("imdb.html", data);
 	
 		parseData(data);
     }
@@ -190,6 +187,8 @@ public class IMDB {
 	
 		Object [] tmpArray;
 	
+		//FileUtil.writeToFile("imdb.html", data);
+		
 		try {
 			/* Processes the data... */
 
@@ -243,72 +242,62 @@ public class IMDB {
 			start = 0;
 			stop = 0;
 			end = 0;
-			/* Gets the directed by... */
-			if ((start = data.indexOf("Director", start)) != -1 &&
-				(stop = data.indexOf("<br/>", start)) != -1) {
-	    	
-				String tmp = data.substring(start, stop);
-				tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
+			
+			
+			// Gets the directed by... 
+			String tmp = getClassInfo(data, "Director");
+			tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
 				
-				ArrayList list = getLinkContentName(tmp);
+			ArrayList list = getLinkContentName(tmp);
 	    	 
-				while (!list.isEmpty()) {
-					if (!_directedBy.equals(""))
-						_directedBy += ", ";
+			while (!list.isEmpty()) {
+				if (!_directedBy.equals(""))
+					_directedBy += ", ";
 	    			
-					_directedBy += list.remove(0);
-				}
+				_directedBy += list.remove(0);
 			}
-	 
-			start = 0;
-			stop = 0;
-			end = 0;
-	    
-			/* Gets the written by... */
-			if (((start = data.indexOf("Writer", start)) != -1) &&
-				(stop = data.indexOf("<br/>", start)) != -1) {
-	    	
-				String tmp = data.substring(start, stop);
-				tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
-				
-				ArrayList list = getLinkContentName(tmp);
-	    	
-				while (!list.isEmpty()) {
+				 
+			
+			// Gets the written by... 
+			tmp = getClassInfo(data, "Writer");
+			tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
+			
+			list = getLinkContentName(tmp);
 	    		
-					if (!_writtenBy.equals(""))
-						_writtenBy += ", ";
+			while (!list.isEmpty()) {
+				if (!_writtenBy.equals(""))
+					_writtenBy += ", ";
 	    			
-					_writtenBy += list.remove(0);
-				}
+				_writtenBy += list.remove(0);
 			}
-	    	
-			_genre = getClassInfo(data, "Genre:");
+	    				
+			_genre = getDecodedClassInfo(data, "Genre:");
 	    
 			_genre = _genre.replaceAll("(more)$", "");
 			
-			_plot = getClassInfo(data, "Plot Outline:");
+			_plot = getDecodedClassInfo(data, "Plot Outline:");
 	     
-			_cast = getClassInfo(data, "class=\"cast\">");
+			_cast = getDecodedClassInfo(data, "class=\"cast\">");
 	    
 			_cast = _cast.replaceAll(" \\.\\.\\.", ",");
 							
-			_aka = getClassInfo(data, "Also Known As:");
+			_aka = getDecodedClassInfo(data, "Also Known As:");
 	    
-			_mpaa = getClassInfo(data, "<a href=\"/mpaa\">MPAA</a>:");
+			_mpaa = getDecodedClassInfo(data, "<a href=\"/mpaa\">MPAA</a>:");
 	    
-			_runtime = getClassInfo(data, "Runtime:");
+			_runtime = getDecodedClassInfo(data, "Runtime:");
 	    
-			_country = getClassInfo(data, "Country:");
+			_country = getDecodedClassInfo(data, "Country:");
 	    
-			_language = getClassInfo(data, "Language:");
+			_language = getDecodedClassInfo(data, "Language:");
 	    
-			_colour = getClassInfo(data, "Color:");
+			_colour = getDecodedClassInfo(data, "Color:");
 	    
-			_soundMix = getClassInfo(data, "Sound Mix:");
+			_soundMix = getDecodedClassInfo(data, "Sound Mix:");
 	    
-			_certification = getClassInfo(data, "Certification:");
+			_certification = getDecodedClassInfo(data, "Certification:");
 	    
-			_awards = getClassInfo(data, "Awards:");
+			_awards = getDecodedClassInfo(data, "Awards:");
 			_awards = _awards.replaceAll("(more)$", "");
 	  
 			/* Gets a bigger plot (if it exists...)
@@ -675,15 +664,13 @@ public class IMDB {
     }
     
 
-    
     /**
-     * Decodes a html string and returns its unicode string.
+     * Grabs the content of a class info containing the classname
      **/
     protected static String getClassInfo(StringBuffer data, String className) {
-    	String decoded = null;
     	String tmp = "";
 
-    	try {
+    	
     		int start = 0;
     		int end = 0;
     		boolean found = false;
@@ -697,14 +684,28 @@ public class IMDB {
     				
     				start = tmp.indexOf(className) + className.length();
     				tmp = tmp.substring(start, tmp.length());	
-    				
-    				found = true;
+    				tmp = tmp.trim();
     				break;
     			}
     		}
+    	return tmp;
+    }
+    
+    
+    /**
+     * Grabs the content of a class info containing the classname
+     * and cleans it up by removing html and paranthesis.
+     **/
+    protected static String getDecodedClassInfo(StringBuffer data, String className) {
+    	String decoded = null;
+    	String tmp = "";
 
-    		if (!found)
-				return "";
+    	try {
+    		int start = 0;
+    		int end = 0;
+    		boolean found = false;
+    		
+    		tmp = getClassInfo(data, className);
     		
     		end = tmp.indexOf("<a class=\"tn15more\"");
     		
