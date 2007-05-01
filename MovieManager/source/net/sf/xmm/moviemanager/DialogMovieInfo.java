@@ -184,8 +184,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		/* Dialog properties... */
 		setTitle(dialogTitle);
-		setModal(false);
-		setResizable(true);
+		setModal(true);
+		setResizable(false);
 
 		/* Enables dispose when pushing escape */
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
