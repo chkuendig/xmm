@@ -30,7 +30,9 @@ public class MovieManagerCommandCloseDatabase implements ActionListener {
     
     public static void execute() {
 	
-//   	 If any notes have been changed, they will be saved before closing database
+    	// If any notes have been changed, they will be saved before seaching
+    	MovieManagerCommandSaveChangedNotes.execute();
+    	
     	Database database = MovieManager.getIt().getDatabase();
 	
 	if (database != null) {
