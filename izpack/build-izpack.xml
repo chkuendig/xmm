@@ -17,23 +17,16 @@
 </info>
 
 
-<guiprefs height="400" resizable="yes" width="600">
-<laf name="liquid">
-<os family="unix" />
-</laf>
+<guiprefs height="400" resizable="yes" width="600"/>
 
-</guiprefs>
 
 <locale> 
 <langpack iso3="eng"/>
 </locale>
 
 
-
-
 <panels>
 <panel classname="HelloPanel"/>
-
 <panel classname="TargetPanel"/>
 <panel classname="InstallPanel"/>
 <panel classname="SimpleFinishPanel"/>
