@@ -1,187 +1,357 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="targets" name="MeD's Movie Manager">
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
 
-  <target name="targets">
-    <echo>
-      =====================================
-      === MeD's Movie Manager build.xml ===
-      =====================================
-      
-      targets available:
-      ==================
-      clean             clears all generated files (deletes build directory)
-      compile           compiles all java files
-      javadoc           compiles the Javadoc
-      all               builds everything
-      jar               builds a jar file
-      run               runs the moviemanager
-    </echo>
+<project name="MeDs Movie Manager Project" default="welcome" basedir="">
+  <description>
+	MeDs Movie Manager build file
+  </description>
+  
+  <target name="welcome">
+	<echo>
+	  =====================================
+	  === MeD's Movie Manager build.xml ===
+	  =====================================
+	  
+	  targets available:
+	  ==================
+	  clean                clears all generated files
+	  compile              compiles all java files
+	  javadoc              compiles the Javadoc
+	  all                  builds everything
+	  makejar              creates the MovieManager.jar
+	  run                  runs the moviemanager
+	  create-archives      creates the zip files
+	  izpackinstaller      creates the izpack java installer
+	</echo>
   </target>
-
-
-  <!-- An "init" target is commonly used to setup variables, paths and timestamps -->
-  <target name="init">
-    <property name="package" value="moviemanager"/>
-    <property name="release_version" value="2.5.1"/>
-    <property name="base" value="MovieManager"/>
-    <property name="source" value="${base}/source"/>
-    <property name="build" value="${base}/build"/>
-    <property name="classes" value="${build}/classes"/>
-    <property name="javadoc" value="${build}/javadoc"/>
-    <property name="basepackage" value="net.sf.xmm"/>
-    <property name="distdir" value="${package}-${release_version}"/>
-    <property name="java_home" value="${java.home}/.."/>
-
-    <!-- Passwords for signing -->
-    <!-- DON'T commit to CVS with real passwords -->
-    <property name="keypass" value="yourpassword"/>
-    <property name="storepass" value="yourpassword2"/>
-
-    <!-- Check whether keys exist -->
-    <available file="keys" type="file" property="keys"/>
-
-    <!-- Needed for reusing the library path in the manifest -->
-    <property name="lib-all" location="${base}/lib"/>
-    <fileset id="libs" dir="${lib-all}">
-      <include name="**/*.jar" />
-    </fileset>
-
-    <!-- The libpath -->
-    <path id="project.libpath">
-      <fileset refid="libs"/>
-    </path>
-
-    <!-- Conversion for the manifest -->
-    <pathconvert property="libpath" refid="project.libpath"
-      pathsep=" " dirsep="/">
-      <map from="${lib-all}" to="lib" />
-     </pathconvert>
-    
-    <path id="project.classpath">
-      <pathelement path="${classes}"/>
-      <path refid="project.libpath"/>
-    </path>  
-    
+  
+  <!-- set global properties for this build -->
+  
+  <property name="build" location="MovieManager/"/>
+  <property name="dist"  location="dist"/>
+  <property name="izpack.dir" location="izpack"/>
+  <property name="version"  value="2.5.3"/>
+  <property name="base" value="MovieManager/"/>
+  
+  <!-- <property name="$(base)/base.dir"  location=""/> -->
+  <property name="source"  value="$(base)/source/"/>
+  
+  
+  <path id="project.lib.path">
+	<fileset dir="${base}/lib/">
+	  <include name="**/*.jar"/>
+	  <include name="*.jar"/>
+	</fileset>
+  </path>
+  
+  
+  <path id="project.classpath">
+	<pathelement path="${classes}"/>
+	<path refid="project.lib.path"/>
+  </path>  
+  
+  
+  <target name="run" depends="compile"
+		  description="Runs the compiled moviemanager">
+	<java
+		classname="net.sf.xmm.moviemanager.MovieManager"
+		classpathref="project.lib.path"
+		classpath="MovieManager/"
+		fork="true" spawn="true"/>
   </target>
-    
-  <!-- "Prepare creates directories needed for other targets -->
-  <target name="prepare" depends="init">
-    <mkdir dir="${build}"/>
-    <mkdir dir="${classes}"/>
-    <mkdir dir="${javadoc}"/>
+  
+  
+  <target name="compile" 
+		  description="Compiles code, output goes to the build dir.">
+	<javac srcdir="MovieManager/source" 
+		   classpathref="project.classpath" 
+		   destdir="${build}">
+	</javac>
   </target>
-
-  <!-- Removes all generated files -->
-  <target name="clean" depends="init"
-    description="deletes all generated classes">
-    <delete dir="${build}"/>
-    <delete file="${base}/MovieManager.jar"/>
-    <delete file="${base}/MovieManager.cer"/>
-  </target>
-
-  <!-- compiles all classes -->
-  <!--  Maybe later crlf can be called as well:
-  <target name="compile" depends="prepare, remove-crlf" -->
-  <target name="compile" depends="prepare"
-    description="Compiles all source files">
-    <javac destdir="${classes}" classpathref="project.classpath" debug="yes" 
-     includeAntRuntime="no" includeJavaRuntime="no">
-      <src path="${source}"/>
-    </javac>
-  </target>
+  
   
   <!-- removes all tabs replaces those with spaces and removes unqualified EOL
-       and replaces those with the correct EOL -->
-  <target name="remove-crlf" depends="init" description="removes all tabs and 
-    unqualified end of lines">
-    <fixcrlf srcdir="${source}"
-      eol="lf"
-      tab="remove"
-      tablength="4"
-      javafiles="yes"
-      includes="**/*.java"
-      />
+	   and replaces those with the correct EOL -->
+  <target name="remove-crlf" description="removes all tabs and 
+														 unqualified end of lines">
+	<fixcrlf srcdir="${source}"
+			 eol="lf"
+			 tab="remove"
+			 tablength="4"
+			 javafiles="yes"
+			 includes="**/*.java"
+			 />
   </target>
-
-
-  <!-- builds everything -->
-  <target name="all" depends="javadoc, compile, jar" 
-    description="builds everything"/>
-
+  
+  
+  <target name="makejar" 
+		  description="Compiles code, output goes to the build dir."
+		  depends="compile">
+	
+	<!-- Ensure that the timestamp has been set -->
+	<tstamp/>
+	
+	<jar destfile="MovieManager/MovieManager.jar" manifest="Manifest.txt">
+	  
+	  <fileset dir="MovieManager/">
+		
+		<include name="net/"/>
+		<include name="codecs"/>
+		<include name="images/"/>
+		<include name="queries/"/>
+		<include name="MovieManager.tmx"/>
+	  </fileset>
+	  
+	  <manifest>
+		<attribute name="Built-By" value="${user.name} on ${TODAY}"/>
+	  </manifest>
+	  
+	</jar>
+  </target>
+  
+  
+  <target name="all" 
+		  description="generate the distribution" >
+	<!-- Create the distribution directory -->
+	
+	<echo>Creating directory:${dist}</echo>
+	<mkdir dir="${dist}"/>
+	
+	<antcall target="build" />
+	<antcall target="create-archives" />
+	<antcall target="izpackinstaller" />
+	
+  </target>
+  
+  
+  <target name="build" 
+		  description="generate the distribution" 
+		  depends="compile, makejar">
+	<tstamp/>
+	
+  </target>
+  
+  
+  
+  <target name="create-archives" 
+		  description="Creates the ZIP archives.">
+	
+	<!-- Creating Binary zip MovieManager.v.version.bin.zip  Mirror  -->
+	<zip destfile="${dist}/MovieManager.v.${version}.bin.zip"
+		 update="false"
+		 compress="true" >
+	  
+	  <!-- Files in root dir (install dir) -->
+	  <zipfileset prefix="MeDs-Movie-Manager" dir="MovieManager" 
+				  includes="Applet.html, 
+							castor.properties, 
+							Icon.ico,
+							log4j.properties, 
+							mapping.xml, 
+							MovieManager.exe, 
+							MovieManager.jar, 
+							MovieManager.tmx, 
+							Temp.mdb">
+		
+		<include name="lib/"/>
+		<include name="reports/"/>
+		
+	  </zipfileset>
+	  
+	  <!-- Look & Feels -->
+	  <zipfileset prefix="MeDs-Movie-Manager/LookAndFeels/" 
+				  dir="MovieManager/LookAndFeels/" 
+				  includes="lookAndFeels.ini, 
+							JTattoo.jar, 
+							kunststoff.jar, 
+							looks-2.1.2.jar, 
+							OfficeLnFs_2.6.jar, 
+							substance-lite-3.3.jar, 
+							synthetica.2.3.0.jar, 
+							syntheticaBlackMoon.jar, 
+							syntheticaBlackStar.jar, 
+							syntheticaBlueIce.jar, 
+							syntheticaBlueMoon.jar, 
+							syntheticaBlueSteel.jar, 
+							syntheticaGreenDream.jar, 
+							syntheticaSilverMoon.jar
+							">
+		
+		<include name="Oyoaha Theme Packs/"/>
+		<include name="Skinlf Theme Packs/"/>
+		
+	  </zipfileset>
+	  
+	  
+	  <zipfileset prefix="MeDs-Movie-Manager" dir="">
+		<include name="License/"/>
+		<include name="Readme.rtf"/>
+		<include name="Readme.txt"/>
+		<include name="Changelog.txt"/>
+	  </zipfileset>
+	  
+	</zip>
+	
+	<!-- Creating Source zip MovieManager.v.version.src.zip  Mirror  -->
+	<zip destfile="${dist}/MovieManager.v.${version}.src.zip"
+		 update="false"
+		 compress="true" >
+	  
+	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager" 
+				  dir="MovieManager" 
+				  includes="Applet.html, 
+							castor.properties, 
+							Icon.ico, 
+							log4j.properties, 
+							mapping.xml, 
+							MovieManager.exe, 
+							MovieManager.jar, 
+							MovieManager.tmx, 
+							Temp.mdb">
+		
+		<include name="lib/"/>
+		
+		<include name="reports/"/>
+		<include name="codecs/"/>
+		<include name="images/"/>
+		<include name="queries/"/>
+		<include name="source/"/>
+		
+	  </zipfileset>
+	  
+	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/LookAndFeels/" 
+				  dir="MovieManager/LookAndFeels/" 
+				  includes="lookAndFeels.ini, 
+							JTattoo.jar, 
+							kunststoff.jar, 
+							looks-2.1.2.jar, 
+							OfficeLnFs_2.6.jar, 
+							substance-lite-3.3.jar, 
+							synthetica.2.3.0.jar, 
+							syntheticaBlackMoon.jar, 
+							syntheticaBlackStar.jar, 
+							syntheticaBlueIce.jar, 
+							syntheticaBlueMoon.jar, 
+							syntheticaBlueSteel.jar, 
+							syntheticaGreenDream.jar, 
+							syntheticaSilverMoon.jar
+							">
+		
+		<include name="Oyoaha Theme Packs/"/>
+		<include name="Skinlf Theme Packs/"/>
+		
+	  </zipfileset>
+	  
+	  <zipfileset prefix="MeDs-Movie-Manager-Source" dir="">
+		<include name="License/"/>
+		<include name="izpack/"/>
+		<include name="Readme.rtf"/>
+		<include name="Readme.txt"/>
+		<include name="Changelog.txt"/>
+		<include name="makejar.bat"/>
+		<include name="compile.bat"/>
+		<include name="run.bat"/>
+		<include name="SignJar.bat"/>
+		<include name="makejar.sh"/>
+		<include name="compile.sh"/>
+		<include name="run.sh"/>
+		<include name="Manifest.txt"/>
+		<include name="build.xml"/>
+		<include name="So how do I get this thing running.txt"/>
+		<include name=".classpath"/>
+		<include name=".project"/>
+		
+		<exclude name="dist/"/>
+	  </zipfileset>
+	  
+	</zip>
+  </target>
+  
+  
+  <!-- create the izpack java installer -->
+  <target name="izpackinstaller" 
+		  description="Creates the izPack installer.">
+	
+	<taskdef name="izpack" classpath="${izpack.dir}/lib/standalone-compiler.jar;"
+			 classname="com.izforge.izpack.ant.IzPackTask"/>
+	
+	<izpack input="${izpack.dir}/build-izpack.xml"
+			output="${dist}/MovieManager.v.${version}.bin.java-installer.jar"
+			installerType="standard" basedir="."
+			izPackDir="${izpack.dir}"/>
+	
+  </target>
+  
+  
   <!-- generates the javadoc -->
   <target name="javadoc" depends="compile">
-    <javadoc 
-      destdir="${javadoc}"
-      author="true"
-      version="true"
-      private="true"
-      use="true"
-      windowtitle="MeD's Movie Manager Javadoc"
-      classpathref="project.classpath" 
-      sourcepath="${source}" 
-      packagenames="net.sf.*">
-      <doctitle>MeD's Movie Manager API Documentation</doctitle>
-    </javadoc>
+	
+	<mkdir dir="${dist}/javadoc/"/>
+	
+	<javadoc 
+		destdir="${dist}/javadoc/"
+		author="true"
+		version="true"
+		private="true"
+		use="true"
+		windowtitle="MeD's Movie Manager Javadoc"
+		classpathref="project.classpath" 
+		
+		sourcepath="MovieManager/source/"  packagenames="net.sf.*">
+	  <doctitle>MeD's Movie Manager API Documentation</doctitle>
+	</javadoc>
   </target> 
   
-  <!-- JAR ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->  
-  <target name="jar" depends="compile"
-    description="Build a .jar archive from the compiled classes">
-    <jar destfile="${base}/MovieManager.jar">
-      <fileset dir="${classes}" excludes="Config.ini"/>
-      <fileset dir="${base}" includes="codecs/** images/** queries/** MovieManager.tmx"/>
-      <manifest>
-	<attribute name="Main-Class" value="${basepackage}.moviemanager.MovieManager"/>
-	<attribute name="Class-Path" value="${libpath}"/>
-      </manifest>
-    </jar>
+  
+  
+  <target name="clean"
+		  description="clean up" >
+	<!-- Delete the ${dist} directory trees -->
+	<delete dir="${build}/net/"/>
+	<delete dir="${dist}"/>
+	<delete file="${build}/MovieManager.jar"/>
   </target>
-
-  <target name="run" depends="jar"
-    description="Runs the compiled moviemanager">
-    <java
-      classname="${basepackage}.moviemanager.MovieManager"
-      classpathref="project.libpath"
-      classpath="MovieManager/MovieManager.jar"
-      fork="true" spawn="true"
-    />
+  
+  
+  
+  <!--  For signing java applet  -->
+  
+  <target name="sign" depends="makejar, generate-keys"
+		  description="Signs the generated jar file">
+	<signjar
+		jar="${base}/MovieManager.jar"
+		keystore="keys"
+		storepass="${storepass}"
+		keypass="${keypass}"
+		signedjar="MovieManager.jar"
+		alias="signFiles"
+		/>
+	<exec executable="keytool">
+	  <arg line="-export"/>
+	  <arg line="-keystore keys"/>
+	  <arg line="-storepass ${storepass}"/>
+	  <arg line="-alias signFiles"/>
+	  <arg line="-file MovieManager.cer"/>
+	</exec>
+	<delete file="${base}/MovieManager.jar"/>
+	<delete file="${base}/MovieManager.cer"/>
+	<move file="MovieManager.jar" todir="${base}"/>
+	<move file="MovieManager.cer" todir="${base}"/>
   </target>
-
-  <target name="sign" depends="jar, generate-keys"
-    description="Signs the generated jar file">
-    <signjar
-      jar="${base}/MovieManager.jar"
-      keystore="keys"
-      storepass="${storepass}"
-      keypass="${keypass}"
-      signedjar="MovieManager.jar"
-      alias="signFiles"
-      />
-    <exec executable="keytool">
-      <arg line="-export"/>
-      <arg line="-keystore keys"/>
-      <arg line="-storepass ${storepass}"/>
-      <arg line="-alias signFiles"/>
-      <arg line="-file MovieManager.cer"/>
-    </exec>
-    <delete file="${base}/MovieManager.jar"/>
-    <delete file="${base}/MovieManager.cer"/>
-    <move file="MovieManager.jar" todir="${base}"/>
-    <move file="MovieManager.cer" todir="${base}"/>
-  </target>
-
+  
   <target name="generate-keys"
-    description="Generates keys if they don't exist"
-    unless="keys">
-    <genkey
-      alias="signFiles"
-      keystore="keys"
-      keypass="${keypass}"
-      storepass="${storepass}"
-      dname="CN=MeDs Movie Manager, OU=MeD's Movie Manager, O=xmm.sf.net, C=INT"
-    />
+		  description="Generates keys if they don't exist"
+		  unless="keys">
+	<genkey
+		alias="signFiles"
+		keystore="keys"
+		keypass="${keypass}"
+		storepass="${storepass}"
+		dname="CN=MeDs Movie Manager, OU=MeD's Movie Manager, O=xmm.sf.net, C=INT"
+		/>
   </target>
-
-
+  
 </project>
+
+
+
 
