@@ -160,7 +160,7 @@ public class DatabaseImporter {
                 }
                 
                 lengthOfTask = movielist.size();
-                transferred = new String[lengthOfTask + 1];
+                transferred = new String[lengthOfTask + 2];
                 
                 String title;
                 
