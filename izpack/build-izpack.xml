@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<installation version="1.0">
+
+
+<property name="version"  value="2.5.3"/>
+
+<info>
+
+<appname>MeD's Movie Manager</appname>
+<appversion>$(version)</appversion>
+
+<url>http://xmm.sourceforge.net</url>
+<javaversion>1.4</javaversion>
+
+
+</info>
+
+
+<guiprefs height="400" resizable="yes" width="600">
+<laf name="liquid">
+<os family="unix" />
+</laf>
+
+</guiprefs>
+
+<locale> 
+<langpack iso3="eng"/>
+</locale>
+
+
+
+
+<panels>
+<panel classname="HelloPanel"/>
+
+<panel classname="TargetPanel"/>
+<panel classname="InstallPanel"/>
+<panel classname="SimpleFinishPanel"/>
+</panels>
+
+
+<packs>
+<pack name="MeD's Movie Manager files" required="yes">
+            <description>MeD's Movie Manager files</description>
+
+			<fileset dir="MovieManager/" targetdir="$INSTALL_PATH">
+			  <include name="MovieManager.jar" />
+			  <include name="MovieManager.exe" />
+			  <include name="Temp.mdb" />
+			  <include name="log4j.properties" />
+			  <include name="mapping.xml" />
+			  <include name="Icon.ico" />
+			  <include name="castor.properties" />
+			  <include name="MovieManager.tmx" />
+			  
+			  <include name="codec/" />
+			  <include name="images/" />
+			  <include name="lib/" />
+			  <include name="LookAndFeels/" />
+			  <include name="License/" />
+			  <include name="queries/" />
+			  <include name="reports/" />
+			</fileset>
+
+         <!--   <file src="build\MeD's Movie Manager\Applet.html" targetdir="$INSTALL_PATH"/> -->
+</pack>
+
+
+
+ <!-- <pack name="Core" required="yes" loose="false"> <description>MeD's Movie Manager core files.</description> <fileset dir="" targetdir="$INSTALL_PATH"> <include name="build\MeD's Movie Manager" /> </fileset> -->
+
+
+</packs>
+
+
+</installation>
