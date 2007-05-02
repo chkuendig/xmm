@@ -4,6 +4,25 @@ Changelog - MeD's Movie Manager
 ========================================
 
 
+Version 2.5.3 (02-may-2007)
+
+ - Note:
+   This is a major bug fix release.
+   Thanks a lot to Matthias for thorough testing and bug-seeking.
+
+ - General improvements:
+ - Add Multiple Movies can now grab movie title from the directory instead of the filename (Thanks to Dan Vann and Nicholas). 
+ - Edit window is now opened on double click on entries in the movie list (except from series).   
+
+ - Bug fixes:
+ - New additional info fields would not be usable for older entries added before the new additional info field.
+ - Notes from previous selected node could overwrite the value of the newly selected node.
+ - Mpaa info was not shown after the movie info was grabbed from IMDb and saved.
+ - Grabbing info from DVDs should now work better on Linux.
+ - Location in additional info is now saved when grabbing media info from CDs.  
+ - A lot of smaller fixes and improvements.
+
+
 Version 2.5.2 (29-april-2007)
 
  - General improvements:
