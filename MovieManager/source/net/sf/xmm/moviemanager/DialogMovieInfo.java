@@ -1927,19 +1927,22 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 					selectedFile = selectedFile.getParentFile();
 				} 
 
-				File tmp = new File(selectedFile.getAbsolutePath(), "VIDEO_TS"); //$NON-NLS-1$
-								
-				if ((tmp = new File(selectedFile.getAbsolutePath(), "VIDEO_TS")).getName().equalsIgnoreCase("VIDEO_TS"))
-					selectedFile = tmp;
+				File [] list = selectedFile.listFiles();
 				
-				if (!selectedFile.getName().equalsIgnoreCase("VIDEO_TS")) { //$NON-NLS-1$
+				String video_ts = "";
+								
+				for (int i = 0; i < list.length && !video_ts.equalsIgnoreCase("VIDEO_TS"); i++)
+					video_ts = list[i].getName();
+					
+				if (!video_ts.equalsIgnoreCase("VIDEO_TS"))
 					throw new Exception("DVD drive not found:" + fileChooser.getSelectedFile()); //$NON-NLS-1$
-				}
-
+					
+				File tmp = new File(selectedFile.getAbsolutePath(), video_ts); //$NON-NLS-1$
+					
 				MovieManager.getConfig().setLastDVDDir(selectedFile.getParentFile());
 
 				/* Get the ifo files */
-				File[] list = selectedFile.listFiles();
+				list = selectedFile.listFiles();
 
 				ArrayList ifoList = new ArrayList(4);
 
