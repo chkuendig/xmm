@@ -931,9 +931,9 @@ public class DatabaseMySQL extends Database {
 		_sql.clear();
 	    
 		String tempValue = "";
-
-		ArrayList extraFieldFieldNames = ModelAdditionalInfo.getExtraInfoFieldNames();
-	    ArrayList extraInfoFieldValues = new ArrayList();
+                         
+		ArrayList extraInfoFieldNames = ModelAdditionalInfo.getExtraInfoFieldNames();
+		ArrayList extraInfoFieldValues = new ArrayList();
 	    
 		if (episode)
 		    resultSet = getExtraInfoEpisodeResultSet(index);
@@ -942,16 +942,32 @@ public class DatabaseMySQL extends Database {
 	    
 		boolean next = resultSet.next();
 		
+		// Fieldnames and Fieldvalues don't match
+		// Caused by a serious bug in v2.5 beta 4 where extra info values weren't added
+		// if the values were empty (and no fields existed).
+		if (next == false) {
+		    
+		    for (int i = 0; i < extraInfoFieldNames.size(); i++)
+			extraInfoFieldValues.add("");
+		    
+		    if (episode)
+			addExtraInfoEpisode(index, extraInfoFieldNames, extraInfoFieldValues);
+		    else
+			addExtraInfoMovie(index, extraInfoFieldNames, extraInfoFieldValues);
+		}
+		
+
+
 		/* Getting the value for each field */
-		for (int i = 0; i < extraFieldFieldNames.size(); i++) {
+		for (int i = 0; i < extraInfoFieldNames.size(); i++) {
 		    
 			if (next)/* First column after the ID column is at index 2 */
 	    		tempValue = resultSet.getString(i+2);
 	    	
-	    	if (tempValue == null)
-	    		tempValue = "";
+			if (tempValue == null)
+			    tempValue = "";
 			
-	    	extraInfoFieldValues.add(tempValue);
+			extraInfoFieldValues.add(tempValue);
 		}
 		
 		additionalInfo = new ModelAdditionalInfo(subtitles, duration, fileSize, cDs, cDCases, resolution, videoCodec, videoRate, videoBitrate, audioCodec, audioRate, audioBitrate, audioChannels, fileLocation, fileCount, container, mediaType);
