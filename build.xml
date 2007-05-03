@@ -29,7 +29,7 @@
   <property name="build" location="MovieManager/"/>
   <property name="dist"  location="dist"/>
   <property name="izpack.dir" location="izpack"/>
-  <property name="version"  value="2.5.3"/>
+  <property name="version"  value="2.5.3.3"/>
   <property name="base" value="MovieManager/"/>
   
   <!-- <property name="$(base)/base.dir"  location=""/> -->
@@ -103,7 +103,7 @@
 	  <fileset dir="MovieManager/">
 		
 		<include name="net/"/>
-		<include name="codecs"/>
+		<include name="codecs/"/>
 		<include name="images/"/>
 		<include name="queries/"/>
 		<include name="MovieManager.tmx"/>
@@ -159,7 +159,7 @@
 							MovieManager.jar, 
 							MovieManager.tmx, 
 							Temp.mdb">
-		
+
 		<include name="lib/"/>
 		<include name="reports/"/>
 		
@@ -217,7 +217,6 @@
 							Temp.mdb">
 		
 		<include name="lib/"/>
-		
 		<include name="reports/"/>
 		<include name="codecs/"/>
 		<include name="images/"/>
@@ -279,17 +278,13 @@
   <target name="izpackinstaller" 
 		  description="Creates the izPack installer.">
 	
-	 <!-- <taskdef name="izpack" classpath="${izpack.dir}/lib/standalone-compiler.jar;"
-			 classname="com.izforge.izpack.ant.IzPackTask"/>
-	-->
-
-	  <taskdef name="izpack" classname="com.izforge.izpack.ant.IzPackTask">
+	<taskdef name="izpack" classname="com.izforge.izpack.ant.IzPackTask">
 		<classpath refid="izpack.claspath"/>
     </taskdef>
 
 
 	<izpack input="${izpack.dir}/build-izpack.xml"
-			output="${dist}/MovieManager.v.${version}.bin.java-installer.jar"
+			output="${dist}/MovieManager.v.${version}.bin.installer.jar"
 			installerType="standard" basedir="."
 			izPackDir="${izpack.dir}"/>
 	
