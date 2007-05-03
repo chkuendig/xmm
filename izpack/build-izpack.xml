@@ -2,13 +2,10 @@
 
 <installation version="1.0">
 
-
-<property name="version"  value="2.5.3"/>
-
-<info>
+  <info>
 
 <appname>MeD's Movie Manager</appname>
-<appversion>$(version)</appversion>
+<appversion>2.5.3.3</appversion>
 
 <url>http://xmm.sourceforge.net</url>
 <javaversion>1.4</javaversion>
@@ -17,7 +14,7 @@
 </info>
 
 
-<guiprefs height="400" resizable="yes" width="600"/>
+<guiprefs height="300" resizable="yes" width="450"/>
 
 
 <locale> 
@@ -35,35 +32,28 @@
 
 <packs>
 <pack name="MeD's Movie Manager files" required="yes">
-            <description>MeD's Movie Manager files</description>
-
-			<fileset dir="MovieManager/" targetdir="$INSTALL_PATH">
-			  <include name="MovieManager.jar" />
-			  <include name="MovieManager.exe" />
-			  <include name="Temp.mdb" />
-			  <include name="log4j.properties" />
-			  <include name="mapping.xml" />
-			  <include name="Icon.ico" />
-			  <include name="castor.properties" />
-			  <include name="MovieManager.tmx" />
-			  
-			  <include name="codec/" />
-			  <include name="images/" />
-			  <include name="lib/" />
-			  <include name="LookAndFeels/" />
-			  <include name="License/" />
-			  <include name="queries/" />
-			  <include name="reports/" />
-			</fileset>
-
-         <!--   <file src="build\MeD's Movie Manager\Applet.html" targetdir="$INSTALL_PATH"/> -->
-</pack>
-
-
-
- <!-- <pack name="Core" required="yes" loose="false"> <description>MeD's Movie Manager core files.</description> <fileset dir="" targetdir="$INSTALL_PATH"> <include name="build\MeD's Movie Manager" /> </fileset> -->
-
-
+  <description>MeD's Movie Manager files</description>
+  
+  <fileset dir="MovieManager/" targetdir="$INSTALL_PATH">
+	<include name="MovieManager.jar" />
+	<include name="MovieManager.exe" />
+	<include name="Temp.mdb" />
+	<include name="log4j.properties" />
+	<include name="mapping.xml" />
+	<include name="Icon.ico" />
+	<include name="castor.properties" />
+	<include name="MovieManager.tmx" />
+	
+	<include name="lib/" />
+	<include name="LookAndFeels/" />
+	<include name="License/" />
+	<include name="reports/" />
+  </fileset>
+  
+  <fileset dir="" targetdir="$INSTALL_PATH">
+	<include name="License/"/>
+  </fileset>
+  </pack>
 </packs>
 
 
