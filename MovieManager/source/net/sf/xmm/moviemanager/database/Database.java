@@ -276,7 +276,7 @@ abstract public class Database {
      /**
      * Returns the number of rows in the General Info id column
      **/
-    public int getDatabaseSize2() {
+    public int getDatabaseSize() {
 
 	int size = -1;
 
