@@ -3099,8 +3099,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Add file info to an existing movie instead of
-                    adding a new movie to the movie list</seg>
+                <seg>Add file info to an existing movie instead of adding a new movie to the movie list</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
@@ -3131,8 +3130,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Add movie to database without retrieving movie info
-                    from IMDB</seg>
+                <seg>Add movie to database without retrieving movie info from IMDB</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">

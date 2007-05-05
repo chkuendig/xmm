@@ -498,9 +498,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 		misc.append("<html><FONT  SIZE=3 FACE=\""+ fontname +"\">"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		if (!aka.equals("")) //$NON-NLS-1$
-			misc.append("<b>" + Localizer.getString("MovieManagerCommandSelect.miscellaneous-panel.field.also-known-as.title") + ":</b><br>"  + aka.replaceAll("\r\n", "<br>") + "<br><br>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-
 		if (!soundMix.equals("")) //$NON-NLS-1$
 			misc.append("<b>" + Localizer.getString("MovieManagerCommandSelect.miscellaneous-panel.field.sound-mix.title") + "</b><br>" + soundMix + "<br><br>"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -514,7 +511,10 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			misc.append("<b>" + Localizer.getString("MovieManagerCommandSelect.miscellaneous-panel.field.mpaa.title") + ":</b><br>"  + mpaa + "<br><br>"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (!certification.equals("")) //$NON-NLS-1$
-			misc.append("<b>" + Localizer.getString("MovieManagerCommandSelect.miscellaneous-panel.field.certification.title") + ":</b><br>" + certification); //$NON-NLS-1$
+			misc.append("<b>" + Localizer.getString("MovieManagerCommandSelect.miscellaneous-panel.field.certification.title") + ":</b><br>" + certification + "<br><br>"); //$NON-NLS-1$
+
+		if (!aka.equals("")) //$NON-NLS-1$
+			misc.append("<b>" + Localizer.getString("MovieManagerCommandSelect.miscellaneous-panel.field.also-known-as.title") + ":</b><br>"  + aka.replaceAll("\r\n", "<br>") ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 		misc.append("</FONT></html>"); //$NON-NLS-1$
 
