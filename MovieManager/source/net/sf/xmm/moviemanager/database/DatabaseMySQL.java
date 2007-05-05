@@ -64,7 +64,7 @@ public class DatabaseMySQL extends Database {
     
     
     /**
-     * Returns the number of rows in the Extra Info id column
+     * Returns the number of rows in the General_Info id column
      **/
     public int getDatabaseSize() {
     
@@ -72,7 +72,7 @@ public class DatabaseMySQL extends Database {
 	
 	try {
 	    /* Gets the number of rows */
-	    ResultSet resultSet = _sql.executeQuery("SELECT COUNT(*) FROM (SELECT alias.id FROM Extra_Info alias) alias2;");
+	    ResultSet resultSet = _sql.executeQuery("SELECT COUNT(*) FROM (SELECT alias.id FROM General_Info alias) alias2;");
 	    
 	    if (resultSet.next())
 		size = resultSet.getInt(1);

@@ -26,6 +26,7 @@ import net.sf.xmm.moviemanager.models.*;
 
 import org.apache.log4j.Logger;
 
+//import java.sql.ResultSet;
 import java.sql.*;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -272,15 +273,16 @@ abstract public class Database {
 
 
     /**
-     * Returns the number of rows in the Extra Info id column
+     /**
+     * Returns the number of rows in the General Info id column
      **/
-    public int getDatabaseSize() {
+    public int getDatabaseSize2() {
 
 	int size = -1;
 
 	try {
 	    /* Gets the number of rows */
-	    ResultSet resultSet = _sql.executeQuery("SELECT COUNT(*) FROM (SELECT id FROM \"Extra Info\") "+
+	    ResultSet resultSet = _sql.executeQuery("SELECT COUNT(*) FROM (SELECT id FROM \"General Info\") "+
 						    ";");
 
 	    if (resultSet.next())
