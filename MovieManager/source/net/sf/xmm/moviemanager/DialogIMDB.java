@@ -56,9 +56,11 @@ public class DialogIMDB extends JDialog {
     int multiAddSelectOption = 0;
     File [] multiAddFile;
     JPanel panelMoviesList;
+
+    String filename = null;
     
     boolean getUrlKeyOnly = false;
- 
+
     String addToThisList = null; 
     
     boolean switchBetweenIMDBAndDatabase = false;
@@ -150,6 +152,8 @@ public class DialogIMDB extends JDialog {
         this.multiAdd = true;
         this.commandAddMovies = commandAddMovies;
         this.multiAddSelectOption = multiAddSelectOption;
+
+        this.filename = filename;
         
         switchBetweenIMDBAndDatabase = true;
         addWithoutIMDBInfo = true;
@@ -335,9 +339,10 @@ public class DialogIMDB extends JDialog {
 
     			addWithoutIMDBInfo.addActionListener(new ActionListener() {
     				public void actionPerformed(ActionEvent event) {
+					String fn = getFilename();
     					log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
 
-    					modelInfo.model.setTitle(searchStringField.getText());
+    					modelInfo.model.setTitle( fn.substring( 0, fn.lastIndexOf('.')) );
     					dropImdbInfoSet = true;
     					dispose();
     					return;
@@ -570,6 +575,10 @@ public class DialogIMDB extends JDialog {
         (JButton)
         ((JPanel)
                 getContentPane().getComponent(1)).getComponent(1);
+    }
+    
+    String getFilename() {
+        return filename;
     }
     
     /**
