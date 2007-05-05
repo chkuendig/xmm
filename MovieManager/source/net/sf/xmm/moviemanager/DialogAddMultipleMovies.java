@@ -494,8 +494,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener {
 	
 	    MovieManagerCommandLists.execute(this);
 	    
-	    all.remove(4);
-	    all.add(makeListPanel(), 4);
+	    all.remove(5);
+	    all.add(makeListPanel(), 5);
 	    pack();
 	    GUIUtil.show(this, true);
 	}
