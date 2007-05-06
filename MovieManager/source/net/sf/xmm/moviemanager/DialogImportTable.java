@@ -105,18 +105,12 @@ public class DialogImportTable extends JDialog {
     MouseAdapter tablePopupListener = new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
             
-				//System.err.println("table mousePressed:" + ((JMenuItem) e.getSource()).getActionCommand());
-            
 				if ("Delete".equals(((JMenuItem) e.getSource()).getActionCommand())) {
 					int [] rows = table.getSelectedRows();
 					DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
                 
-					//  System.err.println("getRowCount:"  + tableModel.getRowCount());
-					//System.err.println("selectedRows:"  + rows.length);
-                
 					for (int i = rows.length-1; i >= 0; i--) {
 						tableModel.removeRow(rows[i]);  
-						//System.err.println("deleted row:" + rows[i]);
 					}
                 
 					table.updateUI();
@@ -126,8 +120,6 @@ public class DialogImportTable extends JDialog {
                 
 					int columnCount = table.getModel().getColumnCount();
 					int row = table.getSelectedRow();
-                
-					//System.err.println("columnCount:" + columnCount);
                 
 					TableColumnModel columnModel = table.getColumnModel();
                 
@@ -148,8 +140,6 @@ public class DialogImportTable extends JDialog {
 						//cm.addColumnGroup(g_name);
                     
 						cm.addColumnGroup(g_name);
-                    
-						//System.err.println(tempVal);
 					}
                 
 					header.setColumnModel(cm);
@@ -235,12 +225,11 @@ public class DialogImportTable extends JDialog {
                 
             dm.setDataVector(data, emptyColumnNames);
             
-			//          Setup table
+			// Setup table
             table = new JTable( /*dm, new GroupableTableColumnModel()*/);
             //table.setColumnModel(new GroupableTableColumnModel());
             //table.setTableHeader(new GroupableTableHeader((GroupableTableColumnModel) table.getColumnModel()));
             table.setModel(dm);
-            
             
             table.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent event) {
@@ -256,11 +245,7 @@ public class DialogImportTable extends JDialog {
                 
 						Rectangle r = jth.getHeaderRect(col);
 						if (!jth.getCursor().equals(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR))) {
-                    
-                    
-							//System.err.println("col:" + col);
 							currentColumn = col;
-                    
 							setHeaderPopupVisible(event.getX(), event.getY(), event, col);
 						}
 					}
@@ -268,7 +253,14 @@ public class DialogImportTable extends JDialog {
             
            
             
-            JScrollPane scroll = new JScrollPane( table );
+            JPanel tablePanel = new JPanel();
+            
+            tablePanel.setLayout(new BorderLayout());
+            tablePanel.add(table.getTableHeader(), BorderLayout.PAGE_START);
+            tablePanel.add(table, BorderLayout.CENTER);
+            
+            tablePanel.add(table);
+            JScrollPane scroll = new JScrollPane(tablePanel);
             
             content.add(scroll);
             
@@ -283,7 +275,7 @@ public class DialogImportTable extends JDialog {
 						dispose();
 					}
 				}
-										 );
+            );
             
             panelButtons.add(buttonDone);
             
@@ -419,7 +411,6 @@ public class DialogImportTable extends JDialog {
                 
                 for (int u = 0; u < cells.length; u++) {
                     tableData[i][u] = cells[u].getContents();
-                    //System.err.println(cells[u].getContents());
                 }
             }
         }
@@ -434,7 +425,7 @@ public class DialogImportTable extends JDialog {
     	return new ModelImportSettings(table);
     }
     
-    void importData() {
+    void importData2() {
         
         TableModel tableModel = table.getModel();
         TableColumnModel columnModel = table.getColumnModel();
