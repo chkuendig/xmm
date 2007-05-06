@@ -642,7 +642,7 @@ public class DialogFolders extends JDialog implements ItemListener {
             queriesFolder = new File(queriesPath);
             
             if(!queriesFolder.isDirectory()) {
-                DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert"),Localizer.getString("DialogFolders.alert.message.queries-doesnt-exist")); 
+                DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert"),Localizer.getString("DialogFolders.alert.queries-doesnt-exist.message")); 
                 GUIUtil.showAndWait(alert, true);
                 return;
             }
