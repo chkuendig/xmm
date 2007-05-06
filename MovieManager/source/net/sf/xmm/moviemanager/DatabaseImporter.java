@@ -222,7 +222,7 @@ public class DatabaseImporter {
                                 ret = addExcelMovie(i);
                             }
                             /* Extreme movie manager */
-                            if (importMode == 2) {
+                            else if (importMode == 2) {
                                 ret = addExtremeMovie(i);
                             }/* XML */
                             else if (importMode == 3) {
@@ -231,7 +231,7 @@ public class DatabaseImporter {
                                 
                             } /* Text file */
                             else {
-                                modelMovieInfo.model.setTitle(title);
+                            	modelMovieInfo.model.setTitle(title);
                             
                                 try {
                                     ret = (modelMovieInfo.saveToDatabase(addToThisList)).getKey();
@@ -242,7 +242,7 @@ public class DatabaseImporter {
                             }
                             
                             if (ret == -1 && MovieManager.getIt().getDatabase().getErrorMessage().equals("Data truncation cover")) {
-                                    modelMovieInfo.setCover("", null);
+                                modelMovieInfo.setCover("", null);
                                     
                                     try {
                                         ret = (modelMovieInfo.saveToDatabase(addToThisList)).getKey();
@@ -632,7 +632,7 @@ public class DatabaseImporter {
         
         
         int addExcelMovie(int i) {
-            
+           
             int ret = -1;
             Object tmp = movielist.get(i);
             
