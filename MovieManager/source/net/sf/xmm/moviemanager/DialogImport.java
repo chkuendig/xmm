@@ -566,12 +566,12 @@ public class DialogImport extends JDialog implements ActionListener {
 		extremeFilePath.setText(ret);
 	}
 	
-    if (event.getSource().equals(browseForXMLFile)) {
-        String ret = executeCommandGetFile(3);
-        if (!ret.equals(""))
-        xmlFilePath.setText(ret);
-    }
-    
+	if (event.getSource().equals(browseForXMLFile)) {
+		String ret = executeCommandGetFile(3);
+		if (!ret.equals(""))
+		xmlFilePath.setText(ret);
+	}
+
 	if (event.getSource().equals(buttonOk)) {
 	    executeSave();
 	    parent.setCancelAll(true);

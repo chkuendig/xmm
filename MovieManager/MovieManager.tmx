@@ -2902,8 +2902,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Any databases opened after this is selected will
-                    not be saved to the config file</seg>
+                <seg>Any databases opened after this is selected will snot be saved to the config file</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
