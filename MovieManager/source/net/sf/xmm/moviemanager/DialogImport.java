@@ -179,7 +179,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	textPathPanel.add(textFilePath);
 	textPathPanel.add(browseForTextFile);
 	
-	textPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Directory "), BorderFactory.createEmptyBorder(0,0,0,0))));
+	textPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," File to Import "), BorderFactory.createEmptyBorder(0,0,0,0))));
 	
 	JPanel textFilePanel = new JPanel(new BorderLayout());
 	textFilePanel.add(textLabelPanel, BorderLayout.NORTH);
@@ -242,7 +242,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	excelPathPanel.add(excelFilePath);
 	excelPathPanel.add(browseForExcelFile);
 	
-	excelPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Directory "), BorderFactory.createEmptyBorder(0,5,0,5))));
+	excelPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," File to Import "), BorderFactory.createEmptyBorder(0,5,0,5))));
 	
 	JPanel excelFilePanel = new JPanel(new BorderLayout());
 	excelFilePanel.add(excelLabelPanel, BorderLayout.NORTH);
@@ -291,7 +291,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	extremePathPanel.add(extremeFilePath);
 	extremePathPanel.add(browseForExtremeFile);
 	
-	extremePathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Directory "), BorderFactory.createEmptyBorder(0,5,0,5))));
+	extremePathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),"  File to Import "), BorderFactory.createEmptyBorder(0,5,0,5))));
 	
 	JPanel extremePanel = new JPanel(new BorderLayout());
 	extremePanel.add(extremeLabelPanel, BorderLayout.NORTH);
@@ -313,7 +313,7 @@ public class DialogImport extends JDialog implements ActionListener {
     xmlPathPanel.add(xmlFilePath);
     xmlPathPanel.add(browseForXMLFile);
     
-    xmlPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Directory "), BorderFactory.createEmptyBorder(0,0,0,0))));
+    xmlPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," File to Import "), BorderFactory.createEmptyBorder(0,0,0,0))));
     
     JLabel xmlLabel = new JLabel("Import movies from a XML file (Must be exported by MeD's Movie Manager)");
     JPanel xmlLabelPanel = new JPanel();
