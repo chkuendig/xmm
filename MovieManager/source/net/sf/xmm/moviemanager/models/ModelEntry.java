@@ -82,7 +82,8 @@ abstract public class ModelEntry {
 	public abstract void updateAdditionalInfoData();
 
 	public abstract void updateGeneralInfoData();
-
+	public abstract void updateGeneralInfoData(boolean getCover);
+	
 	public ModelAdditionalInfo getAdditionalInfo() {
 		return additionalInfo;
 	}

@@ -136,7 +136,8 @@ public class ModelEpisode extends ModelEntry {
 		setAwards(model.getAwards());
 
 		//setMpaa(model.getMpaa());
-		setCoverData(model.getCoverData());
+		if (model.getCoverData() != null)
+			setCoverData(model.getCoverData());
 
 		hasGeneralInfoData = model.getHasGeneralInfoData();
 		
@@ -148,17 +149,21 @@ public class ModelEpisode extends ModelEntry {
 	}
 
 	public void updateGeneralInfoData() {
-
+		updateGeneralInfoData(true);
+	}
+	
+	public void updateGeneralInfoData(boolean getCover) {
 		if (getKey() != -1) {
 
 			ModelEntry model = null;
-			model = MovieManager.getIt().getDatabase().getEpisode(getKey(), true);
+			model = MovieManager.getIt().getDatabase().getEpisode(getKey(), getCover);
 
 			if (model != null) {
 				copyData(model);
 			}
 		}
 	}
+	
 
 	public void updateCoverData() {
 
