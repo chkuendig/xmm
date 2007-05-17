@@ -32,43 +32,44 @@ public class MovieManagerCommandExit implements ActionListener {
     /**
      * Executes the command.
      **/
-    public static void execute() {
-	
-    	// If any notes have been changed, they will be saved before exiting
-    	 MovieManagerCommandSaveChangedNotes.execute();
-    	
-	MovieManager.getConfig().saveConfig();
-	
-	long time = System.currentTimeMillis();
-	
-	MovieManager.log.debug("Shutting down...");
-	
-	/* Finalizes the main frame... */
-	MovieManager.getDialog().finalize();
-	
-	Database db = MovieManager.getIt().getDatabase();
-	String type = "";
-	
-	if (db != null) {
-	    /* Finalizing database... */
-	    db.finalizeDatabase();
-	
-	    type = db.getDatabaseType();
+	public static void execute() {
+
+		// If any notes have been changed, they will be saved before exiting
+		MovieManagerCommandSaveChangedNotes.execute();
+			
+		MovieManager.log.debug("Shutting down...");
+
+		/* Finalizes the main frame... */
+		MovieManager.getDialog().finalize();
+
+		// Saving config file
+		MovieManager.getConfig().saveConfig();
+		
+		Database db = MovieManager.getIt().getDatabase();
+		String type = "";
+
+		long time = System.currentTimeMillis();
+		
+		if (db != null) {
+			/* Finalizing database... */
+			db.finalizeDatabase();
+
+			type = db.getDatabaseType();
+		}
+
+		MovieManager.log.debug("Finalized " + type + " database in " + (System.currentTimeMillis() - time) + " ms.");
+
+		/* Writes the date. */
+		MovieManager.log.debug("Log End: "+new Date(System.currentTimeMillis()));
+
+		MovieManager.exit();
 	}
-	
-	MovieManager.log.debug("Finalized " + type + " database in " + (System.currentTimeMillis() - time) + " ms.");
-	
-	/* Writes the date. */
-	MovieManager.log.debug("Log End: "+new Date(System.currentTimeMillis()));
-	
-    MovieManager.exit();
-    }
-    
-    /**
-     * Invoked when an action occurs.
-     **/
-    public void actionPerformed(ActionEvent event) {
-	MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
-	execute();
-    }
+
+	/**
+	 * Invoked when an action occurs.
+	 **/
+	public void actionPerformed(ActionEvent event) {
+		MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
+		execute();
+	}
 }
