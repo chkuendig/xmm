@@ -530,6 +530,18 @@ public class MovieManager {
                 setDatabase(new DatabaseMySQL(database.getPath()), false);
             }
         }
+        else if (error.equals("connection closed")) { //$NON-NLS-1$
+            
+            dialogMovieManager.setDatabaseComponentsEnable(false);
+            
+            DialogQuestion question = new DialogQuestion("connection closed", "<html>The connection to the MySQL server has closed.<br>" +
+            "Reconnect now?</html>");
+            GUIUtil.showAndWait(question, true);
+            
+            if (question.getAnswer()) {
+                setDatabase(new DatabaseMySQL(database.getPath()), false);
+            }
+        }
         
         if (error.equals("MySQL server is out of space")) { //$NON-NLS-1$
             DialogAlert alert = new DialogAlert(dialogMovieManager, Localizer.getString("moviemanager.mysql-out-of-space"), Localizer.getString("moviemanager.mysql-out-of-space-message")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -793,7 +805,7 @@ public class MovieManager {
                 
                 /* Writes the date. */
                 log.debug("Log Start: " + new Date(System.currentTimeMillis())); //$NON-NLS-1$
-                     
+                log.debug("MeD's Movie Mnager v" + _version); //$NON-NLS-1$
                 
                 /* Loads the config */
                 config.loadConfig();
