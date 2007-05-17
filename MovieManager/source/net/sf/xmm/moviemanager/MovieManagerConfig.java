@@ -31,9 +31,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.*;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
@@ -303,26 +301,31 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		if (lastFileDir == null)
 			return null;
-		
-		if (FileUtil.isWindows()) {
-			String tmp = lastFileDir.getAbsolutePath();
-			
-			if (tmp.indexOf(":") != -1) {
-				String drive = tmp.substring(0, tmp.indexOf(":") + 1);
-				
-				if (drive.length() != 0) {
-					DriveInfo d = new DriveInfo(drive);
-					
-					if (d.isInitialized() && d.isValid() && lastFileDir.exists() ) {
-						return lastFileDir;
+
+		try {
+
+			if (FileUtil.isWindows()) {
+				String tmp = lastFileDir.getAbsolutePath();
+
+				if (tmp.indexOf(":") != -1) {
+					String drive = tmp.substring(0, tmp.indexOf(":") + 1);
+
+					if (drive.length() != 0) {
+						DriveInfo d = new DriveInfo(drive);
+						
+						if (d.isInitialized() && d.isValid() && lastFileDir.exists() ) {
+							return lastFileDir;
+						}
 					}
 				}
 			}
+			else if (lastFileDir.exists()) {
+				return lastFileDir;
+			}
+
+		} catch (UnsatisfiedLinkError e) {
+			log.warn("Exception:" + e.getMessage());
 		}
-		else if (lastFileDir.exists()) {
-			return lastFileDir;
-		}
-		
 		return new File("");
 	}
 
@@ -1181,8 +1184,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
+			// search Alias And Additional Info Default Values
+			ArrayList searchAliasList = new ArrayList();
+			ArrayList additionalFieldDefaults = new ArrayList();
 			HashMap config = new HashMap();
-
+						
 			String tmp, key, value;
 
 			while ((tmp = reader.readLine()) != null) {
@@ -1191,7 +1197,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					key = tmp.substring(0, tmp.indexOf(":") + 1);
 					value = tmp.substring(tmp.indexOf(":") + 1, tmp.length());
 
-					config.put(key, value);
+					if ("AdditionalInfoDefaultValues:".equals(key))
+						additionalFieldDefaults.add(value);
+					else if ("Search Alias:".equals(key))
+						searchAliasList.add(value);
+					else
+						config.put(key, value);
 
 				} catch (Exception e) {
 					log.warn("Error in Config file:" + e.getMessage());
@@ -1244,7 +1255,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					setUseRelativeQueriesPath(Integer.parseInt(value));
 			}
 
+			
+			value = (String) config.get("storeCoversLocally:");
 
+			if (value != null) {
+				setStoreCoversLocally(new Boolean(value).booleanValue());
+			}
+			
+			
 			value = (String) config.get("loadDatabaseOnStartup:");
 
 			if (value != null) {
@@ -1826,56 +1844,41 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setDisplayPrintButton(new Boolean(value).booleanValue());
 			}
 
-/*
-
-			AdditionalInfoFieldDefaultValues defaultValue;
+						AdditionalInfoFieldDefaultValues defaultValue;
 			StringTokenizer tokenizer;
 			String name = "";
 			String token;
 
-			index = settings.indexOf("AdditionalInfoDefaultValues:");
-
-			while (index != -1) {
-
-				value = settings.substring(settings.indexOf(":", index)+1, settings.indexOf(lineSeparator, index));
-
-				name = value.substring(0, value.indexOf(":"));
-
+			for (int i = 0; i < additionalFieldDefaults.size(); i++) {
+			
+				tmp = (String) additionalFieldDefaults.get(i);
+				name = tmp.substring(0, tmp.indexOf(":"));
+				
 				defaultValue = new AdditionalInfoFieldDefaultValues(name);
 
-				tokenizer = new StringTokenizer(value.substring(value.indexOf(":")+1, value.length()), "|");
+				tokenizer = new StringTokenizer(tmp.substring(tmp.indexOf(":") + 1, tmp.length()), "|");
 
 				while (tokenizer.hasMoreTokens()) {
 					token = tokenizer.nextToken();
-					defaultValue.addValue(token);
+					defaultValue.addValue(token);					
 				}
 				additionalInfoDefaultValues.put(name, defaultValue);
 
-				index = settings.indexOf("AdditionalInfoDefaultValues:", ++index);
 			}
-
 
 			String tableAndColumn;
 			String alias;
+			
+			for (int i = 0; i < searchAliasList.size(); i++) {
 
-			index = settings.indexOf("Search Alias:");
-
-			while (index != -1) {
-
-				value = settings.substring(settings.indexOf(":", index)+1, settings.indexOf(lineSeparator, index));
-
-				tableAndColumn = value.substring(0, value.indexOf("="));
-
-				alias = value.substring(value.indexOf("=")+1, value.length());
-
+				tmp = (String) searchAliasList.get(i);
+				tableAndColumn = tmp.substring(0, tmp.indexOf("="));
+				alias = tmp.substring(tmp.indexOf("=") + 1, tmp.length());
+				
 				if (!alias.equals("") && !tableAndColumn.equals(""))
 					searchAlias.put(tableAndColumn, alias);
-
-				index = settings.indexOf("Search Alias:", ++index);
 			}
-			
-			*/
-
+				
 		} catch (Exception e) {
 			log.warn("Cannot find config file." + e.getMessage(), e);
 		}
@@ -1920,6 +1923,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append(lineSeparator);
 		 settings.append("useRelativeDatabasePath:" + getUseRelativeDatabasePath());
 
+		 settings.append(lineSeparator);
+		 settings.append("storeCoversLocally:" + getStoreCoversLocally());
+	 
 		 settings.append(lineSeparator);
 		 settings.append("loadDatabaseOnStartup:" + getLoadDatabaseOnStartup());
 
@@ -2036,7 +2042,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("lastFileDir:");
 		 if (getLastFileDir() != null)
 			 settings.append(getLastFileDir().getPath());
-
 
 		 settings.append(lineSeparator);
 		 settings.append("lastDVDDir:");
@@ -2209,31 +2214,27 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			 settings.append(lineSeparator);
 		 }
 
-
-
 		 try {
 			 /* Gets the working dir... */
 			 String directory = FileUtil.getUserDir();
-
+  
 			 /* Gets the File ini... */
 			 File ini = new File(directory + "Config.ini");
-
+ 
 			 /* If it exists deletes... */
 			 if (ini.exists() && !ini.delete()) {
 				 throw new Exception("Cannot delete config file.");
 			 }
+			  
 			 /* Recreates... */
 			 if (!ini.createNewFile()) {
 				 throw new Exception("Cannot create config file.");
 			 }
-
-			 /* Writes the config file... */
-			 FileOutputStream stream = new FileOutputStream(ini);
-			 for (int i=0; i < settings.length(); i++) {
-				 stream.write(settings.charAt(i));
-			 }
+			 
+			 FileWriter stream = new FileWriter(ini);
+			 stream.write(settings.toString());
 			 stream.close();
-
+				 
 		 } catch (Exception e) {
 			 log.error("", e);
 		 }
