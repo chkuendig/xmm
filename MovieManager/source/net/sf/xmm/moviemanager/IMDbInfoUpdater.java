@@ -325,7 +325,7 @@ model.setDirectedBy(imdb.getDirectedBy());
 					        try {
 					            
 					            /* Gets the covers folder... */
-					            String coversFolder = database.getCoversFolder();
+					            String coversFolder = MovieManager.getConfig().getCoversPath();
 					            
 					            byte [] coverData = imdb.getCover();
 					            
