@@ -872,81 +872,102 @@ public class ModelMovieInfo {
         return true;
     }
     
-    
+
+    /**
+     * It's hard to understand everything going on in this method. I'm not even sure I understand it myself.
+     * makes changes to the aka titles, and/or the main title according to the settings i the preferences.
+     * 
+     * @param originalTitle
+     */
     public void executeTitleModification(String originalTitle) {
-        
-        
-        /* Removing the localized aka titles */
-        if (!MovieManager.getConfig().getStoreAllAkaTitles() || MovieManager.getConfig().getUseLanguageSpecificTitle()) {
-            
-            ArrayList akaKeys = new ArrayList();
-            ArrayList akaValues = new ArrayList();
-            
-            String akaTitles = model.getAka();
-            String newAkaTitles = "";
-            
-            StringTokenizer tokenizer = new StringTokenizer(akaTitles, "\r\n", false);
-            
-            String value;
-            String tmp;
-            String key = "";
-            int index = -1;
-            String languageCode = MovieManager.getConfig().getTitleLanguageCode();
-            
-            while (tokenizer.hasMoreTokens()) {
-                
-                value = tokenizer.nextToken();
-                key = MovieManagerCommandAddMultipleMoviesByFile.performExcludeParantheses(value, false).trim();
-                
-                if (MovieManager.getConfig().getUseLanguageSpecificTitle() && value.indexOf("[" + languageCode + "]") != -1) {
-                    
-                    /* Adds original title to aka list */
-                    akaKeys.add(0, model.getTitle());
-                    
-                    if (MovieManager.getConfig().getIncludeAkaLanguageCodes())
-                        akaValues.add(0, originalTitle + " (Original)");
-                    else
-                        akaValues.add(0, originalTitle);
-                    
-                    setTitle(key);
-                }
-                
-                
-                /* If aka translation */
-                if (!(!MovieManager.getConfig().getStoreAllAkaTitles() && value.indexOf("[") != -1)) {
-                    
-                    /* Adds the language code to the existing title */
-                    if (MovieManager.getConfig().getNoDuplicateAkaTitles() && (index = akaKeys.indexOf(key)) != -1) {
-                        value =  value.replaceFirst(key, "");
-                        tmp = akaValues.get(index) + " " + value.trim();
-                        akaValues.set(index, tmp);
-                    }   
-                    else {
-                        /* Removes comments and language code */
-                        if (!MovieManager.getConfig().getIncludeAkaLanguageCodes()) {
-                            value = key;
-                        }
-                        
-                        akaKeys.add(key);
-                        akaValues.add(value);
-                    }
-                }
-            }
-            
-            while (!akaValues.isEmpty()) {
-                newAkaTitles += akaValues.remove(0) + "\r\n";
-            }   
-            
-            model.setAka(newAkaTitles.trim());
-            
-            try {
-            	modelChanged(this, "GeneralInfo");
-            } catch (IllegalEventTypeException e) {
-            	log.error("IllegalEventTypeException:" + e.getMessage());
-            }
-        }
+
+    	boolean removeDuplicates = !MovieManager.getConfig().getIncludeAkaLanguageCodes();
+
+    	ArrayList akaKeys = new ArrayList();
+    	ArrayList akaValues = new ArrayList();
+
+    	String akaTitles = model.getAka();
+    	String newAkaTitles = "";
+
+    	StringTokenizer tokenizer = new StringTokenizer(akaTitles, "\r\n", false);
+
+    	String value;
+    	String tmp;
+    	String key = "";
+    	int index = 0;
+    	String languageCode = MovieManager.getConfig().getTitleLanguageCode();
+
+    	while (tokenizer.hasMoreTokens()) {
+
+    		value = tokenizer.nextToken();
+    		key = MovieManagerCommandAddMultipleMoviesByFile.performExcludeParantheses(value, false).trim();
+
+    		if (MovieManager.getConfig().getUseLanguageSpecificTitle() && value.indexOf("[" + languageCode + "]") != -1) {
+
+    			if (MovieManager.getConfig().getIncludeAkaLanguageCodes()) {
+    				akaKeys.add(0, model.getTitle());
+    				akaValues.add(0, originalTitle + " (Original)");
+    			}
+    			else if (removeDuplicates && akaKeys.indexOf(model.getTitle()) != -1) {
+    				
+    				akaKeys.remove(model.getTitle());
+    				akaValues.remove(model.getTitle());
+    				
+    				akaKeys.add(0, model.getTitle());
+    				akaValues.add(0, model.getTitle());
+    			}
+    			else  {
+    				akaKeys.add(0, originalTitle);	
+    				akaValues.add(0, originalTitle);
+    			}	
+    			setTitle(key);
+    		}
+
+    		boolean allAkaTitles = MovieManager.getConfig().getStoreAllAkaTitles();
+
+    		if (!(!allAkaTitles && value.indexOf("[") != -1) || removeDuplicates) {
+
+    			index = akaKeys.indexOf(key);
+		
+    			//  Adds the language code to the existing title 
+    			if (removeDuplicates && index != -1) {
+
+    				if (value.indexOf("[") != -1) {
+    					value =  value.replaceFirst(key, "");
+    					tmp = akaValues.get(index) + " " + value.trim();
+    					akaValues.set(index, tmp);
+    				}   
+    			}
+    			else if (!(!allAkaTitles && value.indexOf("[") != -1)) {
+    				
+    				/* Removes comments and language code */
+    				if (!MovieManager.getConfig().getIncludeAkaLanguageCodes()) {
+    					value = key;
+    				}
+    					
+    				if (!value.equals(model.getTitle())) {
+    					akaKeys.add(key);
+    					akaValues.add(value);
+    				}
+    				
+    			}
+    		}
+    	}
+
+    	while (!akaValues.isEmpty()) {
+    		newAkaTitles += akaValues.remove(0) + "\r\n";
+    	}   
+
+    	model.setAka(newAkaTitles.trim());
+
+    	try {
+    		modelChanged(this, "GeneralInfo");
+    	} catch (IllegalEventTypeException e) {
+    		log.error("IllegalEventTypeException:" + e.getMessage());
+    	}
+
     }
-    
+
     
     public void clearModel() {
     	clearModel(false);
