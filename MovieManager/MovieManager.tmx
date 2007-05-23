@@ -117,13 +117,13 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>OK</seg>
+                <seg>Close</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>OK</seg>
+                <seg>Close</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.button-ok.tooltip">
@@ -132,13 +132,13 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Save info</seg>
+                <seg>Save settings</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Save info</seg>
+                <seg>Save settings</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.filechooser.select-movie-directory.approve.text">
