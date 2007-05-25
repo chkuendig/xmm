@@ -339,7 +339,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	JPanel listPanel = makeListPanel();
 	
 	/* Buttons */
-	buttonOk = new JButton("OK");
+	buttonOk = new JButton("Close");
 	buttonOk.setToolTipText("Save info");
 	buttonOk.setActionCommand("DialogAddMultipleMovies - OK");
 	buttonOk.addActionListener(this);

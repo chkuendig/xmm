@@ -2442,13 +2442,13 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Current options demand that the covers directory must be located inside the install directory when using relative path</seg>
+                <seg>Current options demand that the covers directory must be located inside the install directory when using relative path.</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Current options demand that the covers directory must be located inside the install directory when using relative path</seg>
+                <seg>Current options demand that the covers directory must be located inside the install directory when using relative path.</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogFolders.alert.database-relative-install.message">
@@ -7056,7 +7056,7 @@
                 <seg>Add Episode</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="MovieManagerCommandConvertDatabase.alert.message.empty-database">
+        <tu datatype="Text" tuid="MovieManagerCommandConvertDatabase.alert.empty-database.message">
             <prop type="x-Group">MovieManagerCommand</prop>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
@@ -7074,7 +7074,7 @@
                 <seg>Windows Only</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="MovieManagerCommandConvertDatabase.alert.title.empty-database">
+        <tu datatype="Text" tuid="MovieManagerCommandConvertDatabase.alert.empty-database.title">
             <prop type="x-Group">MovieManagerCommand</prop>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">

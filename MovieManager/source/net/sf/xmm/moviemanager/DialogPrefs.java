@@ -1344,6 +1344,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		DialogAlert alert = new DialogAlert(this, Localizer.getString("dialogprefs.alert.title.alert"), Localizer.getString("dialogprefs.alert.message.covers-dir-not-existing")); //$NON-NLS-1$ //$NON-NLS-2$
 		GUIUtil.showAndWait(alert, true);
 		
+		config.setStoreCoversLocally(true);	// need to save enabled option to allow DialogFolders to determine whether to check paths or not
 		DialogFolders dialogFolders = new DialogFolders();
 		GUIUtil.showAndWait(dialogFolders, true);
 		
