@@ -299,41 +299,42 @@ public class DialogImport extends JDialog implements ActionListener {
 	extremePanel.add(extremePathPanel, BorderLayout.SOUTH);
 	
     
-    /* XML file path */
-    xmlFilePath = new JTextField(27);
-    xmlFilePath.setText(MovieManager.getConfig().getImportTextfilePath());
-    
-    browseForXMLFile = new JButton("Browse");
-    browseForXMLFile.setToolTipText("Browse for an XML file");
-    browseForXMLFile.setActionCommand("Browse XML File");
-    browseForXMLFile.addActionListener(this);
-    
-    JPanel xmlPathPanel = new JPanel();
-    xmlPathPanel.setLayout(new FlowLayout());
-    xmlPathPanel.add(xmlFilePath);
-    xmlPathPanel.add(browseForXMLFile);
-    
-    xmlPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," File to Import "), BorderFactory.createEmptyBorder(0,0,0,0))));
-    
-    JLabel xmlLabel = new JLabel("Import movies from a XML file (Must be exported by MeD's Movie Manager)");
-    JPanel xmlLabelPanel = new JPanel();
-    xmlLabelPanel.add(xmlLabel);
-    
-    JPanel xmlFilePanel = new JPanel(new BorderLayout());
-    xmlFilePanel.add(xmlLabelPanel, BorderLayout.NORTH);
-    xmlFilePanel.add(xmlPathPanel, BorderLayout.SOUTH);
-    
-    
+	/* XML file path */
+	xmlFilePath = new JTextField(27);
+	xmlFilePath.setText(MovieManager.getConfig().getImportXmlfilePath());
+	
+	browseForXMLFile = new JButton("Browse");
+	browseForXMLFile.setToolTipText("Browse for an XML file");
+	browseForXMLFile.setActionCommand("Browse XML File");
+	browseForXMLFile.addActionListener(this);
+	
+	JPanel xmlPathPanel = new JPanel();
+	xmlPathPanel.setLayout(new FlowLayout());
+	xmlPathPanel.add(xmlFilePath);
+	xmlPathPanel.add(browseForXMLFile);
+	
+	xmlPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," File to Import "), BorderFactory.createEmptyBorder(0,0,0,0))));
+	
+	JLabel xmlLabel = new JLabel("Import movies from a XML file (Must be exported by MeD's Movie Manager)");
+	JPanel xmlLabelPanel = new JPanel();
+	xmlLabelPanel.add(xmlLabel);
+
+	JPanel xmlFilePanel = new JPanel(new BorderLayout());
+	xmlFilePanel.add(xmlLabelPanel, BorderLayout.NORTH);
+	xmlFilePanel.add(xmlPathPanel, BorderLayout.SOUTH);
+
+
 	/* Tabbed pane */
 	tabbedPane = new JTabbedPane();
 	tabbedPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 	tabbedPane.add("Text File", textFilePanel);
 	tabbedPane.add("Excel Spreadsheet", excelFilePanel);
 	
-	if (FileUtil.isWindows())
-	    tabbedPane.add("Extreme Movie Manager database|", extremePanel);
+	// if (FileUtil.isWindows())	/* why only Windows? And if so, we cannot just omit this as it will mix up */
+					/* the tab numbers and break all following tabs (such as XML import) */
+	    tabbedPane.add("Extreme Movie Manager database", extremePanel);
 	
-    tabbedPane.add("XML File", xmlFilePanel);
+	tabbedPane.add("XML File", xmlFilePanel);
     
 	/* Add to list */
 	JPanel listPanel = makeListPanel();
@@ -499,6 +500,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	MovieManager.getConfig().setImportTextfilePath(textFilePath.getText());
 	MovieManager.getConfig().setImportExcelfilePath(excelFilePath.getText());
 	MovieManager.getConfig().setImportExtremefilePath(extremeFilePath.getText());
+	MovieManager.getConfig().setImportXmlfilePath(xmlFilePath.getText());
 	
 	if (listChooser != null) {
 	    MovieManager.getConfig().setMultiAddList((String) listChooser.getSelectedItem());
@@ -523,7 +525,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	case 0 : return textFilePath.getText();
 	case 1 : return excelFilePath.getText();
 	case 2 : return extremeFilePath.getText();
-    case 3 : return xmlFilePath.getText();
+	case 3 : return xmlFilePath.getText();
 	}
 	return "";
     }

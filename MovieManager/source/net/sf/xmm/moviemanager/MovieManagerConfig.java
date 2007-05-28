@@ -194,6 +194,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String importTextfilePath = "";
 	private String importExcelfilePath = "";
 	private String importExtremefilePath = "";
+	private String importXmlfilePath = "";
 
 	private String lastFileFilterMovieInfoUsed = "";
 
@@ -747,6 +748,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	public void setImportExtremefilePath(String importExtremefilePath) {
 		this.importExtremefilePath = importExtremefilePath;
+	}
+
+	public String getImportXmlfilePath() {
+		return importXmlfilePath;
+	}
+
+	public void setImportXmlfilePath(String importXmlfilePath) {
+		this.importXmlfilePath = importXmlfilePath;
 	}
 
 	public boolean getMultiAddListEnabled() {
@@ -1679,6 +1688,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 
 
+			value = (String) config.get("importXmlfilePath:");
+
+			if (value != null) {
+				setImportXmlfilePath(value);
+			}
+
+
 			value = (String) config.get("useJTreeIcons:");
 
 			if (value != null) {
@@ -2114,6 +2130,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 settings.append(lineSeparator);
 		 settings.append("importExtremefilePath:" + getImportExtremefilePath());
+
+		 settings.append(lineSeparator);
+		 settings.append("importXmlfilePath:" + getImportXmlfilePath());
 
 		 settings.append(lineSeparator);
 		 settings.append("useJTreeIcons:" + getUseJTreeIcons());
