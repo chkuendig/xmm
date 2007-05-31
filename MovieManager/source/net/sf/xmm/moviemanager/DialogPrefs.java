@@ -89,7 +89,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
     
     private JCheckBox storeAllAvailableAkaTitles;
-    private JCheckBox noDuplicateAkaTitles;
     private JCheckBox includeAkaLanguageCodes;
     private JCheckBox useLanguageSpecificTitle;
     
@@ -640,7 +639,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	akaTitlePanel.setLayout(new GridLayout(0, 1));
     
 	storeAllAvailableAkaTitles = new JCheckBox("Store all available aka titles");
-	noDuplicateAkaTitles = new JCheckBox("No duplicate aka titles");
 	includeAkaLanguageCodes = new JCheckBox("Include comments and language codes");
 	useLanguageSpecificTitle = new JCheckBox("Replace original title with aka title (with languageCode):");
     
@@ -682,7 +680,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	}
     
     akaTitlePanel.add(storeAllAvailableAkaTitles);
-    akaTitlePanel.add(noDuplicateAkaTitles);
     akaTitlePanel.add(includeAkaLanguageCodes);
     akaTitlePanel.add(useLanguageSpecificTitle);
     
@@ -699,17 +696,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
     
 	storeAllAvailableAkaTitles.addItemListener(this);
 	useLanguageSpecificTitle.addItemListener(this);
-    
-	if (!config.getStoreAllAkaTitles()) {
-	    noDuplicateAkaTitles.setEnabled(false);
-	}
-    
+      
 	if (config.getStoreAllAkaTitles())
 	    storeAllAvailableAkaTitles.setSelected(true);
-        
-	if (config.getNoDuplicateAkaTitles())
-	    noDuplicateAkaTitles.setSelected(true);
-   
+    
 	if (config.getIncludeAkaLanguageCodes())
 	    includeAkaLanguageCodes.setSelected(true);
     
@@ -1246,13 +1236,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	else
 	    config.setStoreAllAkaTitles(false);
     
-    
-	if (noDuplicateAkaTitles.isSelected())
-	    config.setNoDuplicateAkaTitles(true);
-	else
-	    config.setNoDuplicateAkaTitles(false);
-    
-   
+     
 	if (includeAkaLanguageCodes.isSelected())
 	    config.setIncludeAkaLanguageCodes(true);
 	else
@@ -1344,7 +1328,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		DialogAlert alert = new DialogAlert(this, Localizer.getString("dialogprefs.alert.title.alert"), Localizer.getString("dialogprefs.alert.message.covers-dir-not-existing")); //$NON-NLS-1$ //$NON-NLS-2$
 		GUIUtil.showAndWait(alert, true);
 		
-		config.setStoreCoversLocally(true);	// need to save enabled option to allow DialogFolders to determine whether to check paths or not
+		// need to save enabled option to allow DialogFolders to determine whether to check paths or not
+		config.setStoreCoversLocally(true); 
+
 		DialogFolders dialogFolders = new DialogFolders();
 		GUIUtil.showAndWait(dialogFolders, true);
 		
@@ -1798,25 +1784,15 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
        
     
 	/* Misc - Aka title checkboxes */
-    
-	if (source.equals(storeAllAvailableAkaTitles)) {
-	    if (storeAllAvailableAkaTitles.isSelected()) {
-		noDuplicateAkaTitles.setEnabled(true);
-            }
-	    else {
-		noDuplicateAkaTitles.setEnabled(false);
-	    }
-	}
-    
+       
 	if (source.equals(useLanguageSpecificTitle)) {
     
 	    if (useLanguageSpecificTitle.isSelected())
-		languageCodeSelector.setEnabled(true);
+	    	languageCodeSelector.setEnabled(true);
 	    else
 	        languageCodeSelector.setEnabled(false);
 	}
-	
-	
+		
 	if (source.equals(browserOptionOpera)) {
         setBrowserComponentsEnabled();
 	}
