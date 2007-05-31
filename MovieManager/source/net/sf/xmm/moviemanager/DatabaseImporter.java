@@ -144,6 +144,8 @@ public class DatabaseImporter {
             /* Setting the priority of the thread to 4 to give the GUI room to update more often */
             Thread.currentThread().setPriority(4);
             
+            System.err.print("addToThisList:" + addToThisList + "\n\n");
+            
             if (filePath != null) {
                 
                 try {
@@ -162,7 +164,7 @@ public class DatabaseImporter {
                 lengthOfTask = movielist.size();
                 transferred = new String[lengthOfTask + 2];
                 
-                String title;
+                String title = "";
                 
                 /* Extreme cover path */
                 //File tempFile = new File(filePath);
@@ -173,26 +175,29 @@ public class DatabaseImporter {
                     
                     cancel = false;
                     
+                    // Text
+                    if (importMode == importSettings.IMPORT_TEXT) {
+                    	title = (String) movielist.get(i);
+                    }
                     /* Excel */
-                    if (importMode == 1) {
-                        title = ((ModelMovie) movielist.get(i)).getTitle();
-                    } /* Extreme movie manager */
-                    else if (importMode == 2) {
-                        title = ((ModelExtremeMovie) movielist.get(i)).title;
+                    else if (importMode == importSettings.IMPORT_EXCEL) {
+                    	title = ((ModelMovie) movielist.get(i)).getTitle();
                     } /* XML */
-                    else if (importMode == 3) {
-                        
-                        if (movielist.get(i) instanceof ModelMovie)
-                            title = ((ModelMovie) movielist.get(i)).getTitle();
-                        else if (movielist.get(i) instanceof ModelSeries) {
-                            title = ((ModelSeries) movielist.get(i)).getMovie().getTitle();
-                        }
-                        else
-                            continue;
-                    } // Text
-                    else
-                        title = (String) movielist.get(i);
-                    
+                    else if (importMode == importSettings.IMPORT_XML) {
+
+                    	if (movielist.get(i) instanceof ModelMovie)
+                    		title = ((ModelMovie) movielist.get(i)).getTitle();
+                    	else if (movielist.get(i) instanceof ModelSeries) {
+                    		title = ((ModelSeries) movielist.get(i)).getMovie().getTitle();
+                    	}
+                    	else
+                    		continue;
+                    } 
+                    /* Extreme movie manager */
+                    else if (importMode == importSettings.IMPORT_EXTREME) {
+                    	title = ((ModelExtremeMovie) movielist.get(i)).title;
+                    }
+                   
                     if (!title.equals("")) {
                         
                         /* First resetting the info already present */
@@ -218,29 +223,30 @@ public class DatabaseImporter {
                             int ret = -1; 
                             
                             /* excel */
-                            if (importMode == 1) {
+                            if (importMode == ModelImportSettings.IMPORT_EXCEL) {
                                 ret = addExcelMovie(i);
                             }
                             /* Extreme movie manager */
-                            else if (importMode == 2) {
+                            else if (importMode == ModelImportSettings.IMPORT_EXTREME) {
                                 ret = addExtremeMovie(i);
                             }/* XML */
-                            else if (importMode == 3) {
+                            else if (importMode == ModelImportSettings.IMPORT_XML) {
                                 ret = addXMLMovie(i);
                                 title = "";
                                 
                             } /* Text file */
-                            else {
+                            else if (importMode == ModelImportSettings.IMPORT_TEXT) {
                             	modelMovieInfo.model.setTitle(title);
-                            
-                                try {
-                                    ret = (modelMovieInfo.saveToDatabase(addToThisList)).getKey();
-                                } catch (Exception e) {
-                                    log.error("Saving to database failed.", e);
-                                    ret = -1; 
-                                }
                             }
-                            
+
+                            try {
+                            	ret = (modelMovieInfo.saveToDatabase(addToThisList)).getKey();
+                            } catch (Exception e) {
+                            	log.error("Saving to database failed.", e);
+                            	ret = -1; 
+                            }
+                        
+
                             if (ret == -1 && MovieManager.getIt().getDatabase().getErrorMessage().equals("Data truncation cover")) {
                                 modelMovieInfo.setCover("", null);
                                     
@@ -657,7 +663,7 @@ public class DatabaseImporter {
 	    ArrayList movieList = null;
             
             /* Textfile */
-            if (importMode == 0) {
+            if (importMode == ModelImportSettings.IMPORT_TEXT) {
                 
                 File textFile = new File(filePath);
                 
@@ -682,7 +688,7 @@ public class DatabaseImporter {
                 }
                 
                 /* Excel spreadsheet */
-            } else if (importMode == 1) {
+            } else if (importMode == ModelImportSettings.IMPORT_EXCEL) {
                 
                 try {
                     
@@ -737,7 +743,7 @@ public class DatabaseImporter {
                 }	
                 
                 /* extreme movie manager */
-            } else if (importMode == 2) {
+            } else if (importMode == ModelImportSettings.IMPORT_EXTREME) {
                 DatabaseExtreme extremeDb = new DatabaseExtreme(filePath);
                 extremeDb.setUp();
                 
@@ -745,7 +751,7 @@ public class DatabaseImporter {
                 
                 
                 /* XML */
-            } else if (importMode == 3) {
+            } else if (importMode == ModelImportSettings.IMPORT_XML) {
                 
                 final ArrayList list = movieList;
                 
@@ -754,7 +760,7 @@ public class DatabaseImporter {
                 
                 Unmarshaller unmarshaller = new Unmarshaller(ModelExportXML.class);
                 //unmarshaller.setDebug(true);
-                
+                unmarshaller.setWhitespacePreserve(true);
                 unmarshaller.setMapping(mapping);
                 
                 File xmlFile = new File(filePath);
@@ -769,16 +775,16 @@ public class DatabaseImporter {
                     log.error("XML file not found:" + xmlFile.getAbsolutePath());
                     return null;
                 }
-                
+
                 tmp = unmarshaller.unmarshal(reader);
-                
-		if (tmp instanceof ModelExportXML) {
-		    movieList = ((ModelExportXML) tmp).getCombindedList();
-		}
-	    }
+
+                if (tmp instanceof ModelExportXML) {
+                	movieList = ((ModelExportXML) tmp).getCombindedList();
+                }
+            }
             return movieList;
         }
-               
+
 	
         /**
          * Gets the IMDB info for movies (multiAdd)
