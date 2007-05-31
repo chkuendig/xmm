@@ -516,8 +516,10 @@ public class MovieManager {
     
     public void processDatabaseError() {
         
-        String error = database.getErrorMessage();
+    	String error = database.getErrorMessage();
         
+    	System.err.println("processDatabaseError:" + error);
+    	
         if (error.equals("Connection reset")) { //$NON-NLS-1$
             
             dialogMovieManager.setDatabaseComponentsEnable(false);
@@ -530,11 +532,11 @@ public class MovieManager {
                 setDatabase(new DatabaseMySQL(database.getPath()), false);
             }
         }
-        else if (error.equals("connection closed")) { //$NON-NLS-1$
+        else if (error.equals("Connection closed")) { //$NON-NLS-1$
             
             dialogMovieManager.setDatabaseComponentsEnable(false);
             
-            DialogQuestion question = new DialogQuestion("connection closed", "<html>The connection to the MySQL server has closed.<br>" +
+            DialogQuestion question = new DialogQuestion("Connection closed", "<html>The connection to the MySQL server has closed.<br>" +
             "Reconnect now?</html>");
             GUIUtil.showAndWait(question, true);
             
