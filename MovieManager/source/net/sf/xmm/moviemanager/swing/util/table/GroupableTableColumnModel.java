@@ -1,3 +1,4 @@
+
 package net.sf.xmm.moviemanager.swing.util.table;
 
 import java.util.ArrayList;
@@ -21,6 +22,9 @@ public class GroupableTableColumnModel extends DefaultTableColumnModel {
      */    
     protected ArrayList columnGroups = new ArrayList();
     
+	public ArrayList getColumnGroups() {
+		return columnGroups;
+	}
 
     /**
      * Add a new columngroup.

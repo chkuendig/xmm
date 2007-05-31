@@ -1,3 +1,4 @@
+
 package net.sf.xmm.moviemanager.swing.util.table;
 
 import java.awt.Component;
@@ -14,6 +15,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import javax.swing.plaf.ComponentUI;
 
 /**
  * This class paints groupable header cells. These can be a combination of
@@ -27,6 +29,13 @@ public class GroupableTableHeaderUI extends BasicTableHeaderUI {
      */
     protected Vector paintedGroups = new Vector();
     
+
+
+	public static ComponentUI createUI(JComponent c) {
+		return new GroupableTableHeaderUI();
+	}
+
+	
     /**
      * Paint a representation of the table header.
      * @param g the Graphics context in which to paint
