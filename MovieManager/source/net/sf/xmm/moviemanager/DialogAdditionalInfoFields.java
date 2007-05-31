@@ -42,6 +42,8 @@ public class DialogAdditionalInfoFields extends JDialog {
   
     private java.util.List _toAdd = new ArrayList();
   
+    private ArrayList additionalInfoFieldList;
+    
     private java.util.List _originalExtraList;
     
     private ArrayList fieldsList;
@@ -77,7 +79,9 @@ public class DialogAdditionalInfoFields extends JDialog {
 	setResizable(false);
 		
 	/* fieldsList contains all the additional info fields  */
-	fieldsList = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
+	additionalInfoFieldList = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
+	
+	fieldsList = (ArrayList) additionalInfoFieldList.clone();
 	
 	/* Contains all the existing extra info fields */
 	_originalExtraList = MovieManager.getIt().getDatabase().getExtraInfoFieldNames();
@@ -445,14 +449,18 @@ public class DialogAdditionalInfoFields extends JDialog {
 	    /* Gets the field to remove... */
 	    String field = (String)((DefaultListModel)getActiveFields().getModel()).getElementAt(selectedIndex);
 	    
+	    // Non-removable field
+	    if (additionalInfoFieldList.contains(field))
+	    	return;
+	    
 	     /* Removes the field from the add list... */
 	    if (_toAdd.contains(field)) {
-		_toAdd.remove(field);
+	    	_toAdd.remove(field);
 	    }
 	    
 	    /* Adds the field to the remove list if it exists in the original... */
 	    if (!_toRemove.contains(field) && _originalExtraList.contains(field)) {
-		_toRemove.add(field);
+	    	_toRemove.add(field);
 	    }
 	    
 	    /* Removes the field from the active fields list */
