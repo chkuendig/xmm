@@ -151,7 +151,7 @@ public class ModelMovie extends ModelEntry {
 
 	public void updateAdditionalInfoData() {
 	
-		if (additionalInfo.hasOldExtraInfoFieldNames())
+		if (additionalInfo != null && additionalInfo.hasOldExtraInfoFieldNames())
 			additionalInfo.updateExtraInfoFieldNames();
 		
 		if (getKey() != -1) {
@@ -160,7 +160,6 @@ public class ModelMovie extends ModelEntry {
 
 			if (tmp != null) {
 				setAdditionalInfo(tmp);
-				hasAdditionalInfoData = true;
 			}
 		}
 		
