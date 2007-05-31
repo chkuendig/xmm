@@ -25,6 +25,13 @@ import javax.swing.JTable;
 
 public class ModelImportSettings {
 
+	
+	public final static int IMPORT_TEXT = 0;
+	public final static int IMPORT_EXCEL = 1;
+	public final static int IMPORT_XML = 2;
+    public final static int IMPORT_CSV = 3;
+    public final static int IMPORT_EXTREME = 4;
+	
     public JTable table;
     
     public ModelImportSettings() {
