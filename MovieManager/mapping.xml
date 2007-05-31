@@ -271,6 +271,16 @@
          </field>
 
 
+		 
+	<field name="extraInfoFieldNames" type="string" collection="arraylist" get-method="getExtraInfoFieldNames2" set-method="setExtraInfoFieldNames2">
+	<bind-xml name="FieldNames" location="ExtraInfo" node="element"/>
+         </field>
+
+	<field name="extraInfoFieldValues" type="string" collection="arraylist" get-method="getExtraInfoFieldValues"  set-method="setExtraInfoFieldValues">
+	<bind-xml name="FieldValues" location="ExtraInfo" node="element"/>
+         </field>
+		
+
 </class>
 
    <class name="net.sf.xmm.moviemanager.models.ModelSeries">
