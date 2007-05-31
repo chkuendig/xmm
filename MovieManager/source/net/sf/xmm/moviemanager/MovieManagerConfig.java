@@ -174,7 +174,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String titleLanguageCode = "";
 
 	private boolean storeAllAkaTitles = false;
-	private boolean noDuplicateAkaTitles = false;
 	private boolean includeAkaLanguageCodes = false;
 	private boolean useLanguageSpecificTitle = false;
 
@@ -193,8 +192,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	/* Import */
 	private String importTextfilePath = "";
 	private String importExcelfilePath = "";
+	private String importXMLfilePath = "";
+	private String importCSVfilePath = "";
 	private String importExtremefilePath = "";
-	private String importXmlfilePath = "";
 
 	private String lastFileFilterMovieInfoUsed = "";
 
@@ -219,8 +219,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	protected boolean multiAddListEnabled = false;
 
 	private int useRelativeDatabasePath = 0;
-	private int useRelativeCoversPath = 0;
-	private int useRelativeQueriesPath = 0;
+	private int useRelativeCoversPath = 1;  // 0 == absolute, 1 == database, 2 == program location 
+	private int useRelativeQueriesPath = 1; // 0 == absolute, 1 == database, 2 == program location 
 
 	private String coversPath;
 	private String queriesPath;
@@ -660,14 +660,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.storeAllAkaTitles = storeAllAkaTitles;
 	}
 
-	public boolean getNoDuplicateAkaTitles() {
-		return noDuplicateAkaTitles;
-	}
-
-	public void setNoDuplicateAkaTitles(boolean noDuplicateAkaTitles) {
-		this.noDuplicateAkaTitles = noDuplicateAkaTitles;
-	}
-
 	public boolean getIncludeAkaLanguageCodes() {
 		return includeAkaLanguageCodes;
 	}
@@ -742,20 +734,29 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.importExcelfilePath = importExcelfilePath;
 	}
 
+	public String getImportXMLfilePath() {
+		return importXMLfilePath;
+	}
+
+	public void setImportXMLfilePath(String importXMLfilePath) {
+		this.importXMLfilePath = importXMLfilePath;
+	}
+
+	public String getImportCSVfilePath() {
+		return importCSVfilePath;
+	}
+
+	public void setImportCSVfilePath(String importCSVfilePath) {
+		this.importCSVfilePath = importCSVfilePath;
+	}
+
+	
 	public String getImportExtremefilePath() {
 		return importExtremefilePath;
 	}
 
 	public void setImportExtremefilePath(String importExtremefilePath) {
 		this.importExtremefilePath = importExtremefilePath;
-	}
-
-	public String getImportXmlfilePath() {
-		return importXmlfilePath;
-	}
-
-	public void setImportXmlfilePath(String importXmlfilePath) {
-		this.importXmlfilePath = importXmlfilePath;
 	}
 
 	public boolean getMultiAddListEnabled() {
@@ -1680,18 +1681,24 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setImportExcelfilePath(value);
 			}
 
+			value = (String) config.get("importXMLfilePath:");
 
+			if (value != null) {
+				setImportXMLfilePath(value);
+			}
+
+			
+			value = (String) config.get("importCSVfilePath:");
+
+			if (value != null) {
+				setImportCSVfilePath(value);
+			}
+
+			
 			value = (String) config.get("importExtremefilePath:");
 
 			if (value != null) {
 				setImportExtremefilePath(value);
-			}
-
-
-			value = (String) config.get("importXmlfilePath:");
-
-			if (value != null) {
-				setImportXmlfilePath(value);
 			}
 
 
@@ -1781,14 +1788,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setStoreAllAkaTitles(new Boolean(value).booleanValue());
 			}
 
-
-			value = (String) config.get("noDuplicateAkaTitles:");
-
-			if (value != null) {
-				setNoDuplicateAkaTitles(new Boolean(value).booleanValue());
-			}
-
-
+			
 			value = (String) config.get("includeAkaLanguageCodes:");
 
 			if (value != null) {
@@ -2129,10 +2129,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("importExcelfilePath:" + getImportExcelfilePath());
 
 		 settings.append(lineSeparator);
-		 settings.append("importExtremefilePath:" + getImportExtremefilePath());
+		 settings.append("importXMLfilePath:" + getImportXMLfilePath());
 
 		 settings.append(lineSeparator);
-		 settings.append("importXmlfilePath:" + getImportXmlfilePath());
+		 settings.append("importCSVfilePath:" + getImportCSVfilePath());
+
+		 settings.append(lineSeparator);
+		 settings.append("importExtremefilePath:" + getImportExtremefilePath());
 
 		 settings.append(lineSeparator);
 		 settings.append("useJTreeIcons:" + getUseJTreeIcons());
@@ -2166,9 +2169,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 settings.append(lineSeparator);
 		 settings.append("storeAllAkaTitles:"+ getStoreAllAkaTitles());
-
-		 settings.append(lineSeparator);
-		 settings.append("noDuplicateAkaTitles:"+ getNoDuplicateAkaTitles());
 
 		 settings.append(lineSeparator);
 		 settings.append("includeAkaLanguageCodes:"+ getIncludeAkaLanguageCodes());
