@@ -76,8 +76,10 @@ public class DriveInfo {
 		} catch(Win32Exception ex) { 
 			valid = false;
 			log.error("Drive is not available: " + ex.getErrorCode());
-			log.error(ex.getMessage(), ex);
-			return;
+			log.error(ex.getMessage());
+		} catch(NoClassDefFoundError ex) { 
+			valid = false;
+			log.error(ex.getMessage());
 		}
 	}
 }
