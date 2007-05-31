@@ -56,6 +56,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
@@ -66,7 +68,7 @@ import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 import org.apache.log4j.Logger;
 
 
-public class DialogFolders extends JDialog implements ItemListener {
+public class DialogFolders extends JDialog implements ItemListener, DocumentListener {
     
     static Logger log = Logger.getRootLogger();
     
@@ -91,6 +93,9 @@ public class DialogFolders extends JDialog implements ItemListener {
     private JTextField textFieldLoadDatabase;
     private JTextField textFieldDatabase;
     
+    private Color invalidPath = new Color(233, 180, 180);
+    private boolean validCoversDirectory = false;
+    private boolean validQueriesDirectory = false;
     
     /**
      * The Constructor.
@@ -120,7 +125,7 @@ public class DialogFolders extends JDialog implements ItemListener {
         /* Dialog properties...*/
         setTitle(Localizer.getString("DialogFolders.title")); //$NON-NLS-1$
         setModal(true);
-        setResizable(true);
+        setResizable(false);
         
         /* Folders panel...*/
         JPanel panelFolders = new JPanel();
@@ -139,13 +144,12 @@ public class DialogFolders extends JDialog implements ItemListener {
         panelFolders.add(labelCovers,constraints);
         
         textFieldCovers = new JTextField(MovieManager.getConfig().getCoversFolder(),30);
-        if (! MovieManager.getConfig().getStoreCoversLocally() && (MovieManager.getIt().getDatabase() instanceof DatabaseMySQL))
-            textFieldCovers.setEditable(false);
         constraints = new GridBagConstraints();
         constraints.gridx = 1;
         constraints.gridy = 0;
         constraints.insets = new Insets(5,5,5,5);
         panelFolders.add(textFieldCovers,constraints);
+        textFieldCovers.getDocument().addDocumentListener(this);
         
         JButton buttonCovers = new JButton(Localizer.getString("DialogFolders.browse-covers")); //$NON-NLS-1$
         buttonCovers.setToolTipText(Localizer.getString("DialogFolders.browse-covers-tooltip")); //$NON-NLS-1$
@@ -173,16 +177,12 @@ public class DialogFolders extends JDialog implements ItemListener {
         panelFolders.add(labelQueries,constraints);
         
         textFieldQueries = new JTextField(MovieManager.getConfig().getQueriesFolder(),30);
-        if (! MovieManager.getConfig().getStoreCoversLocally() && (MovieManager.getIt().getDatabase() instanceof DatabaseMySQL))
-            textFieldQueries.setEditable(false);
         constraints = new GridBagConstraints();
         constraints.gridx = 1;
         constraints.gridy = 1;
         constraints.insets = new Insets(5,5,0,5);
         panelFolders.add(textFieldQueries,constraints);
-        
-        
-        
+        textFieldQueries.getDocument().addDocumentListener(this);
         
         JButton buttonQueries = new JButton(Localizer.getString("DialogFolders.browse-queries")); //$NON-NLS-1$
         buttonQueries.setToolTipText(Localizer.getString("DialogFolders.browse-queries-tooltip")); //$NON-NLS-1$
@@ -501,6 +501,8 @@ public class DialogFolders extends JDialog implements ItemListener {
         getContentPane().add(all, BorderLayout.NORTH);
         getContentPane().add(bottomPanel, BorderLayout.SOUTH);
         
+        processPathValidation("Covers&Queries");
+        
         /* Packs and sets location... */
         pack();
         setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
@@ -542,6 +544,8 @@ public class DialogFolders extends JDialog implements ItemListener {
     private void executeCommandSave() {
         /* Checks if the specified paths exist and if so sets the new folders... */
         
+    	//validQueriesDirectory
+    	
         File coversFolder;
         File queriesFolder;
         String coversPath = getCoversPath();
@@ -550,37 +554,19 @@ public class DialogFolders extends JDialog implements ItemListener {
         /* Relative covers path enabled */
         if (relativeCoversEnabled.isSelected()) {
             
+        	// Program location 
             if (relativeCoversProgram.isSelected()) {
-                
-                if ((coversPath.indexOf(FileUtil.getUserDir()) == -1) && (!new File(FileUtil.getUserDir()+ coversPath).isDirectory())) {
-                    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.covers-inside-install.message") + "\n(" + FileUtil.getUserDir()+coversPath + ")"); 
-                    GUIUtil.showAndWait(alert, true);
-                    return;
-                }
-                
-                if (coversPath.equals("") || !(coversFolder = new File(coversPath)).isDirectory()) { //$NON-NLS-1$
-                    if (coversPath.equals("") || !(coversFolder = new File(FileUtil.getUserDir()+ coversPath)).isDirectory()) { //$NON-NLS-1$
-                        DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"),Localizer.getString("DialogFolders.alert-covers-exist") + "\n(" + FileUtil.getUserDir()+coversPath + ")"); 
-                        GUIUtil.showAndWait(alert, true);
-                        return;
-                    }
-                }
                 
                 if (coversPath.indexOf(FileUtil.getUserDir()) != -1)
                     coversPath = coversPath.substring(FileUtil.getUserDir().length()+1, coversPath.length());
                 
                 MovieManager.getConfig().setUseRelativeCoversPath(2);
             }
+            // Database
             else {
                 String dbPath = MovieManager.getConfig().getDatabasePath(true);
                 dbPath = dbPath.substring(0, dbPath.lastIndexOf(FileUtil.getDirSeparator()));
-                
-                if ((coversPath.indexOf(dbPath) == -1) && (!new File(dbPath + FileUtil.getDirSeparator() + coversPath).isDirectory())) {
-                    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert-covers-relative-database")); 
-                    GUIUtil.showAndWait(alert, true);
-                    return;
-                }
-                
+               
                 if (coversPath.indexOf(dbPath) != -1)
                     coversPath = coversPath.substring(dbPath.length()+1, coversPath.length());
                 
@@ -588,17 +574,6 @@ public class DialogFolders extends JDialog implements ItemListener {
             }
         }
         else {
-            if (MovieManager.getConfig().getStoreCoversLocally() || ! (MovieManager.getIt().getDatabase() instanceof DatabaseMySQL)) {
-                /* Do not check path if Covers are stored in MySQL database */
-                coversFolder = new File(coversPath);
-
-                if(!coversFolder.isDirectory()) {
-                        DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"),Localizer.getString("DialogFolders.alert.covers-doesnt-exist.message")); 
-                        GUIUtil.showAndWait(alert, true);
-                        return;
-                }
-                coversPath = coversFolder.getAbsolutePath();
-            }
             MovieManager.getConfig().setUseRelativeCoversPath(0);
         }
         
@@ -608,22 +583,7 @@ public class DialogFolders extends JDialog implements ItemListener {
             
             if (relativeQueriesProgram.isSelected()) {
                 
-                if (queriesPath.indexOf(FileUtil.getUserDir()) == -1 && !(new File(FileUtil.getUserDir(), queriesPath)).isDirectory()) {
-                    
-                    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.queries-inside-install.message") + "\n(" + FileUtil.getUserDir()+queriesPath + ")"); 
-                    GUIUtil.showAndWait(alert, true);
-                    return;
-                }
-                
-                if (queriesPath.equals("") || !(queriesFolder = new File(queriesPath)).isDirectory()) { //$NON-NLS-1$
-                    if (queriesPath.equals("") || !(queriesFolder = new File(FileUtil.getUserDir(), queriesPath)).isDirectory()) { //$NON-NLS-1$
-                        DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.queries-doesnt-exist.message") + "\n(" + FileUtil.getUserDir()+queriesPath + ")"); 
-                        GUIUtil.showAndWait(alert, true);
-                        return;
-                    }
-                }
-                
-                if (queriesPath.indexOf(FileUtil.getUserDir()) != -1)
+            	if (queriesPath.indexOf(FileUtil.getUserDir()) != -1)
                     queriesPath = queriesPath.substring(FileUtil.getUserDir().length()+1, queriesPath.length());
                 
                 MovieManager.getConfig().setUseRelativeQueriesPath(2);
@@ -631,13 +591,7 @@ public class DialogFolders extends JDialog implements ItemListener {
             else {
                 String dbPath = MovieManager.getConfig().getDatabasePath(true);
                 dbPath = dbPath.substring(0, dbPath.lastIndexOf(FileUtil.getDirSeparator()));
-                
-                if ((queriesPath.indexOf(dbPath) == -1) && (!new File(dbPath, queriesPath).isDirectory())) {
-                    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.message"), Localizer.getString("DialogFolders.alert.queries-relative-database.message")); 
-                    GUIUtil.showAndWait(alert, true);
-                    return;
-                }
-                
+               
                 if (queriesPath.indexOf(dbPath) != -1)
                     queriesPath = queriesPath.substring(dbPath.length()+1, queriesPath.length());
                 
@@ -645,19 +599,7 @@ public class DialogFolders extends JDialog implements ItemListener {
             }
         }
         else {
-            if (MovieManager.getConfig().getStoreCoversLocally() || ! (MovieManager.getIt().getDatabase() instanceof DatabaseMySQL)) {
-                /* Do not check path if Covers are stored in MySQL database */
-
-                queriesFolder = new File(queriesPath);
-
-                if(!queriesFolder.isDirectory()) {
-                    DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert"),Localizer.getString("DialogFolders.alert.queries-doesnt-exist.message")); 
-                    GUIUtil.showAndWait(alert, true);
-                    return;
-                }
-                queriesPath = queriesFolder.getAbsolutePath();
-            }
-            MovieManager.getConfig().setUseRelativeQueriesPath(0);
+        	MovieManager.getConfig().setUseRelativeQueriesPath(0);
         }
         
         if (relativeDatabaseEnabled.isSelected()) {
@@ -684,13 +626,14 @@ public class DialogFolders extends JDialog implements ItemListener {
         else
             MovieManager.getConfig().setDatabasePathPermanent(false);
         
-        /*Sets cover and queries directory*/
+        // Sets cover and queries directory
         MovieManager.getConfig().setCoverAndQueriesPaths(coversPath, queriesPath);
         
         MovieManagerCommandSelect.execute();
         dispose();
     }
     
+   
     
     public void itemStateChanged(ItemEvent event) {
         
@@ -742,40 +685,225 @@ public class DialogFolders extends JDialog implements ItemListener {
             optionDatabase.setEnabled(value);
         }
     }
+
+    
+    //textFieldQueries.setBackground(new Color(233, 180, 180));
+    
+   // textFieldQueries.getDocument().addDocumentListener(myListener);
+    
+    //Gives notification that an attribute or set of attributes changed.
+    public void changedUpdate(DocumentEvent e) {
+    	
+    	System.err.println("changedUpdate");
+    	//textFieldQueries
+    	
+    }
+
+    // Gives notification that there was an insert into the document. The range given by the DocumentEvent bounds the freshly inserted region.
+    public void insertUpdate(DocumentEvent e) {
+
+    	if (e.getDocument().equals(textFieldCovers.getDocument()))
+    		processPathValidation("Covers");
+    	else
+    		processPathValidation("Queries");
+    }
+    	
+
+//  Gives notification that a portion of the document has been removed. The range is given in terms of what the view last saw (that is, before updating sticky positions).
+    public void removeUpdate(DocumentEvent e){
+
+    	if (e.getDocument().equals(textFieldCovers.getDocument()))
+    		processPathValidation("Covers");
+    	else
+    		processPathValidation("Queries");
+    	
+    	System.err.println("removeUpdate");
+    }
+
+    
+    public void processPathValidation(String option) {
+    	
+    	File coversFolder;
+    	File queriesFolder;
+    	String coversPath = getCoversPath();
+    	String queriesPath = getQueriesPath();
+
+    	if (option.indexOf("Covers") != -1) {
+
+    		/* Relative covers path enabled */
+    		if (relativeCoversEnabled.isSelected()) {
+
+    			// Relative to program location
+    			if (relativeCoversProgram.isSelected()) {
+
+    				if (new File(coversPath).isDirectory() && (coversPath.indexOf(FileUtil.getUserDir()) == -1)) {
+    					//DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.covers-inside-install.message")); 
+    					textFieldCovers.setBackground(invalidPath);
+    					textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert.covers-inside-install.message"));
+    					validCoversDirectory = false;
+    					return;
+    				}
+
+    				if (!(coversFolder = new File(coversPath)).isDirectory() && !(coversFolder = new File(FileUtil.getUserDir(), coversPath)).isDirectory()) { //$NON-NLS-1$
+    					//DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"),Localizer.getString("DialogFolders.alert-covers-exist")); 
+    					textFieldCovers.setBackground(invalidPath);
+    					textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert-covers-exist"));
+    					validCoversDirectory = false;
+    					return;
+    				}
+
+    				textFieldCovers.setBackground(Color.WHITE);
+    				textFieldCovers.setToolTipText(null);
+    				validCoversDirectory = true;
+    			}
+    			// Relative to database
+    			else {
+    				String dbPath = MovieManager.getConfig().getDatabasePath(true);
+    				dbPath = dbPath.substring(0, dbPath.lastIndexOf(FileUtil.getDirSeparator()));
+
+    				if ((coversFolder = new File(coversPath)).isDirectory()) {
+
+    					if (coversPath.indexOf(dbPath) == -1) {
+    						textFieldCovers.setBackground(invalidPath);
+    						textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert-covers-relative-database"));
+    						validCoversDirectory = false;
+    						return;
+    					}
+    				}
+    				else if (!(coversFolder = new File(dbPath, coversPath)).isDirectory()) {
+    					textFieldCovers.setBackground(invalidPath);
+    					textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert.covers-doesnt-exist.message"));
+    					validCoversDirectory = false;
+    					return;
+    				}
+
+    				textFieldCovers.setBackground(Color.WHITE);
+    				textFieldCovers.setToolTipText(null);
+    				validCoversDirectory = true;
+    			}
+    		}
+    		else {
+    			coversFolder = new File(coversPath);
+
+    			if (!coversFolder.isDirectory()) {
+    				textFieldCovers.setBackground(invalidPath);
+    				textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert.covers-doesnt-exist.message"));
+    				validCoversDirectory = false;
+    				return;
+    			}
+    			
+    			textFieldCovers.setBackground(Color.WHITE);
+    			textFieldCovers.setToolTipText(null);
+    			validCoversDirectory = true;
+    		}
+    	}
+    	
+    	// Queries
+    	if (option.indexOf("Queries") != -1) {
+
+    		/* Relative covers path enabled */
+    		if (relativeQueriesEnabled.isSelected()) {
+
+    			// Relative to program location
+    			if (relativeQueriesProgram.isSelected()) {
+
+    				if (new File(queriesPath).isDirectory() && (queriesPath.indexOf(FileUtil.getUserDir()) == -1)) {
+    					//DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.covers-inside-install.message")); 
+    					textFieldQueries.setBackground(invalidPath);
+    					textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert.queries-inside-install.message"));
+    					validQueriesDirectory = false;
+    					return;
+    				}
+
+    				if (!(queriesFolder = new File(queriesPath)).isDirectory() && !(queriesFolder = new File(FileUtil.getUserDir(), queriesPath)).isDirectory()) { //$NON-NLS-1$
+    					//DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"),Localizer.getString("DialogFolders.alert-covers-exist")); 
+    					textFieldQueries.setBackground(invalidPath);
+    					textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert-queries-exist"));
+    					validQueriesDirectory = false;
+    					return;
+    				}
+
+    				textFieldQueries.setBackground(Color.WHITE);
+    				textFieldQueries.setToolTipText(null);
+    				validQueriesDirectory = true;
+    			}
+    			// Relative to database
+    			else {
+    				String dbPath = MovieManager.getConfig().getDatabasePath(true);
+    				dbPath = dbPath.substring(0, dbPath.lastIndexOf(FileUtil.getDirSeparator()));
+
+    				if ((queriesFolder = new File(queriesPath)).isDirectory()) {
+
+    					if (queriesPath.indexOf(dbPath) == -1) {
+    						textFieldQueries.setBackground(invalidPath);
+    						textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert-queries-relative-database"));
+    						validQueriesDirectory = false;
+    						return;
+    					}
+    				}
+    				else if (!(queriesFolder = new File(dbPath, queriesPath)).isDirectory()) {
+    					textFieldQueries.setBackground(invalidPath);
+    					textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert.queries-doesnt-exist.message"));
+    					validQueriesDirectory = false;
+    					return;
+    				}
+
+    				textFieldQueries.setBackground(Color.WHITE);
+    				textFieldQueries.setToolTipText(null);
+    				validQueriesDirectory = true;
+    			}
+    		}
+    		else {
+    			queriesFolder = new File(queriesPath);
+
+    			if (!queriesFolder.isDirectory()) {
+    				textFieldQueries.setBackground(invalidPath);
+    				textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert.queries-doesnt-exist.message"));
+    				validQueriesDirectory = false;
+    				return;
+    			}
+    			
+    			textFieldQueries.setBackground(Color.WHITE);
+    			textFieldQueries.setToolTipText(null);
+    			validQueriesDirectory = true;
+    		}
+    	}
+    }
+    
     
     /**
      * Gets a folder and updates the textfield...
      **/
     private void executeCommandBrowse(String title) {
-        JTextField textField;
-        /* Gets the right JTextField. */
-        if (title.equals(Localizer.getString("DialogFolders.selectCoversDir"))) {
-            textField = getCovers();
-        } else {
-            textField = getQueries();
-        }
-        
-        /*The Oyoaha theme wouldn't set the file name in the name texField so a contructor accepting current dir and selection mode takes care of that*/
-        ExtendedFileChooser fileChooser;
-        
-        if (title.equals(Localizer.getString("DialogFolders.selectCoversDir")))
-            fileChooser = new ExtendedFileChooser(MovieManager.getConfig().getCoversFolder(), ExtendedFileChooser.DIRECTORIES_ONLY);
-        else
-            fileChooser = new ExtendedFileChooser(MovieManager.getConfig().getQueriesFolder(), ExtendedFileChooser.DIRECTORIES_ONLY);
-        
-        fileChooser.setDialogTitle(title);
-        fileChooser.setApproveButtonText(Localizer.getString("DialogFolders.fileChooser.approve.text"));
-        fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogFolders.filechooser.approve.tooltip"));
-        fileChooser.setAcceptAllFileFilterUsed(false);
-        
-        int returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
-        if (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
-            
-            /* Verifies that it's a directory... */
-            if (fileChooser.getSelectedFile() != null && fileChooser.getSelectedFile().isDirectory()) {
-                /* Sets the new dir... */
-                textField.setText(fileChooser.getSelectedFile().getAbsolutePath());
-            }
-        }
+    	JTextField textField;
+    	/* Gets the right JTextField. */
+    	if (title.equals(Localizer.getString("DialogFolders.selectCoversDir"))) {
+    		textField = getCovers();
+    	} else {
+    		textField = getQueries();
+    	}
+
+    	/*The Oyoaha theme wouldn't set the file name in the name texField so a contructor accepting current dir and selection mode takes care of that*/
+    	ExtendedFileChooser fileChooser;
+
+    	if (title.equals(Localizer.getString("DialogFolders.selectCoversDir")))
+    		fileChooser = new ExtendedFileChooser(MovieManager.getConfig().getCoversFolder(), ExtendedFileChooser.DIRECTORIES_ONLY);
+    	else
+    		fileChooser = new ExtendedFileChooser(MovieManager.getConfig().getQueriesFolder(), ExtendedFileChooser.DIRECTORIES_ONLY);
+
+    	fileChooser.setDialogTitle(title);
+    	fileChooser.setApproveButtonText(Localizer.getString("DialogFolders.fileChooser.approve.text"));
+    	fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogFolders.filechooser.approve.tooltip"));
+    	fileChooser.setAcceptAllFileFilterUsed(false);
+
+    	int returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
+    	if (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
+
+    		/* Verifies that it's a directory... */
+    		if (fileChooser.getSelectedFile() != null && fileChooser.getSelectedFile().isDirectory()) {
+    			/* Sets the new dir... */
+    			textField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+    		}
+    	}
     }
 }
