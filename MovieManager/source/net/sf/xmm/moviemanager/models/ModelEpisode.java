@@ -81,12 +81,13 @@ public class ModelEpisode extends ModelEntry {
 		additionalInfo = new ModelAdditionalInfo();
 	}
 
-	public ModelEpisode(int key, int movieKey, int episodeNumber, String title) {
+	public ModelEpisode(int key, int movieKey, int episodeNumber, String title, String cover) {
 
 		setKey(key);
 		this.movieKey = movieKey;
 		this.episodeNumber = episodeNumber;
 		setTitle(title);
+		setCover(cover);
 	}
 
 	public boolean isEpisode() {
@@ -173,7 +174,7 @@ public class ModelEpisode extends ModelEntry {
 
 	public void updateAdditionalInfoData() {
 
-		if (additionalInfo.hasOldExtraInfoFieldNames())
+		if (additionalInfo != null && additionalInfo.hasOldExtraInfoFieldNames())
 			additionalInfo.updateExtraInfoFieldNames();
 			
 		if (getKey() != -1) {
@@ -182,7 +183,6 @@ public class ModelEpisode extends ModelEntry {
 
 			if (tmp != null) {
 				setAdditionalInfo(tmp);
-				hasAdditionalInfoData = true;
 			}
 		}
 		
