@@ -78,6 +78,14 @@ public class ModelExportXML implements XMLClassDescriptor {
     public void addModelSerie(ModelSeries serie) {
         series.add(serie);
     }
+    
+   public void checkDescriptorForCorrectOrderWithinSequence(XMLFieldDescriptor elementDescriptor) throws ValidationException {
+   // Does nothing
+    }
+    
+    public void checkDescriptorForCorrectOrderWithinSequence(XMLFieldDescriptor edesc, UnmarshalState state, String s) throws ValidationException {
+    	   // Does nothing
+     }
 
     public XMLFieldDescriptor[] getAttributeDescriptors() {
         System.err.println("getAttributeDescriptors()");
