@@ -188,6 +188,22 @@ public class ModelAdditionalInfo {
 		return mediaType;
 	}
 
+
+	public boolean hasOldExtraInfoFieldNames() {
+		return extraInfoChanged != lastExtraInfoCount;
+	}
+
+	public static void setExtraInfoFieldNamesChanged() {
+		oldExtraInfoFieldNames = true;
+		extraInfoChanged++;
+	}
+	
+	public void setExtraInfoFieldNamesUpdated() {
+		lastExtraInfoCount = extraInfoChanged;
+		oldExtraInfoFieldNames = false;
+	}
+	
+	
 	public String getExtraInfoFieldName(int index) {
 
 		if (index >= extraInfoFieldNames.size())
@@ -207,9 +223,10 @@ public class ModelAdditionalInfo {
 	public static void updateExtraInfoFieldNames() {
 		getExtraInfoFieldNames();
 	}
+		
 	
 	public static ArrayList getExtraInfoFieldNames() {
-		
+			
 		if (oldExtraInfoFieldNames)
 				setExtraInfoFieldNames(MovieManager.getIt().getDatabase().getExtraInfoFieldNames());
 		
@@ -217,30 +234,24 @@ public class ModelAdditionalInfo {
 	}
 
 	public ArrayList getExtraInfoFieldValues() {
+		
+		if (extraInfoFieldValues.size() > 0)
+		System.err.println("getExtraInfoFieldValues(" + extraInfoFieldValues.size()+ "):" + extraInfoFieldValues.get(0));
 		return extraInfoFieldValues;
 	}
 
-	public boolean hasOldExtraInfoFieldNames() {
-		return extraInfoChanged != lastExtraInfoCount;
-	}
-
-	public static void setExtraInfoFieldNamesChanged() {
-		oldExtraInfoFieldNames = true;
-		extraInfoChanged++;
-	}
-	
-	public void setExtraInfoFieldNamesUpdated() {
-		lastExtraInfoCount = extraInfoChanged;
-		oldExtraInfoFieldNames = false;
-	}
 
 	public static void setExtraInfoFieldNames(ArrayList extraInfoFieldNames) {
+		
+		System.err.println("setExtraInfoFieldNames:");
 		ModelAdditionalInfo.extraInfoFieldNames = extraInfoFieldNames;
 		setExtraInfoFieldNamesChanged();
 	}
 
 	public void setExtraInfoFieldValues(ArrayList extraInfoFieldValues) {
 		 
+		System.err.println("setExtraInfoFieldValues("+ extraInfoFieldValues.size() + "):" + extraInfoFieldValues.get(0));
+		
 		if (extraInfoFieldValues.size() != extraInfoFieldNames.size()) {
 			
 			try {
@@ -253,6 +264,31 @@ public class ModelAdditionalInfo {
 		this.extraInfoFieldValues = extraInfoFieldValues;
 	}
 
+	
+//	 Used when importing/exporting XML with Castor
+	public ArrayList getExtraInfoFieldNames2() {
+		System.err.println("getExtraInfoFieldNames2");
+		
+		return extraInfoFieldNames;
+	}
+	
+	// Used when importing/exporting XML with Castor
+	public void setExtraInfoFieldNames2(ArrayList extraInfoFieldNames) {
+		System.err.println("setExtraInfoFieldNames2:" + extraInfoFieldNames.get(0));
+		
+		ModelAdditionalInfo.extraInfoFieldNames = extraInfoFieldNames;
+	}
+	
+//	 Used when importing/exporting XML with Castor
+	public void addExtraInfoFieldValue(String str) {
+		System.err.println("addExtraInfoFieldValue:" + str);
+		
+		extraInfoFieldValues.add(str);
+		
+		//ModelAdditionalInfo.extraInfoFieldNames = extraInfoFieldNames;
+	}
+	
+	
 	public void setAudioBitrate(String audioBitrate) {
 		this.audioBitrate = audioBitrate;
 	}
