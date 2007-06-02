@@ -110,67 +110,83 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
     public void setCancelAll(boolean value) {
 	cancelAll = value;
     }
-    
+
     protected void execute() {
-	
-//   	 If any notes have been changed, they will be saved before changing list
+
+//  	If any notes have been changed, they will be saved before changing list
     	MovieManagerCommandSaveChangedNotes.execute();
+
+    	cancelAll = false;
+
+    	DialogImport importMovie = new DialogImport(this);
+    	importSettings = new ModelImportSettings();
+
+    	if (cancelAll)
+    		return;
+
+
+
+    	importSettings.multiAddSelectOption = importMovie.getMultiAddSelectOption();
+
+    	importSettings.importMode = importMovie.getImportMode();
+
+    	System.err.println("command import mode:" + importSettings.importMode);
     	
-	cancelAll = false;
-	
-	DialogImport importMovie = new DialogImport(this);
-	importSettings = new ModelImportSettings();
-	
-	if (cancelAll)
-	    return;
-	
-    
-    
-	importSettings.multiAddSelectOption = importMovie.getMultiAddSelectOption();
-       	
-	importSettings.importMode = importMovie.getImportMode();
-	
-	importSettings.filePath = importMovie.getPath();
-	
-	if (importMovie.enableAddMoviesToList != null && importMovie.enableAddMoviesToList.isSelected()) {
-	    importSettings.addToThisList = (String) importMovie.listChooser.getSelectedItem();
-	}
-	
-	/* Excel spreadsheet */
-	if (importSettings.importMode == 1) {
-        
-        File file = new File(importMovie.getPath());
-            
-        if (file.isFile()) {
-            DialogImportTable importTable = new DialogImportTable(this, file);
-            GUIUtil.showAndWait(importTable, true);
-            
-            importSettings.table = importTable.getSettings().table;
-            	
-            dispose();
-        }
-	}
-	
-    /* extreme movie manager */
-	else if (importSettings.importMode == 2) {
-	    if (importMovie.enableOverwriteImportedInfoWithImdbInfo.isSelected())
-		importSettings.overwriteWithImdbInfo = true;
-	    
-	    if (importMovie.useMediaLanguage.isSelected())
-		importSettings.extremeOriginalLanguage = false;
-	    
-	    File tempFile = new File(importSettings.filePath);
-	    
-	    importSettings.coverPath = tempFile.getParentFile().getParent()+ File.separator +"Covers" + File.separator; //$NON-NLS-1$
-	    if (!new File(importSettings.coverPath).isDirectory()) {
-		
-		String path = ""; //$NON-NLS-1$
-		if (!(path = getCoverDirectory(importSettings.filePath)).equals("")) //$NON-NLS-1$
-		    importSettings.coverPath = path + File.separator;
-	    }
-	}
-	
-	createAndShowGUI();
+    	importSettings.filePath = importMovie.getPath();
+
+    	if (importMovie.enableAddMoviesToList != null && importMovie.enableAddMoviesToList.isSelected()) {
+    		importSettings.addToThisList = (String) importMovie.listChooser.getSelectedItem();
+    	}
+
+    	/* Excel spreadsheet */
+    	if (importSettings.importMode == ModelImportSettings.IMPORT_EXCEL) {
+
+    		File file = new File(importMovie.getPath());
+
+    		if (file.isFile()) {
+    			DialogImportTable importTable = new DialogImportTable(this, file, ModelImportSettings.IMPORT_EXCEL);
+    			GUIUtil.showAndWait(importTable, true);
+
+    			importSettings.table = importTable.getSettings().table;
+
+    			dispose();
+    		}
+    	}
+
+    	/* extreme movie manager */
+    	else if (importSettings.importMode == ModelImportSettings.IMPORT_EXTREME) {
+    		if (importMovie.enableOverwriteImportedInfoWithImdbInfo.isSelected())
+    			importSettings.overwriteWithImdbInfo = true;
+
+    		if (importMovie.useMediaLanguage.isSelected())
+    			importSettings.extremeOriginalLanguage = false;
+
+    		File tempFile = new File(importSettings.filePath);
+
+    		importSettings.coverPath = tempFile.getParentFile().getParent()+ File.separator +"Covers" + File.separator; //$NON-NLS-1$
+    		if (!new File(importSettings.coverPath).isDirectory()) {
+
+    			String path = ""; //$NON-NLS-1$
+    			if (!(path = getCoverDirectory(importSettings.filePath)).equals("")) //$NON-NLS-1$
+    				importSettings.coverPath = path + File.separator;
+    		}
+    	}
+    	
+    	/* CSV */
+    	if (importSettings.importMode == ModelImportSettings.IMPORT_CSV) {
+
+    		File file = new File(importMovie.getPath());
+
+    		if (file.isFile()) {
+    			DialogImportTable importTable = new DialogImportTable(this, file, ModelImportSettings.IMPORT_CSV);
+    			GUIUtil.showAndWait(importTable, true);
+
+    			importSettings.table = importTable.getSettings().table;
+
+    			dispose();
+    		}
+    	}
+    	createAndShowGUI();
     }
     
      /*Opens a filechooser and returns the absolute path to the selected file*/
