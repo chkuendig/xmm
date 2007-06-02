@@ -234,24 +234,17 @@ public class ModelAdditionalInfo {
 	}
 
 	public ArrayList getExtraInfoFieldValues() {
-		
-		if (extraInfoFieldValues.size() > 0)
-		System.err.println("getExtraInfoFieldValues(" + extraInfoFieldValues.size()+ "):" + extraInfoFieldValues.get(0));
 		return extraInfoFieldValues;
 	}
 
 
 	public static void setExtraInfoFieldNames(ArrayList extraInfoFieldNames) {
-		
-		System.err.println("setExtraInfoFieldNames:");
 		ModelAdditionalInfo.extraInfoFieldNames = extraInfoFieldNames;
 		setExtraInfoFieldNamesChanged();
 	}
 
 	public void setExtraInfoFieldValues(ArrayList extraInfoFieldValues) {
 		 
-		System.err.println("setExtraInfoFieldValues("+ extraInfoFieldValues.size() + "):" + extraInfoFieldValues.get(0));
-		
 		if (extraInfoFieldValues.size() != extraInfoFieldNames.size()) {
 			
 			try {
