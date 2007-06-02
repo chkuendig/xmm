@@ -67,7 +67,7 @@ public class MovieManagerCommandExportToXML {
              
             // 4. marshal the data with the total price back and print the XML in the console 
             Marshaller marshaller = new Marshaller(new OutputStreamWriter(new FileOutputStream(outputFile)));
-            //marshaller.setMarshalAsDocument(false);
+            //marshaller.setMarshalAsDocument(true);
             marshaller.setMapping(mapping);
 	
 	    while (enumeration.hasMoreElements()) {
