@@ -870,119 +870,120 @@ public class DatabaseMySQL extends Database {
 	int fileCount = 0;
 	String container = "";
 	String mediaType = "";
-	
+
 	try {
-	    
-	    ResultSet resultSet;
-	    
-	    if (episode)
-		resultSet = getAdditionalInfoEpisodeResultSet(index);
-	    else
-		resultSet = getAdditionalInfoMovieResultSet(index);
-	    
-	    /* Processes the result set till the end... */
-	    if (resultSet.next()) {
-	    
-		if ((subtitles = resultSet.getString("Subtitles")) == null)
-		    subtitles = "";
-	    
-		duration = resultSet.getInt("Duration");
-		fileSize = resultSet.getInt("File_Size");
-		cDs = resultSet.getInt("CDs");
-		cDCases = resultSet.getInt("CD_Cases");
-	    	    
-		if ((resolution = resultSet.getString("Resolution")) == null)
-		    resolution = "";
-	    
-		if ((videoCodec = resultSet.getString("Video_Codec")) == null)
-		    videoCodec = "";
-	    
-		if ((videoRate = resultSet.getString("Video_Rate")) == null)
-		    videoRate = "";
-	    
-		if ((videoBitrate = resultSet.getString("Video_Bit_Rate")) == null)
-		    videoBitrate = "";
-	    
-		if ((audioCodec = resultSet.getString("Audio_Codec")) == null)
-		    audioCodec = "";
-	    
-		if ((audioRate = resultSet.getString("Audio_Rate")) == null)
-		    audioRate = "";
-	    
-		if ((audioBitrate = resultSet.getString("Audio_Bit_Rate")) == null)
-		    audioBitrate = "";
-	    
-		audioChannels = resultSet.getString("Audio_Channels");
-		
-		if ((fileLocation = resultSet.getString("File_Location")) == null)
-		    fileLocation = "";
-		
-		fileCount = resultSet.getInt("File_Count");
-		
-		if ((container = resultSet.getString("Container")) == null)
-		    container = "";
-		
-		if ((mediaType = resultSet.getString("Media_Type")) == null)
-		    mediaType = "";
-		
-		
-		/* Getting extra info fields */
-	    
-		_sql.clear();
-	    
-		String tempValue = "";
-                         
-		ArrayList extraInfoFieldNames = ModelAdditionalInfo.getExtraInfoFieldNames();
-		ArrayList extraInfoFieldValues = new ArrayList();
-	    
+
+		ResultSet resultSet;
+
 		if (episode)
-		    resultSet = getExtraInfoEpisodeResultSet(index);
+			resultSet = getAdditionalInfoEpisodeResultSet(index);
 		else
-		    resultSet = getExtraInfoMovieResultSet(index);
-	    
-		boolean next = resultSet.next();
-		
-		// Fieldnames and Fieldvalues don't match
-		// Caused by a serious bug in v2.5 beta 4 where extra info values weren't added
-		// if the values were empty (and no fields existed).
-		if (next == false) {
-		    
-		    for (int i = 0; i < extraInfoFieldNames.size(); i++)
-			extraInfoFieldValues.add("");
-		    
-		    if (episode)
-			addExtraInfoEpisode(index, extraInfoFieldNames, extraInfoFieldValues);
-		    else
-			addExtraInfoMovie(index, extraInfoFieldNames, extraInfoFieldValues);
-		}
-		
+			resultSet = getAdditionalInfoMovieResultSet(index);
+
+		/* Processes the result set till the end... */
+		if (resultSet.next()) {
+
+			if ((subtitles = resultSet.getString("Subtitles")) == null)
+				subtitles = "";
+
+			duration = resultSet.getInt("Duration");
+			fileSize = resultSet.getInt("File_Size");
+			cDs = resultSet.getInt("CDs");
+			cDCases = resultSet.getInt("CD_Cases");
+
+			if ((resolution = resultSet.getString("Resolution")) == null)
+				resolution = "";
+
+			if ((videoCodec = resultSet.getString("Video_Codec")) == null)
+				videoCodec = "";
+
+			if ((videoRate = resultSet.getString("Video_Rate")) == null)
+				videoRate = "";
+
+			if ((videoBitrate = resultSet.getString("Video_Bit_Rate")) == null)
+				videoBitrate = "";
+
+			if ((audioCodec = resultSet.getString("Audio_Codec")) == null)
+				audioCodec = "";
+
+			if ((audioRate = resultSet.getString("Audio_Rate")) == null)
+				audioRate = "";
+
+			if ((audioBitrate = resultSet.getString("Audio_Bit_Rate")) == null)
+				audioBitrate = "";
+
+			audioChannels = resultSet.getString("Audio_Channels");
+
+			if ((fileLocation = resultSet.getString("File_Location")) == null)
+				fileLocation = "";
+
+			fileCount = resultSet.getInt("File_Count");
+
+			if ((container = resultSet.getString("Container")) == null)
+				container = "";
+
+			if ((mediaType = resultSet.getString("Media_Type")) == null)
+				mediaType = "";
 
 
-		/* Getting the value for each field */
-		for (int i = 0; i < extraInfoFieldNames.size(); i++) {
-		    
-			if (next)/* First column after the ID column is at index 2 */
-	    		tempValue = resultSet.getString(i+2);
-	    	
-			if (tempValue == null)
-			    tempValue = "";
-			
-			extraInfoFieldValues.add(tempValue);
+			/* Getting extra info fields */
+
+			_sql.clear();
+
+			String tempValue = "";
+
+			ArrayList extraInfoFieldNames = ModelAdditionalInfo.getExtraInfoFieldNames();
+			ArrayList extraInfoFieldValues = new ArrayList();
+
+			if (episode)
+				resultSet = getExtraInfoEpisodeResultSet(index);
+			else
+				resultSet = getExtraInfoMovieResultSet(index);
+
+			boolean next = resultSet.next();
+
+			// Fieldnames and Fieldvalues don't match
+			// Caused by a serious bug in v2.5 beta 4 where extra info values weren't added
+			// if the values were empty (and no fields existed).
+			if (next == false) {
+				log.debug("Updating the extra info table with missing extra info row, ID=" + index);
+
+				for (int i = 0; i < extraInfoFieldNames.size(); i++)
+					extraInfoFieldValues.add("");
+
+				if (episode)
+					addExtraInfoEpisode(index, extraInfoFieldNames, extraInfoFieldValues);
+				else
+					addExtraInfoMovie(index, extraInfoFieldNames, extraInfoFieldValues);
+
+				extraInfoFieldValues.clear();
+			}
+
+			/* Getting the value for each field */
+			for (int i = 0; i < extraInfoFieldNames.size(); i++) {
+
+				if (next)/* First column after the ID column is at index 2 */
+					tempValue = resultSet.getString(i+2);
+
+				if (tempValue == null)
+					tempValue = "";
+
+				extraInfoFieldValues.add(tempValue);
+			}
+
+			additionalInfo = new ModelAdditionalInfo(subtitles, duration, fileSize, cDs, cDCases, resolution, videoCodec, videoRate, videoBitrate, audioCodec, audioRate, audioBitrate, audioChannels, fileLocation, fileCount, container, mediaType);
+			additionalInfo.setExtraInfoFieldValues(extraInfoFieldValues);
 		}
-		
-		additionalInfo = new ModelAdditionalInfo(subtitles, duration, fileSize, cDs, cDCases, resolution, videoCodec, videoRate, videoBitrate, audioCodec, audioRate, audioBitrate, audioChannels, fileLocation, fileCount, container, mediaType);
-		additionalInfo.setExtraInfoFieldValues(extraInfoFieldValues);
-	    }
 	} catch (Exception e) {
-	    log.error("", e);
-	    checkErrorMessage(e);
-	} finally {
-	    /* Clears the Statement in the dataBase... */
-	    try {
-		_sql.clear();
-	    } catch (Exception e) {
 		log.error("", e);
-	    }
+		checkErrorMessage(e);
+	} finally {
+		/* Clears the Statement in the dataBase... */
+		try {
+			_sql.clear();
+		} catch (Exception e) {
+			log.error("", e);
+		}
 	}
 	/* Returns the list model... */
 	return additionalInfo;
@@ -1595,14 +1596,15 @@ public class DatabaseMySQL extends Database {
 	    ResultSet resultSet = _sql.executeQuery("SELECT General_Info_Episodes.ID,"+
 						    "General_Info_Episodes.movieID,"+
 						    "General_Info_Episodes.episodeNr,"+
-						    "General_Info_Episodes.Title "+
+						    "General_Info_Episodes.Title, "+
+						    "General_Info_Episodes.Cover "+
 						    "FROM General_Info_Episodes "+
 						    "ORDER BY General_Info_Episodes."+sortBy+", General_Info_Episodes.episodeNr;");
 	    
 	    
 	    /* Processes the result set till the end... */
 	    while (resultSet.next()) {
-		list.add(new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("Title")));
+	    	list.add(new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("Title"), resultSet.getString("Cover")));
 	    }
 	} catch (Exception e) {
 	    log.error("", e);
