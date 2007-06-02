@@ -260,7 +260,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 					boolean storeLocally = MovieManager.getConfig().getStoreCoversLocally();
 					boolean getCoverFromDatabase = !storeLocally ? true : false;
 										
-					if (model.getCoverData() == null && !coverFile.isFile()) {
+					if (model.getCoverData() == null && (!coverFile.isFile() || coverFile.isDirectory())) {
 						getCoverFromDatabase = true;
 					}
 					
@@ -271,6 +271,10 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 						model.updateCoverData();
 					}
 
+					// Update in case the model has been updated.
+					if (getCoverFromDatabase)
+						coverFile = new File(MovieManager.getConfig().getCoversPath(), model.getCover());
+					
 					byteCover = model.getCoverData() != null;
 
 					if (byteCover) {
