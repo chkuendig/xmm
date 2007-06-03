@@ -305,43 +305,45 @@ abstract public class Database {
 
 
     void checkErrorMessage(Exception e) {
-	
-	exception = e;
 
-	if (e == null) {
-	    errorMessage = "";
-	    return;
-	}
-	
-	String message = errorMessage = e.getMessage();
-	
-	log.warn("Database error occured", e);
-	
-	if (message.indexOf("Connection reset") != -1) {
-	    errorMessage = "Connection reset";
-	    MovieManager.getIt().processDatabaseError();
-	}
-	else if ((message.indexOf("is full") != -1) || (message.indexOf("Error writing file") != -1)) {
-	    errorMessage = "MySQL server is out of space";
-	    MovieManager.getIt().processDatabaseError();
-	}
+    	String message = errorMessage = e.getMessage();
+    	exception = e;
 
-	else if ((message.indexOf("Data truncation: Data too long for column 'CoverData'") != -1)) {
-	    errorMessage = "Data truncation cover";
-	}
+    	if (e == null || message == null) {
+    		errorMessage = "";
+    		return;
+    	}
 
-	else if ((message.indexOf("You have an error in your SQL syntax") != -1)) {
-	    errorMessage = "SQL Syntax error";
-	}
-	else if (message.indexOf("settings' doesn't exist") != -1) {
-	    errorMessage = message;
-	    fatalError = true;
-	}
-	else if (!fatalError) {
-	    message = "";
-	}
-	if (!message.equals(""))
-	    DialogDatabase.showDatabaseMessage(MovieManager.getDialog(), this, "");
+    	if (message.indexOf("Connection reset") != -1) {
+    		errorMessage = "Connection reset";
+    		MovieManager.getIt().processDatabaseError();
+    	}
+    	//Software caused connection abort: recv failed
+    	else if (message.indexOf("recv failed") != -1) {
+    			errorMessage = "Connection closed";
+    			MovieManager.getIt().processDatabaseError();
+    	}
+    	else if ((message.indexOf("is full") != -1) || (message.indexOf("Error writing file") != -1)) {
+    		errorMessage = "MySQL server is out of space";
+    		MovieManager.getIt().processDatabaseError();
+    	}
+
+    	else if ((message.indexOf("Data truncation: Data too long for column 'CoverData'") != -1)) {
+    		errorMessage = "Data truncation cover";
+    	}
+
+    	else if ((message.indexOf("You have an error in your SQL syntax") != -1)) {
+    		errorMessage = "SQL Syntax error";
+    	}
+    	else if (message.indexOf("settings' doesn't exist") != -1) {
+    		errorMessage = message;
+    		fatalError = true;
+    	}
+    	else if (!fatalError) {
+    		message = "";
+    	}
+    	else if (!message.equals(""))
+    		DialogDatabase.showDatabaseMessage(MovieManager.getDialog(), this, "");
     }
 
 
@@ -660,117 +662,120 @@ abstract public class Database {
 
 	try {
 
-	    ResultSet resultSet;
+		ResultSet resultSet;
 
-	    if (episode)
-	    	resultSet = getAdditionalInfoEpisodeResultSet(index);
-	    else
-	    	resultSet = getAdditionalInfoMovieResultSet(index);
-
-	    /* Processes the result set till the end... */
-	    if (resultSet.next()) {
-
-		if ((subtitles = resultSet.getString("Subtitles")) == null)
-		    subtitles = "";
-
-		duration = resultSet.getInt("Duration");
-		fileSize = resultSet.getInt("File Size");
-		cDs = resultSet.getInt("CDs");
-		cDCases = resultSet.getInt("CD Cases");
-
-		if ((resolution = resultSet.getString("Resolution")) == null)
-		    resolution = "";
-
-		if ((videoCodec = resultSet.getString("Video Codec")) == null)
-		    videoCodec = "";
-
-		if ((videoRate = resultSet.getString("Video Rate")) == null)
-		    videoRate = "";
-
-		if ((videoBitrate = resultSet.getString("Video Bit Rate")) == null)
-		    videoBitrate = "";
-
-		if ((audioCodec = resultSet.getString("Audio Codec")) == null)
-		    audioCodec = "";
-
-		if ((audioRate = resultSet.getString("Audio Rate")) == null)
-		    audioRate = "";
-
-		if ((audioBitrate = resultSet.getString("Audio Bit Rate")) == null)
-		    audioBitrate = "";
-
-		audioChannels = resultSet.getString("Audio Channels");
-
-		if ((fileLocation = resultSet.getString("File Location")) == null)
-		    fileLocation = "";
-
-		fileCount = resultSet.getInt("File Count");
-
-		if ((container = resultSet.getString("Container")) == null)
-		    container = "";
-
-		if ((mediaType = resultSet.getString("Media Type")) == null)
-		    mediaType = "";
-
-	    }
-
-	    /* Getting extra info fields */
-
-	    _sql.clear();
-
-	    if (episode)
-	    	resultSet = getExtraInfoEpisodeResultSet(index);
-	    else
-	    	resultSet = getExtraInfoMovieResultSet(index);
-
-	    String tempValue;
-
-	    ArrayList extraInfoFieldNames = ModelAdditionalInfo.getExtraInfoFieldNames();
-	    ArrayList extraInfoFieldValues = new ArrayList();
-	    
-	    boolean next = resultSet.next();
-	    
-	    // Fieldnames and Fieldvalues don't match
-	    // Caused by a serious bug in v2.5 beta 4 where extra info values weren't added
-	    // if the values were empty (and no fields existed).
-	    
-	    if (next == false) {
-		
-		for (int i = 0; i < extraInfoFieldNames.size(); i++)
-		    extraInfoFieldValues.add("");
-		
 		if (episode)
-		    addExtraInfoEpisode(index, extraInfoFieldNames, extraInfoFieldValues);
+			resultSet = getAdditionalInfoEpisodeResultSet(index);
 		else
-		    addExtraInfoMovie(index, extraInfoFieldNames, extraInfoFieldValues);
-	    }
-	    
+			resultSet = getAdditionalInfoMovieResultSet(index);
 
-	    /* Getting the value for each field */
-	    for (int i = 0; next && i < extraInfoFieldNames.size(); i++) {
+		/* Processes the result set till the end... */
+		if (resultSet.next()) {
 
-	    	/* First column after the ID column is at index 2 */
-	    	tempValue = resultSet.getString(i+2);
+			if ((subtitles = resultSet.getString("Subtitles")) == null)
+				subtitles = "";
 
-	    	if (tempValue == null)
-	    		tempValue = "";
+			duration = resultSet.getInt("Duration");
+			fileSize = resultSet.getInt("File Size");
+			cDs = resultSet.getInt("CDs");
+			cDCases = resultSet.getInt("CD Cases");
 
-	    	extraInfoFieldValues.add(tempValue);
-	    }
-	    
-	    additionalInfo = new ModelAdditionalInfo(subtitles, duration, fileSize, cDs, cDCases, resolution, videoCodec, videoRate, videoBitrate, audioCodec, audioRate, audioBitrate, audioChannels, fileLocation, fileCount, container, mediaType);
-	    additionalInfo.setExtraInfoFieldValues(extraInfoFieldValues);
+			if ((resolution = resultSet.getString("Resolution")) == null)
+				resolution = "";
 
+			if ((videoCodec = resultSet.getString("Video Codec")) == null)
+				videoCodec = "";
+
+			if ((videoRate = resultSet.getString("Video Rate")) == null)
+				videoRate = "";
+
+			if ((videoBitrate = resultSet.getString("Video Bit Rate")) == null)
+				videoBitrate = "";
+
+			if ((audioCodec = resultSet.getString("Audio Codec")) == null)
+				audioCodec = "";
+
+			if ((audioRate = resultSet.getString("Audio Rate")) == null)
+				audioRate = "";
+
+			if ((audioBitrate = resultSet.getString("Audio Bit Rate")) == null)
+				audioBitrate = "";
+
+			audioChannels = resultSet.getString("Audio Channels");
+
+			if ((fileLocation = resultSet.getString("File Location")) == null)
+				fileLocation = "";
+
+			fileCount = resultSet.getInt("File Count");
+
+			if ((container = resultSet.getString("Container")) == null)
+				container = "";
+
+			if ((mediaType = resultSet.getString("Media Type")) == null)
+				mediaType = "";
+
+
+
+			/* Getting extra info fields */
+
+			_sql.clear();
+
+			if (episode)
+				resultSet = getExtraInfoEpisodeResultSet(index);
+			else
+				resultSet = getExtraInfoMovieResultSet(index);
+
+			String tempValue;
+
+			ArrayList extraInfoFieldNames = ModelAdditionalInfo.getExtraInfoFieldNames();
+			ArrayList extraInfoFieldValues = new ArrayList();
+
+			boolean next = resultSet.next();
+
+			// Fieldnames and Fieldvalues don't match
+			// Caused by a serious bug in v2.5 beta 4 where extra info values weren't added
+			// if the values were empty (and no fields existed).
+
+			if (next == false) {
+				log.debug("Updating the extra info table with missing extra info row, ID=" + index);
+
+				for (int i = 0; i < extraInfoFieldNames.size(); i++)
+					extraInfoFieldValues.add("");
+
+				if (episode)
+					addExtraInfoEpisode(index, extraInfoFieldNames, extraInfoFieldValues);
+				else
+					addExtraInfoMovie(index, extraInfoFieldNames, extraInfoFieldValues);
+
+				extraInfoFieldValues.clear();
+			}
+
+
+			/* Getting the value for each field */
+			for (int i = 0; next && i < extraInfoFieldNames.size(); i++) {
+
+				/* First column after the ID column is at index 2 */
+				tempValue = resultSet.getString(i+2);
+
+				if (tempValue == null)
+					tempValue = "";
+
+				extraInfoFieldValues.add(tempValue);
+			}
+
+			additionalInfo = new ModelAdditionalInfo(subtitles, duration, fileSize, cDs, cDCases, resolution, videoCodec, videoRate, videoBitrate, audioCodec, audioRate, audioBitrate, audioChannels, fileLocation, fileCount, container, mediaType);
+			additionalInfo.setExtraInfoFieldValues(extraInfoFieldValues);
+		}
 	} catch (Exception e) {
-	    log.error("Exception: ", e);
-	    checkErrorMessage(e);
+		log.error("Exception: ", e);
+		checkErrorMessage(e);
 	} finally {
-	    /* Clears the Statement in the dataBase... */
-	    try {
-		_sql.clear();
-	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
-	    }
+		/* Clears the Statement in the dataBase... */
+		try {
+			_sql.clear();
+		} catch (Exception e) {
+			log.error("Exception: " + e.getMessage());
+		}
 	}
 
 	/* Returns the list model... */
@@ -2590,7 +2595,8 @@ abstract public class Database {
 
 
     /**
-     * Used by getMoviesList(ModelDatabaseSearch options)
+     * Part of the advanced search function
+     * Used by method getMoviesList(ModelDatabaseSearch options)
      */
     private Object[] getFilterValues(String filter) {
 
@@ -2599,7 +2605,7 @@ abstract public class Database {
 	/* The regular expression will divide by every white space except if (multiple) words are capsulated by " and " or { and } */
 	//Pattern pattern = Pattern.compile("([\\p{Graph}&&[^\"]]+?)\\s|(\".+?\"+)");
 
-	Pattern pattern = Pattern.compile("(\\{.+?\\})|([\\p{Graph}&&[^\"]]+?)\\s|(\".*?\"+)");
+	Pattern pattern = Pattern.compile("(\\{.+?\\})|([\\p{L}&&[^\"]]+?)\\s|(\".*?\"+)");
 
 	String tmp = "";
 
@@ -2618,7 +2624,8 @@ abstract public class Database {
 
 
     /**
-     * Used by getMoviesList(ModelDatabaseSearch options)
+     * Part of the advanced search function
+     * Used by method getMoviesList(ModelDatabaseSearch options)
      */
     private String processFilterValues(String table, String filterColumn, Object [] values, ModelDatabaseSearch options, boolean recursive) {
         
@@ -2835,235 +2842,247 @@ abstract public class Database {
     }
     
 
-
+    /**
+     * Part of the advanced search function
+     * Used by method getMoviesList(ModelDatabaseSearch options)
+     */
     private String processFilter(ModelDatabaseSearch options, boolean where) {
 
-	String table = quotedGeneralInfoString;
-	String filterColumn = quote + options.getFilterCategory() + quote;
+    	String table = quotedGeneralInfoString;
+    	String filterColumn = quote + options.getFilterCategory() + quote;
 
-	if (databaseType.equals("MySQL"))
-	    filterColumn = filterColumn.replaceAll(" ", "_");
+    	if (databaseType.equals("MySQL"))
+    		filterColumn = filterColumn.replaceAll(" ", "_");
 
-	String filter = options.getFilterString();
+    	String filter = options.getFilterString();
 
-	filter = filter.replaceAll("\\("," \\( ");
-	filter = filter.replaceAll("\\)"," \\) ");
+    	filter = filter.replaceAll("\\("," \\( ");
+    	filter = filter.replaceAll("\\)"," \\) ");
 
-	if (databaseType.equals("HSQL") && filter.indexOf(" XOR ") != -1) {
-	    errorMessage = "XOR is not a supported operator in HSQLDB";
-	    return null;
-	}
+    	if (databaseType.equals("HSQL") && filter.indexOf(" XOR ") != -1) {
+    		errorMessage = "XOR is not a supported operator in HSQLDB";
+    		return null;
+    	}
 
-	/* Remove all double white space */
-	StringBuffer stringBuff = new StringBuffer();
-	for(int x = 0; x < filter.length(); x++)
-	    if (filter.charAt(x) != ' ' || (filter.length() != x+1 && filter.charAt(x+1) != ' '))
-		stringBuff = stringBuff.append(filter.charAt(x));
+    	/* Remove all double white space */
+    	StringBuffer stringBuff = new StringBuffer();
+    	for(int x = 0; x < filter.length(); x++)
+    		if (filter.charAt(x) != ' ' || (filter.length() != x+1 && filter.charAt(x+1) != ' '))
+    			stringBuff = stringBuff.append(filter.charAt(x));
 
-	filter = stringBuff.toString().trim();
+    	filter = stringBuff.toString().trim();
 
-	if (filter.startsWith("AND ") || filter.startsWith("OR "))
-	    filter = filter.substring(filter.indexOf(" ")+1, filter.length());
+    	if (filter.startsWith("AND ") || filter.startsWith("OR "))
+    		filter = filter.substring(filter.indexOf(" ")+1, filter.length());
 
-	if (filter.endsWith(" AND") || filter.endsWith(" OR") || filter.endsWith(" NOT"))
-	    filter = filter.substring(0, filter.lastIndexOf(" "));
-
-
-	/* Check if number and placement of parantheses is correct */
-
-	int par1 = 0; /* '(' */
-	int par2 = 0; /* ')' */
-
-	for (int i = 0; i < filter.length(); i++) {
-
-	    if (filter.charAt(i) == '(') {
-		par1++;
-	    }
-	    else if (filter.charAt(i) == ')') {
-		if (par1 > par2)
-		    par2++;
-		else {
-		    errorMessage = "Syntax error (parantheses)";
-		    return null;
-		}
-	    }
-	}
-
-	if (par1 > par2) {
-	    errorMessage = "Syntax error (parantheses)";
-	    return null;
-	}
-
-	Object[] values = getFilterValues(filter);
-	String filterTemp = processFilterValues(table, filterColumn, values, options, false);
-
-	if (filterTemp == null)
-	    return null;
-
-	if ((filterTemp.indexOf(" AND ") != -1) || (filterTemp.indexOf(" OR ") != -1) || (filterTemp.indexOf(" XOR ") != -1))
-	    filterTemp = "( "+ filterTemp +") ";
-
-	if (options.where)
-	    filter = "AND " + filterTemp;
-	else
-	    filter = "WHERE " + filterTemp;
-
-	return filter;
-    }
+    	if (filter.endsWith(" AND") || filter.endsWith(" OR") || filter.endsWith(" NOT"))
+    		filter = filter.substring(0, filter.lastIndexOf(" "));
 
 
-    private String setTableJoins(String filter, ModelDatabaseSearch options) {
+    	/* Check if number and placement of parantheses is correct */
 
-	String selectAndJoin;
-	
-	if (options.getFullGeneralInfo) {
-		selectAndJoin = getMoviesSelectStatement();
-	}
-	else
-		selectAndJoin = "SELECT " + quotedGeneralInfoString + ".ID, " + quotedGeneralInfoString + "." + quote + "Title" + quote + ", " + quotedGeneralInfoString + "." + quote + "Imdb" + quote + ", " + quotedGeneralInfoString + "." + quote + "Cover" + quote +  ", " + quotedGeneralInfoString + "." + quote + "Date" + quote + " FROM " + quotedGeneralInfoString + " ";
+    	int par1 = 0; /* '(' */
+    	int par2 = 0; /* ')' */
 
-	String orderBy = options.getOrderCategory();
-	String joinTemp = "";
+    	for (int i = 0; i < filter.length(); i++) {
 
-	if (databaseType.equals("MSAccess") && ((options.getListOption() == 1) || orderBy.equals("Duration") || (filter.indexOf(additionalInfoString) != -1) || (filter.indexOf(extraInfoString) != -1))) {
-	    orderBy = "\"Additional Info\".\"Duration\"";
+    		if (filter.charAt(i) == '(') {
+    			par1++;
+    		}
+    		else if (filter.charAt(i) == ')') {
+    			if (par1 > par2)
+    				par2++;
+    			else {
+    				errorMessage = "Syntax error (parantheses)";
+    				return null;
+    			}
+    		}
+    	}
 
-	    if (orderBy.equals("Duration") || filter.indexOf(additionalInfoString) != -1)
-		joinTemp = "\"General Info\" INNER JOIN \"Additional Info\" ON \"General Info\".ID=\"Additional Info\".ID ";
+    	if (par1 > par2) {
+    		errorMessage = "Syntax error (parantheses)";
+    		return null;
+    	}
 
-	    if (options.getListOption() == 1) {
+    	Object[] values = getFilterValues(filter);
+    	String filterTemp = processFilterValues(table, filterColumn, values, options, false);
 
-		if (joinTemp.equals(""))
-		    joinTemp += "\"General Info\" INNER JOIN \"Lists\" ON \"General Info\".ID=\"Lists\".ID ";
-		else
-		    joinTemp += "INNER JOIN ("+ joinTemp +") ON \"General Info\".ID=\"Additional Info\".ID ";
-	    }
+    	if (filterTemp == null)
+    		return null;
 
-	    if (filter.indexOf(extraInfoString) != -1) {
+    	if ((filterTemp.indexOf(" AND ") != -1) || (filterTemp.indexOf(" OR ") != -1) || (filterTemp.indexOf(" XOR ") != -1))
+    		filterTemp = "( "+ filterTemp +") ";
 
-		if (joinTemp.equals(""))
-		    joinTemp += "\"General Info\" INNER JOIN \"Extra Info\" ON \"General Info\".ID=\"Extra Info\".ID ";
-		else
-		    joinTemp += "INNER JOIN ("+ joinTemp +") ON \"General Info\".ID=\"Extra Info\".ID ";
-	    }
+    	if (options.where)
+    		filter = "AND " + filterTemp;
+    	else
+    		filter = "WHERE " + filterTemp;
 
-	    selectAndJoin += joinTemp;
-	}
-	else {
-
-	    if (options.getListOption() == 1) {
-		selectAndJoin += "INNER JOIN "+ quote+ "Lists"+ quote+ " ON "+ quotedGeneralInfoString + ".ID = " + quote + "Lists" + quote + ".ID ";
-	    }
-
-	    if (orderBy.equals("Duration") || filter.indexOf(additionalInfoString) != -1) {
-		orderBy = quotedAdditionalInfoString + "." + quote + "Duration" + quote;
-		//sqlQuery += "INNER JOIN \"Additional Info\" ON \"General Info\".ID = \"Additional Info\".ID ";
-		selectAndJoin += "INNER JOIN "+ quotedAdditionalInfoString + " ON "+ quotedGeneralInfoString + ".ID = "+ quotedAdditionalInfoString +".ID ";
-	    }
-
-	    if (filter.indexOf(extraInfoString) != -1) {
-		selectAndJoin += "INNER JOIN " + quotedExtraInfoString + " ON " + quotedGeneralInfoString + ".ID=" + quotedExtraInfoString + ".ID ";
-	    }
-	}
-	return selectAndJoin;
-    }
-
-
-    private String processAdvancedOptions(ModelDatabaseSearch options) {
-
-	String sqlQuery = "";
-	String listColumn = quote + options.getListName() + quote;
-	int option = 0;
-
-	/* List */
-	if ((option = options.getListOption()) == 1 && !listColumn.equals("")) {
-
-	    if (!options.where)
-		sqlQuery += "WHERE ";
-
-	    sqlQuery += quote + "Lists"+ quote + "." + listColumn + "=1 ";
-
-	    options.where = true;
-	}
-
-	/* seen */
-	if ((option = options.getSeen()) > 1) {
-
-	    if (options.where)
-		sqlQuery += "AND ";
-	    else
-		sqlQuery += "WHERE ";
-
-	    if (option == 2)
-		sqlQuery += "("+ quotedGeneralInfoString +"." +quote+ "Seen" +quote+ " = 1) ";
-	    else
-		sqlQuery += "("+ quotedGeneralInfoString +"." +quote+ "Seen" +quote+ " = 0) ";
-
-	    options.where = true;
-	}
-
-	/* Rating */
-	if ((option = options.getRatingOption()) > 1) {
-
-	    double rating = options.getRating();
-
-	    if (options.where)
-		sqlQuery += "AND ";
-	    else
-		sqlQuery += "WHERE ";
-
-	    /* if MSAccess, have to convert rating with the Val function */
-	    if (databaseType.equals("MSAccess")) {
-
-		if (option == 2)
-		    sqlQuery += "(Val(Rating) >= "+rating+") ";
-		else
-		    sqlQuery += "(Val(Rating) <= "+rating+") ";
-	    }
-	    else {
-		if (option == 2)
-		    sqlQuery += "(" +quote+ "Rating" +quote+ " >= "+rating+") ";
-		else
-		    sqlQuery += "(" +quote+ "Rating" +quote+ " <= "+rating+") ";
-	    }
-
-	    options.where = true;
-	}
-
-	/* Date */
-	if ((option = options.getDateOption()) > 1) {
-
-	    String date = options.getDate();
-
-	    if (!date.equals("")) {
-
-		if (options.where)
-		    sqlQuery += "AND ";
-		else
-		    sqlQuery += "WHERE ";
-
-		/* if MSAccess, have to convert date with the Val function */
-		if (databaseType.equals("MSAccess")) {
-		    if (option == 2)
-			sqlQuery += "(Val(Date) >= "+ date +") ";
-		    else
-			sqlQuery += "(Val(Date) <= "+ date +") ";
-		}
-		else {
-		    if (option == 2)
-			sqlQuery += "(" +quote+ "Date" +quote+ " >= "+ date +") ";
-		    else
-			sqlQuery += "(" +quote+ "Date" +quote+ " <= "+ date +") ";
-		}
-
-		options.where = true;
-	    }
-	}
-	return sqlQuery;
+    	return filter;
     }
 
 
     /**
+     * Part of the advanced search function
+     * Used by method getMoviesList(ModelDatabaseSearch options)
+     */
+    private String setTableJoins(String filter, ModelDatabaseSearch options) {
+
+    	String selectAndJoin;
+
+    	if (options.getFullGeneralInfo) {
+    		selectAndJoin = getMoviesSelectStatement();
+    	}
+    	else
+    		selectAndJoin = "SELECT " + quotedGeneralInfoString + ".ID, " + quotedGeneralInfoString + "." + quote + "Title" + quote + ", " + quotedGeneralInfoString + "." + quote + "Imdb" + quote + ", " + quotedGeneralInfoString + "." + quote + "Cover" + quote +  ", " + quotedGeneralInfoString + "." + quote + "Date" + quote + " FROM " + quotedGeneralInfoString + " ";
+
+    	String orderBy = options.getOrderCategory();
+    	String joinTemp = "";
+
+    	if (databaseType.equals("MSAccess") && ((options.getListOption() == 1) || orderBy.equals("Duration") || (filter.indexOf(additionalInfoString) != -1) || (filter.indexOf(extraInfoString) != -1))) {
+    		orderBy = "\"Additional Info\".\"Duration\"";
+
+    		if (orderBy.equals("Duration") || filter.indexOf(additionalInfoString) != -1)
+    			joinTemp = "\"General Info\" INNER JOIN \"Additional Info\" ON \"General Info\".ID=\"Additional Info\".ID ";
+
+    		if (options.getListOption() == 1) {
+
+    			if (joinTemp.equals(""))
+    				joinTemp += "\"General Info\" INNER JOIN \"Lists\" ON \"General Info\".ID=\"Lists\".ID ";
+    			else
+    				joinTemp += "INNER JOIN ("+ joinTemp +") ON \"General Info\".ID=\"Additional Info\".ID ";
+    		}
+
+    		if (filter.indexOf(extraInfoString) != -1) {
+
+    			if (joinTemp.equals(""))
+    				joinTemp += "\"General Info\" INNER JOIN \"Extra Info\" ON \"General Info\".ID=\"Extra Info\".ID ";
+    			else
+    				joinTemp += "INNER JOIN ("+ joinTemp +") ON \"General Info\".ID=\"Extra Info\".ID ";
+    		}
+
+    		selectAndJoin += joinTemp;
+    	}
+    	else {
+
+    		if (options.getListOption() == 1) {
+    			selectAndJoin += "INNER JOIN "+ quote+ "Lists"+ quote+ " ON "+ quotedGeneralInfoString + ".ID = " + quote + "Lists" + quote + ".ID ";
+    		}
+
+    		if (orderBy.equals("Duration") || filter.indexOf(additionalInfoString) != -1) {
+    			orderBy = quotedAdditionalInfoString + "." + quote + "Duration" + quote;
+    			//sqlQuery += "INNER JOIN \"Additional Info\" ON \"General Info\".ID = \"Additional Info\".ID ";
+    			selectAndJoin += "INNER JOIN "+ quotedAdditionalInfoString + " ON "+ quotedGeneralInfoString + ".ID = "+ quotedAdditionalInfoString +".ID ";
+    		}
+
+    		if (filter.indexOf(extraInfoString) != -1) {
+    			selectAndJoin += "INNER JOIN " + quotedExtraInfoString + " ON " + quotedGeneralInfoString + ".ID=" + quotedExtraInfoString + ".ID ";
+    		}
+    	}
+    	return selectAndJoin;
+    }
+
+
+    /**
+     * Part of the advanced search function
+     * Used by method getMoviesList(ModelDatabaseSearch options)
+     */
+    private String processAdvancedOptions(ModelDatabaseSearch options) {
+
+    	String sqlQuery = "";
+    	String listColumn = quote + options.getListName() + quote;
+    	int option = 0;
+
+    	/* List */
+    	if ((option = options.getListOption()) == 1 && !listColumn.equals("")) {
+
+    		if (!options.where)
+    			sqlQuery += "WHERE ";
+
+    		sqlQuery += quote + "Lists"+ quote + "." + listColumn + "=1 ";
+
+    		options.where = true;
+    	}
+
+    	/* seen */
+    	if ((option = options.getSeen()) > 1) {
+
+    		if (options.where)
+    			sqlQuery += "AND ";
+    		else
+    			sqlQuery += "WHERE ";
+
+    		if (option == 2)
+    			sqlQuery += "("+ quotedGeneralInfoString +"." +quote+ "Seen" +quote+ " = 1) ";
+    		else
+    			sqlQuery += "("+ quotedGeneralInfoString +"." +quote+ "Seen" +quote+ " = 0) ";
+
+    		options.where = true;
+    	}
+
+    	/* Rating */
+    	if ((option = options.getRatingOption()) > 1) {
+
+    		double rating = options.getRating();
+
+    		if (options.where)
+    			sqlQuery += "AND ";
+    		else
+    			sqlQuery += "WHERE ";
+
+    		/* if MSAccess, have to convert rating with the Val function */
+    		if (databaseType.equals("MSAccess")) {
+
+    			if (option == 2)
+    				sqlQuery += "(Val(Rating) >= "+rating+") ";
+    			else
+    				sqlQuery += "(Val(Rating) <= "+rating+") ";
+    		}
+    		else {
+    			if (option == 2)
+    				sqlQuery += "(" +quote+ "Rating" +quote+ " >= "+rating+") ";
+    			else
+    				sqlQuery += "(" +quote+ "Rating" +quote+ " <= "+rating+") ";
+    		}
+
+    		options.where = true;
+    	}
+
+    	/* Date */
+    	if ((option = options.getDateOption()) > 1) {
+
+    		String date = options.getDate();
+
+    		if (!date.equals("")) {
+
+    			if (options.where)
+    				sqlQuery += "AND ";
+    			else
+    				sqlQuery += "WHERE ";
+
+    			/* if MSAccess, have to convert date with the Val function */
+    			if (databaseType.equals("MSAccess")) {
+    				if (option == 2)
+    					sqlQuery += "(Val(Date) >= "+ date +") ";
+    				else
+    					sqlQuery += "(Val(Date) <= "+ date +") ";
+    			}
+    			else {
+    				if (option == 2)
+    					sqlQuery += "(" +quote+ "Date" +quote+ " >= "+ date +") ";
+    				else
+    					sqlQuery += "(" +quote+ "Date" +quote+ " <= "+ date +") ";
+    			}
+
+    			options.where = true;
+    		}
+    	}
+    	return sqlQuery;
+    }
+
+   
+    /**
+     * Part of the advanced search function
      * Returns a List of MovieModels according to the search options
      **/
     public DefaultListModel getMoviesList(ModelDatabaseSearch options) {
