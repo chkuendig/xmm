@@ -33,19 +33,19 @@ public class ModelEpisode extends ModelEntry {
 	/*The database key for this episode.*/
 	private int episodeNumber;
 
-	/* default public constructor for XML export */
+	/* default public constructor for XML export using Castor */
 	public ModelEpisode() {
-		additionalInfo = new ModelAdditionalInfo();
+		additionalInfo = new ModelAdditionalInfo(false);
 	}
 
 	public ModelEpisode(int movieKey) {
 		this.movieKey = movieKey;
-		additionalInfo = new ModelAdditionalInfo();	
+		additionalInfo = new ModelAdditionalInfo(true);	
 	}	
 
 	public ModelEpisode(ModelEpisode model) {
 		copyData(model);
-		additionalInfo = new ModelAdditionalInfo();
+		additionalInfo = new ModelAdditionalInfo(true);
 	}
 
 	/**

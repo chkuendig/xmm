@@ -56,11 +56,16 @@ public class ModelAdditionalInfo {
 	static private ArrayList extraInfoFieldNames = null;
 	private ArrayList extraInfoFieldValues = new ArrayList();
 
-	public ModelAdditionalInfo() {
+	// Default empty contryctir used when importing from XML using Castor
+	public ModelAdditionalInfo() {}
 
-		if (extraInfoFieldNames != null) {
-			for (int i = 0; i < extraInfoFieldNames.size(); i++)
-				extraInfoFieldValues.add("");    
+	public ModelAdditionalInfo(boolean initialize) {
+
+		if (initialize) {
+			if (extraInfoFieldNames != null) {
+				for (int i = 0; i < extraInfoFieldNames.size(); i++)
+					extraInfoFieldValues.add("");    
+			}
 		}
 	}
 
@@ -228,7 +233,7 @@ public class ModelAdditionalInfo {
 	public static ArrayList getExtraInfoFieldNames() {
 			
 		if (oldExtraInfoFieldNames)
-				setExtraInfoFieldNames(MovieManager.getIt().getDatabase().getExtraInfoFieldNames());
+			setExtraInfoFieldNames(MovieManager.getIt().getDatabase().getExtraInfoFieldNames());
 		
 		return extraInfoFieldNames;
 	}
@@ -261,24 +266,19 @@ public class ModelAdditionalInfo {
 //	 Used when importing/exporting XML with Castor
 	public ArrayList getExtraInfoFieldNames2() {
 		System.err.println("getExtraInfoFieldNames2");
-		
 		return extraInfoFieldNames;
 	}
 	
 	// Used when importing/exporting XML with Castor
 	public void setExtraInfoFieldNames2(ArrayList extraInfoFieldNames) {
 		System.err.println("setExtraInfoFieldNames2:" + extraInfoFieldNames.get(0));
-		
 		ModelAdditionalInfo.extraInfoFieldNames = extraInfoFieldNames;
 	}
 	
 //	 Used when importing/exporting XML with Castor
 	public void addExtraInfoFieldValue(String str) {
 		System.err.println("addExtraInfoFieldValue:" + str);
-		
 		extraInfoFieldValues.add(str);
-		
-		//ModelAdditionalInfo.extraInfoFieldNames = extraInfoFieldNames;
 	}
 	
 	

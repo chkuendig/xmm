@@ -27,14 +27,14 @@ public class ModelMovie extends ModelEntry {
 
 	public static boolean notesHaveBeenChanged = false;
 	
-	/* default public constructor for XML export */
+	/* default public constructor for XML import using Castor */
 	public ModelMovie() {
-		additionalInfo = new ModelAdditionalInfo();
+		additionalInfo = new ModelAdditionalInfo(true);
 	}
 
 	public ModelMovie(ModelMovie model) {
 		copyData(model);
-		additionalInfo = new ModelAdditionalInfo();
+		additionalInfo = new ModelAdditionalInfo(true);
 	}
 
 	/**
@@ -123,8 +123,7 @@ public class ModelMovie extends ModelEntry {
 		return false;
 	}
 	
-	
-	
+		
 	public void updateGeneralInfoData() {
 		updateGeneralInfoData(true);
 	}
