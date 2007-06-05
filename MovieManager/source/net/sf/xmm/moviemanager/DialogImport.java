@@ -43,15 +43,24 @@ public class DialogImport extends JDialog implements ActionListener {
     
     static Logger log = Logger.getRootLogger();
     
+    // Stores in array for easy access through indexes.
+    final String [] importTypes = new String[ModelImportSettings.IMPORT_COUNT];
+      
+    void setImportTypeValues() {
+    	importTypes[ModelImportSettings.IMPORT_TEXT] = "Text File";
+        importTypes[ModelImportSettings.IMPORT_EXCEL] = "Excel Spreadsheet";
+        importTypes[ModelImportSettings.IMPORT_XML] = "XML File";
+        importTypes[ModelImportSettings.IMPORT_CSV] = "CSV File";
+        importTypes[ModelImportSettings.IMPORT_EXTREME] = "Extreme Movie Manager database";
+    } 
+    
+     
     private JTextField textFilePath;
     private JTextField excelFilePath;
     private JTextField extremeFilePath;
     private JTextField xmlFilePath;
     private JTextField csvFilePath;
-    
-    private JTextField excelTitleColumn;
-    private JTextField excelLocationColumn;
-      
+    public JTextField csvSeparator;
     
     private JButton browseForTextFile;
     private JButton browseForExcelFile;
@@ -90,9 +99,11 @@ public class DialogImport extends JDialog implements ActionListener {
         
     public DialogImport(final MovieManagerCommandImport parent) {
 	/* Dialog creation...*/
-	super(MovieManager.getDialog());
-	this.parent = parent;
-	
+    	super(MovieManager.getDialog());
+    	this.parent = parent;
+		
+    	setImportTypeValues();
+    	
 	/* Close dialog... */
 	addWindowListener(new WindowAdapter() {
 		public void windowClosing(WindowEvent e) {
@@ -164,7 +175,6 @@ public class DialogImport extends JDialog implements ActionListener {
 	
 	/* Textfile */
 	
-	
 	JLabel textlabel = new JLabel("Import movies from a textfile containing movie titles only");
 	JPanel textLabelPanel = new JPanel();
     textLabelPanel.add(textlabel);
@@ -193,20 +203,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	JLabel excelLabel = new JLabel("Import movies from an excel spreadsheet");
 	JPanel excelLabelPanel = new JPanel();
 	excelLabelPanel.add(excelLabel);
-	
-	excelTitleColumn = new JTextField(3);
-	excelTitleColumn.setDocument(new DocumentRegExp("(\\d)*",4));
-	excelTitleColumn.setText("0");
-	
-    JLabel excelTitleLabel = new JLabel("Movie title column:");
-    excelTitleLabel.setLabelFor(excelTitleColumn);
-    
-    excelLocationColumn = new JTextField("", 3);
-    excelLocationColumn.setDocument(new DocumentRegExp("(\\d)*",4));
-    
-    JLabel excelLocationLabel = new JLabel("Location column:");
-    excelLocationLabel.setLabelFor(excelLocationColumn);
-    
+	 
 	JPanel excelOptionPanel = new JPanel();
     excelOptionPanel.setLayout(new BoxLayout(excelOptionPanel, BoxLayout.Y_AXIS));
     
@@ -253,6 +250,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	excelFilePanel.add(excelOptionPanel, BorderLayout.CENTER);
 	excelFilePanel.add(excelPathPanel, BorderLayout.SOUTH);
 	
+	
 	/* Extreme movie manager database */
 	JLabel extremeLabel = new JLabel("Import movies from an extreme Movie Manager database");
 	JPanel extremeLabelPanel = new JPanel();
@@ -272,6 +270,8 @@ public class DialogImport extends JDialog implements ActionListener {
 	languageButtonGroup.add(useOriginalLanguage);
 	languageButtonGroup.add(useMediaLanguage);
 	
+	
+	/* Extreme option panel */
 	JPanel extremeOptionPanel1 = new JPanel();
 	extremeOptionPanel1.setLayout(new BoxLayout(extremeOptionPanel1, BoxLayout.Y_AXIS));
 	extremeOptionPanel1.add(enableOverwriteImportedInfoWithImdbInfo);
@@ -281,7 +281,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	JPanel extremeOptionPanel2 = new JPanel();
 	extremeOptionPanel2.add(extremeOptionPanel1);
 	
-	/* Extreme file path */
+	
 	extremeFilePath = new JTextField(27);
 	extremeFilePath.setText(MovieManager.getConfig().getImportExtremefilePath());
 	
@@ -326,46 +326,65 @@ public class DialogImport extends JDialog implements ActionListener {
     JPanel xmlFilePanel = new JPanel(new BorderLayout());
     xmlFilePanel.add(xmlLabelPanel, BorderLayout.NORTH);
     xmlFilePanel.add(xmlPathPanel, BorderLayout.SOUTH);
-    
-    
-		csvFilePath = new JTextField(27);
-        csvFilePath.setText(MovieManager.getConfig().getImportTextfilePath());
-        browseForCSVFile = new JButton("Browse");
-        browseForCSVFile.setToolTipText("Browse for an CSV file");
-        browseForCSVFile.setActionCommand("Browse CSV File");
-        browseForCSVFile.addActionListener(this);
-        JPanel jpanel17 = new JPanel();
-        jpanel17.setLayout(new FlowLayout());
-        jpanel17.add(csvFilePath);
-        jpanel17.add(browseForCSVFile);
-        jpanel17.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 3, 1, 2), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Directory "), BorderFactory.createEmptyBorder(0, 0, 0, 0))));
-        JLabel jlabel6 = new JLabel("Import movies from a CSV file");
-        JPanel jpanel18 = new JPanel();
-        jpanel18.add(jlabel6);
-        JPanel jpanel19 = new JPanel(new BorderLayout());
-        jpanel19.add(jpanel18, "North");
-        jpanel19.add(jpanel17, "South");
-      
-      
 
+    
+    /* CSV TEST */
+    JLabel csvLabel = new JLabel("Import movies from a CSV file");
+	JPanel csvLabelPanel = new JPanel();
+	csvLabelPanel.add(csvLabel);
+	
+    JLabel csvSeparatorLabel = new JLabel("Separator:");
+    csvSeparator = new JTextField(";", 5);
+    JPanel csvOpt = new JPanel();
+    csvOpt.add(csvSeparatorLabel);
+    csvOpt.add(csvSeparator);
+   
+	/* CSV option panel */
+	JPanel csvOptionPanel1 = new JPanel();
+	csvOptionPanel1.setLayout(new BoxLayout(csvOptionPanel1, BoxLayout.Y_AXIS));
+	csvOptionPanel1.add(csvOpt);
+	
+	csvFilePath = new JTextField(27);
+	csvFilePath.setText(MovieManager.getConfig().getImportCSVfilePath());
+	
+	browseForCSVFile = new JButton("Browse");
+	browseForCSVFile.setToolTipText("Browse for a CSV file");
+	browseForCSVFile.setActionCommand("Browse CSV File");
+	browseForCSVFile.addActionListener(this);
+	
+	JPanel csvPathPanel = new JPanel();
+	csvPathPanel.setLayout(new FlowLayout());
+	csvPathPanel.add(csvFilePath);
+	csvPathPanel.add(browseForCSVFile);
+	
+	csvPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),"  File to Import "), BorderFactory.createEmptyBorder(0,5,0,5))));
+	
+	JPanel csvFilePanel = new JPanel(new BorderLayout());
+	csvFilePanel.add(csvLabelPanel, BorderLayout.NORTH);
+	csvFilePanel.add(csvOptionPanel1, BorderLayout.CENTER);
+	csvFilePanel.add(csvPathPanel, BorderLayout.SOUTH);
+	
+	
 	/* Tabbed pane */
 	tabbedPane = new JTabbedPane();
 	tabbedPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-	tabbedPane.add("Text File", textFilePanel);
-	tabbedPane.add("Excel Spreadsheet", excelFilePanel);
-	tabbedPane.add("XML File", xmlFilePanel);
-
-	if (FileUtil.isWindows())
-	    tabbedPane.add("Extreme Movie Manager database|", extremePanel);
+	tabbedPane.add(textFilePanel, importTypes[ModelImportSettings.IMPORT_TEXT]);
+	tabbedPane.add(excelFilePanel, importTypes[ModelImportSettings.IMPORT_EXCEL]);
+	tabbedPane.add(xmlFilePanel, importTypes[ModelImportSettings.IMPORT_XML]);
+	tabbedPane.add(csvFilePanel, importTypes[ModelImportSettings.IMPORT_CSV]);
 	
-    
-    
+	// Extreme movie manager uses MS Access, so it's only supported on Windows.
+	if (FileUtil.isWindows())
+	    tabbedPane.add(extremePanel, importTypes[ModelImportSettings.IMPORT_EXTREME]);
+	
+	tabbedPane.setSelectedIndex(tabbedPane.indexOfTab(importTypes[MovieManager.getConfig().getLastDialogImportType()]));
+		
 	/* Add to list */
 	JPanel listPanel = makeListPanel();
 	
 	/* Buttons */
-	buttonOk = new JButton("OK");
-	buttonOk.setToolTipText("Save info");
+	buttonOk = new JButton("Close");
+	buttonOk.setToolTipText("Save and Close");
 	buttonOk.setActionCommand("DialogAddMultipleMovies - OK");
 	buttonOk.addActionListener(this);
 	
@@ -532,160 +551,179 @@ public class DialogImport extends JDialog implements ActionListener {
     
     /*Saves the options to the MovieManager object*/
     void executeSave() {
-	
-	MovieManager.getConfig().setImportTextfilePath(textFilePath.getText());
-	MovieManager.getConfig().setImportExcelfilePath(excelFilePath.getText());
-	MovieManager.getConfig().setImportXMLfilePath(xmlFilePath.getText());
-	MovieManager.getConfig().setImportCSVfilePath(csvFilePath.getText());
-	MovieManager.getConfig().setImportExtremefilePath(extremeFilePath.getText());
-	
-	
-	if (listChooser != null) {
-	    MovieManager.getConfig().setMultiAddList((String) listChooser.getSelectedItem());
-	    
-	    if (enableAddMoviesToList.isSelected())
-		MovieManager.getConfig().setMultiAddListEnabled(true);
-	    else
-		MovieManager.getConfig().setMultiAddListEnabled(false);
-	}
-	
-	MovieManager.getConfig().setMultiAddSelectOption(multiAddSelectOption);
+
+    	MovieManager.getConfig().setLastDialogImportType(getImportMode());
+    	
+    	MovieManager.getConfig().setImportTextfilePath(textFilePath.getText());
+    	MovieManager.getConfig().setImportExcelfilePath(excelFilePath.getText());
+    	MovieManager.getConfig().setImportXMLfilePath(xmlFilePath.getText());
+    	MovieManager.getConfig().setImportCSVfilePath(csvFilePath.getText());
+    	MovieManager.getConfig().setImportExtremefilePath(extremeFilePath.getText());
+   	
+    	// Save CSV separator
+    	//csvSeparator
+    	
+    	if (listChooser != null) {
+    		MovieManager.getConfig().setMultiAddList((String) listChooser.getSelectedItem());
+
+    		if (enableAddMoviesToList.isSelected())
+    			MovieManager.getConfig().setMultiAddListEnabled(true);
+    		else
+    			MovieManager.getConfig().setMultiAddListEnabled(false);
+    	}
+
+    	MovieManager.getConfig().setMultiAddSelectOption(multiAddSelectOption);
     }
-    
+
     public int getImportMode() {
-        return tabbedPane.getSelectedIndex();
+    	
+    	String title = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+    	
+    	if (title.equals(importTypes[ModelImportSettings.IMPORT_TEXT]))
+    		return ModelImportSettings.IMPORT_TEXT;
+    	else if (title.equals(importTypes[ModelImportSettings.IMPORT_EXCEL]))
+    		return ModelImportSettings.IMPORT_EXCEL;
+    	else if (title.equals(importTypes[ModelImportSettings.IMPORT_XML]))
+    		return ModelImportSettings.IMPORT_XML;
+    	else if (title.equals(importTypes[ModelImportSettings.IMPORT_CSV]))
+    		return ModelImportSettings.IMPORT_CSV;
+    	else if (title.equals(importTypes[ModelImportSettings.IMPORT_EXTREME]))
+    		return ModelImportSettings.IMPORT_EXTREME;
+    	
+    	return -1;
     }
-    
+
     /*Returns the string in the path textfield*/
     public String getPath() {
-	
-	switch (tabbedPane.getSelectedIndex()) {
-	case 0 : return textFilePath.getText();
-	case 1 : return excelFilePath.getText();
-	case 2 : return xmlFilePath.getText();
-	case 3 : return csvFilePath.getText();
-	case 4 : return extremeFilePath.getText();
-  	}
-	return "";
+
+    	switch (getImportMode()) {
+    	case ModelImportSettings.IMPORT_TEXT : return textFilePath.getText();
+    	case ModelImportSettings.IMPORT_EXCEL : return excelFilePath.getText();
+    	case ModelImportSettings.IMPORT_XML : return xmlFilePath.getText();
+    	case ModelImportSettings.IMPORT_CSV : return csvFilePath.getText();
+    	case ModelImportSettings.IMPORT_EXTREME : return extremeFilePath.getText();
+    	}
+    	return "";
     }
+
     
     /*returns the value of the multiAddSelectOption variable.( values 0-2)*/
     public int getMultiAddSelectOption() {
-	
-	if (!enableSearchForImdbInfo.isSelected())
-	    return -1;
-	
-	return multiAddSelectOption;
+
+    	if (!enableSearchForImdbInfo.isSelected())
+    		return -1;
+
+    	return multiAddSelectOption;
     }
     
     public void actionPerformed(ActionEvent event) {
-	log.debug("ActionPerformed: "+ event.getActionCommand());
-	
-	if (event.getSource().equals(browseForTextFile)) {
-	    String ret = executeCommandGetFile(ModelImportSettings.IMPORT_TEXT);
-	    if (!ret.equals(""))
-		textFilePath.setText(ret);
-	}
-	
-	if (event.getSource().equals(browseForExcelFile)) {
-	    String ret = executeCommandGetFile(ModelImportSettings.IMPORT_EXCEL);
-	    if (!ret.equals(""))
-		excelFilePath.setText(ret);
-	}
+    	log.debug("ActionPerformed: "+ event.getActionCommand());
 
-	if (event.getSource().equals(browseForXMLFile)) {
-		String ret = executeCommandGetFile(ModelImportSettings.IMPORT_XML);
-		if (!ret.equals(""))
-			xmlFilePath.setText(ret);
-	}
+    	if (event.getSource().equals(browseForTextFile)) {
+    		String ret = executeCommandGetFile(ModelImportSettings.IMPORT_TEXT);
+    		if (!ret.equals(""))
+    			textFilePath.setText(ret);
+    	}
 
-	if(event.getSource().equals(browseForCSVFile))
-	{
-		String s2 = executeCommandGetFile(ModelImportSettings.IMPORT_CSV);
-		if(!s2.equals(""))
-			csvFilePath.setText(s2);
-	}
+    	if (event.getSource().equals(browseForExcelFile)) {
+    		String ret = executeCommandGetFile(ModelImportSettings.IMPORT_EXCEL);
+    		if (!ret.equals(""))
+    			excelFilePath.setText(ret);
+    	}
 
-	if (event.getSource().equals(browseForExtremeFile)) {
-		String ret = executeCommandGetFile(ModelImportSettings.IMPORT_EXTREME);
-		if (!ret.equals(""))
-			extremeFilePath.setText(ret);
-	}
+    	if (event.getSource().equals(browseForXMLFile)) {
+    		String ret = executeCommandGetFile(ModelImportSettings.IMPORT_XML);
+    		if (!ret.equals(""))
+    			xmlFilePath.setText(ret);
+    	}
 
-	if (event.getSource().equals(buttonOk)) {
+    	if(event.getSource().equals(browseForCSVFile))
+    	{
+    		String s2 = executeCommandGetFile(ModelImportSettings.IMPORT_CSV);
+    		if(!s2.equals(""))
+    			csvFilePath.setText(s2);
+    	}
 
-	    executeSave();
-	    parent.setCancelAll(true);
-	    dispose();
-	}
-	
-	if (event.getSource().equals(buttonCancel)) {
-	    log.debug("ActionPerformed: " + event.getActionCommand());
-	    parent.setCancelAll(true);
-	    dispose();
-	}
-	
-	if (event.getSource().equals(buttonAddMovies)) {
-	    log.debug("ActionPerformed: " + event.getActionCommand());
-	    
-	    if (getPath().equals("")) {
-	        DialogAlert alert = new DialogAlert(this, "Alert","Please specify a file path.");
-	        GUIUtil.showAndWait(alert, true);
-	    }
-	    else if (!new File(getPath()).exists()) {
-	        DialogAlert alert = new DialogAlert(this, "Alert","The specified file does not exist.");
-	        GUIUtil.showAndWait(alert, true);
-	    }
-	    else {
-	        executeSave();
-	        dispose();
-	    }
-	}
-	
-   
-	if (event.getSource().equals(buttonAddList)) {
-	
-	    MovieManagerCommandLists.execute(this);
-	    
-	    all.remove(2);
-	    all.add(makeListPanel(), 2);
-	    pack();
-	    
-	    GUIUtil.show(this, true);
-	}
-	
-	if (event.getSource().equals(enableSearchForImdbInfo)) {
-	    
-	    if (enableSearchForImdbInfo.isSelected()) {
-		askButton.setEnabled(true);
-		selectIfOnlyOneHitButton.setEnabled(true);
-		selectFirstHitButton.setEnabled(true);
-		enableOverwriteImportedInfoWithImdbInfo.setEnabled(true);
-		
-	    }
-	    else {
-		askButton.setEnabled(false);
-		selectIfOnlyOneHitButton.setEnabled(false);
-		selectFirstHitButton.setEnabled(false);
-		enableOverwriteImportedInfoWithImdbInfo.setEnabled(false);
-	    }
-	}
-	
-	if (event.getSource().equals(enableAddMoviesToList)) {
-	    
-	    if (enableAddMoviesToList.isSelected())
-		listChooser.setEnabled(true);
-	    else
-		listChooser.setEnabled(false);
-	}
-	
-	if (event.getSource().equals(askButton))
-	    multiAddSelectOption = 0;
-	
-	if (event.getSource().equals(selectFirstHitButton))
-	    multiAddSelectOption = 1;
-	
-	if (event.getSource().equals(selectIfOnlyOneHitButton))
-	    multiAddSelectOption = 2;
+    	if (event.getSource().equals(browseForExtremeFile)) {
+    		String ret = executeCommandGetFile(ModelImportSettings.IMPORT_EXTREME);
+    		if (!ret.equals(""))
+    			extremeFilePath.setText(ret);
+    	}
+
+    	if (event.getSource().equals(buttonOk)) {
+
+    		executeSave();
+    		parent.setCancelAll(true);
+    		dispose();
+    	}
+
+    	if (event.getSource().equals(buttonCancel)) {
+    		log.debug("ActionPerformed: " + event.getActionCommand());
+    		parent.setCancelAll(true);
+    		dispose();
+    	}
+
+    	if (event.getSource().equals(buttonAddMovies)) {
+    		log.debug("ActionPerformed: " + event.getActionCommand());
+
+    		if (getPath().equals("")) {
+    			DialogAlert alert = new DialogAlert(this, "Alert","Please specify a file path.");
+    			GUIUtil.showAndWait(alert, true);
+    		}
+    		else if (!new File(getPath()).exists()) {
+    			DialogAlert alert = new DialogAlert(this, "Alert","The specified file does not exist.");
+    			GUIUtil.showAndWait(alert, true);
+    		}
+    		else {
+    			executeSave();
+    			dispose();
+    		}
+    	}
+
+
+    	if (event.getSource().equals(buttonAddList)) {
+
+    		MovieManagerCommandLists.execute(this);
+
+    		all.remove(2);
+    		all.add(makeListPanel(), 2);
+    		pack();
+
+    		GUIUtil.show(this, true);
+    	}
+
+    	if (event.getSource().equals(enableSearchForImdbInfo)) {
+
+    		if (enableSearchForImdbInfo.isSelected()) {
+    			askButton.setEnabled(true);
+    			selectIfOnlyOneHitButton.setEnabled(true);
+    			selectFirstHitButton.setEnabled(true);
+    			enableOverwriteImportedInfoWithImdbInfo.setEnabled(true);
+
+    		}
+    		else {
+    			askButton.setEnabled(false);
+    			selectIfOnlyOneHitButton.setEnabled(false);
+    			selectFirstHitButton.setEnabled(false);
+    			enableOverwriteImportedInfoWithImdbInfo.setEnabled(false);
+    		}
+    	}
+
+    	if (event.getSource().equals(enableAddMoviesToList)) {
+
+    		if (enableAddMoviesToList.isSelected())
+    			listChooser.setEnabled(true);
+    		else
+    			listChooser.setEnabled(false);
+    	}
+
+    	if (event.getSource().equals(askButton))
+    		multiAddSelectOption = 0;
+
+    	if (event.getSource().equals(selectFirstHitButton))
+    		multiAddSelectOption = 1;
+
+    	if (event.getSource().equals(selectIfOnlyOneHitButton))
+    		multiAddSelectOption = 2;
     }
 }
