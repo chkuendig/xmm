@@ -187,7 +187,7 @@ public class IMDB {
 	
 		Object [] tmpArray;
 	
-		FileUtil.writeToFile("imdb.html", data);
+		//FileUtil.writeToFile("imdb.html", data);
 		
 		try {
 			/* Processes the data... */
