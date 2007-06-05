@@ -64,7 +64,7 @@ public class EntryListRemover {
     }
     
     public void go() {
-	final SwingWorker worker = new SwingWorker() {
+	final net.sf.xmm.moviemanager.util.SwingWorker worker = new net.sf.xmm.moviemanager.util.SwingWorker() {
 		public Object construct() {
 		    return new Deleter();
 		}
