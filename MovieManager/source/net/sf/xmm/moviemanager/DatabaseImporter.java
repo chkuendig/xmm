@@ -115,9 +115,7 @@ public class DatabaseImporter {
         int multiAddSelectOption;
         int importMode;
         boolean overwriteWithImdbInfo;
-        int excelTitleColumn = 0;
-        int excelLocationColumn = -1;
-        
+         
         String addToThisList;
         String filePath;
         boolean originalLanguage = true;
@@ -131,11 +129,9 @@ public class DatabaseImporter {
         
         Importer(ModelImportSettings importSettings) {
             
-            multiAddSelectOption = importSettings.multiAddSelectOption;
+        	multiAddSelectOption = importSettings.multiAddSelectOption;
             importMode = importSettings.importMode;
             overwriteWithImdbInfo = importSettings.overwriteWithImdbInfo;
-            excelTitleColumn = importSettings.excelTitleColumn;
-            excelLocationColumn = importSettings.excelLocationColumn;
             addToThisList = importSettings.addToThisList;
             filePath = importSettings.filePath;
             originalLanguage = importSettings.extremeOriginalLanguage;
@@ -145,26 +141,34 @@ public class DatabaseImporter {
             Thread.currentThread().setPriority(4);
             
             System.err.print("addToThisList:" + addToThisList + "\n\n");
+            System.err.print("filePath:" + filePath);
             
             if (filePath != null) {
                 
                 try {
+                	System.err.println("getMovieList()");
                     movielist = getMovieList();
-                    
+                    System.err.println("getMovieList() done:" + movielist);
+                     
                     if (movielist == null)
                         throw new Exception("An error occured while reading file");
                     
                 } catch (Exception e) {
-                    
+                	System.err.println("Exception");
                     JDialog alert = new DialogAlert(parent, "Error", e.getMessage());
                     GUIUtil.showAndWait(alert, true);
                     return;
                 }
                 
+                System.err.println("after catch");
+                
                 lengthOfTask = movielist.size();
+                System.err.println("after catch 2");
                 transferred = new String[lengthOfTask + 2];
                 
                 String title = "";
+                
+                System.err.print("lengthOfTask:" + lengthOfTask);
                 
                 /* Extreme cover path */
                 //File tempFile = new File(filePath);
@@ -180,8 +184,9 @@ public class DatabaseImporter {
                     	title = (String) movielist.get(i);
                     }
                     /* Excel */
-                    else if (importMode == importSettings.IMPORT_EXCEL) {
+                    else if (importMode == importSettings.IMPORT_EXCEL || importMode == importSettings.IMPORT_CSV) {
                     	title = ((ModelMovie) movielist.get(i)).getTitle();
+                    	System.err.println("CVS title:" + title);
                     } /* XML */
                     else if (importMode == importSettings.IMPORT_XML) {
 
@@ -197,7 +202,9 @@ public class DatabaseImporter {
                     else if (importMode == importSettings.IMPORT_EXTREME) {
                     	title = ((ModelExtremeMovie) movielist.get(i)).title;
                     }
-                   
+                    else
+                    	System.err.println("NOT added");
+                    
                     if (!title.equals("")) {
                         
                         /* First resetting the info already present */
@@ -223,8 +230,8 @@ public class DatabaseImporter {
                             int ret = -1; 
                             
                             /* excel */
-                            if (importMode == ModelImportSettings.IMPORT_EXCEL) {
-                                ret = addExcelMovie(i);
+                            if (importMode == ModelImportSettings.IMPORT_EXCEL || importMode == ModelImportSettings.IMPORT_CSV) {
+                                ret = addTableMovie(i);
                             }
                             /* Extreme movie manager */
                             else if (importMode == ModelImportSettings.IMPORT_EXTREME) {
@@ -361,16 +368,16 @@ public class DatabaseImporter {
             }
             
             modelMovieInfo.getFieldValues().add(duration); /* Duration */
-            modelMovieInfo.getFieldValues().add(cleanInt(((ModelExtremeMovie) movielist.get(i)).filesize, 0));
+            modelMovieInfo.getFieldValues().add(StringUtil.cleanInt(((ModelExtremeMovie) movielist.get(i)).filesize, 0));
             modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).cds); /* CDs */ 
             modelMovieInfo.getFieldValues().add("1"); /* CD cases */
             modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).resolution);
             modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).codec);
             modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).videoRate);
-            modelMovieInfo.getFieldValues().add(cleanInt(((ModelExtremeMovie) movielist.get(i)).bitrate, 0));
+            modelMovieInfo.getFieldValues().add(StringUtil.cleanInt(((ModelExtremeMovie) movielist.get(i)).bitrate, 0));
             modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).audioCodec);
-            modelMovieInfo.getFieldValues().add(cleanInt(((ModelExtremeMovie) movielist.get(i)).sampleRate, 0));
-            modelMovieInfo.getFieldValues().add(cleanInt(((ModelExtremeMovie) movielist.get(i)).audioBitrate, 0));
+            modelMovieInfo.getFieldValues().add(StringUtil.cleanInt(((ModelExtremeMovie) movielist.get(i)).sampleRate, 0));
+            modelMovieInfo.getFieldValues().add(StringUtil.cleanInt(((ModelExtremeMovie) movielist.get(i)).audioBitrate, 0));
             modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).channels);
             modelMovieInfo.getFieldValues().add(((ModelExtremeMovie) movielist.get(i)).filePath); /* Location */
             modelMovieInfo.getFieldValues().add(String.valueOf(((ModelExtremeMovie) movielist.get(i)).fileCount));
@@ -416,42 +423,7 @@ public class DatabaseImporter {
             
             return ret;
         }
-        
-        private String cleanInt(String toBeCleaned, int mode) {
-            
-            boolean start = false;
-            String result = "";
-            
-            if (mode == 1)
-                log.debug("toBeCleaned:" + toBeCleaned);
-            
-            for (int i = 0; i < toBeCleaned.length(); i++) {
-                
-                if (Character.isDigit(toBeCleaned.charAt(i)))
-                    start = true;
-                
-                if (start) {
-                    
-                    if (mode == 1 && toBeCleaned.charAt(i) == ',')
-                        log.debug("NumValComma:"+ Character.getNumericValue(toBeCleaned.charAt(i)));
-                    
-                    if (Character.getNumericValue(toBeCleaned.charAt(i)) != -1 || toBeCleaned.charAt(i) == ',' || toBeCleaned.charAt(i) == '.') {
-                        
-                        if (Character.isDigit(toBeCleaned.charAt(i))) {
-                            result += toBeCleaned.charAt(i);
-                        }
-                        else {
-                            break;
-                        }
-                    }
-                }
-            }
-            
-            if (mode == 1)
-                log.debug("result:" + result);
-            
-            return result;
-        }
+      
         
         
         void addFromXML2(int i) {
@@ -636,11 +608,13 @@ public class DatabaseImporter {
             return ret;
         }
         
-        
-        int addExcelMovie(int i) {
+        // Add movie retrieved from the DialogImportTable
+        int addTableMovie(int i) {
            
             int ret = -1;
             Object tmp = movielist.get(i);
+            
+            System.err.println("setting model:" + ((ModelMovie) tmp).getTitle());
             
             modelMovieInfo.setModel((ModelMovie) tmp, false, false);
             
@@ -653,8 +627,6 @@ public class DatabaseImporter {
             
             return ret;
         }
-        
-        
         
         
         
@@ -687,21 +659,22 @@ public class DatabaseImporter {
                     log.error("", e);
                 }
                 
-                /* Excel spreadsheet */
-            } else if (importMode == ModelImportSettings.IMPORT_EXCEL) {
-                
-                try {
-                    
-		    movieList = new ArrayList(10);
-                	
-		    JTable table = importSettings.table;
-                    
-                    TableModel tableModel = table.getModel();
-                    TableColumnModel columnModel = table.getColumnModel();
-                    int columnCount = table.getModel().getColumnCount();
-                    
-                    TableColumn tmpColumn;
-                    FieldModel fieldModel;
+                /* Excel spreadsheet and CSV text file */
+            } else if (importMode == ModelImportSettings.IMPORT_EXCEL ||
+            		importMode == ModelImportSettings.IMPORT_CSV) {
+
+            	try {
+
+            		movieList = new ArrayList(10);
+
+            		JTable table = importSettings.table;
+
+            		TableModel tableModel = table.getModel();
+            		TableColumnModel columnModel = table.getColumnModel();
+            		int columnCount = table.getModel().getColumnCount();
+
+            		TableColumn tmpColumn;
+            		FieldModel fieldModel;
                     String tableValue;
                     ModelMovie tmpMovie;
                     boolean valueStored = false;
@@ -728,14 +701,30 @@ public class DatabaseImporter {
                                 tableValue = (String) table.getModel().getValueAt(row, columnIndex);
                                 fieldModel.setValue(tableValue);
                                 
+                                fieldModel.validateValue();
+                                
+                                // check if the values are valid numbers
+                              //  if ()
+                                
+                               // String cleanInt(String toBeCleaned, int debugMode)
+                                
                                 if (tmpMovie.setValue(fieldModel)) {
-                                    valueStored = true;
+                                
+                                	if (fieldModel.getField().equalsIgnoreCase("File Size"))
+                                		System.err.println("successfully set value:" + fieldModel.getValue());
+                                	
+                                	valueStored = true;
                                 }
+                                else
+                                	System.err.println("Could not set value:" + fieldModel.getValue());
                             }
                         }
+                                                
                         
-                        if (valueStored)
+                        if (valueStored && tmpMovie.getTitle() != null && !tmpMovie.equals("")) {
+                        	System.err.println("adding movie:" + tmpMovie);
                         	movieList.add(tmpMovie);
+                        }
                     }
                 }
                 catch (Exception e) {
@@ -782,6 +771,8 @@ public class DatabaseImporter {
                 	movieList = ((ModelExportXML) tmp).getCombindedList();
                 }
             }
+           
+            
             return movieList;
         }
 
