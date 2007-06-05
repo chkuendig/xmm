@@ -37,12 +37,19 @@ public class DriveInfo {
 	static {
 		
 		try {
-			LibPathHacker.addDir(FileUtil.getFile("lib/driveinfo").getAbsolutePath());
-			System.load(FileUtil.getFile("lib/driveinfo/sfc_w2k.dll").getAbsolutePath());
-			System.load(FileUtil.getFile("lib/driveinfo/sfc_w9x.dll").getAbsolutePath());
-			System.load(FileUtil.getFile("lib/driveinfo/sfc_wnt.dll").getAbsolutePath());
-		
-		} catch(IOException e) {
+			
+			if (!FileUtil.isWindows() || FileUtil.isWindowsVista()) {
+				log.warn(System.getProperty("os.name") + " is not suppored by DriveInfo.");
+				initialized = false;
+			}
+			else {
+				LibPathHacker.addDir(FileUtil.getFile("lib/driveinfo").getAbsolutePath());
+				System.load(FileUtil.getFile("lib/driveinfo/sfc_w2k.dll").getAbsolutePath());
+				System.load(FileUtil.getFile("lib/driveinfo/sfc_w9x.dll").getAbsolutePath());
+				System.load(FileUtil.getFile("lib/driveinfo/sfc_wnt.dll").getAbsolutePath());
+			}
+		} catch (IOException e) {
+			log.warn("Exception:" + e.getMessage());
 			initialized = false;
 		}
 	}
