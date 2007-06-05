@@ -337,4 +337,9 @@ public class FileUtil {
         String os = System.getProperty("os.name"); //$NON-NLS-1$
         return os != null && os.toLowerCase().startsWith("windows") ? true : false; //$NON-NLS-1$
     }
+    
+    public static boolean isWindowsVista() {
+        String os = System.getProperty("os.name"); //$NON-NLS-1$
+        return os != null && os.toLowerCase().indexOf("vista") != -1 ? true : false; //$NON-NLS-1$
+    }
 } 
