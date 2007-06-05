@@ -26,6 +26,8 @@ import javax.swing.JTable;
 public class ModelImportSettings {
 
 	
+	public final static int IMPORT_COUNT = 5;
+	
 	public final static int IMPORT_TEXT = 0;
 	public final static int IMPORT_EXCEL = 1;
 	public final static int IMPORT_XML = 2;
@@ -34,23 +36,20 @@ public class ModelImportSettings {
 	
     public JTable table;
     
-    public ModelImportSettings() {
-    
-    }
+    public ModelImportSettings() {}
     
     public ModelImportSettings(JTable table) {
         this.table = table;
-        importMode = 1;
     }
         
     public int multiAddSelectOption = 0;
-    public int importMode = 0;
+    public int importMode = IMPORT_TEXT;
     public boolean overwriteWithImdbInfo = false;
-    public int excelTitleColumn = 0;
-    public int excelLocationColumn = -1;
     public String addToThisList = "";
     public String filePath = "";
     public boolean extremeOriginalLanguage = true;
     public String coverPath = "";
+    
+    public String csvSeparator = "";
 }
 

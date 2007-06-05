@@ -367,7 +367,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 								break;
 							}
 						} catch(Exception e) {
-							log.warn("Exception:", e);
+							log.warn("Exception:" + e.getMessage());
 						} 
 					}
 					else if (new File(tmp).exists()) {

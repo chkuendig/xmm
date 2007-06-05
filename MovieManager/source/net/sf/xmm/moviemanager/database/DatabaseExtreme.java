@@ -57,8 +57,11 @@ public class DatabaseExtreme {
 	    }
 	} catch (Exception e) {
 	    log.error("Exception: " + e.getMessage());
+	    e.printStackTrace();
 	    _inicialized = false;
 	}
+	
+	
     }
     
     /** 
