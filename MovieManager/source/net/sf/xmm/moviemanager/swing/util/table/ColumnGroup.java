@@ -71,7 +71,10 @@ public class ColumnGroup {
         v = new Vector();
     }
     
-    
+	public void setText(String text) {
+		this.text = text;
+	}
+	
     /**
      * Add a TableColumn or ColumnGroup object to the
      * ColumnGroup instance.
