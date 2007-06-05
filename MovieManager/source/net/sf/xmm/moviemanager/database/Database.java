@@ -314,13 +314,20 @@ abstract public class Database {
     		return;
     	}
 
+    	
+
     	if (message.indexOf("Connection reset") != -1) {
     		errorMessage = "Connection reset";
     		MovieManager.getIt().processDatabaseError();
     	}
-    	//Software caused connection abort: recv failed
+//    	Software caused connection abort: recv failed
     	else if (message.indexOf("recv failed") != -1) {
     			errorMessage = "Connection closed";
+    			MovieManager.getIt().processDatabaseError();
+    	}
+//    	Software caused connection abort: socket write error
+    	else if (message.indexOf("socket write error") != -1) {
+    			errorMessage = "Socket Write Error";
     			MovieManager.getIt().processDatabaseError();
     	}
     	else if ((message.indexOf("is full") != -1) || (message.indexOf("Error writing file") != -1)) {
