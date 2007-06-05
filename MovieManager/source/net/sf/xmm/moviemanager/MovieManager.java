@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.DefaultListModel;
-import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
 
 public class MovieManager {
@@ -544,7 +543,18 @@ public class MovieManager {
                 setDatabase(new DatabaseMySQL(database.getPath()), false);
             }
         }
-        
+        else if (error.equals("Socket Write Error")) {
+        	
+        	dialogMovieManager.setDatabaseComponentsEnable(false);
+            
+            DialogQuestion question = new DialogQuestion("Socket Write Error", "<html>Software caused connection abort due to a Socket Write Error.<br>" +
+            "Reconnect to server now?</html>");
+            GUIUtil.showAndWait(question, true);
+            
+            if (question.getAnswer()) {
+                setDatabase(new DatabaseMySQL(database.getPath()), false);
+            }
+        }
         if (error.equals("MySQL server is out of space")) { //$NON-NLS-1$
             DialogAlert alert = new DialogAlert(dialogMovieManager, Localizer.getString("moviemanager.mysql-out-of-space"), Localizer.getString("moviemanager.mysql-out-of-space-message")); //$NON-NLS-1$ //$NON-NLS-2$
             GUIUtil.showAndWait(alert, true);
