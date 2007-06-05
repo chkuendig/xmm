@@ -129,7 +129,8 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
     	importSettings.multiAddSelectOption = importMovie.getMultiAddSelectOption();
 
     	importSettings.importMode = importMovie.getImportMode();
-
+    	importSettings.csvSeparator = importMovie.csvSeparator.getText();
+    	
     	System.err.println("command import mode:" + importSettings.importMode);
     	
     	importSettings.filePath = importMovie.getPath();
@@ -138,23 +139,29 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
     		importSettings.addToThisList = (String) importMovie.listChooser.getSelectedItem();
     	}
 
-    	/* Excel spreadsheet */
-    	if (importSettings.importMode == ModelImportSettings.IMPORT_EXCEL) {
+    	
+    	/* CSV  or /* Excel spreadsheet */
+    	if (importSettings.importMode == ModelImportSettings.IMPORT_CSV || 
+    			importSettings.importMode == ModelImportSettings.IMPORT_EXCEL) {
 
     		File file = new File(importMovie.getPath());
 
     		if (file.isFile()) {
-    			DialogImportTable importTable = new DialogImportTable(this, file, ModelImportSettings.IMPORT_EXCEL);
+    			DialogImportTable importTable = new DialogImportTable(this, file, importSettings);
     			GUIUtil.showAndWait(importTable, true);
 
+    			if (importTable.canceled)
+    				setCanceled(true);
+    				
     			importSettings.table = importTable.getSettings().table;
-
     			dispose();
+    			
     		}
     	}
-
+    	    	
     	/* extreme movie manager */
     	else if (importSettings.importMode == ModelImportSettings.IMPORT_EXTREME) {
+    		
     		if (importMovie.enableOverwriteImportedInfoWithImdbInfo.isSelected())
     			importSettings.overwriteWithImdbInfo = true;
 
@@ -172,21 +179,8 @@ public class MovieManagerCommandImport extends JDialog implements ActionListener
     		}
     	}
     	
-    	/* CSV */
-    	if (importSettings.importMode == ModelImportSettings.IMPORT_CSV) {
-
-    		File file = new File(importMovie.getPath());
-
-    		if (file.isFile()) {
-    			DialogImportTable importTable = new DialogImportTable(this, file, ModelImportSettings.IMPORT_CSV);
-    			GUIUtil.showAndWait(importTable, true);
-
-    			importSettings.table = importTable.getSettings().table;
-
-    			dispose();
-    		}
-    	}
-    	createAndShowGUI();
+    	if (!canceled)
+    		createAndShowGUI();
     }
     
      /*Opens a filechooser and returns the absolute path to the selected file*/
