@@ -190,12 +190,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	
 		
 	/* Import */
+	private int lastDialogImportType = 0;
+	
 	private String importTextfilePath = "";
 	private String importExcelfilePath = "";
 	private String importXMLfilePath = "";
 	private String importCSVfilePath = "";
 	private String importExtremefilePath = "";
-
+	
 	private String lastFileFilterMovieInfoUsed = "";
 
 	/*Proxy settings*/
@@ -718,6 +720,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.enableCtrlMouseRightClick = enableCtrlMouseRightClick;
 	}
 
+	public int getLastDialogImportType() {
+		return lastDialogImportType;
+	}
+
+	public void setLastDialogImportType(int lastDialogImportType) {
+		this.lastDialogImportType = lastDialogImportType;
+	}
+		
 	public String getImportTextfilePath() {
 		return importTextfilePath;
 	}
@@ -1667,7 +1677,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setMultiAddListEnabled(new Boolean(value).booleanValue());
 			}
 
+			
+			value = (String) config.get("lastDialogImportType:");
 
+			if (value != null) {
+				setLastDialogImportType(Integer.parseInt(value));
+			}
+
+			
 			value = (String) config.get("importTextfilePath:");
 
 			if (value != null) {
@@ -2122,6 +2139,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append(lineSeparator);
 		 settings.append("multiAddListEnabled:"+ getMultiAddListEnabled());
 
+		 settings.append(lineSeparator);
+		 settings.append("lastDialogImportType:" + getLastDialogImportType());
+		 
 		 settings.append(lineSeparator);
 		 settings.append("importTextfilePath:" + getImportTextfilePath());
 
