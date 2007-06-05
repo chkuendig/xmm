@@ -367,7 +367,7 @@ public class ModelAdditionalInfo {
 				setSubtitles(value);
 			else if (fieldName.equalsIgnoreCase("Duration"))
 				setDuration(Integer.parseInt(value));
-			else if (fieldName.equalsIgnoreCase("File Size"))
+			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("File Size"))
 				setFileSize(Integer.parseInt(value));
 			else if (fieldName.equalsIgnoreCase("CDs"))
 				setCDs(Integer.parseInt(value));
