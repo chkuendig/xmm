@@ -144,13 +144,17 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         panelFolders.add(labelCovers,constraints);
         
         textFieldCovers = new JTextField(MovieManager.getConfig().getCoversFolder(),30);
-        constraints = new GridBagConstraints();
+		constraints = new GridBagConstraints();
         constraints.gridx = 1;
         constraints.gridy = 0;
         constraints.insets = new Insets(5,5,5,5);
         panelFolders.add(textFieldCovers,constraints);
         textFieldCovers.getDocument().addDocumentListener(this);
         
+		// When using MySQL, no need to change this unless storecoverslocally is enabled
+		if (! MovieManager.getConfig().getStoreCoversLocally() && (MovieManager.getIt().getDatabase() instanceof DatabaseMySQL))	 
+			textFieldCovers.setEditable(false);
+
         JButton buttonCovers = new JButton(Localizer.getString("DialogFolders.browse-covers")); //$NON-NLS-1$
         buttonCovers.setToolTipText(Localizer.getString("DialogFolders.browse-covers-tooltip")); //$NON-NLS-1$
         buttonCovers.setActionCommand("Folders - Browse Covers"); //$NON-NLS-1$
@@ -184,6 +188,9 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         panelFolders.add(textFieldQueries,constraints);
         textFieldQueries.getDocument().addDocumentListener(this);
         
+		if (! MovieManager.getConfig().getStoreCoversLocally() && (MovieManager.getIt().getDatabase() instanceof DatabaseMySQL))	 
+			textFieldQueries.setEditable(false);
+
         JButton buttonQueries = new JButton(Localizer.getString("DialogFolders.browse-queries")); //$NON-NLS-1$
         buttonQueries.setToolTipText(Localizer.getString("DialogFolders.browse-queries-tooltip")); //$NON-NLS-1$
         buttonQueries.setActionCommand("Folders - Browse Queries"); //$NON-NLS-1$
