@@ -35,13 +35,13 @@ public class ModelEpisode extends ModelEntry {
 
 	/* default public constructor for XML export using Castor */
 	public ModelEpisode() {
-		additionalInfo = new ModelAdditionalInfo(false);
+		additionalInfo = new ModelAdditionalInfo(true);
 	}
 
 	public ModelEpisode(int movieKey) {
 		this.movieKey = movieKey;
-		additionalInfo = new ModelAdditionalInfo(true);	
-	}	
+		additionalInfo = new ModelAdditionalInfo(true);
+	}
 
 	public ModelEpisode(ModelEpisode model) {
 		copyData(model);
@@ -78,7 +78,7 @@ public class ModelEpisode extends ModelEntry {
 		setWebRuntime(webRuntime);
 		setAwards(awards);
 		
-		additionalInfo = new ModelAdditionalInfo();
+		additionalInfo = new ModelAdditionalInfo(true);
 	}
 
 	public ModelEpisode(int key, int movieKey, int episodeNumber, String title, String cover) {
@@ -88,6 +88,8 @@ public class ModelEpisode extends ModelEntry {
 		this.episodeNumber = episodeNumber;
 		setTitle(title);
 		setCover(cover);
+		
+		additionalInfo = new ModelAdditionalInfo(true);
 	}
 
 	public boolean isEpisode() {

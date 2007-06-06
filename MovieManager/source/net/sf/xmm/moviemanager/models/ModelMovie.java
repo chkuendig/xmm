@@ -66,12 +66,14 @@ public class ModelMovie extends ModelEntry {
 		setAwards(awards);
 
 		hasGeneralInfoData = true;
-		additionalInfo = new ModelAdditionalInfo();
+		additionalInfo = new ModelAdditionalInfo(true);
 	}
 
 	public ModelMovie(int key, String title) {
 		setKey(key);
 		setTitle(title);
+		
+		additionalInfo = new ModelAdditionalInfo(true);
 	}
 
 	public ModelMovie(int key, String title, String urlKey, String cover, String date) {
@@ -80,6 +82,8 @@ public class ModelMovie extends ModelEntry {
 		setUrlKey(urlKey);
 		setCover(cover);
 		setDate(date);
+		
+		additionalInfo = new ModelAdditionalInfo(true);
 	}
 
 	public void copyData(ModelEntry model) {
