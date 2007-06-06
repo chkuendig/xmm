@@ -127,6 +127,8 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         setModal(true);
         setResizable(false);
         
+        boolean disableCoverAndQueries = !MovieManager.getConfig().getStoreCoversLocally() && (MovieManager.getIt().getDatabase() instanceof DatabaseMySQL);
+        
         /* Folders panel...*/
         JPanel panelFolders = new JPanel();
         panelFolders.setBorder(BorderFactory.createEmptyBorder(5,-3,0,-3));
@@ -152,7 +154,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         textFieldCovers.getDocument().addDocumentListener(this);
         
 		// When using MySQL, no need to change this unless storecoverslocally is enabled
-		if (! MovieManager.getConfig().getStoreCoversLocally() && (MovieManager.getIt().getDatabase() instanceof DatabaseMySQL))	 
+		if (disableCoverAndQueries)	 
 			textFieldCovers.setEditable(false);
 
         JButton buttonCovers = new JButton(Localizer.getString("DialogFolders.browse-covers")); //$NON-NLS-1$
@@ -163,6 +165,10 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
                 log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
                 executeCommandBrowse(Localizer.getString("DialogFolders.selectCoversDir")); //$NON-NLS-1$
             }});
+        
+        if (disableCoverAndQueries)
+        	buttonCovers.setEnabled(false);
+        
         constraints = new GridBagConstraints();
         constraints.gridx = 3;
         constraints.gridy = 0;
@@ -188,7 +194,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         panelFolders.add(textFieldQueries,constraints);
         textFieldQueries.getDocument().addDocumentListener(this);
         
-		if (! MovieManager.getConfig().getStoreCoversLocally() && (MovieManager.getIt().getDatabase() instanceof DatabaseMySQL))	 
+        if (disableCoverAndQueries)
 			textFieldQueries.setEditable(false);
 
         JButton buttonQueries = new JButton(Localizer.getString("DialogFolders.browse-queries")); //$NON-NLS-1$
@@ -199,10 +205,13 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
                 log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
                 executeCommandBrowse(Localizer.getString("DialogFolders.selectQueriesDir")); //$NON-NLS-1$
             }});
+        
+        if (disableCoverAndQueries)
+        	buttonQueries.setEnabled(false);
+        
         constraints = new GridBagConstraints();
         constraints.gridx = 3;
         constraints.gridy = 1;
-        
         constraints.insets = new Insets(5,5,5,5);   
         panelFolders.add(buttonQueries,constraints);
         
