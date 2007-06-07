@@ -53,7 +53,7 @@ public class MovieManager {
     /**
      * The current version of the program.
      **/
-    private static String _version = "2.5.3.3"; //$NON-NLS-1$
+    private static String _version = "2.5.4 beta"; //$NON-NLS-1$
     
     /**
      * The current database object.
@@ -519,7 +519,18 @@ public class MovieManager {
         
     	System.err.println("processDatabaseError:" + error);
     	
-        if (error.equals("Connection reset")) { //$NON-NLS-1$
+    	
+    	
+        if (error.equals("Server shutdown in progress")) { //$NON-NLS-1$
+            
+            dialogMovieManager.setDatabaseComponentsEnable(false);
+            
+            DialogAlert alert = new DialogAlert(getDialog(), "Server shutdown in progress", "<html>MySQL server is shutting down."); //$NON-NLS-1$
+            GUIUtil.showAndWait(alert, true);
+            
+            database = null;
+        }
+        else if (error.equals("Connection reset")) { //$NON-NLS-1$
             
             dialogMovieManager.setDatabaseComponentsEnable(false);
             
@@ -555,7 +566,19 @@ public class MovieManager {
                 setDatabase(new DatabaseMySQL(database.getPath()), false);
             }
         }
-        if (error.equals("MySQL server is out of space")) { //$NON-NLS-1$
+        else if (error.equals("Communications link failure")) {
+        	
+        	dialogMovieManager.setDatabaseComponentsEnable(false);
+            
+            DialogQuestion question = new DialogQuestion("Communications link failure", "<html>Client failed to connect to MySQL server.<br>" +
+            "Reconnect to server now?</html>");
+            GUIUtil.showAndWait(question, true);
+            
+            if (question.getAnswer()) {
+                setDatabase(new DatabaseMySQL(database.getPath()), false);
+            }
+        }        	
+        else if (error.equals("MySQL server is out of space")) { //$NON-NLS-1$
             DialogAlert alert = new DialogAlert(dialogMovieManager, Localizer.getString("moviemanager.mysql-out-of-space"), Localizer.getString("moviemanager.mysql-out-of-space-message")); //$NON-NLS-1$ //$NON-NLS-2$
             GUIUtil.showAndWait(alert, true);
         }
