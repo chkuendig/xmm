@@ -116,6 +116,18 @@ abstract public class Database {
     public String getDatabaseType() {
 	return databaseType;
     }
+    
+    public boolean isMySQLDatabase() {
+    	return databaseType.equals("MySQL");
+    }
+    
+    public boolean isHSQLDatabase() {
+    	return databaseType.equals("HSQL");
+    }
+    
+    public boolean isMSAccessDatabase() {
+    	return databaseType.equals("MSAccess");
+    }
 
     /**
      * SetUp...
@@ -329,6 +341,14 @@ abstract public class Database {
     	else if (message.indexOf("socket write error") != -1) {
     			errorMessage = "Socket Write Error";
     			MovieManager.getIt().processDatabaseError();
+    	}
+    	else if (message.indexOf("Server shutdown in progress") != -1) {
+			errorMessage = "Server shutdown in progress";
+			MovieManager.getIt().processDatabaseError();
+    	}
+    	else if (message.indexOf("Communications link failure") != -1) {
+			errorMessage = "Communications link failure";
+			MovieManager.getIt().processDatabaseError();
     	}
     	else if ((message.indexOf("is full") != -1) || (message.indexOf("Error writing file") != -1)) {
     		errorMessage = "MySQL server is out of space";
@@ -1992,6 +2012,9 @@ abstract public class Database {
 		statement.setInt(2, index);
 		value = statement.executeUpdate();
 	    }
+	    
+	    if (fieldNamesList.size() == 0)
+	    	value = -1;
 
 	} catch (Exception e) {
 	    log.error("Exception: ", e);
