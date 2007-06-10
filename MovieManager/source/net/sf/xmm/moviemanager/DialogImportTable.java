@@ -77,8 +77,6 @@ public class DialogImportTable extends JDialog {
 			TableStringCheckBoxMenuItem src = (TableStringCheckBoxMenuItem) e.getSource();
 
 			newColumn.setHeaderValue(src.getTableString());
-
-			//System.err.println("Already assigned on a different column:" + (src.getState() ? "Yes" : "no"));
 			
 			/* Already assigned on a different column */
 			if (src.getState()) {
@@ -90,16 +88,12 @@ public class DialogImportTable extends JDialog {
 					oldColumn = (TableColumn) enumeration.nextElement();
 
 					if (oldColumn.getHeaderValue().equals(src.getTableString())) {
-
-						System.err.println("Found column with same value: " + src.getTableString());
 						
 						/* Removing the title */
 						if (oldColumn.equals(newColumn)) {
-							System.err.println("Removing title");
 							newColumn.setHeaderValue("");
 						}
 						else {
-							System.err.println("Removing title and setting state to false");
 							oldColumn.setHeaderValue("");
 							src.setState(false);
 						}
@@ -297,7 +291,7 @@ public class DialogImportTable extends JDialog {
 					for (int i = 0; i < columnCount; i++ ) {
 						newColumn = columnModel.getColumn(i);
 						
-						if ("Title".equals(newColumn.getHeaderValue()))
+						if ("Title".equals(newColumn.getHeaderValue().toString()))
 							titleFound = true;
 					}
 					
