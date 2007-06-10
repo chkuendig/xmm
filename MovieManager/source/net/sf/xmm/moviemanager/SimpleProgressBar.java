@@ -8,8 +8,7 @@ import net.sf.xmm.moviemanager.util.ProgressBeanImpl;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -42,6 +41,27 @@ public class SimpleProgressBar extends JDialog implements PropertyChangeListener
 
 	public void createProgressBar(Window parent, String title) {
 
+		/* Close dialog... */
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				close();
+			}
+		    });
+		
+		
+		/*Enables dispose when pushing escape*/
+		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		Action escapeAction = new AbstractAction()
+		    {
+			public void actionPerformed(ActionEvent e) {
+				close();
+			}
+		    };
+		
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+		getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
+		
+		
 		JPanel panel = new JPanel();
 		//panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
@@ -88,6 +108,7 @@ public class SimpleProgressBar extends JDialog implements PropertyChangeListener
 	}
 
 	void close() {
+		progressBean.cancel();
 		dispose();
 	}
 
