@@ -61,12 +61,12 @@ public class MovieManagerCommandExportToXML {
         
             // 1. Load the mapping information from the file
             mapping.loadMapping(mappingFile);
-
-            // 2. Unmarshal the data
-            //Unmarshaller unmar = new Unmarshaller(mapping);
+   
+            String encoding = "UTF-8";
              
             // 4. marshal the data with the total price back and print the XML in the console 
-            Marshaller marshaller = new Marshaller(new OutputStreamWriter(new FileOutputStream(outputFile)));
+            Marshaller marshaller = new Marshaller(new OutputStreamWriter(new FileOutputStream(outputFile), encoding));
+            marshaller.setEncoding(encoding);
             //marshaller.setMarshalAsDocument(true);
             marshaller.setMapping(mapping);
 	
@@ -76,16 +76,16 @@ public class MovieManagerCommandExportToXML {
 	        model = (ModelEntry) node.getUserObject();
 	    
 	        if (!model.getHasGeneralInfoData()) {
-		    model.updateGeneralInfoData();
+	        	model.updateGeneralInfoData();
 	        }
 	        
 	        if (!model.getHasAdditionalInfoData()) {
-		    model.updateAdditionalInfoData();
+	        	model.updateAdditionalInfoData();
 	        }
 	       	        		
 	        /* Has no children */
 	        if (node.isLeaf()) {
-		    exportXML.addModelMovie((ModelMovie) model);
+	        	exportXML.addModelMovie((ModelMovie) model);
 	        }
 	        else {
 	            ModelSeries serie = new ModelSeries((ModelMovie) model);
