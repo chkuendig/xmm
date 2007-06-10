@@ -289,7 +289,8 @@ public class MovieManager {
         if (_database != null) {
             
             boolean databaseUpdateAllowed = false;
-            
+        
+            //  If database loading aborted by user
             if (progressBean != null && progressBean.getCancelled()) {
             	return false;
             }
@@ -315,7 +316,8 @@ public class MovieManager {
                     databaseUpdateAllowed = true;
                 }
             }
-             
+            
+            //  If database loading aborted by user
             if (progressBean != null && progressBean.getCancelled()) {
             	 return false;
             }
@@ -327,7 +329,8 @@ public class MovieManager {
                     return false;
                 }
             }
-            
+           
+            //  If database loading aborted by user
             if (progressBean != null && progressBean.getCancelled()) {
             	return false;
             }
@@ -357,7 +360,8 @@ public class MovieManager {
                         return false;
                     }
                 }
-                
+               
+                //  If database loading aborted by user
                 if (progressBean != null && progressBean.getCancelled()) {
                 	return false;
                 }
@@ -373,7 +377,6 @@ public class MovieManager {
                         DialogDatabase.showDatabaseMessage(dialogMovieManager, _database, null);
                         dialogMovieManager.getMoviesList().setModel(null);
                     }
-                    
                     return false;
                 }
                 
@@ -405,6 +408,7 @@ public class MovieManager {
                 options.setDateOption(0);
                 options.setSearchAlias(config.getSearchAlias());
                 
+                //  If database loading aborted by user  
                 if (progressBean != null && progressBean.getCancelled()) {
                 	return false;
                 }
@@ -435,7 +439,11 @@ public class MovieManager {
                         config.setUseRelativeDatabasePath(0);
                     }
                 }
-                
+               
+                //  If database loading aborted by user
+                if (progressBean != null && progressBean.getCancelled()) {
+                	return false;
+                }
                 
                 /* Must be set here and not earlier. 
                  If the database is set at the top and the  method returns because of an error after the database is set, 
@@ -455,6 +463,8 @@ public class MovieManager {
                 DialogDatabase.showDatabaseMessage(dialogMovieManager, _database, null);
             }
         }
+        else
+        	database = null;
                 
         if (_database != null) {
             
@@ -517,10 +527,6 @@ public class MovieManager {
         
     	String error = database.getErrorMessage();
         
-    	System.err.println("processDatabaseError:" + error);
-    	
-    	
-    	
         if (error.equals("Server shutdown in progress")) { //$NON-NLS-1$
             
             dialogMovieManager.setDatabaseComponentsEnable(false);
@@ -696,8 +702,9 @@ public class MovieManager {
                 
                 Database db = null;
                 
+//              If database loading aborted by user
                 if (getCancelled()) {
-                		return;
+                	return;
                 }
                 
                 try {
@@ -727,8 +734,9 @@ public class MovieManager {
                     log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
                 }
                 
+                // If database loading aborted by user
                 if (getCancelled()) {
-                		return;
+                	return;
                 }
                 
                 if (db != null) {
@@ -753,27 +761,27 @@ public class MovieManager {
                     Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
                     
                     long time = System.currentTimeMillis();
-                    
-                    //DialogDatabase.updateProgress(progressBar, Localizer.getString("moviemanager.progress.retrieving-movie-list")); //$NON-NLS-1$
-                    
-                    listener.propertyChange(new PropertyChangeEvent(this, "value", null, Localizer.getString("moviemanager.progress.retrieving-movie-list")));
                      
-                    if (setDatabase(db, false))
+                    listener.propertyChange(new PropertyChangeEvent(this, "value", null, Localizer.getString("moviemanager.progress.retrieving-movie-list")));
+					
+//                  If database loading aborted by user
+                    if (getCancelled()) {
+                		return;
+                    }
+                    
+                    if (setDatabase(db, this, false))
                         log.debug("Database loaded in:" + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
                     else
                         log.debug("Failed to load database"); //$NON-NLS-1$
                 }
                 
                 listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
-                //return;
             }
         };
         worker = (ProgressBean) Spin.off(worker);
         
         SimpleProgressBar progressBar = new SimpleProgressBar(MovieManager.getDialog(), "Loading Database", true, worker);
         GUIUtil.show(progressBar, true);        
-        
-        //worker.addPropertyChangeListener(progressBar);
         
         worker.start();
     }
