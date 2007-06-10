@@ -34,204 +34,200 @@ import java.io.File;
 import javax.swing.*;
 
 public class MovieManagerCommandImport extends JDialog implements ActionListener{
-    
-    static Logger log = Logger.getRootLogger();
-    
-    boolean canceled = true;
-    boolean done = false;
-        
 
-    
-    boolean cancelAll = false;
-   
-    ModelImportSettings importSettings;
-    
-    public MovieManagerCommandImport() {
-	super(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandImport.dialog-importer.title"), true); //$NON-NLS-1$
-    }
-    
-    void createAndShowGUI() {
-	
-	setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-	
-	final JComponent newContentPane = new DialogDatabaseImporter(this, importSettings);
-        newContentPane.setOpaque(true);
-	setContentPane(newContentPane);
-	pack();
-	addWindowListener(new WindowAdapter() {
-		public void windowClosing(WindowEvent e) {
-		    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		    
-		    if (canceled || done) {
-			dispose();
-			MovieManagerCommandSelect.executeAndReload(-1);
-		    }
+	static Logger log = Logger.getRootLogger();
+
+	boolean canceled = false;
+	boolean done = false;
+
+	boolean cancelAll = false;
+
+	ModelImportSettings importSettings;
+
+	public MovieManagerCommandImport() {
+		super(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandImport.dialog-importer.title"), true); //$NON-NLS-1$
+	}
+
+	void createAndShowGUI() {
+
+		canceled = true;	
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+		final JComponent newContentPane = new DialogDatabaseImporter(this, importSettings);
+		newContentPane.setOpaque(true);
+		setContentPane(newContentPane);
+		pack();
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+				if (canceled || done) {
+					dispose();
+					MovieManagerCommandSelect.executeAndReload(-1);
+				}
+			}
+		});
+
+		/*Dispose on escape*/
+		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		Action escapeAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+
+				if (canceled || done) {
+					dispose();
+					MovieManagerCommandSelect.executeAndReload(-1);
+				}
+			}
+		};
+
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+		getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
+
+		MovieManager mm = MovieManager.getIt();
+
+		setLocation((int) mm.getLocation().getX()+(mm.getWidth()-getWidth())/2,
+				(int) mm.getLocation().getY()+(mm.getHeight()-getHeight())/2);
+
+		setLocation((int)mm.getLocation().getX()+(mm.getWidth()- getWidth())/2,
+				(int)mm.getLocation().getY()+(mm.getHeight()- getHeight())/2);
+
+		GUIUtil.show(this, true);
+	}
+
+	public void setCanceled(boolean canceled) {
+		this.canceled = canceled;
+	}
+
+	public void setDone(boolean done) {
+		this.done = done;
+	}
+
+	public void dispose() {
+		GUIUtil.show(this, false);
+	}
+
+	public void setCancelAll(boolean value) {
+		cancelAll = value;
+	}
+
+	protected void execute() {
+
+		// If any notes have been changed, they will be saved before changing list
+		MovieManagerCommandSaveChangedNotes.execute();
+
+		cancelAll = false;
+		canceled = false;
+
+		DialogImport importMovie = new DialogImport(this);
+		importSettings = new ModelImportSettings();
+
+		if (cancelAll)
+			return;
+
+		importSettings.multiAddSelectOption = importMovie.getMultiAddSelectOption();
+
+		importSettings.importMode = importMovie.getImportMode();
+		importSettings.csvSeparator = importMovie.csvSeparator.getText();
+
+		importSettings.filePath = importMovie.getPath();
+
+		if (importMovie.enableAddMoviesToList != null && importMovie.enableAddMoviesToList.isSelected()) {
+			importSettings.addToThisList = (String) importMovie.listChooser.getSelectedItem();
 		}
-	    });
-	
-	/*Dispose on escape*/
-	KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-	Action escapeAction = new AbstractAction() {
-		public void actionPerformed(ActionEvent e) {
-		    
-		    if (canceled || done) {
-			dispose();
-			MovieManagerCommandSelect.executeAndReload(-1);
-		    }
+
+
+		//CSV  or  Excel spreadsheet 
+		if (importSettings.importMode == ModelImportSettings.IMPORT_CSV || 
+				importSettings.importMode == ModelImportSettings.IMPORT_EXCEL) {
+
+			File file = new File(importMovie.getPath());
+
+			if (file.isFile()) {
+				DialogImportTable importTable = new DialogImportTable(this, file, importSettings);
+				GUIUtil.showAndWait(importTable, true);
+
+				if (importTable.canceled)
+					setCanceled(true);
+
+				importSettings.table = importTable.getSettings().table;
+				dispose();
+
+			}
 		}
-	    };
-	
-	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-	getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
-	
-	MovieManager mm = MovieManager.getIt();
-	
-	setLocation((int) mm.getLocation().getX()+(mm.getWidth()-getWidth())/2,
-		    (int) mm.getLocation().getY()+(mm.getHeight()-getHeight())/2);
-	
-	setLocation((int)mm.getLocation().getX()+(mm.getWidth()- getWidth())/2,
-		    (int)mm.getLocation().getY()+(mm.getHeight()- getHeight())/2);
-	
-	GUIUtil.show(this, true);
-    }
-    
-    public void setCanceled(boolean canceled) {
-	this.canceled = canceled;
-    }
-    
-    public void setDone(boolean done) {
-	this.done = done;
-    }
-    
-    public void dispose() {
-	GUIUtil.show(this, false);
-    }
-    
-    public void setCancelAll(boolean value) {
-	cancelAll = value;
-    }
 
-    protected void execute() {
+		/* extreme movie manager */
+		else if (importSettings.importMode == ModelImportSettings.IMPORT_EXTREME) {
 
-//  	If any notes have been changed, they will be saved before changing list
-    	MovieManagerCommandSaveChangedNotes.execute();
+			if (importMovie.enableOverwriteImportedInfoWithImdbInfo.isSelected())
+				importSettings.overwriteWithImdbInfo = true;
 
-    	cancelAll = false;
+			if (importMovie.useMediaLanguage.isSelected())
+				importSettings.extremeOriginalLanguage = false;
 
-    	DialogImport importMovie = new DialogImport(this);
-    	importSettings = new ModelImportSettings();
+			File tempFile = new File(importSettings.filePath);
 
-    	if (cancelAll)
-    		return;
+			importSettings.coverPath = tempFile.getParentFile().getParent()+ File.separator +"Covers" + File.separator; //$NON-NLS-1$
+			if (!new File(importSettings.coverPath).isDirectory()) {
 
+				String path = ""; //$NON-NLS-1$
+				if (!(path = getCoverDirectory(importSettings.filePath)).equals("")) //$NON-NLS-1$
+					importSettings.coverPath = path + File.separator;
+			}
+		}
 
+		if (!canceled)
+			createAndShowGUI();
+	}
 
-    	importSettings.multiAddSelectOption = importMovie.getMultiAddSelectOption();
+	/*Opens a filechooser and returns the absolute path to the selected file*/
+	private String getCoverDirectory(String databaseFilePath) {
 
-    	importSettings.importMode = importMovie.getImportMode();
-    	importSettings.csvSeparator = importMovie.csvSeparator.getText();
-    	
-    	System.err.println("command import mode:" + importSettings.importMode);
-    	
-    	importSettings.filePath = importMovie.getPath();
+		/* Opens the Open dialog... */
+		ExtendedFileChooser fileChooser = new ExtendedFileChooser();
+		try {
+			fileChooser.setFileSelectionMode(ExtendedFileChooser.DIRECTORIES_ONLY);
+			File path;
 
-    	if (importMovie.enableAddMoviesToList != null && importMovie.enableAddMoviesToList.isSelected()) {
-    		importSettings.addToThisList = (String) importMovie.listChooser.getSelectedItem();
-    	}
+			if (!databaseFilePath.equals("") && (path = new File(databaseFilePath)).exists()) //$NON-NLS-1$
+				fileChooser.setCurrentDirectory(path);
+			else if (MovieManager.getConfig().getLastFileDir() != null)
+				fileChooser.setCurrentDirectory(MovieManager.getConfig().getLastFileDir());
 
-    	
-    	/* CSV  or /* Excel spreadsheet */
-    	if (importSettings.importMode == ModelImportSettings.IMPORT_CSV || 
-    			importSettings.importMode == ModelImportSettings.IMPORT_EXCEL) {
+			fileChooser.setDialogTitle(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.title")); //$NON-NLS-1$
+			fileChooser.setApproveButtonText(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.approve-button.text")); //$NON-NLS-1$
+			fileChooser.setApproveButtonToolTipText(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.approve-button.tooltip")); //$NON-NLS-1$
+			fileChooser.setAcceptAllFileFilterUsed(false);
 
-    		File file = new File(importMovie.getPath());
+			int returnVal = fileChooser.showOpenDialog(this);
+			if (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
+				/* Gets the path... */
+				String filepath = fileChooser.getSelectedFile().getAbsolutePath();
 
-    		if (file.isFile()) {
-    			DialogImportTable importTable = new DialogImportTable(this, file, importSettings);
-    			GUIUtil.showAndWait(importTable, true);
-
-    			if (importTable.canceled)
-    				setCanceled(true);
-    				
-    			importSettings.table = importTable.getSettings().table;
-    			dispose();
-    			
-    		}
-    	}
-    	    	
-    	/* extreme movie manager */
-    	else if (importSettings.importMode == ModelImportSettings.IMPORT_EXTREME) {
-    		
-    		if (importMovie.enableOverwriteImportedInfoWithImdbInfo.isSelected())
-    			importSettings.overwriteWithImdbInfo = true;
-
-    		if (importMovie.useMediaLanguage.isSelected())
-    			importSettings.extremeOriginalLanguage = false;
-
-    		File tempFile = new File(importSettings.filePath);
-
-    		importSettings.coverPath = tempFile.getParentFile().getParent()+ File.separator +"Covers" + File.separator; //$NON-NLS-1$
-    		if (!new File(importSettings.coverPath).isDirectory()) {
-
-    			String path = ""; //$NON-NLS-1$
-    			if (!(path = getCoverDirectory(importSettings.filePath)).equals("")) //$NON-NLS-1$
-    				importSettings.coverPath = path + File.separator;
-    		}
-    	}
-    	
-    	if (!canceled)
-    		createAndShowGUI();
-    }
-    
-     /*Opens a filechooser and returns the absolute path to the selected file*/
-    private String getCoverDirectory(String databaseFilePath) {
-	
-	/* Opens the Open dialog... */
-	ExtendedFileChooser fileChooser = new ExtendedFileChooser();
-	try {
-	    fileChooser.setFileSelectionMode(ExtendedFileChooser.DIRECTORIES_ONLY);
-	    File path;
-	    
-	    if (!databaseFilePath.equals("") && (path = new File(databaseFilePath)).exists()) //$NON-NLS-1$
-		fileChooser.setCurrentDirectory(path);
-	    else if (MovieManager.getConfig().getLastFileDir() != null)
-		fileChooser.setCurrentDirectory(MovieManager.getConfig().getLastFileDir());
-	    
-	    fileChooser.setDialogTitle(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.title")); //$NON-NLS-1$
-	    fileChooser.setApproveButtonText(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.approve-button.text")); //$NON-NLS-1$
-	    fileChooser.setApproveButtonToolTipText(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.approve-button.tooltip")); //$NON-NLS-1$
-	    fileChooser.setAcceptAllFileFilterUsed(false);
-	    
-	    int returnVal = fileChooser.showOpenDialog(this);
-	    if (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
-		/* Gets the path... */
-		String filepath = fileChooser.getSelectedFile().getAbsolutePath();
-		
-		if (!(new File(filepath).exists())) {
-		    throw new Exception("Covers directory not found."); //$NON-NLS-1$
+				if (!(new File(filepath).exists())) {
+					throw new Exception("Covers directory not found."); //$NON-NLS-1$
+				}
+				/* Sets the last path... */
+				MovieManager.getConfig().setLastFileDir(new File(filepath));
+				return filepath;
+			}
+		}
+		catch (Exception e) {
+			log.error("", e); //$NON-NLS-1$
 		}
 		/* Sets the last path... */
-		MovieManager.getConfig().setLastFileDir(new File(filepath));
-		return filepath;
-	    }
+		MovieManager.getConfig().setLastFileDir(fileChooser.getCurrentDirectory());
+		return ""; //$NON-NLS-1$
 	}
-	catch (Exception e) {
-	    log.error("", e); //$NON-NLS-1$
-	}
-	/* Sets the last path... */
-	MovieManager.getConfig().setLastFileDir(fileChooser.getCurrentDirectory());
-	return ""; //$NON-NLS-1$
-    }
 
-    /**
-     * Invoked when an action occurs.
-     **/
-    public void actionPerformed(ActionEvent event) {
-	log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-	execute();
-    }
+	/**
+	 * Invoked when an action occurs.
+	 **/
+	public void actionPerformed(ActionEvent event) {
+		log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
+		execute();
+	}
 }
 
-    
-    
-    
+
+
+
