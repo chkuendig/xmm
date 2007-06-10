@@ -31,8 +31,8 @@ import java.util.*;
 
 public class ModelExportXML implements XMLClassDescriptor {
 
-    public ArrayList movies;
-    public ArrayList series;
+    private ArrayList movies;
+    private ArrayList series;
     
     public ModelExportXML() {
     	movies = new ArrayList();
@@ -54,6 +54,16 @@ public class ModelExportXML implements XMLClassDescriptor {
         return combinded;
     }
     
+    // Included all movies and episodes
+    public int getAllEntriesCount() {
+    	
+    	int count = movies.size();
+    	
+    	for (int i = 0; i < series.size(); i++) {
+    		count += ((ModelSeries) series.get(i)).getEpisodes().size();
+    	}
+    	return count;
+    }
     
     public ArrayList getMovies() {
      return movies;   
