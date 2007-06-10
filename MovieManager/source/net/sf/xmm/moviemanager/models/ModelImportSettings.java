@@ -45,7 +45,7 @@ public class ModelImportSettings {
     public int multiAddSelectOption = 0;
     public int importMode = IMPORT_TEXT;
     public boolean overwriteWithImdbInfo = false;
-    public String addToThisList = "";
+    public String addToThisList = null;
     public String filePath = "";
     public boolean extremeOriginalLanguage = true;
     public String coverPath = "";
