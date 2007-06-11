@@ -632,7 +632,7 @@ public class DatabaseHSQL extends Database {
 	
 	int value = 1;
 	
-	/* Adding the column 'Web Runtime' */
+	/* Adding the column 'Mpaa' */
 	try {
 	    _sql.executeUpdate("ALTER TABLE \"General Info\" "+
 			       "ADD COLUMN \"Mpaa\" LONGVARCHAR "+
@@ -1110,7 +1110,7 @@ public class DatabaseHSQL extends Database {
 	    File dbScriptFile = new File(filePath + ".script");
 	    
 	    if (!dbPropertiesFile.exists() || !dbScriptFile.exists())
-		throw new Exception("Database files does not exist.");
+		throw new Exception("Database files do not exist.");
 	    
 	    FileInputStream stream = new FileInputStream(dbScriptFile);
 	    StringBuffer stringBuffer = new StringBuffer();
@@ -1170,9 +1170,11 @@ public class DatabaseHSQL extends Database {
 	    File dbPropertiesFile = new File(filePath + ".properties");
 	    File dbScriptFile = new File(filePath + ".script");
 	    
-	    if (!dbPropertiesFile.exists() || !dbScriptFile.exists())
-		throw new Exception("Database files does not exist.");
-	    
+ 	    if (!dbPropertiesFile.exists())
+ 	    	throw new Exception("properies file does not exist.");
+		else if (!dbScriptFile.exists())
+			throw new Exception("script file does not exist.");
+			
 	    FileInputStream stream = new FileInputStream(dbScriptFile);
 	    StringBuffer stringBuffer = new StringBuffer();
 	    int buffer;
@@ -1196,8 +1198,7 @@ public class DatabaseHSQL extends Database {
 	    stream.close();
 	    
 	} catch (Exception e) {
-	    log.error("Exception:" + e.getMessage());
-	    return false;
+	    log.warn("Exception:" + e.getMessage());
 	}
 	return false;
     }
