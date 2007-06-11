@@ -709,11 +709,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     
     //Gives notification that an attribute or set of attributes changed.
     public void changedUpdate(DocumentEvent e) {
-    	
-    	System.err.println("changedUpdate");
-    	//textFieldQueries
-    	
-    }
+	}
 
     // Gives notification that there was an insert into the document. The range given by the DocumentEvent bounds the freshly inserted region.
     public void insertUpdate(DocumentEvent e) {
@@ -732,9 +728,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     		processPathValidation("Covers");
     	else
     		processPathValidation("Queries");
-    	
-    	System.err.println("removeUpdate");
-    }
+	}
 
     
     public void processPathValidation(String option) {

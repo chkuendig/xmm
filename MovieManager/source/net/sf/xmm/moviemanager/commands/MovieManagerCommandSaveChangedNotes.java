@@ -50,10 +50,7 @@ public class MovieManagerCommandSaveChangedNotes implements ActionListener {
 					ModelMovie.notesHaveBeenChanged = true;
 			}
 		}
-
-		System.err.println("ModelMovie.notesHaveBeenChanged:" + ModelMovie.notesHaveBeenChanged);
-		System.err.println("ModelEpisode.notesHaveBeenChanged:" + ModelEpisode.notesHaveBeenChanged);
-
+		
 		if (ModelMovie.notesHaveBeenChanged || ModelEpisode.notesHaveBeenChanged) {
 
 			DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
