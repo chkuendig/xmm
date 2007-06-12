@@ -554,10 +554,6 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
 		public void start() {
 
-			/*
-	final SwingWorker worker = new SwingWorker() {
-		public Object construct() {
-			 */
 			try {
 				Thread.currentThread().setPriority(3);
 				Database database = connectToDatabase(dialogDatabase, null);
@@ -591,6 +587,8 @@ public class DialogDatabase extends JDialog implements ActionListener {
 				}
 			}
 			catch (Exception e) {
+				log.error("Exception:", e);
+				
 				GUIUtil.invokeLater(new Runnable() {public void run() {
 					listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
 				}});
