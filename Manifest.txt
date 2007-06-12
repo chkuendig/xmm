@@ -27,6 +27,7 @@ Class-Path: lib/drivers/hsqldb-1.7.3.3.jar
   lib/jfreechart-1.0.2.jar
   lib/xml-apis.jar
   lib/gettext-commons-0.9.jar
+  lib/ostermillerutils_1_05_00_for_java_1_4.jar
   lib/mac/AppleJavaExtensions.jar
   lib/mac/quaqua-filechooser-only.jar
   
