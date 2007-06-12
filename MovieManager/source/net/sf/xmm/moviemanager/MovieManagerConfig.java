@@ -460,7 +460,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		}
 		/* Relative to database location */
 		else if (getUseRelativeCoversPath() == 1) {
-			String dbPath = getDatabasePath(true);
+			String dbPath;
+			
+			if (database != null)
+				dbPath = database.getPath();
+			else
+				dbPath = getDatabasePath(true);
 			dbPath = dbPath.substring(0, dbPath.lastIndexOf(FileUtil.getDirSeparator()));
 			coversPath = dbPath + File.separator;
 		}
@@ -504,7 +509,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			queriesPath = FileUtil.getUserDir() + File.separator;
 		}
 		else if (getUseRelativeQueriesPath() == 1) {
-			String dbPath = getDatabasePath(true);
+			String dbPath;
+			
+			if (database != null)
+				dbPath = database.getPath();
+			else
+				dbPath = getDatabasePath(true);
+				
 			dbPath = dbPath.substring(0, dbPath.lastIndexOf(FileUtil.getDirSeparator()));
 			queriesPath = dbPath + File.separator;
 		}
