@@ -2634,8 +2634,9 @@ abstract public class Database {
 
 	/* The regular expression will divide by every white space except if (multiple) words are capsulated by " and " or { and } */
 	//Pattern pattern = Pattern.compile("([\\p{Graph}&&[^\"]]+?)\\s|(\".+?\"+)");
-
-	Pattern pattern = Pattern.compile("(\\{.+?\\})|([\\p{L}&&[^\"]]+?)\\s|(\".*?\"+)");
+	//Pattern pattern = Pattern.compile("(\\{.+?\\})|([\\p{Graph}&&[^\"]]+?)\\s|(\".*?\"+)");
+	
+	Pattern pattern = Pattern.compile("(\\{.+?\\})|([(\\p{L}|\\d)&&[^\"]]+?)\\s|(\".*?\"+)");
 
 	String tmp = "";
 
