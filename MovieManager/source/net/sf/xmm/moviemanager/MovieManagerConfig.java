@@ -196,6 +196,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String importExcelfilePath = "";
 	private String importXMLfilePath = "";
 	private String importCSVfilePath = "";
+	private String importCSVseparator = ",";
 	private String importExtremefilePath = "";
 	
 	private String lastFileFilterMovieInfoUsed = "";
@@ -769,6 +770,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	public void setImportCSVfilePath(String importCSVfilePath) {
 		this.importCSVfilePath = importCSVfilePath;
+	}
+
+	public String getImportCSVseparator() {
+		return importCSVseparator;
+	}
+
+	public void setImportCSVseparator(String importCSVseparator) {
+		this.importCSVseparator = importCSVseparator;
 	}
 
 	
@@ -1722,6 +1731,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setImportCSVfilePath(value);
 			}
 
+			value = (String) config.get("importCSVseparator:");
+
+			if (value != null) {
+				setImportCSVseparator(value);
+			}
+
 			
 			value = (String) config.get("importExtremefilePath:");
 
@@ -2164,6 +2179,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 settings.append(lineSeparator);
 		 settings.append("importCSVfilePath:" + getImportCSVfilePath());
+		 settings.append(lineSeparator);
+		 settings.append("importCSVseparator:" + getImportCSVseparator());
 
 		 settings.append(lineSeparator);
 		 settings.append("importExtremefilePath:" + getImportExtremefilePath());

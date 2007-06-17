@@ -334,7 +334,8 @@ public class DialogImport extends JDialog implements ActionListener {
 	csvLabelPanel.add(csvLabel);
 	
     JLabel csvSeparatorLabel = new JLabel("Separator:");
-    csvSeparator = new JTextField(";", 5);
+    csvSeparator = new JTextField(5);
+    csvSeparator.setText(MovieManager.getConfig().getImportCSVseparator());
     JPanel csvOpt = new JPanel();
     csvOpt.add(csvSeparatorLabel);
     csvOpt.add(csvSeparator);
@@ -558,6 +559,7 @@ public class DialogImport extends JDialog implements ActionListener {
     	MovieManager.getConfig().setImportExcelfilePath(excelFilePath.getText());
     	MovieManager.getConfig().setImportXMLfilePath(xmlFilePath.getText());
     	MovieManager.getConfig().setImportCSVfilePath(csvFilePath.getText());
+    	MovieManager.getConfig().setImportCSVseparator(csvSeparator.getText());
     	MovieManager.getConfig().setImportExtremefilePath(extremeFilePath.getText());
    	
     	// Save CSV separator
