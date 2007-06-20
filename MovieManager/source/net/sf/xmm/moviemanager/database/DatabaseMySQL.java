@@ -341,7 +341,7 @@ public class DatabaseMySQL extends Database {
 			       "Web_Runtime       TEXT, "+
 			       "Awards            TEXT, "+
 			       "Personal_Rating   DOUBLE"+
-			       ");");
+			       ") ENGINE=InnoDB;");
 	    
 	} catch (Exception e) {
 	    log.error("", e);
@@ -387,7 +387,7 @@ public class DatabaseMySQL extends Database {
 				       "File_Count       INTEGER, "+
 				       "Container        TEXT, "+
 				       "Media_Type       TEXT"+
-				       ");");
+				       ") ENGINE=InnoDB;");
 	    
 	} catch (Exception e) {
 	    log.error("", e);
@@ -415,7 +415,7 @@ public class DatabaseMySQL extends Database {
 	try {
 	    value = _sql.executeUpdate("CREATE TABLE Extra_Info ("+
 				       "ID                    INTEGER AUTO_INCREMENT PRIMARY KEY"+
-				       ");");
+				       ") ENGINE=InnoDB;");
 	} catch (Exception e) {
 	    log.error("", e);
 	    checkErrorMessage(e);
@@ -468,7 +468,7 @@ public class DatabaseMySQL extends Database {
 				       "Web_Runtime       TEXT, "+
 				       "Awards            TEXT," +
 				       "Personal_Rating   DOUBLE"+
-				       ");");
+				       ") ENGINE=InnoDB;");
 	    
 	} catch (Exception e) {
 	    log.error("", e);
@@ -515,7 +515,7 @@ public class DatabaseMySQL extends Database {
 				       "File_Count       INTEGER, "+
 				       "Container        TEXT, "+
 				       "Media_Type       TEXT"+
-				       ");");
+				       ") ENGINE=InnoDB;");
 	    
 	} catch (Exception e) {
 	    log.error("", e);
@@ -544,7 +544,7 @@ public class DatabaseMySQL extends Database {
 	try {
 	    value = _sql.executeUpdate("CREATE TABLE Extra_Info_Episodes ("+
 				       "ID                    INTEGER AUTO_INCREMENT PRIMARY KEY"+
-				       ");");
+				       ") ENGINE=InnoDB;");
 	} catch (Exception e) {
 	    log.error("", e);
 	    checkErrorMessage(e);
@@ -574,7 +574,7 @@ public class DatabaseMySQL extends Database {
 				       "ID                  INTEGER AUTO_INCREMENT PRIMARY KEY, "+
 				       "Covers          TEXT, "+
 				       "Queries         TEXT"+
-				       ");");
+				       ") ENGINE=InnoDB;");
 	    
 	} catch (Exception e) {
 	    log.error("", e);
@@ -605,7 +605,7 @@ public class DatabaseMySQL extends Database {
 				       "ID                   INTEGER AUTO_INCREMENT PRIMARY KEY, "+
 				       "Active_Additional_Info_Fields          TEXT, "+
 				       "General_Info_Settings                  TEXT"+
-				       ");");
+				       ") ENGINE=InnoDB;");
 	    
 	} catch (Exception e) {
 	    log.error("", e);
@@ -635,7 +635,7 @@ public class DatabaseMySQL extends Database {
 	try {
 	    value = _sql.executeUpdate("CREATE TABLE Lists ("+
 				       "ID               INTEGER AUTO_INCREMENT PRIMARY KEY"+
-				       ");");
+				       ") ENGINE=InnoDB;");
 	    
 	} catch (Exception e) {
 	    log.error("", e);
