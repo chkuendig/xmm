@@ -32,6 +32,8 @@ import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.*;
 
@@ -55,6 +57,8 @@ class DialogTVDOTCOM extends JDialog {
     private static int mode = 0;
     
     public boolean multipleEpisodesAdded = false;
+    
+    private ArrayList streamsArray = new ArrayList();
     
     /**
      * The Constructor.
@@ -293,16 +297,41 @@ class DialogTVDOTCOM extends JDialog {
             
             getMoviesList().setModel(TVDOTCOM.getSeasons((ModelSearchHit) listModel.getElementAt(index)));
             getMoviesList().setSelectedIndex(0);
+            
+            getMoviesList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+            buttonSelectAll.setEnabled(true);
         }
         
         /* Get episodes */
         else if (mode == 1) {
             
-            ModelSearchHit selected = (ModelSearchHit) listModel.getElementAt(index);
-            
-            streams = TVDOTCOM.getEpisodesStream(selected);
-            
-            getMoviesList().setModel(TVDOTCOM.getEpisodes(selected, streams));
+			ModelSearchHit selected = null;
+			
+			int episodes = 0;
+			
+			Object [] selectedValues = getMoviesList().getSelectedValues();
+			int seasons = selectedValues.length;
+			
+			for( int i = 0; i < seasons; i++) {
+				selected = (ModelSearchHit) selectedValues[i];
+				streams = TVDOTCOM.getEpisodesStream(selected);
+				streamsArray.add(TVDOTCOM.getEpisodes(selected, streams));
+			}
+			
+			DefaultListModel allEpisodes = new DefaultListModel();
+			DefaultListModel tempList = new DefaultListModel();
+			
+			for (Iterator it = streamsArray.iterator(); it.hasNext();) {
+				tempList = (DefaultListModel) it.next();
+				episodes = tempList.getSize();
+				
+				for (int i = 0; i < episodes; i++) {
+					allEpisodes.addElement(tempList.getElementAt(i));
+				}
+			}
+			
+			getMoviesList().setModel(allEpisodes);
+
             getMoviesList().setSelectedIndex(0);
             getMoviesList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
             
