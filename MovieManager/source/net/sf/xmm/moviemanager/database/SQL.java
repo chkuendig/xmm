@@ -46,6 +46,8 @@ class SQL {
     
     private String databaseType;
     
+    private ResultSet lastResultSet = null;
+    
     /**
      * States if a connection has already been made.
      **/
@@ -103,6 +105,7 @@ class SQL {
 			_connected = true;
 	    }
 	}
+	
     }
     
     
@@ -177,6 +180,7 @@ class SQL {
 					   ResultSet.CONCUR_READ_ONLY);
 	
 	ResultSet result = _statement.executeQuery(query);
+	lastResultSet = result;
 	return result;
     }
 
@@ -213,7 +217,17 @@ class SQL {
      * update or every query!
      **/
     protected void clear() throws Exception {
-	if (_statement != null)
-	    _statement.close();
-    }
+    	
+    	try {
+    		if (lastResultSet != null) {
+    			lastResultSet.close();
+				lastResultSet = null;
+    		}
+    	} catch (java.sql.SQLException e) {
+    		log.error("Exception: " + e.getMessage());
+    	}
+		
+		if (_statement != null)
+			_statement.close();
+	}
 }
