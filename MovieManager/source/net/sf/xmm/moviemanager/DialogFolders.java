@@ -655,7 +655,6 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         
         Object source = event.getItemSelectable();
         
-        
         if (source.equals(setPermanentDatabase)) {
             
             String databaseType = MovieManager.getIt().getDatabase().getDatabaseType();
@@ -676,6 +675,8 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
             relativeQueriesProgram.setEnabled(value);
             relativeQueriesDatabase.setEnabled(value);
             optionQueries.setEnabled(value);
+            
+            processPathValidation("Queries");
         }
         
         if (source.equals(relativeCoversEnabled)) {
@@ -688,6 +689,8 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
             relativeCoversProgram.setEnabled(value);
             relativeCoversDatabase.setEnabled(value);
             optionCovers.setEnabled(value);
+            
+            processPathValidation("Covers");
         }
         
         if (source.equals(relativeDatabaseEnabled)) {
@@ -700,6 +703,32 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
             relativeDatabaseProgram.setEnabled(value);
             optionDatabase.setEnabled(value);
         }
+        
+        
+        if (source.equals(relativeCoversProgram)) {
+            
+            if (relativeCoversProgram.isSelected())
+            	processPathValidation("Covers");
+        }
+        
+        if (source.equals(relativeCoversDatabase)) {
+            
+            if (relativeCoversDatabase.isSelected())
+            	processPathValidation("Covers");
+        }
+        
+        if (source.equals(relativeQueriesProgram)) {
+            
+            if (relativeQueriesProgram.isSelected())
+            	processPathValidation("Queries");
+        }
+        
+        if (source.equals(relativeCoversDatabase)) {
+            
+            if (relativeQueriesDatabase.isSelected())
+            	processPathValidation("Queries");
+        }
+        
     }
 
     
