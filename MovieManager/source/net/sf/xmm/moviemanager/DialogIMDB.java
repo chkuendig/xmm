@@ -196,16 +196,17 @@ public class DialogIMDB extends JDialog {
     	listMovies = new JList() {
 
     		public String getToolTipText(MouseEvent e) {
-
+    			
     			if (getCellBounds(0,0) == null)
     				return null;
-
+    			
     			String retVal = null;
+    			
     			int row = (int) e.getPoint().getY() / (int) getCellBounds(0,0).getHeight();
 
-    			if (row >= 0 && row < getModel().getSize() && getMoviesList().getModel() instanceof ModelIMDB)
+				if (row >= 0 && row < getModel().getSize() && getMoviesList().getModel().getElementAt(row) instanceof ModelIMDB)
     				retVal = ((ModelIMDB) getMoviesList().getModel().getElementAt(row)).getAka();
-
+    			
     			return retVal;
     		}
 
