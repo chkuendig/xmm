@@ -656,9 +656,12 @@ public class MovieManager {
         
             public void start() {
                 
+            	try {
+            	
             	//Thread.currentThread().setPriority(8);
             		
-                String databasePath = config.getDatabasePath(true);
+            	// Gets the database path read from the config file.
+                String databasePath = config.getDatabasePath(false);
                 String type = ""; //$NON-NLS-1$
                 
                 if (databasePath == null || databasePath.equals("null")) { //$NON-NLS-1$
@@ -776,6 +779,10 @@ public class MovieManager {
                 }
                 
                 listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
+            
+            } catch (Exception e) {
+            	log.error("Exception:", e);
+            }
             }
         };
         worker = (ProgressBean) Spin.off(worker);
