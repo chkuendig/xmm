@@ -135,6 +135,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         LookAndFeelManager.setLookAndFeel();
         
         Toolkit.getDefaultToolkit().setDynamicLayout(true);
+        ToolTipManager.sharedInstance().setDismissDelay(100000);
         
         if (!MovieManager.isApplet())
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
