@@ -29,12 +29,12 @@ import com.l2fprod.gui.plaf.skin.Skin;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 import com.oyoaha.swing.plaf.oyoaha.OyoahaLookAndFeel;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
@@ -222,76 +222,63 @@ public class LookAndFeelManager {
     protected static void instalLAFs() {
         
         try {
-            URL url = null;
-            if(!MovieManager.isMacAppBundle()) {
-                url = FileUtil.getFileURL("LookAndFeels/lookAndFeels.ini");
-            } else {
+        	   	
+        	File lookAndFeel;
+        	
+        	if (!MovieManager.isMacAppBundle()) {
+        		lookAndFeel =  FileUtil.getFile("LookAndFeels/lookAndFeels.ini");
+        	} else {
                 // Search in the absolute Path of the Application Bundle (Search as if we weren't in a Application Bundle)
-                url = FileUtil.getFileURL(System.getProperty("user.dir") + "/LookAndFeels/lookAndFeels.ini");
+            	lookAndFeel =  FileUtil.getFile(System.getProperty("user.dir") + "/LookAndFeels/lookAndFeels.ini");
             }
-            BufferedInputStream stream = new BufferedInputStream(url.openStream());
-            
-            int buffer;
-            StringBuffer lookAndFeel = new StringBuffer();
-            
-            /* Reads the lookAndFeels.ini textfile. */
-            while ((buffer = stream.read()) != -1) {
-                lookAndFeel.append((char)buffer);
-            }
-            stream.close();
-            
-            String lineSeparator = FileUtil.getLineSeparator();
-            int start = lookAndFeel.indexOf("#")+2;
-            
-            if (start == 1)
-                start = lookAndFeel.indexOf("\"", 0);
-            
-            int end = start;
-            String name = "";
-            String className = "";
-            String line;	    
-            int fileEnd = lookAndFeel.length();
-            
+        	
+        	if (!lookAndFeel.isFile()) {
+        		log.warn("lookAndFeels.ini was not found");
+        		return;
+        	}
+        	
+        	BufferedReader reader = new BufferedReader(new FileReader(lookAndFeel));
+        	Pattern p = Pattern.compile("\"(.+?)\"\\s+?\"(.+?)\".*");
+        	
+        	String line;
+        	boolean start = false;
+        	
             while (true) {
-                end = lookAndFeel.indexOf(lineSeparator, start+1);
-                
-                /*If the last line has no lineSeparator at the end*/
-                if (end == -1)
-                    end = fileEnd;
-                
-                if (start >= end)
-                    break;
-                
-                line = lookAndFeel.substring(start, end);
-                if (line.startsWith("\"")) {
-                    
-                    end = lookAndFeel.indexOf("\"", start+1);
-                    if (end == -1)
-                        break;
-                    
-                    name = lookAndFeel.substring(start+1, end);
-                    start = lookAndFeel.indexOf("\"", end+1);
-                    end = lookAndFeel.indexOf("\"", start+1);
-                    className = lookAndFeel.substring(start+1, end);
-                    
-                    try {
-                        UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(name, className));
-                    }
-                    catch (SecurityException s) {
-                        log.error("SecurityException: "+ s);
-                    }
+             	
+            	line = reader.readLine();
+            	
+            	if (line == null)
+            		break;
+            	
+            	if (!start) {
+            		if (line.indexOf("#") != -1)
+            			start = true;
+            		continue;
+            	}
+            	
+            	if (line.trim().equals(""))
+            		continue;
+            	
+            	Matcher m = p.matcher(line);
+            	            	
+            	if (!m.matches() || m.groupCount() != 2)
+            		continue;
+            		
+            	try {
+            		System.err.println("name:" + m.group(1));
+            		System.err.println("class:" + m.group(2));
+                    UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(m.group(1), m.group(2)));
                 }
-                start = lookAndFeel.indexOf("\"", end+1);
-                
-                if (start == -1) {
-                    break;
+                catch (SecurityException s) {
+                    log.error("SecurityException: "+ s);
                 }
             }
         }
         catch (Exception e) {
-            log.warn("Failed to open lookAndFeels.ini file.");
+            log.warn("Failed to install Look & Feels.", e);
         }
     }
+    
     
     public static void setupOSXLaF() {
         
