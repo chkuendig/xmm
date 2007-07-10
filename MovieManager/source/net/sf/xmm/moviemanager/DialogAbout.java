@@ -97,7 +97,7 @@ public class DialogAbout extends JDialog {
 	JPanel panelDevelopers = new JPanel();
 	panelDevelopers.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Developers "),
 								     BorderFactory.createEmptyBorder(5,5,5,5)));
-	JLabel labelDevelopers = new JLabel("Mediterranean, Bro, olba2, Steven, kreegee, Matthias Ihmig, Johannes Adams",JLabel.CENTER);
+	JLabel labelDevelopers = new JLabel("<html>Mediterranean, Bro, olba2, Steven, kreegee <br> Matthias Ihmig, Johannes Adams </html>",JLabel.CENTER);
 	labelDevelopers.setFont(new Font(labelDevelopers.getFont().getName(),Font.PLAIN,labelDevelopers.getFont().getSize()));
 	panelDevelopers.add(labelDevelopers);
 	/* Licenses panel... */
