@@ -22,6 +22,7 @@ package net.sf.xmm.moviemanager.http;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
+import net.sf.xmm.moviemanager.util.StringUtil;
 
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
@@ -208,25 +209,32 @@ class HttpUtil {
      * Decodes a html string and returns its unicode string.
      **/
     protected static String decodeHTML(String toDecode) {
-	String decoded = "";
-		
-	try {
-	    int end = 0;
-	    for (int i=0; i < toDecode.length(); i++) {
-		if (toDecode.charAt(i)=='&' && toDecode.charAt(i+1)=='#' && (end=toDecode.indexOf(";", i))!=-1) {
-		    decoded += (char)Integer.parseInt(toDecode.substring(i+2,end));
-		    i = end;
-		} else if (toDecode.charAt(i)=='<' && toDecode.indexOf('>', i) != -1) {
-		    i = toDecode.indexOf('>', i);
-		} else {
-		    decoded += toDecode.charAt(i);
-		}
-	    }
-	} catch (Exception e) {
-	    log.error("", e);
-	} 
-	/* Returns the decoded string... */
-	return decoded.trim();
+    	String decoded = "";
+
+    	try {
+    		int end = 0;
+    		for (int i=0; i < toDecode.length(); i++) {
+    			if (toDecode.charAt(i)=='&' && toDecode.charAt(i+1)=='#' && (end=toDecode.indexOf(";", i))!=-1) {
+    				decoded += (char)Integer.parseInt(toDecode.substring(i+2,end));
+    				i = end;
+    			} else if (toDecode.charAt(i)=='<' && toDecode.indexOf('>', i) != -1) {
+    				i = toDecode.indexOf('>', i);
+    			} else {
+    				decoded += toDecode.charAt(i);
+    			}
+    		}
+    		
+    		// replacing html code like &quot; and &amp;
+    		decoded = decoded.replaceAll("&amp;", "&");
+    		decoded = decoded.replaceAll("&quot;", "\"");
+    		decoded = decoded.replaceAll("&nbsp;", " ");
+    		
+    	} catch (Exception e) {
+    		log.error("", e);
+    	} 
+    	
+    	/* Returns the decoded string... */
+    	return StringUtil.removeDoubleSpace(decoded);
     }
 
     
