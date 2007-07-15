@@ -265,9 +265,7 @@ public class LookAndFeelManager {
             		continue;
             		
             	try {
-            		System.err.println("name:" + m.group(1));
-            		System.err.println("class:" + m.group(2));
-                    UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(m.group(1), m.group(2)));
+					UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(m.group(1), m.group(2)));
                 }
                 catch (SecurityException s) {
                     log.error("SecurityException: "+ s);
