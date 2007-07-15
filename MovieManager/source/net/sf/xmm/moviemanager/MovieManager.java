@@ -53,7 +53,7 @@ public class MovieManager {
     /**
      * The current version of the program.
      **/
-    private static String _version = "2.5.4"; //$NON-NLS-1$
+    private static String _version = "2.5.4.1"; //$NON-NLS-1$
     
     /**
      * The current database object.
