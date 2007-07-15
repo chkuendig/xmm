@@ -868,16 +868,15 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		buttonSaveAndClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-				reloadMovieListAndClose(executeCommandSave(MovieManager
-						.getConfig().getCurrentList()));
+				reloadMovieListAndClose(executeCommandSave(MovieManager.getConfig().getCurrentList()));
 			}
 		});
 		panelButtons.add(buttonSaveAndClose);
 
-		panelButtons.add(buttonSaveAndClose);
-
+		
 		JButton buttonSave = new JButton(Localizer.getString("DialogMovieInfo.button-save.text.save")); //$NON-NLS-1$
-
+		// Disabled if edit
+		buttonSave.setEnabled(!movieInfoModel._edit);
 		buttonSave.setToolTipText(Localizer.getString("DialogMovieInfo.button-save.tooltip")); //$NON-NLS-1$
 		buttonSave.setActionCommand("MovieInfo - Save"); //$NON-NLS-1$
 		buttonSave.setMnemonic(KeyEvent.VK_A);
@@ -1819,7 +1818,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	}
 
 	public void reloadMovieListAndClose(ModelEntry reloadEntry) {
-
+		
 		if (reloadEntry != null && reloadEntry.getKey() != -1) {
 
 			/* Reloads... */
