@@ -504,7 +504,7 @@ public class IMDB {
      **/
     public static DefaultListModel getSimpleMatches(String title) throws Exception {
 	
-		return getMatches("http://akas.imdb.com/find?s=tt&q="+ title);
+		return getMatches("http://akas.imdb.com/find?s=tt&q="+ title, false);
 		// http://akas.imdb.com/find?s=tt&q=Predator 
 		// http://akas.imdb.com/find?s=all&q=predator
 		//	return getMatches("http://www.imdb.com/find?tt=on;q=" + title);
@@ -515,7 +515,8 @@ public class IMDB {
      * Returns extended matches list...
      **/
     public static DefaultListModel getExtendedMatches(String title) throws Exception {
-		return getMatches("http://akas.imdb.com/find?more=tt;q=" + title);
+    	return getMatches("http://akas.imdb.com/find?s=tt&q="+ title, true);
+    	//return getMatches("http://akas.imdb.com/find?more=tt;q=" + title);
     }
     
     /**
@@ -525,29 +526,32 @@ public class IMDB {
      * urlType = http://www.imdb.com/find?tt=on;q= or
      *           http://www.imdb.com/find?more=tt;q=
      **/
-    private static DefaultListModel getMatches(String urlType) throws Exception {
+    private static DefaultListModel getMatches(String urlType, boolean moreResults) throws Exception {
 		DefaultListModel listModel = new DefaultListModel();
 		exception = null;
-    
+						
+		String [] movieHitCategory = {"Popular Titles", "Titles (Exact Matches)", "Titles (Partial Matches)", "Titles (Approx Matches)"};
+		
 		try {
 	
 			URL url = new URL(urlType.replaceAll("[\\p{Blank}]+","%20"));
 	    
 			StringBuffer data = HttpUtil.readDataToStringBuffer(url);
-	    
-			//FileUtil.writeToFile("direct-simple", data);
+			
+			//FileUtil.writeToFile("direct-simple.html", data);
         
-			int start = 0, end = 0, stop = 0;
+			int start = 0, stop = 0;
 			String key = "";
 			String movieTitle = "", aka = "";
 			int titleSTart, titleEnd;
-			int otherResults = data.indexOf("Other Results");
-			int partialMatches = data.indexOf("Titles (Partial Matches)");
+			int movieCount = 0;
+			
+			//int partialMatches = data.indexOf("Titles (Partial Matches)");
 	    
 			/* If there's only one movie for that title it goes directly to that site...  */
 			if (!data.substring(data.indexOf("<title>")+7, data.indexOf("<title>")+11).equals("IMDb")) {
 				/* Gets the title... */
-	    
+				
 				titleSTart = data.indexOf("<title>", start)+7;
 				titleEnd = data.indexOf("</title>", titleSTart);
 				movieTitle = HttpUtil.decodeHTML(data.substring(titleSTart, titleEnd));
@@ -556,88 +560,88 @@ public class IMDB {
 					key = HttpUtil.decodeHTML(data.substring(start, start + 7));
 				}
 		
-				/* Getting aka titles */
-				if ((start = data.indexOf("Also Known As:")) != -1) {
-					start += 18;
-	  
-					stop = data.indexOf("<b class=", start)-5;
-	  	  
-					while (true) {
-						if (start >= stop) break;
-						start += 4;
-						end = data.indexOf("<br>", start);
-						if (!aka.equals(""))
-							aka += FileUtil.getLineSeparator(); // windows == "\r\n";, linuz == \n
-						aka += HttpUtil.decodeHTML(data.substring(start, end));
-						start = data.indexOf("<br>", end);
-					}
-					aka = MovieManagerCommandAddMultipleMoviesByFile.performExcludeParantheses(aka, false);
-				}
-		
+				aka = getDecodedClassInfo(data, "Also Known As:");
+				
 				listModel.addElement(new ModelIMDB(key, movieTitle, aka));
 				return listModel;
 			}
-			/* Processes the data... */
-			start = 0;
-			end = 0;
+			
+			int maxMovieCount = moreResults ? 30 : 10;
+			int minimumIndex = 0;
+			int end = -1;
+			int u = 0;
+			
+			start = data.indexOf("Popular Titles");
+			
+			for (; u < movieHitCategory.length && (start == -1); u++)
+				start = data.indexOf(movieHitCategory[u]);
+			
+			// NO results, returning empty list
+			if (start == -1)
+				return listModel;
+			
+			
+			if ((minimumIndex = data.indexOf("Titles (Partial Matches)")) == -1)
+				minimumIndex = data.indexOf("Titles (Approx Matches)");
+			
+			if (!moreResults)
+				end = data.indexOf("Titles (Approx Matches)");
+			
+			
 			while (true) {
  
-				aka = "";
-
-				if ((start = data.indexOf("/title/tt", start)+9) == 8) break;
-		
-				if ((end = data.indexOf("/\">", start)) == -1) break;
-	    
-				/* the string "Other Results only occurs with the simplematches url,
-				   therefore the variable otherResults will contain -1 when 
-				   using the extended matches url*/
-	    
-				if ((otherResults != -1) && (partialMatches != -1) && (start > partialMatches)) 
+				if (start > minimumIndex && movieCount >= maxMovieCount) {
 					break;
-		
+				}
+				
+				start = data.indexOf("\"/title/tt", start) + 10;
+								
+				// no more movies
+				if (start == 9) {
+					break;
+				}
+				
+				// has reached the end
+				if ((end != -1 && start > end) ) {
+					break;
+				}
+				
+				if ((stop = data.indexOf("/\">", start)) == -1) {
+					break;
+				}
+	    
 				key = HttpUtil.decodeHTML(data.substring(start, start+7));
-	    
 				start += key.length() + 3;
-				if ((end = data.indexOf("</", start)) == -1) 
+				
+				if ((stop = data.indexOf("</", start)) == -1) {
 					break;
-		
-				titleSTart = data.indexOf(">", start)+1;
+				}
+				
+				titleSTart = start;
 				titleEnd = data.indexOf("</a>", titleSTart);
 				movieTitle = HttpUtil.decodeHTML(data.substring(titleSTart, titleEnd));
 	    
-				/* Skipping the </a> and adds the year to the movieTitle*/
+				// Skipping the </a> and adds the year to the movieTitle
 				titleSTart = titleEnd+4;
 				titleEnd += 11;
 	    
-				movieTitle = movieTitle.concat(data.substring(titleSTart, titleEnd));
-		
-				start += movieTitle.length() + 2;
-		
-				end = data.indexOf("</li>", start);
-		
-				/* Parses the aka-titles... */
-				while (data.indexOf(";aka", start) < end) {
-					titleSTart = data.indexOf(";aka", start)+1; 
-					titleEnd = data.indexOf("<br>", titleSTart);
-		    
-					if (titleEnd < titleSTart || titleEnd > end)
-						titleEnd = data.indexOf("</li>", titleSTart);
-		    
-					if (titleEnd > end)
-						break;
-		    
-					if (titleSTart > 0 && titleEnd > 0) {
-						start = titleEnd;
-			
-						if (!aka.equals("")) {
-							aka += FileUtil.getLineSeparator();
-						}
-						aka += HttpUtil.decodeHTML(data.substring(titleSTart, titleEnd));
-					}
-					else
-						break;
+				// Video game
+				if (data.substring(titleSTart, titleSTart + 20).indexOf("VG") != -1) {
+					continue;	
 				}
+				movieTitle = movieTitle.concat(data.substring(titleSTart, titleEnd));
+				char[] tmp = movieTitle.toCharArray();
+				tmp[tmp.length-1] = ')';
+				movieTitle = new String(tmp);
+				
+				stop = data.indexOf("</td>", start+1);
 		
+				if (data.indexOf("</p>", start+1) < start) {
+					break;
+				}
+				
+				aka = grabAkaTitles(data.substring(start, stop));
+								
 				/* Adds to the list model... */
 				boolean insert = true;
 				for (int i = 0; i < listModel.size(); i++) {
@@ -646,23 +650,34 @@ public class IMDB {
 						break;
 					}
 				}
+			
 				if (insert) {
 					listModel.addElement(new ModelIMDB(key, movieTitle, aka));
+					movieCount++;
 				}
 			}
-		
-		
-		} catch (IndexOutOfBoundsException i) {
-			log.warn(i.getMessage());
-		
-		} catch (MalformedURLException m) {
-			log.warn(m.getMessage());
+				
+		} catch (Exception i) {
+			log.warn(i.getMessage(), i);
 		}
 	
 		/* Returns the model... */
 		return listModel;
     }
     
+  
+    public static String grabAkaTitles(String substring) {
+		
+    	String aka = "";
+    	String akas [] = substring.split("&#160;aka");
+    	
+    	// skips the first index which is the original title
+    	for (int i = 1; i < akas.length; i++) {
+    		aka += HttpUtil.decodeHTML(akas[i]) + FileUtil.getLineSeparator();
+    	}
+    	    	
+		return aka.trim();
+    }
 
     /**
      * Grabs the content of a class info containing the classname
@@ -698,7 +713,7 @@ public class IMDB {
      * and cleans it up by removing html and paranthesis.
      **/
     protected static String getDecodedClassInfo(StringBuffer data, String className) {
-    	String decoded = null;
+    	String decoded = "";
     	String tmp = "";
 
     	try {
@@ -722,8 +737,7 @@ public class IMDB {
 			}
 			else
 				decoded = HttpUtil.decodeHTML(tmp);
-		
-		
+			
     	} catch (Exception e) {
     		log.error("", e);
     	} 
