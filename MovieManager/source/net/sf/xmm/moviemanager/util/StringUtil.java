@@ -62,4 +62,15 @@ public class StringUtil {
             
 		return result;
 	}
+
+	public static String removeDoubleSpace(String str) {
+
+		/* Remove all double white space */
+		StringBuffer stringBuff = new StringBuffer();
+		for(int x = 0; x < str.length(); x++)
+			if (str.charAt(x) != ' ' || (str.length() != x+1 && str.charAt(x+1) != ' '))
+				stringBuff = stringBuff.append(str.charAt(x));
+		
+		return stringBuff.toString();
+	}
 } 
