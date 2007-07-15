@@ -212,7 +212,13 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 			cancel = false;
 		}
 		else {
-            try {
+			try {
+				boolean status = movieInfoModel.saveCoverToFile();
+			} catch (Exception e) {
+				log.warn("Exception: " + e.getMessage()); //$NON-NLS-1$
+			}
+			
+			try {
             	ModelEntry model = movieInfoModel.saveToDatabase(addToThisList);
                 MovieManagerCommandSelect.executeAndReload(model, false, false, false);
             } catch (Exception e) {
