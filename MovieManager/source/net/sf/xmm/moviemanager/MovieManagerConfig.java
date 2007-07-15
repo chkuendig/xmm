@@ -166,7 +166,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean loadDatabaseOnStartup = true;
 
 	private boolean loadLastUsedListAtStartup = false;
-	private boolean seenEditableInMainWindow = false;
+	private boolean seenEditableInMainWindow = true;
 
 	private boolean autoMoveThe = false;
 	private boolean autoMoveAnAndA = false;
@@ -467,6 +467,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				dbPath = database.getPath();
 			else
 				dbPath = getDatabasePath(true);
+			
 			dbPath = dbPath.substring(0, dbPath.lastIndexOf(FileUtil.getDirSeparator()));
 			coversPath = dbPath + File.separator;
 		}
@@ -779,7 +780,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setImportCSVseparator(String importCSVseparator) {
 		this.importCSVseparator = importCSVseparator;
 	}
-
 	
 	public String getImportExtremefilePath() {
 		return importExtremefilePath;
@@ -1736,7 +1736,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			if (value != null) {
 				setImportCSVseparator(value);
 			}
-
 			
 			value = (String) config.get("importExtremefilePath:");
 
@@ -1939,7 +1938,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 				
 		} catch (Exception e) {
-			log.warn("Cannot find config file." + e.getMessage(), e);
+			log.warn("Cannot find config file." + e.getMessage());
 		}
 	 }
 
@@ -2179,6 +2178,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 settings.append(lineSeparator);
 		 settings.append("importCSVfilePath:" + getImportCSVfilePath());
+
 		 settings.append(lineSeparator);
 		 settings.append("importCSVseparator:" + getImportCSVseparator());
 
