@@ -83,15 +83,7 @@ public class ModelMovieInfo {
     
     /* Loading an empty model (movie or episode) */
     public ModelMovieInfo(boolean episode) {
-        
-        isEpisode = episode;
-        
-        if (isEpisode)
-            model = new ModelEpisode();
-        else
-            model = new ModelMovie();
-        
-        initializeAdditionalInfo(true);
+    	this(episode, true);
     }
     
     /* Loading an empty model  (movie or episode) */
@@ -453,7 +445,7 @@ public class ModelMovieInfo {
                     
                     database.addAdditionalInfo(model.getKey(), additionalInfo);
                     
-					// Must save to extra info even though there are no extra info fields. Tge rows must still be created in the database
+					// Must save to extra info even though there are no extra info fields. The rows must still be created in the database
 					database.addExtraInfoMovie(model.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
                     
                     
@@ -978,10 +970,10 @@ public class ModelMovieInfo {
      * * @param addNewEpisode     true is a new episode will be added
      */
     public void clearModel(boolean addNewEpisode) {
-        
+		
         if (isEpisode) {
-         
-        	if (addNewEpisode) {
+			
+        	if (addNewEpisode && !_edit) {
         		model = new ModelEpisode(modelSeries.getMovieKey());
         		model.setTitle(modelSeries.getMovie().getTitle());
         	}
@@ -998,12 +990,15 @@ public class ModelMovieInfo {
         }
     }
     
-    public void setModel(ModelEntry model, boolean copySeriesKey, boolean modelChanged) {
+    public void setModel(ModelEntry model, boolean copyKey, boolean modelChanged) {
         
-        if (model.isEpisode()) {
-                      
-            if (copySeriesKey) {
-            	((ModelEpisode) model).setMovieKey(modelSeries.getMovieKey());
+    	if (model.isEpisode()) {
+			
+            if (copyKey) {
+            	if (_edit)
+            		((ModelEpisode) model).setKey(this.model.getKey());
+            	else
+            		((ModelEpisode) model).setMovieKey(modelSeries.getMovieKey());
             }
             isEpisode = true;
         }
