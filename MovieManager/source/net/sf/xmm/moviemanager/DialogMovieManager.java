@@ -758,7 +758,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         workingArea.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
        
-        double size[][] = {{0.33, info.clearthought.layout.TableLayout.FILL}, {info.clearthought.layout.TableLayout.FILL}};
+        double size[][] = {{0.34, info.clearthought.layout.TableLayout.FILL}, {info.clearthought.layout.TableLayout.FILL}};
         
         workingArea.setLayout(new info.clearthought.layout.TableLayout(size));
         
