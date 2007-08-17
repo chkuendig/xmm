@@ -114,10 +114,8 @@ public class FileUtil {
             	
 		if (fileName.startsWith("/")) {
 		    f = new File(fileName);
-		    System.err.println("url1:" + f + " (" + new File(fileName).exists() + ")");
 		} else {
 		    f = new File(getUserDir() + fileName);
-		    System.err.println("url2:" + f + " (" + new File(getUserDir() + fileName).exists() + ")");
 		}
 		
 		url = f.toURL();

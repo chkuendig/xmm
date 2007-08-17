@@ -17,8 +17,8 @@
     										lib/commons-beanutils.jar 				lib/poi-2.5.1-final-20040804.jar 
     										lib/commons-httpclient-3.0.1.jar 		lib/commons-logging-1.1.jar 
     										lib/commons-codec-1.3.jar				lib/castor-1.0.5.jar
-    										lib/ProportionLayout.jar				lib/sfc.jar
-  											lib/spin.jar"/>
+    										lib/ProportionLayout.jar				lib/driveinfo/sfc.jar
+											lib/spin.jar							lib/ostermillerutils_1_05_00_for_java_1_4.jar"/>
    <target name="clean">
         <delete dir="build"/>
     </target>

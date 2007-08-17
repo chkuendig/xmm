@@ -4,6 +4,52 @@ Changelog - MeD's Movie Manager
 ========================================
 
 
+Version 2.5.4.1 (12-jul-2007)
+
+ - General improvements:
+ - IMDb parser slightly modified to show more hits
+
+ - Bug fixes:
+ - The MS Access database is now Access 2002 format instead of Access 2000. (Bug ID: 1738785)
+   This fixes a nasty database error which could make it troublesome to add/remove 'additional info' fields.
+ - When using MS Access database: The user defined 'additional info' fields would be 
+   hidden if there were more than 3 (Text field in database was too small). 
+ - Covers were not saved when adding movies with the 'Add Multiple Movies' function.
+
+
+Version 2.5.4 (10-jul-2007)
+
+ - New:
+ - CSV import
+
+ - General improvements:
+ - It's now possible to select multiple seasons when adding episodes from tv.com (Thanks to Mel)
+
+ - Bug fixes:
+ - Searching on IMDb should work now (Didn't quite catch the changes on IMDb with the last fix ;-) )
+ - Can now search the filter with Unicode characters in HSQL database (Bug ID:1730310)
+ - When exporting to XML the user defined additional info values are now included (Bug ID:1727149)
+ - Alias definitions (advanced search) and additional info values (add/edit movie info) are now saved again (Bug ID:1718944)
+ - Covers weren't saved when using "Update IMDb Info" and storing covers relative to database (Bug ID:1718892)
+ - Fixed bug: "'Set relative paths' not restored correctly" (Bug ID:1716094)
+ - Fixed bug: "Problems with 'Store covers locally' (MySQL)" (Bug ID:1716100)
+ - Fixed bug: "Deleting items in MySQL leaves addInfo fields" (Bug ID:1716110)
+ - Fixed bug: "Covers not shown in List after load (MySQL only)" (Bug ID:1716107)
+ - Plenty of other minor bugs and issues have been fixed
+
+
+Version 2.5.3.5 (27-jun-2007)
+
+ - Bug fixes:
+ - IMDb changed their html.
+
+
+Version 2.5.3.4 (26-jun-2007)
+
+ - Bug fixes:
+ - MeD's Movie Manager can now be closed on Windows Vista.
+
+
 Version 2.5.3.3 (03-may-2007)
 
  - Bug fixes:

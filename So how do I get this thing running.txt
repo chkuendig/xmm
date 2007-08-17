@@ -4,17 +4,15 @@ First of all, you need to have Java Developers Kit (SDK) installed to be able to
 
 Fast and simple:
 Simply use the batch/shell scripts to compile and run the app.
-
-Explaining the compile script:
 If you need to change the name of the directory 'MovieManager', or location of the scripts you will have to modify the scripts.
 The javac command uses the option '-d . ' which is the output dir for the class files.
 After changing directory to 'MovieManager' the '.' means that the output dir is 'MovieManager'.
 All the jar files in the lib directory must be included in the class path when compiling and running.
 Each jar file in the lib dir is included in the in the jar-classpath when making the jar file.
-They must have the exact same names as refered in the Manifest.txt file.
+They must have the exact same names as refered in the MANIFEST.MF file.
 
 
-Eclipse (tested on v3.2):
+Eclipse (tested on v3.1):
 Start a new project and choose the 'Create project from existing source'.
 Browse your way to the root directory of where you unpacked these files (where the .project and .classpath files are located) and select.
 Apply a name to the project and click next.

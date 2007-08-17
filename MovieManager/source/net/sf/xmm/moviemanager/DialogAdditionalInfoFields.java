@@ -527,15 +527,30 @@ public class DialogAdditionalInfoFields extends JDialog {
 	for (int i = 0; i < _toAdd.size(); i++) {
 	    
 	    if ((MovieManager.getIt().getDatabase().addExtraInfoFieldName((String)_toAdd.get(i))) == 1) {
-		fieldsList.add(_toAdd.get(i));
+			fieldsList.add(_toAdd.get(i));
 	    }
 	    else {
-		MovieManager.getIt().getDatabase().removeExtraInfoFieldName((String)_toAdd.get(i));
-		listActive.removeElement(_toAdd.get(i));
+			MovieManager.getIt().getDatabase().removeExtraInfoFieldName((String)_toAdd.get(i));
+			listActive.removeElement(_toAdd.get(i));
+	    }
+	    
+		// If MS Access, have to wait to avoid "Database engine cannot lock table" error
+		if (MovieManager.getIt().getDatabase().isMSAccess()) {
+			try {
+				;//Thread.sleep(800);
+			} catch (Exception e) {
+				log.error("Exception:" + e.getMessage());
+				e.printStackTrace();
+			}
 	    }
 	}
+	    
 	
-	/* Trims to remove any empty spaces */
+	//debug testing
+	//ArrayList fieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames();
+	//ArrayList episodesNames = MovieManager.getIt().getDatabase().getExtraInfoEpisodesFieldNames();
+	
+	/* Trim to remove any empty spaces */
 	fieldsList.trimToSize();
 	
 	/* Updating the field order */
@@ -544,7 +559,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 	
 	for (int i = 0; i < listActive.size(); i++)
 	    activeAdditionalInfoFields[i] = fieldsList.indexOf(listActive.get(i));
-	
+	    	
 	MovieManager.getIt().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
 	MovieManager.getIt().getDatabase().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
 	

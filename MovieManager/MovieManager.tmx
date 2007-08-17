@@ -302,13 +302,13 @@
 	                creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
 	                <prop type="x-Comment"/>
 	                <prop type="x-Translated">false</prop>
-	                <seg>Use Folder Name for Files</seg>
+	                <seg>Use folder name instead of files name when searching IMDb</seg>
 	            </tuv>
 	            <tuv changedate="20070121T130738Z" changeid=""
 	                creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
 	                <prop type="x-Comment"/>
 	                <prop type="x-Translated">false</prop>
-	                <seg>Use Folder Name for Files</seg>
+	                <seg>Use folder name instead of files name when searching IMDb</seg>
 	            </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-options.enable-Folder-Naming-tooltip">
@@ -317,13 +317,13 @@
 			creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
 			<prop type="x-Comment"/>
 			<prop type="x-Translated">false</prop>
-			<seg>Use Folder Name for Files when searching IMDB</seg>
+			<seg>Use folder name instead of files name when searching IMDB</seg>
 		    </tuv>
 		    <tuv changedate="20070121T130738Z" changeid=""
 			creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
 			<prop type="x-Comment"/>
 			<prop type="x-Translated">false</prop>
-			<seg>Use Folder Name for Files when searching IMDB</seg>
+			<seg>Use folder name instead of files name when searching IMDB</seg>
 		    </tuv>
         </tu>
         

@@ -93,39 +93,39 @@ abstract public class Database {
      * filePath should contain the file path for the database.
      **/
     protected Database(String filePath) {
-	_path = filePath;
-    }
-
+		_path = filePath;
+	}
+	
     public boolean isSetUp() {
-	return setUp;
+    	return setUp;
     }
 
     public String getErrorMessage() {
-	return errorMessage;
+    	return errorMessage;
     }
     
     public Exception getException() {
-	return exception;
+    	return exception;
     }
 
     public void resetError() {
-	errorMessage = "";
-	exception = null;
+    	errorMessage = "";
+    	exception = null;
     }
 
     public String getDatabaseType() {
-	return databaseType;
+    	return databaseType;
     }
     
-    public boolean isMySQLDatabase() {
+    public boolean isMySQL() {
     	return databaseType.equals("MySQL");
     }
     
-    public boolean isHSQLDatabase() {
+    public boolean isHSQL() {
     	return databaseType.equals("HSQL");
     }
     
-    public boolean isMSAccessDatabase() {
+    public boolean isMSAccess() {
     	return databaseType.equals("MSAccess");
     }
 
@@ -325,8 +325,15 @@ abstract public class Database {
     		errorMessage = "";
     		return;
     	}
-
+		
+    	//finalize()
     	
+    	/*
+    	if (message.indexOf("The database engine could not lock table") != -1) {
+    	 		    		    		//errorMessage = "Connection reset";
+    		//MovieManager.getIt().processDatabaseError();
+    	}
+    	*/
 
     	if (message.indexOf("Connection reset") != -1) {
     		errorMessage = "Connection reset";
@@ -378,29 +385,29 @@ abstract public class Database {
      * Returns the Resolution with index index named name...
      **/
     public String getString(String query, String field) {
-
-	String data = "";
-	try {
-	    ResultSet resultSet = _sql.executeQuery(query);
-
-	    if (resultSet.next() && resultSet.getString(field) != null) {
-		data = resultSet.getString(field);
-	    }
-	} catch (Exception e) {
-	    log.error("Exception: ", e);
-	    checkErrorMessage(e);
-	} finally {
-	    /* Clears the Statement in the dataBase... */
-	    try {
-		_sql.clear();
-	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
-	    }
-	}
-	/* Returns the data... */
-	return data;
+		
+		String data = "";
+		try {
+			ResultSet resultSet = _sql.executeQuery(query);
+			
+			if (resultSet.next() && resultSet.getString(field) != null) {
+				data = resultSet.getString(field);
+			}
+		} catch (Exception e) {
+			log.error("Query failed: " + query, e);
+			checkErrorMessage(e);
+		} finally {
+			/* Clears the Statement in the dataBase... */
+			try {
+				_sql.clear();
+			} catch (Exception e) {
+				log.error("Exception: " + e.getMessage());
+			}
+		}
+		/* Returns the data... */
+		return data;
     }
-
+	
     /**
      * Returns the Duration with index index named name...
      **/
@@ -885,6 +892,38 @@ abstract public class Database {
 	return list;
     }
 
+    /**
+     * Returns the Extra Info field names in a ArrayList.
+     **/
+    public ArrayList getExtraInfoEpisodesFieldNames() {
+
+	ArrayList list = new ArrayList();
+	try {
+	    String query = "SELECT " + quotedExtraInfoEpisodeString +".* "+ "FROM "+ quotedExtraInfoEpisodeString +" WHERE 1=0;";
+
+	    ResultSetMetaData metaData = _sql.executeQuery(query).getMetaData();
+
+	    for (int i = 1; i <= metaData.getColumnCount(); i++) {
+		if (!metaData.getColumnName(i).equalsIgnoreCase("ID")) {
+		    list.add(metaData.getColumnName(i));
+		}
+	    }
+
+	} catch (Exception e) {
+	    log.error("Exception: ", e);
+	    checkErrorMessage(e);
+	} finally {
+	    /* Clears the Statement in the dataBase... */
+	    try {
+		_sql.clear();
+	    } catch (Exception e) {
+		log.error("Exception: " + e.getMessage());
+	    }
+	    /* Returns the list model... */
+	}
+	return list;
+    }
+    
 
     /**
      * Returns the additional info field names in a ArrayList.
@@ -1866,9 +1905,6 @@ abstract public class Database {
      **/
     public void addExtraInfoMovie(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
 
-	if (fieldNamesList == null || fieldValuesList == null)
-	    return;
-
 	try {
 	    String query = "INSERT INTO " + quotedExtraInfoString +
 		"(ID) "+
@@ -1880,11 +1916,11 @@ abstract public class Database {
 	    _sql.clear();
 
 	    if (value == 0) {
-	    	throw new Exception("Can't add row.");
+	    	throw new Exception("Failed to add row in table 'Extra Info'.");
 	    }
 
-	    if (setExtraInfoMovie(index, fieldNamesList, fieldValuesList) != 1) {
-		throw new Exception("Error occured while updating extra info fields");
+	    if (setExtraInfoMovie(index, fieldNamesList, fieldValuesList) == -1) {
+	    	throw new Exception("Error occured while updating extra info fields");
 	    }
 
 	} catch (Exception e) {
@@ -1907,42 +1943,45 @@ abstract public class Database {
      **/
     public int setExtraInfoMovie(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
 
-	int value = 1;
-	PreparedStatement statement;
-	String query = "";
+    	if (fieldNamesList == null || fieldValuesList == null)
+    		return 1;
 
-	try {
-	    
-	    for (int i = 0; i < fieldNamesList.size(); i++) {
+    	int value = 1;
+    	PreparedStatement statement;
+    	String query = "";
 
-		_sql.clear();
-		
-		query = "UPDATE " + quotedExtraInfoString + " "+
-		    "SET " + quotedExtraInfoString + "." +
-		    quote + (String) fieldNamesList.get(i) + quote + "=? "+
-		    "WHERE " + quotedExtraInfoString + ".ID=?;";
-		
-		statement = _sql.prepareStatement(query);
+    	try {
 
-		statement.setString(1, (String) fieldValuesList.get(i));
-		statement.setInt(2, index);
-		value = statement.executeUpdate();
-	    }
+    		for (int i = 0; i < fieldNamesList.size(); i++) {
 
-	} catch (Exception e) {
-	    log.error("Exception: ", e);
-	    checkErrorMessage(e);
-	    value = 0;
-	} finally {
-	    /* Clears the Statement in the dataBase... */
-	    try {
-		_sql.clear();
-	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
-	    }
-	}
-	/* Returns the updated records... */
-	return value;
+    			_sql.clear();
+
+    			query = "UPDATE " + quotedExtraInfoString + " "+
+    			"SET " + quotedExtraInfoString + "." +
+    			quote + (String) fieldNamesList.get(i) + quote + "=? "+
+    			"WHERE " + quotedExtraInfoString + ".ID=?;";
+
+    			statement = _sql.prepareStatement(query);
+
+    			statement.setString(1, (String) fieldValuesList.get(i));
+    			statement.setInt(2, index);
+    			value = statement.executeUpdate();
+    		}
+
+    	} catch (Exception e) {
+    		log.error("Exception: ", e);
+    		checkErrorMessage(e);
+    		value = -1;
+    	} finally {
+    		/* Clears the Statement in the dataBase... */
+    		try {
+    			_sql.clear();
+    		} catch (Exception e) {
+    			log.error("Exception: " + e.getMessage());
+    		}
+    	}
+    	/* Returns the updated records... */
+    	return value;
     }
 
 
@@ -1953,39 +1992,36 @@ abstract public class Database {
      **/
     public int addExtraInfoEpisode(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
 
-	if (fieldNamesList == null)
-	    return 1;
-
-    int ret = 0;
+		int ret = 0;
     
-	try {
-	    /* Creates an empty row... */
-	    int value = _sql.executeUpdate("INSERT INTO " + quotedExtraInfoEpisodeString + " "+
-					   "(ID) "+
-					   "VALUES("+index+");");
+		try {
+			/* Creates an empty row... */
+			int value = _sql.executeUpdate("INSERT INTO " + quotedExtraInfoEpisodeString + " "+
+										   "(ID) "+
+										   "VALUES("+index+");");
 
-	    _sql.clear();
+			_sql.clear();
 
-	    if (value == 0) {
-		throw new Exception("Can't add row.");
-	    }
+			if (value == 0) {
+				throw new Exception("Failed to add row in table 'Extra Info Episodes'.");
+			}
 
-	    if (setExtraInfoEpisode(index, fieldNamesList, fieldValuesList) == 0)
-	        throw new Exception("Error occured while adding info to extra info fields");
+			if (setExtraInfoEpisode(index, fieldNamesList, fieldValuesList) == -1)
+				throw new Exception("Error occured while adding info to extra info fields");
 
-	} catch (Exception e) {
-	    log.error("Exception: ", e);
-	    checkErrorMessage(e);
-        ret = -1;
-	} finally {
-	    /* Clears the Statement in the dataBase... */
-	    try {
-		_sql.clear();
-	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
-	    }
-	}
-    return ret;
+		} catch (Exception e) {
+			log.error("Exception: ", e);
+			checkErrorMessage(e);
+			ret = -1;
+		} finally {
+			/* Clears the Statement in the dataBase... */
+			try {
+				_sql.clear();
+			} catch (Exception e) {
+				log.error("Exception: " + e.getMessage());
+			}
+		}
+		return ret;
     }
 
 
@@ -1995,6 +2031,9 @@ abstract public class Database {
      **/
     public int setExtraInfoEpisode(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
 
+    	if (fieldNamesList == null || fieldValuesList == null)
+      	    return 1;
+    	
 	int value = 0;
 	PreparedStatement statement;
 
@@ -2012,13 +2051,11 @@ abstract public class Database {
 		statement.setInt(2, index);
 		value = statement.executeUpdate();
 	    }
-	    
-	    if (fieldNamesList.size() == 0)
-	    	value = -1;
-
+		
 	} catch (Exception e) {
 	    log.error("Exception: ", e);
 	    checkErrorMessage(e);
+	    value = -1;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2217,14 +2254,14 @@ abstract public class Database {
 
 
     public int addExtraInfoFieldName(String field) {
-
-	if (addExtraInfoMovieFieldName(field) == -2)
-	    return -1;
-
-	if (addExtraInfoEpisodeFieldName(field) == -2)
-	    return -2;
-
-	return 1;
+		
+		if (addExtraInfoMovieFieldName(field) == -2)
+			return -1;
+		
+		if (addExtraInfoEpisodeFieldName(field) == -2)
+			return -2;
+	
+		return 1;
     }
 
 
@@ -2240,7 +2277,7 @@ abstract public class Database {
 	if (this instanceof DatabaseHSQL)
 	    fieldType = "LONGVARCHAR";
 
-	try {
+	try {_sql.clear();
 	    value = _sql.executeUpdate("ALTER TABLE " + quotedExtraInfoString + " "+
 				       "ADD COLUMN " +quote+ field +quote+" "+ fieldType +";");
 
@@ -2248,6 +2285,13 @@ abstract public class Database {
 	    log.error("Exception: ", e);
 	    checkErrorMessage(e);
 	    value = -2;
+	    
+	    try {
+	    if (e.getMessage().indexOf("could not lock table") != -1) {
+			_sql.finalize();
+	    	_sql.setUp();
+	    }
+	    } catch (Exception i) {}
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2272,7 +2316,7 @@ abstract public class Database {
 	if (this instanceof DatabaseHSQL)
 	    fieldType = "LONGVARCHAR";
 
-	try {
+	try {_sql.clear();
 	    value = _sql.executeUpdate("ALTER TABLE " + quotedExtraInfoEpisodeString + " "+
 				       "ADD COLUMN " +quote+ field +quote+" "+ fieldType +";");
 
@@ -2280,6 +2324,13 @@ abstract public class Database {
 	    log.error("Exception: ", e);
 	    checkErrorMessage(e);
 	    value = -2;
+	    
+	    try {
+		    if (e.getMessage().indexOf("could not lock table") != -1) {
+				_sql.finalize();
+		    	_sql.setUp();
+		    }
+		    } catch (Exception i) {}
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2294,9 +2345,26 @@ abstract public class Database {
 
 
 
-    public void removeExtraInfoFieldName(String field) {
-	removeExtraInfoMovieFieldName(field);
-	removeExtraInfoEpisodeFieldName(field);
+    public int removeExtraInfoFieldName(String field) {
+
+    	if (removeExtraInfoMovieFieldName(field) == -2)
+    		return -1;
+		
+		// Hopefully reduces the probabillity of generating a "Database engine cannot lock table" error."
+		if (isMSAccess()) {
+			
+			try {
+				;//Thread.sleep(800);
+			} catch (Exception e) {
+				log.error("Exception:" + e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		
+    	if (removeExtraInfoEpisodeFieldName(field) == -2)
+    		return -1;
+    	
+    	return 1;
     }
 
 
@@ -2305,24 +2373,33 @@ abstract public class Database {
      * and returns number of updated rows (none (-1)...).
      **/
     protected int removeExtraInfoMovieFieldName(String field) {
-
-	int value = 0;
-	try {
-	    value = _sql.executeUpdate("ALTER TABLE " + quotedExtraInfoString + " "+
-				       "DROP COLUMN " +quote+ field +quote+";");
-	} catch (Exception e) {
-	    log.error("Exception: ", e);
-	    checkErrorMessage(e);
-	} finally {
-	    /* Clears the Statement in the dataBase... */
-	    try {
-		_sql.clear();
-	    } catch (Exception e) {
-		log.error("Exception: " + e.getMessage());
-	    }
-	}
-	/* Returns the number of altered rows... */
-	return value;
+		
+		int value = 0;
+		try {
+			value = _sql.executeUpdate("ALTER TABLE " + quotedExtraInfoString + " "+
+									   "DROP COLUMN " +quote+ field +quote+";");
+		} catch (Exception e) {
+			log.error("Exception: ", e);
+			checkErrorMessage(e);
+	    
+			try {
+				if (e.getMessage().indexOf("could not lock table") != -1) {
+					_sql.finalize();
+					_sql.setUp();
+				}
+		    } catch (Exception i) {}
+	    
+			value = -2;
+		} finally {
+			/* Clears the Statement in the dataBase... */
+			try {
+				_sql.clear();
+			} catch (Exception e) {
+				log.error("Exception: " + e.getMessage());
+			}
+		}
+		/* Returns the number of altered rows... */
+		return value;
     }
 
     /**
@@ -2338,6 +2415,15 @@ abstract public class Database {
 	} catch (Exception e) {
 	    log.error("Exception: ", e);
 	    checkErrorMessage(e);
+	    
+	    try {
+		    if (e.getMessage().indexOf("could not lock table") != -1) {
+		    	_sql.finalize();
+		    	_sql.setUp();
+		    }
+		    } catch (Exception i) {}
+	    
+	    value = -2;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2366,8 +2452,8 @@ abstract public class Database {
 
 	for (int i = 0; i < activeAdditionalInfoFields.length; i++) {
 	    if (!activeFields.equals(""))
-		activeFields += ":";
-	    activeFields += "" + activeAdditionalInfoFields[i];
+	    	activeFields += ":";
+	    activeFields += activeAdditionalInfoFields[i];
 	}
 
 	try {
@@ -2896,12 +2982,9 @@ abstract public class Database {
     	}
 
     	/* Remove all double white space */
-    	StringBuffer stringBuff = new StringBuffer();
-    	for(int x = 0; x < filter.length(); x++)
-    		if (filter.charAt(x) != ' ' || (filter.length() != x+1 && filter.charAt(x+1) != ' '))
-    			stringBuff = stringBuff.append(filter.charAt(x));
-
-    	filter = stringBuff.toString().trim();
+    	filter = removeDoubleSpace(filter);
+    	
+    	filter = filter.trim();
 
     	if (filter.startsWith("AND ") || filter.startsWith("OR "))
     		filter = filter.substring(filter.indexOf(" ")+1, filter.length());

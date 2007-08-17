@@ -29,9 +29,11 @@
   <property name="build" location="MovieManager/"/>
   <property name="dist"  location="dist"/>
   <property name="izpack.dir" location="izpack"/>
-  <property name="version"  value="2.5.3.3"/>
+  <property name="version"  value="2.5.4.1"/>
   <property name="base" value="MovieManager/"/>
   
+
+
   <!-- <property name="$(base)/base.dir"  location=""/> -->
   <property name="source"  value="$(base)/source/"/>
   
@@ -72,7 +74,7 @@
 		  description="Compiles code, output goes to the build dir.">
 	<javac srcdir="MovieManager/source" 
 		   classpathref="project.classpath" 
-		   destdir="${build}">
+		   destdir="${build}" source="1.4" target="1.4">
 	</javac>
   </target>
   
@@ -117,16 +119,19 @@
   </target>
   
   
-  <target name="all" 
+  <target name="all"
 		  description="generate the distribution" >
+
+	<!-- Cleans up  first -->
+	<antcall target="clean" />
+
 	<!-- Create the distribution directory -->
-	
 	<echo>Creating directory:${dist}</echo>
-	<mkdir dir="${dist}"/>
 	
+	<!-- Builds the thing -->
 	<antcall target="build" />
 	<antcall target="create-archives" />
-	<antcall target="izpackinstaller" />
+	<antcall target="makeIzpackInstaller" />
 	
   </target>
   
@@ -139,10 +144,18 @@
   </target>
   
   
+
+ 
+	
+
   
   <target name="create-archives" 
 		  description="Creates the ZIP archives.">
 	
+	<mkdir dir="${dist}"/>
+	
+	<antcall target="makeLooAndFeelIni"/>
+
 	<!-- Creating Binary zip MovieManager.v.version.bin.zip  Mirror  -->
 	<zip destfile="${dist}/MovieManager.v.${version}.bin.zip"
 		 update="false"
@@ -150,8 +163,7 @@
 	  
 	  <!-- Files in root dir (install dir) -->
 	  <zipfileset prefix="MeDs-Movie-Manager" dir="MovieManager" 
-				  includes="Applet.html, 
-							castor.properties, 
+				  includes="castor.properties, 
 							Icon.ico,
 							log4j.properties, 
 							mapping.xml, 
@@ -168,25 +180,30 @@
 	  <!-- Look & Feels -->
 	  <zipfileset prefix="MeDs-Movie-Manager/LookAndFeels/" 
 				  dir="MovieManager/LookAndFeels/" 
-				  includes="lookAndFeels.ini, 
-							JTattoo.jar, 
-							kunststoff.jar, 
-							looks-2.1.2.jar, 
-							OfficeLnFs_2.6.jar, 
-							substance-lite-3.3.jar, 
-							synthetica.2.3.0.jar, 
-							syntheticaBlackMoon.jar, 
-							syntheticaBlackStar.jar, 
-							syntheticaBlueIce.jar, 
-							syntheticaBlueMoon.jar, 
-							syntheticaBlueSteel.jar, 
-							syntheticaGreenDream.jar, 
+				  includes="JTattoo-1.2.2.jar,
+							kunststoff.jar,
+							looks-2.1.4.jar,
+							OfficeLnFs_2.6.jar,
+							substance-lite-3.3.jar,
+							synthetica.2.3.0.jar,
+							syntheticaBlackMoon.jar,
+							syntheticaBlackStar.jar,
+							syntheticaBlueIce.jar,
+							syntheticaBlueMoon.jar,
+							syntheticaBlueSteel.jar,
+							syntheticaGreenDream.jar,
 							syntheticaSilverMoon.jar
 							">
+							
 		
 		<include name="Oyoaha Theme Packs/"/>
 		<include name="Skinlf Theme Packs/"/>
 		
+	  </zipfileset>
+
+	  <zipfileset prefix="MeDs-Movie-Manager/LookAndFeels/" 
+				  dir="${dist}" 
+				  includes="lookAndFeels.ini">
 	  </zipfileset>
 	  
 	  
@@ -206,8 +223,7 @@
 	  
 	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager" 
 				  dir="MovieManager" 
-				  includes="Applet.html, 
-							castor.properties, 
+				  includes="castor.properties, 
 							Icon.ico, 
 							log4j.properties, 
 							mapping.xml, 
@@ -227,19 +243,18 @@
 	  
 	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/LookAndFeels/" 
 				  dir="MovieManager/LookAndFeels/" 
-				  includes="lookAndFeels.ini, 
-							JTattoo.jar, 
-							kunststoff.jar, 
-							looks-2.1.2.jar, 
-							OfficeLnFs_2.6.jar, 
-							substance-lite-3.3.jar, 
-							synthetica.2.3.0.jar, 
-							syntheticaBlackMoon.jar, 
-							syntheticaBlackStar.jar, 
-							syntheticaBlueIce.jar, 
-							syntheticaBlueMoon.jar, 
-							syntheticaBlueSteel.jar, 
-							syntheticaGreenDream.jar, 
+				  includes="JTattoo-1.2.2.jar,
+							kunststoff.jar,
+							looks-2.1.4.jar,
+							OfficeLnFs_2.6.jar,
+							substance-lite-3.3.jar,
+							synthetica.2.3.0.jar,
+							syntheticaBlackMoon.jar,
+							syntheticaBlackStar.jar,
+							syntheticaBlueIce.jar,
+							syntheticaBlueMoon.jar,
+							syntheticaBlueSteel.jar,
+							syntheticaGreenDream.jar,
 							syntheticaSilverMoon.jar
 							">
 		
@@ -247,6 +262,13 @@
 		<include name="Skinlf Theme Packs/"/>
 		
 	  </zipfileset>
+	  
+	  
+	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/LookAndFeels/" 
+				  dir="${dist}" 
+				  includes="lookAndFeels.ini">
+	  </zipfileset>
+	  
 	  
 	  <zipfileset prefix="MeDs-Movie-Manager-Source" dir="">
 		<include name="License/"/>
@@ -263,6 +285,7 @@
 		<include name="run.sh"/>
 		<include name="Manifest.txt"/>
 		<include name="build.xml"/>
+		<include name="build-xmm.xml"/>
 		<include name="So how do I get this thing running.txt"/>
 		<include name=".classpath"/>
 		<include name=".project"/>
@@ -274,8 +297,19 @@
   </target>
   
   
-  <!-- create the izpack java installer -->
+  <!-- when called from command line dist must be created and makeLooAndFeelIni called -->
   <target name="izpackinstaller" 
+		  description="Creates the izPack installer.">
+	
+	<mkdir dir="${dist}"/>
+	<antcall target="makeLooAndFeelIni"/>
+	<antcall target="makeIzpackInstaller"/>
+	
+  </target>
+  
+
+   <!-- create the izpack java installer -->
+  <target name="makeIzpackInstaller" 
 		  description="Creates the izPack installer.">
 	
 	<taskdef name="izpack" classname="com.izforge.izpack.ant.IzPackTask">
@@ -290,6 +324,7 @@
 	
   </target>
   
+
   
   <!-- generates the javadoc -->
   <target name="javadoc" depends="compile">
@@ -359,6 +394,81 @@
 		/>
   </target>
   
+
+
+
+  <target name="makeLooAndFeelIni" 
+		  description="generate the distribution" >
+	<!--	  depends="compile, makejar" -->
+	
+	<echo file="${dist}/lookAndFeels.ini" append="false">
+Here you can add new Look and Feels's.
+Make sure the look and Feel jar-file is placed in the 'LookAndFeels' directory 
+and that the correct class is given below.
+The name and classname must be enclosed in quotes.
+The names may be set to whatever fit your needs.
+
+Example:
+
+"Metal look and feel"                 "javax.swing.plaf.metal.MetalLookAndFeel"
+"Windows look and feel"               "com.sun.java.swing.plaf.windows.WindowsLookAndFeel"
+
+The metal and windows look and feels are preinstalled.
+Define the look and feels below:
+#
+
+"Kunststoff"			              "com.incors.plaf.kunststoff.KunststoffLookAndFeel"
+
+"Jgoodies windows"		              "com.jgoodies.looks.windows.WindowsLookAndFeel"
+"Jgoodies Plastic"		              "com.jgoodies.looks.plastic.PlasticLookAndFeel"
+"Jgoodies Plastic 3D"		          "com.jgoodies.looks.plastic.Plastic3DLookAndFeel"
+"Jgoodies PlasticXP"		          "com.jgoodies.looks.plastic.PlasticXPLookAndFeel"
+
+"Office 2003"			              "org.fife.plaf.Office2003.Office2003LookAndFeel"
+"Office XP"			                  "org.fife.plaf.OfficeXP.OfficeXPLookAndFeel"
+"Office VisualStudio 2005"	          "org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel"
+
+"Substance - FieldOfWheat"            "org.jvnet.substance.skin.SubstanceFieldOfWheatLookAndFeel"
+"Substance - Mango"	                  "org.jvnet.substance.skin.SubstanceMangoLookAndFeel"
+"Substance - GreenMagic"              "org.jvnet.substance.skin.SubstanceGreenMagicLookAndFeel"
+"Substance - OfficeBlue2007"          "org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel"
+"Substance - EmeraldDusk"             "org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel"
+"Substance - ChallengerDeep"          "org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel"
+"Substance - Magma"	                  "org.jvnet.substance.skin.SubstanceMagmaLookAndFeel"
+"Substance - Raven"	                  "org.jvnet.substance.skin.SubstanceRavenLookAndFeel"
+"Substance - OfficeSilver2007"        "org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel"
+"Substance - Moderate"                "org.jvnet.substance.skin.SubstanceModerateLookAndFeel"
+"Substance - Sahara"   	              "org.jvnet.substance.skin.SubstanceSaharaLookAndFeel"
+"Substance - Creme"   	              "org.jvnet.substance.skin.SubstanceCremeLookAndFeel"
+"Substance - Business"                "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel"
+"Substance - Business blue"           "org.jvnet.substance.skin.SubstanceBusinessBlueLookAndFeel"
+"Substance - Autumn"                  "org.jvnet.substance.skin.SubstanceAutumnLookAndFeel"
+
+"JTattoo - Acryl" 	                  "com.jtattoo.plaf.acryl.AcrylLookAndFeel"
+"JTattoo - Aero" 	                  "com.jtattoo.plaf.aero.AeroLookAndFeel"
+"JTattoo - Aluminium" 	              "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel"
+"JTattoo - Bernstein" 	              "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel"
+"JTattoo - Fast" 	                  "com.jtattoo.plaf.fast.FastLookAndFeel"
+"JTattoo - HiFi" 	                  "com.jtattoo.plaf.hifi.HiFiLookAndFeel" 
+"JTattoo - McWin" 	                  "com.jtattoo.plaf.mcwin.McWinLookAndFeel"
+"JTattoo - Mint" 	                  "com.jtattoo.plaf.mint.MintLookAndFeel"
+"JTattoo - Noire" 	                  "com.jtattoo.plaf.mint.MintLookAndFeel"
+"JTattoo - Smart" 	                  "com.jtattoo.plaf.smart.SmartLookAndFeel"
+"JTattoo - Luna" 	                  "com.jtattoo.plaf.luna.LunaLookAndFeel"
+
+"Synetetica Standard"  	              "de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel"
+"Synetetica BlackStar"                "de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel"
+"Synetetica greendream"               "de.javasoft.plaf.synthetica.SyntheticaGreenDreamLookAndFeel"
+"Synetetica BlueSteel" 	              "de.javasoft.plaf.synthetica.SyntheticaBlueSteelLookAndFeel"
+"Synetetica BlackMoon"                "de.javasoft.plaf.synthetica.SyntheticaBlackMoonLookAndFeel"
+"Synetetica BlueMoon"                 "de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel"
+"Synetetica SilverMoon"               "de.javasoft.plaf.synthetica.SyntheticaSilverMoonLookAndFeel"
+"Synetetica BlueIce"	              "de.javasoft.plaf.synthetica.SyntheticaBlueIceLookAndFeel"
+"Synetetica GreenDream"	              "de.javasoft.plaf.synthetica.SyntheticaGreenDreamLookAndFeel"
+</echo>
+	
+  </target>
+
 </project>
 
 

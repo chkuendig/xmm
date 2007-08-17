@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="source/" kind="src" path="MovieManager"/>
-	<classpathentry excluding="net/sf/xmm/moviemanager/util/mac/OSXAdapter.java" kind="src" path="MovieManager/source"/>
+	<classpathentry excluding="net/sf/xmm/moviemanager/util/mac/OSXAdapter.java" including="net/sf/xmm/moviemanager/|net/sf/xmm/moviemanager/commands/|net/sf/xmm/moviemanager/mediainfodll/|net/sf/xmm/moviemanager/models/|net/sf/xmm/moviemanager/util/" kind="src" path="MovieManager/source"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="MovieManager/lib/drivers/hsqldb-1.7.3.3.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/drivers/mysql-connector-java-3.1.12-bin.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/BrowserLauncher2-10rc4.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/jxl.jar"/>
-	<classpathentry kind="lib" path="MovieManager/lib/driveinfo/sfc.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/oalnf.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/skinlf.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/TableLayout.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/useful.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/JNative.jar"/>
-	<classpathentry kind="lib" path="MovieManager/lib/retroweaver-all-2.0.jar"/>
-	<classpathentry kind="lib" path="MovieManager/lib/spin.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/commons-httpclient-3.0.1.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/commons-logging-1.1.jar"/>
@@ -28,10 +24,14 @@
 	<classpathentry kind="lib" path="MovieManager/lib/castor-1.0.5.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/gettext-commons-0.9.jar"/>
-	<classpathentry kind="lib" path="MovieManager/lib/GroupableTable.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/mac/AppleJavaExtensions.jar"/>
-	<classpathentry kind="lib" path="MovieManager/lib/mac/quaqua-filechooser-only.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/driveinfo/sfc.jar"/>
+	<classpathentry kind="lib" path="E:/Programmer/Andre/eclipse/eclipse-3.2.2/plugins/org.eclipse.core.runtime.compatibility.registry_3.2.1.R32x_v20060907/runtime_registry_compatibility.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/retroweaver-all-2.0.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/spin.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/drivers/hsqldb-1.7.3.3.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/ostermillerutils_1_05_00_for_java_1_4.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/ProportionLayout.jar"/>
 	<classpathentry kind="output" path="MovieManager"/>
 </classpath>
