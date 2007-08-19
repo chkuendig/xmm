@@ -1,4 +1,4 @@
-Required libraries for MeD's Movie Manager v2.5 beta 5
+Required libraries for MeD's Movie Manager v2.5.4
 
 These libraries can be found in the MovieManager binary or source release.
 
@@ -17,20 +17,23 @@ TableLayout.jar					- Free layout manager
 useful.jar						- Java library with Swing Tree classes extension
 
 castor-1.0.5.jar				- Object-XML binding utility.
+xercesImpl.jar
 
 xml-apis.jar					- org/w3c/dom/ranges/DocumentRange for Java 1.4
 
 JNative.jar						- Simple JNI library
+JNative.dll						- Requiered windows libarary for JNative
+MediaInfo.dll					- Windows library for reading technical info from media files.
+
 retroweaver-all-2.0.jar			- Java bytecode weaver (Used on JNative.jar)
 
-JNative.dll
-MediaInfo.dll
+ostermillerutils_1_05_00_for_java_1_4.jar - CSV library
 
 spin.jar						- For Spinning GUI-threads. Replacement for SwingWorker.
 
-AppleJavaExtensions.jar			- Needed for compilation of Mac OS X adapter on windows/linux. Only required at compile-time.
-libquaqua.jnilib				- Needed for Quaqua L&F (only on mac, only at runtime)
-quaqua.jar						- Needed for Quaqua L&F (only on mac, only at runtime)
+AppleJavaExtensions.jar			- Needed for Mac OS X adaption.
+libquaqua.jnilib				- Needed for Quaqua L&F
+quaqua-filechooser-only.jar		- Needed for Quaqua L&F
 
 jasperreports-1.2.6.jar			- Report creation utility
 poi-2.5.1-final-20040804.jar	- Needed for jasperreports
@@ -39,5 +42,4 @@ commons-codec-1.3.jar			- Needed for jasperreports
 commons-collections-3.2.jar		- Needed for jasperreports
 commons-digester-1.7.jar		- Needed for jasperreports
 sfc.jar							- DriveInfo
-
-ostermillerutils_1_05_00_for_java_1_4.jar - CVSParser
+ 
