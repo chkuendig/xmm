@@ -1,15 +1,25 @@
 package net.sf.xmm.moviemanager;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JProgressBar;
 
-import org.apache.log4j.*;
-import net.sf.jasperreports.engine.*;
-import net.sf.xmm.moviemanager.database.*;
-import net.sf.xmm.moviemanager.models.*;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRField;
+import net.sf.xmm.moviemanager.database.DatabaseMySQL;
+import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
+import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.models.ModelMovie;
+
+import org.apache.log4j.Logger;
 
 /**
  * DataSource for Report Generator
@@ -50,12 +60,13 @@ public class ReportGeneratorDataSource implements JRDataSource {
         if (sortField != null && sortField.length() > 0 && !sortField.equalsIgnoreCase("none")) {
             Collections.sort(movies, new MovieComparator(sortField));
         }
-
+        
         if (progressBar != null) {
             progressBar.setMinimum(0);
             progressBar.setMaximum(movies.size());
             progressBar.setValue(0);
         }
+        
         iterator = movies.iterator();
     }
 
@@ -66,20 +77,22 @@ public class ReportGeneratorDataSource implements JRDataSource {
      * @throws JRException
      */
     public boolean next() throws JRException {
+    	    	
         if (iterator.hasNext() && !interrupt) {
             entry = (ModelEntry) iterator.next();
+                        
             int key = entry.getKey();
             if (key >= 0) {
                 if (entry instanceof ModelMovie) {
-                    entry = MovieManager.getIt().getDatabase().getMovie(key, true);
+                    entry = MovieManager.getIt().getDatabase().getMovie(key);
                 }
                 else {
-                    entry = MovieManager.getIt().getDatabase().getEpisode(key, true);
+                    entry = MovieManager.getIt().getDatabase().getEpisode(key);
                 }
                 if (progressBar != null) {
                     progressBar.setValue(count++);
                 }
-                Thread.yield();
+                //Thread.yield();
             }
             return true;
         }
@@ -97,11 +110,14 @@ public class ReportGeneratorDataSource implements JRDataSource {
      */
     public Object getFieldValue(JRField jRField) throws JRException {
         String name = jRField.getName();
+       Object ret = null;
         // General fields
-
+               
         if (name.equalsIgnoreCase("Cover")) {
+        		
             if (!testmode && entry.getCover() != null && entry.getCover().length() > 0) {
-                String filename = coversFolder + "/" + entry.getCover();
+            	String filename = coversFolder + "/" + entry.getCover();
+                
                 if (mySQL && entry.getCoverData() != null) {
                     try {
                         File tempFile = File.createTempFile("xmm", filename.substring(filename.indexOf('.')));
@@ -109,216 +125,231 @@ public class ReportGeneratorDataSource implements JRDataSource {
                         FileOutputStream fos = new FileOutputStream(tempFile);
                         fos.write(entry.getCoverData());
                         fos.close();
-                        return tempFile.getPath();
+                        ret = tempFile.getPath();
                     }
                     catch (Exception ex) {
                         Logger.getRootLogger().error("Error saving temporary coverfile for " + filename, ex);
                     }
                 }
+                
                 if (new File(filename).exists()) {
-                    return filename;
+                	ret = filename;
                 }
+                else
+                	ret = defaultCoverImageURL.toString();
             }
-            return defaultCoverImageURL.toString();
+            else {
+            	ret = defaultCoverImageURL.toString();
+            }
         }
         else if (name.equalsIgnoreCase("Genre")) {
-            return entry.getGenre();
+        	ret = entry.getGenre();
         }
         else if (name.equalsIgnoreCase("Awards")) {
-            return entry.getAwards();
+        	ret = entry.getAwards();
         }
         else if (name.equalsIgnoreCase("Notes")) {
-            return entry.getNotes();
+        	ret = entry.getNotes();
         }
         else if (name.equalsIgnoreCase("Mpaa")) {
-            return entry.getMpaa();
+        	ret = entry.getMpaa();
         }
         else if (name.equalsIgnoreCase("Cast")) {
-            return entry.getCast();
+        	ret = entry.getCast();
         }
         else if (name.equalsIgnoreCase("Date")) {
-            return entry.getDate();
+        	ret = entry.getDate();
         }
         else if (name.equalsIgnoreCase("IMDB")) {
-            return entry.getUrlKey();
+        	ret = entry.getUrlKey();
         }
         else if (name.equalsIgnoreCase("DirectedBy")) {
-            return entry.getDirectedBy();
+        	ret = entry.getDirectedBy();
         }
         else if (name.equalsIgnoreCase("Plot")) {
-            return testmode ? "" : entry.getPlot();
+        	ret = testmode ? "" : entry.getPlot();
         }
         else if (name.equalsIgnoreCase("WrittenBy")) {
-            return entry.getWrittenBy();
+        	ret = entry.getWrittenBy();
         }
         else if (name.equalsIgnoreCase("SoundMix")) {
-            return entry.getWebSoundMix();
+        	ret = entry.getWebSoundMix();
         }
         else if (name.equalsIgnoreCase("Language")) {
-            return entry.getLanguage();
+        	ret = entry.getLanguage();
         }
         else if (name.equalsIgnoreCase("Genre")) {
-            return entry.getGenre();
+        	ret = entry.getGenre();
         }
         else if (name.equalsIgnoreCase("Colour")) {
-            return entry.getColour();
+        	ret = entry.getColour();
         }
         else if (name.equalsIgnoreCase("Seen")) {
-            return Boolean.valueOf(entry.getSeen());
+        	ret = Boolean.valueOf(entry.getSeen());
         }
         else if (name.equalsIgnoreCase("Country")) {
-            return entry.getCountry();
+        	ret = entry.getCountry();
         }
         else if (name.equalsIgnoreCase("Title")) {
-            return testmode ? "Movie title " + count : entry.getTitle();
+        	ret = testmode ? "Movie title " + count : entry.getTitle();
         }
         else if (name.equalsIgnoreCase("Aka")) {
-            return testmode ? "Aka " + count : entry.getAka();
+        	ret = testmode ? "Aka " + count : entry.getAka();
         }
         else if (name.equalsIgnoreCase("WebRuntime")) {
-            return entry.getWebRuntime();
+        	ret = entry.getWebRuntime();
         }
         else if (name.equalsIgnoreCase("Rating")) {
-            return entry.getRating();
+        	ret = entry.getRating();
         }
         else if (name.equalsIgnoreCase("Certification")) {
-            return entry.getCertification();
-        }
-
-        // Additional fields
-
-        ModelAdditionalInfo a = null;
-        if (entry.getHasAdditionalInfoData()) {
-            a = entry.getAdditionalInfo();
+        	ret = entry.getCertification();
         }
         else {
-            if (entry instanceof ModelMovie) {
-                a = MovieManager.getIt().getDatabase().getAdditionalInfo(entry.getKey(), false);
-            }
-            else {
-                a = MovieManager.getIt().getDatabase().getAdditionalInfo(entry.getKey(), true);
-            }
-            entry.setAdditionalInfo(a);
+        	// Additional fields
+
+        	ModelAdditionalInfo a = null;
+        	if (entry.getHasAdditionalInfoData()) {
+        		a = entry.getAdditionalInfo();
+        	}
+        	else {
+        		if (entry instanceof ModelMovie) {
+        			a = MovieManager.getIt().getDatabase().getAdditionalInfo(entry.getKey(), false);
+        		}
+        		else {
+        			a = MovieManager.getIt().getDatabase().getAdditionalInfo(entry.getKey(), true);
+        		}
+        		entry.setAdditionalInfo(a);
+        	}
+        	
+        	if (a != null) {
+        		if (name.equalsIgnoreCase("Subtitles")) {
+        			ret = a.getSubtitles();
+        		}
+        		else if (name.equalsIgnoreCase("Duration")) {
+        			int tempInt = a.getDuration();
+
+        			if (tempInt != -1) {
+        				int hours = tempInt / 3600;
+        				int mints = tempInt / 60 - hours * 60;
+        				int secds = tempInt - hours * 3600 - mints * 60;
+        				
+        				if (hours == 0 && mints == 0 && secds == 0)
+        					ret = "";
+        				else
+        					ret = hours + ":" + mints + "." + secds;
+        			}
+        			else {
+        				ret = "";
+        			}
+        		}
+        		else if (name.equalsIgnoreCase("Filesize")) {
+        			int tempInt = a.getFileSize();
+        			if (tempInt != -1 && tempInt != 0) {
+        				ret = tempInt + " MB";
+        			}
+        			else {
+        				ret = "";
+        			}
+        		}
+        		else if (name.equalsIgnoreCase("CDs")) {
+        			int tempInt = a.getCDs();
+        			if (tempInt != -1 && tempInt != 0) {
+        				ret = "" + tempInt;
+        			}
+        			else {
+        				ret = "";
+        			}
+        		}
+        		else if (name.equalsIgnoreCase("CDCases")) {
+        			double tempDouble = a.getCDCases();
+        			if (tempDouble > 0) {
+        				ret = String.valueOf(tempDouble);
+        			}
+        			else {
+        				ret = "";
+        			}
+        		}
+        		else if (name.equalsIgnoreCase("Resolution")) {
+        			ret = a.getResolution();
+        		}
+        		else if (name.equalsIgnoreCase("VideoCodec")) {
+        			ret = a.getVideoCodec();
+        		}
+        		else if (name.equalsIgnoreCase("VideoRate")) {
+        			String vRate = a.getVideoRate();
+        			if (!vRate.equals("")) {
+        				ret = vRate + " fps";
+        			}
+        			else {
+        				ret = "";
+        			}
+        		}
+        		else if (name.equalsIgnoreCase("VideoBitrate")) {
+        			String vRate = a.getVideoBitrate();
+        			if (!vRate.equals("")) {
+        				ret = vRate + " kbps";
+        			}
+        			else {
+        				ret = "";
+        			}
+        		}
+        		else if (name.equalsIgnoreCase("AudioCodec")) {
+        			ret = a.getAudioCodec();
+        		}
+        		else if (name.equalsIgnoreCase("AudioRate")) {
+        			String aRate = a.getAudioRate();
+        			if (!aRate.equals("")) {
+        				ret = aRate + " Hz";
+        			}
+        			else {
+        				ret = "";
+        			}
+        		}
+        		else if (name.equalsIgnoreCase("AudioBitrate")) {
+        			String aRate = a.getAudioBitrate();
+        			
+        			if (!aRate.equals("")) {
+        				ret = aRate + " kbps";
+        			}
+        			else {
+        				ret = "";
+        			}
+        		}
+        		else if (name.equalsIgnoreCase("AudioChannels")) {
+        			ret = a.getAudioChannels();
+        		}
+        		else if (name.equalsIgnoreCase("FileLocation")) {
+        			ret = a.getFileLocation();
+        		}
+        		else if (name.equalsIgnoreCase("FileCount")) {
+        			ret = new Integer(a.getFileCount());
+        		}
+        		else if (name.equalsIgnoreCase("Container")) {
+        			ret = a.getContainer();
+        		}
+        		else if (name.equalsIgnoreCase("MediaType")) {
+        			ret = a.getMediaType();
+        		}
+
+        		// Extra info
+        		else {
+        			ArrayList extra = ModelAdditionalInfo.getExtraInfoFieldNames();
+        			if (extra != null) {
+        				for (int i = 0; i < extra.size(); i++) {
+        					if (name.equalsIgnoreCase( (String) extra.get(i))) {
+        						ret = a.getExtraInfoFieldValue(i);
+        					}
+        				}
+        			}
+        		}
+        	}
         }
-        if (a != null) {
-            if (name.equalsIgnoreCase("Subtitles")) {
-                return a.getSubtitles();
-            }
-            else if (name.equalsIgnoreCase("Duration")) {
-                int tempInt = a.getDuration();
-
-                if (tempInt != -1) {
-                    int hours = tempInt / 3600;
-                    int mints = tempInt / 60 - hours * 60;
-                    int secds = tempInt - hours * 3600 - mints * 60;
-                    return hours + ":" + mints + "." + secds;
-                }
-                else {
-                    return "";
-                }
-            }
-            else if (name.equalsIgnoreCase("Filesize")) {
-                int tempInt = a.getFileSize();
-                if (tempInt != -1) {
-                    return tempInt + " MB";
-                }
-                else {
-                    return "";
-                }
-            }
-            else if (name.equalsIgnoreCase("CDs")) {
-                int tempInt = a.getCDs();
-                if (tempInt != -1) {
-                    return "" + tempInt;
-                }
-                else {
-                    return "";
-                }
-            }
-            else if (name.equalsIgnoreCase("CDCases")) {
-                double tempDouble = a.getCDCases();
-                if (tempDouble > 0) {
-                    return String.valueOf(tempDouble);
-                }
-                else {
-                    return "";
-                }
-            }
-            else if (name.equalsIgnoreCase("Resolution")) {
-                return a.getResolution();
-            }
-            else if (name.equalsIgnoreCase("VideoCodec")) {
-                return a.getVideoCodec();
-            }
-            else if (name.equalsIgnoreCase("VideoRate")) {
-                String vRate = a.getVideoRate();
-                if (!vRate.equals("")) {
-                    return vRate + " fps";
-                }
-                else {
-                    return "";
-                }
-            }
-            else if (name.equalsIgnoreCase("VideoBitrate")) {
-                String vRate = a.getVideoBitrate();
-                if (!vRate.equals("")) {
-                    return vRate + " kbps";
-                }
-                else {
-                    return "";
-                }
-            }
-            else if (name.equalsIgnoreCase("AudioCodec")) {
-                return a.getAudioCodec();
-            }
-            else if (name.equalsIgnoreCase("AudioRate")) {
-                String aRate = a.getAudioRate();
-                if (!aRate.equals("")) {
-                    return aRate + " Hz";
-                }
-                else {
-                    return "";
-                }
-            }
-            else if (name.equalsIgnoreCase("AudioBitrate")) {
-                String aRate = a.getAudioBitrate();
-                if (!aRate.equals("")) {
-                    return aRate + " kbps";
-                }
-                else {
-                    return "";
-                }
-            }
-            else if (name.equalsIgnoreCase("AudioChannels")) {
-                return a.getAudioChannels();
-            }
-            else if (name.equalsIgnoreCase("FileLocation")) {
-                return a.getFileLocation();
-            }
-            else if (name.equalsIgnoreCase("FileCount")) {
-                return new Integer(a.getFileCount());
-            }
-            else if (name.equalsIgnoreCase("Container")) {
-                return a.getContainer();
-            }
-            else if (name.equalsIgnoreCase("MediaType")) {
-                return a.getMediaType();
-            }
-
-            // Extra info
-            else {
-                ArrayList extra = ModelAdditionalInfo.getExtraInfoFieldNames();
-                if (extra != null) {
-                    for (int i = 0; i < extra.size(); i++) {
-                        if (name.equalsIgnoreCase( (String) extra.get(i))) {
-                            return a.getExtraInfoFieldValue(i);
-                        }
-                    }
-                }
-            }
-        }
-
-        return "unknown field " + name;
+        
+        if (ret == null)
+        	ret = "unknown field " + name;
+                
+        return ret;
     }
 
     /**
@@ -328,16 +359,16 @@ public class ReportGeneratorDataSource implements JRDataSource {
         private String sortField;
 
         public MovieComparator(String sortField) {
-            System.out.println("sorting by " + sortField);
             this.sortField = sortField;
 
         }
 
         public int compare(Object o1, Object o2) {
-            ModelEntry m1 = (ModelEntry) o1;
+        	        	
+        	ModelEntry m1 = (ModelEntry) o1;
             ModelEntry m2 = (ModelEntry) o2;
             int result = 0;
-
+            
             if (sortField.equalsIgnoreCase("Genre")) {
                 result = m1.getGenre().compareToIgnoreCase(m2.getGenre());
             }
@@ -492,6 +523,6 @@ public class ReportGeneratorDataSource implements JRDataSource {
      * interrupt - call to interrupt generation
      */
     public void interrupt() {
-        interrupt = true;
+    	interrupt = true;
     }
 }

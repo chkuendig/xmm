@@ -20,18 +20,11 @@
 
 package net.sf.xmm.moviemanager;
 
-import net.sf.xmm.moviemanager.util.FileUtil;
-import net.sf.xmm.moviemanager.util.GUIUtil;
-
-import org.apache.log4j.Logger;
-
-import com.l2fprod.gui.plaf.skin.Skin;
-import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
-import com.oyoaha.swing.plaf.oyoaha.OyoahaLookAndFeel;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +32,19 @@ import java.util.regex.Pattern;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import net.sf.xmm.moviemanager.gui.DialogAlert;
+import net.sf.xmm.moviemanager.gui.DialogMovieManager;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
+import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.SysUtil;
+
+import org.apache.log4j.Logger;
+
+import com.l2fprod.gui.plaf.skin.Skin;
+import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
+import com.oyoaha.swing.plaf.oyoaha.OyoahaLookAndFeel;
 
 public class LookAndFeelManager {
     
@@ -50,7 +56,7 @@ public class LookAndFeelManager {
         
         UIManager.LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
         
-        if(config.getLookAndFeelString().equals("")) {
+        if (config.getLookAndFeelString().equals("")) {
             LookAndFeel currentLAF = UIManager.getLookAndFeel();
             if (currentLAF != null) {
                 config.setLookAndFeelString(currentLAF.getName());
@@ -97,10 +103,12 @@ public class LookAndFeelManager {
                 }
             }
             
+            ExtendedTreeCellRenderer.setDefaultColors();
             SwingUtilities.updateComponentTreeUI(MovieManager.getDialog());
             
         } catch (Exception e) {
             log.error("Exception: " + e.getMessage());
+            e.printStackTrace();
             DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Look and Feel error", "Look and feel may not be properly installed.", e.getMessage());
             GUIUtil.showAndWait(alert, true);
         }
@@ -111,19 +119,21 @@ public class LookAndFeelManager {
         
         try {
             File dir;
-            String dirSep = FileUtil.getDirSeparator();
+            String dirSep = SysUtil.getDirSeparator();
             MovieManagerConfig config = MovieManager.getConfig();
             
             if (!MovieManager.isApplet()) {
                 
-                config.setSkinlfThemePackDir(FileUtil.getUserDir() + dirSep + "LookAndFeels" + dirSep + "Skinlf Theme Packs" + dirSep);
+            	//config.setOyoahaThemePackDir(FileUtil.getFile("lib/LookAndFeels/Oyoaha Theme Packs").getAbsolutePath());
+                //File dir = new File(config.getOyoahaThemePackDir());
                 
+                config.setSkinlfThemePackDir(SysUtil.getUserDir() + dirSep + "lib/LookAndFeels" + dirSep + "Skinlf Theme Packs" + dirSep);
                 dir = new File(config.getSkinlfThemePackDir());
                 
                 if (!dir.exists() && !MovieManager.isMacAppBundle()) {
                     dir.mkdirs();
                     
-                    String text = "Here you can add new Skinlf themes."+ FileUtil.getLineSeparator()+
+                    String text = "Here you can add new Skinlf themes."+ SysUtil.getLineSeparator()+
                     "Simply put the .zip files into the 'Skinlf Theme Packs' directory.";
                     
                     File skinlf = null;
@@ -170,10 +180,11 @@ public class LookAndFeelManager {
         
         try {
             MovieManagerConfig config = MovieManager.getConfig();
-            String dirSep = FileUtil.getDirSeparator();
             
             if (!MovieManager.isApplet()) {
-                config.setOyoahaThemePackDir(FileUtil.getUserDir() + dirSep + "LookAndFeels" + dirSep + "Oyoaha Theme Packs" + dirSep);
+            	            	
+                //config.setOyoahaThemePackDir(SysUtil.getUserDir() + dirSep + "LookAndFeels" + dirSep + "Oyoaha Theme Packs" + dirSep);
+            	config.setOyoahaThemePackDir(FileUtil.getFile("lib/LookAndFeels/Oyoaha Theme Packs").getAbsolutePath());
                 File dir = new File(config.getOyoahaThemePackDir());
                 
                 ArrayList themePackList = new ArrayList();
@@ -182,7 +193,7 @@ public class LookAndFeelManager {
                 if (!dir.exists()) {
                     dir.mkdir();
                     
-                    String text = "Here you can add new Oyoaha themes."+ FileUtil.getLineSeparator()+
+                    String text = "Here you can add new Oyoaha themes."+ SysUtil.getLineSeparator()+
                     "Simply put the .zotm files into the 'Oyoaha Theme Packs' directory.";
                     
                     File oyoaha = null;
@@ -222,14 +233,14 @@ public class LookAndFeelManager {
     protected static void instalLAFs() {
         
         try {
-        	   	
+        	           
         	File lookAndFeel;
         	
         	if (!MovieManager.isMacAppBundle()) {
-        		lookAndFeel =  FileUtil.getFile("LookAndFeels/lookAndFeels.ini");
+        		lookAndFeel =  FileUtil.getFile("lib/LookAndFeels/lookAndFeels.ini");
         	} else {
                 // Search in the absolute Path of the Application Bundle (Search as if we weren't in a Application Bundle)
-            	lookAndFeel =  FileUtil.getFile(System.getProperty("user.dir") + "/LookAndFeels/lookAndFeels.ini");
+            	lookAndFeel =  FileUtil.getFile(System.getProperty("user.dir") + "/lib/LookAndFeels/lookAndFeels.ini");
             }
         	
         	if (!lookAndFeel.isFile()) {
@@ -238,7 +249,10 @@ public class LookAndFeelManager {
         	}
         	
         	BufferedReader reader = new BufferedReader(new FileReader(lookAndFeel));
-        	Pattern p = Pattern.compile("\"(.+?)\"\\s+?\"(.+?)\".*");
+        	//Pattern p = Pattern.compile("\"(.+?)\"\\s+?\"(.+?)\".*");
+        	Pattern p = Pattern.compile("\"(.+?)\"\\s+?\"(.+?)\"\\s+?\"(.+?)\".*");
+        	
+        	double javaVersion = Double.parseDouble(System.getProperty("java.version").substring(0, 3));
         	
         	String line;
         	boolean start = false;
@@ -261,10 +275,16 @@ public class LookAndFeelManager {
             	
             	Matcher m = p.matcher(line);
             	            	
-            	if (!m.matches() || m.groupCount() != 2)
+            	if (!m.matches() || m.groupCount() != 3)
             		continue;
             		
             	try {
+            		
+            		double javaVersionSupported =  Double.parseDouble(m.group(3));
+            		
+            		if (javaVersionSupported > javaVersion)
+            			continue;
+            			
 					UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(m.group(1), m.group(2)));
                 }
                 catch (SecurityException s) {
@@ -280,7 +300,7 @@ public class LookAndFeelManager {
     
     public static void setupOSXLaF() {
         
-        if (FileUtil.isMac()) {
+        if (SysUtil.isMac()) {
             
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("apple.awt.showGrowBox", "true");
@@ -305,7 +325,7 @@ public class LookAndFeelManager {
     }
     
     public static void macOSXRegistration() {
-        if (FileUtil.isMac()) {
+        if (SysUtil.isMac()) {
             try {
                 Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass("net.sf.xmm.moviemanager.util.mac.OSXAdapter");
                 

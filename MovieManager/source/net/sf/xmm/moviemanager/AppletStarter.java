@@ -23,6 +23,10 @@ package net.sf.xmm.moviemanager;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+
 public class AppletStarter extends JApplet {
     
     JApplet applet;
@@ -31,6 +35,18 @@ public class AppletStarter extends JApplet {
     /** Initializes Applet by adding MovieManager's content pane. */
     public void init() {
         setSize(400,300);
+        
+        Logger root = Logger.getRootLogger();
+        //root.setLevel(Level.OFF);
+        
+        root.removeAllAppenders();
+        root.addAppender(new ConsoleAppender(new PatternLayout()));
+        //ConsoleAppender appender = new ConsoleAppender(new PatternLayout());
+        
+        //Logger timestampLogger = Logger.getLogger("TimeStamp");
+        //timestampLogger.setLevel(Level.OFF);
+        //BasicConfigurator.configure();
+        
         new MovieManager(this);
     }
 }

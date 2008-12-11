@@ -1,18 +1,34 @@
 
 package net.sf.xmm.moviemanager;
 
-import net.sf.xmm.moviemanager.util.GUIUtil;
-import net.sf.xmm.moviemanager.util.ProgressBean;
-import net.sf.xmm.moviemanager.util.ProgressBeanImpl;
-
 import info.clearthought.layout.TableLayout;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.KeyStroke;
+
+import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.ProgressBean;
 
 public class SimpleProgressBar extends JDialog implements PropertyChangeListener {
 
@@ -20,7 +36,8 @@ public class SimpleProgressBar extends JDialog implements PropertyChangeListener
 	JLabel label;
 	ProgressBean progressBean;
 	boolean done = false;
-
+	//boolean cancelled = false;
+	
 	public SimpleProgressBar(Dialog parent, String title, boolean modal, ProgressBean progressBean) {
 		super(parent, modal);
 		this.progressBean = progressBean;
@@ -103,12 +120,13 @@ public class SimpleProgressBar extends JDialog implements PropertyChangeListener
 		setLocationRelativeTo(parent);
 	}
 
-	void setString(String str) {
+	public void setString(String str) {
 		label.setText(str);
 	}
 
-	void close() {
+	public void close() {
 		progressBean.cancel();
+		//cancelled = true;
 		dispose();
 	}
 

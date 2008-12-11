@@ -1,22 +1,66 @@
 package net.sf.xmm.moviemanager;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
-import org.apache.log4j.*;
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.view.*;
-import net.sf.xmm.moviemanager.database.*;
-import net.sf.xmm.moviemanager.models.*;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
+import net.sf.jasperreports.view.JRViewer;
+import net.sf.xmm.moviemanager.database.Database;
+import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.SysUtil;
+
+import org.apache.log4j.Logger;
 
 /**
  * ReportGenerator using JasperReports. Current entries in movielist is used as
@@ -88,7 +132,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
     	if(MovieManager.isMacAppBundle()) { 
     		return "reports/";
     	}
-    	return FileUtil.getUserDir() + "/reports/";
+    	return SysUtil.getUserDir() + "/reports/";
 	}
 
 	public ReportGenerator(Frame frame) {
@@ -102,8 +146,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
                 jbInit();
                 setLocation(50, 50);
                 setSize(640, 480);
-                setVisible(true);
-
+                GUIUtil.show(this, true);
                 loadReportLayouts();
             }
             catch (Exception ex) {
@@ -199,7 +242,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
      */
     private void loadReportLayouts() {
         File reportDir = new File(reportsDir);
-        System.out.println(reportDir.getAbsolutePath());
+        
         String[] files = reportDir.list(this);
         if (files.length > 0) {
             LayoutItem[] layouts = new LayoutItem[files.length];
@@ -281,9 +324,12 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         try {
             labelProgress.setText("Generating report... Please wait");
             HashMap parms = new HashMap();
-            parms.put("logo", getImageURL("/images/filmFolder.png").toString());
-            ds = new ReportGeneratorDataSource(movies, selectedLayout.sortField, progressBar, getImageURL("/images/movie.png"), false);
-            JasperPrint print = JasperFillManager.fillReport(reportsDir + selectedLayout.filename, parms, ds);
+            parms.put("logo", FileUtil.getImageURL("/images/filmFolder.png").toString());
+            
+            ds = new ReportGeneratorDataSource(movies, selectedLayout.sortField, progressBar, FileUtil.getImageURL("/images/movie.png"), false);
+            
+            JasperPrint print = JasperFillManager.fillReport(new File(reportsDir, selectedLayout.filename).getAbsolutePath(), parms, ds);
+          
             if (ds != null) {
                 ds = null;
                 JRViewer viewerPanel = new JRViewer(print);
@@ -301,16 +347,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         }
     }
 
-    /**
-     * getImageURL
-     *
-     * @param filename String - image filename
-     * @return URL for image
-     */
-    public static URL getImageURL(String filename) {
-        return ReportGenerator.class.getResource(filename);
-    }
-
+   
     /**
      * updateExample - updates example. Call when window changes size or layout
      * selection changes
@@ -372,11 +409,9 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         }
     }
 
-    public void windowOpened(WindowEvent e) {
-    }
+    public void windowOpened(WindowEvent e) {}
 
-    public void windowClosing(WindowEvent e) {
-    }
+    public void windowClosing(WindowEvent e) {}
 
     public void windowClosed(WindowEvent e) {
         if (ds != null) {
@@ -386,17 +421,10 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         instance = null;
     }
 
-    public void windowIconified(WindowEvent e) {
-    }
-
-    public void windowDeiconified(WindowEvent e) {
-    }
-
-    public void windowActivated(WindowEvent e) {
-    }
-
-    public void windowDeactivated(WindowEvent e) {
-    }
+    public void windowIconified(WindowEvent e) {}
+    public void windowDeiconified(WindowEvent e) {}
+    public void windowActivated(WindowEvent e) {}
+    public void windowDeactivated(WindowEvent e) {}
 
     /**
      * accept - filter for jasper filenames
@@ -484,15 +512,18 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         }
 
         public void fetchInfo() {
+        	
             if (!infoFetched) {
                 // example image
                 String filename = reportsDir + examplename;
+                
                 if (new File(filename).exists()) {
                     exampleImage = Toolkit.getDefaultToolkit().getImage(filename);
                 }
 
                 // xmm custom property values
                 filename = reportsDir + sourcename;
+                
                 if (new File(filename).exists()) {
                     try {
                         FileInputStream fis = new FileInputStream(filename);
@@ -558,8 +589,8 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         if (!movies.isEmpty()) {
             try {
                 HashMap parms = new HashMap();
-                parms.put("logo", getImageURL("/images/filmFolder.png").toString());
-                ReportGeneratorDataSource ds = new ReportGeneratorDataSource(movies, "none", null, getImageURL("/images/movie.png"), false);
+                parms.put("logo", FileUtil.getImageURL("/images/filmFolder.png").toString());
+                ReportGeneratorDataSource ds = new ReportGeneratorDataSource(movies, "none", null, FileUtil.getImageURL("/images/movie.png"), false);
                 JasperPrint print = JasperFillManager.fillReport(reportsDir + "movie_details.jasper", parms, ds);
                 JasperPrintManager.printReport(print, true);
             }

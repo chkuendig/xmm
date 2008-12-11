@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerConfig.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)MovieManagerConfig.java 1.0 21.12.07 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  *
@@ -20,23 +20,49 @@
 
 package net.sf.xmm.moviemanager;
 
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFile;
-import net.sf.xmm.moviemanager.database.Database;
-import net.sf.xmm.moviemanager.models.AdditionalInfoFieldDefaultValues;
-import net.sf.xmm.moviemanager.util.*;
-
-import org.apache.log4j.Logger;
-
 import java.awt.Dimension;
 import java.awt.Point;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+
+import net.sf.xmm.moviemanager.database.Database;
+import net.sf.xmm.moviemanager.gui.DialogMovieManager;
+import net.sf.xmm.moviemanager.gui.menubar.DefaultMenuBar;
+import net.sf.xmm.moviemanager.gui.menubar.MovieManagerMenuBar;
+import net.sf.xmm.moviemanager.http.HttpSettings;
+import net.sf.xmm.moviemanager.models.AdditionalInfoFieldDefaultValues;
+import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
+import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
+import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
+import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
+import net.sf.xmm.moviemanager.util.DriveInfo;
+import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.StringUtil;
+import net.sf.xmm.moviemanager.util.SysUtil;
+import net.sf.xmm.moviemanager.util.plugins.MovieManagerConfigHandler;
+import net.sf.xmm.moviemanager.util.plugins.MovieManagerGUIChangeHandler;
+import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
+import net.sf.xmm.moviemanager.util.plugins.MovieManagerPlayHandler;
+import net.sf.xmm.moviemanager.util.plugins.MovieManagerStartupHandler;
+import net.sf.xmm.moviemanager.util.plugins.MovieManagerStreamerHandler;
+
+import org.apache.log4j.Logger;
 
 public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	static Logger log = Logger.getRootLogger();
-
+	
 	/**
 	 * Keeps track of the last directory open...(Moviefiles)
 	 **/
@@ -66,9 +92,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private String queriesFolder = "";
 
-	private boolean displayPlayButton = false;
+	private boolean displayPlayButton = true;
 	private boolean displayPrintButton = false;
-
+	
 	private boolean regularToolBarButtons = true;
 
 	private boolean useRegularSeenIcon = true;
@@ -91,8 +117,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private boolean mainMaximized = false;
 
-	// private int movieListWidth = 0;
-
 	private boolean movieListHighlightEntireRow = true;
 
 	private boolean enableCtrlMouseRightClick = false;
@@ -103,10 +127,20 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String playerPath = "";
 	private String browserPath = "";
 
+	private String mediaPlayerCmdArgument = "";
+		
 	private boolean useDefaultWindowsPlayer = true;
-
-	private String systemWebBrowser = MovieManager.getDefaultPlatformBrowser();
-
+	private boolean executeExternalPlayCommand = false;
+	
+	
+	private String systemWebBrowser = SysUtil.getDefaultPlatformBrowser();
+	
+	private String databaseBackupEveryLaunch = "2";
+	private String databaseBackupDeleteOldest = "20";
+	private String databaseBackupLaunchCount = "0";
+	private String databaseBackupDirectory = "";
+	
+	private int lastMovieInfoTabIndex = 0;
 	private int lastPreferencesTabIndex = 0;
 
 	/* 0 = no, 1 = yes if no java parser avaliable, 2 = yes */
@@ -163,13 +197,18 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private HashMap searchAlias = new HashMap();
 
+	/* Stores default values for additional info fields, key == fieldName */
+	private HashMap additionalInfoDefaultValues = new HashMap();
+
+	private ArrayList mainFilterSearchValues = new ArrayList();
+	
 	private boolean loadDatabaseOnStartup = true;
 
 	private boolean loadLastUsedListAtStartup = false;
 	private boolean seenEditableInMainWindow = true;
 
-	private boolean autoMoveThe = false;
-	private boolean autoMoveAnAndA = false;
+	//private boolean autoMoveThe = false;
+	//private boolean autoMoveAnAndA = false;
 
 	private String titleLanguageCode = "";
 
@@ -178,8 +217,18 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean useLanguageSpecificTitle = false;
 
 	private String multiAddDirectoryPath = "";
+	
 	private String multiAddExcludeString = "";
 	private boolean multiAddExcludeStringEnabled = false;
+	private boolean multiAddExcludeStringNegated = false;
+	
+	private String multiAddRegexString = "";
+	private boolean multiAddRegexStringEnabled = false;
+	private boolean multiAddRegexStringNegated = false;
+
+	private ArrayList multiAddValidExtensions = new ArrayList();
+	private String multiAddCustomExtensions = "";
+	
 	private int multiAddSelectOption = 0;
 	private boolean multiAddEnableExludeParantheses;
 	private boolean multiAddEnableExludeCDNotation;
@@ -193,22 +242,25 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private int lastDialogImportType = 0;
 	
 	private String importTextfilePath = "";
-	private String importExcelfilePath = "";
+	private String importExcelFilePath = "";
 	private String importXMLfilePath = "";
 	private String importCSVfilePath = "";
+	private String importCSVseparator = ",";
 	private String importExtremefilePath = "";
 	
+	/* Exportt */
+	private int lastDialogExportType = 0;
+		
+	private String exportTextfilePath = "";
+	private String exportExcelFilePath = "";
+	private String exportXMLfilePath = "";
+	private String exportCSVfilePath = "";
+	private String exportCSVseparator = ",";
+			
 	private String lastFileFilterMovieInfoUsed = "";
 
-	/*Proxy settings*/
-	private String proxyType = "HTTP";
-	private String proxyHost = "";
-	private String proxyPort = "8080";
-	private String proxyUser = "";
-	private String proxyPassword = "";
-	private boolean proxyEnabled = false;
-	private boolean authenticationEnabled = false;
-
+	private HttpSettings httpSettings = new HttpSettings();
+	
 	/*Export*/
 	private String exportType = "simple";
 
@@ -220,9 +272,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	protected boolean multiAddListEnabled = false;
 
-	private int useRelativeDatabasePath = 0;
-	private int useRelativeCoversPath = 1;  // 0 == absolute, 1 == database, 2 == program location 
-	private int useRelativeQueriesPath = 1; // 0 == absolute, 1 == database, 2 == program location 
+	private int useRelativeDatabasePath = 0; // 0 == absolute, 2 == program location
+	private int useRelativeCoversPath = 1;   // 0 == absolute, 1 == database, 2 == program location 
+	private int useRelativeQueriesPath = 1;  // 0 == absolute, 1 == database, 2 == program location 
 
 	private String coversPath;
 	private String queriesPath;
@@ -234,6 +286,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String multipleAddList = "";
 
 	/* Movie Info SplitPane */
+	public int mainWindowSliderPosition = -1;
+	public int mainWindowLastSliderPosition = -1;
+	
 	public int movieInfoSliderPosition = -1;
 	public int movieInfoLastSliderPosition = -1;
 
@@ -241,11 +296,21 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public int additionalInfoNotesSliderPosition = -1;
 	public int additionalInfoNotesLastSliderPosition = -1;
 
-	/* Stores default values for additional info fields, key == fieldName */
-	private HashMap additionalInfoDefaultValues = new HashMap();
+	public final String HTMLTemplateRoot = "HTML_templates/";
+			
+	
+	ModelHTMLTemplate htmlTemplate = null;
+	ModelHTMLTemplateStyle htmlTemplateStyle = null;
+	
+	public final String HTMLTemplateRootDir = "HTML_templates/";
+	
+	private String DefaultHTMLTemplateName = "Simple Virtue";
+	private String DefaultHTMLTemplateStyleName = "A Touch of Blue";
+	
+	private String HTMLTemplateName = DefaultHTMLTemplateName;
+	private String HTMLTemplateStyleName = DefaultHTMLTemplateStyleName;
 
-
-	private String lookAndFeel = "";
+	private String lookAndFeel = "Metal";
 
 	private String skinlfThemePack = "";
 
@@ -255,34 +320,393 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private String oyoahaThemePackDir;
 
-	private int lookAndFeelType; /*0 = custom, 1 = skinlf, 2 = oyoaha*/
+	private int lookAndFeelType = 0; /*0 = custom, 1 = skinlf, 2 = oyoaha*/
 
 	public int numberOfLookAndFeels;
 
-	private boolean defaultLookAndFeelDecorated = false;
+	private boolean defaultLookAndFeelDecorated = true;
 
-	MovieManagerConfig() {
+	private boolean checkForProgramUpdates = true;
+	
+	
+	private InternalConfig internalConfig = new InternalConfig();
+	
+	public class InternalConfig {
+		
+		// Everything enabled by default
+			
+		private boolean toolBarPopup = true;
+		private boolean addMovieEnabled = true;
+		private boolean removeMovieEnabled = true;
+		private boolean editMovieEnabled = true;
+		private boolean playMovieEnabled = true;
+		private boolean printFunctionEnabled = true;
+		private boolean searchMenuEnabled = true;
+				
+		private boolean displayEntriesCount = true;
+				
+		private boolean listsFunctionalityEnabled = true;
+		
+		private boolean preferencesMovieList = true;
+		private boolean preferencesExternalPrograms = true;
+		private boolean preferencesExternalProgramsPlayer = true;
+		private boolean preferencesDatabaseBackup = true;
+		private boolean preferencesIMDbSettings = true;
+		private boolean preferencesLookAndFeel = true;
+		private boolean preferencesProxySettings = true;
+		private boolean preferencesMiscellaneous = true;
+		private boolean preferencesCoverSettings = true;
+		private boolean movieSeenReplaceWithPlay = false;
+		private boolean additionalInfoAndNotesReplacedByHTMLAdd = false;
+		private boolean playButtonNeverDisabled = false;
+		private boolean disableHTMLView = false;
+		boolean loadLastUsedListEnabled = true;
+		private boolean movieListPopupEnabled = true;
+		private boolean searchAliasEnabled = true;
+		private boolean sensitivePrintMode = false;
+		
+		private HashMap plugins = new HashMap();
+		
+		public void addPlugin(String key, String value) {
+			if (key != null && !"".equals(key) && value != null && !"".equals(value))
+				plugins.put(key, value);
+		}
+		
+		public String getPlugin(String key) {
+			return (String) plugins.get(key);
+		}
+		
+		InternalConfig() {}
+		
+		InternalConfig(ArrayList lines) {
+							
+			for (int i = 0; i < lines.size(); i++) {
+			
+				String line = (String) lines.get(i);
+													
+				if (line.startsWith("toolBarPopup:")) 
+					toolBarPopup = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("addMovieEnabled:")) 
+					addMovieEnabled = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("removeMovieEnabled:")) 
+					removeMovieEnabled = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("editMovieEnabled:")) 
+					editMovieEnabled = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("playMovieEnabled")) 
+					playMovieEnabled = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("printFunctionEnabled:")) 
+					printFunctionEnabled = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("searchMenuEnabled:")) 
+					searchMenuEnabled = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("listsFunctionalityEnabled:")) 
+					listsFunctionalityEnabled = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("preferencesMovieList:")) 
+					preferencesMovieList = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("preferencesExternalPrograms:")) 
+					preferencesExternalPrograms = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("preferencesExternalProgramsPlayer:")) 
+					preferencesExternalProgramsPlayer = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("preferencesDatabaseBackup:")) 
+					preferencesDatabaseBackup = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("preferencesIMDbSettings:")) 
+					preferencesIMDbSettings = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("preferencesLookAndFeel:")) 
+					preferencesLookAndFeel = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("preferencesProxySettings:")) 
+					preferencesProxySettings = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("preferencesMiscellaneous:")) 
+					preferencesMiscellaneous = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("preferencesCoverSettings:")) 
+					preferencesCoverSettings = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("movieSeenReplaceWithPlay:")) 
+					movieSeenReplaceWithPlay = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("displayEntriesCount:")) 
+					displayEntriesCount = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("additionalInfoAndNotesReplacedByHTMLAdd:")) 
+					additionalInfoAndNotesReplacedByHTMLAdd = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("playButtonNeverDisabled:")) 
+					playButtonNeverDisabled = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("disableHTMLView:")) 
+					disableHTMLView = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("loadLastUsedListEnabled:")) 
+					loadLastUsedListEnabled = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("movieListPopupEnabled:")) 
+					movieListPopupEnabled = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("searchAliasEnabled:")) 
+					searchAliasEnabled = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+			}		
+		}
+		
+			
+		public boolean isToolBarPopupDisabled() {
+			return !toolBarPopup;
+		}
+		
+		public boolean isAddMovieDisabled() {
+			return !addMovieEnabled;
+		}
+		
+		public boolean isEditMovieDisabled() {
+			return !editMovieEnabled;
+		}
+		
+		public boolean isRemoveMovieDisabled() {
+			return !removeMovieEnabled;
+		}
+	
+		public boolean isSearchMenuDisabled() {
+			return !searchMenuEnabled;
+		}
+		
+		public boolean isPlayMovieDisabled() {
+			return !playMovieEnabled;
+		}
+
+		public boolean isPrintFunctionDisabled() {
+			return !printFunctionEnabled;
+		}
+		
+		public boolean isEntriesCountDisabled() {
+			return !displayEntriesCount;
+		}
+		
+		public boolean movieSeenReplaceWithPlay() {
+			return movieSeenReplaceWithPlay;
+		}
+				
+		public boolean isListsFunctionalityDisabled() {
+			return !listsFunctionalityEnabled;
+		}
+				
+		public boolean isPreferencesCoverSettingsDisabled() {
+			return !preferencesCoverSettings;
+		}
+
+		public boolean isPreferencesDatabaseBackupDisabled() {
+			return !preferencesDatabaseBackup;
+		}
+
+		public boolean isPreferencesExternalProgramsDisabled() {
+			return !preferencesExternalPrograms;
+		}
+		
+		public boolean isPreferencesExternalProgramsPlayerDisabled() {
+			return !preferencesExternalProgramsPlayer;
+		}
+		
+		public boolean isPreferencesIMDbSettingsDisabled() {
+			return !preferencesIMDbSettings;
+		}
+
+		public boolean isPreferencesLookAndFeelDisabled() {
+			return !preferencesLookAndFeel;
+		}
+
+		public boolean isPreferencesMiscellaneousDisabled() {
+			return !preferencesMiscellaneous;
+		}
+
+		public boolean isPreferencesMovieListDisabled() {
+			return !preferencesMovieList;
+		}
+
+		public boolean isPreferencesProxySettingsDisabled() {
+			return !preferencesProxySettings;
+		}
+			
+		public boolean isAdditionalInfoAndNotesReplacedByHTMLAdd() {
+			return additionalInfoAndNotesReplacedByHTMLAdd;
+		}					
+		
+		public boolean getPlayButtonNeverDisabled() {
+			return playButtonNeverDisabled;
+		}
+		
+		public boolean getDisableHTMLView() {
+			return disableHTMLView;
+		}
+		
+		public boolean getDisableLoadLastUsedList() {
+			return !loadLastUsedListEnabled;
+		}
+
+		public boolean getMovieListPopupDisabled() {
+			return !movieListPopupEnabled;
+		}		
+		
+		public boolean getSearchAliasDisabled() {
+			return !searchAliasEnabled;
+		}	
+		
+		public boolean getSensitivePrintMode() {
+			return sensitivePrintMode;
+		}
+		
+		
+		public void enableSensitivePrint() {
+			sensitivePrintMode = true;
+		}
+		
+		//public void setShowAdditionalInfoAndNotes(boolean val) {
+		//	additionalInfoAndNotes = val;
+		//}
+	}
+	
+	public MovieManagerConfig(boolean exampleConfig) {}
+	
+	public MovieManagerConfig() {
 		MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(this);
+		
+		try {
+			InputStream inputStream = FileUtil.getResourceAsStream("/config/internalConfig.ini");
+			
+			if (inputStream == null)
+				return;
+			
+			ArrayList lines = FileUtil.readArrayList(new InputStreamReader(inputStream));
+						
+			if (lines != null) {
+				internalConfig = new InternalConfig(lines);
+				log.debug("internalConfig.ini");
+			}
+			
+			inputStream = FileUtil.getResourceAsStream("/config/plugins.ini");
+			
+			if (inputStream == null)
+				return;
+			
+			lines = FileUtil.readArrayList(new InputStreamReader(inputStream));
+			
+			for (int i = 0; i < lines.size(); i++) {
+				
+				String line = (String) lines.get(i);
+				String key = line.substring(0, line.indexOf("="));
+				String value = line.substring(line.indexOf("=") + 1, line.length());
+				internalConfig.addPlugin(key, value);
+			}
+						
+		} catch (Exception e) {
+			log.warn("Exception: " + e.getMessage(), e);
+		}	
+	}
+		
+	
+	public InternalConfig getInternalConfig() {
+		return internalConfig;
 	}
 
-	public void newDatabaseLoadedEvent(NewDatabaseLoadedEvent evt) {
+	
+	
+	public MovieManagerPlayHandler getPlayHandler() {
+		Object playHandlerObject = SysUtil.getClass(internalConfig.getPlugin("playHandler"));
+		
+		log.debug("playHandlerObject:" + playHandlerObject);
+		
+		if (playHandlerObject != null)
+			return (MovieManagerPlayHandler) playHandlerObject;
+		
+		return null;
+	}
+	
+	public MovieManagerLoginHandler getLoginHandler() {
+		Object loginHandlerObject = SysUtil.getClass(internalConfig.getPlugin("loginHandler"));
+		
+		if (loginHandlerObject != null)
+			return (MovieManagerLoginHandler) loginHandlerObject;
+		
+		return null;
+	}
+			
+	public MovieManagerStreamerHandler getStreamerHandler() {
+		Object streamerHandlerObject = SysUtil.getClass(internalConfig.getPlugin("streamerHandler"));
+		
+		if (streamerHandlerObject != null)
+			return (MovieManagerStreamerHandler) streamerHandlerObject;
+		
+		return null;
+	}
+	
+	
+	public MovieManagerConfigHandler getConfigHandler() {
+		Object configHandlerObject = SysUtil.getClass(internalConfig.getPlugin("configHandler"));
+		
+		if (configHandlerObject != null) 
+			return (MovieManagerConfigHandler) configHandlerObject;
+		
+		return null;
+	}
+	
+	
+	public MovieManagerStartupHandler getStartupHandler() {
+		
+		Object startupHandlerObject = SysUtil.getClass(internalConfig.getPlugin("startupHandler"));
+		
+		if (startupHandlerObject != null)
+			return (MovieManagerStartupHandler) startupHandlerObject;
+		
+		return null;
+	}
+
+	public MovieManagerGUIChangeHandler getGUIChangeHandler() {
+		
+		Object guiChangeHandlerObject = SysUtil.getClass(internalConfig.getPlugin("guiChangeHandler"));
+		
+		if (guiChangeHandlerObject != null)
+			return (MovieManagerGUIChangeHandler) guiChangeHandlerObject;
+		
+		return null;
+	}
+	
+	
+	
+	
+	public class SystemSettings {
+		
+		
+		  /**
+	     * The current version of the program.
+	     **/
+	    private static final String _version = " 2.7 beta 1"; //$NON-NLS-1$
+	    
+	    
+	    String appTitle = " MeD's Movie Manager v" + getVersion();
+	    String lookAndFeelTitle = "Look & Feel";
+	    
+	    /**
+	     * Returns the version.
+	     *
+	     * @return Program Version.
+	     **/
+	    public String getVersion() {
+	        return _version;
+	    }
+	  
+	    
+	    public String getLookAndFeelTitle() {
+	    	return lookAndFeelTitle;
+	    }
+	    
+	    public void setLookAndFeelTitle(String lookAndFeelTitle) {
+	    	this.lookAndFeelTitle = lookAndFeelTitle;
+	    }
+	    
+	      
+	    public String getAppTitle() {
+	    	return appTitle;
+	    }
+	    
+	    public void setAppTitle(String t) {
+	    	appTitle = t;
+	    }
+		
+	}
+	
+	
+	public final SystemSettings sysSettings = new SystemSettings();
+	
+	public void newDatabaseLoaded(NewDatabaseLoadedEvent evt) {
 		resetCoverAndQueries();
 	}
-
-	public boolean isWritable(File dir) {
-
-		if (dir == null)
-			return false;
-
-		File testDir = new File(dir.getAbsolutePath() + File.separator +"MedsMovieManagerTestDir"+ Math.ceil(Math.random()));
-		if (testDir.mkdir()) {
-			testDir.delete();
-			return true;
-		}
-		return false;
-	}
-
-
 
 
 	public String getLastFileFilterUsed() {
@@ -307,16 +731,21 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		try {
 
-			if (FileUtil.isWindows()) {
+			if (SysUtil.isWindows() && !SysUtil.isWindows98()) {
 				String tmp = lastFileDir.getAbsolutePath();
 
 				if (tmp.indexOf(":") != -1) {
 					String drive = tmp.substring(0, tmp.indexOf(":") + 1);
 
 					if (drive.length() != 0) {
-						DriveInfo d = new DriveInfo(drive);
-						
-						if (d.isInitialized() && d.isValid() && lastFileDir.exists() ) {
+						try {
+							DriveInfo d = new DriveInfo(drive);
+
+							if (d.isInitialized() && d.isValid() && lastFileDir.exists() ) {
+								return lastFileDir;
+							}
+						} catch (NoClassDefFoundError e) {
+							log.warn("Exception:" + e.getMessage());
 							return lastFileDir;
 						}
 					}
@@ -326,7 +755,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				return lastFileDir;
 			}
 
-		} catch (UnsatisfiedLinkError e) {
+		} catch (Exception e) {
 			log.warn("Exception:" + e.getMessage());
 		}
 		return new File("");
@@ -345,9 +774,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	/* If the display name is empty, it's probably an empty removable device */
 	public File getLastDVDDir() {
 
-		String displayName = FileUtil.getDriveDisplayName(lastDVDDir);
+		String displayName = SysUtil.getDriveDisplayName(lastDVDDir);
 
-		displayName = MovieManagerCommandAddMultipleMoviesByFile.performExcludeParantheses(displayName, false);
+		displayName = StringUtil.performExcludeParantheses(displayName, false);
 
 		if (displayName != null) {
 
@@ -443,11 +872,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 
 	public String getCoversPath() {
-		return getCoversPath(null);
+		return getCoversPath(MovieManager.getIt().getDatabase());
 	}
 
 
-	/* Returns the absolute cover path */
+	/* Returns the absolute cover path: NOT healthy*/
 	public String getCoversPath(Database database) {
 
 		/* Get covers folder from database*/
@@ -456,27 +885,41 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		/* Relative to user dir */
 		if (getUseRelativeCoversPath() == 2) {
-			coversPath = FileUtil.getUserDir() + File.separator;
+			coversPath = SysUtil.getUserDir() + File.separator;
 		}
-		/* Relative to database location */
-		else if (getUseRelativeCoversPath() == 1) {
-			String dbPath;
-			
-			if (database != null)
-				dbPath = database.getPath();
-			else
-				dbPath = getDatabasePath(true);
-			
-			dbPath = dbPath.substring(0, dbPath.lastIndexOf(FileUtil.getDirSeparator()));
+		/* Relative to database location - incompatible with MySQL */
+		else if (getUseRelativeCoversPath() == 1 && database != null && !database.isMySQL()) {
+			String dbPath = database.getPath();
+			dbPath = dbPath.substring(0, dbPath.lastIndexOf(SysUtil.getDirSeparator()));
 			coversPath = dbPath + File.separator;
 		}
-
-
+		
+//		 May not be replaced by "new File(coversPath, coversFolder)"
 		return new File(coversPath + coversFolder).getAbsolutePath();
 	}
+	
+	/* Returns the relative queries path */
+	public String getQueriesPath(Database database) {
 
-	public String getQueriesFolder() {
-		return getQueriesFolder(null);
+		String queriesFolder = getQueriesFolder(database);
+
+		/* Get queries folder from database*/
+		String queriesPath = "";
+
+		/* If relative path is used checks if directory exist after the user dir is added to the beginning */
+		if (getUseRelativeQueriesPath() == 2) {
+			queriesPath = SysUtil.getUserDir() + File.separator;
+		}
+		/* Relative to database location - incompatible with MySQL */
+		else if (getUseRelativeQueriesPath() == 1 && database != null && !database.isMySQL()) {
+			String dbPath = database.getPath();
+			dbPath = dbPath.substring(0, dbPath.lastIndexOf(SysUtil.getDirSeparator()));
+			
+			queriesPath = dbPath + File.separator;
+		}
+		
+		// May not be replaced by "new File(queriesPath, queriesFolder)"
+		return new File(queriesPath + queriesFolder).getAbsolutePath();
 	}
 
 	public String getQueriesFolder(Database database) {
@@ -497,33 +940,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		return getQueriesPath(null);
 	}
 
-	/* Returns the relative queries path */
-	public String getQueriesPath(Database database) {
-
-		String queriesFolder = getQueriesFolder(database);
-
-		/* Get queries folder from database*/
-		String queriesPath = "";
-
-		/* If relative path is used checks if directory exist after the user dir is added to the beginning */
-		if (getUseRelativeQueriesPath() == 2) {
-			queriesPath = FileUtil.getUserDir() + File.separator;
-		}
-		else if (getUseRelativeQueriesPath() == 1) {
-			String dbPath;
-			
-			if (database != null)
-				dbPath = database.getPath();
-			else
-				dbPath = getDatabasePath(true);
-				
-			dbPath = dbPath.substring(0, dbPath.lastIndexOf(FileUtil.getDirSeparator()));
-			queriesPath = dbPath + File.separator;
-		}
-
-		return new File(queriesPath + queriesFolder).getAbsolutePath();
+	
+	public String getQueriesFolder() {
+		return getQueriesFolder(null);
 	}
-
 
 	public String getDatabasePath(boolean getPathFromDatabase) {
 
@@ -540,15 +960,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		databasePath = dbPath;
 	}
 
-
-	public HashMap getSearchAlias() {
-		return searchAlias;
+	// Not the database file, but the folder containing the database files.
+	public String getDatabaseFolder(boolean getPathFromDatabase) {
+		return new File(getDatabasePath(getPathFromDatabase)).getParent() + SysUtil.getDirSeparator();
 	}
-
-	// public void setSearchAlias(HashMap searchAlias) {
-//	this.searchAlias = searchAlias;;
-//	}
-
 
 	/* Used by the filter to determine which conditions to filter out movies. */
 	/* filterCategory to determine which category to filter by */
@@ -647,24 +1062,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.loadDatabaseOnStartup = loadDatabaseOnStartup;
 	}
 
-	public boolean getAutoMoveThe() {
-		return autoMoveThe;
-	}
-
-	public void setAutoMoveThe(boolean autoMoveThe) {
-		this.autoMoveThe = autoMoveThe;
-	}
-
-	public boolean getAutoMoveAnAndA() {
-		return autoMoveAnAndA;
-	}
-
-	public void setAutoMoveAnAndA(boolean autoMoveAnAndA) {
-		this.autoMoveAnAndA = autoMoveAnAndA;
-	}
-
-
-
 
 	public boolean getStoreAllAkaTitles() {
 		return storeAllAkaTitles;
@@ -697,8 +1094,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setUseLanguageSpecificTitle(boolean useLanguageSpecificTitle) {
 		this.useLanguageSpecificTitle = useLanguageSpecificTitle;
 	}
-
-
 
 	public boolean getSeenEditable() {
 		return seenEditableInMainWindow;
@@ -737,7 +1132,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 
 	public void setLastDialogImportType(int lastDialogImportType) {
-		this.lastDialogImportType = lastDialogImportType;
+		this.lastDialogImportType = lastDialogImportType >= 0 ? lastDialogImportType : 0;
+	}
+		
+	public int getLastDialogExportType() {
+		return lastDialogExportType;
+	}
+
+	public void setLastDialogExportType(int lastDialogExportType) {
+		this.lastDialogExportType = lastDialogExportType >= 0 ? lastDialogExportType : 0;
 	}
 		
 	public String getImportTextfilePath() {
@@ -748,12 +1151,20 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.importTextfilePath = importTextfilePath;
 	}
 
-	public String getImportExcelfilePath() {
-		return importExcelfilePath;
+	public String getImportExcelFilePath() {
+		return importExcelFilePath;
 	}
 
-	public void setImportExcelfilePath(String importExcelfilePath) {
-		this.importExcelfilePath = importExcelfilePath;
+	public void setImportExcelFilePath(String importExcelFilePath) {
+		this.importExcelFilePath = importExcelFilePath;
+	}
+
+	public String getExportExcelFilePath() {
+		return importExcelFilePath;
+	}
+
+	public void setExportExcelFilePath(String exportExcelFilePath) {
+		this.exportExcelFilePath =  exportExcelFilePath;
 	}
 
 	public String getImportXMLfilePath() {
@@ -764,6 +1175,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.importXMLfilePath = importXMLfilePath;
 	}
 
+	
+	public String getExportCSVfilePath() {
+		return exportCSVfilePath;
+	}
+
+	public void setExportCSVfilePath(String exportCSVfilePath) {
+		this.exportCSVfilePath = exportCSVfilePath;
+	}
+	
 	public String getImportCSVfilePath() {
 		return importCSVfilePath;
 	}
@@ -772,13 +1192,53 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.importCSVfilePath = importCSVfilePath;
 	}
 
+	public String getImportCSVseparator() {
+		return importCSVseparator;
+	}
+
+	public void setImportCSVseparator(String importCSVseparator) {
+		this.importCSVseparator = importCSVseparator;
+	}
 	
+	public String getExportCSVseparator() {
+		return exportCSVseparator;
+	}
+
+	public void setExportCSVseparator(String exportCSVseparator) {
+		this.exportCSVseparator = exportCSVseparator;
+	}
+		
 	public String getImportExtremefilePath() {
 		return importExtremefilePath;
 	}
 
 	public void setImportExtremefilePath(String importExtremefilePath) {
 		this.importExtremefilePath = importExtremefilePath;
+	}
+
+	
+	public String getExportXMLfilePath() {
+		return exportXMLfilePath;
+	}
+
+	private String getExportTextfilePath() {
+		return exportTextfilePath;
+	}
+
+	private String getExportExcelfilePath() {
+		return exportExcelFilePath;
+	}
+
+	private void setExportXMLfilePath(String value) {
+		exportXMLfilePath = value;
+	}
+
+	private void setExportTextfilePath(String value) {
+		exportTextfilePath = value;
+	}
+
+	private void setExportExcelfilePath(String value) {
+		exportExcelFilePath = value;
 	}
 
 	public boolean getMultiAddListEnabled() {
@@ -797,13 +1257,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.multipleAddList = multipleAddList;
 	}
 
-	public boolean getMultiAddExcludeStringEnabled() {
-		return multiAddExcludeStringEnabled;
-	}
-
-	public void setMultiAddExcludeStringEnabled(boolean b) {
-		multiAddExcludeStringEnabled = b;
-	}
+	
 
 	public String getMultiAddDirectoryPath() {
 		return multiAddDirectoryPath;
@@ -813,6 +1267,17 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		multiAddDirectoryPath = p;
 	}
 
+	
+	
+	public boolean getMultiAddExcludeStringEnabled() {
+		return multiAddExcludeStringEnabled;
+	}
+
+	public void setMultiAddExcludeStringEnabled(boolean b) {
+		multiAddExcludeStringEnabled = b;
+	}
+	
+	
 	public String getMultiAddExcludeString() {
 		return multiAddExcludeString;
 	}
@@ -820,13 +1285,89 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setMultiAddExcludeString(String e) {
 		multiAddExcludeString = e;
 	}
+	
+	
+	public String getMultiAddRegexString() {
+		return multiAddRegexString;
+	}
+
+	public void setMultiAddRegexString(String e) {
+		multiAddRegexString = e;
+	}
+	
+	
+	public boolean getMultiAddExcludeStringNegated() {
+		return multiAddExcludeStringNegated;
+	}
+
+	public void setMultiAddExcludeStringNegated(boolean b) {
+		multiAddExcludeStringNegated = b;
+	}
+	
+	public boolean getMultiAddRegexStringNegated() {
+		return multiAddRegexStringNegated;
+	}
+
+	public void setMultiAddRegexStringNegated(boolean b) {
+		multiAddRegexStringNegated = b;
+	}
+	
+	public boolean getMultiAddRegexStringEnabled() {
+		return multiAddRegexStringEnabled;
+	}
+
+	public void setMultiAddRegexStringEnabled(boolean b) {
+		multiAddRegexStringEnabled = b;
+	}
+
+	
+	public ArrayList getMultiAddValidExtensions() {
+		return multiAddValidExtensions;
+	}
+
+	public String getMultiAddValidExtensionsString() {
+		String extStr = "";
+		
+		for (int i = 0; i < multiAddValidExtensions.size(); i++) {
+			if (extStr.length() > 0)
+				extStr += ", ";
+			extStr += multiAddValidExtensions.get(i);
+		}
+		return extStr;
+	}
+	
+	public void setMultiAddValidExtension(ArrayList ext) {
+		multiAddValidExtensions = ext;
+	}
+	
+	public void addMultiAddValidExtension(String ext) {
+		multiAddValidExtensions.add(ext);
+	}
+	
+	public void addMultiAddValidExtensions(String extensions) {
+		String [] ext = extensions.split(",\\s");
+		
+		for (int i = 0; i < ext.length; i++) {
+			addMultiAddValidExtension(ext[i]);
+		}
+	}
+	
+	
+	public String getMultiAddCustomExtensions() {
+		return multiAddCustomExtensions;
+	}
+
+	public void setMultiAddCustomExtensions(String multiAddCustomExtensions) {
+		this.multiAddCustomExtensions = multiAddCustomExtensions;
+	}
+	
 
 	public int getMultiAddSelectOption() {
 		return multiAddSelectOption;
 	}
 
 	public void setMultiAddSelectOption(int o) {
-		multiAddSelectOption = o;
+		multiAddSelectOption = o >= 0 ? o : 0;
 	}
 
 	
@@ -873,8 +1414,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setMultiAddEnableSearchInSubdirectories(boolean val) {
 		multiAddEnableSearchInSubdirectories = val;
 	}
-	
-	
+		
 	
 	public boolean getMultiAddTitleOption() {
 		return multiAddTitleOption;
@@ -885,6 +1425,105 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 	
 	
+	public ModelHTMLTemplate getHTMLTemplate() {
+		
+		if (htmlTemplate == null) {
+			htmlTemplate = MovieManager.getIt().getTemplate(HTMLTemplateName);
+		
+			if (htmlTemplate == null) {
+				log.warn("Requested template does not exist:" + HTMLTemplateName);
+				return null;
+			}
+		}
+		return htmlTemplate;
+	}
+	
+	public void setHTMLTemplate(ModelHTMLTemplate htmlTemplate, ModelHTMLTemplateStyle htmlTemplateStyle) {
+		this.htmlTemplate = htmlTemplate;
+		this.htmlTemplateStyle = htmlTemplateStyle;
+		
+		if (htmlTemplateStyle == null)
+			HTMLTemplateStyleName = null;
+	}
+			
+
+	public void setHTMLTemplate(ModelHTMLTemplate t) {
+		htmlTemplate = t;
+	}
+	
+	public void setHTMLTemplateStyle(ModelHTMLTemplateStyle s) {
+		htmlTemplateStyle = s;
+		
+		if (s == null)
+			HTMLTemplateStyleName = null;
+	}
+	
+//	 Returns the template name, e.g. "Simple Virtue" 
+	public File getHTMLTemplateDir() {
+		
+		if (getHTMLTemplate() != null)
+			return FileUtil.getFile("HTML_templates/" + getHTMLTemplate().getDirName());
+		else
+			return null;
+	}
+	
+//	 Returns the template name, e.g. "Simple Virtue" 
+	public String getHTMLTemplateName() {
+		
+		if (htmlTemplate == null) {
+			if (getHTMLTemplate() == null)
+				return HTMLTemplateName;
+		}
+		return getHTMLTemplate().getName();
+	}
+
+		
+//	Returns the template html file e.g. "HTML_templates/Simple Virtue/Simple_Virtue.html"
+	public File getHTMLTemplateFile() {
+		if (getHTMLTemplate() != null)
+			return new File(getHTMLTemplateDir(), getHTMLTemplate().getHTMLTemplateFileName());
+		else
+			return null;
+	}
+
+	public File getHTMLTemplateCssFile() {
+		if (getHTMLTemplate() != null)
+			return new File(getHTMLTemplateDir(), getHTMLTemplate().getHTMLTemplateCssFileName());  
+		else
+			return null;
+	}
+	
+	public ModelHTMLTemplateStyle getHTMLTemplateStyle() {
+		
+		if (htmlTemplateStyle == null && HTMLTemplateStyleName != null) {
+						
+			ModelHTMLTemplate tmpTemplate = getHTMLTemplate();
+			
+			if (tmpTemplate == null || (htmlTemplateStyle = getHTMLTemplate().getStyle(HTMLTemplateStyleName)) == null) {
+				log.debug("Requested template style does not exist:" + HTMLTemplateStyleName);
+				return null;
+			}
+		}
+		return htmlTemplateStyle;
+	}
+	
+	public String getHTMLTemplateStyleName() {
+		
+		if (htmlTemplateStyle == null) {
+			if (getHTMLTemplateStyle() == null)
+				return HTMLTemplateStyleName; // Update style
+		}
+		
+		return htmlTemplateStyle.getName();
+	}
+	
+	public File getHTMLTemplateCssStyleFile() {
+		return new File(getHTMLTemplateDir(), "Styles/" + htmlTemplateStyle.getCssFileName());  
+	}
+	
+	public String getHTMLTemplateCssStyleFileName() {
+		return htmlTemplateStyle.getCssFileName();
+	}
 	
 	
 	public boolean getDefaultLookAndFeelDecorated() {
@@ -963,6 +1602,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		return displayPrintButton;
 	}
 
+	public void setCheckForProgramUpdates(boolean check) {
+		this.checkForProgramUpdates = check;
+	}
+
+	public boolean getCheckForProgramUpdates() {
+		return checkForProgramUpdates;
+	}
+	
 
 	public void setRegularToolButtonsUsed(boolean regularToolBarButtons) {
 		this.regularToolBarButtons = regularToolBarButtons;
@@ -1000,62 +1647,116 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.mainMaximized = mainMaximized;
 	}
 
+		
+	public HttpSettings getHttpSettings() {
+		return httpSettings;	
+	}
+	
 	public String getProxyType() {
-		return proxyType;
+		return httpSettings.getProxyType();
 	}
 
 	public void setProxyType(String proxyType) {
-		this.proxyType = proxyType;
+		httpSettings.setProxyType(proxyType);
 	}
 
 	public String getProxyHost() {
-		return proxyHost;
+		return httpSettings.getProxyHost();
 	}
 
 	public void setProxyHost(String proxyHost) {
-		this.proxyHost = proxyHost;
+		httpSettings.setProxyHost(proxyHost);
 	}
 
 	public String getProxyPort() {
-		return proxyPort;
+		return httpSettings.getProxyPort();
 	}
 
 	public void setProxyPort(String proxyPort) {
-		this.proxyPort = proxyPort;
+		httpSettings.setProxyPort(proxyPort);
 	}
 
 	public String getProxyUser() {
-		return proxyUser;
+		return httpSettings.getProxyUser();
 	}
 
 	public void setProxyUser(String proxyUser) {
-		this.proxyUser = proxyUser;
+		httpSettings.setProxyUser(proxyUser);
 	}
 
 	public String getProxyPassword() {
-		return proxyPassword;
+		return httpSettings.getProxyPassword();
 	}
 
 	public void setProxyPassword(String proxyPassword) {
-		this.proxyPassword = proxyPassword;
+		httpSettings.setProxyPassword(proxyPassword);
 	}
 
 	public boolean getProxyEnabled() {
-		return proxyEnabled;
+		return httpSettings.getProxyEnabled();
 	}
 
 	public void setProxyEnabled(boolean proxyEnabled) {
-		this.proxyEnabled = proxyEnabled;
+		httpSettings.setProxyEnabled(proxyEnabled);
 	}
 
-	public boolean getAuthenticationEnabled() {
-		return authenticationEnabled;
+	public boolean getProxyAuthenticationEnabled() {
+		return httpSettings.getProxyAuthenticationEnabled();
 	}
 
-	public void setAuthenticationEnabled(boolean authenticationEnabled) {
-		this.authenticationEnabled = authenticationEnabled;
+	public void setProxyAuthenticationEnabled(boolean proxtAuthenticationEnabled) {
+		httpSettings.setProxyAuthenticationEnabled(proxtAuthenticationEnabled);
 	}
 
+	public void resetIMDbAuth() {
+		httpSettings.setIMDbAuthenticationEnabled(false);
+		httpSettings.setIMDbAuthenticationUser("");
+		httpSettings.setIMDbAuthenticationPassword("");
+	}
+	
+	public boolean getIMDbAuthenticationEnabled() {
+		return httpSettings.getIMDbAuthenticationEnabled();
+	}
+
+	public void setIMDbAuthenticationEnabled(boolean IMDbAuthenticationEnabled) {
+		httpSettings.setIMDbAuthenticationEnabled(IMDbAuthenticationEnabled);
+	}
+	
+	
+	public String getIMDbAuthenticationUser() {
+		return httpSettings.getIMDbAuthenticationUser();
+	}
+	
+	public void setIMDbAuthenticationUser(String IMDbAuthenticationUser) {
+		httpSettings.setIMDbAuthenticationUser(IMDbAuthenticationUser);
+	}
+	
+	public String getIMDbAuthenticationPassword() {
+		return httpSettings.getIMDbAuthenticationPassword();
+	}
+
+	public void setIMDbAuthenticationPassword(String IMDbAuthenticationPassword) {
+		httpSettings.setIMDbAuthenticationPassword(IMDbAuthenticationPassword);
+	}
+		
+	public boolean getAutoMoveThe() {
+		return httpSettings.getAutoMoveThe();
+	}
+
+	public void setAutoMoveThe(boolean autoMoveThe) {
+		httpSettings.setAutoMoveThe(autoMoveThe);
+	}
+
+	public boolean getAutoMoveAnAndA() {
+		return httpSettings.getAutoMoveAnAndA();
+	}
+
+	public void setAutoMoveAnAndA(boolean autoMoveAnAndA) {
+		httpSettings.setAutoMoveAnAndA(autoMoveAnAndA);
+	}
+	
+	
+	
 	public void setUseRelativeDatabasePath(int useRelativeDatabasePath) {
 		this.useRelativeDatabasePath = useRelativeDatabasePath;
 	}
@@ -1104,6 +1805,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.exportType = exportType;
 	}
 
+	public String getNoCoverSmall() {
+		
+		if (nocover.equals("nocover_puma.png"))
+			return "nocover_puma_97x97.png";
+		else
+			return "nocover_jaguar_97x97.png";
+	}
+	
 	public String getNoCover() {
 		return nocover;
 	}
@@ -1112,10 +1821,29 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.nocover = nocover;
 	}
 
+	
+	
+	public HashMap getSearchAlias() {
+		return searchAlias;
+	}
+	
 	public HashMap getAdditionalInfoDefaultValues() {
 		return additionalInfoDefaultValues;
 	}
-
+	
+	public ArrayList getMainFilterSearchValues() {
+		return mainFilterSearchValues;
+	}
+	
+	public void addMainFilterSearchValue(String val) {
+		mainFilterSearchValues.add(val);
+	}
+	
+	public void removeMainFilterSearchValue(String val) {
+		mainFilterSearchValues.remove(val);
+	}
+	
+	
 	public String getCurrentList() {
 		return currentList;
 	}
@@ -1164,6 +1892,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.lastPreferencesTabIndex = lastPreferencesTabIndex;
 	}
 
+	public int getLastMovieInfoTabIndex() {
+		return lastMovieInfoTabIndex;
+	}
+
+	public void setLastMovieInfoTabIndex(int lastMovieInfoTabIndex) {
+		this.lastMovieInfoTabIndex = lastMovieInfoTabIndex;
+	}
+	
+	
 	public String getMediaPlayerPath() {
 		return this.playerPath;
 	}
@@ -1172,6 +1909,16 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.playerPath = playerPath;
 	}
 
+	public String getMediaPlayerCmdArgument() {
+		return mediaPlayerCmdArgument;
+	}
+
+	public void setMediaPlayerCmdArgument(String cmdArg){
+		mediaPlayerCmdArgument = cmdArg;
+	}
+
+	
+	
 	public String getBrowserPath() {
 		return browserPath;
 	}
@@ -1181,6 +1928,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 
 
+	
 
 	public boolean getUseDefaultWindowsPlayer() {
 		return useDefaultWindowsPlayer;
@@ -1190,6 +1938,16 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.useDefaultWindowsPlayer = useDefaultWindowsPlayer;
 	}
 
+	public boolean getExecuteExternalPlayCommand() {
+		return executeExternalPlayCommand;
+	}
+
+	public void setExecuteExternalPlayCommand(boolean executeExternalPlayCommand) {
+		this.executeExternalPlayCommand = executeExternalPlayCommand;
+	}
+
+	
+	
 	public String getSystemWebBrowser() {
 		return systemWebBrowser;
 	}
@@ -1198,27 +1956,88 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.systemWebBrowser = systemWebBrowser;
 	}
 
+	public String getDatabaseBackupLaunchCount() {
+		return databaseBackupLaunchCount;
+	}
 
+	public void setDatabaseBackupLaunchCount(String backupLaunchCount) {
+		this.databaseBackupLaunchCount = backupLaunchCount;
+	}
+	
+	
+	public String getDatabaseBackupEveryLaunch() {
+		return databaseBackupEveryLaunch;
+	}
+
+	public void setDatabaseBackupEveryLaunch(String backupEveryLaunch) {
+		this.databaseBackupEveryLaunch = backupEveryLaunch;
+	}
+	
+	
+	public String getDatabaseBackupDeleteOldest() {
+		return databaseBackupDeleteOldest;
+	}
+
+	public void setDatabaseBackupDeleteOldest(String backupDeleteOldest) {
+		this.databaseBackupDeleteOldest = backupDeleteOldest;
+	}
+	
+    
+    public String getDatabaseBackupDirectory() {
+		return databaseBackupDirectory;
+	}
+
+	public void setDatabaseBackupDirectory(String backupDirectory) {
+		this.databaseBackupDirectory = backupDirectory;
+	}
+    
+	
+	
 	/**
 	 * Loads info from the config file...
 	 **/
 	 protected void loadConfig() {
-
+		 		 
 		try {
 
-			URL url;
+			//if (SysUtil.isWindowsVista()) {
+//			System.getenv("ALLUSERSPROFILE")
+			//}
+			
+			
+			URL url = null;
 
-			if (MovieManager.isApplet())
-				url = FileUtil.getFileURL("Config_Applet.ini");
-			else
-				url = FileUtil.getFileURL("Config.ini");
-
-
+			int appMode = MovieManager.getAppMode();
+			
+			// Applet
+			if (appMode == 1)
+				url = FileUtil.getFileURL("config/Config_Applet.ini", DialogMovieManager.applet);
+			else if (appMode == 2) {
+				MovieManagerConfigHandler configHandler = getConfigHandler();
+				
+				if (configHandler != null)
+					url = configHandler.getConfigURL();
+												
+			} else {
+				String conf = "Config.ini";
+				long t = FileUtil.getFile(conf).lastModified();
+				
+				// The newest config file will be used
+				if (FileUtil.getFile("config/Config.ini").lastModified() > t)
+					conf = "config/Config.ini";
+					
+				url = FileUtil.getFileURL(conf);
+			}
+			if (url == null)
+				return;
+			
 			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
 			// search Alias And Additional Info Default Values
 			ArrayList searchAliasList = new ArrayList();
 			ArrayList additionalFieldDefaults = new ArrayList();
+			ArrayList mainFilterDefaults = new ArrayList();
+			
 			HashMap config = new HashMap();
 						
 			String tmp, key, value;
@@ -1226,6 +2045,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			while ((tmp = reader.readLine()) != null) {
 
 				try {
+					if (tmp.indexOf(":") == -1)
+						continue;
+					
 					key = tmp.substring(0, tmp.indexOf(":") + 1);
 					value = tmp.substring(tmp.indexOf(":") + 1, tmp.length());
 
@@ -1233,6 +2055,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 						additionalFieldDefaults.add(value);
 					else if ("Search Alias:".equals(key))
 						searchAliasList.add(value);
+					else if ("mainFilterSearchValues:".equals(key))
+						mainFilterDefaults.add(value);
 					else
 						config.put(key, value);
 
@@ -1243,7 +2067,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 
 			value = (String) config.get("Database:");
-
+			
 			if (value != null) {
 				setDatabasePath(value);
 			}
@@ -1364,7 +2188,16 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setDefaultLookAndFeelDecorated(new Boolean(value).booleanValue());
 			}
 
-
+			
+			value = (String) config.get("HTMLTemplateName:");
+			
+			if (value != null) {
+				HTMLTemplateName = value;
+			}
+						
+			value = (String) config.get("HTMLTemplateStyleName:");
+			HTMLTemplateStyleName = value;
+								
 			value = (String) config.get("filterOption:");
 
 			if (value != null) {
@@ -1443,7 +2276,47 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setMultiAddExcludeStringEnabled(new Boolean(value).booleanValue());
 			}
 
+			
+			value = (String) config.get("multiAddExcludeStringNegated:");
 
+			if (value != null) {
+				setMultiAddExcludeStringNegated(new Boolean(value).booleanValue());
+			}
+
+
+			value = (String) config.get("multiAddRegexString:");
+
+			if (value != null) {
+				if (!value.equals("null"))
+					setMultiAddRegexString(value);
+			}
+
+
+			value = (String) config.get("multiAddRegexStringEnabled:");
+
+			if (value != null) {
+				setMultiAddRegexStringEnabled(new Boolean(value).booleanValue());
+			}
+
+			
+			value = (String) config.get("multiAddRegexStringNegated:");
+
+			if (value != null) {
+				setMultiAddRegexStringNegated(new Boolean(value).booleanValue());
+			}
+
+			value = (String) config.get("multiAddValidExtensions:");
+
+			if (value != null) {
+				addMultiAddValidExtensions(value);
+			}
+			
+			value = (String) config.get("multiAddCustomExtensions:");
+
+			if (value != null) {
+				setMultiAddCustomExtensions(value);
+			}
+						
 			value = (String) config.get("multiAddSelectOption:");
 
 			if (value != null) {
@@ -1496,51 +2369,72 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("proxyEnabled:");
 
 			if (value != null) {
-				setProxyEnabled(new Boolean(value).booleanValue());
+				httpSettings.setProxyEnabled(new Boolean(value).booleanValue());
 			}
 
 
 			value = (String) config.get("proxyType:");
 
 			if (value != null) {
-				setProxyType(value);
+				httpSettings.setProxyType(value);
 			}
 
 
 			value = (String) config.get("authenticationEnabled:");
 
 			if (value != null) {
-				setAuthenticationEnabled(new Boolean(value).booleanValue());
+				httpSettings.setProxyAuthenticationEnabled(new Boolean(value).booleanValue());
 			}
 
 
 			value = (String) config.get("proxyHost:");
 
 			if (value != null) {
-				setProxyHost(value);
+				httpSettings.setProxyHost(value);
 			}
 
 
 			value = (String) config.get("proxyPort:");
 
 			if (value != null) {
-				setProxyPort(value);
+				httpSettings.setProxyPort(value);
 			}
 
 
 			value = (String) config.get("proxyUser:");
 
 			if (value != null) {
-				setProxyUser(value);
+				httpSettings.setProxyUser(value);
 			}
 
 
 			value = (String) config.get("proxyPassword:");
 
 			if (value != null) {
-				setProxyPassword(value);
+				httpSettings.setProxyPassword(value);
 			}
 
+			
+			value = (String) config.get("IMDbAuthenticationEnabled:");
+
+			if (value != null) {
+				httpSettings.setIMDbAuthenticationEnabled(new Boolean(value).booleanValue());
+			}
+			
+			value = (String) config.get("IMDbAuthenticationUser:");
+
+			
+			if (value != null) {
+				httpSettings.setIMDbAuthenticationUser(value);
+			}
+			
+			
+			value = (String) config.get("IMDbAuthenticationPassword:");
+
+			if (value != null) {
+				setIMDbAuthenticationPassword(value);
+			}
+			
 
 			value = (String) config.get("lastFileDir:");
 
@@ -1589,13 +2483,23 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setExportType(value);
 			}
 
+			value = (String) config.get("mainWindowSliderPosition:");
 
+			if (value != null) {
+				mainWindowSliderPosition = Integer.parseInt(value);
+			}
+			
+			value = (String) config.get("mainWindowLastSliderPosition:");
+
+			if (value != null) {
+				mainWindowLastSliderPosition = Integer.parseInt(value);
+			}
+			
 			value = (String) config.get("movieInfoSliderPosition:");
 
 			if (value != null) {
 				movieInfoSliderPosition = Integer.parseInt(value);
 			}
-
 
 			value = (String) config.get("movieInfoLastSliderPosition:");
 
@@ -1707,7 +2611,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("importExcelfilePath:");
 
 			if (value != null) {
-				setImportExcelfilePath(value);
+				setImportExcelFilePath(value);
 			}
 
 			value = (String) config.get("importXMLfilePath:");
@@ -1723,6 +2627,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setImportCSVfilePath(value);
 			}
 
+			value = (String) config.get("importCSVseparator:");
+
+			if (value != null) {
+				setImportCSVseparator(value);
+			}
 			
 			value = (String) config.get("importExtremefilePath:");
 
@@ -1752,7 +2661,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					setLastPreferencesTabIndex(Character.digit(value.charAt(0), 10));
 			}
 
+			value = (String) config.get("lastMovieInfoTabIndex:");
 
+			if (value != null) {
+				if (Character.isDigit(value.charAt(0)))
+					setLastMovieInfoTabIndex(Character.digit(value.charAt(0), 10));
+			}
+			
 			value = (String) config.get("movieListRowHeight:");
 
 			if (value != null) {
@@ -1792,8 +2707,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				
 				if (value.equals("nocover_puma.png"))
 					setNoCover(value);
-				else if (value.equals("nocover_jaguar.png"))
-					setNoCover(value);
+				else
+					setNoCover("nocover_jaguar.png");
 			}
 
 
@@ -1854,7 +2769,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setMediaPlayerPath(value);
 			}
 
+			value = (String) config.get("mediaPlayerCmdArgument:");
 
+			if (value != null) {
+				setMediaPlayerCmdArgument(value);
+			}
+
+			
 			value = (String) config.get("browserPath:");
 
 			if (value != null) {
@@ -1868,6 +2789,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setUseDefaultWindowsPlayer(new Boolean(value).booleanValue());
 			}
 
+			
+			value = (String) config.get("executeExternalPlayCommand:");
+
+			if (value != null) {
+				setExecuteExternalPlayCommand(new Boolean(value).booleanValue());
+			}
 
 			value = (String) config.get("systemWebBrowser:");
 
@@ -1876,6 +2803,30 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 
 
+			value = (String) config.get("databaseBackupEveryLaunch:");
+
+			if (value != null) {
+				setDatabaseBackupEveryLaunch(value);
+			}
+			
+			value = (String) config.get("databaseBackupDeleteOldest:");
+
+			if (value != null) {
+				setDatabaseBackupDeleteOldest(value);
+			}
+						
+			value = (String) config.get("databaseBackupLaunchCount:");
+
+			if (value != null) {
+				setDatabaseBackupLaunchCount(value);
+			}
+			
+			value = (String) config.get("databaseBackupDirectory:");
+
+			if (value != null) {
+				setDatabaseBackupDirectory(value);
+			}
+									
 			value = (String) config.get("displayPlayButton:");
 
 			if (value != null) {
@@ -1889,7 +2840,98 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setDisplayPrintButton(new Boolean(value).booleanValue());
 			}
 
-						AdditionalInfoFieldDefaultValues defaultValue;
+			value = (String) config.get("checkForProgramUpdates:");
+
+			if (value != null) {
+				setCheckForProgramUpdates(new Boolean(value).booleanValue());
+			}
+			
+			value = (String) config.get("lastDialogExportType:");
+
+			if (value != null) {
+				setLastDialogImportType(Integer.parseInt(value));
+			}
+			
+			value = (String) config.get("lastDialogImportType:");
+
+			if (value != null) {
+				setLastDialogExportType(Integer.parseInt(value));
+			}
+			
+			
+			
+			
+			value = (String) config.get("importTextfilePath:");
+
+			if (value != null) {
+				setImportTextfilePath(value);
+			}
+			
+			value = (String) config.get("importExcelfilePath:");
+
+			if (value != null) {
+				setImportExcelFilePath(value);
+			}
+			
+			value = (String) config.get("importXMLfilePath:");
+
+			if (value != null) {
+				setImportXMLfilePath(value);
+			}
+			
+			value = (String) config.get("importCSVfilePath:");
+
+			if (value != null) {
+				setImportCSVfilePath(value);
+			}
+			
+			value = (String) config.get("importCSVseparator:");
+
+			if (value != null) {
+				setImportCSVseparator(value);
+			}
+			
+			value = (String) config.get("importExtremefilePath:");
+
+			if (value != null) {
+				setImportExtremefilePath(value);
+			}
+			
+			
+
+			value = (String) config.get("exportTextfilePath:");
+
+			if (value != null) {
+				setExportTextfilePath(value);
+			}
+			
+			value = (String) config.get("exportExcelfilePath:");
+
+			if (value != null) {
+				setExportExcelfilePath(value);
+			}
+			
+			value = (String) config.get("exportXMLfilePath:");
+
+			if (value != null) {
+				setExportXMLfilePath(value);
+			}
+			
+			value = (String) config.get("exportCSVfilePath:");
+
+			if (value != null) {
+				setExportCSVfilePath(value);
+			}
+			
+			value = (String) config.get("exportCSVseparator:");
+
+			if (value != null) {
+				setExportCSVseparator(value);
+			}
+			
+			
+			
+			AdditionalInfoFieldDefaultValues defaultValue;
 			StringTokenizer tokenizer;
 			String name = "";
 			String token;
@@ -1923,17 +2965,21 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				if (!alias.equals("") && !tableAndColumn.equals(""))
 					searchAlias.put(tableAndColumn, alias);
 			}
-				
+			
+			// Setting main filter default values
+			mainFilterSearchValues = mainFilterDefaults;
+			
 		} catch (Exception e) {
 			log.warn("Cannot find config file." + e.getMessage());
 		}
 	 }
 
 
-	 public void saveConfig() {
+
+	public void saveConfig() {
 
 		 StringBuffer settings = new StringBuffer(1500);
-		 String lineSeparator = FileUtil.getLineSeparator();
+		 String lineSeparator = SysUtil.getLineSeparator();
 		 Database database = MovieManager.getIt().getDatabase();
 
 		 /* Absort if Applet */
@@ -1943,17 +2989,18 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 String dbPath = "";
 
 		 /* Verifies if the database is initialized... */
-		 if (database == null || getDatabasePathPermanent()) {
+		 if (database == null ||  (database != null && getDatabasePathPermanent())) {
 			 dbPath = getDatabasePath(false);
 		 }
-		 else if (database != null) {
+		 else {
 
 			 String databaseType = database.getDatabaseType();
 			 dbPath = getDatabasePath(true);
 
+			 // Relative to program location
 			 if (getUseRelativeDatabasePath() == 2) {
-				 if (dbPath.indexOf(FileUtil.getUserDir()) != -1)
-					 dbPath = databaseType + ">" + dbPath.substring(FileUtil.getUserDir().length(), dbPath.length());
+				 if (dbPath.indexOf(SysUtil.getUserDir()) != -1)
+					 dbPath = databaseType + ">" + dbPath.substring(SysUtil.getUserDir().length(), dbPath.length());
 
 			 }
 			 else
@@ -2008,6 +3055,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("defaultLookAndFeelDecorated:" + getDefaultLookAndFeelDecorated());
 
 		 settings.append(lineSeparator);
+		 settings.append("HTMLTemplateName:" + getHTMLTemplateName());
+		 		 
+		 if (getHTMLTemplateStyleName() != null) {
+			 settings.append(lineSeparator);
+			 settings.append("HTMLTemplateStyleName:" + getHTMLTemplateStyleName());
+		 }
+		 
+		 settings.append(lineSeparator);
 		 settings.append("filterOption:" + getFilterCategory());
 
 		 settings.append(lineSeparator);
@@ -2034,12 +3089,32 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append(lineSeparator);
 		 settings.append("multiAddDirectoryPath:" + getMultiAddDirectoryPath());
 
+		 
 		 settings.append(lineSeparator);
 		 settings.append("multiAddExcludeString:" + getMultiAddExcludeString());
 
 		 settings.append(lineSeparator);
 		 settings.append("multiAddExcludeStringEnabled:" + getMultiAddExcludeStringEnabled());
 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddExcludeStringNegated:" + getMultiAddExcludeStringNegated());
+		 
+		 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddRegexString:" + getMultiAddRegexString());
+
+		 settings.append(lineSeparator);
+		 settings.append("multiAddRegexStringEnabled:" + getMultiAddRegexStringEnabled());
+
+		 settings.append(lineSeparator);
+		 settings.append("multiAddRegexStringNegated:" + getMultiAddRegexStringNegated());
+		 		 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddValidExtensions:" + getMultiAddValidExtensionsString());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddCustomExtensions:" + getMultiAddCustomExtensions());
+		 
 		 settings.append(lineSeparator);
 		 settings.append("multiAddSelectOption:" + getMultiAddSelectOption());
 
@@ -2063,26 +3138,36 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 
 				 
 		 settings.append(lineSeparator);
-		 settings.append("proxyEnabled:" + getProxyEnabled());
+		 settings.append("proxyEnabled:" + httpSettings.getProxyEnabled());
 
 		 settings.append(lineSeparator);
-		 settings.append("proxyType:"+getProxyType());
+		 settings.append("proxyType:" + httpSettings.getProxyType());
 
 		 settings.append(lineSeparator);
-		 settings.append("authenticationEnabled:" + getAuthenticationEnabled());
+		 settings.append("authenticationEnabled:" + httpSettings.getProxyAuthenticationEnabled());
 
 		 settings.append(lineSeparator);
-		 settings.append("proxyHost:" + getProxyHost());
+		 settings.append("proxyHost:" + httpSettings.getProxyHost());
 
 		 settings.append(lineSeparator);
-		 settings.append("proxyPort:" + getProxyPort());
+		 settings.append("proxyPort:" + httpSettings.getProxyPort());
 
 		 settings.append(lineSeparator);
-		 settings.append("proxyUser:" + getProxyUser());
+		 settings.append("proxyUser:" + httpSettings.getProxyUser());
 
 		 settings.append(lineSeparator);
-		 settings.append("proxyPassword:" + getProxyPassword());
+		 settings.append("proxyPassword:" + httpSettings.getProxyPassword());
 
+		 settings.append(lineSeparator);
+		 settings.append("IMDbAuthenticationEnabled:" + httpSettings.getIMDbAuthenticationEnabled());
+
+		 settings.append(lineSeparator);
+		 settings.append("IMDbAuthenticationUser:" + httpSettings.getIMDbAuthenticationUser());
+
+		 settings.append(lineSeparator);
+		 settings.append("IMDbAuthenticationPassword:" + httpSettings.getIMDbAuthenticationPassword());
+
+		 
 		 settings.append(lineSeparator);
 		 settings.append("lastFileDir:");
 		 if (getLastFileDir() != null)
@@ -2110,20 +3195,31 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 settings.append(lineSeparator);
 		 settings.append("exportType:" + getExportType());
-
-
+		 		 
 		 settings.append(lineSeparator);
-		 settings.append("movieInfoSliderPosition:" + MovieManager.getDialog().getMovieInfoSplitPane().getDividerLocation());
-
+		 settings.append("mainWindowSliderPosition:" + MovieManager.getDialog().getMainWindowSplitPane().getDividerLocation());
+		 
 		 settings.append(lineSeparator);
-		 settings.append("movieInfoLastSliderPosition:" + MovieManager.getDialog().getMovieInfoSplitPane().getLastDividerLocation());
+		 settings.append("mainWindowLastSliderPosition:" + MovieManager.getDialog().getMainWindowSplitPane().getLastDividerLocation());
 
-		 settings.append(lineSeparator);
-		 settings.append("addionalInfoNotesSliderPosition:" + MovieManager.getDialog().getAdditionalInfoNotesSplitPane().getDividerLocation());
+		 if (MovieManager.getDialog().getMovieInfoSplitPane() != null) {
+			 settings.append(lineSeparator);
+			 settings.append("movieInfoSliderPosition:" + MovieManager.getDialog().getMovieInfoSplitPane().getDividerLocation());
+		 
+			 settings.append(lineSeparator);
+			 settings.append("movieInfoLastSliderPosition:" + MovieManager.getDialog().getMovieInfoSplitPane().getLastDividerLocation());
 
-		 settings.append(lineSeparator);
-		 settings.append("addionalInfoNotesLastSliderPosition:" + MovieManager.getDialog().getAdditionalInfoNotesSplitPane().getLastDividerLocation());
-
+		 }
+		 
+		 
+		 if (MovieManager.getDialog().getAdditionalInfoNotesSplitPane() != null) {
+			 settings.append(lineSeparator);
+			 settings.append("addionalInfoNotesSliderPosition:" + MovieManager.getDialog().getAdditionalInfoNotesSplitPane().getDividerLocation());
+			 
+			 settings.append(lineSeparator);
+			 settings.append("addionalInfoNotesLastSliderPosition:" + MovieManager.getDialog().getAdditionalInfoNotesSplitPane().getLastDividerLocation());
+		 }
+		 
 		 settings.append(lineSeparator);
 		 settings.append("mainWidth:" + ((int) mainSize.getWidth()));
 
@@ -2158,13 +3254,16 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("importTextfilePath:" + getImportTextfilePath());
 
 		 settings.append(lineSeparator);
-		 settings.append("importExcelfilePath:" + getImportExcelfilePath());
+		 settings.append("importExcelfilePath:" + getImportExcelFilePath());
 
 		 settings.append(lineSeparator);
 		 settings.append("importXMLfilePath:" + getImportXMLfilePath());
 
 		 settings.append(lineSeparator);
 		 settings.append("importCSVfilePath:" + getImportCSVfilePath());
+
+		 settings.append(lineSeparator);
+		 settings.append("importCSVseparator:" + getImportCSVseparator());
 
 		 settings.append(lineSeparator);
 		 settings.append("importExtremefilePath:" + getImportExtremefilePath());
@@ -2179,6 +3278,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("lastPreferencesTabIndex:"+ Integer.toString(getLastPreferencesTabIndex()));
 
 		 settings.append(lineSeparator);
+		 settings.append("lastMovieInfoTabIndex:"+ Integer.toString(getLastMovieInfoTabIndex()));
+
+		 settings.append(lineSeparator);
 		 settings.append("movieListRowHeight:"+ Integer.toString(getMovieListRowHeight()));
 
 		 settings.append(lineSeparator);
@@ -2191,50 +3293,111 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("preserveCoverAspectRatioSetting:"+ getPreserveCoverAspectRatio());
 
 		 settings.append(lineSeparator);
-		 settings.append("noCover:"+ getNoCover());
+		 settings.append("noCover:" + getNoCover());
 
 		 settings.append(lineSeparator);
-		 settings.append("autoMoveThe:"+ getAutoMoveThe());
+		 settings.append("autoMoveThe:" + getAutoMoveThe());
 
 		 settings.append(lineSeparator);
-		 settings.append("autoMoveAnAndA:"+ getAutoMoveAnAndA());
+		 settings.append("autoMoveAnAndA:" + getAutoMoveAnAndA());
 
 		 settings.append(lineSeparator);
-		 settings.append("storeAllAkaTitles:"+ getStoreAllAkaTitles());
+		 settings.append("storeAllAkaTitles:" + getStoreAllAkaTitles());
 
 		 settings.append(lineSeparator);
-		 settings.append("includeAkaLanguageCodes:"+ getIncludeAkaLanguageCodes());
+		 settings.append("includeAkaLanguageCodes:" + getIncludeAkaLanguageCodes());
 
 		 settings.append(lineSeparator);
-		 settings.append("titleLanguageCode:"+ getTitleLanguageCode());
+		 settings.append("titleLanguageCode:" + getTitleLanguageCode());
 
 		 settings.append(lineSeparator);
-		 settings.append("useLanguageSpecificTitle:"+ getUseLanguageSpecificTitle());
+		 settings.append("useLanguageSpecificTitle:" + getUseLanguageSpecificTitle());
 
 		 settings.append(lineSeparator);
-		 settings.append("useMediaInfoDLL:"+ getUseMediaInfoDLL());
+		 settings.append("useMediaInfoDLL:" + getUseMediaInfoDLL());
 
 		 settings.append(lineSeparator);
-		 settings.append("playerPath:"+ getMediaPlayerPath());
+		 settings.append("playerPath:" + getMediaPlayerPath());
 
 		 settings.append(lineSeparator);
-		 settings.append("browserPath:"+ getBrowserPath());
+		 settings.append("mediaPlayerCmdArgument:" + getMediaPlayerCmdArgument());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("browserPath:" + getBrowserPath());
 
 		 settings.append(lineSeparator);
-		 settings.append("useDefaultWindowsPlayer:"+ getUseDefaultWindowsPlayer());
+		 settings.append("useDefaultWindowsPlayer:" + getUseDefaultWindowsPlayer());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("executeExternalPlayCommand:" + getExecuteExternalPlayCommand());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("systemWebBrowser:" + getSystemWebBrowser());
 
 		 settings.append(lineSeparator);
-		 settings.append("systemWebBrowser:"+ getSystemWebBrowser());
+		 settings.append("databaseBackupEveryLaunch:" + getDatabaseBackupEveryLaunch());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("databaseBackupDeleteOldest:" + getDatabaseBackupDeleteOldest());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("databaseBackupLaunchCount:" + getDatabaseBackupLaunchCount());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("databaseBackupDirectory:" + getDatabaseBackupDirectory());
+		 		 
+		 settings.append(lineSeparator);
+		 settings.append("displayPlayButton:" + getDisplayPlayButton());
 
 		 settings.append(lineSeparator);
-		 settings.append("displayPlayButton:"+ getDisplayPlayButton());
+		 settings.append("displayPrintButton:" + getDisplayPrintButton());
 
 		 settings.append(lineSeparator);
-		 settings.append("displayPrintButton:"+ getDisplayPrintButton());
+		 settings.append("checkForProgramUpdates:" + getCheckForProgramUpdates());
 
+		 settings.append(lineSeparator);
+		 settings.append("lastDialogExportType:" + getLastDialogExportType());
 
+		 settings.append(lineSeparator);
+		 settings.append("lastDialogImportType:" + getLastDialogImportType());
 
-
+		 
+		 
+		 settings.append(lineSeparator);
+		 settings.append("exportTextfilePath:" + getExportTextfilePath());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("exportExcelfilePath:" + getExportExcelfilePath());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("exportXMLfilePath:" + getExportXMLfilePath());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("exportCSVfilePath:" + getExportCSVfilePath());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("exportCSVseparator:" + getExportCSVfilePath());
+		 
+		 
+		 settings.append(lineSeparator);
+		 settings.append("importTextfilePath:" + getImportTextfilePath());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("importExcelfilePath:" + getImportExcelFilePath());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("importXMLfilePath:" + getImportXMLfilePath());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("importCSVfilePath:" + getImportCSVfilePath());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("importCSVseparator:" + getImportCSVfilePath());
+		 
+		 
+		 
+		 
+		 // Default values in the additional info fields in DialogMovieInfo
 
 		 HashMap defaultValues = getAdditionalInfoDefaultValues();
 		 AdditionalInfoFieldDefaultValues value;
@@ -2246,13 +3409,16 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 			 if (value != null) {
 				 settings.append(lineSeparator);
-				 settings.append("AdditionalInfoDefaultValues:"+value.getFieldName()+":");
+				 settings.append("AdditionalInfoDefaultValues:" +value.getFieldName()+":");
 				 settings.append(value.getDefaultValuesString("|"));
 			 }
 		 }
 
 		 settings.append(lineSeparator);
 
+		 
+		 // Search aliases
+		 
 		 HashMap searchAlias = getSearchAlias();
 		 String key;
 		 String val;
@@ -2264,30 +3430,92 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			 settings.append("Search Alias:" + key + "=" + val);
 			 settings.append(lineSeparator);
 		 }
+		 
+		 
+		 ArrayList filterValues = getMainFilterSearchValues();
+		 
+		 for (int i = 0; i < filterValues.size(); i++) {
+			 settings.append("mainFilterSearchValues:" + (String) filterValues.get(i));
+			 settings.append(lineSeparator);
+		 }
 
 		 try {
+			 
+			 URL url = null;
+
+			 int appMode = MovieManager.getAppMode();
+
+			 // Applet
+			 if (appMode == 1)
+				 url = FileUtil.getFileURL("config/Config_Applet.ini", DialogMovieManager.applet);
+			 else if (appMode == 2) {
+				 MovieManagerConfigHandler configHandler = getConfigHandler();
+
+				 if (configHandler != null)
+					 url = configHandler.getConfigURL();
+
+			 } else {
+				 url = new File(SysUtil.getUserDir(), "config/Config.ini").toURL();  
+				 //FileUtil.getFileURL("config/Config.ini");
+			 }
+
+
 			 /* Gets the working dir... */
-			 String directory = FileUtil.getUserDir();
-  
+			 // String directory = SysUtil.getUserDir();
+
 			 /* Gets the File ini... */
-			 File ini = new File(directory + "Config.ini");
- 
+			 //File ini = new File(directory, "config/Config.ini");
+
+			 File config = new File(url.getFile());
+
 			 /* If it exists deletes... */
-			 if (ini.exists() && !ini.delete()) {
+			 if (config.exists() && !config.delete()) {
 				 throw new Exception("Cannot delete config file.");
 			 }
 			  
 			 /* Recreates... */
-			 if (!ini.createNewFile()) {
+			 if (!config.createNewFile()) {
 				 throw new Exception("Cannot create config file.");
 			 }
 			 
-			 FileWriter stream = new FileWriter(ini);
-			 stream.write(settings.toString());
-			 stream.close();
-				 
+			 FileUtil.writeToFile(config.getAbsolutePath(), settings);
+			 				 
 		 } catch (Exception e) {
-			 log.error("", e);
+			 log.error("Exception:" + e.getMessage(), e);
 		 }
 	 }
+	 
+	
+	
+	public boolean handleBackupSettings() {
+			 
+		 try {
+			 boolean ret = false;
+			 int launchCount = Integer.parseInt(getDatabaseBackupLaunchCount());
+			 int backupEveryLaunch = Integer.parseInt(getDatabaseBackupEveryLaunch());
+			 
+			 if (backupEveryLaunch < 1)
+				 return false;
+			 
+			 if (launchCount % backupEveryLaunch == 0) {
+				 ret = true;
+			 }	 
+			 
+			 launchCount++;
+			 setDatabaseBackupLaunchCount(String.valueOf(launchCount));
+			 return ret;
+			 
+		 } catch (Exception e) {
+			 log.error("Exception:" + e.getMessage(), e);
+			 log.warn("Unable to handle backup settings!");
+		 }
+		 return false;
+	 }
+	
+	
+	
 }
+
+
+
+
