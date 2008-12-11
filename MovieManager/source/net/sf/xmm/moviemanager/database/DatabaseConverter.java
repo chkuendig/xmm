@@ -20,13 +20,15 @@
 
 package net.sf.xmm.moviemanager.database;
 
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.models.*;
-
 import java.util.ArrayList;
 
 import javax.swing.ListModel;
 
+import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
+import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.models.ModelEpisode;
+import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.util.SwingWorker;
 
 import org.apache.log4j.Logger;
@@ -174,7 +176,7 @@ public class DatabaseConverter {
 			model = (ModelEpisode) episodeList.get(i- movieListSize);
 			int key = model.getKey();
 			
-			model = cDb.getEpisode(key, true);
+			model = cDb.getEpisode(key);
 
 			int index = newDatabase.addGeneralInfoEpisode((ModelEpisode) model);
 			

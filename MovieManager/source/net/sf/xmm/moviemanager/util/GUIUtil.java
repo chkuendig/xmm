@@ -20,67 +20,125 @@
 
 package net.sf.xmm.moviemanager.util;
 
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.Window;
+
+import javax.swing.SwingUtilities;
+
 import org.apache.log4j.Logger;
 
-import javax.swing.*;
-
-import java.awt.Component;
-import java.awt.Container;
-
 public class GUIUtil {
-    
-    static Logger log = Logger.getRootLogger();
-    
-    public static void show(final Container container, final boolean visible) {
-     	
-        SwingUtilities.invokeLater(new Runnable(){
-            public void run() {
-                container.setVisible(visible);
-            }
-        });
-    }
-    
-    public static void showAndWait(final Container container, final boolean visible) {
-        
-        if (SwingUtilities.isEventDispatchThread()) {
-	    container.setVisible(visible);
-        }
-        else {
-            try {
-                SwingUtilities.invokeAndWait(new Runnable(){
-                    public void run() {
-                        container.setVisible(visible);
-                    }
-                });
-            } catch (InterruptedException i) {
-                log.error("showAndWait error:", i);
-            } catch (java.lang.reflect.InvocationTargetException i) {
-                log.error("showAndWait error:", i);
-            }
-        }
-    }
-   
-    
-    public static void invokeLater(Runnable runnable) {
-    	
-    	if (!SwingUtilities.isEventDispatchThread())
-    		SwingUtilities.invokeLater(runnable);
-    	else
-    		runnable.run();
-    }
-    
-    public static void isEDT() {
-        if (!SwingUtilities.isEventDispatchThread()) {
-          throw new Error("assertion failed: not on EDT");
-        }
-      }
-      
-      /**
-       * Must not be executed on the EDT.
-       */  
-      public static void isNotEDT() {
-        if (SwingUtilities.isEventDispatchThread()) {
-          throw new Error("assertion failed: on EDT");
-        }
-      }
-    } 
+
+	static Logger log = Logger.getRootLogger();
+
+	public static void show(final java.awt.Container container, final boolean visible) {
+		show(container, visible, null);
+	}
+	
+	public static void show(final Container container, final boolean visible, Window appearOnLeftSide) {
+
+		if (visible)
+			adjustLocation(container, appearOnLeftSide);
+		
+		SwingUtilities.invokeLater(new Runnable(){
+			public void run() {
+				container.setVisible(visible);
+			}
+		});
+	}
+
+	public static void showAndWait(final Container container, final boolean visible) {
+		showAndWait(container, visible, null);
+	}
+	
+	public static void showAndWait(final Container container, final boolean visible, Window appearOnLeftSide) {
+
+		try {
+
+			if (visible)
+				adjustLocation(container, appearOnLeftSide);
+
+			if (SwingUtilities.isEventDispatchThread()) {
+				container.setVisible(visible);
+			}
+			else {
+				SwingUtilities.invokeAndWait(new Runnable(){
+					public void run() {
+						container.setVisible(visible);
+					}
+				});
+			}
+		} catch (InterruptedException i) {
+			log.error("InterruptedException:" + i.getMessage(), i);
+		} catch (java.lang.reflect.InvocationTargetException i) {
+			log.error("InvocationTargetException:" + i.getMessage(), i);
+		} catch (Exception i) {
+			log.error("Exception:" + i.getMessage(), i);
+		}
+	}
+
+	private static void adjustLocation(Container container, Window appearOnLeftSide) {
+		
+		Point p = container.getLocation();
+
+		Dimension size = container.getSize();
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+		int wisthLocation = (int) (p.getX() + size.getWidth());
+		int heightLocation = (int ) (p.getY() + size.getHeight());	
+
+		if (appearOnLeftSide != null) {
+			
+			Point appearLeft = appearOnLeftSide.getLocation();
+			
+			int wSize = (int) size.getWidth();
+			p.setLocation(appearLeft.getX()- wSize, p.getY());
+		}
+		
+		if (wisthLocation > screenSize.getWidth()) {
+			int diff = (int) (wisthLocation - screenSize.getWidth());
+			p.setLocation((p.getX() - diff), p.getY());
+		}
+
+		if (heightLocation > screenSize.getHeight()) {
+			int diff = (int) (heightLocation - screenSize.getHeight());
+			p.setLocation(p.getX(), (p.getY() - diff));
+		}
+
+		if (p.getX() < 0) {
+			p.setLocation(0.0, p.getY());
+		}
+
+		if (p.getY() < 0) {
+			p.setLocation(p.getX(), 0.0);
+		}
+
+		container.setLocation(p);
+	}
+
+	public static void invokeLater(Runnable runnable) {
+
+		if (!SwingUtilities.isEventDispatchThread())
+			SwingUtilities.invokeLater(runnable);
+		else
+			runnable.run();
+	}
+
+	public static void isEDT() {
+		if (!SwingUtilities.isEventDispatchThread()) {
+			throw new Error("assertion failed: not on EDT");
+		}
+	}
+
+	/**
+	 * Must not be executed on the EDT.
+	 */  
+	public static void isNotEDT() {
+		if (SwingUtilities.isEventDispatchThread()) {
+			throw new Error("assertion failed: on EDT");
+		}
+	}
+} 

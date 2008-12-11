@@ -21,10 +21,15 @@
 
 package net.sf.xmm.moviemanager.util;
 
-import org.apache.log4j.Logger;
-import stec.sfc.Win32.*;
 import java.io.IOException;
-import java.lang.System;
+
+import net.sf.xmm.moviemanager.MovieManager;
+
+import org.apache.log4j.Logger;
+
+import stec.sfc.Win32.Drive;
+import stec.sfc.Win32.DriveType;
+import stec.sfc.Win32.Win32Exception;
 
 public class DriveInfo {
 
@@ -38,8 +43,12 @@ public class DriveInfo {
 		
 		try {
 			
-			if (!FileUtil.isWindows() || FileUtil.isWindowsVista()) {
-				log.warn(System.getProperty("os.name") + " is not suppored by DriveInfo.");
+			if (!SysUtil.isWindows() || SysUtil.isWindowsVista()) {
+				log.warn(System.getProperty("os.name") + " is not supported by DriveInfo.");
+				initialized = false;
+			}
+			else if (MovieManager.isApplet()) {
+				log.warn("DriveInfo is not supported in applet mode.");
 				initialized = false;
 			}
 			else {

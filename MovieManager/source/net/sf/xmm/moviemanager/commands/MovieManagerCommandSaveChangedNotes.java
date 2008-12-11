@@ -20,14 +20,17 @@
 
 package net.sf.xmm.moviemanager.commands;
 
-import net.sf.xmm.moviemanager.models.*;
-import net.sf.xmm.moviemanager.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.tree.*;
+import java.util.Enumeration;
 
-import java.util.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+
+import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.models.ModelEpisode;
+import net.sf.xmm.moviemanager.models.ModelMovie;
 
 public class MovieManagerCommandSaveChangedNotes implements ActionListener {
 
@@ -36,6 +39,9 @@ public class MovieManagerCommandSaveChangedNotes implements ActionListener {
 	 **/
 	public static void execute() {
 
+		if (1 == 1)
+			return;
+		
 		/* Saving the current selected node's changed notes value */
 		if (MovieManager.getDialog().getMoviesList().getLeadSelectionRow() != -1) {
 

@@ -20,22 +20,41 @@
 
 package net.sf.xmm.moviemanager.commands;
 
-import net.sf.xmm.moviemanager.DialogAlert;
-import net.sf.xmm.moviemanager.DialogDatabaseConverter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.ListModel;
+import javax.swing.WindowConstants;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.database.DatabaseAccess;
 import net.sf.xmm.moviemanager.database.DatabaseHSQL;
+import net.sf.xmm.moviemanager.gui.DialogAlert;
+import net.sf.xmm.moviemanager.gui.DialogDatabaseConverter;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
-import net.sf.xmm.moviemanager.util.*;
+import net.sf.xmm.moviemanager.util.CustomFileFilter;
+import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.Localizer;
+import net.sf.xmm.moviemanager.util.SysUtil;
 
 import org.apache.log4j.Logger;
-
-import java.awt.event.*;
-import java.io.*;
-import java.util.ArrayList;
-
-import javax.swing.*;
 
 
 public class MovieManagerCommandConvertDatabase extends JPanel implements ActionListener{
@@ -124,7 +143,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	
 	/* Owner, title, modal=true */
 	dbConverter = new JDialog(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.database-converter.title"), true); //$NON-NLS-1$
-	dbConverter.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	dbConverter.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	
 	final JComponent newContentPane = new DialogDatabaseConverter(newDatabase, movieListModel, episodeList, this);
         newContentPane.setOpaque(true);
@@ -211,7 +230,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	ExtendedFileChooser fileChooser = new ExtendedFileChooser();
 	newDatabaseType = 1;
 	
-	if (FileUtil.isWindows()) {
+	if (SysUtil.isWindows()) {
 		if (MovieManager.getIt().getDatabase() instanceof DatabaseAccess) {
 			fileChooser.setFileFilter(new CustomFileFilter(new String[]{"mdb", "accdb"},new String("MS Access Database File (*.mdb, *.accdb)"))); //$NON-NLS-1$ //$NON-NLS-2$
 			fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"properties", "script"},new String("HSQL Database Files (*.properties, *.script)"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -262,7 +281,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 //    	 If any notes have been changed, they will be saved before converting database.
     	MovieManagerCommandSaveChangedNotes.execute();
     	
-    	if (!FileUtil.isWindows() && !MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL")) {
+    	if (!SysUtil.isWindows() && !MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL")) {
     		DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.alert.windows-only.title"), Localizer.getString("MovieManagerCommandConvertDatabase.alert.windows-only.message"));
     		GUIUtil.showAndWait(alert, true);
     	}

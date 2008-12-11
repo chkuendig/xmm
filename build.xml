@@ -21,6 +21,7 @@
 	  run                  runs the moviemanager
 	  create-archives      creates the zip files
 	  izpackinstaller      creates the izpack java installer
+	  make-http-jar        creates the http archive 
 	</echo>
   </target>
   
@@ -29,16 +30,83 @@
   <property name="build" location="MovieManager/"/>
   <property name="dist"  location="dist"/>
   <property name="izpack.dir" location="izpack"/>
-  <property name="version"  value="2.5.4.1"/>
+
+  <property name="version"  value="2.7 Beta 1"/>
+  <property name="versionName"  value="2.7.Beta.1"/>
+
   <property name="base" value="MovieManager/"/>
   
-
-
+  <property name="executers" value="MovieManager.exe, MovieManager.jar, Applet.html"/>
+  <property name="jasperFiles" value="*.jasper, *.png, *.jrxml"/>
+  
+  <property name="infoFiles" value="License/, Readme.rtf, Readme.txt, Changelog.txt"/>
+ 
+  <property name="library_file_list" value="*.jar,
+										   *.dll,
+										   Required-libraries.txt,
+										   cobra/, 
+										   driveinfo/, 
+										   drivers/*.jar, 
+										   mac/, 
+										   LookAndFeels/oalnf.jar,
+										   LookAndFeels/skinlf.jar,
+										   LookAndFeels/JTattoo.1.2.4.jar,
+										   LookAndFeels/kunststoff.jar,
+										   LookAndFeels/JGoodies-2.1.4.jar,
+										   LookAndFeels/OfficeLnFs_2.7.jar,
+										   LookAndFeels/InfoNode-1.5.jar,
+										   LookAndFeels/CLooks_13.jar,
+										   LookAndFeels/lipstikLF-RC2.jar,
+										   LookAndFeels/squareness.2.3.0.jar,
+										   LookAndFeels/PgsLookAndFeel-1.0.1.jar,
+										   LookAndFeels/substance-lite-4.1.jar
+										   "/>
+  
+  
+ 
+  <property name="library_file_list" value="*.jar,
+											*.dll,
+											Required-libraries.txt,
+											cobra/, 
+											driveinfo/, 
+											drivers/*.jar, 
+											mac/, 
+											LookAndFeels/oalnf.jar,
+											LookAndFeels/skinlf.jar,
+											LookAndFeels/JTattoo.1.2.4.jar,
+											LookAndFeels/kunststoff.jar,
+											LookAndFeels/JGoodies-2.1.4.jar,
+											LookAndFeels/OfficeLnFs_2.7.jar,
+											LookAndFeels/InfoNode-1.5.jar,
+											LookAndFeels/CLooks_13.jar,
+											LookAndFeels/lipstikLF-RC2.jar,
+											LookAndFeels/squareness.2.3.0.jar,
+											LookAndFeels/PgsLookAndFeel-1.0.1.jar,
+											LookAndFeels/substance-lite-4.1.jar
+											"/>
+  
+  
+  <property name="template_files" value="Simple_Virtue/Simple_Virtue.css,
+										 Simple_Virtue/Simple_Virtue.html,
+										 Simple_Virtue/template.txt,
+										 
+										 Simple_Virtue/Styles/A_Touch_of_Blue.css,
+										 Simple_Virtue/Styles/A_Touch_of_Blue.style.txt,
+										 Simple_Virtue/Styles/Blue_Motion.css,
+										 Simple_Virtue/Styles/Blue_Motion.png,
+										 Simple_Virtue/Styles/Blue_Motion.style.txt,
+										 Simple_Virtue/Styles/Dark_Inferno.css,
+										 Simple_Virtue/Styles/Dark_Inferno.png,
+										 Simple_Virtue/Styles/Dark_Inferno.style.txt,
+										 Simple_Virtue/Styles/Silver_Flower.css,
+										 Simple_Virtue/Styles/Silver_Flower.png,
+										 Simple_Virtue/Styles/Silver_Flower.style.txt
+										 "/>
+  
+ 
   <!-- <property name="$(base)/base.dir"  location=""/> -->
   <property name="source"  value="$(base)/source/"/>
   
-  
-
    <path id="izpack.claspath">
 	<fileset dir="${izpack.dir}/lib/">
 	  <include name="*.jar"/>
@@ -49,6 +117,7 @@
   <path id="project.lib.path">
 	<fileset dir="${base}/lib/">
 	  <include name="**/*.jar"/>
+	  <include name="**/**/*.jar"/>
 	  <include name="*.jar"/>
 	</fileset>
   </path>
@@ -78,46 +147,8 @@
 	</javac>
   </target>
   
-  
-  <!-- removes all tabs replaces those with spaces and removes unqualified EOL
-	   and replaces those with the correct EOL -->
-  <target name="remove-crlf" description="removes all tabs and 
-														 unqualified end of lines">
-	<fixcrlf srcdir="${source}"
-			 eol="lf"
-			 tab="remove"
-			 tablength="4"
-			 javafiles="yes"
-			 includes="**/*.java"
-			 />
-  </target>
-  
-  
-  <target name="makejar" 
-		  description="Compiles code, output goes to the build dir."
-		  depends="compile">
-	
-	<!-- Ensure that the timestamp has been set -->
-	<tstamp/>
-	
-	<jar destfile="MovieManager/MovieManager.jar" manifest="Manifest.txt">
-	  
-	  <fileset dir="MovieManager/">
-		
-		<include name="net/"/>
-		<include name="codecs/"/>
-		<include name="images/"/>
-		<include name="queries/"/>
-		<include name="MovieManager.tmx"/>
-	  </fileset>
-	  
-	  <manifest>
-		<attribute name="Built-By" value="${user.name} on ${TODAY}"/>
-	  </manifest>
-	  
-	</jar>
-  </target>
-  
+
+
   
   <target name="all"
 		  description="generate the distribution" >
@@ -130,8 +161,12 @@
 	
 	<!-- Builds the thing -->
 	<antcall target="build" />
+
+	<echo>Creating arhcives...</echo>
 	<antcall target="create-archives" />
-	<antcall target="makeIzpackInstaller" />
+
+	<echo>Creating Izpack Installer...</echo>
+	<antcall target="izpackinstaller" />
 	
   </target>
   
@@ -145,95 +180,73 @@
   
   
 
- 
-	
 
-  
+
   <target name="create-archives" 
-		  description="Creates the ZIP archives.">
+		  description="Creates the ZIP archives."
+		  depends="compile"
+		  >
 	
 	<mkdir dir="${dist}"/>
+	<delete includeemptydirs="true">
+	  <fileset dir="${dist}" includes="**/*"/>
+	</delete>
 	
-	<antcall target="makeLooAndFeelIni"/>
+	<antcall target="makeLookAndFeelIni"/>
 
 	<!-- Creating Binary zip MovieManager.v.version.bin.zip  Mirror  -->
-	<zip destfile="${dist}/MovieManager.v.${version}.bin.zip"
+	<zip destfile="${dist}/MovieManager.v.${versionName}.bin.zip"
 		 update="false"
 		 compress="true" >
 	  
-	  <!-- Files in root dir (install dir) -->
+	  
+	  <!-- Files in root dir (install dir)  -->
 	  <zipfileset prefix="MeDs-Movie-Manager" dir="MovieManager" 
-				  includes="castor.properties, 
-							Icon.ico,
-							log4j.properties, 
-							mapping.xml, 
-							MovieManager.exe, 
-							MovieManager.jar, 
-							MovieManager.tmx, 
-							Temp.mdb">
-
-		<include name="lib/"/>
-		<include name="reports/"/>
-		
+				  includes="${executers}">
+		<include name="config/"/>
+		<exclude name="config/Config.ini"/>
 	  </zipfileset>
 	  
-	  <!-- Look & Feels -->
-	  <zipfileset prefix="MeDs-Movie-Manager/LookAndFeels/" 
-				  dir="MovieManager/LookAndFeels/" 
-				  includes="JTattoo-1.2.2.jar,
-							kunststoff.jar,
-							looks-2.1.4.jar,
-							OfficeLnFs_2.6.jar,
-							substance-lite-3.3.jar,
-							synthetica.2.3.0.jar,
-							syntheticaBlackMoon.jar,
-							syntheticaBlackStar.jar,
-							syntheticaBlueIce.jar,
-							syntheticaBlueMoon.jar,
-							syntheticaBlueSteel.jar,
-							syntheticaGreenDream.jar,
-							syntheticaSilverMoon.jar
-							">
-							
-		
-		<include name="Oyoaha Theme Packs/"/>
-		<include name="Skinlf Theme Packs/"/>
-		
-	  </zipfileset>
-
-	  <zipfileset prefix="MeDs-Movie-Manager/LookAndFeels/" 
+	   <!-- Files for the report generator  -->
+	  <zipfileset prefix="MeDs-Movie-Manager/reports/" dir="MovieManager/reports/" 
+				  includes="*.jasper, *.png, *.jrxml"/>
+	  
+	  <!-- libraries -->
+	  <zipfileset prefix="MeDs-Movie-Manager/lib/" 
+				  dir="MovieManager/lib/" 
+				  includes="${library_file_list}"
+				  />
+	 
+	  <zipfileset prefix="MeDs-Movie-Manager/lib/LookAndFeels/" 
 				  dir="${dist}" 
 				  includes="lookAndFeels.ini">
 	  </zipfileset>
-	  
-	  
-	  <zipfileset prefix="MeDs-Movie-Manager" dir="">
-		<include name="License/"/>
-		<include name="Readme.rtf"/>
-		<include name="Readme.txt"/>
-		<include name="Changelog.txt"/>
-	  </zipfileset>
+
+	  <!-- html template files -->
+	  <zipfileset id="template_simple_virtue" 
+				  prefix="MeDs-Movie-Manager/HTML_templates/" 
+				  dir="MovieManager/HTML_templates/" 
+				  includes="${template_files}"/>
+
+	 	 	  
+	  <zipfileset prefix="MeDs-Movie-Manager" dir=""
+				  includes="${infoFiles}"/>
 	  
 	</zip>
 	
+
+
 	<!-- Creating Source zip MovieManager.v.version.src.zip  Mirror  -->
-	<zip destfile="${dist}/MovieManager.v.${version}.src.zip"
+	<zip destfile="${dist}/MovieManager.v.${versionName}.src.zip"
 		 update="false"
 		 compress="true" >
 	  
 	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager" 
 				  dir="MovieManager" 
-				  includes="castor.properties, 
-							Icon.ico, 
-							log4j.properties, 
-							mapping.xml, 
-							MovieManager.exe, 
-							MovieManager.jar, 
-							MovieManager.tmx, 
-							Temp.mdb">
+				  includes="${executers}">
 		
-		<include name="lib/"/>
 		<include name="reports/"/>
+		<include name="config/"/>
 		<include name="codecs/"/>
 		<include name="images/"/>
 		<include name="queries/"/>
@@ -241,41 +254,28 @@
 		
 	  </zipfileset>
 	  
-	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/LookAndFeels/" 
-				  dir="MovieManager/LookAndFeels/" 
-				  includes="JTattoo-1.2.2.jar,
-							kunststoff.jar,
-							looks-2.1.4.jar,
-							OfficeLnFs_2.6.jar,
-							substance-lite-3.3.jar,
-							synthetica.2.3.0.jar,
-							syntheticaBlackMoon.jar,
-							syntheticaBlackStar.jar,
-							syntheticaBlueIce.jar,
-							syntheticaBlueMoon.jar,
-							syntheticaBlueSteel.jar,
-							syntheticaGreenDream.jar,
-							syntheticaSilverMoon.jar
-							">
-		
-		<include name="Oyoaha Theme Packs/"/>
-		<include name="Skinlf Theme Packs/"/>
-		
-	  </zipfileset>
+	 
+
+	  <!-- libraries -->
+	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/lib/" 
+				  dir="MovieManager/lib/" 
+				  includes="${library_file_list}"
+				  />
 	  
-	  
-	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/LookAndFeels/" 
+	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/lib/LookAndFeels/" 
 				  dir="${dist}" 
 				  includes="lookAndFeels.ini">
 	  </zipfileset>
+
+	  <!-- Simple Virtue template -->
+	  <zipfileset id="template_simple_virtue" 
+				  prefix="MeDs-Movie-Manager-Source/MovieManager/HTML_templates/" 
+				  dir="MovieManager/HTML_templates/" 
+				  includes="${template_files}"/>
+	 
 	  
-	  
-	  <zipfileset prefix="MeDs-Movie-Manager-Source" dir="">
-		<include name="License/"/>
+	  <zipfileset prefix="MeDs-Movie-Manager-Source" dir="" includes="${infoFiles}">
 		<include name="izpack/"/>
-		<include name="Readme.rtf"/>
-		<include name="Readme.txt"/>
-		<include name="Changelog.txt"/>
 		<include name="makejar.bat"/>
 		<include name="compile.bat"/>
 		<include name="run.bat"/>
@@ -285,7 +285,7 @@
 		<include name="run.sh"/>
 		<include name="Manifest.txt"/>
 		<include name="build.xml"/>
-		<include name="build-xmm.xml"/>
+		<include name="build-mac.xml"/>
 		<include name="So how do I get this thing running.txt"/>
 		<include name=".classpath"/>
 		<include name=".project"/>
@@ -297,34 +297,89 @@
   </target>
   
   
-  <!-- when called from command line dist must be created and makeLooAndFeelIni called -->
-  <target name="izpackinstaller" 
-		  description="Creates the izPack installer.">
+
+  
+  
+  
+  <target name="makejar" 
+		  description="Creates the MovieManager.jar file"
+		  depends="compile">
 	
-	<mkdir dir="${dist}"/>
-	<antcall target="makeLooAndFeelIni"/>
-	<antcall target="makeIzpackInstaller"/>
+	<!-- Ensure that the timestamp has been set -->
+	<tstamp/>
 	
+	<jar destfile="MovieManager/MovieManager.jar" manifest="Manifest.txt">
+	  
+	  <fileset dir="MovieManager/">
+		
+		<include name="net/"/>
+		<include name="codecs/"/>
+		<include name="images/"/>
+		<include name="queries/"/>
+		<include name="config/MovieManager.tmx"/>
+		<include name="config/internalConfig.ini"/>
+		<include name="config/plugins.ini"/>
+	  </fileset>
+	  
+	  <manifest>
+		<attribute name="Built-By" value="${user.name} on ${TODAY}"/>
+	  </manifest>
+	  
+	</jar>
   </target>
   
 
-   <!-- create the izpack java installer -->
-  <target name="makeIzpackInstaller" 
-		  description="Creates the izPack installer.">
-	
-	<taskdef name="izpack" classname="com.izforge.izpack.ant.IzPackTask">
-		<classpath refid="izpack.claspath"/>
-    </taskdef>
 
-
-	<izpack input="${izpack.dir}/build-izpack.xml"
-			output="${dist}/MovieManager.v.${version}.bin.installer.jar"
-			installerType="standard" basedir="."
-			izPackDir="${izpack.dir}"/>
+  <target name="make-http-jar" 
+		  description="Compiles code, output goes to the build dir."
+		  depends="compile">
 	
+	<!-- Ensure that the timestamp has been set -->
+	<tstamp/>
+	
+	<jar destfile="${dist}/MovieManager-http.jar" 
+		 basedir="Moviemanager/" 
+		 includes="net/sf/xmm/moviemanager/models/ModelIMDB.class, 
+				   net/sf/xmm/moviemanager/util/StringUtil.class">
+	  
+	  <fileset dir="MovieManager/">
+		<include name="net/sf/xmm/moviemanager/http/"/>
+	  </fileset>
+	  
+	  
+<!--	  <fileset dir="MovieManager/" includes="net/sf/xmm/moviemanager/models/ModelIMDB.java,
+											 net/sf/xmm/moviemanager/util/StringUtil.java
+									   "/>
+ -->	  
+	  
+	  <manifest>
+		<attribute name="Built-By" value="${user.name} on ${TODAY}"/>
+	  </manifest>
+	  
+	</jar>
   </target>
   
+  
+ <target name="izpackinstaller" >
+		 <ant antfile="izpack/build-izpack.xml" target="makeIzpackInstaller" inheritAll="true" inheritrefs="true"/>
+  </target>
 
+ 
+
+
+
+  <!-- removes all tabs replaces those with spaces and removes unqualified EOL
+	   and replaces those with the correct EOL -->
+  <target name="remove-crlf" description="removes all tabs and 
+										  unqualified end of lines">
+	<fixcrlf srcdir="${source}"
+			 eol="lf"
+			 tab="remove"
+			 tablength="4"
+			 javafiles="yes"
+			 includes="**/*.java"
+			 />
+  </target>
   
   <!-- generates the javadoc -->
   <target name="javadoc" depends="compile">
@@ -349,9 +404,14 @@
   
   <target name="clean"
 		  description="clean up" >
-	<!-- Delete the ${dist} directory trees -->
-	<delete dir="${build}/net/"/>
-	<delete dir="${dist}"/>
+
+	<mkdir dir="${dist}"/>
+
+	<!--  Delete files and directories in dist -->
+	<delete includeemptydirs="true">
+	  <fileset dir="${dist}" includes="**/*"/>
+	</delete>
+	
 	<delete file="${build}/MovieManager.jar"/>
   </target>
   
@@ -397,77 +457,102 @@
 
 
 
-  <target name="makeLooAndFeelIni" 
-		  description="generate the distribution" >
-	<!--	  depends="compile, makejar" -->
+  <target name="makeLookAndFeelIni" 
+		  description="generate the distribution">
 	
 	<echo file="${dist}/lookAndFeels.ini" append="false">
-Here you can add new Look and Feels's.
-Make sure the look and Feel jar-file is placed in the 'LookAndFeels' directory 
-and that the correct class is given below.
-The name and classname must be enclosed in quotes.
-The names may be set to whatever fit your needs.
-
-Example:
-
-"Metal look and feel"                 "javax.swing.plaf.metal.MetalLookAndFeel"
-"Windows look and feel"               "com.sun.java.swing.plaf.windows.WindowsLookAndFeel"
-
-The metal and windows look and feels are preinstalled.
-Define the look and feels below:
-#
-
-"Kunststoff"			              "com.incors.plaf.kunststoff.KunststoffLookAndFeel"
-
-"Jgoodies windows"		              "com.jgoodies.looks.windows.WindowsLookAndFeel"
-"Jgoodies Plastic"		              "com.jgoodies.looks.plastic.PlasticLookAndFeel"
-"Jgoodies Plastic 3D"		          "com.jgoodies.looks.plastic.Plastic3DLookAndFeel"
-"Jgoodies PlasticXP"		          "com.jgoodies.looks.plastic.PlasticXPLookAndFeel"
-
-"Office 2003"			              "org.fife.plaf.Office2003.Office2003LookAndFeel"
-"Office XP"			                  "org.fife.plaf.OfficeXP.OfficeXPLookAndFeel"
-"Office VisualStudio 2005"	          "org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel"
-
-"Substance - FieldOfWheat"            "org.jvnet.substance.skin.SubstanceFieldOfWheatLookAndFeel"
-"Substance - Mango"	                  "org.jvnet.substance.skin.SubstanceMangoLookAndFeel"
-"Substance - GreenMagic"              "org.jvnet.substance.skin.SubstanceGreenMagicLookAndFeel"
-"Substance - OfficeBlue2007"          "org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel"
-"Substance - EmeraldDusk"             "org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel"
-"Substance - ChallengerDeep"          "org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel"
-"Substance - Magma"	                  "org.jvnet.substance.skin.SubstanceMagmaLookAndFeel"
-"Substance - Raven"	                  "org.jvnet.substance.skin.SubstanceRavenLookAndFeel"
-"Substance - OfficeSilver2007"        "org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel"
-"Substance - Moderate"                "org.jvnet.substance.skin.SubstanceModerateLookAndFeel"
-"Substance - Sahara"   	              "org.jvnet.substance.skin.SubstanceSaharaLookAndFeel"
-"Substance - Creme"   	              "org.jvnet.substance.skin.SubstanceCremeLookAndFeel"
-"Substance - Business"                "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel"
-"Substance - Business blue"           "org.jvnet.substance.skin.SubstanceBusinessBlueLookAndFeel"
-"Substance - Autumn"                  "org.jvnet.substance.skin.SubstanceAutumnLookAndFeel"
-
-"JTattoo - Acryl" 	                  "com.jtattoo.plaf.acryl.AcrylLookAndFeel"
-"JTattoo - Aero" 	                  "com.jtattoo.plaf.aero.AeroLookAndFeel"
-"JTattoo - Aluminium" 	              "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel"
-"JTattoo - Bernstein" 	              "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel"
-"JTattoo - Fast" 	                  "com.jtattoo.plaf.fast.FastLookAndFeel"
-"JTattoo - HiFi" 	                  "com.jtattoo.plaf.hifi.HiFiLookAndFeel" 
-"JTattoo - McWin" 	                  "com.jtattoo.plaf.mcwin.McWinLookAndFeel"
-"JTattoo - Mint" 	                  "com.jtattoo.plaf.mint.MintLookAndFeel"
-"JTattoo - Noire" 	                  "com.jtattoo.plaf.mint.MintLookAndFeel"
-"JTattoo - Smart" 	                  "com.jtattoo.plaf.smart.SmartLookAndFeel"
-"JTattoo - Luna" 	                  "com.jtattoo.plaf.luna.LunaLookAndFeel"
-
-"Synetetica Standard"  	              "de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel"
-"Synetetica BlackStar"                "de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel"
-"Synetetica greendream"               "de.javasoft.plaf.synthetica.SyntheticaGreenDreamLookAndFeel"
-"Synetetica BlueSteel" 	              "de.javasoft.plaf.synthetica.SyntheticaBlueSteelLookAndFeel"
-"Synetetica BlackMoon"                "de.javasoft.plaf.synthetica.SyntheticaBlackMoonLookAndFeel"
-"Synetetica BlueMoon"                 "de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel"
-"Synetetica SilverMoon"               "de.javasoft.plaf.synthetica.SyntheticaSilverMoonLookAndFeel"
-"Synetetica BlueIce"	              "de.javasoft.plaf.synthetica.SyntheticaBlueIceLookAndFeel"
-"Synetetica GreenDream"	              "de.javasoft.plaf.synthetica.SyntheticaGreenDreamLookAndFeel"
-</echo>
+	  
+	  Here you can add new Look and Feels's.
+	  Make sure the look and Feel jar-file is placed in the 'LookAndFeels' directory 
+	  and that the correct class is given below.
+	  The name and classname must be enclosed in quotes.
+	  The names may be set to whatever fit your needs.
+	  
+	  Example:
+	  
+	  "Metal look and feel"                    "javax.swing.plaf.metal.MetalLookAndFeel"
+	  "Windows look and feel"                  "com.sun.java.swing.plaf.windows.WindowsLookAndFeel"
+	  
+	  The metal and windows look and feels are preinstalled.
+	  Define the look and feels below:
+	  #
+	  
+	  "Kunststoff"                 			   "com.incors.plaf.kunststoff.KunststoffLookAndFeel" 						  "1.4"    
+	  
+	  "JTattoo - Acryl" 	     			   "com.jtattoo.plaf.acryl.AcrylLookAndFeel"      							  "1.4"    
+	  "JTattoo - Aero" 	     				   "com.jtattoo.plaf.aero.AeroLookAndFeel"       							  "1.4"    
+	  "JTattoo - Aluminium" 	     		   "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel"   						  "1.4"    
+	  "JTattoo - Bernstein" 	     		   "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel" 						  "1.4"    
+	  "JTattoo - Fast" 	     				   "com.jtattoo.plaf.fast.FastLookAndFeel"       							  "1.4"    
+	  "JTattoo - HiFi" 	     				   "com.jtattoo.plaf.hifi.HiFiLookAndFeel"       							  "1.4"    
+	  "JTattoo - McWin" 	     			   "com.jtattoo.plaf.mcwin.McWinLookAndFeel"     							  "1.4"    
+	  "JTattoo - Mint" 	     				   "com.jtattoo.plaf.mint.MintLookAndFeel"       							  "1.4"    
+	  "JTattoo - Noire" 	     			   "com.jtattoo.plaf.noire.NoireLookAndFeel"     							  "1.4"    
+	  "JTattoo - Smart" 	     			   "com.jtattoo.plaf.smart.SmartLookAndFeel"     							  "1.4"   
+	  "JTattoo - Luna" 	     				   "com.jtattoo.plaf.luna.LunaLookAndFeel"        							  "1.4"    
+	  
+	  "Pagosoft"              				   "com.pagosoft.plaf.PgsLookAndFeel"                 						  "1.4"   
+	  "Compiere"                   			   "org.compiere.plaf.CompiereLookAndFeel"            						  "1.5"    
+	  "Squareness"                 			   "net.beeger.squareness.SquarenessLookAndFeel"      						  "1.4"    
+	  "InfoNode"                   			   "net.infonode.gui.laf.InfoNodeLookAndFeel" 								  "1.4"   
+	  "Lipstik" 		     				   "com.lipstikLF.LipstikLookAndFeel"										  "1.5"   
+	  
+	  "Jgoodies windows"     	     		   "com.jgoodies.looks.windows.WindowsLookAndFeel"          			      "1.4"    
+	  "Jgoodies Plastic"	     			   "com.jgoodies.looks.plastic.PlasticLookAndFeel"    						  "1.4"    
+	  "Jgoodies Plastic 3D"	     			   "com.jgoodies.looks.plastic.Plastic3DLookAndFeel"  						  "1.4"    
+	  "Jgoodies PlasticXP"         			   "com.jgoodies.looks.plastic.PlasticXPLookAndFeel"  						  "1.4"    
+	  
+	  "Office 2003"         				   "org.fife.plaf.Office2003.Office2003LookAndFeel"   						  "1.4"    
+	  "Office XP" 		   		   			   "org.fife.plaf.OfficeXP.OfficeXPLookAndFeel"       						  "1.4"    
+	  "Office VisualStudio 2005" 		   	   "org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel"      		  "1.4"   
+	  
+	  "Substance - Default"	 	     		   "org.jvnet.substance.SubstanceLookAndFeel" 								  "1.5"    
+	  "Substance - Autumn"         			   "org.jvnet.substance.skin.SubstanceAutumnLookAndFeel" 					  "1.5"
+	  "Substance - Business Black Steel"       "org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel" 		  "1.5"
+	  "Substance - Business Blue Steel"        "org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel" 		  "1.5"
+	  "Substance - Business"       			   "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel" 					  "1.5"
+	  "Substance - Challenger Deep" 		   "org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel" 			  "1.5"
+	  "Substance - Creme"   	     		   "org.jvnet.substance.skin.SubstanceCremeLookAndFeel" 					  "1.5"
+	  "Substance - EmeraldDusk"    			   "org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel" 				  "1.5"
+	  "Substance - Field Of Wheat"   		   "org.jvnet.substance.skin.SubstanceFieldOfWheatLookAndFeel" 				  "1.5"
+	  "Substance - Green Magic"     		   "org.jvnet.substance.skin.SubstanceGreenMagicLookAndFeel" 				  "1.5"
+	  "Substance - Magma"	     			   "org.jvnet.substance.skin.SubstanceMagmaLookAndFeel" 					  "1.5"
+	  "Substance - Mango"	     			   "org.jvnet.substance.skin.SubstanceMangoLookAndFeel" 					  "1.5"
+	  "Substance - Office Blue 2007" 		   "org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel" 			  "1.5"
+	  "Substance - OfficeSilver2007"    	   "org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel" 			  "1.5"
+	  "Substance - Raven Graphite"	     	   "org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel" 			  "1.5"
+	  "Substance - Raven"	     			   "org.jvnet.substance.skin.SubstanceRavenLookAndFeel" 					  "1.5"
+	  "Substance - Sahara"   	     		   "org.jvnet.substance.skin.SubstanceSaharaLookAndFeel" 					  "1.5"
+	  
+	</echo>
 	
   </target>
+
+
+
+
+<!-- not functioning yet -->
+  <target name="doParams">
+    <antcall target="tokenize">
+       <param name="params" value="${jdbc.driver.properties}"/>
+    </antcall>
+  </target>
+        
+  
+  <target name="tokenize">
+        
+        <script language="beanshell" setbeans="true">
+               System.out.println("Hello world");
+                        
+        </script>
+
+  </target>
+
+
+
+
+
+
 
 </project>
 

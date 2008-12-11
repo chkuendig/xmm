@@ -86,42 +86,7 @@ public class ModelMovie extends ModelEntry {
 		additionalInfo = new ModelAdditionalInfo(true);
 	}
 
-	public void copyData(ModelEntry model) {
-		setKey(model.getKey());
-		setUrlKey(model.getUrlKey());
-		setCover(model.getCover());
-		setDate(model.getDate());
-		setTitle(model.getTitle());
-		setDirectedBy(model.getDirectedBy());
-		setWrittenBy(model.getWrittenBy());
-		setGenre(model.getGenre());
-		setRating(model.getRating());
-		setPlot(model.getPlot());
-		setCast(model.getCast());
-		setNotes(model.getNotes());
-		setSeen(model.getSeen());
-		setAka(model.getAka());
-		setCountry(model.getCountry());
-		setLanguage(model.getLanguage());
-		setColour(model.getColour());
-		setCertification(model.getCertification());
-		setWebSoundMix(model.getWebSoundMix());
-		setWebRuntime(model.getWebRuntime());
-		setAwards(model.getAwards());
-		setMpaa(model.getMpaa());
-
-		if (model.getCoverData() != null)
-			setCoverData(model.getCoverData());
-		
-		hasGeneralInfoData = model.getHasGeneralInfoData();
-		
-		if (model.getHasAdditionalInfoData())
-			setAdditionalInfo(model.getAdditionalInfo());
-		else
-			setAdditionalInfo(new ModelAdditionalInfo());
-		
-		hasChangedNotes = model.hasChangedNotes;
-	}
+	
 
 	public boolean isEpisode() {
 		return false;
@@ -129,14 +94,25 @@ public class ModelMovie extends ModelEntry {
 	
 		
 	public void updateGeneralInfoData() {
-		updateGeneralInfoData(true);
-	}
-	
-	public void updateGeneralInfoData(boolean getCover) {
+		
 		if (getKey() != -1) {
 
 			ModelEntry model = null;
-			model = MovieManager.getIt().getDatabase().getMovie(getKey(), getCover);
+			model = MovieManager.getIt().getDatabase().getMovie(getKey());
+
+			if (model != null) {
+				copyData(model);
+				hasGeneralInfoData = true;
+			}
+		}
+	}
+	
+	public void updateGeneralInfoData(boolean getCover) {
+		
+		if (getKey() != -1 && MovieManager.getIt().getDatabase().isMySQL()) {
+
+			ModelEntry model = null;
+			model = ((DatabaseMySQL) MovieManager.getIt().getDatabase()).getMovie(getKey(), getCover);
 
 			if (model != null) {
 				copyData(model);
@@ -147,15 +123,17 @@ public class ModelMovie extends ModelEntry {
 	public void updateCoverData() {
 
 		if (getKey() != -1) {
-			if (MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL"))
+			if (MovieManager.getIt().getDatabase().isMySQL())
 				setCoverData(((DatabaseMySQL) MovieManager.getIt().getDatabase()).getCoverDataMovie(getKey()));
 		}
 	}
 
+	
+	
 	public void updateAdditionalInfoData() {
 	
 		if (additionalInfo != null && additionalInfo.hasOldExtraInfoFieldNames())
-			additionalInfo.updateExtraInfoFieldNames();
+			ModelAdditionalInfo.updateExtraInfoFieldNames();
 		
 		if (getKey() != -1) {
 

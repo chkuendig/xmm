@@ -20,77 +20,77 @@
 
 package net.sf.xmm.moviemanager.fileproperties;
 
-import net.sf.xmm.moviemanager.util.FileUtil;
-
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import net.sf.xmm.moviemanager.util.FileUtil;
+
 class FilePropertiesRIFF extends FileProperties {
 
-    private final int RIFF_AVI = 0x20495641;
+	private final int RIFF_AVI = 0x20495641;
 
-    private final int AVI_LIST = 0x5453494c;
+	private final int AVI_LIST = 0x5453494c;
 
-    private final int AVI_movi = 0x69766f6d;
+	private final int AVI_movi = 0x69766f6d;
 
-    private final int AVI_avih = 0x68697661;
+	private final int AVI_avih = 0x68697661;
 
-    private final int AVI_dmlh = 0x686C6D64;
+	private final int AVI_dmlh = 0x686C6D64;
 
-    private final int AVI_avih_SIZE = 0x00000038;
+	private final int AVI_avih_SIZE = 0x00000038;
 
-    private final int AVI_strh = 0x68727473;
+	private final int AVI_strh = 0x68727473;
 
-    private final int AVI_strh_SIZE = 0x00000038;
+	private final int AVI_strh_SIZE = 0x00000038;
 
-    private final int AVI_vids = 0x73646976;  
+	private final int AVI_vids = 0x73646976;  
 
-    private final int AVI_auds = 0x73647561;//61756473 <-- reverse
+	private final int AVI_auds = 0x73647561;//61756473 <-- reverse
 
-    private final int AVI_strf = 0x66727473;
+	private final int AVI_strf = 0x66727473;
 
-    private final int AVI_INFO = 0x4f464e49;
+	private final int AVI_INFO = 0x4f464e49;
 
-    //private final int AVI_INFO2 = 0x494e464f;// 4f464e49 <-- reverse
+	//private final int AVI_INFO2 = 0x494e464f;// 4f464e49 <-- reverse
 
-    private int fccHandler1;
-    private boolean checkForSpecifiedCodecInfo = false;
+	private int fccHandler1;
+	private boolean checkForSpecifiedCodecInfo = false;
 
-    private boolean extendedCodecInfoFound = false;
-    private int extendedCodecInfoChunkCounter = 0;
+	private boolean extendedCodecInfoFound = false;
+	private int extendedCodecInfoChunkCounter = 0;
 
-    private boolean header = true;
+	private boolean header = true;
 
-    /* Not always correct or valid... */
-    private int lastSubChunk = 0;
+	/* Not always correct or valid... */
+	private int lastSubChunk = 0;
 
-    private long videoAudioStreamSize = 0;
+	private long videoAudioStreamSize = 0;
 
-    private boolean quit = false;
+	private boolean quit = false;
 
-    private String audioCodec = "";
-    private String audioChannels = "";
-    private String audioRate = "";
-    private String audioBitrate = "";
+	private String audioCodec = "";
+	private String audioChannels = "";
+	private String audioRate = "";
+	private String audioBitrate = "";
 
-    /* Is needed if there is a dmlh chunk (openDML AVI/Extended AVI/AVI2) */
-    private int dwMicroSecPerFrame; 
+	/* Is needed if there is a dmlh chunk (openDML AVI/Extended AVI/AVI2) */
+	private int dwMicroSecPerFrame; 
 
-    private final int AVI_JUNK = 0x4b4e554a;
+	private final int AVI_JUNK = 0x4b4e554a;
 
-    // Unused (but that may exist)...
-    //private final int AVI_idx1 = 0x31786469;
-    //private final int AVI_strn = 0x6e727473;
+	// Unused (but that may exist)...
+	//private final int AVI_idx1 = 0x31786469;
+	//private final int AVI_strn = 0x6e727473;
 
 
 
-    /**
-     * Processes a file from the given DataInputStream.
-     **/
-    protected void process(RandomAccessFile dataStream) throws Exception {
+	/**
+	 * Processes a file from the given DataInputStream.
+	 **/
+	protected void process(RandomAccessFile dataStream) throws Exception {
 		log.info("Start processing RIFF file.");
-	
+
 		dataStream.seek(4);
 
 		/* Gets the stream size... (4 bytes) */          
@@ -123,12 +123,12 @@ class FilePropertiesRIFF extends FileProperties {
 		} else {
 			log.info("RIFF file format not supported.");
 		}
-    }
+	}
 
-    /**
-     * Processes n bytes of the AVI chunk.
-     **/
-    private void processAviChunks(RandomAccessFile dataStream, int bytesToProcess) throws Exception {
+	/**
+	 * Processes n bytes of the AVI chunk.
+	 **/
+	private void processAviChunks(RandomAccessFile dataStream, int bytesToProcess) throws Exception {
 
 		int chunkType;
 		int chunkSize;
@@ -150,14 +150,14 @@ class FilePropertiesRIFF extends FileProperties {
 			n -= chunkSize;
 
 			if (header) {
-	
+
 				switch (chunkType) {
 
 				case(0): {
 					// chunkType should never be 0
 					errorOccured = true;
 				}
-				
+
 				case(AVI_LIST): {
 
 					chunkType = readUnsignedInt32(dataStream);
@@ -170,7 +170,7 @@ class FilePropertiesRIFF extends FileProperties {
 
 						/* A very aproximate test to check if the AVI_movi chunk size isn't wrong*/
 						if (chunkSize < (dataStream.length()*0.7) || 
-							chunkSize > dataStream.length())
+								chunkSize > dataStream.length())
 							videoAudioStreamSize = dataStream.length();
 						else
 							videoAudioStreamSize = chunkSize;
@@ -188,7 +188,7 @@ class FilePropertiesRIFF extends FileProperties {
 					break;
 				}
 				case(AVI_avih): {
-	
+
 					if (chunkSize != AVI_avih_SIZE) {
 						throw new Exception("RIFF file corrupted (avih chunk size is "+chunkSize+" and not 0x38 as expected).");
 					}
@@ -254,7 +254,7 @@ class FilePropertiesRIFF extends FileProperties {
 					break;
 				}
 				case(AVI_dmlh): {
-					
+
 					/* Extended AVI header (openDML AVI) */
 					/* To get correct duration the total number of frames must be grabbed here. */
 
@@ -299,7 +299,7 @@ class FilePropertiesRIFF extends FileProperties {
 
 			/*If done processing the header*/
 			else if (checkForSpecifiedCodecInfo) {
-	
+
 				extendedCodecInfoChunkCounter++;
 
 				/* 100000 is an approximate value to prevent the whole file from being parsed */
@@ -340,12 +340,12 @@ class FilePropertiesRIFF extends FileProperties {
 				quit = true;
 			}
 		}
-    }
+	}
 
-    /**
-     * Processes the AVI avih chunk.
-     **/
-    private void processAviAvih(RandomAccessFile dataStream, int chunkSize) throws Exception {
+	/**
+	 * Processes the AVI avih chunk.
+	 **/
+	private void processAviAvih(RandomAccessFile dataStream, int chunkSize) throws Exception {
 		/* Gets the dwMicroSecPerFrame... */
 		dwMicroSecPerFrame = readUnsignedInt32(dataStream);
 
@@ -373,12 +373,12 @@ class FilePropertiesRIFF extends FileProperties {
 		}
 		/* Sets the resolution... */
 		setVideoResolution(dwWidth+"x"+dwHeight);
-    }
+	}
 
-    /**
-     * Processes of avi_vids sub chunk.
-     **/
-    private void processAviVids(RandomAccessFile dataStream, int chunkSize) throws Exception {
+	/**
+	 * Processes of avi_vids sub chunk.
+	 **/
+	private void processAviVids(RandomAccessFile dataStream, int chunkSize) throws Exception {
 
 		/* Gets the fccHandler... */
 		fccHandler1 = readUnsignedInt32(dataStream);
@@ -394,13 +394,13 @@ class FilePropertiesRIFF extends FileProperties {
 
 		/* Sets the video rate... */
 		setVideoRate((dwRate / dwScale) + "." + ((long)dwRate * 1000 / dwScale - dwRate / dwScale * 1000));
-    }
+	}
 
 
-    /**
-     * Processes of avi_strf on the same sub chuck that avi_auds.
-     **/
-    private void processAviSound(RandomAccessFile dataStream, int chunkSize) throws Exception {
+	/**
+	 * Processes of avi_strf on the same sub chuck that avi_auds.
+	 **/
+	private void processAviSound(RandomAccessFile dataStream, int chunkSize) throws Exception {
 
 		/* Gets the wFormatTag... */
 		int wFormatTag = readUnsignedInt16(dataStream);
@@ -428,13 +428,13 @@ class FilePropertiesRIFF extends FileProperties {
 		if (!audioBitrate.equals(""))
 			audioBitrate += ", ";
 		audioBitrate += "" + Math.round(((float)nAvgBytesPerSec) * 8F / 1000F);
-    }
+	}
 
 
-    /**
-     * Gets the audio codec name from file based on the id.
-     **/
-    private String getAudioCodecName(int id) throws Exception {
+	/**
+	 * Gets the audio codec name from file based on the id.
+	 **/
+	private String getAudioCodecName(int id) throws Exception {
 
 		/* Transforms the id in a string... */
 		StringBuffer buffer = new StringBuffer("0x");
@@ -445,10 +445,10 @@ class FilePropertiesRIFF extends FileProperties {
 		}
 		buffer.append(value);
 		return findName(FileUtil.getResourceAsStream("/codecs/FOURCCaudio.txt"), buffer.toString());
-    }
+	}
 
 
-    private void calculateVideoBitrate() { 
+	private void calculateVideoBitrate() { 
 
 		/*Calculates the size of the video only and then calculates the videoBitrate/kbps.*/
 		int audioSize = 0;
@@ -465,10 +465,10 @@ class FilePropertiesRIFF extends FileProperties {
 			int videoBitrate = ((int) ((videoAudioStreamSize - audioSize)/getDuration())/1000)*8; /*Video rate kbit/s*/
 			setVideoBitrate(String.valueOf(videoBitrate));
 		}
-    }
+	}
 
 
-    private void processAviCodec(RandomAccessFile dataStream, int chunkSize) throws Exception {
+	private void processAviCodec(RandomAccessFile dataStream, int chunkSize) throws Exception {
 
 		int fccHandler;
 		int fccHandler2;
@@ -484,11 +484,11 @@ class FilePropertiesRIFF extends FileProperties {
 		 *Other codecs is identified by the second fourcc code*/
 
 		if ((fromByteToAscii(fccHandler1, 4).toUpperCase().equals("DIV3")) ||
-			(fromByteToAscii(fccHandler1, 4).toUpperCase().equals("DIV4")))
+				(fromByteToAscii(fccHandler1, 4).toUpperCase().equals("DIV4")))
 			fccHandler = fccHandler1;
 
 		if ((fromByteToAscii(fccHandler2, 4).toUpperCase().equals("DX50")) ||
-			(fromByteToAscii(fccHandler2, 4).toUpperCase().equals("XVID"))) {
+				(fromByteToAscii(fccHandler2, 4).toUpperCase().equals("XVID"))) {
 			checkForSpecifiedCodecInfo = true;
 		}
 		if (fccHandler == 0 && fccHandler1 != 0)
@@ -499,20 +499,20 @@ class FilePropertiesRIFF extends FileProperties {
 		codecName  = findName(FileUtil.getResourceAsStream("/codecs/FOURCCvideo.txt"), codecName);
 
 		setVideoCodec(codecName);
-    }
+	}
 
 
-    int correctChunkSize(int chunkSize) {
+	int correctChunkSize(int chunkSize) {
 
 		int m = chunkSize % 2;
 		if (m != 0)
 			chunkSize += (2-m);
 
 		return chunkSize;
-    }
+	}
 
 
-    void processMetaTags(RandomAccessFile dataStream, int chunkSize) throws Exception {
+	void processMetaTags(RandomAccessFile dataStream, int chunkSize) throws Exception {
 
 		//  private final int META_INAM = 0x4d414e49; /*Name*/
 		//  	private final int META_ICOP = 0x504f4349; /*Copyright*/
@@ -569,5 +569,5 @@ class FilePropertiesRIFF extends FileProperties {
 			}
 		}
 		setMetaData(metaData);
-    }
+	}
 }

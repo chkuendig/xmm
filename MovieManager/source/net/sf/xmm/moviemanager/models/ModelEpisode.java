@@ -20,19 +20,28 @@
 
 package net.sf.xmm.moviemanager.models;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 
 public class ModelEpisode extends ModelEntry {
 
+	static Logger log = Logger.getRootLogger();
+	
 	public static boolean notesHaveBeenChanged = false;
 	
 	/*The key to the entry this episode is linked to.*/
 	private int movieKey = -1;
 
 	/*The database key for this episode.*/
-	private int episodeNumber;
+	private int episodeKey;
 
+	private String episodeNumber;
+	private String seasonNumber;
+
+	private String episodeTitle = null;
+	
 	/* default public constructor for XML export using Castor */
 	public ModelEpisode() {
 		additionalInfo = new ModelAdditionalInfo(true);
@@ -51,11 +60,11 @@ public class ModelEpisode extends ModelEntry {
 	/**
 	 * The constructor.
 	 **/
-	public ModelEpisode(int key, int movieKey, int episodeNumber, String urlKey, String cover, String date, String title, String directedBy, String writtenBy, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String webSoundMix, String webRuntime, String awards) {
+	public ModelEpisode(int key, int movieKey, int episodeKey, String urlKey, String cover, String date, String title, String directedBy, String writtenBy, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String webSoundMix, String webRuntime, String awards) {
 
 		setKey(key);
 		this.movieKey = movieKey;
-		this.episodeNumber = episodeNumber;
+		setEpisodeKey(episodeKey);
 		setUrlKey(urlKey);
 		setCover(cover);
 		setDate(date);
@@ -79,13 +88,14 @@ public class ModelEpisode extends ModelEntry {
 		setAwards(awards);
 		
 		additionalInfo = new ModelAdditionalInfo(true);
+		hasGeneralInfoData = true;
 	}
 
-	public ModelEpisode(int key, int movieKey, int episodeNumber, String title, String cover) {
+	public ModelEpisode(int key, int movieKey, int episodeKey, String title, String cover) {
 
 		setKey(key);
 		this.movieKey = movieKey;
-		this.episodeNumber = episodeNumber;
+		setEpisodeKey(episodeKey);
 		setTitle(title);
 		setCover(cover);
 		
@@ -96,6 +106,11 @@ public class ModelEpisode extends ModelEntry {
 		return true;
 	}
 	
+
+	public String getEpisodeTitle() {
+		return episodeTitle != null ? episodeTitle : getTitle();
+	}
+	
 	public int getMovieKey() {
 		return movieKey; 
 	}
@@ -104,62 +119,85 @@ public class ModelEpisode extends ModelEntry {
 		this.movieKey = movieKey; 
 	}
 
-	public int getEpisodeNumber() {
-		return episodeNumber; 
+	public int getEpisodeKey() {
+		return episodeKey; 
 	}
 
-	public void setEpisodeNumber(int episodeNumber) {
-		this.episodeNumber = episodeNumber; 
-	}
-
-	public void copyData(ModelEntry model) {
-
-		setKey(model.getKey());
-		this.movieKey = ((ModelEpisode) model).getMovieKey();
-		this.episodeNumber = ((ModelEpisode) model).getEpisodeNumber();
-		setUrlKey(model.getUrlKey());
-		setCover(model.getCover());
-		setDate(model.getDate());
-		setTitle(model.getTitle());
-		setDirectedBy(model.getDirectedBy());
-		setWrittenBy(model.getWrittenBy());
-		setGenre(model.getGenre());
-		setRating(model.getRating());
-		setPlot(model.getPlot());
-		setCast(model.getCast());
-		setNotes(model.getNotes());
-		setSeen(model.getSeen());
-		setAka(model.getAka());
-		setCountry(model.getCountry()); 
-		setLanguage(model.getLanguage());
-		setColour(model.getColour());
-		setCertification(model.getCertification());
-		setWebSoundMix(model.getWebSoundMix());
-		setWebRuntime(model.getWebRuntime());
-		setAwards(model.getAwards());
-
-		//setMpaa(model.getMpaa());
-		if (model.getCoverData() != null)
-			setCoverData(model.getCoverData());
-
-		hasGeneralInfoData = model.getHasGeneralInfoData();
+	public void setEpisodeKey(int episodeKey) {
 		
-		if (model.getHasAdditionalInfoData())
-			setAdditionalInfo(model.getAdditionalInfo());
+		this.episodeKey = episodeKey; 
 		
-		hasChangedNotes = model.hasChangedNotes;
+		// Does not contain valid season/episode info
+		if (episodeKey < 10000) {
+			log.warn("episodeKey smaller than 10000:" + episodeKey);
+			//System.err.println("episodeKey:" + episodeKey);
+			return;
+		}
 		
-	}
+		String tmp = String.valueOf(episodeKey);
+		seasonNumber = tmp.substring(0, tmp.length() - 4);		
+		episodeNumber = new Integer(tmp.substring(tmp.length() - 4, tmp.length())).toString();
 
-	public void updateGeneralInfoData() {
-		updateGeneralInfoData(true);
+		episodeTitle = "S" + seasonNumber + "E" + episodeNumber +  " " + getTitle();
+		
+		System.err.println(episodeKey + " set seasonNumber:" + seasonNumber);
+		System.err.println(episodeKey + " set episodeNumber:" + episodeNumber);
 	}
 	
-	public void updateGeneralInfoData(boolean getCover) {
+	
+	public String getEpisodeNumber() {
+		return episodeNumber; 
+	}
+	
+	public String getSeasonNumber() {
+		return seasonNumber; 
+	}
+	
+	public String getCompleteUrl() {
+
+		// Old entry with data from tv.com
+		if (episodeKey < 10000) {
+			return "http://www.tv.com"+ getUrlKey() + "summary.html";
+		}
+				
+		return "http://www.imdb.com/title/tt" + getUrlKey();
+	}
+	
+	public void copyData(ModelEntry model) {
+		
+		super.copyData(model);
+		this.movieKey = ((ModelEpisode) model).getMovieKey();
+		
+		try {
+			throw new Exception();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		setEpisodeKey(((ModelEpisode) model).getEpisodeKey());
+	}
+	
+
+	public void updateGeneralInfoData() {
+		
 		if (getKey() != -1) {
 
 			ModelEntry model = null;
-			model = MovieManager.getIt().getDatabase().getEpisode(getKey(), getCover);
+			model = MovieManager.getIt().getDatabase().getEpisode(getKey());
+
+			if (model != null) {
+				copyData(model);
+				hasGeneralInfoData = true;
+			}
+		}
+	}
+	
+	
+	public void updateGeneralInfoData(boolean getCover) {
+		if (getKey() != -1 && MovieManager.getIt().getDatabase().isMySQL()) {
+
+			ModelEntry model = null;
+			model = ((DatabaseMySQL) MovieManager.getIt().getDatabase()).getEpisode(getKey(), getCover);
 
 			if (model != null) {
 				copyData(model);
@@ -170,14 +208,14 @@ public class ModelEpisode extends ModelEntry {
 
 	public void updateCoverData() {
 
-		if (MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL"))
+		if (MovieManager.getIt().getDatabase().isMySQL())
 			setCoverData(((DatabaseMySQL) MovieManager.getIt().getDatabase()).getCoverDataEpisode(getKey()));
 	}
 
 	public void updateAdditionalInfoData() {
 
 		if (additionalInfo != null && additionalInfo.hasOldExtraInfoFieldNames())
-			additionalInfo.updateExtraInfoFieldNames();
+			ModelAdditionalInfo.updateExtraInfoFieldNames();
 			
 		if (getKey() != -1) {
 			

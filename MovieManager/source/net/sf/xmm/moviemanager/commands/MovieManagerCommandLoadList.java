@@ -20,12 +20,12 @@
 
 package net.sf.xmm.moviemanager.commands;
 
-import net.sf.xmm.moviemanager.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
+
+import net.sf.xmm.moviemanager.MovieManager;
 
 public class MovieManagerCommandLoadList implements ActionListener {
     

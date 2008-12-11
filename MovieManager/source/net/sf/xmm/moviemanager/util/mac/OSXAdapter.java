@@ -5,7 +5,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import org.apache.log4j.Logger;
 
-import net.sf.xmm.moviemanager.DialogMovieManager;
+import net.sf.xmm.moviemanager.gui.DialogMovieManager;
 import com.apple.eawt.*;
 
 public class OSXAdapter extends ApplicationAdapter {

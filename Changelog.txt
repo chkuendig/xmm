@@ -4,6 +4,83 @@ Changelog - MeD's Movie Manager
 ========================================
 
 
+Version 2.7 beta 1 (16-jul-2008)
+
+ - New:
+ - "Add multiple movies" function has been rewritten and contains some new features.
+   - File tree to specify which directories to search. Only local disks may be searched.
+   - Possibility of excluding/including files depending on file extensions and file name, using regular strings and regular expression.
+   - Option to exclude files that are already in the database.
+   - A list of media files to be added has also been added, which makes it easier to control which files will be added. 
+ - Export to HTML will now export the currently used HTML template instead of the old HTML.
+ - Export to CSV and excel file format.
+
+ - General improvements:
+ - Windows will no longer appear outside of the screen if the main windows is placed near or outside the screen.
+ - Added option in preferences to enable the play button in the toolbar.
+ - Cover image in the HTML view is now linking to the IMDb web site for the movie. 
+ - Adjustments have been made so that the movie list should load faster with big movie lists.
+ - Movie list has now a color matching the current L&F. Also improved consistency when selecting multiple entries with ctrl-key pressed.
+
+ - Bug fixes:
+ - When editing an episode the key linking the episode to the series was lost.
+ - The second of two movies with the same title produced in the same year wouldn't appear in the search hits.
+ - Move 'The', 'A' and 'An' to end of title did not work.
+ - HTML templates wouldn't load if the HTML code contained dollar signs ($). 
+ - Runtime read from ifo (DVD) files were slightly off mark. Fix by gaelead.
+ - Title was not added when importing movies from text file.
+ - Seen/Unseen wasn't updated in HTML view unless the entry was reloaded.
+ - Error alert will no longer appear when trying to save an edited movie with no cover image.
+ - Error window would appear when trying to play a movie with spaces in  the file path on Windows.
+ - Plot was missing from some movies.
+ - Error could occur when generating reports with the Report Generator if the cover was missing.
+ - Incorrect directory was used when exporting database to HTML.
+
+
+Version 2.6.1 (19-feb-2008)
+
+ - Bug fixes:
+ - Fixed some bugs in cover and queries paths settings in Folders menu.
+
+ - Note:
+ - This is most importantly a repack of 2.6 as some important files were missing.
+
+
+Version 2.6 (18-feb-2008)
+
+ - New:
+ - HTML view of movie info using templates.
+
+ - Bug fixes:
+ - "Playing media files on Linux doesn't work" (Bug ID:1879542)
+ - "The jasper report tool may hang during compilation" (Bug ID:1760174)
+ - "Unable to add certain films" - IMDb parser slightly modified to correct this error.
+ - "Moviemanager Doesn't Shut-Down" - This would only appear on Win 98. Hopefully fixed.
+ - Fixed an issue with cover path relative to database/program install directory.
+
+
+Version 2.5.5 (26-dec-2007)
+
+ - New:
+ - Database backup function for HSQL and MS Access database.
+ - New version update notifier.
+ - IMDb authentication.
+
+ - General improvements:
+ - Search filter remembers old search queries.
+ - The movie list and movie info window is now divided by a splitpane.
+
+ - Bug fixes:
+ - IMDb info is now saved when using the import funtion.
+
+
+Version 2.5.4.2 (05-dec-2007)
+
+ - Bug fixes:
+ - IMDb parser gave strange results
+ - Connecting to the same MySQL database from both Windows and Linux didn't always work.
+
+
 Version 2.5.4.1 (12-jul-2007)
 
  - General improvements:

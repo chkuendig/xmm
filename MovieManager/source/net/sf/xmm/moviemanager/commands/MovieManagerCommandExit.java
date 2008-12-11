@@ -20,12 +20,12 @@
 
 package net.sf.xmm.moviemanager.commands;
 
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.database.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.Date;
+
+import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.database.Database;
 
 public class MovieManagerCommandExit implements ActionListener {
 
@@ -42,6 +42,11 @@ public class MovieManagerCommandExit implements ActionListener {
 		/* Finalizes the main frame... */
 		MovieManager.getDialog().finalize();
 
+		
+		// Gets config from toolbar
+		MovieManager.getConfig().setDisplayPlayButton(MovieManager.getDialog().getPLayButtonVisible());
+		MovieManager.getConfig().setDisplayPrintButton(MovieManager.getDialog().getPrintButtonVisible());
+		
 		// Saving config file
 		MovieManager.getConfig().saveConfig();
 		

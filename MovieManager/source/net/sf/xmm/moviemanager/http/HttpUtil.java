@@ -20,317 +20,310 @@
 
 package net.sf.xmm.moviemanager.http;
 
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.MovieManagerConfig;
-import net.sf.xmm.moviemanager.util.StringUtil;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.commons.httpclient.*;
+import net.sf.xmm.moviemanager.util.StringUtil;
+import net.sf.xmm.moviemanager.util.SysUtil;
+
+import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.SimpleHttpConnectionManager;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.log4j.Logger;
 
-import java.io.*;
-import java.net.Authenticator;
-import java.net.URL;
-import java.util.ArrayList;
+public class HttpUtil {
 
-class HttpUtil {
-    
-    static Logger log = Logger.getRootLogger();
-    
-    static StringBuffer readDataToStringBuffer(URL url) throws Exception {
-	
-	StringBuffer data = null;
-	BufferedInputStream stream;
-	
-	//long time = System.currentTimeMillis();
-	
-	SimpleHttpConnectionManager connectionManager = new SimpleHttpConnectionManager();
-	
-	HttpConnectionManagerParams params = connectionManager.getParams();
-	
-	//params.setSoTimeout(2000);
-	params.setConnectionTimeout(8000);
-	
-	connectionManager.setParams(params);
-	
-	HttpClient client = new HttpClient(connectionManager);
-	
-	setProxySetting(client);
-	
-	GetMethod method = new GetMethod(url.toString());
-	//method.setDoAuthentication(true);
-	
-	int statusCode = client.executeMethod(method);
-	
-	if (statusCode == HttpStatus.SC_OK) {
-	    
-	    stream = new BufferedInputStream(method.getResponseBodyAsStream());
-	    int buffer;
-	    
-	    /* Saves the page data in a string buffer... */
-	    data = new StringBuffer();
-	    
-	    while ((buffer = stream.read()) != -1) {
-		data.append((char) buffer);
-	    }
-	    
-	    stream.close();
-	}
-	return data;
-    }
+	static Logger log = Logger.getRootLogger();
 
-    
-    
-    static byte [] readDataToByteArray(URL url) throws Exception {
+	public boolean imdbAuthenticationSetUp = false;
+	public boolean setUp = false;
 	
-	byte[] data = {-1};
+	private HttpClient client = null;
+	//static SimpleHttpConnectionManager connectionManager = null;
+	//static MultiThreadedHttpConnectionManager connectionManager = null;
 	
-	//long time = System.currentTimeMillis();
-	
-	SimpleHttpConnectionManager connectionManager = new SimpleHttpConnectionManager();
-	
-	HttpConnectionManagerParams params = connectionManager.getParams();
-	params.setConnectionTimeout(2000);
-	connectionManager.setParams(params);
-	
-	HttpClient client = new HttpClient(connectionManager);
-	//HostConfiguration config = new HostConfiguration();
-	setProxySetting(client);
-
-	GetMethod method = new GetMethod(url.toString());
-	//method.setDoAuthentication(true);
-	
-	try {
-	    
-	    int statusCode = client.executeMethod(method);
-	    
-	    if (statusCode == HttpStatus.SC_OK) {
+	static HttpConnectionManagerParams params = null;
+	private HttpSettings httpSettings = new HttpSettings();
 		
-		BufferedInputStream  inputStream = new BufferedInputStream(method.getResponseBodyAsStream());
-		ByteArrayOutputStream byteStream = new ByteArrayOutputStream(inputStream.available());
+	public HttpUtil() {setup();}
 		
-		int buffer;
-		while ((buffer = inputStream.read()) != -1)
-		    byteStream.write(buffer);
+	public HttpUtil(HttpSettings httpSettings) {
 		
-		inputStream.close();
-		data = byteStream.toByteArray();
-	    }
-	    
-	} catch (Exception e) {
-	    throw new Exception(e.getMessage());
-	} finally {
-	    method.releaseConnection();
+		if (httpSettings != null)
+			this.httpSettings = httpSettings;
+		
+		setup();
+		setProxySettings();
+		
+		setUpIMDbAuthentication();			
 	}
 	
-	return data;
-    }
-    
-    
-    static void setProxySetting(HttpClient client) {
 	
-	MovieManagerConfig mmc = MovieManager.getConfig();
+	public boolean isSetup() {
+		return setUp;
+	}
 	
 	
-	if (mmc.getProxyEnabled()) {
-	    
-	    //HostConfiguration config = client.getHostConfiguration();
-	    Credentials defaultcreds = null;
-	    
-	    /*Adds proxy settings*/
-	    java.util.Properties systemSettings = System.getProperties();
-	    
-	    if (mmc.getProxyType().equals("HTTP")) {
-		systemSettings.put("proxySet", "true");
-		systemSettings.put("socksProxySet", "false");
+	public void setup() {
+		client = new HttpClient(new MultiThreadedHttpConnectionManager());
+		client.getHttpConnectionManager().getParams().setConnectionTimeout(5000);
+		setUp = true;
+	}
+	
+	
+	public boolean isIMDbAuthSetup() {
+		return imdbAuthenticationSetUp;
+	}
+	
 		
-		/* Removing SOCKS properties */
-		systemSettings.remove("socksProxyHost");
-		systemSettings.remove("socksProxyPort");
-		
-		Authenticator.setDefault(null);
-		
-		if (mmc.getAuthenticationEnabled()) {
-		    log.debug("user:" + mmc.getProxyUser());
-		    log.debug("pass:" + mmc.getProxyPassword());
-		    defaultcreds = new UsernamePasswordCredentials(mmc.getProxyUser(), mmc.getProxyPassword());
+	
+	public boolean setUpIMDbAuthentication() {
+
+		if (httpSettings == null) {
+			log.warn("Authentication could not be set. Missing authentication settings.");
+			return false;
 		}
-		
-		client.getHostConfiguration().setProxy(mmc.getProxyHost(), Integer.parseInt(mmc.getProxyPort()));
-		
-		client.getState().setProxyCredentials(new AuthScope(mmc.getProxyHost(), Integer.parseInt(mmc.getProxyPort()), AuthScope.ANY_REALM), defaultcreds);
-	    }
-	    else {
-		
-		systemSettings.put("socksProxySet", "true");
-		systemSettings.put("proxySet", "false");
-		
-		systemSettings.put("socksProxyHost", mmc.getProxyHost());
-		systemSettings.put("socksProxyPort", mmc.getProxyPort());
-		 
-		 if (mmc.getAuthenticationEnabled()) {
-		     /*Adds authentication*/
-		     Authenticator.setDefault(new MyAuth(mmc.getProxyUser(), mmc.getProxyPassword()));
-		 }
-		 else /*Removes authentication*/
-		     Authenticator.setDefault(null);
-	    }
-	    
-	    /*Saves proxy settings*/
-	    System.setProperties(systemSettings);
-	}
-    }
 
-    
-    public static void writeToFile(String fileName, StringBuffer data) {
-	
-	try {
-	    
-	    FileOutputStream fileStream = new FileOutputStream(new File(fileName));
-	    for (int u = 0; u < data.length(); u++)
-		fileStream.write(data.charAt(u));
-	    fileStream.close();
-	
-	} catch (Exception e) {
-	    log.error("Exception:"+ e.getMessage());
-	}
-    }
-    
-    
-   
+		if (httpSettings.getIMDbAuthenticationEnabled()) {
+
+			try {
+
+				if (!isSetup())
+					setup();
+
+				client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+
+				PostMethod postMethod = new PostMethod(("http://akas.imdb.com/register/login")); 
+
+				NameValuePair[] postData = new NameValuePair[2];
+				postData[0] = new NameValuePair("login", httpSettings.getIMDbAuthenticationUser());
+				postData[1] = new NameValuePair("password", httpSettings.getIMDbAuthenticationPassword());
 
 
-   
-    
-    
-    /**
-     * Decodes a html string and returns its unicode string.
-     **/
-    protected static String decodeHTML(String toDecode) {
-    	String decoded = "";
+				postMethod.setRequestBody(postData);
 
-    	try {
-    		int end = 0;
-    		for (int i=0; i < toDecode.length(); i++) {
-    			if (toDecode.charAt(i)=='&' && toDecode.charAt(i+1)=='#' && (end=toDecode.indexOf(";", i))!=-1) {
-    				decoded += (char)Integer.parseInt(toDecode.substring(i+2,end));
-    				i = end;
-    			} else if (toDecode.charAt(i)=='<' && toDecode.indexOf('>', i) != -1) {
-    				i = toDecode.indexOf('>', i);
-    			} else {
-    				decoded += toDecode.charAt(i);
-    			}
-    		}
-    		
-    		// replacing html code like &quot; and &amp;
-    		decoded = decoded.replaceAll("&amp;", "&");
-    		decoded = decoded.replaceAll("&quot;", "\"");
-    		decoded = decoded.replaceAll("&nbsp;", " ");
-    		
-    	} catch (Exception e) {
-    		log.error("", e);
-    	} 
-    	
-    	/* Returns the decoded string... */
-    	return StringUtil.removeDoubleSpace(decoded);
-    }
+				int statusCode = client.executeMethod(postMethod);
 
-    
-    /**
-     * Decodes a html string and returns its unicode string.
-     **/
-    protected static Object [] decodeHTMLtoArray(String toDecode) {
-    	ArrayList decoded = new ArrayList();
-    	String tmp = "";
-    	
-    	try {
-    		int end = 0;
-    		for (int i=0; i < toDecode.length(); i++) {
-    			if (toDecode.charAt(i)=='&' && toDecode.charAt(i+1)=='#' && (end=toDecode.indexOf(";", i)) != -1) {
-    				tmp += (char) Integer.parseInt(toDecode.substring(i+2,end));
-    				i = end;
-    			} else if (toDecode.charAt(i)=='<' && toDecode.indexOf('>', i) != -1) {
-    				i = toDecode.indexOf('>', i);
-    				
-    				if (!tmp.trim().equals(""))
-    					decoded.add(tmp.trim());
-    				
-    				tmp = "";
-    			} else {
-    				tmp += toDecode.charAt(i);
-    			}
-    		}
-    	} catch (Exception e) {
-    		log.error("", e);
-    	} 
-    	/* Returns the decoded string... */
-    	return decoded.toArray();
-    }
-    
-    
-    /* Creates the URL and sets the appropriate proxy values */
-    //protected static URL makeURL(String url) {
-    static void setProxySetting2(HttpClient client) {
-	
-	//url = makeURL(urlType+title.replaceAll("[\\p{Blank}]+","%20"));
-	
-	MovieManagerConfig mm = MovieManager.getConfig();
-	//URL urlData = null;
-	
-	try {
-	    if (mm.getProxyEnabled()) {
-		
-		String host = mm.getProxyHost();
-		String port = mm.getProxyPort();
-		
-		/*Adds proxy settings*/
-		java.util.Properties systemSettings = System.getProperties();
-		
-		if (mm.equals("HTTP")) {
-		    systemSettings.put("proxySet", "true");
-		    systemSettings.put("proxyHost", host);
-		    systemSettings.put("proxyPort", port);
-		}
-		else {
-		    systemSettings.put("socksProxySet", "true");
-		    systemSettings.put("socksProxyHost", host);
-		    systemSettings.put("socksProxyPort", port);
-		}
-		
-		/*Saves proxy settings*/
-		System.setProperties(systemSettings);
-		
-		if (mm.getAuthenticationEnabled()) {
-		    String user = mm.getProxyUser();
-		    String password = mm.getProxyPassword();
-		    
-		    /*Adds authentication*/
-		    Authenticator.setDefault(new MyAuth(user, password));
+				 if (statusCode == HttpStatus.SC_OK) 
+					 imdbAuthenticationSetUp = true;
+				 else
+					 imdbAuthenticationSetUp = false;
+				
+			} catch (Exception e) {
+				log.warn("error:" + e.getMessage());
+			}
 		}
 		else
-		    Authenticator.setDefault(null);/*Removes authentication*/
-	    }
-	    else {
-		/*Removes proxy settings*/
-		java.util.Properties systemSettings = System.getProperties();
-		systemSettings.remove("proxySet");
-		systemSettings.remove("proxyHost"); 
-		systemSettings.remove("proxyPort");
-		
-		systemSettings.remove("socksProxySet");
-		systemSettings.remove("socksProxyHost"); 
-		systemSettings.remove("socksProxyPort");
-		System.setProperties(systemSettings);
-		
-		/*Removes authentication*/
-		Authenticator.setDefault(null);
-	    }
-	    //urlData = new URL(url);
+			imdbAuthenticationSetUp = false;
+
+		return imdbAuthenticationSetUp;
 	}
-	catch (Exception e) {
-	    log.error("", e);
+	
+	
+	
+	protected void setProxySettings() {
+
+		if (httpSettings.getProxyEnabled()) {
+
+			Credentials defaultcreds = null;
+
+			if (httpSettings.getProxyAuthenticationEnabled()) {
+				log.debug("user:" + httpSettings.getProxyUser());
+				log.debug("pass:" + httpSettings.getProxyPassword());
+				defaultcreds = new UsernamePasswordCredentials(httpSettings.getProxyUser(), httpSettings.getProxyPassword());
+			}
+
+			client.getHostConfiguration().setProxy(httpSettings.getProxyHost(), Integer.parseInt(httpSettings.getProxyPort()));
+			client.getState().setProxyCredentials(new AuthScope(httpSettings.getProxyHost(), Integer.parseInt(httpSettings.getProxyPort()), AuthScope.ANY_REALM), defaultcreds);
+		}
 	}
-    }
+
+
+	
+	public StringBuffer readDataToStringBuffer(URL url) throws Exception {
+
+		StringBuffer data = null;
+		
+		if (!isSetup())
+			setup();
+		
+		//long time = System.currentTimeMillis();
+		
+		//System.err.println("readDataToStringBuffer 0:" + (System.currentTimeMillis() - time));
+		
+		GetMethod method = new GetMethod(url.toString());
+		int statusCode = client.executeMethod(method);
+		
+		if (statusCode != HttpStatus.SC_OK)
+			log.debug("statusCode HttpStatus.SC_OK:" + (statusCode != HttpStatus.SC_OK));
+		
+		if (statusCode == HttpStatus.SC_OK) {
+			
+			data = new StringBuffer();
+			
+			//System.err.println("readDataToStringBuffer 1:" + (System.currentTimeMillis() - time));
+			
+			BufferedInputStream stream = new BufferedInputStream(method.getResponseBodyAsStream());
+			//System.err.println("readDataToStringBuffer 2:" + (System.currentTimeMillis() - time));
+			
+			// Saves the page data in a string buffer... 
+			int buffer;
+			
+			while ((buffer = stream.read()) != -1) {
+				data.append((char) buffer);
+			}
+			stream.close();
+		}
+		
+		return data;
+	}
+
+
+
+	byte [] readDataToByteArray(URL url) throws Exception {
+
+		//System.err.println("readDataToByteArray isSetup():" + isSetup());
+		
+		byte[] data = {-1};
+
+		if (!isSetup())
+			setup();
+		
+		GetMethod method = new GetMethod(url.toString());
+		
+		//System.err.println("readDataToByteArray url.toString():" + url.toString());
+		
+		try {
+			int statusCode = client.executeMethod(method);
+						
+			if (statusCode == HttpStatus.SC_OK) {
+
+				BufferedInputStream  inputStream = new BufferedInputStream(method.getResponseBodyAsStream());
+				ByteArrayOutputStream byteStream = new ByteArrayOutputStream(inputStream.available());
+
+				int buffer;
+				while ((buffer = inputStream.read()) != -1)
+					byteStream.write(buffer);
+
+				inputStream.close();
+				data = byteStream.toByteArray();
+			}
+			else {
+				System.err.println("statusCode:" + statusCode);
+				System.err.println("HttpStatus.SC_OK:" + HttpStatus.SC_OK);
+			}
+
+		} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
+			throw new Exception(e.getMessage());
+		} finally {
+			method.releaseConnection();
+		}
+
+		//System.err.println("readDataToByteArray return:" + data);
+		return data;
+	}
+
+
+	
+
+	/**
+	 * Decodes a html string and returns its unicode string.
+	 **/
+	protected static String decodeHTML(String toDecode) {
+		String decoded = "";
+
+		try {
+			int end = 0;
+			for (int i=0; i < toDecode.length(); i++) {
+				if (toDecode.charAt(i)=='&' && toDecode.charAt(i+1)=='#' && (end=toDecode.indexOf(";", i))!=-1) {
+					decoded += (char)Integer.parseInt(toDecode.substring(i+2,end));
+					i = end;
+				} else if (toDecode.charAt(i)=='<' && toDecode.indexOf('>', i) != -1) {
+					i = toDecode.indexOf('>', i);
+				} else {
+					decoded += toDecode.charAt(i);
+				}
+			}
+
+			// replacing html code like &quot; and &amp;
+			decoded = decoded.replaceAll("&amp;", "&");
+			decoded = decoded.replaceAll("&quot;", "\"");
+			decoded = decoded.replaceAll("&nbsp;", " ");
+
+		} catch (Exception e) {
+			log.error("", e);
+		} 
+
+		/* Returns the decoded string... */
+		return StringUtil.removeDoubleSpace(decoded);
+	}
+
+
+	/**
+	 * Decodes a html string 
+	 **/
+	protected static Object [] decodeHTMLtoArray(String toDecode) {
+		ArrayList decoded = new ArrayList();
+		String tmp = "";
+
+		try {
+			int end = 0;
+			for (int i=0; i < toDecode.length(); i++) {
+				if (toDecode.charAt(i)=='&' && toDecode.charAt(i+1)=='#' && (end=toDecode.indexOf(";", i)) != -1) {
+					tmp += (char) Integer.parseInt(toDecode.substring(i+2,end));
+					i = end;
+				} else if (toDecode.charAt(i)=='<' && toDecode.indexOf('>', i) != -1) {
+					i = toDecode.indexOf('>', i);
+
+					if (!tmp.trim().equals(""))
+						decoded.add(tmp.trim());
+
+					tmp = "";
+				} else {
+					tmp += toDecode.charAt(i);
+				}
+			}
+		} catch (Exception e) {
+			log.error("", e);
+		} 
+		/* Returns the decoded string... */
+		return decoded.toArray();
+	}
+
+	 public static StringBuffer getHtmlNiceFormat(StringBuffer buffer) {
+
+		 int index = 0;
+
+//		 Format html
+		 Pattern p = Pattern.compile("</.+?>");
+		 Matcher m = p.matcher(buffer);
+
+		 while (m.find(index)) {
+
+			 index = m.start();
+
+			 int index2 = buffer.indexOf(">", index) + 1;
+
+			 buffer.insert(index2, SysUtil.getLineSeparator());
+			 index++;
+		 }
+		 return buffer;
+	 }
 }

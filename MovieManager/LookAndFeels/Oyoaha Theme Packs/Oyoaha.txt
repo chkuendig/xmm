@@ -1,2 +1,0 @@
-Here you can add new Oyoaha themes.
-Simply put the .zotm files into the 'Oyoaha Theme Packs' directory.

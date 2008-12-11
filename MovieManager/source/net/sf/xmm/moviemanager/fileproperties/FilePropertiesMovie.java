@@ -20,15 +20,18 @@
 
 package net.sf.xmm.moviemanager.fileproperties;
 
-import net.sf.xmm.moviemanager.util.FileUtil;
-
-import org.apache.log4j.Logger;
-
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import net.sf.xmm.moviemanager.util.SysUtil;
+
+import org.apache.log4j.Logger;
+
+/**
+ * @author		Bro3@sf.net
+ **/
 public class FilePropertiesMovie {
 
 	static Logger log = Logger.getRootLogger();
@@ -111,11 +114,15 @@ public class FilePropertiesMovie {
 
 	private boolean supported = false;
 
+
 	/**
-	 * The Constructor. Gets all info available (reads contents from file).
-	 *
-	 * @param filePath A path for the file.
-	 * @param useMediaInfo , 0 = no, 1 = yes if no java parser avaliable, 2 = yes 
+	 * Class 	gets all info available from the media file.
+	 * 
+	 * Class  constructor specifying number of objects to create.
+	 * @param filePath 		a path for the file.
+	 * @param useMediaInfo 	0 = no
+	 * 						1 = yes if no java parser avaliable
+	 * 						2 = yes 
 	 **/
 	public FilePropertiesMovie(String filePath, int useMediaInfo) throws Exception {
 
@@ -196,8 +203,8 @@ public class FilePropertiesMovie {
 					}
 
 					case 2: {
-						
-						if (FileUtil.isWindows()) {
+
+						if (SysUtil.isWindows()) {
 							try {
 								fileProperties = new FilePropertiesMediaInfo(filePath);
 								break;
@@ -221,7 +228,7 @@ public class FilePropertiesMovie {
 
 
 					if (fileProperties != null) {
-	
+
 						/* Starts parsing the file...*/
 						fileProperties.process(dataStream);
 
@@ -230,7 +237,7 @@ public class FilePropertiesMovie {
 						if (supported)
 							infoAvailable = true;
 						else
-							throw new Exception("Info not available");
+							throw new Exception("Unable to retrieve info");
 
 						/* Gets the processed info... */
 						_subtitles = fileProperties.getSubtitles();
@@ -259,7 +266,7 @@ public class FilePropertiesMovie {
 
 				} catch (Exception e) {
 					log.error("Exception: " + e.getMessage(), e);
-	
+
 					if (next == 1) {
 						if (useMediaInfo == 2)
 							useMediaInfo = 0;
@@ -303,23 +310,9 @@ public class FilePropertiesMovie {
 		}
 	}
 
-	/**
-	 * The Constructor.
-	 **/
-	protected FilePropertiesMovie(int fileSize, String videoResolution, String videoCodec, String videoRate,
-			int duration, String audioCodec, String audioRate, String audioChannels) {
-		_fileSize = fileSize;
-		_videoResolution = videoResolution;
-		_videoCodec = videoCodec;
-		_videoRate = videoRate;
-		_duration = duration;
-		_audioCodec = audioCodec;
-		_audioRate = audioRate;
-		_audioChannels = audioChannels;
-	}
 
 	/**
-	 * Returns all the components in a string.
+	 * @return 		all the info in a string
 	 **/
 	public String toString() {
 		return "MovieProperties [ fileSize:"+_fileSize+", "+
@@ -335,14 +328,16 @@ public class FilePropertiesMovie {
 	}
 
 
-
+	/**
+	 * @return 		list of meta data
+	 **/
 	public ArrayList getMetaData() {
 		return metaData;
 	}
 
-	/*
-	 * Returns the the tag info if it exists
-	 */
+	/**
+	 * @return 		the the tag info if it exists, null if it doesn't exist
+	 **/
 	public String getMetaDataTagInfo(String tag) {
 
 		String temp = "";
@@ -358,203 +353,131 @@ public class FilePropertiesMovie {
 				}
 			}
 		}
-		return "";
+		return null;
 	}
 
+	/**
+	 * @return 		if the info is available
+	 **/
 	public boolean getInfoAvailable() {
 		return infoAvailable;
 	}
 
+	/**
+	 * @return 		if the info is available
+	 **/
 	public boolean getFileFormatSupported() {
 		return supported;
 	}
 
 	/**
-	 * Returns the subtitles.
+	 * @return the subtitles
 	 **/
 	public String getSubtitles() {
 		return _subtitles;
 	}
 
 	/**
-	 * Returns the filesize.
+	 * @return 		the filesize in MiB
 	 **/
 	public int getFileSize() {
 		return _fileSize;
 	}
 
 	/**
-	 * Returns the Media Type.
+	 * @return gets the file name
 	 **/
 	public String getFileName() {
 		return fileName;
 	}
 
+	/**
+	 * sets the file name
+	 **/
 	public void setFileName(String newName) {
 		fileName = newName;
 	}
 
 	/**
-	 * Returns the resolution.
+	 * @return 		the video resolution
 	 **/
 	public String getVideoResolution() {
 		return _videoResolution;
 	}
 
 	/**
-	 * Returns the video codec (vids handler).
+	 * @return 		the video codec
 	 **/
 	public String getVideoCodec() {
 		return _videoCodec;
 	}
 
+	/**
+	 * @return 		the bitstream version info for Xvid or DivX 5-6
+	 **/
 	public String getVideoCodecLibraryIdentifier() {
 		return _codecLibraryIdentifier;
 	}
 
 
 	/**
-	 * Returns the video rate.
+	 * @return 		the video rate
 	 **/
 	public String getVideoRate() {
 		return _videoRate;
 	}
 
 	/**
-	 * Returns the video bit rate.
+	 * @return		 the video bit rate
 	 **/
 	public String getVideoBitrate() {
 		return _videoBitrate;
 	}
 
 	/**
-	 * Returns the duration.
+	 * @return 		the duration in seconds
 	 **/
 	public int getDuration() {
 		return _duration;
 	}
 
 	/**
-	 * Returns the audio codec (auds handler).
+	 * @return 		the audio codec
 	 **/
 	public String getAudioCodec() {
 		return _audioCodec;
 	}
 
 	/**
-	 * Returns the audio rate.
+	 * @return 		the audio rate
 	 **/
 	public String getAudioRate() {
 		return _audioRate;
 	}
 
 	/**
-	 * Returns the audio bit rate.
+	 * @return 		the audio bit rate
 	 **/
 	public String getAudioBitrate() {
 		return _audioBitrate;
 	}
 
 	/**
-	 * Returns the audio channels.
+	 * @return 		the audio channels
 	 **/
 	public String getAudioChannels() {
 		return _audioChannels;
 	}
 
 	/**
-	 * Sets the subtitles.
-	 **/
-	protected void setSubtitles(String subtitles) {
-		_subtitles = subtitles;
-	}
-
-	/**
-	 * Sets the length.
-	 **/
-	protected void setFileSize(int fileSize) {
-		_fileSize = fileSize;
-	}
-
-	/**
-	 * Sets the resolution.
-	 **/
-	protected void setVideoResolution(String videoResolution) {
-		_videoResolution = videoResolution;
-	}
-
-	/**
-	 * Sets the video codec (vids handler).
-	 **/
-	protected void setVideoCodec(String videoCodec) {
-		_videoCodec=videoCodec;
-	}
-
-	/**
-	 * Sets the video rate.
-	 **/
-	protected void setVideoRate(String videoRate) {
-		_videoRate=videoRate;
-	}
-
-	/**
-	 *  Sets the video bit rate.
-	 **/
-	protected void setVideoBitrate(String videoBitrate) {
-		_videoBitrate = videoBitrate; 
-	}
-
-	/**
-	 * Sets the duration.
-	 **/
-	protected void setDuration(int duration) {
-		_duration = duration;
-	}
-
-	/**
-	 * Sets the audio codec (auds handler).
-	 **/
-	protected void setAudioCodec(String audioCodec) {
-		_audioCodec=audioCodec;
-	}
-
-	/**
-	 * Sets the audio rate.
-	 **/
-	protected void setAudioRate(String audioRate) {
-		_audioRate=audioRate;
-	}
-
-	/**
-	 * Sets the audio channels.
-	 **/
-	protected void setAudioChannels(String audioChannels) {
-		_audioChannels=audioChannels;
-	}
-
-	/**
-	 * Sets the file location.
-	 **/
-	protected void setFileLocatinon(String location) {
-		_location = location;
-	}
-
-	/**
-	 * Sets the file container.
+	 * @return 		the file location
 	 **/
 	public String getLocation() {
 		return _location;
 	}
 
 	/**
-	 * Sets the file container.
-	 **/
-	protected void setContainer(String container) {
-		_container = container;
-	}
-
-	/**
-	 * Returns the file container.
+	 * @return 		the file container
 	 **/
 	public String getContainer() {
 		return _container;

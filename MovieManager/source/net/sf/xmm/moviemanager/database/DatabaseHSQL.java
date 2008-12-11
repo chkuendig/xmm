@@ -20,8 +20,6 @@
 
 package net.sf.xmm.moviemanager.database;
 
-import net.sf.xmm.moviemanager.MovieManager;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,6 +28,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import net.sf.xmm.moviemanager.util.FileUtil;
 
 
 public class DatabaseHSQL extends Database {
@@ -73,7 +73,7 @@ public class DatabaseHSQL extends Database {
 
     		errorMessage = eMessage;
 
-    		for (int i = 2; i < 10; i++) {
+    		for (int i = 2; i < 12; i++) {
     			try {
     				Thread.sleep(2000);
     				if (!_initialized) {
@@ -1161,7 +1161,7 @@ public class DatabaseHSQL extends Database {
     }
     
     
-    /* Has to update the script manually since hsqldb driver v1.7.3 doesn't support changing the datatype */
+    /* Have to update the script manually since hsqldb driver v1.7.3 doesn't support changing the datatype */
     public boolean isScriptOutOfDate() {
 	
 	String filePath = getPath();
@@ -1174,7 +1174,14 @@ public class DatabaseHSQL extends Database {
  	    	throw new Exception("properies file does not exist.");
 		else if (!dbScriptFile.exists())
 			throw new Exception("script file does not exist.");
-			
+			 	    
+ 	    StringBuffer properties = FileUtil.readFileToStringBuffer(dbPropertiesFile);
+ 	    
+ 	    	    
+ 	    // Updating from hsql v1.7 to 1.8
+ 	    if (properties.indexOf("compatible_version=1.7") != -1)
+ 	    	makeDatabaseBackup();
+ 	     	    
 	    FileInputStream stream = new FileInputStream(dbScriptFile);
 	    StringBuffer stringBuffer = new StringBuffer();
 	    int buffer;
@@ -1228,8 +1235,9 @@ public class DatabaseHSQL extends Database {
 	    File newScriptFile;
 	    
 	    
-	    while ((newPropertiesFile = new File(path + "Backup" + number + " ("+ date+ ") of "+ currentPropertiesFile.getName())).exists() || (newScriptFile = new File(path + "Backup" + number + " ("+ date+ ") of "+ currentScriptFile.getName())).exists())
-		number++;
+	    while ((newPropertiesFile = new File(path + "backupBackup" + number + " ("+ date+ ") of "+ currentPropertiesFile.getName())).exists() || 
+	    		(newScriptFile = new File(path + "Backup" + number + " ("+ date+ ") of "+ currentScriptFile.getName())).exists())
+	    	number++;
 	    
 	    
 	    OutputStream outputStream;

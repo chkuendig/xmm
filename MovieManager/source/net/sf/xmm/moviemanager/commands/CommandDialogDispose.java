@@ -19,12 +19,12 @@ package net.sf.xmm.moviemanager.commands;
  * Contact: mediterranean@users.sourceforge.net
  **/
 
-import net.sf.xmm.moviemanager.MovieManager;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
+
+import net.sf.xmm.moviemanager.MovieManager;
 
 public class CommandDialogDispose implements ActionListener {
 

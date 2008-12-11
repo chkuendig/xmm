@@ -1,14 +1,12 @@
 package net.sf.xmm.moviemanager.util;
 
-import net.sf.xmm.moviemanager.MovieManager;
-
-import org.apache.log4j.Logger;
-
-//import org.xnap.commons.i18n.I18n;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.MissingResourceException;
+
+import net.sf.xmm.moviemanager.MovieManager;
+
+import org.apache.log4j.Logger;
 
 
 public class Localizer {
@@ -24,12 +22,12 @@ public class Localizer {
 
 	static {
 
-		if (MovieManager.isApplet()) {
+		if (MovieManager.isApplet() || MovieManager.getIt().isSandbox()) {
 
 			InputStream inpuStream = null;
 
 			try {
-				inpuStream = FileUtil.getResourceAsStream("/MovieManager.tmx");
+				inpuStream = FileUtil.getResourceAsStream("/config/MovieManager.tmx");
 				// inpuStream = DialogMovieManager.applet.getClass().getResourceAsStream("/MovieManager.tmx");
 			} catch (Exception e) {
 
@@ -54,19 +52,19 @@ public class Localizer {
 			// do so)
 
 			// First try to get the file from the current dir
-			File f = FileUtil.getFile("MovieManager.tmx");
+			File f = FileUtil.getFile("config/MovieManager.tmx");
 			
 			
 			if (f == null || !f.isFile()) {
-				 f = new File(FileUtil.getFileURL(System.getProperty("user.dir") + "/MovieManager.tmx").getPath());
+				 f = new File(FileUtil.getFileURL(System.getProperty("user.dir") + "/config/MovieManager.tmx").getPath());
 			}
 
 			// If no success the MovieManager.tmx is grabbed from the MovieManager.jar file.
-			if (f == null || !f.isFile()) {
-				InputStream inpuStream = FileUtil.getResourceAsStream("/MovieManager.tmx");
+			if (!f.isFile()) {
+				InputStream inpuStream = FileUtil.getResourceAsStream("/config/MovieManager.tmx");
 
 				if (inpuStream != null) {
-					System.err.println("tmx ResourceAsStream");
+					log.debug("tmx ResourceAsStream");
 					res_en = new TMXResourceBundle(null, inpuStream, "en-EN", "");
 				}
 				else {
@@ -76,7 +74,6 @@ public class Localizer {
 			}
 			else {
 				res_en = new TMXResourceBundle(f.getAbsolutePath(), "en-EN");
-				System.err.println("tmx getFile !");
 			}
 	
 			//i18n = new org.xnap.commons.i18n.I18n(res_en);
@@ -92,7 +89,6 @@ public class Localizer {
 		try {
 
 			temp = ""; //res_no.getString(key, "no-NO");
-
 			if ("".equals(temp)) {
 				temp = res_en.getString(key, "");
 			}

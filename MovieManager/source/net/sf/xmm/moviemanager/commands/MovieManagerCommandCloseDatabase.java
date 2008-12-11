@@ -22,8 +22,9 @@ package net.sf.xmm.moviemanager.commands;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import net.sf.xmm.moviemanager.database.*;
-import net.sf.xmm.moviemanager.*;
+
+import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.database.Database;
 
 public class MovieManagerCommandCloseDatabase implements ActionListener {
     
@@ -40,8 +41,8 @@ public class MovieManagerCommandCloseDatabase implements ActionListener {
 	    /* Closes the open database... */
 	    database.finalizeDatabase();
 	    
-	    MovieManager.getDialog().getMoviesList().setModel(null);
-	    MovieManager.getDialog().setDatabaseComponentsEnable(false);
+	    MovieManager.getDialog().resetTreeModel();
+	    MovieManager.getDialog().getAppMenuBar().setDatabaseComponentsEnable(false);
 	    MovieManager.getDialog().setAndShowEntries(-1);
 	    MovieManager.getIt().setDatabase(null, false);
 	    

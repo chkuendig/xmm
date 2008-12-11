@@ -20,9 +20,6 @@
 
 package net.sf.xmm.moviemanager.models;
 
-import net.sf.xmm.moviemanager.DialogImportTable.FieldModel;
-
-
 abstract public class ModelEntry {
 
 	static public String sortCategory = "";
@@ -80,8 +77,8 @@ abstract public class ModelEntry {
 	}
 	
 	public abstract void updateAdditionalInfoData();
-
 	public abstract void updateGeneralInfoData();
+	
 	public abstract void updateGeneralInfoData(boolean getCover);
 	
 	public ModelAdditionalInfo getAdditionalInfo() {
@@ -119,6 +116,13 @@ abstract public class ModelEntry {
 		this.urlKey = urlKey;	
 	}
 
+	public String getCompleteUrl() {
+		if (urlKey == null)
+			return "";
+		
+		return "http://www.imdb.com/title/tt" + urlKey;
+	}
+	
 	public String getCover() {
 		if (cover == null)
 			return "";
@@ -135,6 +139,7 @@ abstract public class ModelEntry {
 		return coverData;
 	}
 
+	
 	public void setCoverData(byte [] data) {
 		coverData = data;
 	}
@@ -155,6 +160,7 @@ abstract public class ModelEntry {
 		this.date = date;
 	}
 
+	
 	public String getTitle() {
 		return title;
 	}
@@ -335,17 +341,16 @@ abstract public class ModelEntry {
 		this.awards = awards;
 	}
 
-	public abstract void copyData(ModelEntry model);
-
+	
 
 	/* Convenience method for setting values */
-	public boolean setValue(FieldModel fieldModel) {
+	public boolean setValue(String fieldName, String value, String tableName) {
 
-		if (!fieldModel.getTable().equals("General Info"))
-			return additionalInfo.setValue(fieldModel);
+		if (!tableName.equals("General Info"))
+			return additionalInfo.setValue(fieldName, value, tableName);
 
-		String fieldName = fieldModel.getField();
-		String value = fieldModel.getValue();
+		//String fieldName = fieldModel.getField();
+		//String value = fieldModel.getValue();
 
 		if (fieldName.equalsIgnoreCase("Title"))
 			setTitle(value);
@@ -393,7 +398,104 @@ abstract public class ModelEntry {
 		return true;
 	}
 
+	
+	/* Convenience method for setting values */
+	public String getValue(String fieldName, String tableName) {
 
+		if (!tableName.equals("General Info"))
+			return additionalInfo.getValue(fieldName, tableName);
+
+		//String fieldName = fieldModel.getField();
+		//String value = fieldModel.getValue();
+
+		if (fieldName.equalsIgnoreCase("Title"))
+			return getTitle();
+		else if (fieldName.equalsIgnoreCase("Cover"))
+			return getCover();
+		else if (fieldName.equalsIgnoreCase("Imdb"))
+			return getUrlKey();
+		else if (fieldName.equalsIgnoreCase("Date"))
+			return getDate();
+		else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Directed By"))
+			return getDirectedBy();
+		else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Written By"))
+			return getWrittenBy();
+		else if (fieldName.equalsIgnoreCase("Genre"))
+			return getGenre();
+		else if (fieldName.equalsIgnoreCase("Rating"))
+			return getRating();
+		else if (fieldName.equalsIgnoreCase("Seen"))
+			return "" + getSeen();
+		else if (fieldName.equalsIgnoreCase("Plot"))
+			return getPlot();
+		else if (fieldName.equalsIgnoreCase("Cast"))
+			return getCast();
+		else if (fieldName.equalsIgnoreCase("Notes"))
+			return getNotes();
+		else if (fieldName.equalsIgnoreCase("Aka"))
+			return getAka();
+		else if (fieldName.equalsIgnoreCase("Country"))
+			return getCountry();
+		else if (fieldName.equalsIgnoreCase("Language"))
+			return getLanguage();
+		else if (fieldName.equalsIgnoreCase("Colour"))
+			return getColour();
+		else if (fieldName.equalsIgnoreCase("Certification"))
+			return getCertification();
+		else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Sound Mix"))
+			return getWebSoundMix();
+		else if (fieldName.equalsIgnoreCase("Mpaa"))
+			return getMpaa();
+		else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Web Runtime"))
+			return getWebRuntime();
+		else if (fieldName.equalsIgnoreCase("Awards"))
+			return getAwards();
+
+		return "";
+	}
+
+	
+	public void copyData(ModelEntry model) {
+
+		setKey(model.getKey());
+		
+		setUrlKey(model.getUrlKey());
+		setCover(model.getCover());
+		setDate(model.getDate());
+		setTitle(model.getTitle());
+		setDirectedBy(model.getDirectedBy());
+		setWrittenBy(model.getWrittenBy());
+		setGenre(model.getGenre());
+		setRating(model.getRating());
+		setPlot(model.getPlot());
+		setCast(model.getCast());
+		setNotes(model.getNotes());
+		setSeen(model.getSeen());
+		setAka(model.getAka());
+		setCountry(model.getCountry()); 
+		setLanguage(model.getLanguage());
+		setColour(model.getColour());
+		setCertification(model.getCertification());
+		setWebSoundMix(model.getWebSoundMix());
+		setWebRuntime(model.getWebRuntime());
+		setAwards(model.getAwards());
+
+		setMpaa(model.getMpaa());
+		
+		if (model.getCoverData() != null)
+			setCoverData(model.getCoverData());
+
+		hasGeneralInfoData = model.getHasGeneralInfoData();
+		
+		if (model.getHasAdditionalInfoData())
+			setAdditionalInfo(model.getAdditionalInfo());
+		else
+			setAdditionalInfo(new ModelAdditionalInfo());
+		
+		hasChangedNotes = model.hasChangedNotes;
+		
+	}
+	
 
 	public String toString() { 
 		return title;

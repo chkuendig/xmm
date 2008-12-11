@@ -3,7 +3,7 @@ package net.sf.xmm.moviemanager.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
 
 
 public class LibPathHacker {

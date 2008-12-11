@@ -22,56 +22,56 @@ package net.sf.xmm.moviemanager.models;
 
 public class ModelIMDB {
 
-    /**
-     * The IMDB database key for this movie.
-     **/
-    private String _key;
-  
-    /**
-     * The title.
-     **/
-    private String _title;
-    
-    /**
-     * The aka titles.
-     **/
-    private String _aka;
-    
-    /**
-     * The constructor.
-     **/
-    public ModelIMDB(String key, String title, String aka) {
-	_key = key; 
-	_title = title;
-	_aka = aka;
-    }
+	/**
+	 * The IMDB database key for this movie.
+	 **/
+	private String _key;
 
-    /**
-     * Gets the key.
-     **/
-    public String getKey() {
-	return _key; 
-    }
+	/**
+	 * The title.
+	 **/
+	private String _title;
 
-    /**
-     * Gets the title.
-     **/
-    protected String getTitle() {
-	return _title;
-    }
-    
-    /**
-     * Gets the title.
-     **/
-    public String getAka() {
-	return _aka;
-    }
-  
-    /**
-     * Returns the title.
-     **/
-    public String toString() {
-	return _title;
-    }
+	/**
+	 * The aka titles.
+	 **/
+	private String _aka;
+
+	/**
+	 * The constructor.
+	 **/
+	public ModelIMDB(String key, String title, String aka) {
+		_key = key; 
+		_title = title;
+		_aka = aka;
+	}
+
+	/**
+	 * Gets the key.
+	 **/
+	public String getKey() {
+		return _key; 
+	}
+
+	/**
+	 * Gets the title.
+	 **/
+	public String getTitle() {
+		return _title;
+	}
+
+	/**
+	 * Gets the title.
+	 **/
+	public String getAka() {
+		return _aka;
+	}
+
+	/**
+	 * Returns the title.
+	 **/
+	public String toString() {
+		return _title;
+	}
 
 }

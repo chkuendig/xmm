@@ -20,256 +20,310 @@
 
 package net.sf.xmm.moviemanager.swing.extentions;
 
-import java.io.*;
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.tree.*;
 
-import java.awt.event.*;
-import net.sf.xmm.moviemanager.*;
-import net.sf.xmm.moviemanager.database.*;
-import net.sf.xmm.moviemanager.models.*;
-import net.sf.xmm.moviemanager.util.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer, ComponentListener, NewDatabaseLoadedEventListener {
-         
-    private HashMap coverCache = new HashMap();
-    private Icon defaultIconMovie;
-    private Icon defaultIconSerie;
-    private String folder;
-    private JScrollPane scrollPane;
-    private MovieManager mm = MovieManager.getIt();
-    private DialogMovieManager dmm;
-    private MovieManagerConfig config;
-    private Color foreground = UIManager.getColor("Tree.foreground");
-    private Color background = UIManager.getColor("Tree.background");
-    private Color selectionForeground = UIManager.getColor("Tree.selectionForeground");
-    private Color selectionBackground = UIManager.getColor("Tree.selectionBackground");
-    private int lastRowHeight = -1;
-    private boolean lastUseCovers = false;
-    private Image movieImage;
-    private Image serieImage;
-    
-    private static int maxWidth = 0;
-    private static int viewPortWidth = 0;
-    
-    /**
-     * ExtendedTreeCellRenderer constructor
-     *
-     * @param mm MovieManager
-     * @param scrollPane - JScrollPane containing JTree
-     */
-    public ExtendedTreeCellRenderer(DialogMovieManager dmm, JScrollPane scrollPane) {
-        this(dmm, scrollPane, MovieManager.getConfig());
-    }
-    
-    
-    /**
-     * ExtendedTreeCellRenderer constructor
-     *
-     * @param dmm DialogMovieManager
-     * @param scrollPane - JScrollPane containing JTree
-     * @param config MovieManagerConfig
-     */
-    public ExtendedTreeCellRenderer(DialogMovieManager dmm, JScrollPane scrollPane, MovieManagerConfig config) {
-        this.dmm = dmm;
-        this.scrollPane = scrollPane;
-        this.config = config;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreeNode;
 
-        // load and scale default images
-        movieImage = FileUtil.getImage("/images/movie.png");
-        serieImage = FileUtil.getImage("/images/serie.png");
-        setOpaque(true);
+import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.MovieManagerConfig;
+import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.models.ModelEpisode;
+import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
+import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
+import net.sf.xmm.moviemanager.util.FileUtil;
+
+import org.apache.log4j.Logger;
+
+public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer, NewDatabaseLoadedEventListener {
+
+	static Logger log = Logger.getRootLogger();
 	
-	scrollPane.addComponentListener(this);
+	private HashMap coverCache = new HashMap();
+	private Icon defaultIconMovie;
+	private Icon defaultIconSerie;
+	private String folder;
+	private MovieManager mm = MovieManager.getIt();
+	private MovieManagerConfig config;
+	private int lastRowHeight = -1;
+	private boolean lastUseCovers = false;
+	private Image movieImage;
+	private Image serieImage;
 
-	MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(this);
-    }
-    
-    public void newDatabaseLoadedEvent(NewDatabaseLoadedEvent evt) {
-        folder = null;
-    }
-
-    public void	componentHidden(ComponentEvent e) {}
-    public void	componentMoved(ComponentEvent e) {}
-    public void	componentShown(ComponentEvent e){}
-    
-    /* Size of viewPort changed */
-    public void componentResized(ComponentEvent e) {
+	int coverWidth;
 	
-	if (!config.getMovieListHighlightEntireRow())
-	    return;
+	StringBuffer coverTitleBuf = new StringBuffer();
+		
+	private static Color background;
+	private static Color selectionBackground;
+		
 	
-	int newViewPortWidth = scrollPane.getViewport().getExtentSize().width;
+	Map views = new HashMap();
 	
-	if (viewPortWidth != newViewPortWidth) {
-	    viewPortWidth = newViewPortWidth;
-	    
-	    TreePath[] selPaths = dmm.getMoviesList().getSelectionPaths();
-	    
-	    dmm.getMoviesList().clearSelection();
-	    dmm.getMoviesList().addSelectionPaths(selPaths);
+	public void removeNode(DefaultMutableTreeNode node) {
+		
+		if (views.remove(node.getUserObject()) == null) {
+			log.warn("No mapping existed for entry:" + node.getUserObject());
+		}
 	}
-    }
-    
-    /**
-     * Returns specialized JLabel for JTree node display
-     *
-     * @param tree JTree
-     * @param value Object
-     * @param selected boolean
-     * @param expanded boolean
-     * @param leaf boolean
-     * @param row int
-     * @param hasFocus boolean
-     * @return specialized JLabel
-     */
-    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        
-        boolean useCovers = config.getUseJTreeCovers();
-        boolean useIcons = config.getUseJTreeIcons();
-        
-        Object o = ( (DefaultMutableTreeNode) value).getUserObject();
-        
-        if (o instanceof ModelEntry) {
-            ModelEntry entry = (ModelEntry) o;
-            
-            // icon
-            int h = config.getMovieListRowHeight();
-            
-            if (!useCovers)
-                h += 8;
-            
-            if ((h != lastRowHeight) || (useCovers != lastUseCovers)) {
-                /* Use height as width to obtain square default images when not showing covers. */
-                int w = useCovers ? h * 32 / 44 : h; 
-                defaultIconMovie = new ImageIcon(movieImage.getScaledInstance(w, h, Image.SCALE_SMOOTH));
-                defaultIconSerie = new ImageIcon(serieImage.getScaledInstance(w, h, Image.SCALE_SMOOTH));
-                lastRowHeight = h;
-                lastUseCovers = useCovers;
-                clearCoverCache();
-            }
-            
-            Icon icon = null;
-            
-            if (useCovers) {
-                if (entry.getCover() != null && entry.getCover().length() > 0) {
-                    icon = (Icon) coverCache.get(entry.getCover());
-                    if (icon == null) {
-                        icon = loadCover(entry);
-                        if (icon != null) {
-                            coverCache.put(entry.getCover(), icon);
-                        }
-                    }
-                }
-                if (icon == null) {
-                    icon = leaf ? defaultIconMovie : defaultIconSerie;
-                }
-            }
-            else if (useIcons) {
-                icon = leaf ? defaultIconMovie : defaultIconSerie;
-            }
-            setIcon(icon);
-            
-            /* text and colors */
-            setForeground(selected ? selectionForeground : foreground);
-            setBackground(selected ? selectionBackground : background);
-            
-            if (useCovers) {
-                int fontSize = 3 + h / 40;
-                Color c = selected ? selectionForeground : foreground;
-                
-                String foreground = " color='#" + Integer.toHexString(c.getRed() * 256 * 256 + c.getGreen() * 256 + c.getBlue()) + "'";
-                setText("<html><font size='" + fontSize + "'" + foreground + "><b>" + entry.getTitle() + "</b></font><br><font size='" + (fontSize - 1) + "'" + foreground + ">" + entry.getDate() + "</font></html>");
-            }
-            else {
-                setText(entry.getTitle());
-            }
-        }
-        else {
-            setText(o.toString());
-        }
-        return this;
-    }
-    
-    
-    public Dimension getPreferredSize() {
 	
-        Dimension dim = super.getPreferredSize();
-	int w = getIconTextGap() + SwingUtilities.computeStringWidth(this.getFontMetrics(this.getFont()), this.getText());
+	public void removeEntry(ModelEntry entry) {
+		views.remove(entry);
+	}
 	
-	if (getIcon() != null)
-	    w += + getIcon().getIconWidth() + 4;
-	
-	if (w > maxWidth)
-	    maxWidth = w;
-	
-	/* If highlightEntireRow == true, using the stored maxwidth on all the cells */
-	if (config.getMovieListHighlightEntireRow())
-	    w = maxWidth > viewPortWidth ? maxWidth : viewPortWidth;
-	
-	dim.width = w;
-	dim.height = lastRowHeight;
-	  
-	return dim;
-    }
-    
-    
-    /**
-     * loadCover load cover from disk or database
-     *
-     * @param entry ModelEntry - movie to load cover for
-     * @return Icon - loaded cover
-     */
-    private Icon loadCover(ModelEntry entry) {
-       
-        if (folder == null) {
-            folder = config.getCoversPath();
+	/**
+	 * ExtendedTreeCellRenderer constructor
+	 *
+	 * @param mm MovieManager
+	 * @param scrollPane - JScrollPane containing JTree
+	 */
+	public ExtendedTreeCellRenderer(JTree tree, JScrollPane scrollPane) {
+		this(tree, scrollPane, MovieManager.getConfig());
 	}
 
-        int h = config.getMovieListRowHeight();
-        int w = h * 32 / 44; // hardcoded aspect ratio
-	
-	if (mm.getDatabase() instanceof DatabaseMySQL) {
-            if (config.getStoreCoversLocally() && new File(folder, entry.getCover()).exists()) {
-                return new ImageIcon(FileUtil.getImage(folder + File.separator + entry.getCover()).getScaledInstance(w, h, Image.SCALE_SMOOTH));
-            }
-            else {
-                byte[] coverData = entry.getCoverData();
 
-                if (coverData != null) {
-                    return new ImageIcon(Toolkit.getDefaultToolkit().createImage(coverData).getScaledInstance(w, h, Image.SCALE_SMOOTH));
-                }
-                else {
-                    return null;
-                }
-            }
-        }
-        else if ( (new File(folder, entry.getCover()).exists())) {
-            /* Loads the image... */
-            return new ImageIcon(FileUtil.getImage(folder + File.separator + entry.getCover()).getScaledInstance(w, h, Image.SCALE_SMOOTH));
-        }
-        else {
-            return null;
-        }
-    }
-    
-    
-    /**
-     * clear cached covers
-     */
-    public void clearCoverCache() {
-        coverCache.clear();
-    }
-    
-    
-    /**
-     * removeCoverFromCache - remove specified cover from cache
-     *
-     * @param cover - as represented in Model- or MovieEntry cover field
-     */
-    public void removeCoverFromCache(String cover) {
-        coverCache.remove(cover);
-    }
+	/**
+	 * ExtendedTreeCellRenderer constructor
+	 *
+	 * @param dmm DialogMovieManager
+	 * @param scrollPane - JScrollPane containing JTree
+	 * @param config MovieManagerConfig
+	 */
+	public ExtendedTreeCellRenderer(JTree tree, JScrollPane scrollPane, MovieManagerConfig config) {
+		
+		this.config = config;
+		
+		if (tree != null && tree.getModel() != null) {
+			final JTree finalTree = tree;
+			scrollPane.getViewport().addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					TreeNode node = (DefaultMutableTreeNode) finalTree.getLastSelectedPathComponent();
+					((DefaultTreeModel) finalTree.getModel()).nodeChanged(node); 
+				}
+			});
+		}
+		
+		// load and scale default images
+		movieImage = FileUtil.getImage("/images/movie.png");
+		serieImage = FileUtil.getImage("/images/serie.png");
+		setOpaque(true);
+
+		setDefaultColors();	
+	}
+
+	public void newDatabaseLoaded(NewDatabaseLoadedEvent evt) {
+		folder = null;
+	}
+	
+	
+	/**
+	 * Returns specialized JLabel for JTree node display
+	 *
+	 * @param tree JTree
+	 * @param value Object
+	 * @param selected boolean
+	 * @param expanded boolean
+	 * @param leaf boolean
+	 * @param row int
+	 * @param hasFocus boolean
+	 * @return specialized JLabel
+	 */
+	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+
+		try {
+
+			boolean useCovers = config.getUseJTreeCovers();
+			boolean useIcons = config.getUseJTreeIcons();
+
+			Object o = ((DefaultMutableTreeNode) value).getUserObject();
+
+			setBackground(selected ? selectionBackground : background);
+
+			if (o instanceof ModelEntry) {
+				ModelEntry entry = (ModelEntry) o;
+
+				// icon
+				int h = config.getMovieListRowHeight();
+
+				if (!useCovers)
+					h += 8;
+
+				if ((h != lastRowHeight) || (useCovers != lastUseCovers)) {
+					/* Use height as width to obtain square default images when not showing covers. */
+					int w = useCovers ? h * 32 / 44 : h; 
+
+					coverWidth = w;
+					defaultIconMovie = new ImageIcon(movieImage.getScaledInstance(w, h, Image.SCALE_SMOOTH));
+					defaultIconSerie = new ImageIcon(serieImage.getScaledInstance(w, h, Image.SCALE_SMOOTH));
+					lastRowHeight = h;
+					lastUseCovers = useCovers;
+					clearCoverCache();
+				}
+
+				Icon icon = null;
+
+
+
+				if (useCovers) {
+
+					if (entry.getKey() != -1) {
+
+						if (entry.getCover() != null && entry.getCover().length() > 0) {
+							icon = (Icon) coverCache.get(entry.getCover());
+
+							if (icon == null) {
+								icon = loadCover(entry);
+
+								if (icon != null) {
+									coverCache.put(entry.getCover(), icon);
+								}
+							}
+						}
+
+						if (icon == null) {
+							icon = leaf ? defaultIconMovie : defaultIconSerie;
+						}
+					}
+				}
+				else if (useIcons) {
+					icon = leaf ? defaultIconMovie : defaultIconSerie;
+				}
+
+				setIcon(icon);
+
+				if (useCovers) {
+
+					Object view = views.get(o);
+
+					if (view != null) {
+						putClientProperty("html", view);
+					}
+					else {
+
+						int fontSize = 3 + h / 40;
+
+						coverTitleBuf.setLength(0);
+						coverTitleBuf.append("<html><font size='");
+						coverTitleBuf.append(fontSize);
+						coverTitleBuf.append("'><b>");
+						coverTitleBuf.append(entry.isEpisode() ? ((ModelEpisode) entry).getEpisodeTitle() : entry.getTitle());
+						coverTitleBuf.append("</b></font><br><font size='");
+						coverTitleBuf.append((fontSize - 1));
+						coverTitleBuf.append("'>");
+						coverTitleBuf.append(entry.getDate());
+						coverTitleBuf.append("</font></html>");
+
+						//String str = "<html><font size='" + fontSize + "'><b>" + entry.getTitle() + "</b></font><br><font size='" + (fontSize - 1)  + "'>" + entry.getDate() + "</font></html>";
+
+						setText(coverTitleBuf.toString());
+						//setText(entry.getTitle());
+						views.put(o, getClientProperty("html"));
+					}
+				}
+				else {
+					setText(entry.isEpisode() ? ((ModelEpisode) entry).getEpisodeTitle() : entry.getTitle());
+				}
+
+			}
+			else {
+				setText(o.toString());
+			}
+
+		} catch (Exception e) {
+			log.error("Exception:" + e.getMessage(), e);
+		}
+
+		return this;
+	}
+
+		
+	
+	public static void setDefaultColors() {
+			
+		if (UIManager.getColor("ScrollPane.background") != null)
+			background = UIManager.getColor("ScrollPane.background");
+		
+		if (background == null) {
+			background = UIManager.getColor("TaskPane.background");
+		}
+				
+		if (UIManager.getColor("Tree.selectionBackground") != null)
+			selectionBackground = UIManager.getColor("Tree.selectionBackground");
+				
+	}
+	
+	
+	/**
+	 * loadCover load cover from disk or database
+	 *
+	 * @param entry ModelEntry - movie to load cover for
+	 * @return Icon - loaded cover
+	 */
+	private Icon loadCover(ModelEntry entry) {
+
+		if (folder == null) {
+			folder = config.getCoversPath();
+		}
+
+		int h = config.getMovieListRowHeight();
+		coverWidth = h * 32 / 44; // hardcoded aspect ratio
+
+		if (mm.getDatabase().isMySQL()) {
+			if (config.getStoreCoversLocally() && new File(folder, entry.getCover()).exists()) {
+				return new ImageIcon(FileUtil.getImage(folder + File.separator + entry.getCover()).getScaledInstance(coverWidth, h, Image.SCALE_SMOOTH));
+			}
+			else {
+				byte[] coverData = entry.getCoverData();
+
+				if (coverData != null) {
+					return new ImageIcon(Toolkit.getDefaultToolkit().createImage(coverData).getScaledInstance(coverWidth, h, Image.SCALE_SMOOTH));
+				}
+				else {
+					return null;
+				}
+			}
+		}
+		else if ( (new File(folder, entry.getCover()).exists())) {
+			/* Loads the image... */
+			return new ImageIcon(FileUtil.getImage(folder + File.separator + entry.getCover()).getScaledInstance(coverWidth, h, Image.SCALE_SMOOTH));
+		}
+		else {
+			return null;
+		}
+	}
+
+
+	/**
+	 * clear cached covers
+	 */
+	public void clearCoverCache() {
+		coverCache.clear();
+	}
+
+
+	/**
+	 * removeCoverFromCache - remove specified cover from cache
+	 *
+	 * @param cover - as represented in Model- or MovieEntry cover field
+	 */
+	public void removeCoverFromCache(String cover) {
+		coverCache.remove(cover);
+	}
 }

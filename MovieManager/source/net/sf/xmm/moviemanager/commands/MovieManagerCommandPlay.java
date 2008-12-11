@@ -1,7 +1,7 @@
 /**
- * @(#)MovieManagerCommandPlay 1.0 10.10.06 (dd.mm.yy)
+ * @(#)MovieManagerCommandPlay.java 1.0 15.11.08 (dd.mm.yy)
  *
- * Copyright (2003) 
+ * Copyright (2003) Bro3
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -15,122 +15,244 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Boston, MA 02111.
  * 
- * Contact: 
+ * Contact: bro3@users.sourceforge.net
  **/
 
 package net.sf.xmm.moviemanager.commands;
 
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
+import javax.swing.JTextArea;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
-import org.apache.log4j.Logger;
-
-import net.sf.xmm.moviemanager.DialogMovieManager;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
+import net.sf.xmm.moviemanager.PlanetaryTools;
+import net.sf.xmm.moviemanager.gui.DialogMovieManager;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.SimpleMailbox;
+import net.sf.xmm.moviemanager.util.StringUtil;
+import net.sf.xmm.moviemanager.util.SysUtil;
+import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
+import net.sf.xmm.moviemanager.util.plugins.MovieManagerStreamerHandler;
 
-public class MovieManagerCommandPlay implements ActionListener{
+import org.apache.log4j.Logger;
+
+public class MovieManagerCommandPlay implements ActionListener {
 
 	static Logger log = Logger.getRootLogger();
-	
-    public void actionPerformed(ActionEvent e) {
 
-	MovieManager.log.debug("ActionPerformed: " + e.getActionCommand());
-	try {
-	    execute();
-	} catch (IOException e1) {
-	} catch (InterruptedException e1) {
-	    e1.printStackTrace();
-	}
-    }
+	public void actionPerformed(ActionEvent e) {
 
-    protected static void execute() throws IOException, InterruptedException {
-	// check if there is a file selected
-	int listIndex = -1;
-    DialogMovieManager movieManagerInstance = MovieManager.getDialog();
-	TreeModel moviesListTreeModel = movieManagerInstance.getMoviesList().getModel();
-
-	// check whether movies list has entries
-	if (moviesListTreeModel.
-	    getChildCount(moviesListTreeModel.getRoot()) > 0) {
-
-	    listIndex = movieManagerInstance.getMoviesList().getLeadSelectionRow();
-
-	    if (listIndex == -1)
-		listIndex = movieManagerInstance.getMoviesList().getMaxSelectionRow();
-
-	    if (movieManagerInstance.getMoviesList().getSelectionCount() > 1) {
-		movieManagerInstance.getMoviesList().setSelectionRow(listIndex);
-	    }
+		log.debug("ActionPerformed: " + e.getActionCommand());
+		
+		try {
+			execute();
+		} catch (IOException e1) {
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
-	if (listIndex != -1) {
-	    
-	    ModelEntry selected = ((ModelEntry) ((DefaultMutableTreeNode) movieManagerInstance.getMoviesList().
-	            getLastSelectedPathComponent()).getUserObject());
-	    
-	    if (selected.getKey() != -1) {
-	        
-            MovieManagerConfig mmc = MovieManager.getConfig();
-            
-	        String fileLocation = selected.getAdditionalInfo().getFileLocation();
-	        String cmd;
-            
-            if (FileUtil.isWindows() && mmc.getUseDefaultWindowsPlayer()) {
-                cmd = "rundll32 url.dll,FileProtocolHandler ";
-             
-                if (fileLocation.indexOf("*") != -1)
-                    fileLocation = fileLocation.substring(0, fileLocation.indexOf("*"));
-                
-                fileLocation = "file://" + fileLocation;
-                
-            }
-            else {
-                // Splitting on *, each file is enclosed by quotes.	
-                String [] files = fileLocation.split("\\*");
-                fileLocation = "";
-                
-                for (int i = 0; i < files.length; i++)
-                	fileLocation += "\"" + files[i] + "\" ";
-                                
-                cmd = mmc.getMediaPlayerPath();
-                
-                System.err.println("cmd:" + cmd);
-                
-                if (!new File(cmd).isFile() && 1 == 0){
-                    
-                    JFileChooser chooser = new JFileChooser();
-                    int returnVal = chooser.showDialog(null, "Launch");
-                    if(returnVal != JFileChooser.APPROVE_OPTION)
-                        return;
-                    
-                    cmd = chooser.getSelectedFile().getCanonicalPath();
-                    mmc.setMediaPlayerPath(cmd);
-                }
-                cmd += " ";
-            }
-	    
-            //fileLocation = "\"" + fileLocation + "\"";
-            
-            //fileLocation = "/uio/aristoteles/s06/bendiko/movieManager/media\\ files/inputSmall2.avi";
-            
-            String [] args = new String[] {cmd, fileLocation};
-            
-            System.err.println("CMD1:" + cmd);
-            
-            cmd = cmd + fileLocation;
-            
-            log.debug("CMD2:" + cmd);
-	    Process p = Runtime.getRuntime().exec(cmd);
-	    }
+	public static void execute() throws IOException, InterruptedException {
+		execute(null);
 	}
-    }
+	
+		
+	public static void execute(final SimpleMailbox mailbox) throws IOException, InterruptedException {
+		
+		String error = "";
+		
+		/**
+		 * Runs the command using Runtimes exec method.
+		 * @author Bro
+		 */
+		class LaunchPlayer extends Thread {
+
+			String [] args;
+			String command;
+			File cwd;
+			
+			public Process p;
+			
+			// cwd = Current working directory
+			LaunchPlayer(String [] args, String command, File cwd) {
+				this.args = args;
+				this.command = command;
+				this.cwd = cwd;
+			}
+			
+			public void run() {
+
+				try {
+					if (cwd != null) {
+						log.debug("Execute file:" + command);
+						p = Runtime.getRuntime().exec(command, null, cwd);
+					} else if (args == null) {
+						log.debug("Execute command:" + command);
+						p = Runtime.getRuntime().exec(command);
+					} else {
+						String str = "";
+						for (int i = 0; i < args.length; i++) str += args[i] + " ";
+						log.debug("Execute default player:" + str);
+						p = Runtime.getRuntime().exec(args);
+					}
+										
+				} catch (Exception e) {
+					log.error("Exception: " + e.getMessage(), e);
+					
+					log.debug("Cause:" + e.getCause());
+					
+					
+					if (mailbox != null) {
+						if (e.getMessage().indexOf("not found") != -1) {
+							mailbox.setMessage("");
+						}
+					}
+				}
+				finally {
+					if (mailbox != null)
+						mailbox.setMessage("exec done");
+				}
+
+				if (p == null)
+					return;
+				
+				// Clear input/error streams to avoid dead lock in subprocess
+				SysUtil.cleaStreams(p);
+			}
+		}
+		
+		// check if there is a file selected
+		int listIndex = -1;
+		DialogMovieManager movieManagerInstance = MovieManager.getDialog();
+		TreeModel moviesListTreeModel = movieManagerInstance.getMoviesList().getModel();
+
+		// check whether movies list has entries
+		if (moviesListTreeModel.
+				getChildCount(moviesListTreeModel.getRoot()) > 0) {
+
+			listIndex = movieManagerInstance.getMoviesList().getLeadSelectionRow();
+
+			if (listIndex == -1)
+				listIndex = movieManagerInstance.getMoviesList().getMaxSelectionRow();
+
+			if (movieManagerInstance.getMoviesList().getSelectionCount() > 1) {
+				movieManagerInstance.getMoviesList().setSelectionRow(listIndex);
+			}
+		}
+
+		if (listIndex != -1) {
+
+			ModelEntry selected = ((ModelEntry) ((DefaultMutableTreeNode) movieManagerInstance.getMoviesList().
+					getLastSelectedPathComponent()).getUserObject());
+
+			if (selected.getKey() != -1) {
+
+				String [] command = null;
+
+				MovieManagerConfig mmc = MovieManager.getConfig();
+				String fileLocation = selected.getAdditionalInfo().getFileLocation();
+				MovieManagerStreamerHandler streamerHandler = MovieManager.getConfig().getStreamerHandler();
+        			
+				if (streamerHandler != null) {
+					String extraInfoField = streamerHandler.getDatabaseUrlField();
+					fileLocation = selected.getAdditionalInfo().getExtraInfoFieldValue(extraInfoField);
+				}
+								
+				String cmd = null;
+	
+				String [] files = fileLocation.split("\\*");
+				
+				if (files.length == 0)
+					return;
+				
+				if (MovieManager.getConfig().getExecuteExternalPlayCommand()) {
+					File mediaFile = new File(files[0]);
+					
+					File [] dirFiles = mediaFile.getParentFile().listFiles();
+					
+					if (dirFiles != null) {
+						for (int i = 0; i < dirFiles.length; i++) {
+
+							if (dirFiles[i].getName().endsWith(".xmm.sh") || dirFiles[i].getName().endsWith(".xmm.bat")) {
+
+								int rating = StringUtil.compareFileNames(dirFiles[i].getName(), mediaFile.getName());
+
+								// File names are similar
+								if (rating > 2) {
+									final File dirFile = dirFiles[i];
+									final LaunchPlayer player = new LaunchPlayer(null, dirFile.getAbsolutePath(), mediaFile.getParentFile());
+									player.start();
+									return;
+								}
+							}
+						}
+					}
+				}
+				
+				if (SysUtil.isWindows() && mmc.getUseDefaultWindowsPlayer()) {
+					cmd = "cmd.exe /C  ";
+
+					// Can only have one file as argument. The second is ignored
+					for (int i = 0; i < 1; i++) {
+						cmd +=  "\"" + files[i] + "\"";
+					}
+				}
+				else {
+					// each file is enclosed by quotes.	
+					ArrayList commandList = new ArrayList();
+					
+					cmd = mmc.getMediaPlayerPath();
+					
+					if (cmd != null && "".equals(cmd)){
+
+						JFileChooser chooser = new JFileChooser();
+						int returnVal = chooser.showDialog(null, "Launch");
+						if(returnVal != JFileChooser.APPROVE_OPTION)
+							return;
+
+						cmd = chooser.getSelectedFile().getCanonicalPath();
+						mmc.setMediaPlayerPath(cmd);
+					}
+					
+					if (cmd != null && !"".equals(cmd)) {
+						commandList.add(cmd);
+					}
+					
+					String playArg = mmc.getMediaPlayerCmdArgument();
+					
+					if (playArg != null && !playArg.equals(""))
+						commandList.add(playArg);
+										
+					
+					for (int i= 0; i < files.length; i++) {
+						commandList.add(files[i]);
+					}
+					
+					command = new String[commandList.size()];
+					command = (String[]) commandList.toArray(command);
+				}
+					
+				final String windowsDefault = cmd;
+				
+				/* Creating a Object wrapped in a Thread */
+				Thread t = new Thread(new LaunchPlayer(command, windowsDefault, null));
+				t.start();
+			}
+		}
+	}
 }
+
+

@@ -20,12 +20,12 @@
 
 package net.sf.xmm.moviemanager.fileproperties;
 
+import java.io.File;
+import java.io.RandomAccessFile;
+
 import net.sf.xmm.moviemanager.mediainfodll.MediaInfo;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.LibPathHacker;
-
-import java.io.File;
-import java.io.RandomAccessFile;
 
 class FilePropertiesMediaInfo extends FileProperties {
     

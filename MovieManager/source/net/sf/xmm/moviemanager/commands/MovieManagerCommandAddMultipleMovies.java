@@ -1,6 +1,6 @@
 package net.sf.xmm.moviemanager.commands;
 
-import net.sf.xmm.moviemanager.DialogMovieInfo;
+import net.sf.xmm.moviemanager.gui.DialogMovieInfo;
 
 
 /**

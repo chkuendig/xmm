@@ -20,12 +20,12 @@
 
 package net.sf.xmm.moviemanager.database;
 
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
 import net.sf.xmm.moviemanager.models.ModelExtremeMovie;
 
 import org.apache.log4j.Logger;
-
-import java.sql.ResultSet;
-import java.util.ArrayList;
 
 public class DatabaseExtreme {
     

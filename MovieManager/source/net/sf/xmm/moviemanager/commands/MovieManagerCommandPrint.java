@@ -20,12 +20,18 @@
 
 package net.sf.xmm.moviemanager.commands;
 
-import java.awt.event.*;
-import net.sf.xmm.moviemanager.*;
+import java.awt.Cursor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.ReportGenerator;
 
 public class MovieManagerCommandPrint implements ActionListener {
    void execute() {
+	   MovieManager.getDialog().setCursor(new Cursor(Cursor.WAIT_CURSOR));
        ReportGenerator.printDirect(MovieManager.getDialog().getMoviesList());
+       MovieManager.getDialog().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
    }
 
    /**

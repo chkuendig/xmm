@@ -1,82 +1,91 @@
 package net.sf.xmm.moviemanager.util;
 
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
-import javax.swing.SwingUtilities;
-
-//import spin.demo.Assert;
 
 /**
  * Implementation of a progress.
  */
-public class ProgressBeanImpl implements ProgressBean {
+public class ProgressBeanImpl implements ProgressBean, Runnable {
 
 	public PropertyChangeListener listener = null;
-  
+
 	private boolean cancelled = false;
-  private double  status;
-  private String message = "";
-  
-  /**
-   * Constructor.
-   */
-  public ProgressBeanImpl() {
-  }
+	private double  status;
+	private String message = "";
+	private Runnable r = null;
 
-  /**
-   * Add a listener to property changes.
-   * 
-   * @param listener listener to add
-   */
-  synchronized public void addPropertyChangeListener(PropertyChangeListener listener) {
-    //Assert.isNotEDT();
- 
-	  GUIUtil.isNotEDT();
-	  
-	  this.listener = listener;
-	  return;
-  }
-  
-  /**
-   * Start.
-   */
-  public void start() {
-	  
-  }
+	boolean success = true;
+	
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+	
+	public boolean success() {
+		return success;
+	}
+	
+	/**
+	 * Empty Constructor.
+	 */
+	public ProgressBeanImpl() {}
 
-  /**
-   * Cancel the progress.
-   */
-  public synchronized void cancel() {
-	 
-	  GUIUtil.isNotEDT();
+	/**
+	 * Constructor taking a runnable object.
+	 */
+	public ProgressBeanImpl(Runnable r) {
+		this.r = r;
+	}
 
-    cancelled = true;
-  }
+	// Must be overridden
+	public void run() {}
 
-  /**
-   * Get the current status.
-   *
-   * @return    status of progress
-   */
-  public double getStatus() {
-	  GUIUtil.isNotEDT();
-	  
-    return status;
-  }
-  
-  public String getMessage() {
-	  GUIUtil.isNotEDT();
-	  
-	  return message;
-  }
-  
-  public synchronized boolean getCancelled() {
-	  
-	  GUIUtil.isNotEDT();
-	  return cancelled;
-  }
+	/**
+	 * Add a listener to property changes.
+	 * 
+	 * @param listener listener to add
+	 */
+	synchronized public void addPropertyChangeListener(PropertyChangeListener listener) {
+		this.listener = listener;
+		return;
+	}
+
+	/**
+	 * Start.
+	 */
+	public void start() {
+
+		if (r != null)
+			r.run();
+		else
+			run();
+	}
+
+	/**
+	 * Cancel the progress.
+	 */
+	public synchronized void cancel() {
+		cancelled = true;
+	}
+
+	/**
+	 * Get the current status.
+	 *
+	 * @return    status of progress
+	 */
+	public double getStatus() {
+		GUIUtil.isNotEDT();
+
+		return status;
+	}
+
+	public String getMessage() {
+		GUIUtil.isNotEDT();
+		return message;
+	}
+
+	public synchronized boolean getCancelled() {
+		return cancelled;
+	}
 }
 

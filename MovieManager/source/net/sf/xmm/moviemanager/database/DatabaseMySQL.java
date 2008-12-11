@@ -20,47 +20,53 @@
 
 package net.sf.xmm.moviemanager.database;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
+import javax.swing.DefaultListModel;
+
+import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import javax.swing.DefaultListModel;
-
-
 public class DatabaseMySQL extends Database {
-    
-    public DatabaseMySQL(String filePath) {
-	super(filePath);
-	databaseType = "MySQL";
-	_sql = new SQL(filePath, "MySQL");
-	
-	quote = "`";
-	generalInfoString = "General_Info";
-	additionalInfoString = "Additional_Info";
-	extraInfoString = "Extra_Info";
+    	
+	public DatabaseMySQL(String filePath) {
+		super(filePath);
+		
+		if (!MovieManager.getConfig().getInternalConfig().getSensitivePrintMode())
+			log.debug("DatabaseMySQL - filePath:" + filePath);
+		
+		databaseType = "MySQL";
+		_sql = new SQL(filePath, "MySQL");
+		
+		
+		quote = "`";
+		generalInfoString = "General_Info";
+		additionalInfoString = "Additional_Info";
+		extraInfoString = "Extra_Info";
 
-	generalInfoEpisodeString = "General_Info_Episodes";
-	additionalInfoEpisodeString = "Additional_Info_Episodes";
-	extraInfoEpisodeString = "Extra_Info_Episodes";
+		generalInfoEpisodeString = "General_Info_Episodes";
+		additionalInfoEpisodeString = "Additional_Info_Episodes";
+		extraInfoEpisodeString = "Extra_Info_Episodes";
 
-	quotedGeneralInfoString = quote + generalInfoString + quote;
-	quotedAdditionalInfoString = quote + additionalInfoString + quote;
-	quotedExtraInfoString = quote + extraInfoString + quote;
-	
-	quotedGeneralInfoEpisodeString = quote + generalInfoEpisodeString + quote;
-	quotedAdditionalInfoEpisodeString = quote + additionalInfoEpisodeString + quote;
-	quotedExtraInfoEpisodeString = quote + extraInfoEpisodeString + quote;
-	
-	directedByString = "Directed_By";
-	writtenByString = "Written_By";
-	
-	soundMixString = "Sound_Mix";
-	webRuntimeString = "Web_Runtime";
-    }
-    
+		quotedGeneralInfoString = quote + generalInfoString + quote;
+		quotedAdditionalInfoString = quote + additionalInfoString + quote;
+		quotedExtraInfoString = quote + extraInfoString + quote;
+
+		quotedGeneralInfoEpisodeString = quote + generalInfoEpisodeString + quote;
+		quotedAdditionalInfoEpisodeString = quote + additionalInfoEpisodeString + quote;
+		quotedExtraInfoEpisodeString = quote + extraInfoEpisodeString + quote;
+
+		directedByString = "Directed_By";
+		writtenByString = "Written_By";
+
+		soundMixString = "Sound_Mix";
+		webRuntimeString = "Web_Runtime";
+	}
+
     
     
     /**
@@ -1230,7 +1236,7 @@ public class DatabaseMySQL extends Database {
 	    statement.setString(15, model.getCast());
 	    statement.setString(16, model.getNotes());
 	    statement.setInt(17, model.getMovieKey());
-	    statement.setInt(18, model.getEpisodeNumber());
+	    statement.setInt(18, model.getEpisodeKey());
 	    statement.setBytes(19, model.getCoverData());
 	    statement.setString(20, model.getCertification());
 	    statement.setString(21, model.getWebSoundMix());
@@ -1307,7 +1313,7 @@ public class DatabaseMySQL extends Database {
 		statement.setString(16, model.getCast());
 		statement.setString(17, model.getNotes());
 		statement.setInt(18, model.getMovieKey());
-		statement.setInt(19, model.getEpisodeNumber());
+		statement.setInt(19, model.getEpisodeKey());
 		statement.setBytes(20, model.getCoverData());
 		statement.setString(21, model.getCertification());
 		statement.setString(22, model.getWebSoundMix());
@@ -1621,7 +1627,9 @@ public class DatabaseMySQL extends Database {
 	return list;
     }
     
-    
+    public ModelMovie getMovie(int index) {
+    	return getMovie(index, true);
+    }
 
     
     /** 
@@ -1694,6 +1702,10 @@ public class DatabaseMySQL extends Database {
 	return movie;
     }
     
+    
+    public ModelEpisode getEpisode(int index) {
+    	return getEpisode(index, true);
+    }
 
     /** 
      * Returns a ModelEpisode with the General_Info on a specific episode

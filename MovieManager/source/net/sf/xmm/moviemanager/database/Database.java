@@ -20,19 +20,29 @@
 
 package net.sf.xmm.moviemanager.database;
 
-import net.sf.xmm.moviemanager.DialogDatabase;
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.models.*;
-
-import org.apache.log4j.Logger;
-
-//import java.sql.ResultSet;
-import java.sql.*;
-import java.util.*;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
+
+import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
+import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
+import net.sf.xmm.moviemanager.models.ModelEpisode;
+import net.sf.xmm.moviemanager.models.ModelMovie;
+
+import org.apache.log4j.Logger;
 
 abstract public class Database {
 
@@ -94,6 +104,9 @@ abstract public class Database {
      **/
     protected Database(String filePath) {
 		_path = filePath;
+		
+		if (!MovieManager.getConfig().getInternalConfig().getSensitivePrintMode())
+			log.debug("Debug - filePath:" + filePath);
 	}
 	
     public boolean isSetUp() {
@@ -141,7 +154,8 @@ abstract public class Database {
 		setUp = true;
 	    }
 	} catch (Exception e) {
-	    log.error("Exception: ", e);
+	    //log.error("Exception: ", e);
+		log.error("Exception: " + e.getMessage());
 	    checkErrorMessage(e);
 	    _initialized = false;
 	    fatalError = true;
@@ -318,54 +332,57 @@ abstract public class Database {
 
     void checkErrorMessage(Exception e) {
 
-    	String message = errorMessage = e.getMessage();
+    	String message =  e.getMessage();
+    	errorMessage = message;
+    	
     	exception = e;
 
-    	if (e == null || message == null) {
+    	if (message == null) {
     		errorMessage = "";
     		return;
     	}
 		
-    	//finalize()
-    	
-    	/*
-    	if (message.indexOf("The database engine could not lock table") != -1) {
-    	 		    		    		//errorMessage = "Connection reset";
-    		//MovieManager.getIt().processDatabaseError();
+    	if (message.indexOf("Access denied") != -1) {
+    		errorMessage = message;
+    		MovieManager.getIt().processDatabaseError(this);
     	}
-    	*/
-
-    	if (message.indexOf("Connection reset") != -1) {
+    	else if (message.indexOf("Connection reset") != -1) {
     		errorMessage = "Connection reset";
-    		MovieManager.getIt().processDatabaseError();
+    		MovieManager.getIt().processDatabaseError(this);
     	}
 //    	Software caused connection abort: recv failed
     	else if (message.indexOf("recv failed") != -1) {
     			errorMessage = "Connection closed";
-    			MovieManager.getIt().processDatabaseError();
+    			MovieManager.getIt().processDatabaseError(this);
     	}
 //    	Software caused connection abort: socket write error
     	else if (message.indexOf("socket write error") != -1) {
     			errorMessage = "Socket Write Error";
-    			MovieManager.getIt().processDatabaseError();
+    			MovieManager.getIt().processDatabaseError(this);
     	}
     	else if (message.indexOf("Server shutdown in progress") != -1) {
 			errorMessage = "Server shutdown in progress";
-			MovieManager.getIt().processDatabaseError();
+			MovieManager.getIt().processDatabaseError(this);
+    	}
+    	else if (message.indexOf("Connection timed out: connect") != -1) {
+			errorMessage = "Connection timed out: connect";
+			MovieManager.getIt().processDatabaseError(this);
+    	}
+    	else if (message.indexOf("UnknownHostException") != -1) {
+			errorMessage = "UnknownHostException";
+			MovieManager.getIt().processDatabaseError(this);
     	}
     	else if (message.indexOf("Communications link failure") != -1) {
 			errorMessage = "Communications link failure";
-			MovieManager.getIt().processDatabaseError();
+			MovieManager.getIt().processDatabaseError(this);
     	}
     	else if ((message.indexOf("is full") != -1) || (message.indexOf("Error writing file") != -1)) {
     		errorMessage = "MySQL server is out of space";
-    		MovieManager.getIt().processDatabaseError();
+    		MovieManager.getIt().processDatabaseError(this);
     	}
-
     	else if ((message.indexOf("Data truncation: Data too long for column 'CoverData'") != -1)) {
     		errorMessage = "Data truncation cover";
     	}
-
     	else if ((message.indexOf("You have an error in your SQL syntax") != -1)) {
     		errorMessage = "SQL Syntax error";
     	}
@@ -377,7 +394,9 @@ abstract public class Database {
     		message = "";
     	}
     	else if (!message.equals(""))
-    		DialogDatabase.showDatabaseMessage(MovieManager.getDialog(), this, "");
+    		MovieManager.getIt().processDatabaseError(this);
+       	
+       	
     }
 
 
@@ -1688,7 +1707,7 @@ abstract public class Database {
 		statement.setString(16, model.getCast());
 		statement.setString(17, model.getNotes());
 		statement.setInt(18, model.getMovieKey());
-		statement.setInt(19, model.getEpisodeNumber());
+		statement.setInt(19, model.getEpisodeKey());
 		statement.setString(20, model.getCertification());
 		statement.setString(21, model.getWebSoundMix());
 		statement.setString(22, model.getWebRuntime());
@@ -1873,7 +1892,7 @@ abstract public class Database {
 	    statement.setString(15, model.getCast());
 	    statement.setString(16, model.getNotes());
 	    statement.setInt(17, model.getMovieKey());
-	    statement.setInt(18, model.getEpisodeNumber());
+	    statement.setInt(18, model.getEpisodeKey());
 	    statement.setString(19, model.getCertification());
 	    statement.setString(20, model.getWebSoundMix());
 	    statement.setString(21, model.getWebRuntime());
@@ -2277,7 +2296,7 @@ abstract public class Database {
 	if (this instanceof DatabaseHSQL)
 	    fieldType = "LONGVARCHAR";
 
-	try {_sql.clear();
+	try {
 	    value = _sql.executeUpdate("ALTER TABLE " + quotedExtraInfoString + " "+
 				       "ADD COLUMN " +quote+ field +quote+" "+ fieldType +";");
 
@@ -2285,13 +2304,6 @@ abstract public class Database {
 	    log.error("Exception: ", e);
 	    checkErrorMessage(e);
 	    value = -2;
-	    
-	    try {
-	    if (e.getMessage().indexOf("could not lock table") != -1) {
-			_sql.finalize();
-	    	_sql.setUp();
-	    }
-	    } catch (Exception i) {}
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2316,7 +2328,7 @@ abstract public class Database {
 	if (this instanceof DatabaseHSQL)
 	    fieldType = "LONGVARCHAR";
 
-	try {_sql.clear();
+	try {
 	    value = _sql.executeUpdate("ALTER TABLE " + quotedExtraInfoEpisodeString + " "+
 				       "ADD COLUMN " +quote+ field +quote+" "+ fieldType +";");
 
@@ -2324,13 +2336,6 @@ abstract public class Database {
 	    log.error("Exception: ", e);
 	    checkErrorMessage(e);
 	    value = -2;
-	    
-	    try {
-		    if (e.getMessage().indexOf("could not lock table") != -1) {
-				_sql.finalize();
-		    	_sql.setUp();
-		    }
-		    } catch (Exception i) {}
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2349,17 +2354,6 @@ abstract public class Database {
 
     	if (removeExtraInfoMovieFieldName(field) == -2)
     		return -1;
-		
-		// Hopefully reduces the probabillity of generating a "Database engine cannot lock table" error."
-		if (isMSAccess()) {
-			
-			try {
-				;//Thread.sleep(800);
-			} catch (Exception e) {
-				log.error("Exception:" + e.getMessage());
-				e.printStackTrace();
-			}
-		}
 		
     	if (removeExtraInfoEpisodeFieldName(field) == -2)
     		return -1;
@@ -2381,15 +2375,7 @@ abstract public class Database {
 		} catch (Exception e) {
 			log.error("Exception: ", e);
 			checkErrorMessage(e);
-	    
-			try {
-				if (e.getMessage().indexOf("could not lock table") != -1) {
-					_sql.finalize();
-					_sql.setUp();
-				}
-		    } catch (Exception i) {}
-	    
-			value = -2;
+	    	value = -2;
 		} finally {
 			/* Clears the Statement in the dataBase... */
 			try {
@@ -2415,15 +2401,7 @@ abstract public class Database {
 	} catch (Exception e) {
 	    log.error("Exception: ", e);
 	    checkErrorMessage(e);
-	    
-	    try {
-		    if (e.getMessage().indexOf("could not lock table") != -1) {
-		    	_sql.finalize();
-		    	_sql.setUp();
-		    }
-		    } catch (Exception i) {}
-	    
-	    value = -2;
+	     value = -2;
 	} finally {
 	    /* Clears the Statement in the dataBase... */
 	    try {
@@ -2756,7 +2734,13 @@ abstract public class Database {
             if (value.equals("AND") || value.equals("OR") || value.equals("XOR") || value.equals("NOT")) {
                 
                 log.debug("value:" + value);
-                log.debug("values[i+1]:" + values[i+1]);
+                
+                if (values.length > i+1)
+                	log.debug("values[i+1]:" + values[i+1]);
+                else {
+                	errorMessage = "Invalid query. No expression after " + value;
+                	return null;
+                }
                 
                 /* Checking if next value is invalid */
                 if ((values.length-1 > i) && !values[i+1].equals(")") &&
@@ -3349,7 +3333,7 @@ abstract public class Database {
     /** Returns a MovieModel that contains the movie at the specified index
      * in the database.
      **/
-    public ModelMovie getMovie(int index, boolean notUsed) {
+    public ModelMovie getMovie(int index) {
     	ModelMovie movie = null;
 
     	try {
@@ -3383,7 +3367,7 @@ abstract public class Database {
     /**
      * Returns a ModelMovie with the general info on a specific episode
      **/
-    public ModelEpisode getEpisode(int index, boolean notUsed) {
+    public ModelEpisode getEpisode(int index) {
 	ModelEpisode episode = null;
 
 	try {
@@ -3417,7 +3401,7 @@ abstract public class Database {
 
 	    /* Processes the result set till the end... */
 	    if (resultSet.next()) {
-		episode = new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), ""/*("Aka")*/, resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), /*resultSet.getString("Mpaa"), */resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards"));
+	    	episode = new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), ""/*("Aka")*/, resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), /*resultSet.getString("Mpaa"), */resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards"));
 	    }
 	} catch (Exception e) {
 	    log.error("Exception: ", e);

@@ -21,16 +21,24 @@
 
 package net.sf.xmm.moviemanager.models;
 
+import java.util.ArrayList;
+
+import org.apache.log4j.Logger;
 import org.exolab.castor.mapping.AccessMode;
 import org.exolab.castor.mapping.ClassDescriptor;
 import org.exolab.castor.mapping.FieldDescriptor;
-import org.exolab.castor.xml.*;
-
-import java.util.*;
+import org.exolab.castor.xml.NodeType;
+import org.exolab.castor.xml.TypeValidator;
+import org.exolab.castor.xml.UnmarshalState;
+import org.exolab.castor.xml.ValidationException;
+import org.exolab.castor.xml.XMLClassDescriptor;
+import org.exolab.castor.xml.XMLFieldDescriptor;
 
 
 public class ModelExportXML implements XMLClassDescriptor {
 
+	static Logger log = Logger.getRootLogger();
+	
     private ArrayList movies;
     private ArrayList series;
     
@@ -98,85 +106,85 @@ public class ModelExportXML implements XMLClassDescriptor {
      }
 
     public XMLFieldDescriptor[] getAttributeDescriptors() {
-        System.err.println("getAttributeDescriptors()");
+        log.debug("getAttributeDescriptors()");
         // TODO Auto-generated method stub
         return null;
     }
 
     public XMLFieldDescriptor getContentDescriptor() {
-        System.err.println("getContentDescriptor()");
+        log.debug("getContentDescriptor()");
         // TODO Auto-generated method stub
         return null;
     }
 
     public XMLFieldDescriptor[] getElementDescriptors() {
-        System.err.println("getElementDescriptors()");
+        log.debug("getElementDescriptors()");
         // TODO Auto-generated method stub
         return null;
     }
 
     public XMLFieldDescriptor getFieldDescriptor(String arg0, String arg1, NodeType arg2) {
-        System.err.println("getFieldDescriptor");
+        log.debug("getFieldDescriptor");
         // TODO Auto-generated method stub
         return null;
     }
 
     public String getNameSpacePrefix() {
-        System.err.println("getNameSpacePrefix()");
+        log.debug("getNameSpacePrefix()");
         // TODO Auto-generated method stub
         return null;
     }
 
     public String getNameSpaceURI() {
-        System.err.println("getNameSpaceURI()");
+        log.debug("getNameSpaceURI()");
         // TODO Auto-generated method stub
         return null;
     }
 
     public TypeValidator getValidator() {
-        System.err.println("getValidator()");
+        log.debug("getValidator()");
         // TODO Auto-generated method stub
         return null;
     }
 
     public String getXMLName() {
-        System.err.println("getXMLName()");
+        log.debug("getXMLName()");
         // TODO Auto-generated method stub
         return null;
     }
 
     public boolean canAccept(String arg0, String arg1, Object arg2) {
-        System.err.println("canAccept");
+		log.debug("canAccept");
         // TODO Auto-generated method stub
         return false;
     }
 
     public Class getJavaClass() {
-        System.err.println("getJavaClass()");
+        log.debug("getJavaClass()");
         // TODO Auto-generated method stub
         return null;
     }
 
     public FieldDescriptor[] getFields() {
-        System.err.println("getFields()");
+        log.debug("getFields()");
         // TODO Auto-generated method stub
         return null;
     }
 
     public ClassDescriptor getExtends() {
-        System.err.println("getExtends()");
+        log.debug("getExtends()");
         // TODO Auto-generated method stub
         return null;
     }
 
     public FieldDescriptor getIdentity() {
-        System.err.println("getIdentity()");
+        log.debug("getIdentity()");
         // TODO Auto-generated method stub
         return null;
     }
 
     public AccessMode getAccessMode() {
-        System.err.println("getAccessMode()");
+        log.debug("getAccessMode()");
         // TODO Auto-generated method stub
         return null;
     }

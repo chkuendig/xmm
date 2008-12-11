@@ -20,42 +20,130 @@
 
 package net.sf.xmm.moviemanager.util;
 
-import org.apache.log4j.Logger;
-
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.io.*;
-import java.net.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.swing.JApplet;
-import javax.swing.filechooser.FileSystemView;
+
+import net.sf.xmm.moviemanager.gui.DialogMovieManager;
+
+import org.apache.log4j.Logger;
 
 public class FileUtil {
     
     static Logger log = Logger.getRootLogger();
+   
     
     
-    public static String getLineSeparator() {
-        return System.getProperty("line.separator"); //$NON-NLS-1$
+    public static StringBuffer readFileToStringBuffer(String filePath) throws FileNotFoundException, IOException {
+
+    	File file = new File(filePath);
+    	
+    	if (!file.isFile()) {
+    		if (!FileUtil.getFile(filePath).isFile()) 
+    			throw new FileNotFoundException("File does not exist:" + filePath);
+    		else
+    			file = FileUtil.getFile(filePath);
+    	}
+
+    	StringBuffer buf = new StringBuffer();
+
+    	BufferedReader reader = new BufferedReader(new FileReader(file));
+    	String tmp;
+
+    	while ((tmp = reader.readLine()) != null)
+    		buf.append(tmp);
+
+    	reader.close();
+    			
+    	return buf;
     }
     
     
-    public static String getDirSeparator() {
-        return File.separator;
+    
+    public static StringBuffer readFileToStringBuffer(File file) throws FileNotFoundException, IOException {
+
+    	if (!file.isFile()) {
+    		if (!FileUtil.getFile(file.toString()).isFile()) 
+    			throw new FileNotFoundException("File does not exist:" + file);
+    		else
+    			file = FileUtil.getFile(file.toString());
+    	}
+
+    	StringBuffer buf = new StringBuffer();
+
+    	BufferedReader reader = new BufferedReader(new FileReader(file));
+    	String tmp;
+
+    	while ((tmp = reader.readLine()) != null)
+    		buf.append(tmp);
+
+    	reader.close();
+    			
+    	return buf;
     }
     
-    /* Mainly used for debugging */
-    public static void writeToFile(String fileName, StringBuffer data) {
-        try {
-            FileOutputStream fileStream = new FileOutputStream(new File(fileName));
-            for (int u = 0; u < data.length(); u++)
-                fileStream.write(data.charAt(u));
-            fileStream.close();
-            
-        } catch (Exception e) {
-            log.error("Exception:"+ e.getMessage());
-        }
+    
+   
+    public static ArrayList readFileToArrayList(File file) throws FileNotFoundException, IOException {
+
+    	if (!file.isFile()) {
+    		if (!FileUtil.getFile(file.toString()).isFile()) 
+    			throw new FileNotFoundException("File does not exist:" + file);
+    		else
+    			file = FileUtil.getFile(file.toString());
+    	}
+    	
+    	if (file.isFile())
+    		return readArrayList(new FileReader(file));
+    	
+    	return null;
     }
+
+    	
+    	
+    public static ArrayList readArrayList(Reader input) throws FileNotFoundException, IOException {
+    	ArrayList ret = new ArrayList();
+    	
+    	BufferedReader reader = new BufferedReader(input);
+    	String tmp;
+
+    	while ((tmp = reader.readLine()) != null)
+    		ret.add(tmp);
+
+    	reader.close();
+    			
+    	return ret;
+    }
+    
+    
+  
     
     
     public static InputStream getResourceAsStream(String name) {
@@ -85,6 +173,67 @@ public class FileUtil {
     }
     
     
+    public static byte[] getResourceAsByteArray(File file) {
+    	return getResourceAsByteArray(file.getAbsolutePath());
+    }
+    
+    /**
+     * Returns a resource in a byte[] or null if not found.
+     *
+     * @param name A resource name.
+     **/
+    public static byte[] getResourceAsByteArray(String name) {
+        
+        try {
+            InputStream inputStream;
+            
+            if (new File(name).exists()) {
+                inputStream = new FileInputStream(new File(name));
+            }
+            else {
+                inputStream = FileUtil.class.getResourceAsStream(name);
+            }
+            
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream(bufferedInputStream.available());
+            
+            int buffer;
+            while ((buffer = bufferedInputStream.read()) != -1)
+                byteStream.write(buffer);
+            
+            bufferedInputStream.close();
+            
+            return byteStream.toByteArray();
+            
+        } catch (Exception e) {
+            log.error("Exception: " + e.getMessage(), e); //$NON-NLS-1$
+        }
+        return null;
+    }
+    
+    public static String getAsString(InputStream s) {
+
+    	String str = "";
+
+    	try {
+    		InputStreamReader inpStrd = new InputStreamReader(s);
+    		BufferedReader buffRd = new BufferedReader(inpStrd);
+    		String line = null;
+
+    		while((line = buffRd.readLine()) != null) {
+    			str += line;
+    		}
+
+    		log.debug(line);  
+    		buffRd.close();
+
+    	} catch (Exception e) {
+    		log.warn("Exception:" + e.getMessage(), e);
+    	}
+    	return str;	
+    }
+    
+    
     public static File getFile(String fileName) {
         try {
             return new File(new URI(null, getFileURL(fileName).toString(), null));
@@ -101,160 +250,144 @@ public class FileUtil {
     
 
     public static URL getFileURL(String fileName, JApplet applet) {
-        
-        URL url = null;
-		
-        try {
-	    //URL p = FileUtil.class.getResource(fileName);
-	    //String path = URLDecoder.decode(fileName, "UTF-8");
-	   
-	    if (applet == null) {
-		
-		File f;
-            	
-		if (fileName.startsWith("/")) {
-		    f = new File(fileName);
-		} else {
-		    f = new File(getUserDir() + fileName);
-		}
-		
-		url = f.toURL();
-		
-		/*
+
+    	URL url = null;
+
+    	try {
+    		//URL p = FileUtil.class.getResource(fileName);
+    		//String path = URLDecoder.decode(fileName, "UTF-8");
+
+    		if (applet == null) {
+
+    			File f;
+
+    			if (fileName.startsWith("/")) {
+    				f = new File(fileName);
+    			} else {
+    				f = new File(SysUtil.getUserDir() + fileName);
+    			}
+
+    			url = f.toURL();
+
+    			/*
 		// If it exists inside the jar 
 		if (!f.exists()) {
 		    url = FileUtil.class.getResource("/" + fileName);
-		    
-		    System.err.println("ur3:" + url + "  ("+ new File(url.toString()).isFile() +")" );
-		    
+
+		    System.out.println("ur3:" + url + "  ("+ new File(url.toString()).isFile() +")" );
+
 		    //url = new File("/MovieManager.tmx").toURL();
-		    
-		    
+
+
 		    //f = new File("/" + fileName);
-		    //System.err.println("url3:" + f + " (" + new File("/" + fileName).exists() + ")");
-		    //System.err.println("url3:"+ url);
+		    //System.out.println("url3:" + f + " (" + new File("/" + fileName).exists() + ")");
+		    //System.out.println("url3:"+ url);
 		}
-		*/
-		
-            }
-            else {
-                
-                fileName = fileName.replaceAll("\\\\", "/");
-                
-                if (fileName.startsWith("/"))
-                    fileName = fileName.replaceFirst("/", "");
-                
-                //log.debug("fileName:" + fileName);
-                //log.debug("codebase:"+ _movieManager.applet.getCodeBase());
-                
-                url = new URL(applet.getCodeBase(), fileName);
-                
-		//log.debug("URL:"+ url.toString());
-                //log.debug("url.getFile():" + url.getFile());
-                //log.debug("getPath():" + url.getPath());
-                
-                //log.debug("encode:"+URLEncoder.encode(url.toString() , "UTF-8"));
-            }
-            //return new File((java.net.URI) new java.net.URI(URLEncoder.encode(url.toString() , "UTF-8")));
-            
-        } catch(Exception e) {
-            log.error("Exception:" + e.getMessage(), e);
-        }
-        return url;
+    			 */
+
+    		}
+    		// Applet
+    		else {
+
+    			fileName = fileName.replaceAll("\\\\", "/");
+
+    			if (fileName.startsWith("/"))
+    				fileName = fileName.replaceFirst("/", "");
+
+    			log.debug("codebase:"+ applet.getCodeBase());
+    			log.debug("fileName:" + fileName);
+
+    			url = new URL(applet.getCodeBase(), fileName);
+    			log.debug("url:" + url);
+    			//log.debug("URL:"+ url.toString());
+    			//log.debug("url.getFile():" + url.getFile());
+    			//log.debug("getPath():" + url.getPath());
+
+    			//log.debug("encode:"+URLEncoder.encode(url.toString() , "UTF-8"));
+    		}
+    		//return new File((java.net.URI) new java.net.URI(URLEncoder.encode(url.toString() , "UTF-8")));
+
+    	} catch(Exception e) {
+    		log.error("Exception:" + e.getMessage(), e);
+    	}
+    	return url;
     }
+
+
     
+   public static URL getImageURL(String imageName) {
+	   return FileUtil.class.getResource(imageName);
+   }
     
-    
-    /**
-     * Getting the 'root directory' of the app.
-     **/
-    public static String getUserDir() {
-        
-        String path = ""; //$NON-NLS-1$
-        
-        try {
-            //java.net.URL url = MovieManager.class.getProtectionDomain().getCodeSource().getLocation();
-            java.net.URL url = FileUtil.class.getProtectionDomain().getCodeSource().getLocation();
-            File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
-            //File file = new File(java.net.URLDecoder.decode(System.getProperty("user.dir"), "UTF-8"));
-            
-	    // If running in a jar file the parent is the root dir 
-            if (file.isFile())
-                path = file.getParentFile().getAbsolutePath();
-            else
-                path = file.getAbsolutePath();
-            
-            
-            /* If running in a mac application bundle, we can't write in the application-directory, so we use the home of the user */
-            if (FileUtil.isMac() /* && path.indexOf(".app/Contents") > -1 */) {
-                path = System.getProperty("user.home") + "/Library/Application Support/MovieManager/";
-                File dir = new File(path);
-                
-                if (!dir.exists()) {
-                    if(!dir.mkdir()) {
-                        log.error("Could not create settings folder.");
-                    }
-                }
-            }
-        }
-        catch (UnsupportedEncodingException e) {
-            path = System.getProperty("user.dir"); //$NON-NLS-1$
-        }
-        
-        if (!path.endsWith(getDirSeparator()))
-            path += getDirSeparator();
-        
-        return path;
-    }
-    
-    public static Image getImage(String imageName) {
-    	return getImage(imageName, null);
+    public static Image getImage(String imageName) { 
+    	return getImage(imageName, DialogMovieManager.getApplet());
     }
     
     public static Image getImage(String imageName, JApplet applet) {
-        Image image = null;
-        
-        try {
-            
-            if (applet != null) {
-                //URL url = MovieManager.getIt().getClass().getResource(imageName);
-            	URL url = FileUtil.class.getResource(imageName);
-                image = applet.getImage(url);
-            }
-            else {
-                String path = "";
-                
-                if (!new File(imageName).exists()){
-                    path = System.getProperty("user.dir");
-                }
-                if (new File(path + imageName).exists()) {
-                    image = Toolkit.getDefaultToolkit().getImage(path + imageName);
-                }
-                else {
-                    
-                    try {
-                        //URL url = MovieManager.class.getResource(imageName);
-                        URL url = FileUtil.class.getResource(imageName);
-                        image = Toolkit.getDefaultToolkit().getImage(url);
-                    }
-                    catch (Exception e) {
-                        log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
-        }
-        return image;
+    	Image image = null;
+    	
+    	try {
+
+    		try {
+    			URL url = FileUtil.class.getResource(imageName);
+    			
+    			if (url != null)
+    				image = Toolkit.getDefaultToolkit().getImage(url);
+    		}
+    		catch (Exception e) {
+    			log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
+    		}
+
+    		
+    		
+    		if (image == null) {
+
+    			if (applet != null) {
+    				URL url = getImageURL(imageName);
+    				image = applet.getImage(url);
+    			}
+    			else {
+    				String path = "";
+
+    				if (!new File(imageName).exists()){
+    					path = System.getProperty("user.dir");
+    				}
+
+    				if (new File(path + imageName).exists()) {
+    					image = Toolkit.getDefaultToolkit().getImage(path + imageName);
+    				}
+    			}
+
+    			//.println("image:" + image);
+
+    		}
+    	} catch (Exception e) {
+    		log.error("Exception:" + e.getMessage(), e); //$NON-NLS-1$
+    	}
+
+    	return image;
     }
-    
+
+    public static Image getImageFromJar1(String imageName) {
+    	
+    	Image image = null;
+    	try {
+			URL url = FileUtil.class.getResource(imageName);
+			image = Toolkit.getDefaultToolkit().getImage(url);
+			
+			throw new Exception();
+		}
+		catch (Exception e) {
+			log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
+		}
+		return image;
+    }
     
     public static String getPath(String fileName) {
         String path = ""; //$NON-NLS-1$
         try {
-            //path = URLDecoder.decode(MovieManager.class.getResource(fileName).getPath(), "UTF-8"); //$NON-NLS-1$
-            path = URLDecoder.decode(FileUtil.class.getResource(fileName).getPath(), "UTF-8"); //$NON-NLS-1$
-             }
+        	path = URLDecoder.decode(FileUtil.class.getResource(fileName).getPath(), "UTF-8"); //$NON-NLS-1$
+        }
         catch (Exception e) {
             log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
         }
@@ -262,6 +395,7 @@ public class FileUtil {
     }
     
     
+    // Not used
     public static File getAppletFile(String fileName, JApplet applet) {
         
         try {
@@ -294,50 +428,256 @@ public class FileUtil {
     }
     
     
-    public static String getDriveDisplayName(File path) {
-        
-        FileSystemView fsv = new javax.swing.JFileChooser().getFileSystemView();
-        
-        if (fsv != null) {
+  
+    
+    public static void writeToFile(String fileName, String dataString) {
+    	StringBuffer data = new StringBuffer(dataString);
+    	writeToFile(fileName, data, null);
+    }
+    
+   
+    public static void writeToFile(String fileName, String dataString, String encoding) {
+    	StringBuffer data = new StringBuffer(dataString);
+    	writeToFile(fileName, data, encoding);
+    }
+    
+   
+    public static void writeToFile(String fileName, StringBuffer data) {
+    	writeToFile(fileName, data, null);
+    }
+    
+    
+    public static void writeToFile(String fileName, StringBuffer data, String encoding) {
+        try {
+        	Writer out; 
+            FileOutputStream fileStream = new FileOutputStream(new File(fileName));
             
-            File tmp = path;
+            if (encoding == null || encoding.equals("")) 
+            	out = new BufferedWriter(new OutputStreamWriter(fileStream));
+            else
+            	out = new BufferedWriter(new OutputStreamWriter(fileStream, encoding));
+                                    
+            for (int u = 0; u < data.length(); u++)
+            	out.write(data.charAt(u));
+            out.close();
             
-            while (tmp.getParentFile() != null)
-                tmp = tmp.getParentFile();
-            
-            String displayName = fsv.getSystemDisplayName(tmp);
-                        
-            if (!displayName.trim().equals(""))
-                return displayName;
-            
-            return "";
+        } catch (Exception e) {
+            log.error("Exception:"+ e.getMessage());
         }
+    }
+    
+    
+   
+    public static boolean writeToFile(byte [] data, File file) {
+        try {
+        	if (!file.getParentFile().isDirectory()) {
+        		if (!file.getParentFile().mkdirs()) {
+        			log.warn("Failed to create new file: " + file);
+        			return false;
+        		}
+        	}
+            FileOutputStream fileStream = new FileOutputStream(file);
+            for (int u = 0; u < data.length; u++)
+                fileStream.write(data[u]);
+            fileStream.close();
             
-        return null;
+        } catch (Exception e) {
+            log.error("Exception:"+ e.getMessage());
+            return false;
+        }
+        return true;
     }
     
-    public static boolean isMac() {
-        String os = System.getProperty("os.name"); //$NON-NLS-1$
-        return os != null && os.toLowerCase().startsWith("mac") ? true : false; //$NON-NLS-1$
+    
+    public static boolean writeToFile(InputStream data, File file) {
+        try {
+        	if (!file.getParentFile().isDirectory()) {
+        		if (!file.getParentFile().mkdirs()) {
+        			log.warn("Failed to create new file: " + file);
+        			return false;
+        		}
+        	}
+            
+        	int bufferSize = 8192;
+        	
+        	BufferedInputStream inputStream = new BufferedInputStream(data);
+        	FileOutputStream fileStream = new FileOutputStream(file);
+        	
+        	byte buffer [] = new byte[bufferSize];
+        	BufferedOutputStream dest = new BufferedOutputStream(fileStream, bufferSize);
+        	int count;
+        	
+        	while ((count = inputStream.read(buffer, 0, bufferSize)) != -1) {
+        		   dest.write(buffer, 0, count);
+        	}	
+        	
+        	inputStream.close();
+        	dest.close();
+        	
+        } catch (Exception e) {
+            log.error("Exception:"+ e.getMessage());
+            return false;
+        }
+        return true;
     }
     
-    public static boolean isLinux() {
-        String os = System.getProperty("os.name"); //$NON-NLS-1$
-        return os != null && os.toLowerCase().startsWith("linux") ? true : false; //$NON-NLS-1$
+
+    public static boolean unzip(File zipFile, File dir) {
+
+    	boolean success = true;
+    		
+    	try {
+    		ZipFile zip = new ZipFile(zipFile);
+    		Enumeration entries = zip.entries();
+    			    		
+    		while (entries.hasMoreElements()) {
+    			ZipEntry entry = (ZipEntry) entries.nextElement();
+
+    			if (entry.isDirectory()) {
+    				new File(dir, entry.getName()).mkdirs();
+    				continue;
+    			}
+    			else {
+    				writeToFile(zip.getInputStream(entry), new File(dir, entry.getName()));
+    			}
+    		}
+
+    		zip.close();
+    	} catch (IOException ioe) {
+    		System.err.println("IOException:" + ioe.getMessage());
+    		ioe.printStackTrace();
+    		
+    		log.error("Exception:" + ioe.getMessage(), ioe);
+			success = false;
+    	}
+
+    	if (success)
+    		log.debug("File " + zipFile.getName() + " unzipped successfully.");
+    	else
+    		log.debug("An error occured while unzipping file " + zipFile.getName());
+    	
+    	return success;
     }
     
-    public static boolean isSolaris() {
-        String os = System.getProperty("os.name"); //$NON-NLS-1$
-        return os != null && (os.toLowerCase().startsWith("sunos") || os.toLowerCase().startsWith("solaris")) ? true : false; //$NON-NLS-1$ //$NON-NLS-2$
+    
+    
+    public static String getExtension(File file) {
+    	if (file == null)
+    		return null;
+    	
+    	return getExtension(file.getName());
+    }
+        
+    public static String getExtension(String fileName) {
+    	if (fileName != null && fileName.indexOf(".") != -1) {
+    		
+    		if (fileName.indexOf(".") == fileName.length() - 1)
+    			return null;
+    		
+    		return fileName.substring(fileName.indexOf(".") + 1, fileName.length()); 
+    	}
+    	return null;
     }
     
-    public static boolean isWindows() {
-        String os = System.getProperty("os.name"); //$NON-NLS-1$
-        return os != null && os.toLowerCase().startsWith("windows") ? true : false; //$NON-NLS-1$
+    public static boolean setExecute(File f, boolean b) {
+    	
+    	try {
+    		Process p = null;
+    		String cmd = null;
+    		
+    		cmd = "chmod " + "u+x" + " " + f.getAbsolutePath();
+
+    		System.err.println("chmod: " + cmd);
+    		
+    		p = Runtime.getRuntime().exec(cmd);
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    		return false;
+    	}
+    		
+    	return true;
     }
     
-    public static boolean isWindowsVista() {
-        String os = System.getProperty("os.name"); //$NON-NLS-1$
-        return os != null && os.toLowerCase().indexOf("vista") != -1 ? true : false; //$NON-NLS-1$
+    
+    public static void copyToDir(File file, File dir) throws Exception {
+    	copyToDir(file, dir, null);
     }
+   
+    
+    public static void copyToDir(File file, File dir, String fileName) throws Exception {
+    	
+    	if (!file.isFile())
+    		throw new Exception("Source file is not a file!");
+    	
+    	if (!dir.isDirectory() && !dir.mkdirs())
+    		throw new Exception("Output directory dos not exist. Failed to create directores.");
+    	
+    	if (fileName == null || "".equals(fileName))
+    		fileName = file.getName();
+    	
+        try {	
+            FileChannel srcChannel = new FileInputStream(file).getChannel();
+            FileChannel dstChannel = new FileOutputStream(new File(dir, fileName)).getChannel();
+            dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
+            srcChannel.close();
+            dstChannel.close();
+            		
+        } catch (IOException e) {
+        	log.error("Exception:" + e.getMessage(), e);
+        }
+    }
+    
+    /*
+     * Calculate size of files in directory and subdirectories
+     * If regex is not null, only directories that matches the regex will be included
+     */
+    public static long getDirectorySize(File file, String regex) {
+
+    	long size = 0;
+
+    	if (file.isFile())
+    		return file.length();
+    	else if (file.isDirectory()){
+    		
+    		if (regex != null && !Pattern.matches(regex, file.getName())) {
+    			return 0;
+    		}
+    		
+    		File[]	files = file.listFiles();
+
+    		for (int i = 0; i < files.length; i++) {
+
+    			if (files[i].isFile()) {
+    				size += files[i].length();
+    			}
+    			else if (files[i].isDirectory()) {
+    				size += getDirectorySize(files[i], regex);
+    			}
+    		}
+    	}
+    	return size;
+    }
+
+    
+    public static boolean deleteDirectoryStructure(File dir) {
+
+    	if (dir.isDirectory()) {
+    		
+    		String[] children = dir.list();
+    		
+    		for (int i = 0; i < children.length; i++) {
+    		
+    			boolean success = deleteDirectoryStructure(new File(dir, children[i]));
+    			
+    			if (!success) {
+    				return false;
+    			}
+    		}
+    	}
+    	return dir.delete();
+    }
+
+	
+  
 } 

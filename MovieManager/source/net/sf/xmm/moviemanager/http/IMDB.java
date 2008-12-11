@@ -1,7 +1,7 @@
 /**
  * @(#)IMDB.java 1.0 29.01.06 (dd.mm.yy)
  *
- * Copyright (2003) Mediterranean
+ * Copyright (2003) Bro
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -15,201 +15,173 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Boston, MA 02111.
  * 
- * Contact: mediterranean@users.sourceforge.net
+ * Contact: bro3@users.sourceforge.net
  **/
 
 package net.sf.xmm.moviemanager.http;
 
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.MovieManagerConfig;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFile;
-import net.sf.xmm.moviemanager.models.ModelIMDB;
-import net.sf.xmm.moviemanager.util.FileUtil;
-
-import org.apache.log4j.Logger;
-
-import java.net.Authenticator;
-import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
 
+import net.sf.xmm.moviemanager.models.ModelSearchHit;
+import net.sf.xmm.moviemanager.util.StringUtil;
+import net.sf.xmm.moviemanager.models.imdb.*;
+
+import org.apache.log4j.Logger;
+
 public class IMDB {
   
-    static Logger log = Logger.getRootLogger();
+    static Logger log = Logger.getRootLogger();    
     
-    /**
-     * The imdb key for the movie.
-     **/
-    private String _key = "";
-  
-    /**
-     * The date of the movie
-     **/
-    private String _date = "";
-  
-    /**
-     * The dateof the movie.
-     **/
-    private String _title = "";
-  
-    /**
-     * Directed by.
-     **/
-    private String _directedBy = "";
-   
-    /**
-     * Written by.
-     **/
-    private String _writtenBy = "";
-   
-    /**
-     * Genre.
-     **/
-    private String _genre = "";
-  
-    /**
-     * The rating.
-     **/
-    private String _rating = "";
-   
+    private HttpUtil httpUtil = new HttpUtil();
     
-    /**
-     * The colour of the movie
-     **/
-    private String _colour = "";
+    private HttpSettings settings = null;
     
-    /**
-     * Also known as of the movie
-     **/
-    private String _aka = "";
+    private ModelIMDbEntry lastDataModel = null;
     
-    /**
-     * The country of the movie
-     **/
-    private String _country = "";
+    public IMDB() throws Exception {
+    	this(null, null, null);		
+    }
     
-    /**
-     * The language of the movie
-     **/
-    private String _language = "";
+    public IMDB(String urlID) throws Exception {
+    	this(urlID, null, null);		
+    }
     
-    /**
-     * The Sound Mix of the movie
-     **/
-    private String _mpaa = "";
+    public IMDB(String urlID, StringBuffer data) throws Exception {
+    	this(urlID, data, null);		
+    }
     
-    /**
-     * The Sound Mix of the movie
-     **/
-    private String _soundMix = "";
+    public IMDB(String urlID, HttpSettings settings) throws Exception {
+    	this(urlID, null, settings);	
+    }
     
-    /**
-     * The Sound Mix of the movie
-     **/
-    private String _runtime = "";
-    
-    /**
-     * The Sound Mix of the movie
-     **/
-    private String _certification = "";
-    
-    /**
-     * The Sound Mix of the movie
-     **/
-    private String _awards = "";
-    
-    /**
-     * The plot.
-     **/
-    private String _plot = "";
-   
-    /**
-     * The cast.
-     **/
-    private String _cast = "";
-   
-    /**
-     * The cover url.
-     **/
-    private String _coverURL = "";
-  
-    
-    /**
-     * The cover url.
-     **/
-    private String _coverName = "";
-    
-    /**
-     * Reding ok...
-     **/
-    private boolean _coverOK = false;
-    
-    /* stores the last exception message */
-    private static String exception;
+    public IMDB(HttpSettings settings) throws Exception {
+    	this(null, null, settings);	
+    }
     
     /**
      * The constructor. Initializes all vars (read from the net) for
      * the movie with key.
      **/
-    public IMDB(String key) throws Exception {
+    public IMDB(String urlID, StringBuffer data, HttpSettings settings) throws Exception {
 	
-		_key = key;
-	
-		/* Gets the url... */
-		URL url = makeURL("http://akas.imdb.com/title/tt"+key+"/");
-	
-		/* Saves the page data in a string buffer... */
-		StringBuffer data = HttpUtil.readDataToStringBuffer(url);
-	
-		if (data == null) {
-			throw new Exception("Invalid HTTP link");
+		this.settings = settings;
+		httpUtil = new HttpUtil(settings);
+		
+		if (urlID != null || data != null)
+			grabInfo(urlID, data);
+    }
+      
+    public ModelIMDbEntry grabInfo(String urlID) throws Exception {
+    	return grabInfo(urlID, null);	
+    }
+    
+    public ModelIMDbEntry grabInfo(String urlID, StringBuffer data) throws Exception {
+    	
+    	long time = System.currentTimeMillis();
+    	
+    	//System.err.println("grabInfo:" + (System.currentTimeMillis() - time));
+    	
+    	if (urlID == null && data == null)
+    		throw new Exception("Input data is null.");
+    	
+    	if (urlID != null) {
+    		URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/");
+    		data = httpUtil.readDataToStringBuffer(url);
+    	}
+    	
+    	if (data == null) {
+			throw new Exception("Error occured when reading data.");
 		}
-    
-		parseData(data);
+    	
+    	//System.err.println("grabInfo 2:" + (System.currentTimeMillis() - time));
+    	
+    	return parseData(urlID, data);
     }
+        
     
-    
-    public IMDB(String key, StringBuffer data) throws Exception {
+    private ModelIMDbEntry parseData(String urlID, StringBuffer data) throws Exception {
 	
-		_key = key;
-	
-		parseData(data);
-    }
-    
-    
-    private void parseData(StringBuffer data) throws Exception {
-	
+        String date = "", title = "", directedBy = "", writtenBy = "", genre = "", rating = "", colour = "", aka = "", 
+        country = "", language = "", mpaa = "", soundMix = "", runtime = "", certification = "", awards = "", plot = "", cast = "", 
+        coverURL = "", coverName = "", seasonNumber = "", episodeNumber = "";
+    	  
+    	long time = System.currentTimeMillis();
+    	
 		int start = 0;
-		int stop = 0;
 		int end = 0;
 	
 		Object [] tmpArray;
 	
-		//FileUtil.writeToFile("imdb.html", data);
+		boolean isEpisode = false;
+		boolean isSeries = false;
 		
+		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("imdb.html", data);
+			
 		try {
 			/* Processes the data... */
 
+			if (data.indexOf("Full Episode List") != -1)
+				isEpisode = true;
+			
 			/* Gets the title... */
 			if ((start = data.indexOf("<div id=\"tn15title\">", start)) != -1 &&
-				(end = data.indexOf("</div>", start)) != -1) {
-	
+					(end = data.indexOf("</div>", start)) != -1) {
+
 				tmpArray = HttpUtil.decodeHTMLtoArray(data.substring(start, end));
 
-				_title = (String) tmpArray[0];
+				if (isEpisode) {
+					title = (String) tmpArray[1];
+					date = (String) tmpArray[2];
+					
+					if (date.startsWith("(") && date.endsWith(")"))
+						date = date.substring(1, date.length() -1);
+					
+				}
+				else { 
+					title = (String) tmpArray[0];
+					date = (String) tmpArray[2];
+				}
+				
+				//System.err.println("title:" + title);
+				//System.err.println("tmpArray[1]:" + tmpArray[1]);
 
-				if (MovieManager.getConfig().getAutoMoveThe() && _title.startsWith("The ")) {
-					_title = _title.substring(_title.indexOf(" ")+1, _title.length())+ ", The";
-				}
-				else if (MovieManager.getConfig().getAutoMoveAnAndA() && (_title.startsWith("A ") || _title.startsWith("An "))) {
-					_title = _title.substring(_title.indexOf(" ")+1, _title.length())+ ", "+ _title.substring(0, _title.indexOf(" "));
-				}
-		
-				_date = (String) tmpArray[2];
-			}
+				if (!isEpisode && title.startsWith("\""))
+					isSeries = true;
+			}	
+			else
+				throw new Exception("Title could not be found");
 	    
+			ModelIMDbEntry tmpModel = null;
+			
+			if (isSeries)
+				tmpModel = new ModelIMDbSeries();
+			
+			else if (isEpisode)
+				tmpModel = new ModelIMDbEpisode();
+			
+			else
+				tmpModel = new ModelIMDbMovie();
+			
+			// Must be accessible from within inner class
+			final ModelIMDbEntry dataModel = tmpModel;
+			
+			dataModel.setTitle(title);
+			dataModel.setDate(date);
+			dataModel.setUrlID(urlID);
+			
+			coverURL = null;
+						
+			boolean getCover = false;
+			
 			/* Gets the cover url... */
 			if ((start = data.indexOf("<div class=\"photo\">")) != -1 && 
 				(end = data.indexOf("</div>", start)) != -1) {
@@ -218,45 +190,94 @@ public class IMDB {
 	    	
 					if ((start = data.indexOf("src=\"",start) +5) !=4 &&
 						(end = data.indexOf("\"", start)) != -1) {
-						_coverURL = HttpUtil.decodeHTML(data.substring(start, end));
-					}
-	    	
-					start = _coverURL.lastIndexOf(".");
+						coverURL = HttpUtil.decodeHTML(data.substring(start, end));
+						
+						//System.err.println("coverURL:" + coverURL);
+						//System.err.println("NEW coverURL:" + coverURL);
+						
+						//if (!coverURL.equals(coverURL))
+						getCover = true;
+						
+						dataModel.setCoverURL(coverURL);
+						
+						start = coverURL.lastIndexOf(".");
 
-					if (start != 0 && start != -1)
-						_coverName = _key + _coverURL.substring(start, _coverURL.length());
+						if (start != 0 && start != -1)
+							coverName = urlID + coverURL.substring(start, coverURL.length());
+					}
 				}
 			}
 	    
+			//System.err.println("getCover:" + getCover);
+			//System.err.println("coverURL:" + coverURL);
+			//System.err.println("coverName:" + coverName);
+						
+			final ReentrantLock lock = new ReentrantLock();
+			
+			//System.err.println("time1:" + (time = System.currentTimeMillis() - time));
+			
+			if (getCover) {
+								
+				Thread t = new Thread(new Runnable() {
+					public void run() {
+						try {
+							long coverTime = System.currentTimeMillis();
+							lock.lock();
+							retrieveCover(dataModel);
+							//System.err.println("covertime:" + (System.currentTimeMillis() - coverTime));
+						} finally {
+							lock.unlock();
+						}
+					}
+				});
+				t.start();
+			}
+			
+			//System.err.println("time2:" + (time = System.currentTimeMillis() - time));
+			
 			start = 0;
-			stop = 0;
 			end = 0;
+			
 			/* Gets the rating... */
 			if ((start = data.indexOf("User Rating:", start)+ 12) != 11 &&
 				(end = data.indexOf("/10</b>",start)) != -1 &&
 				(start = data.indexOf("<b>",end-9) +3) != 2) {
 		
-				_rating = HttpUtil.decodeHTML(data.substring(start, end));
+				rating = HttpUtil.decodeHTML(data.substring(start, end));
+				dataModel.setRating(rating);
 			}
 	     
 			start = 0;
-			stop = 0;
 			end = 0;
 			
 			
 			// Gets the directed by... 
-			String tmp = getClassInfo(data, "Director");
-			tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
-				
+			
+			HashMap classInfo = decodeClassInfo(data);
+			
+			String tmp = "";
+			
+			if (classInfo.containsKey("Director:")) {
+				//System.err.println("contains director");
+				 tmp = getDecodedClassInfo("Director:", (String) classInfo.get("Director:"));
+				//tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
+			}
+			else if (classInfo.containsKey("Directors:")) {
+				//System.err.println("contains directors");
+				tmp = getDecodedClassInfo("Directors:", (String) classInfo.get("Directors:"));
+			}
+			//System.err.println("director:" + tmp);
+			
 			ArrayList list = getLinkContentName(tmp);
 	    	 
 			while (!list.isEmpty()) {
-				if (!_directedBy.equals(""))
-					_directedBy += ", ";
+				if (!directedBy.equals(""))
+					directedBy += ", ";
 	    			
-				_directedBy += list.remove(0);
+				directedBy += list.remove(0);
 			}
 				 
+			dataModel.setDirectedBy(directedBy);
 			
 			// Gets the written by... 
 			tmp = getClassInfo(data, "Writer");
@@ -265,491 +286,591 @@ public class IMDB {
 			list = getLinkContentName(tmp);
 	    		
 			while (!list.isEmpty()) {
-				if (!_writtenBy.equals(""))
-					_writtenBy += ", ";
+				if (!writtenBy.equals(""))
+					writtenBy += ", ";
 	    			
-				_writtenBy += list.remove(0);
+				writtenBy += list.remove(0);
 			}
 	    				
-			_genre = getDecodedClassInfo(data, "Genre:");
-	    
-			_genre = _genre.replaceAll("(more)$", "");
+			dataModel.setWrittenBy(writtenBy);
 			
-			_plot = getDecodedClassInfo(data, "Plot Outline:");
-	     
-			_cast = getDecodedClassInfo(data, "class=\"cast\">");
-	    
-			_cast = _cast.replaceAll(" \\.\\.\\.", ",");
-							
-			_aka = getDecodedClassInfo(data, "Also Known As:");
-	    
-			_mpaa = getDecodedClassInfo(data, "<a href=\"/mpaa\">MPAA</a>:");
-	    
-			_runtime = getDecodedClassInfo(data, "Runtime:");
-	    
-			_country = getDecodedClassInfo(data, "Country:");
-	    
-			_language = getDecodedClassInfo(data, "Language:");
-	    
-			_colour = getDecodedClassInfo(data, "Color:");
-	    
-			_soundMix = getDecodedClassInfo(data, "Sound Mix:");
-	    
-			_certification = getDecodedClassInfo(data, "Certification:");
-	    
-			_awards = getDecodedClassInfo(data, "Awards:");
-			_awards = _awards.replaceAll("(more)$", "");
-	  
+			
+			if (classInfo.containsKey("Genre:")) {
+				genre = getDecodedClassInfo("Genre:", (String) classInfo.get("Genre:"));
+				genre = genre.replaceAll("(more)$", "");
+				dataModel.setGenre(genre);
+			}
+			
+			if (classInfo.containsKey("Plot:"))
+				plot = getDecodedClassInfo("Plot:", (String) classInfo.get("Plot:"));
+			
+			//if (classInfo.containsKey("Plot:"))
+			cast = getDecodedClassInfo("class=\"cast\">", data);
+			cast = cast.replaceAll(" \\.\\.\\.", ",");
+			dataModel.setCast(cast);
+			
+			if (classInfo.containsKey("Also Known As:")) {
+				aka = getDecodedClassInfo("Also Known As:", (String) classInfo.get("Also Known As:"));
+				dataModel.setAka(aka);
+			}
+			
+			mpaa = getDecodedClassInfo("<a href=\"/mpaa\">MPAA</a>:", data);
+			dataModel.setMpaa(mpaa);
+			
+			if (classInfo.containsKey("Runtime:")) {
+				runtime = getDecodedClassInfo("Runtime:", (String) classInfo.get("Runtime:"));
+				dataModel.setWebRuntime(runtime);
+			}
+			
+			if (classInfo.containsKey("Country:")) {
+				country = getDecodedClassInfo("Country:", (String) classInfo.get("Country:"));
+				dataModel.setCountry(country);
+			}
+			
+			if (classInfo.containsKey("Language:")) {
+				language = getDecodedClassInfo("Language:", (String) classInfo.get("Language:"));
+				dataModel.setLanguage(language);
+			}
+			
+			if (classInfo.containsKey("Color:")) {
+				colour = getDecodedClassInfo("Color:", (String) classInfo.get("Color:"));
+				dataModel.setColour(colour);
+			}
+			
+			if (classInfo.containsKey("Sound Mix:")) {
+				soundMix = getDecodedClassInfo("Sound Mix:", (String) classInfo.get("Sound Mix:"));
+				dataModel.setWebSoundMix(soundMix);
+			}
+			
+			if (classInfo.containsKey("Certification:")) {
+				certification = getDecodedClassInfo("Certification:", (String) classInfo.get("Certification:"));
+				dataModel.setCertification(certification);
+			}
+			
+			if (classInfo.containsKey("Awards:")) {
+				awards = getDecodedClassInfo("Awards:", (String) classInfo.get("Awards:"));
+				awards = awards.replaceAll("(more)$", "");
+				dataModel.setAwards(awards);
+			}
+			
+			String airdateContent = null;
+			
+			if (classInfo.containsKey("Original Air Date:"))
+				airdateContent =getDecodedClassInfo("Original Air Date:", (String) classInfo.get("Original Air Date:"));
+			
+			//System.err.println("time3:" + (time = System.currentTimeMillis() - time));
+			
+			
+			// Ex: 5 October 1999 (Season 1, Episode 1)
+			if (airdateContent != null) {
+				Pattern p = Pattern.compile("(.+)?\\s\\(.+?(\\d+?),\\s?.+?(\\d+?)\\)");
+				Matcher m = p.matcher(data);
+								
+				if (m.find()) {
+
+					int gCount = m.groupCount();
+
+					if (gCount == 3) {
+						
+						//isEpisode = true;
+						
+						String airdat = m.group(1);
+						String season = m.group(2);
+						String episode = m.group(3);
+
+						//System.err.println("season:" + season);
+						//System.err.println("episode:" + episode);
+						
+						seasonNumber = season;
+					    episodeNumber = episode;
+					    
+					    ((ModelIMDbEpisode) dataModel).setSeasonNumber(seasonNumber);
+					    ((ModelIMDbEpisode) dataModel).setEpisodeNumber(episodeNumber);
+					    
+					   // System.err.println("seasonNumber:" + seasonNumber);
+					   // System.err.println("episode:" + episode);
+					    
+					   // title = "" + episodeNumber + ". " + title;
+					}
+				}
+			}
+			
+			//System.err.println("time4:" + (time = System.currentTimeMillis() - time));
+			
+			//System.err.println("airdate:" + airdateContent);
+			
+				//29 April 2002 (Season 3, Episode 19)
+			
 			/* Gets a bigger plot (if it exists...)
 			   /* Creates the url... */
-			URL url = new URL("http://akas.imdb.com/title/tt"+ _key +"/plotsummary");
+			URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/plotsummary");
 	    
-			data = HttpUtil.readDataToStringBuffer(url);   
+			data = httpUtil.readDataToStringBuffer(url);   
 	    
+			//System.err.println("time5:" + (time = System.currentTimeMillis() - time));
+			
 			/* Processes the data... */
 			start = 0;
 			end = 0;
 	    
+			//String longPlot = getDecodedClassInfo(data, "Certification:");
+			
 			if ((start = data.indexOf("class=\"plotpar\">",start)+16) != 15 &&
 				(end=data.indexOf("</p>",start)) != -1) {
-				_plot = HttpUtil.decodeHTML(data.substring(start, end));
+				plot = HttpUtil.decodeHTML(data.substring(start, end));
 				
-				if (_plot.indexOf("Written by") != -1)
-					_plot = _plot.substring(0, _plot.indexOf("Written by"));
+				if (plot.indexOf("Written by") != -1)
+					plot = plot.substring(0, plot.indexOf("Written by"));
 			}
 	   	   
-			_plot = _plot.trim();
-			_plot = _plot.replaceAll("(more)$", "");
+			
+			
+			plot = plot.trim();
+			plot = plot.replaceAll("(more)$", "");
+			
+			dataModel.setPlot(plot);
+			
+			//System.err.println("time6:" + (time = System.currentTimeMillis() - time));
+			
+			lock.tryLock((long) 10, TimeUnit.SECONDS);
+			
+			System.err.println("Total time for "+ dataModel.getTitle() +":" + (time = System.currentTimeMillis() - time));
+			
+			dataModel.setCoverName(coverName);
+			
+			lastDataModel = dataModel;
+			
+			return dataModel;
 			
 		} catch (Exception e) {
-			log.error("", e);
+			log.error("Exception:" + e.getMessage(), e);
 		}
-    }
-
-    /**
-     * Gets the key.
-     **/
-    public String getKey() {
-		return _key;
-    }
-
-    /**
-     * Gets the date.
-     **/
-    public String getDate() {
-		return _date;
-    }
-  
-    /**
-     * Gets the title.
-     **/
-    public String getTitle() {
-		return _title;
-    }
-  
-    /**
-     * Gets the durected by.
-     **/
-    public String getDirectedBy() {
-		return _directedBy;
-    }
-  
-    /**
-     * Gets the written by.
-     **/
-    public String getWrittenBy() {
-		return _writtenBy;
-    }
-  
-    /**
-     * Gets the genre.
-     **/
-    public String getGenre() {
-		return _genre;
-    }
-  
-    /**
-     * Gets the rating.
-     **/
-    public String getRating() {
-		return _rating;
-    }
-  
-    /**
-     * Gets the colour.
-     **/
-    public String getColour() {
-		return _colour;
-    }
-
-    /**
-     * Gets the country.
-     **/
-    public String getCountry() {
-		return _country;
-    }
-
-    /**
-     * Gets the language.
-     **/
-    public String getLanguage() {
-		return _language;
-    }
-    
-    /**
-     * Gets the plot.
-     **/
-    public String getPlot() {
-		return _plot;
-    }
-  
-    /**
-     * Gets the cast.
-     **/
-    public String getCast() {
-		return _cast;
-    }
-    
-    /**
-     * Gets the aka.
-     **/
-    public String getAka() {
-		return _aka;
-    }
-    
-    /**
-     * Gets the mpaa.
-     **/
-    public String getMpaa() {
-		return _mpaa;
-    }
-    
-    /**
-     * Gets the Sound Mix.
-     **/
-    public String getSoundMix() {
-		return _soundMix;
-    }
-
-    /**
-     * Gets the Runtime.
-     **/
-    public String getRuntime() {
-		return _runtime;
-    }
-    
-    /**
-     * Gets the Certification.
-     **/
-    public String getCertification() {
-		return _certification;
-    }
-
-    /**
-     * Gets the Awards.
-     **/
-    public String getAwards() {
-		return _awards;
-    }
-    
-    
-    /**
-     * Gets the cover url.
-     **/
-    public String getCoverName() {
-		return _coverName;
-    }
-    
-    /**
-     * Gets the cover url.
-     **/
-    public String getCoverURL() {
-		return _coverURL;
-    }
-  
-    /**
-     * Gets the cover.
-     **/
-    public byte[] getCover() {
-      
-		byte[] coverData = {-1};
-		try {
-	    
-			if (!_coverURL.equals("")) {
 		
-				URL url = new URL(_coverURL);
-				coverData = HttpUtil.readDataToByteArray(url);
-		
-				_coverOK = true;
-			}
-		} catch (Exception e) {
-			log.error("", e);
-			_coverOK = false;
-		} 
-	
-		/* Returns the data... */
-		return coverData;
-    }
-    
-    
-    /**
-     * Returns true if the last cover reading went ok..
-     **/
-    public boolean getCoverOK() {
-		return _coverOK;
+		return null;
     }
 
+  
+
+   
     /**
      * Returns simple matches list...
      **/
-    public static DefaultListModel getSimpleMatches(String title) throws Exception {
-	
-		return getMatches("http://akas.imdb.com/find?s=tt&q="+ title, false);
-		// http://akas.imdb.com/find?s=tt&q=Predator 
-		// http://akas.imdb.com/find?s=all&q=predator
-		//	return getMatches("http://www.imdb.com/find?tt=on;q=" + title);
-		//return getMatches("http://www.imdb.com/find?tt=on;q=",title);
-    }
-
-    /**
-     * Returns extended matches list...
-     **/
-    public static DefaultListModel getExtendedMatches(String title) throws Exception {
-    	return getMatches("http://akas.imdb.com/find?s=tt&q="+ title, true);
-    	//return getMatches("http://akas.imdb.com/find?more=tt;q=" + title);
+    public DefaultListModel getSimpleMatches(String title) {
+    	return getMatches("http://akas.imdb.com/find?s=tt&q="+ title, false);	
     }
     
-    /**
-     * Returns a DefaultListModel with ModelMovie's of the movies that IMDB
-     * returned for the searched title.
-     *
-     * urlType = http://www.imdb.com/find?tt=on;q= or
-     *           http://www.imdb.com/find?more=tt;q=
-     **/
-    private static DefaultListModel getMatches(String urlType, boolean moreResults) throws Exception {
+    
+    public StringBuffer getEpisodesStream(ModelSearchHit modelSeason) {
+
+    	//System.err.println("getEpisodesStream");
+    	
+		StringBuffer data = null;
+		
+		String urlType = "http://akas.imdb.com/title/tt"+ modelSeason.getUrlID() +"/episodes";
+		
+		//String urlType = "http://www.tv.com/"+ modelSeason.getUrlTitle() +"/show/"+ modelSeason.getShowKey() +"/episode_guide.html&season="+ modelSeason.getSeasonNumber();
+
+		try {
+
+			URL url = new URL(urlType);
+
+			try {
+				data = httpUtil.readDataToStringBuffer(url);
+			} catch (SocketTimeoutException s) {
+				log.error("Exception: " + s.getMessage());
+				data = null;
+			}
+
+			if (data == null) {
+				return null;
+			}
+
+			net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/episodeStream.html", data);
+
+			int counter = 1;
+			int seasonCounter = 1;
+			
+			
+			// Get number of episodes 
+			/*
+			while (true) {
+				
+				String classContent = getClass("season-filter-all filter-season-" + seasonCounter, data);
+				
+				if (classContent != null)
+					net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/season-"+seasonCounter+".html", classContent);
+				else {
+					seasonCounter--;
+					break;
+				}
+				seasonCounter++;
+			}
+*/
+
+		} catch (Exception e) {
+			log.error("", e);
+
+			/*if (exception == null || !exception.equals("Server redirected too many  times"))
+				exception = e.getMessage();
+				*/
+		} 
+
+		return data;
+	}
+    
+    
+    
+    public static DefaultListModel getEpisodes(ModelSearchHit modelSeason, StringBuffer stream) {
+
 		DefaultListModel listModel = new DefaultListModel();
-		exception = null;
+		
+		//System.err.println("getEpisodes:" + stream.length());
+		//System.err.println("modelSeason.getKey:" + modelSeason.getUrlID());
+		//System.err.println("modelSeason.getTitle:" + modelSeason.getTitle());
+		//System.err.println("modelSeason.getSeasonNumber:" + modelSeason.getSeasonNumber());
+		
+		try {
+
+			String classContent = getClass("season-filter-all filter-season-" + modelSeason.getSeasonNumber(), stream);
+			
+			StringBuffer data = new StringBuffer(classContent);
+			
+			net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/episodeStream"+modelSeason.getSeasonNumber()+".html", data);
+						
+			Pattern p = Pattern.compile("<h3>(.+)\\s?<a href=\"/title/tt(\\d+)/\">(.+?)</a>");
+			Matcher m = p.matcher(data);
+							
+			while (m.find()) {
+
+				int gCount = m.groupCount();
+
+				if (gCount == 3) {
+					
+					String episode = m.group(1);
+					String key = m.group(2);
+					String title = m.group(3);
+
+					title = episode + title;
+					
+					listModel.addElement(new ModelSearchHit(key, title, modelSeason.getSeasonNumber()));
+				}
+			}
+
+		} catch (Exception e) {
+			log.error("", e);
+		}
+		/* Returns the model... */
+		return listModel;
+	}
+    
+    
+    
+    
+    
+	public DefaultListModel getSeasons(ModelSearchHit modelSeries) {
+
+		DefaultListModel listModel = new DefaultListModel();
+				
+		String urlString = "http://akas.imdb.com/title/tt" + modelSeries.getUrlID();
+				
+		try {
+
+			URL url = new URL(urlString);
+			StringBuffer data = httpUtil.readDataToStringBuffer(url);
+
+			net.sf.xmm.moviemanager.util.FileUtil.writeToFile("seasonsOutput.html", data);
+
+			String title = "";
+
+			int start = data.indexOf("Seasons:");
+
+			/* No season....?. */
+			if (start == -1) {
+				listModel.addElement(new ModelSearchHit(null, null, "No seasons available"));
+			}
+			else {
+				int end = data.indexOf("</div>", start);
+				
+				String seasons = data.substring(start, end);
+				
+				int seasonCount = 1;
+				String season = "episodes#season-";
+				
+				while (seasons.indexOf(season + seasonCount) != -1) {
+					title = modelSeries.getTitle()+ " - Season "+ seasonCount;
+					listModel.addElement(new ModelSearchHit(modelSeries.getUrlID(), title, seasonCount));
+					seasonCount++;
+				}
+			}
+		} catch (Exception e) {
+			log.error("", e);
+		} 
+		/* Returns the model... */
+
+		return listModel;
+	}
+	
+	
+	public ModelIMDbEntry getEpisodeInfo(ModelSearchHit episode) throws Exception {
+		//System.err.println("episode:" + episode);
+		//System.err.println("getEpisodeInfo:" + episode.getStreamNumber());
+		
+		ModelIMDbEntry model = grabInfo(episode.getUrlID());
+		episode.setDataModel(model);
+		
+		return model;
+	}
+	
+    
+   public DefaultListModel getSeriesMatches(String title) {
+	   
+    	DefaultListModel all = getSimpleMatches(title);
+    	
+    	for (int i = 0; i < all.getSize(); i++) {
+    		
+    		ModelSearchHit imdb = (ModelSearchHit) all.get(i);
+    		
+    		if (!imdb.getTitle().startsWith("\"")) {
+    			all.remove(i);
+    			i--;
+    		}
+    	}
+    	return all;
+    }
+    
+    private DefaultListModel getMatches(String urlType, boolean moreResults) {
+		DefaultListModel listModel = new DefaultListModel();
 						
 		String [] movieHitCategory = {"Popular Titles", "Titles (Exact Matches)", "Titles (Partial Matches)", "Titles (Approx Matches)"};
 		
 		try {
 	
 			URL url = new URL(urlType.replaceAll("[\\p{Blank}]+","%20"));
-	    
-			StringBuffer data = HttpUtil.readDataToStringBuffer(url);
 			
-			//FileUtil.writeToFile("direct-simple.html", data);
+			StringBuffer data = httpUtil.readDataToStringBuffer(url);
+			
+			if (data == null) {
+				log.warn("Failed to retrieve data from :" + url);
+				return listModel;
+			}
+			
+			net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/direct-simple.html", data);
         
-			int start = 0, stop = 0;
+			int start = 0;
 			String key = "";
 			String movieTitle = "", aka = "";
 			int titleSTart, titleEnd;
 			int movieCount = 0;
 			
-			//int partialMatches = data.indexOf("Titles (Partial Matches)");
-	    
 			/* If there's only one movie for that title it goes directly to that site...  */
 			if (!data.substring(data.indexOf("<title>")+7, data.indexOf("<title>")+11).equals("IMDb")) {
-				/* Gets the title... */
 				
+				/* Gets the title... */
 				titleSTart = data.indexOf("<title>", start)+7;
 				titleEnd = data.indexOf("</title>", titleSTart);
 				movieTitle = HttpUtil.decodeHTML(data.substring(titleSTart, titleEnd));
-	    
+				
 				if ((start=data.indexOf("title/tt",start) + 8) != 7) {
 					key = HttpUtil.decodeHTML(data.substring(start, start + 7));
 				}
-		
-				aka = getDecodedClassInfo(data, "Also Known As:");
 				
-				listModel.addElement(new ModelIMDB(key, movieTitle, aka));
+				aka = getDecodedClassInfo("Also Known As:", data);
+				listModel.addElement(new ModelSearchHit(key, movieTitle, aka));
+				
 				return listModel;
 			}
 			
-			int maxMovieCount = moreResults ? 30 : 10;
-			int minimumIndex = 0;
-			int end = -1;
-			int u = 0;
+			// <a href="/title/tt0074853/">The Man in the Iron Mask</a> (1977) (TV)</td></tr>
+			// <a href="/title/tt0120744/">The Man in the Iron Mask</a> (1998/I)</td></tr>
+			// <a href="/title/tt0103064/">Terminator 2: Judgment Day</a> (1991)<br>&#160;aka <em>"Terminator 2 - Le jugement dernier"</em> - France<br>&#160;aka <em>"T2 - Terminator 2: Judgment Day"</em></td></tr>
 			
-			start = data.indexOf("Popular Titles");
+			// should match strings like the above
 			
-			for (; u < movieHitCategory.length && (start == -1); u++)
-				start = data.indexOf(movieHitCategory[u]);
+			Pattern p = Pattern.compile("<a\\shref=\"/title/tt(\\d{5,})/\">(.+?)</a>.+?\\((\\d+(/I*)?)\\).*?(;aka\\\\s<em>.+?</em>)*?</td></tr>");
+			Matcher m = p.matcher(data);
+			 			
+			int [] movieHitCategoryIndex = new int[4];
+			boolean empty = true;
 			
+			for (int u = 0; u < movieHitCategory.length; u++) {
+				movieHitCategoryIndex[u] = data.indexOf(movieHitCategory[u]);
+				if (movieHitCategoryIndex[u] != -1) 
+					empty = false;
+			}
+				
 			// NO results, returning empty list
-			if (start == -1)
+			if (empty) {
 				return listModel;
-			
-			
-			if ((minimumIndex = data.indexOf("Titles (Partial Matches)")) == -1)
-				minimumIndex = data.indexOf("Titles (Approx Matches)");
-			
-			if (!moreResults)
-				end = data.indexOf("Titles (Approx Matches)");
-			
-			
-			while (true) {
- 
-				if (start > minimumIndex && movieCount >= maxMovieCount) {
-					break;
-				}
+			}
 				
-				start = data.indexOf("\"/title/tt", start) + 10;
-								
-				// no more movies
-				if (start == 9) {
-					break;
-				}
+			while (m.find()) {
+			
+				//int gCount = m.groupCount();
 				
-				// has reached the end
-				if ((end != -1 && start > end) ) {
-					break;
-				}
+				key = m.group(1);
+				String title = m.group(2);
+				String year = m.group(3);
+
+				title = HttpUtil.decodeHTML(title);
 				
-				if ((stop = data.indexOf("/\">", start)) == -1) {
-					break;
-				}
-	    
-				key = HttpUtil.decodeHTML(data.substring(start, start+7));
-				start += key.length() + 3;
+				title += " (" + year + ")"; 
 				
-				if ((stop = data.indexOf("</", start)) == -1) {
-					break;
-				}
-				
-				titleSTart = start;
-				titleEnd = data.indexOf("</a>", titleSTart);
-				movieTitle = HttpUtil.decodeHTML(data.substring(titleSTart, titleEnd));
-	    
-				// Skipping the </a> and adds the year to the movieTitle
-				titleSTart = titleEnd+4;
-				titleEnd += 11;
-	    
-				// Video game
-				if (data.substring(titleSTart, titleSTart + 20).indexOf("VG") != -1) {
+				//Video game
+				if (m.group(0).indexOf("VG") != -1) {
 					continue;	
 				}
-				movieTitle = movieTitle.concat(data.substring(titleSTart, titleEnd));
-				char[] tmp = movieTitle.toCharArray();
-				tmp[tmp.length-1] = ')';
-				movieTitle = new String(tmp);
 				
-				stop = data.indexOf("</td>", start+1);
-		
-				if (data.indexOf("</p>", start+1) < start) {
-					break;
-				}
+				// Aka
+				aka = grabAkaTitlesFromSearchHit(m.group(0));
 				
-				aka = grabAkaTitles(data.substring(start, stop));
-								
-				/* Adds to the list model... */
-				boolean insert = true;
-				for (int i = 0; i < listModel.size(); i++) {
-					if (((ModelIMDB)listModel.elementAt(i)).getKey().equals(key)) {
-						insert = false;
-						break;
-					}
-				}
-			
-				if (insert) {
-					listModel.addElement(new ModelIMDB(key, movieTitle, aka));
-					movieCount++;
-				}
+				listModel.addElement(new ModelSearchHit(key, title, aka));
+				
+				movieCount++;
 			}
-				
-		} catch (Exception i) {
-			log.warn(i.getMessage(), i);
+		} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
 		}
 	
 		/* Returns the model... */
 		return listModel;
     }
     
-  
-    public static String grabAkaTitles(String substring) {
+    
+    
+    public static String grabAkaTitlesFromSearchHit(String substring) {
 		
-    	String aka = "";
+    	String aka = " ";
     	String akas [] = substring.split("&#160;aka");
     	
     	// skips the first index which is the original title
     	for (int i = 1; i < akas.length; i++) {
-    		aka += HttpUtil.decodeHTML(akas[i]) + FileUtil.getLineSeparator();
+    		
+    		if (!aka.equals(" "))
+    			aka += "\r\n ";
+    		
+    		aka += HttpUtil.decodeHTML(akas[i]);
     	}
     	    	
-		return aka.trim();
+		return aka;
     }
-
+  
+ 
+    protected HashMap decodeClassInfo(StringBuffer data) {
+    	
+    	//System.err.println("decodeClassInfo");
+    	
+    	HashMap classInfo = new HashMap();
+    	
+    	Pattern p = Pattern.compile("<div.*?class=\"info\">.+?<.+?>(.*?)<.+?>(.+?)</div>", Pattern.DOTALL);
+		Matcher m = p.matcher(data);
+		 		
+		while (m.find()) {
+		
+			//int gCount = m.groupCount();
+			
+			String className = m.group(1);
+			String info = m.group(2);
+			
+			//System.err.println("className:" + className);
+			//System.err.println("info:" + info);
+			
+			classInfo.put(className, info);
+		}
+		
+		return classInfo;
+    }
+    
+    
+    
     /**
      * Grabs the content of a class info containing the classname
      **/
+    
     protected static String getClassInfo(StringBuffer data, String className) {
     	String tmp = "";
 
-    	
-    		int start = 0;
-    		int end = 0;
-    		boolean found = false;
-    		
-    		while ((start = data.indexOf("<div class=\"info\">", end)) != -1 && 
-				   (end = data.indexOf("</div>", start)) != -1) {
+    	int start = 0;
+    	int end = 0;
 
-    			tmp = data.substring(start, end);	
+    	while ((start = data.indexOf("<div class=\"info\">", end)) != -1 && 
+    			(end = data.indexOf("</div>", start)) != -1) {
 
-    			if (tmp.indexOf(className) != -1) {
-    				
-    				start = tmp.indexOf(className) + className.length();
-    				tmp = tmp.substring(start, tmp.length());	
-    				tmp = tmp.trim();
-    				break;
-    			}
-    			tmp = "";
+    		tmp = data.substring(start, end);	
+
+    		if (tmp.indexOf(className) != -1) {
+    			start = tmp.indexOf(className) + className.length();
+    			tmp = tmp.substring(start, tmp.length());	
+    			tmp = tmp.trim();
+    			break;
     		}
+    		tmp = "";
+    	}
     	return tmp;
     }
     
+    
+    protected static String getDecodedClassInfo(String className, StringBuffer data) {
+    	String decoded = "";
+    	String tmp = getClassInfo(data, className);
+
+    	return getDecodedClassInfo(className, tmp);
+    }
     
     /**
      * Grabs the content of a class info containing the classname
      * and cleans it up by removing html and paranthesis.
      **/
-    protected static String getDecodedClassInfo(StringBuffer data, String className) {
+    protected static String getDecodedClassInfo(String className, String classInfo) {
     	String decoded = "";
-    	String tmp = "";
+    	String tmp = classInfo;
 
+    	if (className == null)
+    		className = "";
+    	
     	try {
-    		int start = 0;
     		int end = 0;
-    		boolean found = false;
     		
-    		tmp = getClassInfo(data, className);
+    		//tmp = getClassInfo(data, className);
+    			
     		
-    		end = tmp.indexOf("<a class=\"tn15more\"");
-    		
+    		end = tmp.indexOf("<a class=\"tn15more");
+    			
+    		// Link to "more" will be removed
     		if (end != -1) {
-				tmp = tmp.substring(0, end);
-    		}
-		
+    			tmp = tmp.substring(0, end);
+    		} 
+    				
 			if (className.equals("Also Known As:")) {
 				decoded = decodeAka(tmp);
 			}
 			else if (className.equals("class=\"cast\">")) {
-				decoded = decodeCast(tmp);
+				decoded = decodeCast(tmp).trim();
 			}
-			else
+			else {
 				decoded = HttpUtil.decodeHTML(tmp);
-			
+				decoded = decoded.replaceAll("\\|", ",");
+				decoded = decoded.replaceAll("\r\n|\n|\r", " ");
+				
+				// Removes all space before comma
+				while (decoded.indexOf(" ,") != -1) {
+					decoded = decoded.replaceAll("\\s,", ",");
+				}
+				
+				decoded = StringUtil.removeDoubleSpace(decoded);
+				decoded = decoded.trim();
+			}
     	} catch (Exception e) {
-    		log.error("", e);
+    		log.error("Exception:" + e.getMessage(), e);
     	} 
     	/* Returns the decoded string... */
-    	return decoded.trim();
+    	return decoded;
     }
     
     
     
     
     /**
-     * Decodes a html string and returns its unicode string.
+     * Returns the name of the link; <a href="">name</a>
      **/
     protected static ArrayList getLinkContentName(String toDecode) {
     	ArrayList decoded = new ArrayList();
@@ -768,30 +889,35 @@ public class IMDB {
 				decoded.add(HttpUtil.decodeHTML(tmp.trim()));
 			}
 		} catch (Exception e) {
-			log.error("", e);
+			log.error("Exception:" + e.getMessage(), e);
 		} 
 		/* Returns the decoded string... */
 		return decoded;
     }
     
+    
     /**
-     * Decodes a html string and returns its unicode string.
+     * Returns the aka titles.
      **/
     protected static String decodeAka(String toDecode) {
-		String decoded = "";
+		String decoded = " ";
 		
 		try {
 			String [] akaTitles = toDecode.split("<br>");
 		
 			for (int i = 0; i < akaTitles.length; i++) {
-				decoded += HttpUtil.decodeHTML(akaTitles[i]) + "\r\n";
+				
+				if (!decoded.equals(" "))
+					decoded += System.getProperty("line.separator");
+					
+				decoded += HttpUtil.decodeHTML(akaTitles[i].trim());
 			}
 			
 		} catch (Exception e) {
-			log.error("", e);
+			log.error("Exception:" + e.getMessage(), e);
 		} 
 		/* Returns the decoded string... */
-		return decoded.trim();
+		return decoded;
     }
     
     
@@ -799,100 +925,43 @@ public class IMDB {
      * Decodes a html string and returns its unicode string.
      **/
     protected static String decodeCast(String toDecode) {
-		StringBuffer decoded = new StringBuffer();
-		
-		try {
-			String [] castSplit = toDecode.split("<td class=\"hs\">");
-			String [] tmp;
-		
-			for (int i = 0; i < castSplit.length; i++) {
-			
-				tmp = HttpUtil.decodeHTML(castSplit[i]).split(" \\.\\.\\.");
-			
-				if (tmp.length == 2) {
-					decoded.append(tmp[0].trim());
-					decoded.append(" (" + tmp[1].trim() + "), ");
-				}
-			}
-			
-		} catch (Exception e) {
-			log.error("", e);
-		} 
-		/* Returns the decoded string... */
-		return decoded.toString();
+
+    	StringBuffer decoded = new StringBuffer();
+    	
+    	try {
+    		try {
+    			String [] castSplit = toDecode.split("<td class=\"hs\">");
+    			String [] tmp;
+
+    			for (int i = 0; i < castSplit.length; i++) {
+
+    				tmp = HttpUtil.decodeHTML(castSplit[i]).split(" \\.\\.\\.");
+
+    				if (tmp.length == 2) {
+    					decoded.append(tmp[0].trim());
+    					decoded.append(" (" + tmp[1].trim() + "), ");
+    				}
+    			}
+    			
+    			// Removes spaces at end
+    			while (decoded.length() > 0 && decoded.charAt(decoded.length() - 1) == ' ')
+    				decoded = decoded.deleteCharAt(decoded.length() - 1);
+
+    			// Replace comma at the end
+    			if (decoded.length() > 0 && decoded.charAt(decoded.length() - 1) == ',') 
+    				decoded = decoded.replace(decoded.length() - 1, decoded.length(), ".");
+
+    		} catch (Exception e) {
+    			log.error("Exception:" + e.getMessage(), e);
+    		} 
+    	} catch (Exception e) {
+    		log.error("Exception:" + e.getMessage(), e);
+    	}
+    	/* Returns the decoded string... */
+    	return decoded.toString();
     }
     
-    
-    
-    /* Creates the URL and sets the appropriate proxy values */
-    protected static URL makeURL(String url) {
-	
-		MovieManagerConfig mm = MovieManager.getConfig();
-		URL urlData = null;
-	
-		try {
-			if (mm.getProxyEnabled()) {
-		
-				String host = mm.getProxyHost();
-				String port = mm.getProxyPort();
-		
-				/*Adds proxy settings*/
-				java.util.Properties systemSettings = System.getProperties();
-		
-				if (mm.getProxyType().equals("HTTP")) {
-					systemSettings.put("proxySet", "true");
-					systemSettings.put("proxyHost", host);
-					systemSettings.put("proxyPort", port);
-				}
-				else {
-					systemSettings.put("socksProxySet", "true");
-					systemSettings.put("socksProxyHost", host);
-					systemSettings.put("socksProxyPort", port);
-				}
-		
-				/*Saves proxy settings*/
-				System.setProperties(systemSettings);
-		
-				if (mm.getAuthenticationEnabled()) {
-					String user = mm.getProxyUser();
-					String password = mm.getProxyPassword();
-		    
-					/*Adds authentication*/
-					Authenticator.setDefault(new MyAuth(user, password));
-				}
-				else
-					Authenticator.setDefault(null);/*Removes authentication*/
-			}
-			else if (!MovieManager.isApplet()){
-				/*Removes proxy settings*/
-				java.util.Properties systemSettings = System.getProperties();
-				systemSettings.remove("proxySet");
-				systemSettings.remove("proxyHost"); 
-				systemSettings.remove("proxyPort");
-		
-				systemSettings.remove("socksProxySet");
-				systemSettings.remove("socksProxyHost"); 
-				systemSettings.remove("socksProxyPort");
-				System.setProperties(systemSettings);
-		
-				/*Removes authentication*/
-				Authenticator.setDefault(null);
-			}
-			urlData = new URL(url);
-		}
-		catch (Exception e) {
-			log.error("", e);
-		}
-		return urlData;
-    }
-    
-    public static String getException() {
-		return exception;
-    }
-    
-    static void setException(String e) {
-		exception = e;
-    }
+        
     
     public static String extractTime(String toBeCleaned) {
 	
@@ -916,4 +985,263 @@ public class IMDB {
 		}
 		return result;
     }
+    
+        
+    public static String getClass(String classname, StringBuffer buffer) {
+    
+    	int safety = 10000;
+    	
+    	String searchStr = "<div class=\""+ classname + "\">";
+    	
+    	//System.err.println("getClass:" + searchStr);
+    	
+    	int start = buffer.indexOf(searchStr);
+    	
+    	if (start == -1)
+    		return null;
+    	
+    	start += 3;
+    	
+    	int end = start;
+    	
+    	int div_count = 1;
+    	
+    	while (div_count > 0) {
+    	
+    		if (safety-- == 0)
+    			break;
+    		
+    		//System.err.println("div_count:" + div_count);
+    		
+    		int i = buffer.indexOf("div", end);
+    		
+    		//System.err.println("next div:" + i);
+    		
+    		if (i != -1) {
+    			
+    			if (buffer.charAt(i-1) == '<')
+    				div_count++;
+    			else if (buffer.charAt(i-1) == '/')
+    				div_count--;
+
+    			end = i + 3;
+    		}
+    		else
+    			break;
+    	}
+    
+    	//System.err.println("start:" + start);
+    	//System.err.println("end:" + end);
+    	
+    	if (start > 0 && end < buffer.length() && start < end)
+    		return buffer.substring(start, end);
+    	else
+    		return null;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * Gets the key.
+     **/
+    public String getUrlID() {
+		return lastDataModel.getUrlID();
+    }
+
+    /**
+     * Gets the date.
+     **/
+    public String getDate() {
+		return lastDataModel.getDate();
+    }
+  
+       
+    
+    /**
+     * Gets the title.
+     **/
+    public String getIMDbTitle() {
+		return lastDataModel.getTitle();
+    }
+  
+ 
+    /**
+     * Returns the title where 'The', 'A' and 'An' are moved to the end of the title, If the settings are set.
+     * @return
+     */
+    public String getCorrectedTitle(String title) {
+    	
+    	if (settings != null) {
+    		
+    		if (settings.getAutoMoveThe() && title.startsWith("The ")) {
+    			title = title.substring(title.indexOf(" ")+1, title.length())+ ", The";
+    		}
+    		else if (settings.getAutoMoveAnAndA() && (title.startsWith("A ") || title.startsWith("An "))) {
+    			title = title.substring(title.indexOf(" ")+1, title.length())+ ", "+ title.substring(0, title.indexOf(" "));
+    		} 
+    	}
+    	return title;
+    }
+    
+    /**
+     * Gets the directed by.
+     **/
+    public String getDirectedBy() {
+		return lastDataModel.getDirectedBy();
+    }
+  
+    /**
+     * Gets the written by.
+     **/
+    public String getWrittenBy() {
+		return lastDataModel.getWrittenBy();
+    }
+  
+    /**
+     * Gets the genre.
+     **/
+    public String getGenre() {
+		return lastDataModel.getGenre();
+    }
+  
+    /**
+     * Gets the rating.
+     **/
+    public String getRating() {
+		return lastDataModel.getRating();
+    }
+  
+    /**
+     * Gets the colour.
+     **/
+    public String getColour() {
+		return lastDataModel.getColour();
+    }
+
+    /**
+     * Gets the country.
+     **/
+    public String getCountry() {
+		return lastDataModel.getCountry();
+    }
+
+    /**
+     * Gets the language.
+     **/
+    public String getLanguage() {
+		return lastDataModel.getLanguage();
+    }
+    
+    /**
+     * Gets the plot.
+     **/
+    public String getPlot() {
+		return lastDataModel.getPlot();
+    }
+  
+    /**
+     * Gets the cast.
+     **/
+    public String getCast() {
+		return lastDataModel.getCast();
+    }
+    
+    /**
+     * Gets the aka.
+     **/
+    public String getAka() {
+		return lastDataModel.getAka();
+    }
+    
+    /**
+     * Gets the mpaa.
+     **/
+    public String getMpaa() {
+		return lastDataModel.getMpaa();
+    }
+    
+    /**
+     * Gets the Sound Mix.
+     **/
+    public String getSoundMix() {
+		return lastDataModel.getWebSoundMix();
+    }
+
+    /**
+     * Gets the Runtime.
+     **/
+    public String getRuntime() {
+		return lastDataModel.getWebRuntime();
+    }
+    
+    /**
+     * Gets the Certification.
+     **/
+    public String getCertification() {
+		return lastDataModel.getCertification();
+    }
+
+    /**
+     * Gets the Awards.
+     **/
+    public String getAwards() {
+		return lastDataModel.getAwards();
+    }
+    
+    
+    /**
+     * Gets the cover url.
+     **/
+    public String getCoverName() {
+		return lastDataModel.getCoverName();
+    }
+    
+    /**
+     * Gets the cover url.
+     **/
+    public String getCoverURL() {
+		return lastDataModel.getCoverURL();
+    }
+  
+    public byte [] getCover() {
+    	return lastDataModel.getCoverData();
+    }
+    
+    /**
+     * Gets the cover.
+     **/
+    private boolean retrieveCover(ModelIMDbEntry dataModel) {
+      
+		byte[] coverData = null;
+		
+		try {
+			if (dataModel.getCoverURL() != null && !dataModel.getCoverURL().equals("")) {
+				//System.err.println("getting cover:" + dataModel.getCoverURL());
+				coverData = httpUtil.readDataToByteArray(new URL(dataModel.getCoverURL()));
+			}
+		} catch (Exception e) {
+			log.error("Exception:" + e.getMessage(), e);
+		} 
+	
+		//System.err.println("setCoverData:" + coverData);
+		dataModel.setCoverData(coverData);
+		/* Returns the data... */
+		return coverData != null;
+    }
+    
+    
+    /**
+     * Returns true if the last cover reading went ok..
+     **/
+    public boolean getCoverOK() {
+		return lastDataModel.hasCover();
+    }
+    
+    
 }

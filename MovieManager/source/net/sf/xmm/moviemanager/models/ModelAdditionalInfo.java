@@ -20,13 +20,15 @@
 
 package net.sf.xmm.moviemanager.models;
 
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.DialogImportTable.FieldModel;
-
 import java.util.ArrayList;
+
+import net.sf.xmm.moviemanager.MovieManager;
+
+import org.apache.log4j.Logger;
 
 public class ModelAdditionalInfo {
 
+	static Logger log = Logger.getRootLogger();
 	public static int additionalInfoFieldCount = 17;
 
 	private int index = -1;
@@ -53,7 +55,7 @@ public class ModelAdditionalInfo {
 	private static int extraInfoChanged = 0;
 	private int lastExtraInfoCount = 0;
 	private static boolean oldExtraInfoFieldNames = true;
-	static private ArrayList extraInfoFieldNames = null;
+	static private ArrayList extraInfoFieldNames = new ArrayList();
 	private ArrayList extraInfoFieldValues = new ArrayList();
 
 	// Default empty contryctir used when importing from XML using Castor
@@ -217,6 +219,19 @@ public class ModelAdditionalInfo {
 			return (String) extraInfoFieldNames.get(index);
 	}
 
+	
+	public String getExtraInfoFieldValue(String columnName) {
+
+		for (int i = 0; i < extraInfoFieldValues.size(); i++) {
+			String tmp = (String) extraInfoFieldNames.get(i);
+			
+			if (tmp != null && tmp.equals(columnName))
+				return (String) extraInfoFieldValues.get(i);
+		}
+		return null;
+	}
+	
+	
 	public String getExtraInfoFieldValue(int index) {
 
 		if (index < 0 || index >= extraInfoFieldValues.size())
@@ -231,12 +246,19 @@ public class ModelAdditionalInfo {
 		
 	
 	public static ArrayList getExtraInfoFieldNames() {
-			
-		if (oldExtraInfoFieldNames)
+					
+		return getExtraInfoFieldNames(true);
+	}
+	
+	public static ArrayList getExtraInfoFieldNames(boolean update) {
+		
+		if (update && oldExtraInfoFieldNames) {
 			setExtraInfoFieldNames(MovieManager.getIt().getDatabase().getExtraInfoFieldNames());
+		}
 		
 		return extraInfoFieldNames;
 	}
+	
 
 	public ArrayList getExtraInfoFieldValues() {
 		return extraInfoFieldValues;
@@ -265,19 +287,48 @@ public class ModelAdditionalInfo {
 	
 //	 Used when importing/exporting XML with Castor
 	public ArrayList getExtraInfoFieldNames2() {
-		System.err.println("getExtraInfoFieldNames2");
-		return extraInfoFieldNames;
+		return getExtraInfoFieldNames();
 	}
+	
+	
 	
 	// Used when importing/exporting XML with Castor
 	public void setExtraInfoFieldNames2(ArrayList extraInfoFieldNames) {
-		System.err.println("setExtraInfoFieldNames2:" + extraInfoFieldNames.get(0));
 		ModelAdditionalInfo.extraInfoFieldNames = extraInfoFieldNames;
+	}
+	
+	
+//	Used when importing/exporting XML with Castor
+	// If the extra info field name doesn't exist, it's created automatically
+	public void addExtraInfoFieldName(String extraInfoFieldName) {
+
+		try {
+
+			if (!extraInfoFieldNames.contains(extraInfoFieldName)) {
+				extraInfoFieldNames.add(extraInfoFieldName);
+
+				if (MovieManager.getIt().getDatabase().addExtraInfoFieldName(extraInfoFieldName) < 0)
+					log.error("Error occured when adding new extra info field:" + extraInfoFieldName);
+				else {
+					log.info("New extra info field added:" + extraInfoFieldName);
+
+					int [] activeFields = MovieManager.getIt().getActiveAdditionalInfoFields();
+					int [] newActiveFields = new int[activeFields.length + 1];
+
+					System.arraycopy(activeFields, 0, newActiveFields, 0, activeFields.length);
+					newActiveFields[newActiveFields.length-1] = additionalInfoFieldCount + extraInfoFieldNames.size() -1;
+
+					MovieManager.getIt().getDatabase().setActiveAdditionalInfoFields(newActiveFields);
+					MovieManager.getIt().setActiveAdditionalInfoFields(newActiveFields);
+				}
+			}
+		} catch (Exception e) {
+			log.warn("Exception:", e);
+		}
 	}
 	
 //	 Used when importing/exporting XML with Castor
 	public void addExtraInfoFieldValue(String str) {
-		System.err.println("addExtraInfoFieldValue:" + str);
 		extraInfoFieldValues.add(str);
 	}
 	
@@ -356,12 +407,12 @@ public class ModelAdditionalInfo {
 
 
 	/* Convenience method for setting values */
-	public boolean setValue(FieldModel fieldModel) {
+	public boolean setValue(String fieldName, String value, String tableName) {
 
-		String fieldName = fieldModel.getField();
-		String value = fieldModel.getValue();
+		//String fieldName = fieldModel.getField();
+		//String value = fieldModel.getValue();
 
-		if (fieldModel.getTable().equals("Additional Info")) {
+		if (tableName.equals("Additional Info")) {
 
 			if (fieldName.equalsIgnoreCase("SubTitles"))
 				setSubtitles(value);
@@ -402,7 +453,7 @@ public class ModelAdditionalInfo {
 
 			return true;
 		}
-		else if (fieldModel.getTable().equals("Extra Info")) {
+		else if (tableName.equals("Extra Info")) {
 
 			for (int i = 0; i < extraInfoFieldNames.size(); i++) {
 				if (fieldName.equals(extraInfoFieldNames.get(i))) {
@@ -414,6 +465,61 @@ public class ModelAdditionalInfo {
 		return false;
 	}
 
+	/* Convenience method for setting values */
+	public String getValue(String fieldName, String tableName) {
+
+		//String fieldName = fieldModel.getField();
+		//String value = fieldModel.getValue();
+
+		if (tableName.equals("Additional Info")) {
+
+			if (fieldName.equalsIgnoreCase("SubTitles"))
+				return getSubtitles();
+			else if (fieldName.equalsIgnoreCase("Duration"))
+				return "" + getDuration();
+			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("File Size"))
+				return "" + getFileSize();
+			else if (fieldName.equalsIgnoreCase("CDs"))
+				return "" + getCDs();
+			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("CD Cases"))
+				return "" + getCDCases();
+			else if (fieldName.equalsIgnoreCase("Resolution"))
+				return getResolution();
+			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Video Codec"))
+				return getVideoCodec();
+			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Video Rate"))
+				return getVideoRate();
+			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Video Bit Rate"))
+				return getVideoBitrate();
+			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Codec"))
+				return getAudioCodec();
+			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Rate"))
+				return getAudioRate();
+			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Bit Rate"))
+				return getAudioBitrate();
+			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Channels"))
+				return getAudioChannels();
+			else if (fieldName.equalsIgnoreCase("Container"))
+				return getContainer();
+			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("File Location"))
+				return getFileLocation();
+			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("File Count"))
+				return "" + getFileCount();
+			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Media Type"))
+				return getMediaType();
+			
+			return "";
+		}
+		else if (tableName.equals("Extra Info")) {
+
+			for (int i = 0; i < extraInfoFieldNames.size(); i++) {
+				if (fieldName.equals(extraInfoFieldNames.get(i))) {
+					return "" + extraInfoFieldValues.get(i);
+				}
+			}
+		}
+		return "";
+	}
 
 	public String getAdditionalInfoString() {
 		return getAdditionalInfoString(this);
@@ -437,6 +543,9 @@ public class ModelAdditionalInfo {
 
 			int [] activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
 
+			if (activeAdditionalInfoFields == null)
+				return null;
+			
 			for (int i = 0; i < activeAdditionalInfoFields.length; i++) {
 
 				switch (activeAdditionalInfoFields[i]) {

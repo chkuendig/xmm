@@ -1,15 +1,24 @@
 package net.sf.xmm.moviemanager.swing.extentions;
 
-import java.io.*;
+
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.awt.datatransfer.*;
+
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
+import net.sf.xmm.moviemanager.gui.DialogMovieInfo;
+
 import org.apache.log4j.Logger;
 
-import net.sf.xmm.moviemanager.DialogMovieInfo;
 
 public class CoverTransferHandler extends TransferHandler {
    static Logger log = Logger.getRootLogger();
