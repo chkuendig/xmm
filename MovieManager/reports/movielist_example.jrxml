@@ -53,10 +53,10 @@
 	<field name="Awards" class="java.lang.String"/>
 	<field name="PersonalRating" class="java.lang.String"/>
 	<field name="Subtitles" class="java.lang.String"/>
-	<field name="Duration" class="java.lang.String"/>
-	<field name="Filesize" class="java.lang.String"/>
-	<field name="CDs" class="java.lang.String"/>
-	<field name="CDCases" class="java.lang.String"/>
+	<field name="Duration" class="java.lang.Integer"/>
+	<field name="Filesize" class="java.lang.Integer"/>
+	<field name="CDs" class="java.lang.Integer"/>
+	<field name="CDCases" class="java.lang.Double"/>
 	<field name="Resolution" class="java.lang.String"/>
 	<field name="VideoCodec" class="java.lang.String"/>
 	<field name="VideoRate" class="java.lang.String"/>

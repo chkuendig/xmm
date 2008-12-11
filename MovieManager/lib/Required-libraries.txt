@@ -1,4 +1,4 @@
-Required libraries for MeD's Movie Manager v2.5.4
+Required libraries for MeD's Movie Manager v2.7
 
 These libraries can be found in the MovieManager binary or source release.
 
@@ -29,8 +29,6 @@ retroweaver-all-2.0.jar			- Java bytecode weaver (Used on JNative.jar)
 
 ostermillerutils_1_05_00_for_java_1_4.jar - CSV library
 
-spin.jar						- For Spinning GUI-threads. Replacement for SwingWorker.
-
 AppleJavaExtensions.jar			- Needed for Mac OS X adaption.
 libquaqua.jnilib				- Needed for Quaqua L&F
 quaqua-filechooser-only.jar		- Needed for Quaqua L&F
@@ -43,3 +41,12 @@ commons-collections-3.2.jar		- Needed for jasperreports
 commons-digester-1.7.jar		- Needed for jasperreports
 sfc.jar							- DriveInfo
  
+
+The following libraries are necessary when running in applet mode:
+
+TableLayout.jar						  	   Layout of the main window
+useful.jar								   JTree extension
+BrowserLauncher2-10rc4.jar				   Launching web browser when clicking cover 
+log4j-1.2.13.jar						   Logging library
+mysql-connector-java-3.1.12-bin.jar		   MySQL driver
+spin.jar								   Progress bar

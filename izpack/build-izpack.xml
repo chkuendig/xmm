@@ -1,19 +1,44 @@
 <?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
 
-<installation version="1.0">
+<project name="MeDs Movie Manager IzPack installer" default="makeIzpackInstaller" basedir="">
+  <description>
+	MeDs Movie Manager IzPack install creator
+  </description>
+
+ <!-- create the izpack java installer -->
+
+  <target name="makeIzpackInstaller" 
+		  description="Creates the izPack installer.">
+	
+
+
+	<taskdef name="izpack" classname="com.izforge.izpack.ant.IzPackTask">
+		<classpath refid="izpack.claspath"/>
+    </taskdef>
+
+
+	<izpack input="${izpack.dir}/build-izpack.xml"
+			output="${dist}/MovieManager.v.${versionName}.bin.installer.jar"
+			installerType="standard" basedir="."
+			izpackdir="${izpack.dir}"  >
+	
+
+
+	  <config>
+ <![CDATA[
+    
+	<installation version="1.0">
   
-  <info>
-	
-	<appname>MeD's Movie Manager</appname>
-	<appversion>2.5.4.1</appversion>
-	
-	<url>http://xmm.sourceforge.net</url>
-	<javaversion>1.4</javaversion>
-	
-	
-  </info>
-  
-  
+   <info>
+	  
+	  <appname>MeD's Movie Manager</appname>
+	  <appversion>@{version}</appversion>
+	  
+	  <url>http://xmm.sourceforge.net</url>
+	  <javaversion>1.4</javaversion>
+	  
+	  </info>
+
   <guiprefs height="300" resizable="yes" width="450"/>
   
   
@@ -29,68 +54,66 @@
 	<panel classname="SimpleFinishPanel"/>
   </panels>
   
-  
+
   <packs>
 	<pack name="MeD's Movie Manager files" required="yes">
 	  <description>MeD's Movie Manager files</description>
 	  
-	  <fileset dir="MovieManager/" targetdir="$INSTALL_PATH">
-		<include name="MovieManager.jar" />
-		<include name="MovieManager.exe" />
-		<include name="Temp.mdb" />
-		<include name="log4j.properties" />
-		<include name="mapping.xml" />
-		<include name="Icon.ico" />
-		<include name="castor.properties" />
-		<include name="MovieManager.tmx" />
-		
-		<include name="lib/" />
-		<!--<include name="LookAndFeels/" /> -->
-		<include name="License/" />
-		<include name="reports/" />
-	  </fileset>
-	  
-	  
-	  <!-- Look & Feels -->
-	  <fileset dir="MovieManager/LookAndFeels" 
-			   targetdir="$INSTALL_PATH/LookAndFeels">
-		
-		<include name="JTattoo-1.2.2.jar" />
-		<include name="kunststoff.jar" />
-		<include name="looks-2.1.4.jar" />
-		<include name="OfficeLnFs_2.6.jar" />
-		<include name="substance-lite-3.3.jar" />
-		<include name="synthetica.2.3.0.jar" />
-		<include name="syntheticaBlackMoon.jar" />
-		<include name="syntheticaBlackStar.jar" />
-		<include name="syntheticaBlueIce.jar" />
-		<include name="syntheticaBlueMoon.jar" />
-		<include name="syntheticaBlueSteel.jar" />
-		<include name="syntheticaGreenDream.jar" />
-		<include name="syntheticaSilverMoon.jar" />
-		
-		<include name="Oyoaha Theme Packs/"/>
-		<include name="Skinlf Theme Packs/"/>
+	  <!-- Files in root dir (install dir)  -->
+	  <fileset targetdir="$INSTALL_PATH/" dir="MovieManager/" 
+				  includes="@{executers}">
+		<include name="config/" />
+		<exclude name="config/Config.ini"/>
 		
 	  </fileset>
 	  
-	  <!-- fileset dir="MovieManager/" targetdir="$INSTALL_PATH"> -->
+	  <fileset targetdir="$INSTALL_PATH/" 
+				  dir="" 
+				  includes="@{infoFiles}"/>
 
+	   <!-- Files in root dir (install dir)  -->
+	  <fileset targetdir="$INSTALL_PATH/reports/" dir="MovieManager/reports/" 
+				  includes="@{jasperFiles}"/>
+	
+	  
+  
+	  <!-- libraries -->
+	  <fileset targetdir="$INSTALL_PATH/lib/" 
+				  dir="MovieManager/lib/" 
+				  includes="@{library_file_list}"
+				  />
+	 
+
+	  <!--html template files-->
+	  <fileset targetdir="$INSTALL_PATH/HTML_templates/" 
+				  dir="MovieManager/HTML_templates/" 
+				  includes="@{template_files}"/>
+	
+	  
+
+	  <!-- Adding the lookAndFeels.ini file -->
 	  <fileset dir="dist"
-			   targetdir="$INSTALL_PATH/LookAndFeels">
+			   targetdir="$INSTALL_PATH/lib/LookAndFeels">
 		
 		<include name="lookAndFeels.ini" />
 	  </fileset>
 	  
+
 	  
-	  <fileset dir="" targetdir="$INSTALL_PATH">
-		<include name="License/"/>
-		<include name="Readme.rtf"/>
-		<include name="Readme.txt"/>
-		<include name="Changelog.txt"/>
-	  </fileset>
-	  
+				  	  
 	</pack>
   </packs>
   
+
+
 </installation>
+
+	  ]]> </config>
+ 
+
+	</izpack>
+  </target>
+
+</project>
+
+
