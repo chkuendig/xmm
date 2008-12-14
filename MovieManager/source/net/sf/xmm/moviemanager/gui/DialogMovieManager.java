@@ -133,6 +133,7 @@ import net.sf.xmm.moviemanager.util.SysUtil;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerGUIChangeHandler;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerPlayHandler;
+import net.sf.xmm.moviemanager.util.plugins.PlanetaryToolBar;
 
 import org.apache.log4j.Logger;
 import org.dotuseful.ui.tree.AutomatedTreeModel;
