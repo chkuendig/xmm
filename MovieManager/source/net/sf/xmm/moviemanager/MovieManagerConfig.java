@@ -324,7 +324,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	public int numberOfLookAndFeels;
 
-	private boolean defaultLookAndFeelDecorated = true;
+	private boolean defaultLookAndFeelDecorated = false;
 
 	private boolean checkForProgramUpdates = true;
 	
