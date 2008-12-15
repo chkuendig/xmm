@@ -21,6 +21,8 @@
 package net.sf.xmm.moviemanager.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -35,6 +37,7 @@ import java.util.Iterator;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -53,7 +56,7 @@ import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
-import net.sf.xmm.moviemanager.models.ModelSearchHit;
+import net.sf.xmm.moviemanager.models.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.swing.extentions.events.ModelUpdatedEvent.IllegalEventTypeException;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
@@ -114,7 +117,7 @@ public class DialogTVSeries extends JDialog {
         listMovies.setFont(new Font(listMovies.getFont().getName(),Font.PLAIN,listMovies.getFont().getSize()));
         listMovies.setLayoutOrientation(JList.VERTICAL);
         listMovies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+        listMovies.setCellRenderer(new TVSeriesListCellRenderer());
         
         JScrollPane scrollPaneMovies = new JScrollPane(listMovies);
         scrollPaneMovies.setPreferredSize(new Dimension(300,255));
@@ -194,6 +197,22 @@ public class DialogTVSeries extends JDialog {
     public JButton getButtonSelect() {
         return buttonSelect;
     }
+ 
     
+    public class TVSeriesListCellRenderer extends DefaultListCellRenderer {
+	  
+	  public Component getListCellRendererComponent(JList list, Object value,
+	    int index, boolean isSelected, boolean hasFocus) {
+	    super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
+	  
+	   if (value instanceof ModelIMDbSearchHit) {
+		  
+		   if (((ModelIMDbSearchHit) value).processed) {
+			   setBackground(new Color(125, 203, 138));
+		   }
+	   }
+	   return this;
+	  }
+	}
 }
 
