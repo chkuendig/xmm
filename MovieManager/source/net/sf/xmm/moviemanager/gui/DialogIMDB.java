@@ -55,7 +55,7 @@ import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
-import net.sf.xmm.moviemanager.models.ModelSearchHit;
+import net.sf.xmm.moviemanager.models.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
@@ -226,8 +226,8 @@ public class DialogIMDB extends JDialog {
     			
     			int row = (int) e.getPoint().getY() / (int) getCellBounds(0,0).getHeight();
 
-				if (row >= 0 && row < getModel().getSize() && getMoviesList().getModel().getElementAt(row) instanceof ModelSearchHit) {
-    				retVal = ((ModelSearchHit) getMoviesList().getModel().getElementAt(row)).getAka();
+				if (row >= 0 && row < getModel().getSize() && getMoviesList().getModel().getElementAt(row) instanceof ModelIMDbSearchHit) {
+    				retVal = ((ModelIMDbSearchHit) getMoviesList().getModel().getElementAt(row)).getAka();
     				
     				if (retVal != null && retVal.trim().equals(""))
     					retVal = null;
@@ -462,7 +462,7 @@ public class DialogIMDB extends JDialog {
 
 
     	DefaultListModel model = new DefaultListModel();
-    	model.addElement(new ModelSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.search-in-progress"), null)); //$NON-NLS-1$
+    	model.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.search-in-progress"), null)); //$NON-NLS-1$
     	listMovies.setModel(model);
 	
     	
@@ -475,7 +475,7 @@ public class DialogIMDB extends JDialog {
     			int listSize = list.getSize();
 
     			if (list.getSize() == 0) {
-    				list.addElement(new ModelSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
+    				list.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
     			}
 
     			listMovies.setModel(list);
@@ -496,7 +496,7 @@ public class DialogIMDB extends JDialog {
     					DefaultListModel list = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(modelEntry.getTitle());
 
     					if (list.getSize() == 0) {
-    						list.addElement(new ModelSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
+    						list.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
     					}
 
     					listMovies.setModel(list);
@@ -554,7 +554,7 @@ public class DialogIMDB extends JDialog {
     		}
 
     		if (listModel.getSize() == 0) {
-    			listModel.addElement(new ModelSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
+    			listModel.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
     		}
     		
     		getMoviesList().setModel(listModel);
@@ -689,7 +689,7 @@ public class DialogIMDB extends JDialog {
     		dispose();
     	}
     	else {
-    		ModelSearchHit model = ((ModelSearchHit) listModel.getElementAt(index));
+    		ModelIMDbSearchHit model = ((ModelIMDbSearchHit) listModel.getElementAt(index));
 
     		System.err.println("TEst 1");
     		
