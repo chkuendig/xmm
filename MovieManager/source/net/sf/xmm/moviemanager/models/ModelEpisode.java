@@ -108,7 +108,11 @@ public class ModelEpisode extends ModelEntry {
 	
 
 	public String getEpisodeTitle() {
-		return episodeTitle != null ? episodeTitle : getTitle();
+		
+		if (episodeTitle == null && getTitle() != null)
+			episodeTitle = "S" + seasonNumber + "E" + episodeNumber +  " - " + getTitle();
+		
+		return episodeTitle;
 	}
 	
 	public int getMovieKey() {
@@ -130,7 +134,6 @@ public class ModelEpisode extends ModelEntry {
 		// Does not contain valid season/episode info
 		if (episodeKey < 10000) {
 			log.warn("episodeKey smaller than 10000:" + episodeKey);
-			//System.err.println("episodeKey:" + episodeKey);
 			return;
 		}
 		
@@ -138,8 +141,6 @@ public class ModelEpisode extends ModelEntry {
 		seasonNumber = tmp.substring(0, tmp.length() - 4);		
 		episodeNumber = new Integer(tmp.substring(tmp.length() - 4, tmp.length())).toString();
 
-		episodeTitle = "S" + seasonNumber + "E" + episodeNumber +  " " + getTitle();
-		
 		System.err.println(episodeKey + " set seasonNumber:" + seasonNumber);
 		System.err.println(episodeKey + " set episodeNumber:" + episodeNumber);
 	}
@@ -167,13 +168,6 @@ public class ModelEpisode extends ModelEntry {
 		
 		super.copyData(model);
 		this.movieKey = ((ModelEpisode) model).getMovieKey();
-		
-		try {
-			throw new Exception();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
 		setEpisodeKey(((ModelEpisode) model).getEpisodeKey());
 	}
 	
