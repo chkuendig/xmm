@@ -842,7 +842,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	
 	public static void processTemplateData(StringBuffer template, ModelEntry model) throws FileNotFoundException, IOException {
 		
-		StringUtil.replaceAll(template, "$Date: 2008-12-15 12:27:52 $", "" + model.getDate());
+		StringUtil.replaceAll(template, "$ReleaseDate$", "" + model.getDate());
 		StringUtil.replaceAll(template, "$MovieTitle$", model.getTitle());
 		StringUtil.replaceAll(template, "$DirectedBy$", model.getDirectedBy());
 		StringUtil.replaceAll(template, "$WrittenBy$", model.getWrittenBy());
