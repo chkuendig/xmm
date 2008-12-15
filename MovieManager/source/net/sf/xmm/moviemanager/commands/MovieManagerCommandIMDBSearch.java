@@ -41,7 +41,7 @@ import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
-import net.sf.xmm.moviemanager.models.ModelSearchHit;
+import net.sf.xmm.moviemanager.models.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEpisode;
 import net.sf.xmm.moviemanager.swing.extentions.events.ModelUpdatedEvent.IllegalEventTypeException;
@@ -108,9 +108,13 @@ public class MovieManagerCommandIMDBSearch {
                 try {
                     DefaultListModel list = imdb.getSeriesMatches(movieInfoModel.getModel().getTitle());
                     
+                    System.err.println("match size:" + list.getSize());
+                    
                     if (list == null) {
                         final DefaultListModel model = new DefaultListModel();
-                        model.addElement(new ModelSearchHit(null, Localizer.getString("DialogTVDOTCOM.list-item.message.no-matches-found"), null)); //$NON-NLS-1$
+                        model.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogTVDOTCOM.list-item.message.no-matches-found"), null)); //$NON-NLS-1$
+                        
+                        System.err.println("adding not found string:" + Localizer.getString("DialogTVDOTCOM.list-item.message.no-matches-found"));
                         
                         Runnable updateProgres = new Runnable() {
                             public void run() {
@@ -157,14 +161,14 @@ public class MovieManagerCommandIMDBSearch {
 			
 			int index = dialogTVSeries.getMoviesList().getSelectedIndex();
 
-			DefaultListModel listModel = (DefaultListModel) dialogTVSeries.getMoviesList().getModel();
+			final DefaultListModel listModel = (DefaultListModel) dialogTVSeries.getMoviesList().getModel();
 
 			/* Get seasons */
 			if (mode == 0) {
 
 				dialogTVSeries.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				
-				dialogTVSeries.getMoviesList().setModel(imdb.getSeasons((ModelSearchHit) listModel.getElementAt(index)));
+				dialogTVSeries.getMoviesList().setModel(imdb.getSeasons((ModelIMDbSearchHit) listModel.getElementAt(index)));
 				dialogTVSeries.getMoviesList().setSelectedIndex(0);
 
 				dialogTVSeries.getMoviesList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -178,7 +182,7 @@ public class MovieManagerCommandIMDBSearch {
 
 				dialogTVSeries.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				
-				ModelSearchHit selected = null;
+				ModelIMDbSearchHit selected = null;
 				StringBuffer episodesStream;
 
 				int episodes = 0;
@@ -187,7 +191,7 @@ public class MovieManagerCommandIMDBSearch {
 				int seasons = selectedValues.length;
 
 				for( int i = 0; i < seasons; i++) {
-					selected = (ModelSearchHit) selectedValues[i];
+					selected = (ModelIMDbSearchHit) selectedValues[i];
 					episodesStream = imdb.getEpisodesStream(selected);
 					streamsArray.add(imdb.getEpisodes(selected, episodesStream));
 				}
@@ -195,12 +199,17 @@ public class MovieManagerCommandIMDBSearch {
 				DefaultListModel allEpisodes = new DefaultListModel();
 				DefaultListModel tempList = new DefaultListModel();
 
+				int indexInList = 0;
+				
 				for (Iterator it = streamsArray.iterator(); it.hasNext();) {
 					tempList = (DefaultListModel) it.next();
 					episodes = tempList.getSize();
 
 					for (int i = 0; i < episodes; i++) {
-						allEpisodes.addElement(tempList.getElementAt(i));
+						
+						ModelIMDbSearchHit tmp = (ModelIMDbSearchHit) tempList.getElementAt(i);
+						tmp.index = indexInList++;
+						allEpisodes.addElement(tmp);
 					}
 				}
 
@@ -246,7 +255,7 @@ public class MovieManagerCommandIMDBSearch {
 							
 							while (mailbox_size-- > 0) {
 
-								while (mailbox.getThreadCount() > 10)
+								while (mailbox.getThreadCount() > 6)
 									Thread.sleep(100);
 
 								System.err.println("Size:" + mailbox.getSize() + " count:" + 
@@ -262,7 +271,9 @@ public class MovieManagerCommandIMDBSearch {
 										try {
 											Thread.currentThread().setPriority(4);
 																						
-											ModelIMDbEntry entry = imdb.getEpisodeInfo((ModelSearchHit) mailbox.pop());
+											final ModelIMDbSearchHit searchHit = (ModelIMDbSearchHit) mailbox.pop();
+											
+											ModelIMDbEntry entry = imdb.getEpisodeInfo(searchHit);
 											final ModelEntry modelEntry = saveData(entry, movieKey, multipleEpisodes);
 
 											/* Adding each entry to the movie list */
@@ -288,6 +299,15 @@ public class MovieManagerCommandIMDBSearch {
 											});
 											
 											mailbox.decreaseThreadCount();
+											
+											searchHit.processed = true;
+											
+											SwingUtilities.invokeLater(new Runnable() {
+												public void run() {
+													listModel.set(searchHit.index, searchHit);
+												}
+											});
+											
 											
 											System.err.println("Size:" + mailbox.getSize() + " THcount:" + 
 													mailbox.getThreadCount() + "  total:" + 
