@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
 
-import net.sf.xmm.moviemanager.models.ModelSearchHit;
+import net.sf.xmm.moviemanager.models.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.models.imdb.*;
 
@@ -256,27 +256,33 @@ public class IMDB {
 			HashMap classInfo = decodeClassInfo(data);
 			
 			String tmp = "";
+			ArrayList list;
 			
 			if (classInfo.containsKey("Director:")) {
 				//System.err.println("contains director");
-				 tmp = getDecodedClassInfo("Director:", (String) classInfo.get("Director:"));
+				directedBy = getDecodedClassInfo("Director:", (String) classInfo.get("Director:"));
 				//tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
 			}
 			else if (classInfo.containsKey("Directors:")) {
 				//System.err.println("contains directors");
-				tmp = getDecodedClassInfo("Directors:", (String) classInfo.get("Directors:"));
+				//tmp = getDecodedClassInfo("Directors:", (String) classInfo.get("Directors:"));
+				
+				tmp = (String) classInfo.get("Directors:");
+				
+				list = getLinkContentName(tmp);
+		    	 
+				while (!list.isEmpty()) {
+					if (!directedBy.equals(""))
+						directedBy += ", ";
+		    			
+					directedBy += list.remove(0);
+				}
 			}
-			//System.err.println("director:" + tmp);
 			
-			ArrayList list = getLinkContentName(tmp);
-	    	 
-			while (!list.isEmpty()) {
-				if (!directedBy.equals(""))
-					directedBy += ", ";
-	    			
-				directedBy += list.remove(0);
-			}
+			//System.err.println("director:" + tmp);
 				 
+			//System.err.println("list:" + directedBy);
+			
 			dataModel.setDirectedBy(directedBy);
 			
 			// Gets the written by... 
@@ -460,7 +466,7 @@ public class IMDB {
     }
     
     
-    public StringBuffer getEpisodesStream(ModelSearchHit modelSeason) {
+    public StringBuffer getEpisodesStream(ModelIMDbSearchHit modelSeason) {
 
     	//System.err.println("getEpisodesStream");
     	
@@ -490,22 +496,6 @@ public class IMDB {
 			int counter = 1;
 			int seasonCounter = 1;
 			
-			
-			// Get number of episodes 
-			/*
-			while (true) {
-				
-				String classContent = getClass("season-filter-all filter-season-" + seasonCounter, data);
-				
-				if (classContent != null)
-					net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/season-"+seasonCounter+".html", classContent);
-				else {
-					seasonCounter--;
-					break;
-				}
-				seasonCounter++;
-			}
-*/
 
 		} catch (Exception e) {
 			log.error("", e);
@@ -520,7 +510,7 @@ public class IMDB {
     
     
     
-    public static DefaultListModel getEpisodes(ModelSearchHit modelSeason, StringBuffer stream) {
+    public static DefaultListModel getEpisodes(ModelIMDbSearchHit modelSeason, StringBuffer stream) {
 
 		DefaultListModel listModel = new DefaultListModel();
 		
@@ -552,7 +542,7 @@ public class IMDB {
 
 					title = episode + title;
 					
-					listModel.addElement(new ModelSearchHit(key, title, modelSeason.getSeasonNumber()));
+					listModel.addElement(new ModelIMDbSearchHit(key, title, modelSeason.getSeasonNumber()));
 				}
 			}
 
@@ -567,7 +557,7 @@ public class IMDB {
     
     
     
-	public DefaultListModel getSeasons(ModelSearchHit modelSeries) {
+	public DefaultListModel getSeasons(ModelIMDbSearchHit modelSeries) {
 
 		DefaultListModel listModel = new DefaultListModel();
 				
@@ -586,7 +576,7 @@ public class IMDB {
 
 			/* No season....?. */
 			if (start == -1) {
-				listModel.addElement(new ModelSearchHit(null, null, "No seasons available"));
+				listModel.addElement(new ModelIMDbSearchHit(null, null, "No seasons available"));
 			}
 			else {
 				int end = data.indexOf("</div>", start);
@@ -598,7 +588,7 @@ public class IMDB {
 				
 				while (seasons.indexOf(season + seasonCount) != -1) {
 					title = modelSeries.getTitle()+ " - Season "+ seasonCount;
-					listModel.addElement(new ModelSearchHit(modelSeries.getUrlID(), title, seasonCount));
+					listModel.addElement(new ModelIMDbSearchHit(modelSeries.getUrlID(), title, seasonCount));
 					seasonCount++;
 				}
 			}
@@ -611,7 +601,7 @@ public class IMDB {
 	}
 	
 	
-	public ModelIMDbEntry getEpisodeInfo(ModelSearchHit episode) throws Exception {
+	public ModelIMDbEntry getEpisodeInfo(ModelIMDbSearchHit episode) throws Exception {
 		//System.err.println("episode:" + episode);
 		//System.err.println("getEpisodeInfo:" + episode.getStreamNumber());
 		
@@ -628,7 +618,9 @@ public class IMDB {
     	
     	for (int i = 0; i < all.getSize(); i++) {
     		
-    		ModelSearchHit imdb = (ModelSearchHit) all.get(i);
+    		ModelIMDbSearchHit imdb = (ModelIMDbSearchHit) all.get(i);
+    		
+    		System.err.println("series Title:" + imdb.getTitle());
     		
     		if (!imdb.getTitle().startsWith("\"")) {
     			all.remove(i);
@@ -675,10 +667,41 @@ public class IMDB {
 				}
 				
 				aka = getDecodedClassInfo("Also Known As:", data);
-				listModel.addElement(new ModelSearchHit(key, movieTitle, aka));
+				listModel.addElement(new ModelIMDbSearchHit(key, movieTitle, aka));
 				
 				return listModel;
 			}
+			
+			// Insert newline before each href, as dot in regex will not match newline
+			int index = 0;
+			while ((index = data.indexOf("<a href", index)) != -1) {
+				data.insert(index, "\n");
+				index += 2;
+			}
+			
+			int [] movieHitCategoryIndex = new int[4];
+			boolean empty = true;
+			
+			int startIndex = -1;
+			
+			for (int u = 0; u < movieHitCategory.length; u++) {
+				movieHitCategoryIndex[u] = data.indexOf(movieHitCategory[u]);
+				if (movieHitCategoryIndex[u] != -1)  {
+					empty = false;
+					
+					if (startIndex == -1) {
+						startIndex = movieHitCategoryIndex[u];
+						data.delete(0, startIndex);
+						System.err.println("hit on " + movieHitCategory[u] + " at index:" + startIndex);
+					}
+				}
+			}
+			
+			// NO results, returning empty list
+			if (empty) {
+				return listModel;
+			}
+			
 			
 			// <a href="/title/tt0074853/">The Man in the Iron Mask</a> (1977) (TV)</td></tr>
 			// <a href="/title/tt0120744/">The Man in the Iron Mask</a> (1998/I)</td></tr>
@@ -686,23 +709,9 @@ public class IMDB {
 			
 			// should match strings like the above
 			
-			Pattern p = Pattern.compile("<a\\shref=\"/title/tt(\\d{5,})/\">(.+?)</a>.+?\\((\\d+(/I*)?)\\).*?(;aka\\\\s<em>.+?</em>)*?</td></tr>");
+			Pattern p = Pattern.compile("<a\\shref=\"/title/tt(\\d{5,})/\".*?>(.+?)</a>.+?\\((\\d+(/I*)?)\\).*?(;aka\\\\s<em>.+?</em>)*?");
 			Matcher m = p.matcher(data);
-			 			
-			int [] movieHitCategoryIndex = new int[4];
-			boolean empty = true;
 			
-			for (int u = 0; u < movieHitCategory.length; u++) {
-				movieHitCategoryIndex[u] = data.indexOf(movieHitCategory[u]);
-				if (movieHitCategoryIndex[u] != -1) 
-					empty = false;
-			}
-				
-			// NO results, returning empty list
-			if (empty) {
-				return listModel;
-			}
-				
 			while (m.find()) {
 			
 				//int gCount = m.groupCount();
@@ -710,20 +719,23 @@ public class IMDB {
 				key = m.group(1);
 				String title = m.group(2);
 				String year = m.group(3);
-
+				
 				title = HttpUtil.decodeHTML(title);
 				
-				title += " (" + year + ")"; 
+				if (title.equals(""))
+					continue;
 				
 				//Video game
 				if (m.group(0).indexOf("VG") != -1) {
 					continue;	
 				}
 				
+				title += " (" + year + ")"; 
+					
 				// Aka
 				aka = grabAkaTitlesFromSearchHit(m.group(0));
 				
-				listModel.addElement(new ModelSearchHit(key, title, aka));
+				listModel.addElement(new ModelIMDbSearchHit(key, title, aka));
 				
 				movieCount++;
 			}
@@ -1039,13 +1051,7 @@ public class IMDB {
     		return null;
     }
     
-    
-    
-    
-    
-    
-    
-    
+        
     
     /**
      * Gets the key.
