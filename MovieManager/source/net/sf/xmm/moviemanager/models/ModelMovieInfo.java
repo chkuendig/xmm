@@ -413,17 +413,17 @@ public class ModelMovieInfo {
 //      Removing the cached info for the node
     	MovieManager.getDialog().getTreeCellRenderer().removeEntry(model);
     	
-    	return saveToDatabase(model, listName);
+    	return saveToDatabase(model, _edit, listName);
     }
         
-    public synchronized ModelEntry saveToDatabase(ModelEntry modelToSave, String listName) throws Exception {
+    public synchronized ModelEntry saveToDatabase(ModelEntry modelToSave, boolean edit, String listName) throws Exception {
                 
         Database database = MovieManager.getIt().getDatabase();
         ModelAdditionalInfo additionalInfo = modelToSave.getAdditionalInfo();
         
         if (isEpisode) {
             
-            if (_edit) {
+            if (edit) {
                 /* Editing episode */
                 
                 database.setGeneralInfoEpisode(modelToSave.getKey(), (ModelEpisode) modelToSave);
@@ -457,7 +457,7 @@ public class ModelMovieInfo {
             }
         } else {
             
-            if (_edit) {
+            if (edit) {
                 
                 /* Editing movie */
                 
@@ -889,8 +889,46 @@ public class ModelMovieInfo {
         File coverFile = new File(coversFolder, coverName);
         
         if (coverFile.exists()) {
-            if (!coverFile.delete() && !coverFile.createNewFile()) {
-                throw new Exception("Cannot delete old cover file and create a new one:" + coverFile); //$NON-NLS-1$
+            if (!coverFile.delete() ) {
+            	
+            	System.err.println("File delete failed. Running System.gc");
+            	
+            	Thread.sleep(50);
+            	
+            	System.gc();
+            	
+            	Thread.sleep(50);
+            	
+            	File tempDir = new File(coverFile.getParentFile(), "temp");
+            	
+            	if (!tempDir.exists() && !tempDir.mkdir()) {
+            		throw new Exception("Failed to create temporary directory in cover dir:" + tempDir); //$NON-NLS-1$
+            	}
+            	
+            	//File tmpFile = File.createTempFile(String prefix, String suffix, temoDir);
+            	
+            	System.err.println("Math.random() * 100000:" + (Math.random() * 100000));
+            	
+            	int rand = (int) (Math.random() * 100000);
+            	
+            	File newFile = new File(tempDir, "" + rand);
+            	//File.renameTo()
+            	
+            	
+            	
+            	if (!coverFile.renameTo(newFile))
+            		throw new Exception("Failed to rename cover file:" + coverFile + " to " + newFile); //$NON-NLS-1$
+            	
+            	newFile.deleteOnExit();
+            	
+            	if (coverFile.exists())
+            		throw new Exception("File still exists dammit"); //$NON-NLS-1$
+            		
+            	if (!coverFile.delete())
+            		throw new Exception("Failed to delete old cover file:" + coverFile); //$NON-NLS-1$
+            }
+            else if (!coverFile.createNewFile()) {
+            	throw new Exception("Failed to create new cover file:" + coverFile); //$NON-NLS-1$
             }
         } else {
         	try {
@@ -903,10 +941,8 @@ public class ModelMovieInfo {
         }
         
         /* Copies the cover to the covers folder... */
-        OutputStream outputStream = new FileOutputStream(coverFile);
-        outputStream.write(cover);
-        outputStream.close();
-        
+        FileUtil.writeToFile(cover, coverFile);
+       
         return true;
     }
     

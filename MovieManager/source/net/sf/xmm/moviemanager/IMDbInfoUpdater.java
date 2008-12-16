@@ -365,7 +365,7 @@ public class IMDbInfoUpdater {
 
 						long time = System.currentTimeMillis();
 						//System.err.println("save:" + getName());
-						modelInfo.saveToDatabase(model, null);
+						modelInfo.saveToDatabase(model, true, null);
 						System.err.println("save " + getName() + ":" + System.currentTimeMillis());
 
 					} catch (Exception e) {
