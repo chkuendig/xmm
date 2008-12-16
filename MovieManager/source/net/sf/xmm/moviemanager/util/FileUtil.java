@@ -26,6 +26,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -202,6 +203,7 @@ public class FileUtil {
                 byteStream.write(buffer);
             
             bufferedInputStream.close();
+            byteStream.close();
             
             return byteStream.toByteArray();
             
@@ -337,8 +339,6 @@ public class FileUtil {
     		catch (Exception e) {
     			log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
     		}
-
-    		
     		
     		if (image == null) {
 
@@ -357,9 +357,6 @@ public class FileUtil {
     					image = Toolkit.getDefaultToolkit().getImage(path + imageName);
     				}
     			}
-
-    			//.println("image:" + image);
-
     		}
     	} catch (Exception e) {
     		log.error("Exception:" + e.getMessage(), e); //$NON-NLS-1$
@@ -368,7 +365,7 @@ public class FileUtil {
     	return image;
     }
 
-    public static Image getImageFromJar1(String imageName) {
+    public static Image getImageFromJar(String imageName) {
     	
     	Image image = null;
     	try {
@@ -382,6 +379,7 @@ public class FileUtil {
 		}
 		return image;
     }
+    
     
     public static String getPath(String fileName) {
         String path = ""; //$NON-NLS-1$
@@ -459,6 +457,7 @@ public class FileUtil {
                                     
             for (int u = 0; u < data.length(); u++)
             	out.write(data.charAt(u));
+            
             out.close();
             
         } catch (Exception e) {
@@ -469,27 +468,12 @@ public class FileUtil {
     
    
     public static boolean writeToFile(byte [] data, File file) {
-        try {
-        	if (!file.getParentFile().isDirectory()) {
-        		if (!file.getParentFile().mkdirs()) {
-        			log.warn("Failed to create new file: " + file);
-        			return false;
-        		}
-        	}
-            FileOutputStream fileStream = new FileOutputStream(file);
-            for (int u = 0; u < data.length; u++)
-                fileStream.write(data[u]);
-            fileStream.close();
-            
-        } catch (Exception e) {
-            log.error("Exception:"+ e.getMessage());
-            return false;
-        }
-        return true;
+    	return writeToFile(new ByteArrayInputStream(data), file);
     }
     
     
     public static boolean writeToFile(InputStream data, File file) {
+    	
         try {
         	if (!file.getParentFile().isDirectory()) {
         		if (!file.getParentFile().mkdirs()) {
@@ -508,7 +492,7 @@ public class FileUtil {
         	int count;
         	
         	while ((count = inputStream.read(buffer, 0, bufferSize)) != -1) {
-        		   dest.write(buffer, 0, count);
+        		dest.write(buffer, 0, count);
         	}	
         	
         	inputStream.close();
@@ -559,6 +543,41 @@ public class FileUtil {
     	return success;
     }
     
+
+    /**
+     * Creates a copy the original file in the destionation directory which is deleted on program exit
+     * @param original
+     * @param destination
+     * @return
+     */
+    public static File createTempCopy(File original, File destination) {
+
+    	File tempFile = null;
+
+    	try {
+
+    		if (destination.isFile())
+    			throw new Exception("Destinaion is not a directory!");
+    		else if (!destination.isDirectory() && !destination.mkdirs())
+    			throw new Exception("Failed to create temporary directory!");
+    			
+    		do {	    	
+    			int rand = (int) (Math.random() * 10000000);
+    			tempFile = new File(destination, "" + rand + ".temp");
+    		} while (tempFile.exists());
+
+    		FileInputStream input = new FileInputStream(original);
+    		
+    		writeToFile(input, tempFile);
+
+    		tempFile.deleteOnExit();
+
+    	} catch (Exception e) {
+    		log.error("Exception:"+ e.getMessage());
+    	}
+
+    	return tempFile;
+    }
     
     
     public static String getExtension(File file) {
