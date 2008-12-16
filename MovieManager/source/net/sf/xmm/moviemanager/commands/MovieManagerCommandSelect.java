@@ -100,6 +100,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 	private static ModelEntry lastSelectedEntry = null;
 	
+	static File lastTemplateFile = null;
+	static StringBuffer lastTemplate = null;
 	
 	public static void reloadCurrentModel() {
 		Thread t = new Thread() {
@@ -727,14 +729,19 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			//String htmlTemplate = MovieManager.getConfig().getCurrentTemplate();
 						
 			File templateFile = MovieManager.getConfig().getHTMLTemplateFile();
-				
+			
 			if (templateFile == null || !templateFile.isFile()) {
 				log.warn("Current template file is missing:" + templateFile);
 				return;
 			}
-					
 			
-			StringBuffer template = FileUtil.readFileToStringBuffer(templateFile);
+			if (lastTemplateFile == null || !templateFile.getAbsolutePath().equals(lastTemplateFile.getAbsolutePath())) {
+				lastTemplate = FileUtil.readFileToStringBuffer(templateFile);
+				lastTemplateFile = templateFile;
+			}
+			
+			// Copy previous template data
+			StringBuffer template = new StringBuffer(lastTemplate);
 			
 			processTemplateData(template, model);
 			
@@ -777,8 +784,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			
 			
 			if (coverFile != null) {
-				String coverPath = coverFile.toURI().toString();
-				processTemplateCover(template, coverPath, coverDim);
+				processTemplateCover(template, coverFile, coverDim);
 			}
 			
 			processTemplateCssStyle(template);
@@ -805,11 +811,26 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		}
 	}
 	
+	/**
+	 * Makes sure a temporary copy of the cover is used instead of the original.
+	 * 
+	 * @param template
+	 * @param coverFile
+	 * @param coverDim
+	 */
+	public static void processTemplateCover(StringBuffer template, File coverFile, Dimension coverDim) {
+
+		File tempCover = FileUtil.createTempCopy(coverFile, new File(coverFile.getParentFile(), "temp"));
+		String coverPath = tempCover.toURI().toString();
+		processTemplateCover(template, coverPath, coverDim);
+	}
 	
-	public static void processTemplateCover(StringBuffer template, String coverFile, Dimension coverDim) {
 	
-		if (coverFile != null) {
-			String cover = "style=\"width:" + coverDim.width + "px;height:" + coverDim.height + "px;\" src=\"" + coverFile + "\" alt=\"\"";
+	public static void processTemplateCover(StringBuffer template, String coverPath, Dimension coverDim) {
+	
+		if (coverPath != null) {
+			
+			String cover = "style=\"width:" + coverDim.width + "px;height:" + coverDim.height + "px;\" src=\"" + coverPath + "\" alt=\"\"";
 
 			// ReplaceAll takes a regular expression.
 			// Therefore everey "\" must be duplicated
