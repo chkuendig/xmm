@@ -638,9 +638,17 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     	else
     		MovieManager.getConfig().setDatabasePathPermanent(false);
 
+    	
+    	String originalCover = MovieManager.getConfig().getCoversFolder();
+    	
     	// Sets cover and queries directory
     	MovieManager.getConfig().setCoverAndQueriesPaths(coversPath, queriesPath);
 
+    	// Covers must be reloaded in movie list
+    	if (originalCover != null && !originalCover.equals(coversPath)) {
+    		MovieManager.newDbHandler.newDatabaseLoaded(this);
+    	}
+    	
     	MovieManagerCommandSelect.execute();
     	dispose();
     }
