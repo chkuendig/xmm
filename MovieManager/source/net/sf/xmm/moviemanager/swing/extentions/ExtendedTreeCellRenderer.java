@@ -130,6 +130,7 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 
 	public void newDatabaseLoaded(NewDatabaseLoadedEvent evt) {
 		folder = null;
+		clearCoverCache();
 	}
 	
 	
@@ -187,7 +188,7 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 
 						if (entry.getCover() != null && entry.getCover().length() > 0) {
 							icon = (Icon) coverCache.get(entry.getCover());
-
+	
 							if (icon == null) {
 								icon = loadCover(entry);
 
