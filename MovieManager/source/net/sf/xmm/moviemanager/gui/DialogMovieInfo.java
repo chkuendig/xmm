@@ -1000,8 +1000,13 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 				if (movieInfoModel.isEpisode)
 					executeCommandGetTVDOTCOMInfo();
-				else
-					executeCommandGetIMDBInfo(false);
+				else {
+				
+					if (!getMovieTitle().getText().equals(""))
+						executeCommandGetIMDBInfo(false);
+					else if (!getIMDb().getText().equals(""))
+						executeCommandGetIMDBInfo(true);
+				}
 			}
 		});
 
@@ -1178,13 +1183,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 */
 	public JTextArea getCast() {
 		return this.textAreaCast;
-	/*	return (JTextArea) 
-			((JScrollPane) 
-			 ((JPanel) 
-			  ((JPanel) 
-			   ((JTabbedPane) 
-				((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(0))
-			  .getComponent(1)).getComponent(0)).getViewport().getComponent(0);*/
 	}
 
 	/**
@@ -1192,10 +1190,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 */
 	public JTextField getWebRuntime() {
 		return this.textFieldWebRuntime;
-		/*return (JTextField) 
-			((JPanel) 
-			 ((JTabbedPane) 
-			  ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(1);*/
 	}
 
 	/**
@@ -1203,10 +1197,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 */
 	protected JTextField getWebSoundMix() {
 		return this.textFieldSoundMix;
-		/*return (JTextField)
-			((JPanel) 
-			 ((JTabbedPane) 
-			  ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(3);*/
 	}
 
 	/**
@@ -1214,10 +1204,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 */
 	protected JTextField getAwards() {
 		return this.textFieldAwards;
-		/* return (JTextField) 
-			((JPanel) 
-			 ((JTabbedPane) 
-			  ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(5);*/
 	}
 
 	/**
@@ -1225,10 +1211,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 */
 	public JTextField getMpaa() {
 		return this.textFieldMpaa;
-		/*return (JTextField) 
-			((JPanel)
-			 ((JTabbedPane) 
-			  ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(7);*/
 	}
 
 	/**
@@ -1236,11 +1218,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 */
 	public JTextArea getAka() {
 		return this.textAreaAka;
-		/*return (JTextArea) 
-			((JScrollPane) 
-			 ((JPanel) 
-			  ((JTabbedPane) 
-			   ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(9)).getViewport().getComponent(0);*/
 	}
 
 	/**
@@ -1248,11 +1225,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 */
 	protected JTextArea getCertification() {
 		return this.textAreaCertification;
-		/*return (JTextArea) 
-			((JScrollPane) 
-			 ((JPanel) 
-			  ((JTabbedPane) 
-			   ((JPanel) getContentPane().getComponent(0)).getComponent(1)).getComponent(1)).getComponent(11)).getViewport().getComponent(0);*/
 	}
 
 	/**
