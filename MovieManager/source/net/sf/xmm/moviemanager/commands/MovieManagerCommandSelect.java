@@ -43,6 +43,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -206,9 +207,22 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 					
 					ExtendedTreeNode child = new ExtendedTreeNode(new ModelEpisode((ModelEpisode) reloadEntry));
 
+					int index = 0;
+					Enumeration e = node.children();
+					
+					while (e.hasMoreElements()) {
+					
+						ExtendedTreeNode child2 = (ExtendedTreeNode) e.nextElement();
+						
+						if (child.compareTo(child2) < 0)
+							break;
+						
+						index++;
+					}
+					
 					/* Adds the new child to the node */
-					node.add(child);
-
+					node.insert(child, index);
+					
 					/* expands the node and selects the new child */
 					if (execute) {
 						TreePath newTreePath = new TreePath(new Object[] {node.getParent(), node, child});
