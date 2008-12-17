@@ -465,13 +465,15 @@ public class FileUtil {
         }
     }
     
-    
    
+    public static boolean writeToFile(File original, File file) throws Exception {
+    	return writeToFile(new FileInputStream(original), file);
+    }
+	
     public static boolean writeToFile(byte [] data, File file) {
     	return writeToFile(new ByteArrayInputStream(data), file);
     }
-    
-    
+        
     public static boolean writeToFile(InputStream data, File file) {
     	
         try {
