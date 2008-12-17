@@ -163,10 +163,6 @@ public class HttpUtil {
 		if (!isSetup())
 			setup();
 		
-		//long time = System.currentTimeMillis();
-		
-		//System.err.println("readDataToStringBuffer 0:" + (System.currentTimeMillis() - time));
-		
 		GetMethod method = new GetMethod(url.toString());
 		int statusCode = client.executeMethod(method);
 		
@@ -176,11 +172,7 @@ public class HttpUtil {
 		if (statusCode == HttpStatus.SC_OK) {
 			
 			data = new StringBuffer();
-			
-			//System.err.println("readDataToStringBuffer 1:" + (System.currentTimeMillis() - time));
-			
 			BufferedInputStream stream = new BufferedInputStream(method.getResponseBodyAsStream());
-			//System.err.println("readDataToStringBuffer 2:" + (System.currentTimeMillis() - time));
 			
 			// Saves the page data in a string buffer... 
 			int buffer;
@@ -197,18 +189,14 @@ public class HttpUtil {
 
 
 	byte [] readDataToByteArray(URL url) throws Exception {
-
-		//System.err.println("readDataToByteArray isSetup():" + isSetup());
-		
+	
 		byte[] data = {-1};
 
 		if (!isSetup())
 			setup();
 		
 		GetMethod method = new GetMethod(url.toString());
-		
-		//System.err.println("readDataToByteArray url.toString():" + url.toString());
-		
+	
 		try {
 			int statusCode = client.executeMethod(method);
 						
@@ -225,8 +213,8 @@ public class HttpUtil {
 				data = byteStream.toByteArray();
 			}
 			else {
-				System.err.println("statusCode:" + statusCode);
-				System.err.println("HttpStatus.SC_OK:" + HttpStatus.SC_OK);
+				log.warn("HttpStatus statusCode:" + statusCode);
+				log.warn("HttpStatus.SC_OK:" + HttpStatus.SC_OK);
 			}
 
 		} catch (Exception e) {
@@ -236,7 +224,6 @@ public class HttpUtil {
 			method.releaseConnection();
 		}
 
-		//System.err.println("readDataToByteArray return:" + data);
 		return data;
 	}
 

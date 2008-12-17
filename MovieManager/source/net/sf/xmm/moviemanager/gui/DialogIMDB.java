@@ -690,9 +690,7 @@ public class DialogIMDB extends JDialog {
     	}
     	else {
     		ModelIMDbSearchHit model = ((ModelIMDbSearchHit) listModel.getElementAt(index));
-
-    		System.err.println("TEst 1");
-    		
+	
     		if (model.getUrlID() == null)
     			return;
 

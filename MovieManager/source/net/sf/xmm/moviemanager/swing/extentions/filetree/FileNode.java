@@ -127,8 +127,6 @@ public class FileNode implements Comparable {
 			}
 		}
 		
-		System.err.println("fileIndex:" + fileIndex);
-		
 		// Removing all regular files
 		if (currentChildrenFiles.length == 0 && fileIndex != -1) {
 						

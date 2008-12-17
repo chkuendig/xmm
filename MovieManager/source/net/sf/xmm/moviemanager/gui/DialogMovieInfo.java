@@ -2157,8 +2157,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 	public void modelUpdatedEvent(ModelUpdatedEvent event) {
 		
-		System.err.println("modelUpdatedEvent:" + event.getUpdateType());
-		
 		if (event.getUpdateType().equals("GeneralInfo"))
 			updateGeneralInfoFromModel();
 		else
@@ -2166,9 +2164,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	}
 
 	public void updateGeneralInfoFromModel() {
-
-		System.err.println("updateGeneralInfoFromModel");
-		
+	
 		getMovieTitle().setText(movieInfoModel.model.getTitle());
 		getMovieTitle().setCaretPosition(0);
 

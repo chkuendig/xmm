@@ -140,9 +140,6 @@ public class ModelEpisode extends ModelEntry {
 		String tmp = String.valueOf(episodeKey);
 		seasonNumber = tmp.substring(0, tmp.length() - 4);		
 		episodeNumber = new Integer(tmp.substring(tmp.length() - 4, tmp.length())).toString();
-
-		System.err.println(episodeKey + " set seasonNumber:" + seasonNumber);
-		System.err.println(episodeKey + " set episodeNumber:" + episodeNumber);
 	}
 	
 	

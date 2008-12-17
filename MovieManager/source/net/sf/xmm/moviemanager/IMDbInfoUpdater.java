@@ -329,10 +329,7 @@ public class IMDbInfoUpdater {
 						if (cover == 1 || (cover == 2 && model.getCover().equals(""))) {
 
 							try {
-
-								//System.err.println("coversfolder:" + coversFolder);
-								
-								//byte [] coverData = imdb.getCover();
+	
 								byte [] coverData = movie.getCoverData();
 
 								if (coverData != null) {
@@ -362,11 +359,8 @@ public class IMDbInfoUpdater {
 								log.error("Exception:" + e.getMessage(), e);
 							}
 						}
-
-						long time = System.currentTimeMillis();
-						//System.err.println("save:" + getName());
-						modelInfo.saveToDatabase(model, true, null);
-						System.err.println("save " + getName() + ":" + System.currentTimeMillis());
+						
+						modelInfo.saveToDatabase(model, true, null);					
 
 					} catch (Exception e) {
 						log.fatal("", e);

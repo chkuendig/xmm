@@ -190,11 +190,7 @@ public class DialogTableExport extends DialogTableData {
 	
 	
 	public void updateColumnData(int oldModelIndex, int currentColumn, int initialColumnindex) {
-		
-		System.err.println("updateColumnData");
-		
-		
-		
+				
 		if (oldModelIndex != -1) {
 			// Removes data in old column
 			for (int i = 0; i < databaseData.length; i++) {
@@ -202,12 +198,8 @@ public class DialogTableExport extends DialogTableData {
 			}
 		}
 		
-		System.err.println("databaseData:" + databaseData);
-		System.err.println("databaseData size:" + databaseData.length);
-		
 //		 Adds data to new column
 		for (int i = 0; i < databaseData.length; i++) {
-			System.err.println("set value:" + databaseData[i][initialColumnindex]);
 			tableModel.setValueAt(databaseData[i][initialColumnindex], i, currentColumn);
 		}
 	}

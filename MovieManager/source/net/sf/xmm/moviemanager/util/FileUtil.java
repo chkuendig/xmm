@@ -530,11 +530,9 @@ public class FileUtil {
 
     		zip.close();
     	} catch (IOException ioe) {
-    		System.err.println("IOException:" + ioe.getMessage());
-    		ioe.printStackTrace();
-    		
     		log.error("Exception:" + ioe.getMessage(), ioe);
-			success = false;
+    		ioe.printStackTrace();
+    		success = false;
     	}
 
     	if (success)
@@ -607,9 +605,6 @@ public class FileUtil {
     		String cmd = null;
     		
     		cmd = "chmod " + "u+x" + " " + f.getAbsolutePath();
-
-    		System.err.println("chmod: " + cmd);
-    		
     		p = Runtime.getRuntime().exec(cmd);
     	}
     	catch (Exception e) {

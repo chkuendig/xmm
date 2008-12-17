@@ -866,19 +866,13 @@ public class ModelMovieInfo {
     
     
     public boolean saveCoverToFile() throws Exception {
-       	
-    	System.err.println("saveCoverToFile:" + _saveCover);
-    	
+     	
 		if (!_saveCover)
 			return false;
 	
         byte [] cover = model.getCoverData();
         String coverName = model.getCover();
-        
-        System.err.println("cover:" + cover);
-        System.err.println("coverName:" + coverName);
-    	
-        
+         
         if (cover == null || coverName == null || coverName.equals("")) {
         	throw new Exception("Unable to save cover file:" + coverName);
         }
@@ -890,40 +884,13 @@ public class ModelMovieInfo {
         
         if (coverFile.exists()) {
             if (!coverFile.delete() ) {
-            	
-            	System.err.println("File delete failed. Running System.gc");
-            	
-            	Thread.sleep(50);
-            	
-            	System.gc();
-            	
-            	Thread.sleep(50);
-            	
+             	
             	File tempDir = new File(coverFile.getParentFile(), "temp");
             	
             	if (!tempDir.exists() && !tempDir.mkdir()) {
             		throw new Exception("Failed to create temporary directory in cover dir:" + tempDir); //$NON-NLS-1$
             	}
-            	
-            	//File tmpFile = File.createTempFile(String prefix, String suffix, temoDir);
-            	
-            	System.err.println("Math.random() * 100000:" + (Math.random() * 100000));
-            	
-            	int rand = (int) (Math.random() * 100000);
-            	
-            	File newFile = new File(tempDir, "" + rand);
-            	//File.renameTo()
-            	
-            	
-            	
-            	if (!coverFile.renameTo(newFile))
-            		throw new Exception("Failed to rename cover file:" + coverFile + " to " + newFile); //$NON-NLS-1$
-            	
-            	newFile.deleteOnExit();
-            	
-            	if (coverFile.exists())
-            		throw new Exception("File still exists dammit"); //$NON-NLS-1$
-            		
+              		
             	if (!coverFile.delete())
             		throw new Exception("Failed to delete old cover file:" + coverFile); //$NON-NLS-1$
             }

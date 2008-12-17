@@ -88,8 +88,6 @@ public class IMDB {
     	
     	long time = System.currentTimeMillis();
     	
-    	//System.err.println("grabInfo:" + (System.currentTimeMillis() - time));
-    	
     	if (urlID == null && data == null)
     		throw new Exception("Input data is null.");
     	
@@ -101,8 +99,6 @@ public class IMDB {
     	if (data == null) {
 			throw new Exception("Error occured when reading data.");
 		}
-    	
-    	//System.err.println("grabInfo 2:" + (System.currentTimeMillis() - time));
     	
     	return parseData(urlID, data);
     }
@@ -124,7 +120,7 @@ public class IMDB {
 		boolean isEpisode = false;
 		boolean isSeries = false;
 		
-		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("imdb.html", data);
+		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("imdb.html", data);
 			
 		try {
 			/* Processes the data... */
@@ -151,9 +147,6 @@ public class IMDB {
 					date = (String) tmpArray[2];
 				}
 				
-				//System.err.println("title:" + title);
-				//System.err.println("tmpArray[1]:" + tmpArray[1]);
-
 				if (!isEpisode && title.startsWith("\""))
 					isSeries = true;
 			}	
@@ -192,10 +185,6 @@ public class IMDB {
 						(end = data.indexOf("\"", start)) != -1) {
 						coverURL = HttpUtil.decodeHTML(data.substring(start, end));
 						
-						//System.err.println("coverURL:" + coverURL);
-						//System.err.println("NEW coverURL:" + coverURL);
-						
-						//if (!coverURL.equals(coverURL))
 						getCover = true;
 						
 						dataModel.setCoverURL(coverURL);
@@ -207,14 +196,8 @@ public class IMDB {
 					}
 				}
 			}
-	    
-			//System.err.println("getCover:" + getCover);
-			//System.err.println("coverURL:" + coverURL);
-			//System.err.println("coverName:" + coverName);
-						
+	    				
 			final ReentrantLock lock = new ReentrantLock();
-			
-			//System.err.println("time1:" + (time = System.currentTimeMillis() - time));
 			
 			if (getCover) {
 								
@@ -224,7 +207,6 @@ public class IMDB {
 							long coverTime = System.currentTimeMillis();
 							lock.lock();
 							retrieveCover(dataModel);
-							//System.err.println("covertime:" + (System.currentTimeMillis() - coverTime));
 						} finally {
 							lock.unlock();
 						}
@@ -232,8 +214,6 @@ public class IMDB {
 				});
 				t.start();
 			}
-			
-			//System.err.println("time2:" + (time = System.currentTimeMillis() - time));
 			
 			start = 0;
 			end = 0;
@@ -259,16 +239,11 @@ public class IMDB {
 			ArrayList list;
 			
 			if (classInfo.containsKey("Director:")) {
-				//System.err.println("contains director");
 				directedBy = getDecodedClassInfo("Director:", (String) classInfo.get("Director:"));
-				//tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
 			}
 			else if (classInfo.containsKey("Directors:")) {
-				//System.err.println("contains directors");
-				//tmp = getDecodedClassInfo("Directors:", (String) classInfo.get("Directors:"));
 				
 				tmp = (String) classInfo.get("Directors:");
-				
 				list = getLinkContentName(tmp);
 		    	 
 				while (!list.isEmpty()) {
@@ -278,11 +253,7 @@ public class IMDB {
 					directedBy += list.remove(0);
 				}
 			}
-			
-			//System.err.println("director:" + tmp);
-				 
-			//System.err.println("list:" + directedBy);
-			
+				
 			dataModel.setDirectedBy(directedBy);
 			
 			// Gets the written by... 
@@ -363,10 +334,7 @@ public class IMDB {
 			
 			if (classInfo.containsKey("Original Air Date:"))
 				airdateContent =getDecodedClassInfo("Original Air Date:", (String) classInfo.get("Original Air Date:"));
-			
-			//System.err.println("time3:" + (time = System.currentTimeMillis() - time));
-			
-			
+						
 			// Ex: 5 October 1999 (Season 1, Episode 1)
 			if (airdateContent != null) {
 				Pattern p = Pattern.compile("(.+)?\\s\\(.+?(\\d+?),\\s?.+?(\\d+?)\\)");
@@ -377,33 +345,19 @@ public class IMDB {
 					int gCount = m.groupCount();
 
 					if (gCount == 3) {
-						
-						//isEpisode = true;
-						
+							
 						String airdat = m.group(1);
 						String season = m.group(2);
 						String episode = m.group(3);
-
-						//System.err.println("season:" + season);
-						//System.err.println("episode:" + episode);
-						
+	
 						seasonNumber = season;
 					    episodeNumber = episode;
 					    
 					    ((ModelIMDbEpisode) dataModel).setSeasonNumber(seasonNumber);
 					    ((ModelIMDbEpisode) dataModel).setEpisodeNumber(episodeNumber);
-					    
-					   // System.err.println("seasonNumber:" + seasonNumber);
-					   // System.err.println("episode:" + episode);
-					    
-					   // title = "" + episodeNumber + ". " + title;
 					}
 				}
 			}
-			
-			//System.err.println("time4:" + (time = System.currentTimeMillis() - time));
-			
-			//System.err.println("airdate:" + airdateContent);
 			
 				//29 April 2002 (Season 3, Episode 19)
 			
@@ -412,15 +366,11 @@ public class IMDB {
 			URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/plotsummary");
 	    
 			data = httpUtil.readDataToStringBuffer(url);   
-	    
-			//System.err.println("time5:" + (time = System.currentTimeMillis() - time));
-			
+	   	
 			/* Processes the data... */
 			start = 0;
 			end = 0;
-	    
-			//String longPlot = getDecodedClassInfo(data, "Certification:");
-			
+	    		
 			if ((start = data.indexOf("class=\"plotpar\">",start)+16) != 15 &&
 				(end=data.indexOf("</p>",start)) != -1) {
 				plot = HttpUtil.decodeHTML(data.substring(start, end));
@@ -436,11 +386,7 @@ public class IMDB {
 			
 			dataModel.setPlot(plot);
 			
-			//System.err.println("time6:" + (time = System.currentTimeMillis() - time));
-			
 			lock.tryLock((long) 10, TimeUnit.SECONDS);
-			
-			System.err.println("Total time for "+ dataModel.getTitle() +":" + (time = System.currentTimeMillis() - time));
 			
 			dataModel.setCoverName(coverName);
 			
@@ -467,15 +413,11 @@ public class IMDB {
     
     
     public StringBuffer getEpisodesStream(ModelIMDbSearchHit modelSeason) {
-
-    	//System.err.println("getEpisodesStream");
-    	
+	
 		StringBuffer data = null;
 		
 		String urlType = "http://akas.imdb.com/title/tt"+ modelSeason.getUrlID() +"/episodes";
-		
-		//String urlType = "http://www.tv.com/"+ modelSeason.getUrlTitle() +"/show/"+ modelSeason.getShowKey() +"/episode_guide.html&season="+ modelSeason.getSeasonNumber();
-
+	
 		try {
 
 			URL url = new URL(urlType);
@@ -491,7 +433,7 @@ public class IMDB {
 				return null;
 			}
 
-			net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/episodeStream.html", data);
+			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/episodeStream.html", data);
 
 			int counter = 1;
 			int seasonCounter = 1;
@@ -514,18 +456,13 @@ public class IMDB {
 
 		DefaultListModel listModel = new DefaultListModel();
 		
-		//System.err.println("getEpisodes:" + stream.length());
-		//System.err.println("modelSeason.getKey:" + modelSeason.getUrlID());
-		//System.err.println("modelSeason.getTitle:" + modelSeason.getTitle());
-		//System.err.println("modelSeason.getSeasonNumber:" + modelSeason.getSeasonNumber());
-		
 		try {
 
 			String classContent = getClass("season-filter-all filter-season-" + modelSeason.getSeasonNumber(), stream);
 			
 			StringBuffer data = new StringBuffer(classContent);
 			
-			net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/episodeStream"+modelSeason.getSeasonNumber()+".html", data);
+			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/episodeStream"+modelSeason.getSeasonNumber()+".html", data);
 						
 			Pattern p = Pattern.compile("<h3>(.+)\\s?<a href=\"/title/tt(\\d+)/\">(.+?)</a>");
 			Matcher m = p.matcher(data);
@@ -568,7 +505,7 @@ public class IMDB {
 			URL url = new URL(urlString);
 			StringBuffer data = httpUtil.readDataToStringBuffer(url);
 
-			net.sf.xmm.moviemanager.util.FileUtil.writeToFile("seasonsOutput.html", data);
+			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("seasonsOutput.html", data);
 
 			String title = "";
 
@@ -602,8 +539,6 @@ public class IMDB {
 	
 	
 	public ModelIMDbEntry getEpisodeInfo(ModelIMDbSearchHit episode) throws Exception {
-		//System.err.println("episode:" + episode);
-		//System.err.println("getEpisodeInfo:" + episode.getStreamNumber());
 		
 		ModelIMDbEntry model = grabInfo(episode.getUrlID());
 		episode.setDataModel(model);
@@ -619,8 +554,6 @@ public class IMDB {
     	for (int i = 0; i < all.getSize(); i++) {
     		
     		ModelIMDbSearchHit imdb = (ModelIMDbSearchHit) all.get(i);
-    		
-    		System.err.println("series Title:" + imdb.getTitle());
     		
     		if (!imdb.getTitle().startsWith("\"")) {
     			all.remove(i);
@@ -646,7 +579,7 @@ public class IMDB {
 				return listModel;
 			}
 			
-			net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/direct-simple.html", data);
+			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/direct-simple.html", data);
         
 			int start = 0;
 			String key = "";
@@ -692,7 +625,6 @@ public class IMDB {
 					if (startIndex == -1) {
 						startIndex = movieHitCategoryIndex[u];
 						data.delete(0, startIndex);
-						System.err.println("hit on " + movieHitCategory[u] + " at index:" + startIndex);
 					}
 				}
 			}
@@ -768,9 +700,7 @@ public class IMDB {
   
  
     protected HashMap decodeClassInfo(StringBuffer data) {
-    	
-    	//System.err.println("decodeClassInfo");
-    	
+    		
     	HashMap classInfo = new HashMap();
     	
     	Pattern p = Pattern.compile("<div.*?class=\"info\">.+?<.+?>(.*?)<.+?>(.+?)</div>", Pattern.DOTALL);
@@ -782,10 +712,6 @@ public class IMDB {
 			
 			String className = m.group(1);
 			String info = m.group(2);
-			
-			//System.err.println("className:" + className);
-			//System.err.println("info:" + info);
-			
 			classInfo.put(className, info);
 		}
 		
@@ -1005,8 +931,6 @@ public class IMDB {
     	
     	String searchStr = "<div class=\""+ classname + "\">";
     	
-    	//System.err.println("getClass:" + searchStr);
-    	
     	int start = buffer.indexOf(searchStr);
     	
     	if (start == -1)
@@ -1023,11 +947,7 @@ public class IMDB {
     		if (safety-- == 0)
     			break;
     		
-    		//System.err.println("div_count:" + div_count);
-    		
     		int i = buffer.indexOf("div", end);
-    		
-    		//System.err.println("next div:" + i);
     		
     		if (i != -1) {
     			
@@ -1041,10 +961,7 @@ public class IMDB {
     		else
     			break;
     	}
-    
-    	//System.err.println("start:" + start);
-    	//System.err.println("end:" + end);
-    	
+     	
     	if (start > 0 && end < buffer.length() && start < end)
     		return buffer.substring(start, end);
     	else
@@ -1228,14 +1145,12 @@ public class IMDB {
 		
 		try {
 			if (dataModel.getCoverURL() != null && !dataModel.getCoverURL().equals("")) {
-				//System.err.println("getting cover:" + dataModel.getCoverURL());
 				coverData = httpUtil.readDataToByteArray(new URL(dataModel.getCoverURL()));
 			}
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
 		} 
 	
-		//System.err.println("setCoverData:" + coverData);
 		dataModel.setCoverData(coverData);
 		/* Returns the data... */
 		return coverData != null;

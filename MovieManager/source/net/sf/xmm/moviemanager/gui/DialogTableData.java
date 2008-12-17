@@ -335,8 +335,6 @@ public class DialogTableData extends JDialog {
 		}
 				
 		public void validateValue() {
-		
-			System.err.println("value:" + value);
 			
 			if (table.equals("General Info")) {
 				

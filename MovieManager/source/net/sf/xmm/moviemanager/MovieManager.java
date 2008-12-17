@@ -1177,17 +1177,13 @@ public class MovieManager {
     		s.printStackTrace();
     		sandbox = true;
     	}
-    	
-    	System.err.println("sandbox:" + sandbox);
-    	
+    		
     	if (!sandbox) {
     		// Disables logging for cobra html renderer
     		java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.OFF); 
 
     		File log4jConfigFile = FileUtil.getFile("config/log4j.properties"); //$NON-NLS-1$
-
-    		System.err.println("log4jConfigFile:" + log4jConfigFile.isFile());
-    		
+	
     		if (log4jConfigFile.isFile()) {
     			PropertyConfigurator.configure(log4jConfigFile.getAbsolutePath());
     		} else {
@@ -1205,9 +1201,8 @@ public class MovieManager {
 			FileAppender appender = new FileAppender();
 			appender.setLayout(new org.apache.log4j.PatternLayout());
 			appender.setThreshold(org.apache.log4j.Level.ALL);
-			
 			appender.setWriter(new FileWriter(new File(System.getProperty("user.home"), "Log.txt")));
-			System.err.println("add appender:" + new File(System.getProperty("user.home"), "Log.txt").getAbsolutePath());
+			
 			log.addAppender(appender);
 		} catch (Exception e) {
 			

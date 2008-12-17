@@ -131,9 +131,7 @@ public class MovieManagerCommandExportToSimpleXHTML {
 
 			/* Creates the movielist file... */
 			File xhtmlFile = new File(selected.getParent(), fileName);
-
-			System.err.println("xhtmlFile:" + xhtmlFile);
-			
+	
 			if (xhtmlFile.exists()) {
 				DialogQuestion question = new DialogQuestion("File already exists", "A file with the chosen filename already exists. Would you like to overwrite the old file?");
 				GUIUtil.showAndWait(question, true);

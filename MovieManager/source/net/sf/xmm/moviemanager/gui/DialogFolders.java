@@ -775,9 +775,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     	File queriesFolder;
     	String coversPath = getCoversPath();
     	String queriesPath = getQueriesPath();
-
-    	System.err.println("processPathValidation");
-    	
+	
     	try {
     		
     		if (option.indexOf("Covers") != -1) {
@@ -887,12 +885,8 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     			}
     		}
 
-    		System.err.println("option:" + option);
-
     		if (option.indexOf("Queries") != -1) {
-
-    			System.err.println("Queries found:");
-    			
+	
     			/* Relative Queries path enabled */
     			if (relativeQueriesEnabled.isSelected()) {
 

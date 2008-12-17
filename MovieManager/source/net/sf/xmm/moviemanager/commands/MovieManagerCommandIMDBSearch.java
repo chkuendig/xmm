@@ -108,13 +108,9 @@ public class MovieManagerCommandIMDBSearch {
                 try {
                     DefaultListModel list = imdb.getSeriesMatches(movieInfoModel.getModel().getTitle());
                     
-                    System.err.println("match size:" + list.getSize());
-                    
                     if (list == null) {
                         final DefaultListModel model = new DefaultListModel();
                         model.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogTVDOTCOM.list-item.message.no-matches-found"), null)); //$NON-NLS-1$
-                        
-                        System.err.println("adding not found string:" + Localizer.getString("DialogTVDOTCOM.list-item.message.no-matches-found"));
                         
                         Runnable updateProgres = new Runnable() {
                             public void run() {
@@ -156,9 +152,7 @@ public class MovieManagerCommandIMDBSearch {
 	private void executeCommandSelect() {
 
 		try {
-
-			System.err.println("executeCommandSelect:" + mode);
-			
+	
 			int index = dialogTVSeries.getMoviesList().getSelectedIndex();
 
 			final DefaultListModel listModel = (DefaultListModel) dialogTVSeries.getMoviesList().getModel();
@@ -239,9 +233,6 @@ public class MovieManagerCommandIMDBSearch {
 				for (int i = 0; i < selectedValues.length; i++)
 					mailbox.addElement(selectedValues[i]);
 
-				System.err.println("mailbox created:" + mailbox.getSize());
-				
-				
 				
 				final Thread adder = new Thread(new Runnable() {
 
@@ -257,13 +248,7 @@ public class MovieManagerCommandIMDBSearch {
 
 								while (mailbox.getThreadCount() > 6)
 									Thread.sleep(100);
-
-								System.err.println("Size:" + mailbox.getSize() + " count:" + 
-										mailbox.getThreadCount() + "  total:" + 
-										mailbox.getTotalThreadCount());
-							
-								
-								//getThreadCount
+									
 								Thread oneEpisode = new Thread(new Runnable() {
 
 									public void run() {	
@@ -279,22 +264,9 @@ public class MovieManagerCommandIMDBSearch {
 											/* Adding each entry to the movie list */
 											final boolean expandAndExecute = mailbox.getSize() == 0;
 											
-											
-											System.err.println("EGG episodeKey:" + ((ModelEpisode) modelEntry).getEpisodeKey());
-											System.err.println("EGG getEpisodeNumber:" + ((ModelEpisode) modelEntry).getEpisodeNumber());
-											
 											SwingUtilities.invokeLater(new Runnable() {
 												public void run() {
-													System.err.println("4 " + ((ModelEpisode) modelEntry).getEpisodeKey() + " title:" + ((ModelEpisode) modelEntry).getEpisodeTitle() );
-													
-													
 													MovieManagerCommandSelect.executeAndReload(modelEntry, false, true, expandAndExecute);
-													System.err.println("5 " + ((ModelEpisode) modelEntry).getEpisodeKey() + " title:" + ((ModelEpisode) modelEntry).getEpisodeTitle() );
-													
-													
-													System.err.println("IGG episodeKey:" + ((ModelEpisode) modelEntry).getEpisodeKey());
-													System.err.println("IGG getEpisodeNumber:" + ((ModelEpisode) modelEntry).getEpisodeNumber());
-													
 												}
 											});
 											
@@ -307,11 +279,6 @@ public class MovieManagerCommandIMDBSearch {
 													listModel.set(searchHit.index, searchHit);
 												}
 											});
-											
-											
-											System.err.println("Size:" + mailbox.getSize() + " THcount:" + 
-													mailbox.getThreadCount() + "  total:" + 
-													mailbox.getTotalThreadCount());
 											
 										} catch (Exception e) {
 											log.warn("Exception:" + e.getMessage(), e);
@@ -355,24 +322,11 @@ public class MovieManagerCommandIMDBSearch {
 	public synchronized ModelEntry saveData(ModelIMDbEntry entry, int movieKey, boolean multipleEpisodes) {
 
 		ModelEpisode episode = new ModelEpisode();
-		
 		copyData(entry, episode);
-
-		//System.err.println("saveData 1:" + ((ModelEpisode) episode).getEpisodeKey());
-		
 		episode.setMovieKey(movieKey); 
-		//System.err.println("saveData 2:" + ((ModelEpisode) episode).getEpisodeKey());
 		
 		movieInfoModel.setModel(episode, false, false);
-
-		//System.err.println("saveData 3:" + ((ModelEpisode) episode).getEpisodeKey());
-		
-		System.err.println("3 " + ((ModelEpisode) episode).getEpisodeKey() + " title:" + ((ModelEpisode) episode).getEpisodeTitle() );
-				
-		//System.err.println(entry.getTitle() + "COVER:" + (episode.getCoverData() != null));
-		//System.err.println("entry title:" + entry.getTitle());
-		//System.err.println("episode title:" + episode.getTitle());
-
+	
 		// The cover... 
 		if (episode.getCoverData() != null) {
 			movieInfoModel.setCover(entry.getCoverName(), episode.getCoverData(), !multipleEpisodes);
@@ -426,16 +380,7 @@ public class MovieManagerCommandIMDBSearch {
 		
 		entry.setCoverData(imdbEntry.getCoverData());
 		
-		//System.err.println("imdbEntry.getCoverData():" + imdbEntry.getCoverData());
-		
-		System.err.println("imdbEntry.isEpisode:" + imdbEntry.isEpisode());
-		System.err.println("entry.isEpisode:" + entry.isEpisode());
-		
-		System.err.println("setting episode key:" + (imdbEntry.isEpisode() && entry.isEpisode()));
-		
 		if (imdbEntry.isEpisode() && entry.isEpisode()) {
-			
-			//System.err.println("getSeasonNumber:" + ((ModelIMDbEpisode) imdbEntry).getSeasonNumber());
 			
 			try {
 				int episodeNumber = Integer.parseInt(((ModelIMDbEpisode) imdbEntry).getSeasonNumber());
@@ -449,10 +394,6 @@ public class MovieManagerCommandIMDBSearch {
 				log.warn("NumberFormatException:" + e.getMessage());
 			}
 		}
-		
-		System.err.println("1 " + ((ModelEpisode) entry).getEpisodeKey() + " data set");
-		System.err.println("2 " + ((ModelEpisode) entry).getEpisodeKey() + " title:" + ((ModelEpisode) entry).getEpisodeTitle() );
-		
 	}
 	
 	

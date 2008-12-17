@@ -408,27 +408,15 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 						
 						if (tmp.startsWith("\\\\") || 2 == 2) {
 							
-							//System.err.println("tmp:" + tmp);
-							
 							File f = new File(tmp);
-							//System.err.println("f:" + f);
-							//System.err.println("f.exists:" + f.isFile());
-							
 							
 							try {
-								//String tmp2 = tmp.replaceAll("\\\\", "\\\\\\\\");
 								
 								String tmp2 ="\\\\" + tmp;
-								
-								//System.err.println("tmp2:" + tmp2);
-								
 								f = new File(tmp2);
 								
-								//System.err.println("f:" + f);
-								//System.err.println("f.exists:" + f.isFile());
-								
 							} catch (Exception e) {
-								System.err.println("exception:" + e.getMessage());
+								log.warn("Exception:" + e.getMessage(), e);
 							}
 														
 							enable = true;
@@ -436,7 +424,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 						}
 						
 						if (SysUtil.isWindows() && !SysUtil.isWindowsVista() && !SysUtil.isWindows98()) {
-							// This is used becuase File.exists might provoke a popup window on (some versions of) Windows.
+							// This is used because File.exists might provoke a popup window on (some versions of) Windows.
 							String drive = tmp.substring(0, tmp.indexOf(":") + 1);
 
 							if (drive.length() == 0)
@@ -543,8 +531,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	 */
 	public static void updateStandardPanel(ModelEntry model, Image cover) {
 
-		System.err.println("file:" + model.getAdditionalInfo().getExtraInfoFieldValue("IP_Address"));
-		
 		if (cover != null)
 			MovieManager.getDialog().getCover().setIcon(new ImageIcon(cover));
 		else {
@@ -684,22 +670,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		ExtendedJTree movieList = MovieManager.getDialog().getMoviesList();
 		TreeNode selected = ((TreeNode) movieList.getLastSelectedPathComponent());
 		int horizontalPosition = MovieManager.getDialog().getMoviesListScrollPane().getHorizontalScrollBar().getValue();
-		
-		
-		System.err.println("\nimdb id:" + model.getUrlKey());
-				
-		
-		if (model.isEpisode()) {
-			System.err.println("\nepisode title::" + ((ModelEpisode) model).getTitle());
-			System.err.println("getEpisodeKey:" + ((ModelEpisode) model).getEpisodeKey());
-			System.err.println("getMovieKey:" + ((ModelEpisode) model).getMovieKey());
-			
-			System.err.println("SeasonNumber:" + ((ModelEpisode) model).getSeasonNumber());
-			System.err.println("EpisodeNumber:" + ((ModelEpisode) model).getEpisodeNumber());
-			
-		}
-		
-		
 		
 		if (selected != null) {
 			// Scrolls to the selected row
