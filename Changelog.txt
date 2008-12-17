@@ -4,6 +4,19 @@ Changelog - MeD's Movie Manager
 ========================================
 
 
+Version 2.7 (17-des-2008)
+
+ - General improvements:
+   - TV.COM support has been replaced by IMDb. There should be no big changes 
+   	 except that grabbing the info will take a bit longer as more URLs must be
+	 downloaded and parsed.
+
+   - The Season and episode will be shown in the movie list for each episode.
+
+ - Bug fixes:
+   - IMDb changed the HTML code again.
+
+
 Version 2.7 beta 1 (16-jul-2008)
 
  - New:
