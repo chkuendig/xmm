@@ -42,6 +42,10 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.swing.DefaultListModel;
@@ -102,6 +106,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	
 	static File lastTemplateFile = null;
 	static StringBuffer lastTemplate = null;
+	
+	static HashMap coverTemp = null;
 	
 	public static void reloadCurrentModel() {
 		Thread t = new Thread() {
@@ -509,7 +515,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		if (MovieManager.getDialog().getCurrentMainTabIndex() == 0)
 			updateStandardPanel(model, cover);
 		else
-			updateHTMLPanel(model, coverFile, coverDim);
+			updateHTMLPanel(model, coverFile, coverDim, nocover);
 
 	}
 
@@ -701,7 +707,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	 * @param coverFile
 	 * @param coverDim
 	 */
-	public static void updateHTMLPanel(ModelEntry model, File coverFile, Dimension coverDim) {
+	public static void updateHTMLPanel(ModelEntry model, File coverFile, Dimension coverDim, boolean nocover) {
 
 		// html panel does not support Java 1.4
 		if (SysUtil.isCurrentJRES14())
@@ -784,7 +790,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			
 			
 			if (coverFile != null) {
-				processTemplateCover(template, coverFile, coverDim);
+				processTemplateCover(template, coverFile, coverDim, nocover);
 			}
 			
 			processTemplateCssStyle(template);
@@ -818,13 +824,63 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	 * @param coverFile
 	 * @param coverDim
 	 */
-	public static void processTemplateCover(StringBuffer template, File coverFile, Dimension coverDim) {
+	public static void processTemplateCover(StringBuffer template, File coverFile, Dimension coverDim, boolean nocover) {
 
-		File tempCover = FileUtil.createTempCopy(coverFile, new File(coverFile.getParentFile(), "temp"));
-		String coverPath = tempCover.toURI().toString();
+		if (!nocover)
+			coverFile = getTempCoverFile(coverFile);
+		
+		String coverPath = coverFile.toURI().toString();
 		processTemplateCover(template, coverPath, coverDim);
 	}
 	
+		
+	public static File getTempCoverFile(File coverFile) {
+
+		File newCoverFile = null;
+		
+		try {
+
+			// Sets up the tempCover map
+			if (coverTemp == null) {
+				coverTemp = new HashMap();
+			
+				File tempDir = new File(coverFile.getParentFile(), "temp");
+				
+				File [] list = tempDir.listFiles();
+				
+				for (int i = 0; i < list.length; i++) {
+				
+					if (list[i].getName().endsWith(".temp"))
+						coverTemp.put(list[i].getName(), list[i]);
+				}
+			}
+			
+			Collection values = coverTemp.values();
+			Iterator it = values.iterator();
+			
+			while (it.hasNext()) {
+
+				File f = (File) it.next();
+
+				if (f.delete()) {
+					newCoverFile = f;
+					break;
+				}
+			}
+
+			if (newCoverFile == null) {
+				newCoverFile = FileUtil.createTempCopy(coverFile, new File(coverFile.getParentFile(), "temp"));
+				coverTemp.put(newCoverFile.getName(), newCoverFile);
+			}
+			else
+				FileUtil.writeToFile(new FileInputStream(coverFile), newCoverFile);
+
+		} catch (Exception e) {
+			log.error("Exception:"+ e.getMessage());
+		}
+
+		return newCoverFile;
+	}
 	
 	public static void processTemplateCover(StringBuffer template, String coverPath, Dimension coverDim) {
 	
