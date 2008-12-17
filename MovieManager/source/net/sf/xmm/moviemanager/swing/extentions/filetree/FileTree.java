@@ -256,20 +256,6 @@ public class FileTree extends JPanel {
 		
 		dir_popup = new JPopupMenu();
 		
-		/*
-		addFiles = new JMenuItem("Add files to add list");
-		addFiles.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				fileTree.repaint();
-				setFolderIcon(IconData.REGULAR_FOLDER);
-			}
-		});
-				
-		dir_popup.add(addFiles);
-		
-		dir_popup.addSeparator();
-		*/
-		
 		folder = new JMenuItem("Folder");
 		folder.setIcon(getImageIcon("Folder.png", 20));
 		folder.addActionListener(new ActionListener() {
@@ -665,7 +651,7 @@ public class FileTree extends JPanel {
 			final FileNode fnode = getFileNode(node);
 
 			Thread runner = new Thread()	{
-				public void run() 	{
+				public void run() {
 					
 					if (fnode != null && fnode.expand(node, validExtensions)) 	{
 						addExpandedNode(fnode);
@@ -738,6 +724,9 @@ public class FileTree extends JPanel {
 			setText(obj.toString());
 			
 			if (obj instanceof Boolean) {
+				
+				System.err.println("boolean:" + ((Boolean) obj));
+				
 				setText("Retrieving data...");
 			}
 
