@@ -25,14 +25,14 @@ import java.util.ArrayList;
 
 public class SimpleMailbox {
 
-	ArrayList <String> msgs = new ArrayList<String>();
+	ArrayList msgs = new ArrayList();
 	
 	synchronized public String getMessage() {
 		
 		if (msgs.size() == 0)
 			return null;
 		
-		return msgs.remove(0);
+		return (String) msgs.remove(0);
 	}
 	
 	synchronized public void setMessage(String msg) {
