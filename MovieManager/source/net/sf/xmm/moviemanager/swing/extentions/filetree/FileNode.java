@@ -81,6 +81,9 @@ public class FileNode implements Comparable {
 		currentChildrenFiles = getValidChildren(validExtensions, true);
 		FileTree.IconData idata;
 		
+		if (currentChildrenFiles == null)
+			return true;
+		
 		for (int i = 0; i < currentChildrenFiles.length; i++)	{
 
 			FileNode nd = (FileNode) currentChildrenFiles[i];
