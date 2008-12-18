@@ -107,7 +107,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 
 	final private int defaultFrameHeight = 635;
-	final private int defaultFrameWidth = 808;
+	final private int defaultFrameWidth = 850;
 
 
 	/* Main window size */
@@ -2023,8 +2023,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				long t = FileUtil.getFile(conf).lastModified();
 				
 				// The newest config file will be used
-				if (FileUtil.getFile("config/Config.ini").lastModified() > t)
-					conf = "config/Config.ini";
+				if (FileUtil.getFile("config/" + conf).lastModified() > t)
+					conf = "config/" + conf;
 					
 				url = FileUtil.getFileURL(conf);
 			}
@@ -2970,7 +2970,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			mainFilterSearchValues = mainFilterDefaults;
 			
 		} catch (Exception e) {
-			log.warn("Cannot find config file." + e.getMessage());
+			log.warn("Cannot find config file. " + e.getMessage());
 		}
 	 }
 
