@@ -301,7 +301,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         
         setTitle(MovieManager.getConfig().sysSettings.getAppTitle()); //$NON-NLS-1$
-        //setIconImage(FileUtil.getImageFromJar("/images/film.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH)); //$NON-NLS-1$
         setIconImage(FileUtil.getImage("/images/film.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH)); //$NON-NLS-1$
         
         setJMenuBar(createMenuBar());
@@ -335,40 +334,32 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
             setLocation((int)(screenSize.getWidth() - getSize().getWidth())/2,
                     (int)(screenSize.getHeight() - getSize().getHeight())/2 - 12);
         }
-                
-      
+         
         /* Setting Main Window slider position */
         if (config.mainWindowSliderPosition == -1) {
-        	getMainWindowSplitPane().setDividerLocation(0.537);
+        	getMainWindowSplitPane().setDividerLocation(0.285);
         	getMainWindowSplitPane().setLastDividerLocation(getMainWindowSplitPane().getDividerLocation());
         }
         else {
         	getMainWindowSplitPane().setDividerLocation(config.mainWindowSliderPosition);
+        	
             if (config.mainWindowLastSliderPosition != -1)
             	getMainWindowSplitPane().setLastDividerLocation(config.mainWindowLastSliderPosition);
         }
                 
         /* Setting Movie Info slider position */
-        if (config.movieInfoSliderPosition == -1) {
-        	getMovieInfoSplitPane().setDividerLocation(0.5);
-        	getMovieInfoSplitPane().setLastDividerLocation(getMovieInfoSplitPane().getDividerLocation());
-        }
-        else if (getMovieInfoSplitPane() != null) {
+        if (config.movieInfoSliderPosition != -1 && getMovieInfoSplitPane() != null) {
         	getMovieInfoSplitPane().setDividerLocation(config.movieInfoSliderPosition);
 
         	if (config.movieInfoLastSliderPosition != -1)
         		getMovieInfoSplitPane().setLastDividerLocation(config.movieInfoLastSliderPosition);
         }
        
-
         if (getAdditionalInfoNotesSplitPane() != null) {
 
         	/* Setting Additional Info / Notes slider position */
-        	if (config.additionalInfoNotesSliderPosition == -1) {
-        		getAdditionalInfoNotesSplitPane().setDividerLocation(0.5);
-        		getAdditionalInfoNotesSplitPane().setLastDividerLocation(getAdditionalInfoNotesSplitPane().getDividerLocation());
-        	}
-        	else {
+        	if (config.additionalInfoNotesSliderPosition != -1) {
+        		
         		getAdditionalInfoNotesSplitPane().setDividerLocation(config.additionalInfoNotesSliderPosition);
 
         		if (config.additionalInfoNotesLastSliderPosition != -1)
