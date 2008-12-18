@@ -1195,27 +1195,10 @@ public class MovieManager {
 		
 		log = Logger.getRootLogger();
 		
-		
-		
-		try {
-			FileAppender appender = new FileAppender();
-			appender.setLayout(new org.apache.log4j.PatternLayout());
-			appender.setThreshold(org.apache.log4j.Level.ALL);
-			appender.setWriter(new FileWriter(new File(System.getProperty("user.home"), "Log.txt")));
-			
-			log.addAppender(appender);
-		} catch (Exception e) {
-			
-		}
-		
-		
-		
-		
 		/* Writes the date. */
 		log.debug("Log Start: " + new Date(System.currentTimeMillis())); //$NON-NLS-1$
 		log.debug("MeD's Movie Manager v" + config.sysSettings.getVersion()); //$NON-NLS-1$
-		
-		
+				
 		
 		/* Loads the config */
 		if (!sandbox)
