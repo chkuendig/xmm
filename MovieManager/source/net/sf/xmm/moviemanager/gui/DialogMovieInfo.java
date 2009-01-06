@@ -1438,6 +1438,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 * Changes the cover...
 	 */
 	private void executeCommandCover() {
+		
 		try {
 			/* Opens the Open dialog... */
 			ExtendedFileChooser fileChooser = new ExtendedFileChooser();
@@ -1485,6 +1486,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		}
 	}
 
+	
 	/**
 	 * Changes the value JPanel and the JLabel unit and the...
 	 */
@@ -1493,7 +1495,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		int [] activeAdditionalInfoFields;
 
 		activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
-		
+			
 		if (movieInfoModel.getLastFieldIndex() != -1
 				&& movieInfoModel._saveLastFieldValue.get(movieInfoModel.getLastFieldIndex()).toString().equals(new Boolean(true).toString())) {
 
@@ -1574,11 +1576,15 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		int [] activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
 		
 		int currentFieldIndex = getAdditionalInfoFields().getSelectedIndex();
+		
 		String currentFieldIndexValue = ""; //$NON-NLS-1$
 
 		if (currentFieldIndex != -1) {
 			currentFieldIndexValue = (String) movieInfoModel.getFieldValues().get(activeAdditionalInfoFields[currentFieldIndex]);
 
+			if (currentFieldIndexValue == null)
+				currentFieldIndexValue = "";
+			
 			int oldIndex = activeAdditionalInfoFields[currentFieldIndex];
 			
 			/* Duration - Displays the new info... */
@@ -1659,8 +1665,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 				FontMetrics fontmetrics = getFontMetrics(getFont());
 				int line_widths;
+					
 				int maxPopupWidth = fontmetrics.stringWidth(currentFieldIndexValue);
-
 
 				if (valuesObj != null) {
 
@@ -1764,9 +1770,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			}
 
 			updateModelFromGeneralInfo();
-
 			movieInfoModel.saveAdditionalInfoData();
-
+	
 			try {
 				movieInfoModel.saveToDatabase(listName);
 			} catch (Exception e) {
@@ -1833,8 +1838,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	public void reloadMovieListAndClose(ModelEntry reloadEntry) {
 		
 		if (reloadEntry != null && reloadEntry.getKey() != -1) {
-
-			/* Reloads... */
 
 			// long time = System.currentTimeMillis();
 			MovieManagerCommandSelect.executeAndReload(reloadEntry, movieInfoModel._edit, movieInfoModel.isEpisode, true);
@@ -2056,7 +2059,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				}
 			}
 		} catch (Exception e) {
-			log.error(e); //$NON-NLS-1$
+			log.error("Exception:" + e.getMessage(), e); //$NON-NLS-1$
 		}
 	}
 
