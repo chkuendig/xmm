@@ -83,7 +83,7 @@ public class EntryListRemover {
 				if (parent != null && child != null) {
 					parent.remove(child);
 					
-					//Removing the chached info for the node
+					//Removing the cached info for the node
 					treeCellRenderer.removeNode(child);
 					listModel.nodeStructureChanged(parent);
 					MovieManager.getDialog().setAndShowEntries();
