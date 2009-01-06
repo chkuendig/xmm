@@ -162,11 +162,20 @@ public class MovieManagerCommandIMDBSearch {
 
 				dialogTVSeries.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				
-				dialogTVSeries.getMoviesList().setModel(imdb.getSeasons((ModelIMDbSearchHit) listModel.getElementAt(index)));
+				DefaultListModel seasonList = imdb.getSeasons((ModelIMDbSearchHit) listModel.getElementAt(index));
+				
+				if (seasonList.size() == 0) {
+					seasonList.addElement(new ModelIMDbSearchHit("-1", "No seasons found", 0));
+					dialogTVSeries.buttonSelect.setEnabled(false);
+					dialogTVSeries.buttonSelectAll.setEnabled(false);
+				}
+				else if (!movieInfoModel._edit) {
+					dialogTVSeries.getMoviesList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					dialogTVSeries.buttonSelectAll.setEnabled(true);
+				}
+				
+				dialogTVSeries.getMoviesList().setModel(seasonList);
 				dialogTVSeries.getMoviesList().setSelectedIndex(0);
-
-				dialogTVSeries.getMoviesList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				dialogTVSeries.buttonSelectAll.setEnabled(true);
 				
 				dialogTVSeries.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			}
@@ -208,17 +217,23 @@ public class MovieManagerCommandIMDBSearch {
 				}
 
 				dialogTVSeries.getMoviesList().setModel(allEpisodes);
-
 				dialogTVSeries.getMoviesList().setSelectedIndex(0);
-				dialogTVSeries.getMoviesList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-				dialogTVSeries.buttonSelectAll.setEnabled(true);
+				
+				if (!movieInfoModel._edit) {
+					dialogTVSeries.getMoviesList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					dialogTVSeries.buttonSelectAll.setEnabled(true);
+				}
+								
 				dialogTVSeries.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			}
 
 			/* Get episode info */
 			else if (mode == 2) {
 
+				dialogTVSeries.buttonSelect.setEnabled(false);
+				dialogTVSeries.buttonSelectAll.setEnabled(false);
+				dialogTVSeries.buttonOk.setEnabled(false);
+								
 				final int movieKey = ((ModelEpisode) movieInfoModel.getModel()).getMovieKey();
 
 				final Object [] selectedValues = dialogTVSeries.getMoviesList().getSelectedValues();
@@ -259,16 +274,21 @@ public class MovieManagerCommandIMDBSearch {
 											final ModelIMDbSearchHit searchHit = (ModelIMDbSearchHit) mailbox.pop();
 											
 											ModelIMDbEntry entry = imdb.getEpisodeInfo(searchHit);
+											
+											
 											final ModelEntry modelEntry = saveData(entry, movieKey, multipleEpisodes);
 
-											/* Adding each entry to the movie list */
-											final boolean expandAndExecute = mailbox.getSize() == 0;
-											
-											SwingUtilities.invokeLater(new Runnable() {
-												public void run() {
-													MovieManagerCommandSelect.executeAndReload(modelEntry, false, true, expandAndExecute);
-												}
-											});
+											if (multipleEpisodes) {
+
+												/* Adding each entry to the movie list */
+												final boolean expandAndExecute = mailbox.getSize() == 0;
+
+												SwingUtilities.invokeLater(new Runnable() {
+													public void run() {
+														MovieManagerCommandSelect.executeAndReload(modelEntry, false, true, expandAndExecute);
+													}
+												});
+											}
 											
 											mailbox.decreaseThreadCount();
 											
@@ -298,7 +318,9 @@ public class MovieManagerCommandIMDBSearch {
 							dialogTVSeries.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 							
 							dialogTVSeries.dispose();
-							parent.dispose();
+							
+							if (multipleEpisodes)
+								parent.dispose();
 
 							try {
 								movieInfoModel.modelChanged(this, "GeneralInfo");
@@ -314,6 +336,8 @@ public class MovieManagerCommandIMDBSearch {
 			}
 			mode++;
 
+			
+			
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
 		}
@@ -325,7 +349,8 @@ public class MovieManagerCommandIMDBSearch {
 		copyData(entry, episode);
 		episode.setMovieKey(movieKey); 
 		
-		movieInfoModel.setModel(episode, false, false);
+		// Copy the database key if editing
+		movieInfoModel.setModel(episode, movieInfoModel._edit, false);
 	
 		// The cover... 
 		if (episode.getCoverData() != null) {
@@ -336,21 +361,25 @@ public class MovieManagerCommandIMDBSearch {
 			movieInfoModel.setSaveCover(false);
 		}
 
-		ModelEntry tmpEntry = null;
-		
-		try {
-			tmpEntry = movieInfoModel.saveToDatabase(null);
-		} catch (Exception e) {
-			log.error("Saving to database failed.", e);
-		}
+		if (multipleEpisodes) {
 
-		try {
-			movieInfoModel.saveCoverToFile();
-		} catch (Exception e) {
-			log.error("Saving cover file failed.", e);
+			ModelEntry tmpEntry = null;
+
+			try {
+				tmpEntry = movieInfoModel.saveToDatabase(null);
+			} catch (Exception e) {
+				log.error("Saving to database failed.", e);
+			}
+
+			try {
+				movieInfoModel.saveCoverToFile();
+			} catch (Exception e) {
+				log.error("Saving cover file failed.", e);
+			}
+			return tmpEntry;
 		}
-	
-		return tmpEntry;
+		
+		return episode;
 	}
 	
 
