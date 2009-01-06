@@ -73,9 +73,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.JToolTip;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
@@ -89,62 +87,33 @@ import javax.swing.tree.TreePath;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
 import net.sf.xmm.moviemanager.MovieManagerConfig.InternalConfig;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFile;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandCloseDatabase;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandConvertDatabase;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandExit;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandFilter;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandLoadList;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandOpenPage;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandPlay;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
-import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAbout;
-import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAdditionalInfoFields;
-import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandFolders;
-import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandHelp;
-import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandLists;
-import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandNew;
-import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandOpen;
-import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandPrefs;
-import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandQueries;
-import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandReportGenerator;
-import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandUpdateIMDBInfo;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandExport;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImport;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.gui.menubar.DefaultMenuBar;
 import net.sf.xmm.moviemanager.gui.menubar.MovieManagerMenuBar;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
-import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedToolBar;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeNode;
 import net.sf.xmm.moviemanager.swing.extentions.JComboCheckBox;
-import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
-import net.sf.xmm.moviemanager.util.BrowserOpener;
 import net.sf.xmm.moviemanager.util.FileUtil;
-import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
-import net.sf.xmm.moviemanager.util.plugins.MovieManagerGUIChangeHandler;
-import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerPlayHandler;
 
 import org.apache.log4j.Logger;
 import org.dotuseful.ui.tree.AutomatedTreeModel;
 import org.dotuseful.ui.tree.AutomatedTreeNode;
-import org.lobobrowser.html.UserAgentContext;
 import org.lobobrowser.html.gui.HtmlPanel;
-import org.lobobrowser.html.parser.DocumentBuilderImpl;
-import org.lobobrowser.html.parser.InputSourceImpl;
 import org.lobobrowser.html.test.SimpleHtmlRendererContext;
-import org.lobobrowser.html.test.SimpleUserAgentContext;
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
 
 
@@ -301,6 +270,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         
         setTitle(MovieManager.getConfig().sysSettings.getAppTitle()); //$NON-NLS-1$
+        //setIconImage(FileUtil.getImageFromJar("/images/film.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH)); //$NON-NLS-1$
         setIconImage(FileUtil.getImage("/images/film.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH)); //$NON-NLS-1$
         
         setJMenuBar(createMenuBar());
@@ -334,32 +304,40 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
             setLocation((int)(screenSize.getWidth() - getSize().getWidth())/2,
                     (int)(screenSize.getHeight() - getSize().getHeight())/2 - 12);
         }
-         
+                
+      
         /* Setting Main Window slider position */
         if (config.mainWindowSliderPosition == -1) {
-        	getMainWindowSplitPane().setDividerLocation(0.285);
+        	getMainWindowSplitPane().setDividerLocation(0.537);
         	getMainWindowSplitPane().setLastDividerLocation(getMainWindowSplitPane().getDividerLocation());
         }
         else {
         	getMainWindowSplitPane().setDividerLocation(config.mainWindowSliderPosition);
-        	
             if (config.mainWindowLastSliderPosition != -1)
             	getMainWindowSplitPane().setLastDividerLocation(config.mainWindowLastSliderPosition);
         }
                 
         /* Setting Movie Info slider position */
-        if (config.movieInfoSliderPosition != -1 && getMovieInfoSplitPane() != null) {
+        if (config.movieInfoSliderPosition == -1) {
+        	getMovieInfoSplitPane().setDividerLocation(0.5);
+        	getMovieInfoSplitPane().setLastDividerLocation(getMovieInfoSplitPane().getDividerLocation());
+        }
+        else if (getMovieInfoSplitPane() != null) {
         	getMovieInfoSplitPane().setDividerLocation(config.movieInfoSliderPosition);
 
         	if (config.movieInfoLastSliderPosition != -1)
         		getMovieInfoSplitPane().setLastDividerLocation(config.movieInfoLastSliderPosition);
         }
        
+
         if (getAdditionalInfoNotesSplitPane() != null) {
 
         	/* Setting Additional Info / Notes slider position */
-        	if (config.additionalInfoNotesSliderPosition != -1) {
-        		
+        	if (config.additionalInfoNotesSliderPosition == -1) {
+        		getAdditionalInfoNotesSplitPane().setDividerLocation(0.5);
+        		getAdditionalInfoNotesSplitPane().setLastDividerLocation(getAdditionalInfoNotesSplitPane().getDividerLocation());
+        	}
+        	else {
         		getAdditionalInfoNotesSplitPane().setDividerLocation(config.additionalInfoNotesSliderPosition);
 
         		if (config.additionalInfoNotesLastSliderPosition != -1)
@@ -888,7 +866,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         ExtendedTreeCellRenderer.setDefaultColors();
          
-        moviesList.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(new ModelMovie(-1, null, null, null, "", null, null, null, null, null, null, null, false, null, null, null, null, null, null, null, null, null)))); //$NON-NLS-1$
+        moviesList.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(new ModelMovie(false)))); //$NON-NLS-1$
         
         moviesList.setRootVisible(false);
         moviesList.setDragEnabled(false);
@@ -1091,6 +1069,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 
     	panelMovieInfo.add(movieInfoSplitPane, "0, 1"); //$NON-NLS-1$
 
+    	
+    	
     	return panelMovieInfo;
     }
 
