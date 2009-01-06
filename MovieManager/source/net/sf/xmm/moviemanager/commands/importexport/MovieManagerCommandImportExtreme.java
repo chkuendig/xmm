@@ -84,7 +84,7 @@ public class MovieManagerCommandImportExtreme extends MovieManagerCommandImport 
         movielist = extremeDb.getMovies();
         	
 		
-		ArrayList extraInfoFieldDatabase = MovieManager.getIt().getDatabase().getExtraInfoFieldNames();
+		ArrayList extraInfoFieldDatabase = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
         extraInfoFieldsCount = extraInfoFieldDatabase.size();
         
 		

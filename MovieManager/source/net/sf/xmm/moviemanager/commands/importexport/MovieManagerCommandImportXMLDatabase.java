@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 
+import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelExportXML;
@@ -102,7 +103,7 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 
 		if (model instanceof ModelMovie) {
 
-			while(((ModelMovie) model).getAdditionalInfo().getExtraInfoFieldValues().size() < ModelAdditionalInfo.getExtraInfoFieldNames().size())
+			while(((ModelMovie) model).getAdditionalInfo().getExtraInfoFieldValues().size() < MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false).size())
 				((ModelMovie) model).getAdditionalInfo().getExtraInfoFieldValues().add(0, "");
 
 			modelMovieInfo.setModel((ModelMovie) model, false, false);
@@ -118,7 +119,7 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 			ModelSeries seriesTmp = (ModelSeries) model;
 			ModelEpisode episodeTmp;
 
-			while(((ModelMovie) seriesTmp.getMovie()).getAdditionalInfo().getExtraInfoFieldValues().size() < ModelAdditionalInfo.getExtraInfoFieldNames().size())
+			while(((ModelMovie) seriesTmp.getMovie()).getAdditionalInfo().getExtraInfoFieldValues().size() < MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false).size())
 				((ModelMovie) seriesTmp.getMovie()).getAdditionalInfo().getExtraInfoFieldValues().add(0, "");
 
 			modelMovieInfo.setModel(seriesTmp.getMovie(), false, false);
@@ -135,7 +136,7 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 				episodeTmp = (ModelEpisode) seriesTmp.episodes.get(u);
 				episodeTmp.setMovieKey(movieKey);
 
-				while(episodeTmp.getAdditionalInfo().getExtraInfoFieldValues().size() < ModelAdditionalInfo.getExtraInfoFieldNames().size())
+				while(episodeTmp.getAdditionalInfo().getExtraInfoFieldValues().size() < MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false).size())
 					episodeTmp.getAdditionalInfo().getExtraInfoFieldValues().add(0, "");
 
 				modelMovieInfo.setModel(episodeTmp, false, false);
@@ -167,18 +168,12 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 		String encoding = "UTF-8";
 
 		Unmarshaller unmarshaller = new Unmarshaller(ModelExportXML.class);
-		//unmarshaller.setDebug(true);
-
 		unmarshaller.setWhitespacePreserve(true);
 		unmarshaller.setMapping(mapping);
 
-		Object tmp = null;
-
 		Reader reader = new InputStreamReader(new FileInputStream(xmlFile), encoding);
 
-		//UnmarshalListener listener = new MappingUnmarshallListener(new MappingUnmarshaller(), mapping, new DTDResolver());
-
-		tmp = unmarshaller.unmarshal(reader);
+		Object tmp = unmarshaller.unmarshal(reader);
 
 		if (tmp instanceof ModelExportXML) {
 			movieList = ((ModelExportXML) tmp).getCombindedList();
