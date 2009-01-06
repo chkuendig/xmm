@@ -83,7 +83,8 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     			((DatabaseHSQL)newDatabase).createDatabaseTables();
 
     			/* Adds extra info field names */
-    			ArrayList columnNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames();
+    			ArrayList columnNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+    			
     			for (int i = 0; i < columnNames.size(); i++)
     				newDatabase.addExtraInfoFieldName((String) columnNames.get(i));
 
@@ -121,7 +122,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     			newDatabase.setUp();
 
     			/* Adds extra info field names */
-    			ArrayList columnNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames();
+    			ArrayList columnNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
     			for (int i = 0; i < columnNames.size(); i++)
     				newDatabase.addExtraInfoFieldName((String) columnNames.get(i));
 

@@ -334,7 +334,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
 
         		// Extra info
         		else {
-        			ArrayList extra = ModelAdditionalInfo.getExtraInfoFieldNames();
+        			ArrayList extra = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
         			if (extra != null) {
         				for (int i = 0; i < extra.size(); i++) {
         					if (name.equalsIgnoreCase( (String) extra.get(i))) {
@@ -498,7 +498,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
 
                     // Extra info
                     else {
-                        ArrayList extra1 = ModelAdditionalInfo.getExtraInfoFieldNames();
+                        ArrayList extra1 = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
                         
                         if (extra1 != null) {
                             for (int i = 0; i < extra1.size(); i++) {
