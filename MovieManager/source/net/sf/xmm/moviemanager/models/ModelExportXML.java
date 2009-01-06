@@ -23,6 +23,8 @@ package net.sf.xmm.moviemanager.models;
 
 import java.util.ArrayList;
 
+import net.sf.xmm.moviemanager.MovieManager;
+
 import org.apache.log4j.Logger;
 import org.exolab.castor.mapping.AccessMode;
 import org.exolab.castor.mapping.ClassDescriptor;
@@ -39,6 +41,8 @@ public class ModelExportXML implements XMLClassDescriptor {
 
 	static Logger log = Logger.getRootLogger();
 	
+	private String movieManagerVersion = MovieManager.getConfig().sysSettings.getVersion();
+	
     private ArrayList movies;
     private ArrayList series;
     
@@ -50,6 +54,10 @@ public class ModelExportXML implements XMLClassDescriptor {
     public ModelExportXML(int size) {
     	movies = new ArrayList(size);
         series = new ArrayList(size);
+    }
+    
+    public String getMovieManagerVersion() {
+    	return movieManagerVersion;
     }
     
     public ArrayList getCombindedList() {
@@ -188,4 +196,9 @@ public class ModelExportXML implements XMLClassDescriptor {
         // TODO Auto-generated method stub
         return null;
     }
+
+	public boolean isChoice() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
