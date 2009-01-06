@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import net.sf.xmm.moviemanager.MovieManager;
 
@@ -54,20 +55,22 @@ public class ModelAdditionalInfo {
 	// Each time a new additionial info field is added, this is encreased so that each ModelEntry knows that the additional info it already has needs to be updated from the database.
 	private static int extraInfoChanged = 0;
 	private int lastExtraInfoCount = 0;
-	private static boolean oldExtraInfoFieldNames = true;
-	static private ArrayList extraInfoFieldNames = new ArrayList();
-	private ArrayList extraInfoFieldValues = new ArrayList();
 
-	// Default empty contryctir used when importing from XML using Castor
+	private HashMap extraInfoFieldValuesMap = new HashMap();
+	
+	boolean initialized = false;
+	
+	// Default empty constuctor used when importing from XML using Castor
 	public ModelAdditionalInfo() {}
 
 	public ModelAdditionalInfo(boolean initialize) {
 
 		if (initialize) {
-			if (extraInfoFieldNames != null) {
-				for (int i = 0; i < extraInfoFieldNames.size(); i++)
-					extraInfoFieldValues.add("");    
-			}
+			
+			if (MovieManager.getIt().getDatabase() == null)
+				return;
+			
+			initialized = true;
 		}
 	}
 
@@ -93,14 +96,132 @@ public class ModelAdditionalInfo {
 		this.fileCount = fileCount;
 		this.container = container;
 		this.mediaType = mediaType;
-
-		if (extraInfoFieldNames != null) {
-			for (int i = 0; i < extraInfoFieldNames.size(); i++)
-				extraInfoFieldValues.add("");    
-		}
 	}
 
 
+	public boolean hasOldExtraInfoData() {
+		return extraInfoChanged != lastExtraInfoCount;
+	}
+
+	
+	public String getExtraInfoFieldName(int index) {
+
+		ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+		
+		if (index >= extraInfoFieldNames.size())
+			return "";
+		else
+			return (String) extraInfoFieldNames.get(index);
+	}
+
+	
+	public String getExtraInfoFieldValue(String columnName) {
+	
+		if (extraInfoFieldValuesMap.containsKey(columnName))
+			return (String) extraInfoFieldValuesMap.get(columnName);
+		
+		return null;
+	}
+	
+	
+	public String getExtraInfoFieldValue(int index) {
+
+		ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+				
+		if (index >= 0 && index < extraInfoFieldNames.size()) {
+			String column = (String) extraInfoFieldNames.get(index);
+		
+			if (extraInfoFieldValuesMap.containsKey(column))
+				return (String) extraInfoFieldValuesMap.get(column);
+		}
+	
+		return "";
+	}
+
+
+	public ArrayList getExtraInfoFieldValues() {
+		
+		ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+		ArrayList extraInfoFieldValues = new ArrayList();
+		
+		for (int i = 0; i < extraInfoFieldNames.size(); i++) {
+			
+			if (extraInfoFieldValuesMap.containsKey(extraInfoFieldNames.get(i)))
+				extraInfoFieldValues.add(extraInfoFieldValuesMap.get(extraInfoFieldNames.get(i)));
+			else
+				extraInfoFieldValues.add("");
+		}
+		
+		return extraInfoFieldValues;
+	}
+
+
+	public void setExtraInfoFieldValues(ArrayList extraInfoFieldValues) {
+		 
+		ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+	
+		if (extraInfoFieldValues.size() != extraInfoFieldNames.size()) {
+			
+			try {
+				throw new Exception("extraInfoFieldValues.size(" + extraInfoFieldValues.size()+ ") != extraInfoFieldNamesCount(" + extraInfoFieldNames.size() + ")");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		 
+		for (int i = 0; i < extraInfoFieldNames.size(); i++) {
+			extraInfoFieldValuesMap.put(extraInfoFieldNames.get(i), extraInfoFieldValues.get(i));
+		}
+	}
+
+	
+//	 Used when importing/exporting XML with Castor
+	public ArrayList getExtraInfoFieldNames2() {
+		//return getExtraInfoFieldNames();
+		return MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+	}
+	
+//	 Used when importing/exporting XML with Castor
+	public HashMap getExtraInfoFieldValuesMap() {
+		return extraInfoFieldValuesMap;
+	}
+	
+//	Used when importing/exporting XML with Castor
+	// If the extra info field name doesn't exist, it's created automatically
+	public void addExtraInfoFieldName(String extraInfoFieldName) {
+	
+		try {
+
+			ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+			
+			if (!extraInfoFieldNames.contains(extraInfoFieldName)) {
+				
+				if (MovieManager.getIt().getDatabase().addExtraInfoFieldName(extraInfoFieldName) < 0)
+					log.error("Error occured when adding new extra info field:" + extraInfoFieldName);
+				else {
+					log.info("New extra info field added:" + extraInfoFieldName);
+
+					int [] activeFields = MovieManager.getIt().getActiveAdditionalInfoFields();
+					int [] newActiveFields = new int[activeFields.length + 1];
+
+					System.arraycopy(activeFields, 0, newActiveFields, 0, activeFields.length);
+					newActiveFields[newActiveFields.length-1] = additionalInfoFieldCount + extraInfoFieldNames.size();
+
+					MovieManager.getIt().getDatabase().setActiveAdditionalInfoFields(newActiveFields);
+					MovieManager.getIt().setActiveAdditionalInfoFields(newActiveFields);
+				}
+			}
+		} catch (Exception e) {
+			log.warn("Exception:", e);
+		}
+	}
+		
+	
+	public static int additionalInfoFieldCount() {
+		return additionalInfoFieldCount;
+	}
+	
+	
 	public int getKey() {
 		return index;
 	}
@@ -193,143 +314,6 @@ public class ModelAdditionalInfo {
 		if (mediaType == null)
 			return "";
 		return mediaType;
-	}
-
-
-	public boolean hasOldExtraInfoFieldNames() {
-		return extraInfoChanged != lastExtraInfoCount;
-	}
-
-	public static void setExtraInfoFieldNamesChanged() {
-		oldExtraInfoFieldNames = true;
-		extraInfoChanged++;
-	}
-	
-	public void setExtraInfoFieldNamesUpdated() {
-		lastExtraInfoCount = extraInfoChanged;
-		oldExtraInfoFieldNames = false;
-	}
-	
-	
-	public String getExtraInfoFieldName(int index) {
-
-		if (index >= extraInfoFieldNames.size())
-			return "";
-		else
-			return (String) extraInfoFieldNames.get(index);
-	}
-
-	
-	public String getExtraInfoFieldValue(String columnName) {
-
-		for (int i = 0; i < extraInfoFieldValues.size(); i++) {
-			String tmp = (String) extraInfoFieldNames.get(i);
-			
-			if (tmp != null && tmp.equals(columnName))
-				return (String) extraInfoFieldValues.get(i);
-		}
-		return null;
-	}
-	
-	
-	public String getExtraInfoFieldValue(int index) {
-
-		if (index < 0 || index >= extraInfoFieldValues.size())
-			return "";
-		else
-			return (String) extraInfoFieldValues.get(index);
-	}
-
-	public static void updateExtraInfoFieldNames() {
-		getExtraInfoFieldNames();
-	}
-		
-	
-	public static ArrayList getExtraInfoFieldNames() {
-					
-		return getExtraInfoFieldNames(true);
-	}
-	
-	public static ArrayList getExtraInfoFieldNames(boolean update) {
-		
-		if (update && oldExtraInfoFieldNames) {
-			setExtraInfoFieldNames(MovieManager.getIt().getDatabase().getExtraInfoFieldNames());
-		}
-		
-		return extraInfoFieldNames;
-	}
-	
-
-	public ArrayList getExtraInfoFieldValues() {
-		return extraInfoFieldValues;
-	}
-
-
-	public static void setExtraInfoFieldNames(ArrayList extraInfoFieldNames) {
-		ModelAdditionalInfo.extraInfoFieldNames = extraInfoFieldNames;
-		setExtraInfoFieldNamesChanged();
-	}
-
-	public void setExtraInfoFieldValues(ArrayList extraInfoFieldValues) {
-		 
-		if (extraInfoFieldValues.size() != extraInfoFieldNames.size()) {
-			
-			try {
-				throw new Exception("extraInfoFieldValues.size(" + extraInfoFieldValues.size()+ ") != extraInfoFieldNames.size(" + extraInfoFieldNames.size()+ ")");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		 
-		this.extraInfoFieldValues = extraInfoFieldValues;
-	}
-
-	
-//	 Used when importing/exporting XML with Castor
-	public ArrayList getExtraInfoFieldNames2() {
-		return getExtraInfoFieldNames();
-	}
-	
-	
-	
-	// Used when importing/exporting XML with Castor
-	public void setExtraInfoFieldNames2(ArrayList extraInfoFieldNames) {
-		ModelAdditionalInfo.extraInfoFieldNames = extraInfoFieldNames;
-	}
-	
-	
-//	Used when importing/exporting XML with Castor
-	// If the extra info field name doesn't exist, it's created automatically
-	public void addExtraInfoFieldName(String extraInfoFieldName) {
-
-		try {
-
-			if (!extraInfoFieldNames.contains(extraInfoFieldName)) {
-				extraInfoFieldNames.add(extraInfoFieldName);
-
-				if (MovieManager.getIt().getDatabase().addExtraInfoFieldName(extraInfoFieldName) < 0)
-					log.error("Error occured when adding new extra info field:" + extraInfoFieldName);
-				else {
-					log.info("New extra info field added:" + extraInfoFieldName);
-
-					int [] activeFields = MovieManager.getIt().getActiveAdditionalInfoFields();
-					int [] newActiveFields = new int[activeFields.length + 1];
-
-					System.arraycopy(activeFields, 0, newActiveFields, 0, activeFields.length);
-					newActiveFields[newActiveFields.length-1] = additionalInfoFieldCount + extraInfoFieldNames.size() -1;
-
-					MovieManager.getIt().getDatabase().setActiveAdditionalInfoFields(newActiveFields);
-					MovieManager.getIt().setActiveAdditionalInfoFields(newActiveFields);
-				}
-			}
-		} catch (Exception e) {
-			log.warn("Exception:", e);
-		}
-	}
-	
-//	 Used when importing/exporting XML with Castor
-	public void addExtraInfoFieldValue(String str) {
-		extraInfoFieldValues.add(str);
 	}
 	
 	
@@ -455,9 +439,12 @@ public class ModelAdditionalInfo {
 		}
 		else if (tableName.equals("Extra Info")) {
 
+			ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+			
 			for (int i = 0; i < extraInfoFieldNames.size(); i++) {
 				if (fieldName.equals(extraInfoFieldNames.get(i))) {
-					extraInfoFieldValues.set(i, value);
+					extraInfoFieldValuesMap.put(fieldName, value);
+					//extraInfoFieldValues.set(i, value);
 					return true;
 				}
 			}
@@ -512,9 +499,11 @@ public class ModelAdditionalInfo {
 		}
 		else if (tableName.equals("Extra Info")) {
 
+			ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+			
 			for (int i = 0; i < extraInfoFieldNames.size(); i++) {
 				if (fieldName.equals(extraInfoFieldNames.get(i))) {
-					return "" + extraInfoFieldValues.get(i);
+					return "" + extraInfoFieldValuesMap.get(fieldName);
 				}
 			}
 		}
