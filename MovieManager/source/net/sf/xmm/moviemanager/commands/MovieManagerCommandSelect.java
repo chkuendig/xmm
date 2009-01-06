@@ -382,10 +382,9 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 				
 				
 				// Getting additional info
-				
 				if (!model.getHasAdditionalInfoData())
 					model.updateAdditionalInfoData();
-
+	
 				ModelAdditionalInfo additionalInfo = model.getAdditionalInfo();
 
 				StringTokenizer tokenizer = new StringTokenizer(additionalInfo.getFileLocation(), "*");
@@ -505,7 +504,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 				} 
 			}
 		}
-
+	
 		Image cover = null;
 
 		if (image != null)
@@ -1011,25 +1010,32 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 				rowForLocation = movieList.getRowForLocation(i, event.getY());
 		}
 	
+				
+		TreePath selectionRow =  null;
+		
+		if (rowForLocation == -1 || ((selectionRow = movieList.getPathForRow(rowForLocation)) == null)) {
+			log.warn("selectionRow is null - rowForLocation: -1");
+			return;
+		}
+				
+		ModelEntry leadSelectionObject = (ModelEntry) ((DefaultMutableTreeNode) selectionRow.getLastPathComponent()).getUserObject();
+		int selectionCount = movieList.getSelectionCount();
+		
 		/* Button 2 */
 		if (SwingUtilities.isRightMouseButton(event)) {
-			int selectionCount = movieList.getSelectionCount();
-			ModelEntry leadSelectionRow = (ModelEntry) ((DefaultMutableTreeNode) (movieList.getPathForRow(rowForLocation)).getLastPathComponent()).getUserObject();
-		
+
 			if (!movieList.isRowSelected(rowForLocation)) {
 				movieList.setSelectionRow(rowForLocation);
 				selectionCount = 1;
 			}
-			
-			makeMovieListPopupMenu(event.getX(), event.getY(), event, leadSelectionRow, selectionCount);
+
+			makeMovieListPopupMenu(event.getX(), event.getY(), event, leadSelectionObject, selectionCount);
 		}
 
 		/* Button 1 */
-		if (SwingUtilities.isLeftMouseButton(event)) {
+		else if (SwingUtilities.isLeftMouseButton(event)) {
 			
 			if (MovieManager.getConfig().getEnableCtrlMouseRightClick() && SysUtil.isCtrlPressed(event)) {
-				int selectionCount = movieList.getSelectionCount();
-				ModelEntry leadSelectionObject = (ModelEntry) ((DefaultMutableTreeNode) (movieList.getPathForRow(rowForLocation)).getLastPathComponent()).getUserObject();
 				makeMovieListPopupMenu(event.getX(), event.getY(), event, leadSelectionObject, selectionCount);
 			}
 		}
