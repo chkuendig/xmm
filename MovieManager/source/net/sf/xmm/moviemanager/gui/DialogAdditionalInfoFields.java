@@ -108,14 +108,14 @@ public class DialogAdditionalInfoFields extends JDialog {
 	fieldsList = (ArrayList) additionalInfoFieldList.clone();
 	
 	/* Contains all the existing extra info fields */
-	_originalExtraList = MovieManager.getIt().getDatabase().getExtraInfoFieldNames();
+	_originalExtraList = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 	
 	/* Contains the number of each of the active fields */
 	int [] activeFields = MovieManager.getIt().getActiveAdditionalInfoFields();
-	
+		
 	/* adds all the extra info fields to fieldsList */
 	for (int i = 0; i < _originalExtraList.size(); i++) {
-	    fieldsList.add(_originalExtraList.get(i));
+		fieldsList.add(_originalExtraList.get(i));
 	}
 	
 	/* Creates the list model... */
@@ -126,15 +126,15 @@ public class DialogAdditionalInfoFields extends JDialog {
 	
 	/* Adds the active fields to the active list */
 	for (int i = 0; i < activeFields.length; i++) {
-	    
-	    if (fieldsListArray[activeFields[i]] != null) {
-		listActive.addElement(fieldsListArray[activeFields[i]]);
-		fieldsListArray[activeFields[i]] = null;
-	    }
-	    else
-		log.warn("Null entry in additional info active list at index:" + i); //$NON-NLS-1$
+
+		if (fieldsListArray[activeFields[i]] != null) {
+			listActive.addElement(fieldsListArray[activeFields[i]]);
+			fieldsListArray[activeFields[i]] = null;
+		}
+		else
+			log.warn("Null entry in additional info active list at index:" + i); //$NON-NLS-1$
 	}
-	
+
 	/* Adds the inactive-fields to the inactive-list */
 	for (int i = 0; i < fieldsListArray.length; i++) {
 	    if (fieldsListArray[i] != null)
@@ -538,45 +538,48 @@ public class DialogAdditionalInfoFields extends JDialog {
      * Saves and exits...
      **/
     private void executeCommandSave() {
-	
-	DefaultListModel listActive = (DefaultListModel) getActiveFields().getModel();
-	
-	/* Removes from database... */
-	for (int i = 0; i < _toRemove.size(); i++) {
-	    MovieManager.getIt().getDatabase().removeExtraInfoFieldName((String)_toRemove.get(i));
-	    fieldsList.remove(_toRemove.get(i));
-	}
-	
-	/* Adds to database... */
-	for (int i = 0; i < _toAdd.size(); i++) {
-	    
-	    if ((MovieManager.getIt().getDatabase().addExtraInfoFieldName((String)_toAdd.get(i))) == 1) {
-		fieldsList.add(_toAdd.get(i));
-	    }
-	    else {
-		MovieManager.getIt().getDatabase().removeExtraInfoFieldName((String)_toAdd.get(i));
-		listActive.removeElement(_toAdd.get(i));
-	    }
-	}
-	
-	/* Trims to remove any empty spaces */
-	fieldsList.trimToSize();
-	
-	/* Updating the field order */
-	
-	int [] activeAdditionalInfoFields = new int[listActive.size()];
-	
-	for (int i = 0; i < listActive.size(); i++)
-	    activeAdditionalInfoFields[i] = fieldsList.indexOf(listActive.get(i));
-	
-	MovieManager.getIt().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
-	MovieManager.getIt().getDatabase().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
-	
-	/* Means the fields in the ModelAdditionalInfo must be updated */
-	if (_toRemove.size() != 0 || _toAdd.size() != 0) {
-	    ModelAdditionalInfo.setExtraInfoFieldNamesChanged();
-	}
-	MovieManagerCommandSelect.execute();
-	dispose();
+
+    	DefaultListModel listActive = (DefaultListModel) getActiveFields().getModel();
+
+    	/* Removes from database... */
+    	for (int i = 0; i < _toRemove.size(); i++) {
+    		MovieManager.getIt().getDatabase().removeExtraInfoFieldName((String)_toRemove.get(i));
+    		fieldsList.remove(_toRemove.get(i));
+    	}
+
+    	/* Adds to database... */
+    	for (int i = 0; i < _toAdd.size(); i++) {
+
+    		if ((MovieManager.getIt().getDatabase().addExtraInfoFieldName((String)_toAdd.get(i))) == 1) {
+    			fieldsList.add(_toAdd.get(i));
+    		}
+    		else {
+    			MovieManager.getIt().getDatabase().removeExtraInfoFieldName((String)_toAdd.get(i));
+    			listActive.removeElement(_toAdd.get(i));
+    		}
+    	}
+
+    	/* Trims to remove any empty spaces */
+    	fieldsList.trimToSize();
+
+    	/* Updating the field order */
+
+    	int [] activeAdditionalInfoFields = new int[listActive.size()];
+
+    	for (int i = 0; i < listActive.size(); i++)
+    		activeAdditionalInfoFields[i] = fieldsList.indexOf(listActive.get(i));
+
+    	MovieManager.getIt().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
+    	MovieManager.getIt().getDatabase().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
+
+    	/* Means the fields in the ModelAdditionalInfo must be updated */
+    /*
+    	if (_toRemove.size() != 0 || _toAdd.size() != 0) {
+    		ModelAdditionalInfo.setExtraInfoFieldNamesChanged();
+    	}
+    	*/
+    	
+    	MovieManagerCommandSelect.execute();
+    	dispose();
     }
 }
