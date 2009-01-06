@@ -169,6 +169,14 @@ public class IMDbInfoUpdater {
 
 				model = (ModelEntry) node.getUserObject();
 
+				if (!model.getHasGeneralInfoData()) {
+					model.updateGeneralInfoData();
+				}
+
+				if (!model.getHasAdditionalInfoData()) {
+					model.updateAdditionalInfoData();
+				}
+				
 				/* wrapping each movie in a thread */
 				Thread t = new Thread(new GetInfo(modelInfo, model, imdb));
 				encreaseThreadCount();
@@ -228,6 +236,7 @@ public class IMDbInfoUpdater {
 				if (canceled)
 					return;
 
+								
 				if (model.getUrlKey().equals("")) {
 					log.info("UrlKey is empty");
 
@@ -254,6 +263,8 @@ public class IMDbInfoUpdater {
 
 					try {
 
+						
+						
 						ModelIMDbEntry movie = imdb.grabInfo(model.getUrlKey());
 
 						if (title == 1 || (title == 2 && model.getTitle().equals(""))) {
@@ -359,6 +370,8 @@ public class IMDbInfoUpdater {
 								log.error("Exception:" + e.getMessage(), e);
 							}
 						}
+						
+						
 						
 						modelInfo.saveToDatabase(model, true, null);					
 
