@@ -123,7 +123,7 @@ public class DialogTableData extends JDialog {
 
 		generalInfoFieldNames = MovieManager.getIt().getDatabase().getGeneralInfoMovieFieldNames();
 		additionalInfoFieldNames = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
-		extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames();
+		extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 		
 		headerPopupMenu = makeHeaderPopupMenu();
 		

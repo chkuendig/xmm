@@ -785,7 +785,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 					}
 
 					additionalInfoFields = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
-					extraInfoFields = MovieManager.getIt().getDatabase().getExtraInfoFieldNames();
+					extraInfoFields = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 
 					additionalAliasPanel = new JPanel(new GridLayout(additionalInfoFields.size()+ extraInfoFields.size() +1, 3));
 
