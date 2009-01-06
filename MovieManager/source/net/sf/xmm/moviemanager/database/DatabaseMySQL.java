@@ -938,7 +938,7 @@ public class DatabaseMySQL extends Database {
 
 			String tempValue = "";
 
-			ArrayList extraInfoFieldNames = ModelAdditionalInfo.getExtraInfoFieldNames();
+			ArrayList extraInfoFieldNames = getExtraInfoFieldNames(true);
 			ArrayList extraInfoFieldValues = new ArrayList();
 
 			if (episode)
