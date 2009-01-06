@@ -123,11 +123,8 @@ public class LookAndFeelManager {
             MovieManagerConfig config = MovieManager.getConfig();
             
             if (!MovieManager.isApplet()) {
-                
-            	//config.setOyoahaThemePackDir(FileUtil.getFile("lib/LookAndFeels/Oyoaha Theme Packs").getAbsolutePath());
-                //File dir = new File(config.getOyoahaThemePackDir());
-                
-                config.setSkinlfThemePackDir(SysUtil.getUserDir() + dirSep + "lib/LookAndFeels" + dirSep + "Skinlf Theme Packs" + dirSep);
+                 
+                config.setSkinlfThemePackDir(SysUtil.getUserDir() + dirSep + "lib/LookAndFeels" + dirSep + "Skinlf_Theme_Packs" + dirSep);
                 dir = new File(config.getSkinlfThemePackDir());
                 
                 if (!dir.exists() && !MovieManager.isMacAppBundle()) {
@@ -183,8 +180,8 @@ public class LookAndFeelManager {
             
             if (!MovieManager.isApplet()) {
             	            	
-                //config.setOyoahaThemePackDir(SysUtil.getUserDir() + dirSep + "LookAndFeels" + dirSep + "Oyoaha Theme Packs" + dirSep);
-            	config.setOyoahaThemePackDir(FileUtil.getFile("lib/LookAndFeels/Oyoaha Theme Packs").getAbsolutePath());
+            	String dirSep = SysUtil.getDirSeparator();
+                config.setOyoahaThemePackDir(SysUtil.getUserDir() + dirSep + "lib/LookAndFeels" + dirSep + "Oyoaha_Theme_Packs" + dirSep);
                 File dir = new File(config.getOyoahaThemePackDir());
                 
                 ArrayList themePackList = new ArrayList();
