@@ -169,14 +169,14 @@ public class MovieManagerCommandPlay implements ActionListener {
 					String extraInfoField = streamerHandler.getDatabaseUrlField();
 					fileLocation = selected.getAdditionalInfo().getExtraInfoFieldValue(extraInfoField);
 				}
-								
+				
+				if (fileLocation.trim().equals(""))
+					return;
+				
 				String cmd = null;
 	
 				String [] files = fileLocation.split("\\*");
-				
-				if (files.length == 0)
-					return;
-				
+								
 				if (MovieManager.getConfig().getExecuteExternalPlayCommand()) {
 					File mediaFile = new File(files[0]);
 					
