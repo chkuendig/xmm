@@ -69,13 +69,9 @@ abstract public class ModelEntry {
 	}
 
 	public boolean getHasAdditionalInfoData() {
-		return hasAdditionalInfoData && !additionalInfo.hasOldExtraInfoFieldNames();
+		return hasAdditionalInfoData && !additionalInfo.hasOldExtraInfoData();
 	}
 
-	public boolean hasOldExtraInfoFieldNames() {
-		return additionalInfo.hasOldExtraInfoFieldNames();
-	}
-	
 	public abstract void updateAdditionalInfoData();
 	public abstract void updateGeneralInfoData();
 	
@@ -85,6 +81,18 @@ abstract public class ModelEntry {
 		return additionalInfo;
 	}
 
+	/*
+	 * Necessary for Castor export where the additional info must be updated automatically
+	 */
+	public ModelAdditionalInfo getUpdatedAdditionalInfo() {
+		
+		if (!hasAdditionalInfoData)
+			updateAdditionalInfoData();
+			
+		return additionalInfo;
+	}
+
+	
 	public void setAdditionalInfo(ModelAdditionalInfo additionalInfo) {
 		this.additionalInfo = additionalInfo;
 		hasAdditionalInfoData = true;
@@ -342,15 +350,11 @@ abstract public class ModelEntry {
 	}
 
 	
-
 	/* Convenience method for setting values */
 	public boolean setValue(String fieldName, String value, String tableName) {
 
 		if (!tableName.equals("General Info"))
 			return additionalInfo.setValue(fieldName, value, tableName);
-
-		//String fieldName = fieldModel.getField();
-		//String value = fieldModel.getValue();
 
 		if (fieldName.equalsIgnoreCase("Title"))
 			setTitle(value);
@@ -404,9 +408,6 @@ abstract public class ModelEntry {
 
 		if (!tableName.equals("General Info"))
 			return additionalInfo.getValue(fieldName, tableName);
-
-		//String fieldName = fieldModel.getField();
-		//String value = fieldModel.getValue();
 
 		if (fieldName.equalsIgnoreCase("Title"))
 			return getTitle();
@@ -489,11 +490,8 @@ abstract public class ModelEntry {
 		
 		if (model.getHasAdditionalInfoData())
 			setAdditionalInfo(model.getAdditionalInfo());
-		else
-			setAdditionalInfo(new ModelAdditionalInfo());
 		
 		hasChangedNotes = model.hasChangedNotes;
-		
 	}
 	
 
