@@ -32,9 +32,12 @@ public class ModelMovie extends ModelEntry {
 		additionalInfo = new ModelAdditionalInfo(true);
 	}
 
+	public ModelMovie(boolean initialize) {
+		additionalInfo = new ModelAdditionalInfo(initialize);
+	}
+	
 	public ModelMovie(ModelMovie model) {
 		copyData(model);
-		additionalInfo = new ModelAdditionalInfo(true);
 	}
 
 	/**
@@ -131,14 +134,11 @@ public class ModelMovie extends ModelEntry {
 	
 	
 	public void updateAdditionalInfoData() {
-	
-		if (additionalInfo != null && additionalInfo.hasOldExtraInfoFieldNames())
-			ModelAdditionalInfo.updateExtraInfoFieldNames();
 		
 		if (getKey() != -1) {
 
 			ModelAdditionalInfo tmp = MovieManager.getIt().getDatabase().getAdditionalInfo(getKey(), false);
-
+	
 			if (tmp != null) {
 				setAdditionalInfo(tmp);
 			}
