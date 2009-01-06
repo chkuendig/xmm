@@ -107,7 +107,7 @@ public class ModelMovieInfo {
     
     /* Initializes with the info from a model (Editing entry) */
     public ModelMovieInfo(ModelEntry model, boolean loadEmptyAdditionalInfoFields) {
-        
+    	
         if (model instanceof ModelEpisode) {
             this.model = new ModelEpisode((ModelEpisode) model);
             isEpisode = true;
@@ -132,7 +132,7 @@ public class ModelMovieInfo {
     
     public List getFieldNames() {
     	
-    	if (model.getHasAdditionalInfoData());
+    	if (!model.getHasAdditionalInfoData())
     		model.updateAdditionalInfoData();
     	
     	return  _fieldNames;    	
@@ -144,7 +144,7 @@ public class ModelMovieInfo {
     
     public List getFieldValues() {
     	
-    	if (model.getHasAdditionalInfoData());
+    	if (!model.getHasAdditionalInfoData())
 			model.updateAdditionalInfoData();	
     	
     	return _fieldValues;
@@ -429,8 +429,8 @@ public class ModelMovieInfo {
                 database.setGeneralInfoEpisode(modelToSave.getKey(), (ModelEpisode) modelToSave);
                 database.setAdditionalInfoEpisode(modelToSave.getKey(), additionalInfo);
                 	
-                //Must save to extra info even though there are no extra info fields. Tge rows must still be created in the database
-                database.setExtraInfoEpisode(modelToSave.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+                //Must save to extra info even though there are no extra info fields. The rows must still be created in the database
+                database.setExtraInfoEpisode(modelToSave.getKey(), database.getExtraInfoFieldNames(false), additionalInfo.getExtraInfoFieldValues());
                
             } else {
                 
@@ -450,8 +450,8 @@ public class ModelMovieInfo {
                     /* Adds the additional info... */
                     ret = database.addAdditionalInfoEpisode(episodeindex, additionalInfo);
                      
-                    //Must save to extra info even though there are no extra info fields. Tge rows must still be created in the database
-                    ret = database.addExtraInfoEpisode(episodeindex, ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+                    //Must save to extra info even though there are no extra info fields. The rows must still be created in the database
+                    ret = database.addExtraInfoEpisode(episodeindex, database.getExtraInfoFieldNames(false), additionalInfo.getExtraInfoFieldValues());
                       
                 }
             }
@@ -466,8 +466,8 @@ public class ModelMovieInfo {
                 if (saveAdditionalInfo) {
                     database.setAdditionalInfo(modelToSave.getKey(), additionalInfo);
                     
-					// Must save to extra info even though there are no extra info fields. Tge rows must still be created in the database
-					database.setExtraInfoMovie(modelToSave.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+					// Must save to extra info even though there are no extra info fields. The rows must still be created in the database
+					database.setExtraInfoMovie(modelToSave.getKey(), database.getExtraInfoFieldNames(false), additionalInfo.getExtraInfoFieldValues());
 				}
                 
             } else {
@@ -482,7 +482,7 @@ public class ModelMovieInfo {
                     database.addAdditionalInfo(modelToSave.getKey(), additionalInfo);
                     
 					// Must save to extra info even though there are no extra info fields. The rows must still be created in the database
-					database.addExtraInfoMovie(modelToSave.getKey(), ModelAdditionalInfo.getExtraInfoFieldNames(), additionalInfo.getExtraInfoFieldValues());
+					database.addExtraInfoMovie(modelToSave.getKey(), database.getExtraInfoFieldNames(false), additionalInfo.getExtraInfoFieldValues());
                     
                     
                     /* Add new row in Lists table with default values */
@@ -654,7 +654,7 @@ public class ModelMovieInfo {
             
             if (_lastFieldIndex != -1)
             /* The value currently in the selected index will not be saved, but be replaced by the new info */
-            _saveLastFieldValue.set(_lastFieldIndex, new Boolean(false).toString());
+            	_saveLastFieldValue.set(_lastFieldIndex, new Boolean(false).toString());
             
             for (int u = 0; u < _saveLastFieldValue.size(); u++) {
                 _saveLastFieldValue.set(u, new Boolean(true));
@@ -680,8 +680,8 @@ public class ModelMovieInfo {
         _fieldValues = new ArrayList();
         
         if (!loadEmpty) {
-                   	
-            if (!model.getHasAdditionalInfoData())
+         	
+        	if (!model.getHasAdditionalInfoData())
                 model.updateAdditionalInfoData();
             
             additionalInfo = model.getAdditionalInfo();
@@ -689,7 +689,7 @@ public class ModelMovieInfo {
         
         _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Subtitles"); //$NON-NLS-1$
-        
+            
         if (loadEmpty)
             _fieldValues.add("");
         else if (additionalInfo != null)
@@ -832,12 +832,12 @@ public class ModelMovieInfo {
             _fieldValues.add(additionalInfo.getMediaType());
         
         
-        ArrayList extraFieldNames = ModelAdditionalInfo.getExtraInfoFieldNames();
+        ArrayList extraFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(true);
         ArrayList extraFieldValues = null;
         
         if (!loadEmpty && additionalInfo != null)
             extraFieldValues = additionalInfo.getExtraInfoFieldValues();
-		
+		  
         for (int i = 0; i < extraFieldNames.size(); i++) {
             
             _fieldNames.add(extraFieldNames.get(i));
