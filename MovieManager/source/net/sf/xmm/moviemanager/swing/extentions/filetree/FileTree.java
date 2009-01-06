@@ -724,9 +724,6 @@ public class FileTree extends JPanel {
 			setText(obj.toString());
 			
 			if (obj instanceof Boolean) {
-				
-				System.err.println("boolean:" + ((Boolean) obj));
-				
 				setText("Retrieving data...");
 			}
 
