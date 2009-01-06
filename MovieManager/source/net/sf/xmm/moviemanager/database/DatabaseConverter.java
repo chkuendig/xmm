@@ -106,7 +106,7 @@ public class DatabaseConverter {
 		newDatabase.setFolders(cDb.getCoversFolder(), cDb.getQueriesFolder());
 		newDatabase.setActiveAdditionalInfoFields(cDb.getActiveAdditionalInfoFields());
 		
-		ArrayList extraFieldNamesList = cDb.getExtraInfoFieldNames();
+		ArrayList extraFieldNamesList = cDb.getExtraInfoFieldNames(true);
 		ArrayList extraFieldValuesList;
 		
 		ArrayList listsColumnNamesList = cDb.getListsColumnNames();
@@ -166,7 +166,7 @@ public class DatabaseConverter {
 		    }		
 		}
 		
-		extraFieldNamesList = cDb.getExtraInfoFieldNames();
+		extraFieldNamesList = cDb.getExtraInfoFieldNames(true);
 		
 		/* Transferring episode entries */
 		for (int i = movieListSize; i < lengthOfTask; i++) {
@@ -191,7 +191,7 @@ public class DatabaseConverter {
 			    // for (int u = 0; u < extraFieldNamesList.size(); u++) {
 // 				extraFieldValuesList.add(cDb.getExtraInfoMovieField(key, (String) extraFieldNamesList.get(u)));
 // 			    }
-			    newDatabase.addExtraInfoEpisode(index, ModelAdditionalInfo.getExtraInfoFieldNames(), additionalModel.getExtraInfoFieldValues());
+			    newDatabase.addExtraInfoEpisode(index, extraFieldNamesList, additionalModel.getExtraInfoFieldValues());
 			}
 			
 			current = i;

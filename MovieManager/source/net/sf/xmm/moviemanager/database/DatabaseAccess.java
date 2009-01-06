@@ -312,7 +312,7 @@ public class DatabaseAccess extends Database {
 	    
 	    _sql.clear();
 
-	    ArrayList columns = getExtraInfoFieldNames();
+	    ArrayList columns = getExtraInfoFieldNames(true);
 	    String field;
 	    /* Copying existing extra info table columns to the extra info episode table */
 	    
