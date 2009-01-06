@@ -62,6 +62,51 @@ import org.apache.log4j.Logger;
 public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	static Logger log = Logger.getRootLogger();
+
+	public class SystemSettings {
+
+
+		/**
+		 * The current version of the program.
+		 **/
+		private static final String _version = " 2.7.2"; //$NON-NLS-1$
+
+
+		String appTitle = " MeD's Movie Manager v" + getVersion();
+		String lookAndFeelTitle = "Look & Feel";
+
+		/**
+		 * Returns the version.
+		 *
+		 * @return Program Version.
+		 **/
+		public String getVersion() {
+			return _version;
+		}
+
+
+		public String getLookAndFeelTitle() {
+	    	return lookAndFeelTitle;
+	    }
+	    
+	    public void setLookAndFeelTitle(String lookAndFeelTitle) {
+	    	this.lookAndFeelTitle = lookAndFeelTitle;
+	    }
+	    
+	      
+	    public String getAppTitle() {
+	    	return appTitle;
+	    }
+	    
+	    public void setAppTitle(String t) {
+	    	appTitle = t;
+	    }
+		
+	}
+	
+	public final SystemSettings sysSettings = new SystemSettings();
+	
+	
 	
 	/**
 	 * Keeps track of the last directory open...(Moviefiles)
@@ -646,63 +691,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		
 		return null;
 	}
-
-	public MovieManagerGUIChangeHandler getGUIChangeHandler() {
-		
-		Object guiChangeHandlerObject = SysUtil.getClass(internalConfig.getPlugin("guiChangeHandler"));
-		
-		if (guiChangeHandlerObject != null)
-			return (MovieManagerGUIChangeHandler) guiChangeHandlerObject;
-		
-		return null;
-	}
 	
-	
-	
-	
-	public class SystemSettings {
-		
-		
-		  /**
-	     * The current version of the program.
-	     **/
-	    private static final String _version = " 2.7"; //$NON-NLS-1$
-	    
-	    
-	    String appTitle = " MeD's Movie Manager v" + getVersion();
-	    String lookAndFeelTitle = "Look & Feel";
-	    
-	    /**
-	     * Returns the version.
-	     *
-	     * @return Program Version.
-	     **/
-	    public String getVersion() {
-	        return _version;
-	    }
-	  
-	    
-	    public String getLookAndFeelTitle() {
-	    	return lookAndFeelTitle;
-	    }
-	    
-	    public void setLookAndFeelTitle(String lookAndFeelTitle) {
-	    	this.lookAndFeelTitle = lookAndFeelTitle;
-	    }
-	    
-	      
-	    public String getAppTitle() {
-	    	return appTitle;
-	    }
-	    
-	    public void setAppTitle(String t) {
-	    	appTitle = t;
-	    }
-		
-	}
-	
-	
-	public final SystemSettings sysSettings = new SystemSettings();
 	
 	public void newDatabaseLoaded(NewDatabaseLoadedEvent evt) {
 		resetCoverAndQueries();
@@ -774,10 +763,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	/* If the display name is empty, it's probably an empty removable device */
 	public File getLastDVDDir() {
 
-		String displayName = SysUtil.getDriveDisplayName(lastDVDDir);
-
-		displayName = StringUtil.performExcludeParantheses(displayName, false);
-
+		String displayName = null;
+		
+		if (lastDVDDir != null) {
+			displayName = SysUtil.getDriveDisplayName(lastDVDDir);
+			displayName = StringUtil.performExcludeParantheses(displayName, false);
+		}
+		
 		if (displayName != null) {
 
 			if (!displayName.equals(""))
@@ -872,7 +864,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 
 	public String getCoversPath() {
-		return getCoversPath(MovieManager.getIt().getDatabase());
+		return getCoversPath(null);
 	}
 
 
@@ -922,6 +914,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		return new File(queriesPath + queriesFolder).getAbsolutePath();
 	}
 
+	
 	public String getQueriesFolder(Database database) {
 
 		if (database != null) {
