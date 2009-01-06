@@ -418,10 +418,7 @@ public class MovieManager {
     				}
     				return false;
     			}
-    			
-    			/* Resets the additonal info fields names stored in ModelAdditionalInfo */
-    			ModelAdditionalInfo.setExtraInfoFieldNamesChanged();
-
+    		
     			log.info("Loads the movies list"); //$NON-NLS-1$
 
     			ModelDatabaseSearch options = new ModelDatabaseSearch();
