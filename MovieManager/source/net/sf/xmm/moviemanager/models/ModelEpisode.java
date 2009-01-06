@@ -37,8 +37,8 @@ public class ModelEpisode extends ModelEntry {
 	/*The database key for this episode.*/
 	private int episodeKey;
 
-	private String episodeNumber;
-	private String seasonNumber;
+	private int episodeNumber = -1;
+	private int seasonNumber = -1;
 
 	private String episodeTitle = null;
 	
@@ -54,7 +54,6 @@ public class ModelEpisode extends ModelEntry {
 
 	public ModelEpisode(ModelEpisode model) {
 		copyData(model);
-		additionalInfo = new ModelAdditionalInfo(true);
 	}
 
 	/**
@@ -109,9 +108,14 @@ public class ModelEpisode extends ModelEntry {
 
 	public String getEpisodeTitle() {
 		
-		if (episodeTitle == null && getTitle() != null)
-			episodeTitle = "S" + seasonNumber + "E" + episodeNumber +  " - " + getTitle();
+		if (episodeTitle == null && getTitle() != null) {
 		
+			if (seasonNumber == -1)
+				episodeTitle = getTitle();
+			else {
+				episodeTitle = "S" + seasonNumber + "E" + episodeNumber +  (episodeNumber < 10 ? "   - " : " - ") + getTitle();
+			}
+		}
 		return episodeTitle;
 	}
 	
@@ -133,21 +137,21 @@ public class ModelEpisode extends ModelEntry {
 		
 		// Does not contain valid season/episode info
 		if (episodeKey < 10000) {
-			log.warn("episodeKey smaller than 10000:" + episodeKey);
+			//log.warn("Old episode with episodeKey smaller than 10000:" + episodeKey);
 			return;
 		}
 		
 		String tmp = String.valueOf(episodeKey);
-		seasonNumber = tmp.substring(0, tmp.length() - 4);		
-		episodeNumber = new Integer(tmp.substring(tmp.length() - 4, tmp.length())).toString();
+		seasonNumber = new Integer(tmp.substring(0, tmp.length() - 4)).intValue();		
+		episodeNumber = new Integer(tmp.substring(tmp.length() - 4, tmp.length())).intValue();
 	}
 	
 	
-	public String getEpisodeNumber() {
+	public int getEpisodeNumber() {
 		return episodeNumber; 
 	}
 	
-	public String getSeasonNumber() {
+	public int getSeasonNumber() {
 		return seasonNumber; 
 	}
 	
@@ -204,14 +208,11 @@ public class ModelEpisode extends ModelEntry {
 	}
 
 	public void updateAdditionalInfoData() {
-
-		if (additionalInfo != null && additionalInfo.hasOldExtraInfoFieldNames())
-			ModelAdditionalInfo.updateExtraInfoFieldNames();
 			
 		if (getKey() != -1) {
 			
 			ModelAdditionalInfo tmp = MovieManager.getIt().getDatabase().getAdditionalInfo(getKey(), true);
-
+		
 			if (tmp != null) {
 				setAdditionalInfo(tmp);
 			}
