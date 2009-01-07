@@ -27,6 +27,7 @@ import javax.swing.JDialog;
 
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMovies;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
+import net.sf.xmm.moviemanager.gui.DialogMovieInfo;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SwingWorker;
@@ -85,7 +86,7 @@ public class DatabaseImporterExporter {
 		return current;
 	}
 
-	/*Stops the importing process*/
+	/* Stops the importing process */
 	public void stop() {
 		canceled = true;
 	}
@@ -105,8 +106,7 @@ public class DatabaseImporterExporter {
 	 * The actual database import task.
 	 * This runs in a SwingWorker thread.
 	 */
-	class Importer extends MovieManagerCommandAddMultipleMovies {
-
+	class Importer {
 
 		ArrayList movielist = null;
 
@@ -136,27 +136,14 @@ public class DatabaseImporterExporter {
 
 				for (int i = 0; i < lengthOfTask; i++) {
 
-					cancel = false;
 					title = handler.getNextMovie(i);
 					
 					if (title != null && !title.equals("")) {
-
-						/* First resetting the info already present */
-
-						if (importSettings.multiAddIMDbSelectOption != -1) {
-
-							/* If the user cancels the imdb */
-							if (dropImdbInfo)
-								handler.setCancelled(true);
-
-							dropImdbInfo = false;
-						}
-
-						// cancellAll and cancel can be set from DlalogIMDB run from  executeCommandGetIMDBInfoMultiMovie
-						if (cancelAll || canceled)
+					
+						if (handler.isAborted())
 							break;
 
-						if (!cancel) {
+						if (!handler.isCancelled()) {
 
 							int ret = -1; 
 
@@ -168,6 +155,9 @@ public class DatabaseImporterExporter {
 								transferred.add(title);
 
 							current++;
+						}
+						else {// Reset settings
+							handler.setCancelled(false);
 						}
 					}
 					else {

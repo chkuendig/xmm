@@ -34,8 +34,6 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandImportExcel extends MovieManagerCommandImportExportHandler {
 
-
-
 	ModelMovie movie = null;
 
 	Object [][] tableData;
@@ -50,8 +48,6 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportExp
 		this.settings = settings;
 	}
 
-
-
 	public void execute() {
 
 		Object [][] data = readData();
@@ -65,6 +61,10 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportExp
 
 	public boolean isCancelled() {
 		return cancelled;
+	}
+
+	public boolean isAborted() {
+		return aborted;
 	}
 
 
@@ -97,11 +97,8 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportExp
 
 		if (title != null && !title.equals("")) {
 
-			/* First resetting the info already present */
-
 			if (settings.multiAddIMDbSelectOption != -1) {
-
-				executeCommandGetIMDBInfoMultiMovies(title, title, settings.multiAddIMDbSelectOption);
+				executeCommandGetIMDBInfoMultiMovies(title, title, settings.multiAddIMDbSelectOption, (ModelMovie) movieList.get(i));
 			}
 			return (String) ((ModelMovie) movieList.get(i)).getTitle();
 		}
@@ -131,14 +128,12 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportExp
 		log.debug("EXCEL import completetd");
 	}
 
-	//  Eetrieved the data from the table and stores it in movieList in super class.
+	//  Retrieved the data from the table and stores it in movieList in super class.
 	public void retrieveMovieList() {
 		tableData = dialogImportTable.retrieveValuesFromTable();
-		
 		titleColumnIndex = dialogImportTable.titleColumnIndex;
 	}
-
-
+	
 
 	// Returns the data read from excel file
 	public Object [][] readData() {

@@ -16,6 +16,7 @@ public class MovieManagerCommandImportExportHandler {
 
 	static Logger log = Logger.getRootLogger();
 	boolean cancelled = false;
+	boolean aborted = false;
 	
 	ModelMovieInfo modelMovieInfo = new ModelMovieInfo(false, true);
 	ModelMovie movie = null;
@@ -26,8 +27,14 @@ public class MovieManagerCommandImportExportHandler {
 	}
 	
 	public void setCancelled(boolean cancel) {
+		System.err.println("setCancelled:" + cancel);
 		cancelled = cancel;
 		modelMovieInfo.clearModel();
+	}
+		
+	public void setAborted(boolean abort) {
+		System.err.println("setAborted:" + abort);
+		aborted = abort;
 	}
 		
 	public void done() throws Exception {
@@ -36,6 +43,10 @@ public class MovieManagerCommandImportExportHandler {
 	
 	public boolean isCancelled() throws Exception {
 		throw new Exception("MovieManagerCommandImportExportHandler does not implement method isCancelled!");
+	}
+	
+	public boolean isAborted() throws Exception {
+		throw new Exception("MovieManagerCommandImportExportHandler does not implement method isAborted!");
 	}
 	
 	public int addMovie(int i) throws Exception {
@@ -59,20 +70,29 @@ public class MovieManagerCommandImportExportHandler {
 	}
 	
 	
-	
-	
 	/**
      * Gets the IMDB info for movies (multiAdd)
      **/
-    public void executeCommandGetIMDBInfoMultiMovies(String searchString, String filename, int multiAddSelectOption) {
+    public void executeCommandGetIMDBInfoMultiMovies(String searchString, String filename, int multiAddSelectOption, ModelMovie model) {
         
         /* Checks the movie title... */
         log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
         if (!searchString.equals("")) { //$NON-NLS-1$
-            DialogIMDB dialogIMDB = new DialogIMDB(modelMovieInfo.model, searchString, filename, null, multiAddSelectOption, null);
+            DialogIMDB dialogIMDB = new DialogIMDB(model, searchString, filename, null, multiAddSelectOption, null);
             
-            if (dialogIMDB.cancelSet || dialogIMDB.dropImdbInfoSet)
+            System.err.println("dialogIMDB.cancelSet:" + dialogIMDB.cancelSet);
+            System.err.println("dialogIMDB.dropImdbInfoSet:" + dialogIMDB.dropImdbInfoSet);
+            System.err.println("dialogIMDB.cancelAllSet:" + dialogIMDB.cancelAllSet);
+            
+            if (dialogIMDB.cancelSet/* || dialogIMDB.dropImdbInfoSet*/)
             	setCancelled(true);
+            
+            if (dialogIMDB.cancelAllSet)
+            	setAborted(true);
+            
+            
+            System.err.println("DirectedBy:" + model.getDirectedBy());
+           
             
         } else {
             DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.alert"), Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$

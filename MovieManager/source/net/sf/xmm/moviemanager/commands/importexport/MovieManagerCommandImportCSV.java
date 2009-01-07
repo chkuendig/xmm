@@ -103,7 +103,7 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportExpor
 
 			if (settings.multiAddIMDbSelectOption != -1) {
 
-				executeCommandGetIMDBInfoMultiMovies(title, title, settings.multiAddIMDbSelectOption);
+				executeCommandGetIMDBInfoMultiMovies(title, title, settings.multiAddIMDbSelectOption, (ModelMovie) movieList.get(i));
 			}
 			return (String) ((ModelMovie) movieList.get(i)).getTitle();
 		}
