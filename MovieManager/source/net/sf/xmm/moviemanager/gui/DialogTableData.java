@@ -89,7 +89,7 @@ public class DialogTableData extends JDialog {
 
 	JPopupMenu headerPopupMenu;
 
-	JPopupMenu tablePopupMenu = makeTablePopupMenu();
+	JPopupMenu tablePopupMenu = null;
 
 
 	public DialogTableData(JFrame parent, ModelImportExportSettings settings) {
@@ -263,6 +263,9 @@ public class DialogTableData extends JDialog {
 		if (!table.isRowSelected(row))
 			return;
 
+		if (tablePopupMenu == null)
+			tablePopupMenu = makeTablePopupMenu();
+		
 		SwingUtilities.invokeLater(new Runnable(){
 			public void run() {
 				tablePopupMenu.show((JTable) event.getSource(), x, y);
@@ -513,7 +516,7 @@ public class DialogTableData extends JDialog {
 				int [] rows = table.getSelectedRows();
 				DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
 
-				for (int i = rows.length-1; i >= 0; i--) {
+				for  (int i = rows.length-1; i >= 0; i--) {
 					tableModel.removeRow(rows[i]);  
 				}
 
@@ -521,7 +524,7 @@ public class DialogTableData extends JDialog {
 			}
 			else if ("OriginalColumnTitles".equals(((JMenuItem) e.getSource()).getActionCommand())) {
 				/* Putting row values in the header */
-
+	
 				int columnCount = table.getModel().getColumnCount();
 				int row = table.getSelectedRow();
 
@@ -531,7 +534,7 @@ public class DialogTableData extends JDialog {
 				ColumnGroup tmpGroup;
 
 				ArrayList columnGroups = cm.getColumnGroups();
-
+	
 				for (int i = 0; i < columnCount; i++) {
 					
 					tmpGroup = (ColumnGroup) columnGroups.get(i);
