@@ -177,7 +177,7 @@ public class DialogImport extends JDialog implements ActionListener {
 
 		enableSearchForImdbInfo = new JCheckBox("Get IMDb info");
 		enableSearchForImdbInfo.addActionListener(this);
-
+		
 		JPanel imdbPanel = new JPanel();
 
 		imdbPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," IMDb Dialog "), BorderFactory.createEmptyBorder(5,5,5,5)));
@@ -434,6 +434,19 @@ public class DialogImport extends JDialog implements ActionListener {
 
 		setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
 				(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
+
+	
+//doClick
+		
+		if (MovieManager.getConfig().getImportIMDbInfoEnabled())
+			enableSearchForImdbInfo.doClick();
+
+		switch (MovieManager.getConfig().getImportIMDbSelectOption()) {
+			case 0: {askButton.setSelected(true); break;}
+			case 1: {selectFirstHitButton.setSelected(true); break;}
+			case 2: {selectIfOnlyOneHitButton.setSelected(true); break;}
+		}
+		
 	}
 
 	JPanel makeListPanel() {
@@ -565,6 +578,16 @@ public class DialogImport extends JDialog implements ActionListener {
 	/*Saves the options to the MovieManager object*/
 	void executeSave() {
 
+		MovieManager.getConfig().setImportIMDbInfoEnabled(enableSearchForImdbInfo.isSelected());
+			
+		if (askButton.isSelected())
+			MovieManager.getConfig().setImportIMDbSelectOption(0);
+		if (selectFirstHitButton.isSelected())
+			MovieManager.getConfig().setImportIMDbSelectOption(1);
+		if (selectIfOnlyOneHitButton.isSelected())
+			MovieManager.getConfig().setImportIMDbSelectOption(2);
+					
+		
 		MovieManager.getConfig().setLastDialogImportType(getImportMode());
 
 		MovieManager.getConfig().setImportTextfilePath(textFilePath.getText());
