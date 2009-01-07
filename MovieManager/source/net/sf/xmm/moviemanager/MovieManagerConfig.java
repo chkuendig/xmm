@@ -293,7 +293,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String importCSVseparator = ",";
 	private String importExtremefilePath = "";
 	
-	/* Exportt */
+	private int importIMDbSelectOption = 0;
+	private boolean importIMDbInfoEnabled = true;
+	
+	/* Export */
 	private int lastDialogExportType = 0;
 		
 	private String exportTextfilePath = "";
@@ -1234,6 +1237,22 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		exportExcelFilePath = value;
 	}
 
+	public boolean getImportIMDbInfoEnabled() {
+		return importIMDbInfoEnabled;
+	}
+	
+	public void setImportIMDbInfoEnabled(boolean enabled) {
+		importIMDbInfoEnabled = enabled;
+	}
+	
+	public int getImportIMDbSelectOption() {
+		return importIMDbSelectOption;
+	}
+	
+	public void setImportIMDbSelectOption(int option) {
+		importIMDbSelectOption = option;
+	}
+	
 	public boolean getMultiAddListEnabled() {
 		return multiAddListEnabled;
 	}
@@ -2852,8 +2871,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 			
 			
-			
-			
 			value = (String) config.get("importTextfilePath:");
 
 			if (value != null) {
@@ -2890,7 +2907,17 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setImportExtremefilePath(value);
 			}
 			
+			value = (String) config.get("importIMDbInfoEnabled:");
+
+			if (value != null) {
+				setImportIMDbInfoEnabled(new Boolean(value).booleanValue());
+			}
 			
+			value = (String) config.get("importIMDbSelectOption:");
+
+			if (value != null) {
+				setImportIMDbSelectOption(Integer.parseInt(value));
+			}
 
 			value = (String) config.get("exportTextfilePath:");
 
@@ -3260,7 +3287,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 settings.append(lineSeparator);
 		 settings.append("importExtremefilePath:" + getImportExtremefilePath());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("importIMDbInfoEnabled:" + getImportIMDbInfoEnabled());
 
+		 settings.append(lineSeparator);
+		 settings.append("importIMDbSelectOption:" + getImportIMDbSelectOption());
+		 		 
 		 settings.append(lineSeparator);
 		 settings.append("useJTreeIcons:" + getUseJTreeIcons());
 
