@@ -59,14 +59,6 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportExp
 			setCancelled(true);
 	}
 
-	public boolean isCancelled() {
-		return cancelled;
-	}
-
-	public boolean isAborted() {
-		return aborted;
-	}
-
 
 	public int getMovieListSize() {
 
@@ -96,9 +88,9 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportExp
 		String title = ((ModelMovie) movieList.get(i)).getTitle();
 
 		if (title != null && !title.equals("")) {
-
+	
 			if (settings.multiAddIMDbSelectOption != -1) {
-				executeCommandGetIMDBInfoMultiMovies(title, title, settings.multiAddIMDbSelectOption, (ModelMovie) movieList.get(i));
+				executeCommandGetIMDBInfoMultiMovies(title, title, settings, (ModelMovie) movieList.get(i));
 			}
 			return (String) ((ModelMovie) movieList.get(i)).getTitle();
 		}
@@ -116,7 +108,7 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportExp
 		modelMovieInfo.setModel((ModelMovie) tmp, false, false);
 
 		try {
-			ret = modelMovieInfo.saveToDatabase(settings.addToThisList).getKey();
+			ret = modelMovieInfo.saveToDatabase(listToAddMovieTo).getKey();
 		} catch (Exception e) {
 			log.error("Saving to database failed.", e);
 		}
