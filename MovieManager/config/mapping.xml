@@ -90,7 +90,7 @@
 	</field>
 	
 	
-	<field name="ModelAdditionalInfo" type="net.sf.xmm.moviemanager.models.ModelAdditionalInfo" get-method="getAdditionalInfo" set-method="setAdditionalInfo">
+	<field name="ModelAdditionalInfo" type="net.sf.xmm.moviemanager.models.ModelAdditionalInfo" get-method="getUpdatedAdditionalInfo" set-method="setAdditionalInfo">
 	  <bind-xml name="ModelAdditionalInfo"/>
 	</field>
 	
@@ -108,8 +108,16 @@
 	  <bind-xml name="movieKey" location="GeneralInfo"/>
 	</field>
 	
+	<field name="episodeKey" type="integer">
+	  <bind-xml name="episodeKey" location="GeneralInfo"/>
+	</field>
+	
 	<field name="episodeNumber" type="integer">
 	  <bind-xml name="episodeNumber" location="GeneralInfo"/>
+	</field>
+	
+	<field name="seasonNumber" type="integer">
+	  <bind-xml name="seasonNumber" location="GeneralInfo"/>
 	</field>
 	
 	<field name="urlKey" type="string">
@@ -193,7 +201,7 @@
 	</field>
 	
 	
-	<field name="ModelAdditionalInfo" type="net.sf.xmm.moviemanager.models.ModelAdditionalInfo" get-method="getAdditionalInfo">
+	<field name="ModelAdditionalInfo" type="net.sf.xmm.moviemanager.models.ModelAdditionalInfo" get-method="getUpdatedAdditionalInfo" set-method="setAdditionalInfo">
 	  <bind-xml name="ModelAdditionalInfo"/>
 	</field>
 	
@@ -272,13 +280,21 @@
 	
 	
 	<field name="extraInfoFieldNames" type="string" collection="arraylist" get-method="getExtraInfoFieldNames2" set-method="addExtraInfoFieldName">
-	  <bind-xml name="FieldNames" location="ExtraInfo" node="element"/>
+	  <bind-xml name="FieldName" location="ExtraInfo" node="element"/>
 	</field>
-	
-	<field name="extraInfoFieldValues" type="string" collection="arraylist" get-method="getExtraInfoFieldValues"  set-method="addExtraInfoFieldValue">
-	  <bind-xml name="FieldValues" location="ExtraInfo" node="element"/>
+
+
+	<field name="extraInfoFieldValuesMap" collection="map">
+	  <bind-xml name="extraInfoField" location="ExtraInfo" >
+		<class name="org.exolab.castor.mapping.MapItem">
+		  <field name="key" type="java.lang.String">
+			<bind-xml node="attribute"/>
+		  </field>
+		  <field name="value" type="java.lang.String"/>
+		</class>
+	  </bind-xml>
 	</field>
-	
+
   </class>
   
   <class name="net.sf.xmm.moviemanager.models.ModelSeries">
@@ -300,6 +316,10 @@
 	
 	<map-to xml="ModelExportXML" />
 	
+	<field name="movieManagerVersion" type="java.lang.String">
+	  <bind-xml name="MovieManager-version" />
+	</field>
+
 	<field name="movies" type="net.sf.xmm.moviemanager.models.ModelMovie" collection="arraylist">
 	  <bind-xml name="ModelMovie" />
 	</field>
