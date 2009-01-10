@@ -750,7 +750,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		storeAllAvailableAkaTitles = new JCheckBox("Store all available aka titles");
 		includeAkaLanguageCodes = new JCheckBox("Include comments and language codes");
-		useLanguageSpecificTitle = new JCheckBox("Replace original title with aka title (with languageCode):");
+		useLanguageSpecificTitle = new JCheckBox("Replace original title with aka title with the following language code:");
 
 		ArrayList langCodesList = new ArrayList(150);
 		int index = 0;
