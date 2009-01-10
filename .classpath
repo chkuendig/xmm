@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="MovieManager/lib/cobra/js.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/driveinfo/sfc.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/BrowserLauncher2-10rc4.jar"/>
-	<classpathentry kind="lib" path="MovieManager/lib/castor-1.0.5.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/commons-collections-3.2.jar"/>
@@ -30,5 +29,6 @@
 	<classpathentry kind="lib" path="MovieManager/lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/LookAndFeels/oalnf.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/LookAndFeels/skinlf.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/castor-1.2.jar"/>
 	<classpathentry kind="output" path="MovieManager"/>
 </classpath>
