@@ -73,8 +73,6 @@ public class MovieManagerCommandExportExcel extends MovieManagerCommandImportExp
 		}
 	}
 	
-
-	
 	
 	public void execute() {
 			
@@ -86,11 +84,7 @@ public class MovieManagerCommandExportExcel extends MovieManagerCommandImportExp
 		if (dialogExportTable.cancelled)
 			setCancelled(true);
 	}
-	
-	public boolean isCancelled() {
-		return cancelled;
-	}
-	
+
 
 	public void retrieveMovieList() throws Exception {
 		tableData = dialogExportTable.retrieveValuesFromTable();
