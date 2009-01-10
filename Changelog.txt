@@ -4,7 +4,29 @@ Changelog - MeD's Movie Manager
 ========================================
 
 
-Version 2.7 (17-des-2008)
+Version 2.7.2 (10-jan-2009)
+ 
+ - Bug fixes:
+   - 'Update IMDb Info' function could remove the additional info on some movies.
+   - It was not possible to retrieve DVD Info twice in one session.
+   - Add multiple movies function now saves the Cover from IMDb.
+   - Multiple bugs have been fixed in the import function.
+   	 - Marking each column with correct data field should now work 100%.
+	 - Can now when importing retrieve IMDb info.
+	 - Abort and Cancel when importing IMDb info was switched.
+   - Import function now has the option to add movies that weren't found at IMDb in a list 'Importer-skipped'. 
+   - Fixed som stuff when adding episode entries from IMDb.
+   - Saving movie titles from IMDb of specific language set in settings now works.
+
+
+Version 2.7.1 (20-des-2008)
+ 
+ - Bug fixes:
+   - Old episodes will now look like they used to without "SnullEnull" in the movie list.
+   - Hopefully fixed some issues causing crashes.
+
+
+Version 2.7 (18-des-2008)
 
  - General improvements:
    - TV.COM support has been replaced by IMDb. There should be no big changes 
