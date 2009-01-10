@@ -80,52 +80,6 @@ public class MovieManagerCommandExport implements ActionListener{
 	}
 
 	
-	
-	
-	/* 
-	
-	 //Opens a filechooser and returns the absolute path to the selected file
-	private String getCoverDirectory1(String databaseFilePath) {
-
-		// Opens the Open dialog... 
-		ExtendedFileChooser fileChooser = new ExtendedFileChooser();
-		try {
-			fileChooser.setFileSelectionMode(ExtendedFileChooser.DIRECTORIES_ONLY);
-			File path;
-
-			if (!databaseFilePath.equals("") && (path = new File(databaseFilePath)).exists()) //$NON-NLS-1$
-				fileChooser.setCurrentDirectory(path);
-			else if (MovieManager.getConfig().getLastFileDir() != null)
-				fileChooser.setCurrentDirectory(MovieManager.getConfig().getLastFileDir());
-
-			fileChooser.setDialogTitle(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.title")); //$NON-NLS-1$
-			fileChooser.setApproveButtonText(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.approve-button.text")); //$NON-NLS-1$
-			fileChooser.setApproveButtonToolTipText(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.approve-button.tooltip")); //$NON-NLS-1$
-			fileChooser.setAcceptAllFileFilterUsed(false);
-
-			int returnVal = fileChooser.showOpenDialog(this);
-			if (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
-				// Gets the path... 
-				String filepath = fileChooser.getSelectedFile().getAbsolutePath();
-
-				if (!(new File(filepath).exists())) {
-					throw new Exception("Covers directory not found."); //$NON-NLS-1$
-				}
-				// Sets the last path... 
-				MovieManager.getConfig().setLastFileDir(new File(filepath));
-				return filepath;
-			}
-		}
-		catch (Exception e) {
-			log.error("", e); //$NON-NLS-1$
-		}
-		// Sets the last path... 
-		MovieManager.getConfig().setLastFileDir(fileChooser.getCurrentDirectory());
-		return ""; //$NON-NLS-1$
-	}
-
-/*
-
 	/**
 	 * Invoked when an action occurs.
 	 **/
