@@ -46,7 +46,6 @@ public class MovieManagerCommandExportCSV extends MovieManagerCommandImportExpor
 	
 	static Logger log = Logger.getRootLogger();
 
-	
 	File output;
 	
 	Object [][] data = null;
@@ -66,6 +65,7 @@ public class MovieManagerCommandExportCSV extends MovieManagerCommandImportExpor
 	MovieManagerCommandExportCSV(ModelImportExportSettings exportSettings) {
 		settings = exportSettings;
 		csvp = new CSVPrinter(writer);
+		csvp.changeDelimiter(exportSettings.csvSeparator);
 	}
 	
 	
@@ -80,11 +80,7 @@ public class MovieManagerCommandExportCSV extends MovieManagerCommandImportExpor
 		
 	}
 	
-	public boolean isCancelled() {
-		return cancelled;
-	}
-	
-
+		
 	public void retrieveMovieList() throws Exception {
 		
 		tableData = dialogExportTable.retrieveValuesFromTable();
