@@ -38,8 +38,6 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportExpo
 	
 	static Logger log = Logger.getRootLogger();
 	
-	boolean cancelled = false;
-	
 	ModelImportExportSettings importSettings;
 	
 	ArrayList movieList = null;
@@ -63,10 +61,6 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportExpo
 		//GUIUtil.showAndWait(importTable, true);
 	}
 	
-	public boolean isCancelled() {
-		return cancelled;
-	}
-
 	
 	public int getMovieListSize() {
 		
@@ -91,7 +85,7 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportExpo
      	modelMovieInfo.setTitle(title);
      	
      	 try {
-     		 key = (modelMovieInfo.saveToDatabase(importSettings.addToThisList)).getKey();
+     		 key = (modelMovieInfo.saveToDatabase(listToAddMovieTo)).getKey();
           } catch (Exception e) {
               log.error("Saving to database failed.", e);
               key = -1; 
