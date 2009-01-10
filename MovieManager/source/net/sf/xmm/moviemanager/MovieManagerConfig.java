@@ -2861,15 +2861,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("lastDialogExportType:");
 
 			if (value != null) {
-				setLastDialogImportType(Integer.parseInt(value));
+				setLastDialogExportType(Integer.parseInt(value));
 			}
 			
 			value = (String) config.get("lastDialogImportType:");
 
 			if (value != null) {
-				setLastDialogExportType(Integer.parseInt(value));
+				setLastDialogImportType(Integer.parseInt(value));
 			}
-			
 			
 			value = (String) config.get("importTextfilePath:");
 
