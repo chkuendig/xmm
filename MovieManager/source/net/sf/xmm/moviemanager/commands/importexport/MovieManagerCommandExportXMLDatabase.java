@@ -51,8 +51,7 @@ public class MovieManagerCommandExportXMLDatabase extends MovieManagerCommandImp
 	static Logger log = Logger.getRootLogger();
 
 	File output;
-	boolean cancelled = false;
-
+	
 	ArrayList movieList = null;
 
 	ModelImportExportSettings importSettings;
@@ -68,11 +67,6 @@ public class MovieManagerCommandExportXMLDatabase extends MovieManagerCommandImp
 	public void execute() {
 
 	}
-
-	public boolean isCancelled() {
-		return cancelled;
-	}
-
 
 	public void retrieveMovieList() throws Exception {
 
