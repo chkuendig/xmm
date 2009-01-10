@@ -71,7 +71,6 @@ public class ModelImportExportSettings {
     } 
     
     
-    //public JTable table;
     
     public ModelImportExportSettings() {
     	setImportTypeValues();
@@ -80,15 +79,20 @@ public class ModelImportExportSettings {
     
         
     public int multiAddIMDbSelectOption = -1;
+  
+    
     public int mode = IMPORT_MODE_TEXT;
     public boolean overwriteWithImdbInfo = false;
+    
     public String addToThisList = null;
+    public String skippedListName = "Importer-skipped";
+    
     public String filePath = "";
     private File file = null;
     public boolean extremeOriginalLanguage = true;
     public String coverPath = "";
     
-    public String csvSeparator = "";
+    public char csvSeparator = ',';
     public String textEncoding = null;
     
     public String getFilePath() {
@@ -106,7 +110,7 @@ public class ModelImportExportSettings {
     	file = f;
     }
     
-    public String getCSVSeparator() {
+    public char getCSVSeparator() {
     	return csvSeparator;	
     }
     
