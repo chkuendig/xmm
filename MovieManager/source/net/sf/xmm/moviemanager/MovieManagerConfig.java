@@ -885,10 +885,21 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/* Relative to database location - incompatible with MySQL */
 		else if (getUseRelativeCoversPath() == 1 && database != null && !database.isMySQL()) {
 			String dbPath = database.getPath();
-			dbPath = dbPath.substring(0, dbPath.lastIndexOf(SysUtil.getDirSeparator()));
+			
+			if (dbPath != null && dbPath.indexOf(SysUtil.getDirSeparator()) != -1) {
+				dbPath = dbPath.substring(0, dbPath.lastIndexOf(SysUtil.getDirSeparator()));
+			}
+			
 			coversPath = dbPath + File.separator;
 		}
 		
+		if (new File(coversPath + coversFolder).isDirectory())
+			return new File(coversPath + coversFolder).getAbsolutePath();
+		else if (new File(coversFolder).isDirectory())
+			return new File(coversFolder).getAbsolutePath();
+		else if (new File(coversPath).isDirectory())
+			return new File(coversPath).getAbsolutePath();
+			
 //		 May not be replaced by "new File(coversPath, coversFolder)"
 		return new File(coversPath + coversFolder).getAbsolutePath();
 	}
@@ -908,10 +919,20 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/* Relative to database location - incompatible with MySQL */
 		else if (getUseRelativeQueriesPath() == 1 && database != null && !database.isMySQL()) {
 			String dbPath = database.getPath();
-			dbPath = dbPath.substring(0, dbPath.lastIndexOf(SysUtil.getDirSeparator()));
 			
+			if (dbPath != null && dbPath.indexOf(SysUtil.getDirSeparator()) != -1) {
+				dbPath = dbPath.substring(0, dbPath.lastIndexOf(SysUtil.getDirSeparator()));
+			}
+							
 			queriesPath = dbPath + File.separator;
 		}
+		
+		if (new File(queriesPath + queriesFolder).isDirectory())
+			return new File(queriesPath + queriesFolder).getAbsolutePath();
+		else if (new File(queriesFolder).isDirectory())
+			return new File(queriesFolder).getAbsolutePath();
+		else if (new File(queriesPath).isDirectory())
+			return new File(queriesPath).getAbsolutePath();
 		
 		// May not be replaced by "new File(queriesPath, queriesFolder)"
 		return new File(queriesPath + queriesFolder).getAbsolutePath();
