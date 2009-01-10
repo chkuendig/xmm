@@ -96,7 +96,7 @@ public class DialogTableImport extends DialogTableData {
 					for (int i = 0; i < columnCount; i++ ) {
 						newColumn = columnModel.getColumn(i);
 						
-						if ("Title".equals(newColumn.getHeaderValue().toString()))
+						if (newColumn.getHeaderValue() != null && newColumn.getHeaderValue() instanceof FieldModel && ((FieldModel) newColumn.getHeaderValue()).table.equals("General Info") && "Title".equals(newColumn.getHeaderValue().toString()))
 							titleFound = true;
 					}
 					

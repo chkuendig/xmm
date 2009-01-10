@@ -64,7 +64,7 @@ public class DialogTableExport extends DialogTableData {
 			int rowLen = data.length;
 			int colsLen = data[0].length;
 
-			Object [] emptyColumnNames = new Object[rowLen];
+			Object [] emptyColumnNames = new Object[colsLen];
 
 			for (int i = 0; i < emptyColumnNames.length; i++)
 				emptyColumnNames[i] = " ";
@@ -75,11 +75,10 @@ public class DialogTableExport extends DialogTableData {
 			tableModel.setDataVector(tableData, emptyColumnNames);
 
 			table.setModel(tableModel);
-
-
+	
 			GroupableTableColumnModel cm = (GroupableTableColumnModel) table.getColumnModel();
 			ColumnGroup tmpGroup;
-
+			
 			for (int i = 0; i < colsLen; i++) {
 				tmpGroup = new ColumnGroup(" ");
 				tmpGroup.add(cm.getColumn(i));
@@ -154,7 +153,7 @@ public class DialogTableExport extends DialogTableData {
 				}
 					
 				fieldModel = (FieldModel) o;
-
+	
 				// column has been assigned an info field 
 				if (!fieldModel.toString().trim().equals("")) {
 					columns.add(new Integer(columnIndex));

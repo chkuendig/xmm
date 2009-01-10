@@ -306,7 +306,10 @@ public class DialogTableData extends JDialog {
 		String field;
 		String value;
 		
-		// The inital index this column belongs to
+		TableColumn assignedTableColumn = null;
+		int assignedTableColumnIndex = -1;
+		
+		// The initial index this column belongs to in the data matrix
 		int columnIndex;
 		
 		TableStringCheckBoxMenuItem checkBox = null;
@@ -461,44 +464,63 @@ public class DialogTableData extends JDialog {
 						
 			TableColumn newColumn = columnModel.getColumn(currentColumn);
 			TableStringCheckBoxMenuItem src = (TableStringCheckBoxMenuItem) e.getSource();
-
-			// Column is already asigned a field
-			if (newColumn.getHeaderValue() != null) {
-				
-				if (newColumn.getHeaderValue() instanceof FieldModel)
-					((FieldModel) newColumn.getIdentifier()).checkBox.setSelected(false);
-			}
-			//newColumn
-			
-			newColumn.setHeaderValue(src.getFieldModel());
-			
+	
+			FieldModel oldColumnField = null;
 			int oldModelIndex = -1;
 			
-			/* Already assigned on a different column */
-			if (src.getState()) {
-
-				Enumeration enumeration = columnModel.getColumns();
-				TableColumn oldColumn;
-
-				while (enumeration.hasMoreElements()) {
-					oldColumn = (TableColumn) enumeration.nextElement();
-
-					if (oldColumn.getHeaderValue().equals(src.getFieldModel())) {
-						oldModelIndex = oldColumn.getModelIndex();
+			FieldModel sourceFieldModel = src.getFieldModel();
+			
+			
+			// Column is already assigned a field
+			if (newColumn.getHeaderValue() != null) {
+				
+				if (newColumn.getHeaderValue() instanceof FieldModel) {
+					oldColumnField = (FieldModel) newColumn.getHeaderValue();
+					
+					if (!oldColumnField.equals(sourceFieldModel)) {
+						oldColumnField.assignedTableColumn.setHeaderValue(null);
+						oldColumnField.assignedTableColumn = null;
 						
-						/* Removing the title */
-						if (oldColumn.equals(newColumn)) {
-							newColumn.setHeaderValue("");
-						}
-						else {
-							oldColumn.setHeaderValue("");
-						}
-						src.setState(false);
-						break;
+						oldModelIndex = oldColumnField.assignedTableColumnIndex;
+						oldColumnField.assignedTableColumnIndex = -1;
+						oldColumnField.checkBox.setState(false);
 					}
 				}
 			}
+			
+			
+			/* Already assigned on a different column */
+			if (src.getState()) {
+				
+				// It's already assigned on this column. Therefore remove/deselect
+				if (newColumn.equals(sourceFieldModel.assignedTableColumn)) {
+					newColumn.setHeaderValue(null);
+					src.setState(true);
+				}
+				else {
 					
+					// Remove header from old column
+					if (sourceFieldModel.assignedTableColumn != null) {
+	
+						sourceFieldModel.assignedTableColumn.setHeaderValue(null);
+						oldModelIndex = sourceFieldModel.assignedTableColumnIndex;
+						
+						// Must set to false, because when it was clicked it was already armed, it will be unchecked automatically
+						// This reverses the 'uncheck'
+						src.setState(false);
+					}
+
+					newColumn.setHeaderValue(src.getFieldModel());			
+					src.getFieldModel().assignedTableColumn = newColumn;
+					
+					src.getFieldModel().assignedTableColumnIndex = currentColumn;
+				}
+			}
+			else {
+				newColumn.setHeaderValue(src.getFieldModel());			
+				src.getFieldModel().assignedTableColumn = newColumn;
+				src.getFieldModel().assignedTableColumnIndex = currentColumn;
+			}
 			
 			updateColumnData(oldModelIndex, currentColumn, src.getFieldModel().getInitialColumnindex());
 			
