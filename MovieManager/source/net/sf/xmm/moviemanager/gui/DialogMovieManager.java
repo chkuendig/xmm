@@ -176,7 +176,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     ExtendedJTree moviesList;
     ExtendedTreeCellRenderer treeCellRenderer;
     
-    JComboCheckBox comboBoxFilter;
+   public JComboCheckBox comboBoxFilter;
     JLabel coverLabel;
     JLabel colourField;
     JLabel colourLabel;
@@ -944,8 +944,13 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	/* All done. */
     	log.debug("Creation of the Filter done."); //$NON-NLS-1$
 
-    	filter.setPreferredSize(new Dimension(255, 100));
-    	filter.setSize(255, 200);
+    	Dimension filterDim = new Dimension(255, 37);
+    		
+    	filter.setPreferredSize(filterDim);
+    	filter.setMaximumSize(filterDim);
+    	filter.setMinimumSize(filterDim);
+    	filter.setSize(filterDim);
+    	
     	return filter;
     }
 
