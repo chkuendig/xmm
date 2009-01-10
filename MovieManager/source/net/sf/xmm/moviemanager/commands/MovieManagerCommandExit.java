@@ -24,11 +24,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.Database;
 
 public class MovieManagerCommandExit implements ActionListener {
 
+	static Logger log = Logger.getRootLogger();
+	
     /**
      * Executes the command.
      **/
@@ -37,7 +41,7 @@ public class MovieManagerCommandExit implements ActionListener {
 		// If any notes have been changed, they will be saved before exiting
 		MovieManagerCommandSaveChangedNotes.execute();
 			
-		MovieManager.log.debug("Shutting down...");
+		log.debug("Shutting down...");
 
 		/* Finalizes the main frame... */
 		MovieManager.getDialog().finalize();
@@ -62,10 +66,10 @@ public class MovieManagerCommandExit implements ActionListener {
 			type = db.getDatabaseType();
 		}
 
-		MovieManager.log.debug("Finalized " + type + " database in " + (System.currentTimeMillis() - time) + " ms.");
+		log.debug("Finalized " + type + " database in " + (System.currentTimeMillis() - time) + " ms.");
 
 		/* Writes the date. */
-		MovieManager.log.debug("Log End: "+new Date(System.currentTimeMillis()));
+		log.debug("Log End: "+new Date(System.currentTimeMillis()));
 
 		MovieManager.exit();
 	}
