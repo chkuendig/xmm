@@ -713,6 +713,8 @@ public class DialogIMDB extends JDialog {
     			time = System.currentTimeMillis();
 
     			getIMDbInfo(modelEntry, model.getUrlID());
+    			ModelMovieInfo.executeTitleModification(modelEntry);
+    			
     			dispose();
     		}
     	}
