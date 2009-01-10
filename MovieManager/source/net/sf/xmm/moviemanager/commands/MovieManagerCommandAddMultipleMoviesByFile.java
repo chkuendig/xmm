@@ -43,9 +43,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	static Logger log = Logger.getRootLogger();
 
 	String[] stringFiles;
-
-	//ArrayList fileList = null;
-
+	
 	ModelMovieInfo movieInfoModel = null;
 
 	String excludeString;
@@ -75,7 +73,8 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		MovieManagerCommandSaveChangedNotes.execute();
 
 		movieInfoModel = new ModelMovieInfo(false, true);
-
+		movieInfoModel.setSaveCover(true);
+		
 		cancelAll = false;
 
 		damm = new DialogAddMultipleMovies();
@@ -210,6 +209,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 			else {
 				try {
 					boolean status = movieInfoModel.saveCoverToFile();
+					
 				} catch (Exception e) {
 					log.warn("Exception: " + e.getMessage()); //$NON-NLS-1$
 				}
