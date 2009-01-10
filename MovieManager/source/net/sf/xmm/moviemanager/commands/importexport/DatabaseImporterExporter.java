@@ -140,7 +140,7 @@ public class DatabaseImporterExporter {
 					
 					if (title != null && !title.equals("")) {
 					
-						if (handler.isAborted())
+						if (handler.isAborted() || canceled)
 							break;
 
 						if (!handler.isCancelled()) {
