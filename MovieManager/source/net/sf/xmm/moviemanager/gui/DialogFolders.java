@@ -894,8 +894,8 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     				if (relativeQueriesProgram.isSelected()) {
 
     					if (new File(queriesPath).isDirectory() && (new File(queriesPath).getAbsolutePath().indexOf(SysUtil.getUserDir()) == -1)) {
-    						textFieldCovers.setBackground(invalidPath);
-    						textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert.queries-inside-install.message"));
+    						textFieldQueries.setBackground(invalidPath);
+    						textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert.queries-inside-install.message"));
     						return;
     					}
 
