@@ -6,6 +6,9 @@ Changelog - MeD's Movie Manager
 
 Version 2.7.2 (10-jan-2009)
  
+ - General improvements:
+   - Added a new theme 'A Touch of Green' for the HTML panel. 
+
  - Bug fixes:
    - 'Update IMDb Info' function could remove the additional info on some movies.
    - It was not possible to retrieve DVD Info twice in one session.
