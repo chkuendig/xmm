@@ -452,7 +452,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		includeOrExcludeStringsAndRegex.add(regexTextField,   "1, 1");
 		includeOrExcludeStringsAndRegex.add(regexNegate,  "2, 1");
 
-		filterOutDuplicates = new JCheckBox("Filter out duplicate media files"); 
+		filterOutDuplicates = new JCheckBox("Filter out media files already in database"); 
 		filterOutDuplicates.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
