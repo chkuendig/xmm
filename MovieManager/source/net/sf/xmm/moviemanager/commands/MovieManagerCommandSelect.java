@@ -812,8 +812,10 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		if (!nocover)
 			coverFile = getTempCoverFile(coverFile);
 		
-		String coverPath = coverFile.toURI().toString();
-		processTemplateCover(template, coverPath, coverDim);
+		if (coverFile != null) {
+			String coverPath = coverFile.toURI().toString();
+			processTemplateCover(template, coverPath, coverDim);
+		}
 	}
 	
 		
