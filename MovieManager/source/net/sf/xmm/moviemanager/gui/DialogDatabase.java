@@ -616,7 +616,6 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		executeSave();
 
 		final ProgressBean worker = new ProgressBeanImpl() {
-		//Runnable runWorker = new Runnable() {
 		
 			public void run() {
 
@@ -751,10 +750,15 @@ public class DialogDatabase extends JDialog implements ActionListener {
     	Database database = null;
 
     	String path = getPath();
-
     	String parentPath = path.substring(0, path.lastIndexOf(File.separator) +1);
-
-    	if (!databaseType.equals("MySQL")) { //$NON-NLS-1$
+	
+    	if (! new File(parentPath).isDirectory()) {
+    		DialogAlert alert = new DialogAlert(dialogDatabase, "Error", "The directory does not exist");
+    		GUIUtil.show(alert, true);
+    		return null;
+    	}
+    	
+     	if (!databaseType.equals("MySQL")) { //$NON-NLS-1$
     		/* Creates the covers folder... */
     		File coversDir = new File(parentPath + "Covers"); //$NON-NLS-1$
     		if (!coversDir.exists() && !coversDir.mkdir()) {
