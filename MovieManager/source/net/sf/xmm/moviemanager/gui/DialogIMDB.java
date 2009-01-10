@@ -586,23 +586,33 @@ public class DialogIMDB extends JDialog {
     private int executeCommandMultipleMoviesSelectCheck(int listSize) {
         
         /* checks the property settings entered in the multi add movie preferences*/
-        
-        if (multiAddSelectOption != 0) {
+      	
+        if (multiAddSelectOption > 0) {
             
-            /*Select first hit no matter*/
-            if ((multiAddSelectOption == 1) && (listSize > 0)) {
-                executeCommandSelect();
-                return 0;
-            }
-            
-            /*Select first if only one hit*/
-            if (multiAddSelectOption == 2) {
-                if (listSize == 1) {
-                    getMoviesList().setSelectedIndex(0);
-                    executeCommandSelect();
-                    return 0;
-                }
-            }
+        	// No hits on IMDb
+        	if (listSize == 0) {
+        		
+        		// Show search dialog 
+        		if (multiAddSelectOption == 1 || multiAddSelectOption == 3)
+        			return 1;
+        		// Add to skipped-list
+        		else {
+        			dropImdbInfoSet = true;
+        			return 0;
+        		}
+        	}
+        	else
+        	// If only one hit option
+        	if (listSize == 1 && multiAddSelectOption == 3 || multiAddSelectOption == 4) {
+        		executeCommandSelect();
+        		return 0;
+        	}
+        	else
+        	// Option 'select first hit' and there are more than 0 hits
+        	if (multiAddSelectOption == 2 || multiAddSelectOption == 3) {
+        		executeCommandSelect();
+        		return 0;
+        	}            
         }
         return 1;
     }
