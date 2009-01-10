@@ -38,8 +38,6 @@ import com.Ostermiller.util.LabeledCSVParser;
 
 public class MovieManagerCommandImportCSV extends MovieManagerCommandImportExportHandler {
 
-
-
 	ModelMovie movie = null;
 
 	Object [][] data;
@@ -53,7 +51,6 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportExpor
 	}
 
 
-
 	public void execute() {
 
 		Object [][] data = readData();
@@ -63,10 +60,6 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportExpor
 		
 		if (dialogImportTable.cancelled)
 			setCancelled(true);
-	}
-
-	public boolean isCancelled() {
-		return cancelled;
 	}
 
 
@@ -103,7 +96,7 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportExpor
 
 			if (settings.multiAddIMDbSelectOption != -1) {
 
-				executeCommandGetIMDBInfoMultiMovies(title, title, settings.multiAddIMDbSelectOption, (ModelMovie) movieList.get(i));
+				executeCommandGetIMDBInfoMultiMovies(title, title, settings, (ModelMovie) movieList.get(i));
 			}
 			return (String) ((ModelMovie) movieList.get(i)).getTitle();
 		}
@@ -121,7 +114,7 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportExpor
 		modelMovieInfo.setModel((ModelMovie) tmp, false, false);
 
 		try {
-			ret = modelMovieInfo.saveToDatabase(settings.addToThisList).getKey();
+			ret = modelMovieInfo.saveToDatabase(listToAddMovieTo).getKey();
 		} catch (Exception e) {
 			log.error("Saving to database failed.", e);
 		}
@@ -153,10 +146,8 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportExpor
 			else
 				reader = new InputStreamReader(new FileInputStream(settings.getFile()), settings.getTextEncoding());
 			
-			if (settings.csvSeparator.length() == 0)
-				cvsParser = new CSVParser(reader);
-			else
-				cvsParser = new CSVParser(reader, settings.csvSeparator.charAt(0));
+				
+			cvsParser = new CSVParser(reader, settings.csvSeparator);
 			//ExcelCSVParser cvsParser = new ExcelCSVParser(new FileReader(file));
 
 			cvsParser = new LabeledCSVParser(cvsParser);
