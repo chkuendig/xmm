@@ -31,13 +31,14 @@
   <property name="dist"  location="dist"/>
   <property name="izpack.dir" location="izpack"/>
 
-  <property name="version"  value="2.7 Beta 1"/>
-  <property name="versionName"  value="2.7.Beta.1"/>
+  <property name="version"  value="2.7.2"/>
+  <property name="versionName"  value="2.7.2"/>
 
   <property name="base" value="MovieManager/"/>
   
-  <property name="executers" value="MovieManager.exe, MovieManager.jar, Applet.html"/>
   <property name="jasperFiles" value="*.jasper, *.png, *.jrxml"/>
+  
+  <property name="mainFiles" value="MovieManager.exe, MovieManager.jar, Applet.html, Icon.ico"/>
   
   <property name="infoFiles" value="License/, Readme.rtf, Readme.txt, Changelog.txt"/>
  
@@ -56,42 +57,23 @@
 										   LookAndFeels/OfficeLnFs_2.7.jar,
 										   LookAndFeels/InfoNode-1.5.jar,
 										   LookAndFeels/CLooks_13.jar,
-										   LookAndFeels/lipstikLF-RC2.jar,
+										   LookAndFeels/lipstikLF-1.1.jar,
 										   LookAndFeels/squareness.2.3.0.jar,
-										   LookAndFeels/PgsLookAndFeel-1.0.1.jar,
-										   LookAndFeels/substance-lite-4.1.jar
+										   LookAndFeels/PgsLookAndFeel-1.1.jar,
+										   LookAndFeels/substance-lite-4.1.jar,
+										   LookAndFeels/Oyoaha_Theme_Packs/,
+										   LookAndFeels/Skinlf_Theme_Packs/
 										   "/>
   
-  
- 
-  <property name="library_file_list" value="*.jar,
-											*.dll,
-											Required-libraries.txt,
-											cobra/, 
-											driveinfo/, 
-											drivers/*.jar, 
-											mac/, 
-											LookAndFeels/oalnf.jar,
-											LookAndFeels/skinlf.jar,
-											LookAndFeels/JTattoo.1.2.4.jar,
-											LookAndFeels/kunststoff.jar,
-											LookAndFeels/JGoodies-2.1.4.jar,
-											LookAndFeels/OfficeLnFs_2.7.jar,
-											LookAndFeels/InfoNode-1.5.jar,
-											LookAndFeels/CLooks_13.jar,
-											LookAndFeels/lipstikLF-RC2.jar,
-											LookAndFeels/squareness.2.3.0.jar,
-											LookAndFeels/PgsLookAndFeel-1.0.1.jar,
-											LookAndFeels/substance-lite-4.1.jar
-											"/>
   
   
   <property name="template_files" value="Simple_Virtue/Simple_Virtue.css,
 										 Simple_Virtue/Simple_Virtue.html,
 										 Simple_Virtue/template.txt,
-										 
 										 Simple_Virtue/Styles/A_Touch_of_Blue.css,
 										 Simple_Virtue/Styles/A_Touch_of_Blue.style.txt,
+										 Simple_Virtue/Styles/A_Touch_of_Green.css,
+										 Simple_Virtue/Styles/A_Touch_of_Green.style.txt,
 										 Simple_Virtue/Styles/Blue_Motion.css,
 										 Simple_Virtue/Styles/Blue_Motion.png,
 										 Simple_Virtue/Styles/Blue_Motion.style.txt,
@@ -103,6 +85,14 @@
 										 Simple_Virtue/Styles/Silver_Flower.style.txt
 										 "/>
   
+
+ <!--	   log4j.properties, -->
+  <property name="config_file_list" value="castor.properties,
+									
+										   mapping.xml,
+										   MovieManager.tmx,
+										   Temp.mdb
+										 "/>
  
   <!-- <property name="$(base)/base.dir"  location=""/> -->
   <property name="source"  value="$(base)/source/"/>
@@ -184,7 +174,7 @@
 
   <target name="create-archives" 
 		  description="Creates the ZIP archives."
-		  depends="compile"
+		  depends="compile, makejar"
 		  >
 	
 	<mkdir dir="${dist}"/>
@@ -193,7 +183,8 @@
 	</delete>
 	
 	<antcall target="makeLookAndFeelIni"/>
-
+	<antcall target="makeLog4jProperties"/>
+	
 	<!-- Creating Binary zip MovieManager.v.version.bin.zip  Mirror  -->
 	<zip destfile="${dist}/MovieManager.v.${versionName}.bin.zip"
 		 update="false"
@@ -202,11 +193,25 @@
 	  
 	  <!-- Files in root dir (install dir)  -->
 	  <zipfileset prefix="MeDs-Movie-Manager" dir="MovieManager" 
-				  includes="${executers}">
+				  includes="${mainFiles}">
+
+		 <!--
 		<include name="config/"/>
 		<exclude name="config/Config.ini"/>
+ -->
 	  </zipfileset>
-	  
+
+	  <zipfileset prefix="MeDs-Movie-Manager/config/" 
+				  dir="MovieManager/config/" 
+				  includes="${config_file_list}"
+				  />
+	  	
+	  <!-- Config file for log4j  -->
+	   <zipfileset prefix="MeDs-Movie-Manager/config/" 
+				  dir="${dist}" 
+				  includes="log4j.properties">
+	  </zipfileset>
+
 	   <!-- Files for the report generator  -->
 	  <zipfileset prefix="MeDs-Movie-Manager/reports/" dir="MovieManager/reports/" 
 				  includes="*.jasper, *.png, *.jrxml"/>
@@ -243,10 +248,9 @@
 	  
 	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager" 
 				  dir="MovieManager" 
-				  includes="${executers}">
+				  includes="${mainFiles}">
 		
 		<include name="reports/"/>
-		<include name="config/"/>
 		<include name="codecs/"/>
 		<include name="images/"/>
 		<include name="queries/"/>
@@ -254,7 +258,15 @@
 		
 	  </zipfileset>
 	  
-	 
+	  <!-- config -->
+	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/config/" 
+				  dir="MovieManager/config/" 
+				  includes="${config_file_list}"
+				  />
+	  
+	  <!-- Config file for log4j  -->
+	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/config/" dir="MovieManager/config/" 
+				  includes="log4j.properties"/>
 
 	  <!-- libraries -->
 	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/lib/" 
@@ -266,6 +278,8 @@
 				  dir="${dist}" 
 				  includes="lookAndFeels.ini">
 	  </zipfileset>
+
+	  
 
 	  <!-- Simple Virtue template -->
 	  <zipfileset id="template_simple_virtue" 
@@ -458,78 +472,128 @@
 
 
   <target name="makeLookAndFeelIni" 
-		  description="generate the distribution">
+		  description="Creates a lookAndFeels.ini file used in the distribution packages.">
 	
 	<echo file="${dist}/lookAndFeels.ini" append="false">
-	  
-	  Here you can add new Look and Feels's.
-	  Make sure the look and Feel jar-file is placed in the 'LookAndFeels' directory 
-	  and that the correct class is given below.
-	  The name and classname must be enclosed in quotes.
-	  The names may be set to whatever fit your needs.
-	  
-	  Example:
-	  
-	  "Metal look and feel"                    "javax.swing.plaf.metal.MetalLookAndFeel"
-	  "Windows look and feel"                  "com.sun.java.swing.plaf.windows.WindowsLookAndFeel"
-	  
-	  The metal and windows look and feels are preinstalled.
-	  Define the look and feels below:
-	  #
-	  
-	  "Kunststoff"                 			   "com.incors.plaf.kunststoff.KunststoffLookAndFeel" 						  "1.4"    
-	  
-	  "JTattoo - Acryl" 	     			   "com.jtattoo.plaf.acryl.AcrylLookAndFeel"      							  "1.4"    
-	  "JTattoo - Aero" 	     				   "com.jtattoo.plaf.aero.AeroLookAndFeel"       							  "1.4"    
-	  "JTattoo - Aluminium" 	     		   "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel"   						  "1.4"    
-	  "JTattoo - Bernstein" 	     		   "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel" 						  "1.4"    
-	  "JTattoo - Fast" 	     				   "com.jtattoo.plaf.fast.FastLookAndFeel"       							  "1.4"    
-	  "JTattoo - HiFi" 	     				   "com.jtattoo.plaf.hifi.HiFiLookAndFeel"       							  "1.4"    
-	  "JTattoo - McWin" 	     			   "com.jtattoo.plaf.mcwin.McWinLookAndFeel"     							  "1.4"    
-	  "JTattoo - Mint" 	     				   "com.jtattoo.plaf.mint.MintLookAndFeel"       							  "1.4"    
-	  "JTattoo - Noire" 	     			   "com.jtattoo.plaf.noire.NoireLookAndFeel"     							  "1.4"    
-	  "JTattoo - Smart" 	     			   "com.jtattoo.plaf.smart.SmartLookAndFeel"     							  "1.4"   
-	  "JTattoo - Luna" 	     				   "com.jtattoo.plaf.luna.LunaLookAndFeel"        							  "1.4"    
-	  
-	  "Pagosoft"              				   "com.pagosoft.plaf.PgsLookAndFeel"                 						  "1.4"   
-	  "Compiere"                   			   "org.compiere.plaf.CompiereLookAndFeel"            						  "1.5"    
-	  "Squareness"                 			   "net.beeger.squareness.SquarenessLookAndFeel"      						  "1.4"    
-	  "InfoNode"                   			   "net.infonode.gui.laf.InfoNodeLookAndFeel" 								  "1.4"   
-	  "Lipstik" 		     				   "com.lipstikLF.LipstikLookAndFeel"										  "1.5"   
-	  
-	  "Jgoodies windows"     	     		   "com.jgoodies.looks.windows.WindowsLookAndFeel"          			      "1.4"    
-	  "Jgoodies Plastic"	     			   "com.jgoodies.looks.plastic.PlasticLookAndFeel"    						  "1.4"    
-	  "Jgoodies Plastic 3D"	     			   "com.jgoodies.looks.plastic.Plastic3DLookAndFeel"  						  "1.4"    
-	  "Jgoodies PlasticXP"         			   "com.jgoodies.looks.plastic.PlasticXPLookAndFeel"  						  "1.4"    
-	  
-	  "Office 2003"         				   "org.fife.plaf.Office2003.Office2003LookAndFeel"   						  "1.4"    
-	  "Office XP" 		   		   			   "org.fife.plaf.OfficeXP.OfficeXPLookAndFeel"       						  "1.4"    
-	  "Office VisualStudio 2005" 		   	   "org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel"      		  "1.4"   
-	  
-	  "Substance - Default"	 	     		   "org.jvnet.substance.SubstanceLookAndFeel" 								  "1.5"    
-	  "Substance - Autumn"         			   "org.jvnet.substance.skin.SubstanceAutumnLookAndFeel" 					  "1.5"
-	  "Substance - Business Black Steel"       "org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel" 		  "1.5"
-	  "Substance - Business Blue Steel"        "org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel" 		  "1.5"
-	  "Substance - Business"       			   "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel" 					  "1.5"
-	  "Substance - Challenger Deep" 		   "org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel" 			  "1.5"
-	  "Substance - Creme"   	     		   "org.jvnet.substance.skin.SubstanceCremeLookAndFeel" 					  "1.5"
-	  "Substance - EmeraldDusk"    			   "org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel" 				  "1.5"
-	  "Substance - Field Of Wheat"   		   "org.jvnet.substance.skin.SubstanceFieldOfWheatLookAndFeel" 				  "1.5"
-	  "Substance - Green Magic"     		   "org.jvnet.substance.skin.SubstanceGreenMagicLookAndFeel" 				  "1.5"
-	  "Substance - Magma"	     			   "org.jvnet.substance.skin.SubstanceMagmaLookAndFeel" 					  "1.5"
-	  "Substance - Mango"	     			   "org.jvnet.substance.skin.SubstanceMangoLookAndFeel" 					  "1.5"
-	  "Substance - Office Blue 2007" 		   "org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel" 			  "1.5"
-	  "Substance - OfficeSilver2007"    	   "org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel" 			  "1.5"
-	  "Substance - Raven Graphite"	     	   "org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel" 			  "1.5"
-	  "Substance - Raven"	     			   "org.jvnet.substance.skin.SubstanceRavenLookAndFeel" 					  "1.5"
-	  "Substance - Sahara"   	     		   "org.jvnet.substance.skin.SubstanceSaharaLookAndFeel" 					  "1.5"
-	  
-	</echo>
+      
+Here you can add new Look and Feels's.
+Make sure the look and Feel jar-file is placed in the 'LookAndFeels' directory 
+and that the correct class is given below.
+The name and classname must be enclosed in quotes.
+The names may be set to whatever fit your needs.
+
+Example:
+
+"Metal look and feel"                    "javax.swing.plaf.metal.MetalLookAndFeel"
+"Windows look and feel"                  "com.sun.java.swing.plaf.windows.WindowsLookAndFeel"
+
+The metal and windows look and feels are preinstalled.
+Define the look and feels below:
+#
+
+"Kunststoff"                             "com.incors.plaf.kunststoff.KunststoffLookAndFeel"                         "1.4"    
+      
+"JTattoo - Acryl"                        "com.jtattoo.plaf.acryl.AcrylLookAndFeel"                                  "1.4"    
+"JTattoo - Aero"                         "com.jtattoo.plaf.aero.AeroLookAndFeel"                                    "1.4"    
+"JTattoo - Aluminium"                    "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel"                          "1.4"    
+"JTattoo - Bernstein"                    "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel"                          "1.4"    
+"JTattoo - Fast"                         "com.jtattoo.plaf.fast.FastLookAndFeel"                                    "1.4"    
+"JTattoo - HiFi"                         "com.jtattoo.plaf.hifi.HiFiLookAndFeel"                                    "1.4"    
+"JTattoo - McWin"                        "com.jtattoo.plaf.mcwin.McWinLookAndFeel"                                  "1.4"    
+"JTattoo - Mint"                         "com.jtattoo.plaf.mint.MintLookAndFeel"                                    "1.4"    
+"JTattoo - Noire"                        "com.jtattoo.plaf.noire.NoireLookAndFeel"                                  "1.4"    
+"JTattoo - Smart"                        "com.jtattoo.plaf.smart.SmartLookAndFeel"                                  "1.4"   
+"JTattoo - Luna"                         "com.jtattoo.plaf.luna.LunaLookAndFeel"                                    "1.4"    
+
+"Pagosoft"                               "com.pagosoft.plaf.PgsLookAndFeel"                                         "1.4"   
+"Compiere"                               "org.compiere.plaf.CompiereLookAndFeel"                                    "1.5"    
+"Squareness"                             "net.beeger.squareness.SquarenessLookAndFeel"                              "1.4"    
+"InfoNode"                               "net.infonode.gui.laf.InfoNodeLookAndFeel"                                 "1.4"   
+"Lipstik"                                "com.lipstikLF.LipstikLookAndFeel"                                         "1.5"   
+
+"Jgoodies windows"                       "com.jgoodies.looks.windows.WindowsLookAndFeel"                            "1.4"    
+"Jgoodies Plastic"                       "com.jgoodies.looks.plastic.PlasticLookAndFeel"                            "1.4"    
+"Jgoodies Plastic 3D"                    "com.jgoodies.looks.plastic.Plastic3DLookAndFeel"                          "1.4"    
+"Jgoodies PlasticXP"                     "com.jgoodies.looks.plastic.PlasticXPLookAndFeel"                          "1.4"    
+
+"Office 2003"                            "org.fife.plaf.Office2003.Office2003LookAndFeel"                           "1.4"    
+"Office XP"                              "org.fife.plaf.OfficeXP.OfficeXPLookAndFeel"                               "1.4"    
+"Office VisualStudio 2005"               "org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel"               "1.4"   
+
+"Substance - Default"                    "org.jvnet.substance.SubstanceLookAndFeel"                                 "1.5"    
+"Substance - Autumn"                     "org.jvnet.substance.skin.SubstanceAutumnLookAndFeel"                      "1.5"
+"Substance - Business Black Steel"       "org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel"        "1.5"
+"Substance - Business Blue Steel"        "org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel"         "1.5"
+"Substance - Business"                   "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel"                    "1.5"
+"Substance - Challenger Deep"            "org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel"              "1.5"
+"Substance - Creme"                      "org.jvnet.substance.skin.SubstanceCremeLookAndFeel"                       "1.5"
+"Substance - EmeraldDusk"                "org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel"                 "1.5"
+"Substance - Field Of Wheat"             "org.jvnet.substance.skin.SubstanceFieldOfWheatLookAndFeel"                "1.5"
+"Substance - Green Magic"                "org.jvnet.substance.skin.SubstanceGreenMagicLookAndFeel"                  "1.5"
+"Substance - Magma"                      "org.jvnet.substance.skin.SubstanceMagmaLookAndFeel"                       "1.5"
+"Substance - Mango"                      "org.jvnet.substance.skin.SubstanceMangoLookAndFeel"                       "1.5"
+"Substance - Office Blue 2007"           "org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel"              "1.5"
+"Substance - OfficeSilver2007"           "org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel"            "1.5"
+"Substance - Raven Graphite"             "org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel"               "1.5"
+"Substance - Raven"                      "org.jvnet.substance.skin.SubstanceRavenLookAndFeel"                       "1.5"
+"Substance - Sahara"                     "org.jvnet.substance.skin.SubstanceSaharaLookAndFeel"                      "1.5"
+
+</echo>
+
+</target>
+
+
+ <target name="makeLog4jProperties" 
+		  description="Creates a log4j.properties to be used in the binary package where only warnings/error are printed to log.">
 	
-  </target>
+	<echo file="${dist}/log4j.properties" append="false">
+#### Using two appenders, one to log to console, another to log to a file.
+log4j.rootCategory=ALL, stdout, FileAppender
 
+#### First appender writes to console
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
 
+# Setting the lowest priority to log
+log4j.appender.stdout.Threshold=WARN
 
+# Setting layout
+log4j.appender.stdout.layout=net.sf.xmm.moviemanager.util.PatternLayoutByLevel
+
+# Set default format for log levels not specifically set
+log4j.appender.stdout.layout.ConversionPattern = %d{ISO8601} %-5p [%t] %m%n
+
+# Set formats for different log levels
+log4j.appender.stdout.layout.InfoPattern = %-5p %m%n
+log4j.appender.stdout.layout.DebugPattern = %-5p %m%n
+log4j.appender.stdout.layout.WarnPattern =  %-5p %l%n %m%n
+log4j.appender.stdout.layout.ErrorPattern = %-5p %l%n %m%n
+log4j.appender.stdout.layout.FatalPattern = %-5p %l%n %m%n
+
+#### Second appender writes to file
+log4j.appender.FileAppender=org.apache.log4j.RollingFileAppender
+log4j.appender.FileAppender.File=Log.txt
+
+# Setting the lowest priority to log
+log4j.appender.FileAppender.Threshold=ALL
+
+# Control the maximum log file size
+log4j.appender.FileAppender.MaxFileSize=200KB
+
+# Setting layout
+log4j.appender.FileAppender.layout=net.sf.xmm.moviemanager.util.PatternLayoutByLevel
+
+# Set default format for log levels not specifically set
+log4j.appender.FileAppender.layout.ConversionPattern = %d{ISO8601} %-5p [%t] %m%n
+
+# Set formats for different log levels
+log4j.appender.FileAppender.layout.InfoPattern = %-5p %m%n
+log4j.appender.FileAppender.layout.DebugPattern = %-5p %m%n
+log4j.appender.FileAppender.layout.WarnPattern =  %-5p %l%n %m%n
+log4j.appender.FileAppender.layout.ErrorPattern = %-5p %l%n %m%n
+log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
+</echo>
+
+</target>
 
 <!-- not functioning yet -->
   <target name="doParams">
