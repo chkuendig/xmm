@@ -931,7 +931,7 @@ public class ModelMovieInfo {
      * @param originalTitle
      */
     public static void executeTitleModification(ModelEntry modelToModify) {
-
+	
     	boolean removeDuplicates = !MovieManager.getConfig().getIncludeAkaLanguageCodes();
 
     	ArrayList akaKeys = new ArrayList();
@@ -948,12 +948,12 @@ public class ModelMovieInfo {
     	String key = "";
     	int index = 0;
     	String languageCode = MovieManager.getConfig().getTitleLanguageCode();
-
+	
     	while (tokenizer.hasMoreTokens()) {
 
     		value = tokenizer.nextToken();
     		key = StringUtil.performExcludeParantheses(value, false).trim();
-
+	    		
     		if (MovieManager.getConfig().getUseLanguageSpecificTitle() && value.indexOf("[" + languageCode + "]") != -1) {
 
     			if (MovieManager.getConfig().getIncludeAkaLanguageCodes()) {
@@ -977,31 +977,27 @@ public class ModelMovieInfo {
 
     		boolean allAkaTitles = MovieManager.getConfig().getStoreAllAkaTitles();
 
-    		if (!(!allAkaTitles && value.indexOf("[") != -1) || removeDuplicates) {
+    		index = akaKeys.indexOf(key);
 
-    			index = akaKeys.indexOf(key);
-		
-    			//  Title already exists. Adds the language code to the existing title 
-    			if (removeDuplicates && index != -1) {
+    		//  Title already exists. Adds the language code to the existing title 
+    		if (removeDuplicates && index != -1) {
 
-    				if (value.indexOf("[") != -1) {
-    					value =  value.replaceFirst(key, "");
-    					tmp = akaValues.get(index) + " " + value.trim();
-    					akaValues.set(index, tmp);
-    				}   
+    			if (value.indexOf("[") != -1) {
+    				value =  value.replaceFirst(key, "");
+    				tmp = akaValues.get(index) + " " + value.trim();
+    				akaValues.set(index, tmp);
+    			}   
+    		}
+    		else if (!(!allAkaTitles && value.indexOf("[") != -1)) {
+
+    			/* Removes comments and language code */
+    			if (!MovieManager.getConfig().getIncludeAkaLanguageCodes()) {
+    				value = key;
     			}
-    			else if (!(!allAkaTitles && value.indexOf("[") != -1)) {
-    				
-    				/* Removes comments and language code */
-    				if (!MovieManager.getConfig().getIncludeAkaLanguageCodes()) {
-    					value = key;
-    				}
-    					
-    				if (!value.equals(modelToModify.getTitle())) {
-    					akaKeys.add(key);
-    					akaValues.add(value);
-    				}
-    				
+
+    			if (!value.equals(modelToModify.getTitle())) {
+    				akaKeys.add(key);
+    				akaValues.add(value);
     			}
     		}
     	}
@@ -1011,7 +1007,6 @@ public class ModelMovieInfo {
     	}   
 
     	modelToModify.setAka(newAkaTitles.trim());
-
     }
 
     
