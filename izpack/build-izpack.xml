@@ -25,7 +25,8 @@
 
 
 	  <config>
- <![CDATA[
+ 
+		 <![CDATA[ 
     
 	<installation version="1.0">
   
@@ -55,50 +56,61 @@
   </panels>
   
 
+
   <packs>
 	<pack name="MeD's Movie Manager files" required="yes">
 	  <description>MeD's Movie Manager files</description>
 	  
 	  <!-- Files in root dir (install dir)  -->
 	  <fileset targetdir="$INSTALL_PATH/" dir="MovieManager/" 
-				  includes="@{executers}">
-		<include name="config/" />
-		<exclude name="config/Config.ini"/>
+			   includes="@{mainFiles}">
 		
 	  </fileset>
 	  
-	  <fileset targetdir="$INSTALL_PATH/" 
-				  dir="" 
-				  includes="@{infoFiles}"/>
-
-	   <!-- Files in root dir (install dir)  -->
-	  <fileset targetdir="$INSTALL_PATH/reports/" dir="MovieManager/reports/" 
-				  includes="@{jasperFiles}"/>
-	
+	  <!-- config files -->
+	  <fileset targetdir="$INSTALL_PATH/config/" 
+			   dir="MovieManager/config/" 
+			   includes="@{config_file_list}"
+			   />
 	  
-  
+	   <!-- Config file for log4j  -->
+	  <fileset dir="dist" targetdir="$INSTALL_PATH/config">
+	      <include name="log4j.properties" />
+	  </fileset>
+
+
+	  <fileset targetdir="$INSTALL_PATH/" 
+			   dir="" 
+			   includes="@{infoFiles}"
+			   />
+	  
+	  <!-- Files in root dir (install dir)  -->
+	  <fileset targetdir="$INSTALL_PATH/reports/" 
+			   dir="MovieManager/reports/" 
+			   includes="@{jasperFiles}"
+			   />
+	  
 	  <!-- libraries -->
 	  <fileset targetdir="$INSTALL_PATH/lib/" 
-				  dir="MovieManager/lib/" 
-				  includes="@{library_file_list}"
-				  />
-	 
-
+			   dir="MovieManager/lib/" 
+			   includes="@{library_file_list}"
+			   />
+	  
+	  
 	  <!--html template files-->
 	  <fileset targetdir="$INSTALL_PATH/HTML_templates/" 
-				  dir="MovieManager/HTML_templates/" 
-				  includes="@{template_files}"/>
-	
+			   dir="MovieManager/HTML_templates/" 
+			   includes="@{template_files}"
+			   />
 	  
-
+	  
+	  
 	  <!-- Adding the lookAndFeels.ini file -->
-	  <fileset dir="dist"
-			   targetdir="$INSTALL_PATH/lib/LookAndFeels">
-		
-		<include name="lookAndFeels.ini" />
+	  <fileset dir="dist" targetdir="$INSTALL_PATH/lib/LookAndFeels">
+	      <include name="lookAndFeels.ini" />
 	  </fileset>
 	  
-
+	 
 	  
 				  	  
 	</pack>
@@ -108,7 +120,9 @@
 
 </installation>
 
-	  ]]> </config>
+	  ]]>  
+
+</config>
  
 
 	</izpack>
