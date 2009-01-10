@@ -369,7 +369,11 @@ public class DialogExport extends JDialog implements ActionListener {
         tabs.add(htmlExportPanel, ModelImportExportSettings.exportTypes[ModelImportExportSettings.EXPORT_MODE_HTML]);
       
         if (MovieManager.getConfig().getLastDialogImportType() < ModelImportExportSettings.EXPORT_MODE_COUNT) {
-        	int index = tabs.indexOfTab(ModelImportExportSettings.exportTypes[MovieManager.getConfig().getLastDialogExportType()]);
+        	
+        	int index = 0;
+        	
+        	if (MovieManager.getConfig().getLastDialogExportType() < ModelImportExportSettings.exportTypes.length)
+        		index = tabs.indexOfTab(ModelImportExportSettings.exportTypes[MovieManager.getConfig().getLastDialogExportType()]);
         	
         	if (index >= 0)
         		tabs.setSelectedIndex(index);
@@ -420,8 +424,8 @@ public class DialogExport extends JDialog implements ActionListener {
     	MovieManager.getConfig().setLastDialogExportType(getExportMode());
     	    	
     	// Save CSV separator
-    	settings.csvSeparator = csvSeparator.getText();
-    	
+    	if (csvSeparator.getText().trim().length() > 0)
+    		settings.csvSeparator = csvSeparator.getText().trim().charAt(0);
     	    	
     	settings.mode = getExportMode();
     	
@@ -465,38 +469,10 @@ public class DialogExport extends JDialog implements ActionListener {
             if (tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_HTML) {
                
             	String title = titleTextField.getText();
-                //String orderBy = "Title"; //$NON-NLS-1$
-                
-                //if (orderByDirectedBy.isSelected())
-                //    orderBy = "Directed By"; //$NON-NLS-1$
-               // else if (orderByRating.isSelected())
-              //      orderBy = "Rating"; //$NON-NLS-1$
-              //  else if (orderByDate.isSelected())
-             //       orderBy = "Date"; //$NON-NLS-1$
-                
+             
                 DefaultListModel listModel;
                 
                 String currentList = "Show All"; //$NON-NLS-1$
-                
-             //   if (exportCurrentList.isSelected())
-               //     currentList = MovieManager.getConfig().getCurrentList();
-                
-              //  if (exportCurrentList.isSelected() && !currentList.equals("Show All")) //$NON-NLS-1$
-            //        listModel = MovieManager.getIt().getDatabase().getMoviesList(orderBy, currentList);
-           //     else
-            //        listModel = MovieManager.getIt().getDatabase().getMoviesList(orderBy);
-                
-              //  if (applyCurrentAdvancedSearchSettings.isSelected()) {
-                //    ModelDatabaseSearch options = MovieManager.getIt().getFilterOptions();
-               //     options.setListName(currentList);
-                    
-             //       if (currentList.equals("Show All")) //$NON-NLS-1$
-            //            options.setListOption(0);
-            ///        else
-            //            options.setListOption(1);
-                    
-           //         listModel = MovieManager.getIt().getDatabase().getMoviesList(options);
-          //      }
                 
                 listModel = MovieManager.getDialog().getCurrentMoviesList();
                 
@@ -567,10 +543,14 @@ public class DialogExport extends JDialog implements ActionListener {
             	
         		if (exexute) {
         			executeSave();
-        			dispose();
         		}
+        		else
+        			cancelled = true;
             }
-            dispose();
+                        
+            if (!cancelled)
+            	dispose();
+            
             return;
         }
     
