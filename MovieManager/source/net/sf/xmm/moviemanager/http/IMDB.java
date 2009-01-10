@@ -569,7 +569,7 @@ public class IMDB {
 		String [] movieHitCategory = {"Popular Titles", "Titles (Exact Matches)", "Titles (Partial Matches)", "Titles (Approx Matches)"};
 		
 		try {
-	
+		
 			URL url = new URL(urlType.replaceAll("[\\p{Blank}]+","%20"));
 			
 			StringBuffer data = httpUtil.readDataToStringBuffer(url);
@@ -579,7 +579,8 @@ public class IMDB {
 				return listModel;
 			}
 			
-			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/direct-simple.html", data);
+			//new java.io.File("HTML-debug").mkdir();
+			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
         
 			int start = 0;
 			String key = "";
@@ -641,7 +642,7 @@ public class IMDB {
 			
 			// should match strings like the above
 			
-			Pattern p = Pattern.compile("<a\\shref=\"/title/tt(\\d{5,})/\".*?>(.+?)</a>.+?\\((\\d+(/I*)?)\\).*?(;aka\\\\s<em>.+?</em>)*?");
+			Pattern p = Pattern.compile("<a\\shref=\"/title/tt(\\d{5,})/\".*?>(.+?)</a>.+?\\((\\d+(/I*)?)\\).*?(;aka\\\\s<em>.+?</em>)*?</tr><tr>");
 			Matcher m = p.matcher(data);
 			
 			while (m.find()) {
@@ -663,7 +664,7 @@ public class IMDB {
 				}
 				
 				title += " (" + year + ")"; 
-					
+				
 				// Aka
 				aka = grabAkaTitlesFromSearchHit(m.group(0));
 				
