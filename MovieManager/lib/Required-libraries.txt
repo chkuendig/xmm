@@ -16,7 +16,7 @@ skinlf.jar						- Skin L&F
 TableLayout.jar					- Free layout manager
 useful.jar						- Java library with Swing Tree classes extension
 
-castor-1.0.5.jar				- Object-XML binding utility.
+castor-1.2.jar					- Object-XML binding utility.
 xercesImpl.jar
 
 xml-apis.jar					- org/w3c/dom/ranges/DocumentRange for Java 1.4
