@@ -60,6 +60,7 @@ import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SwingWorker;
+import net.sf.xmm.moviemanager.util.SysUtil;
 
 import org.apache.log4j.Logger;
 
@@ -654,7 +655,7 @@ public class DialogIMDB extends JDialog {
      **/
     private void executeCommandSelect() {
     	int index = getMoviesList().getSelectedIndex();
-
+    	System.err.println("executeCommandSelect");
     	/*
     	 * When adding the file info the an existing movie, a new ModelMovieInfo object is created. 
     	 * When done, the old ModelMovieInfo object created in the 
@@ -723,8 +724,13 @@ public class DialogIMDB extends JDialog {
     public static boolean getIMDbInfo(ModelEntry modelEntry, String key) {
     	IMDB imdb;
 
+    	System.err.println("getIMDbInfo");
     	try {
-    		imdb = new IMDB(key, MovieManager.getConfig().getHttpSettings());
+    		net.sf.xmm.moviemanager.http.IMDB_if i = SysUtil.getIMDBInstance();
+    		
+    		imdb = i.getIMDB(key, MovieManager.getConfig().getHttpSettings());
+    		
+    		//imdb = new IMDB(key, MovieManager.getConfig().getHttpSettings());
     	} catch (Exception e) {
     		log.error(e.getMessage(), e); //$NON-NLS-1$
     		return false;
