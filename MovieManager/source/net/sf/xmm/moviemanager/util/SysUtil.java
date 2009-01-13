@@ -11,6 +11,8 @@ import java.net.URL;
 
 import javax.swing.filechooser.FileSystemView;
 
+import net.sf.xmm.moviemanager.http.IMDB;
+import net.sf.xmm.moviemanager.http.IMDB_if;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
 
 import org.apache.log4j.Logger;
@@ -271,5 +273,45 @@ public class SysUtil {
         return browser;
     }
     
-    
+    public static IMDB_if getIMDBInstance() throws Exception {
+    	
+    	File imdb = new File(System.getProperty("user.dir") + "/MovieManager/lib/" + "IMDB.jar");
+    	
+    	System.err.println("imdb:" + imdb);
+    	
+    	if (imdb.isFile()) {
+
+    		System.err.println("IMDB.jar found!");
+    		
+    		try {
+    		
+    			System.err.println("new IMDB().getClass().getClassLoader():" + new IMDB().getClass().getClassLoader());
+    			
+    			File f = imdb;
+    			ZipClassLoader zl = new ZipClassLoader (new IMDB().getClass().getClassLoader(), f);
+    			Class c = zl.loadClass("net.sf.xmm.moviemanager.http.IMDB", true);
+    			Object o = c.newInstance();
+    			
+    			//f.delete();
+    			
+    			System.err.println("getClass:" + o.getClass());
+    			
+    			System.err.println("getClass().getName():" + o.getClass().getName());
+    			
+    			return (IMDB_if) o;
+
+    		} catch(Exception e) {
+    			e.printStackTrace();
+    		}
+    	}
+    	
+    	IMDB_if i = new IMDB();
+    	
+    	System.err.println("Returning default IMDB");
+    	
+    	System.err.println("getClass:" + i.getClass());
+    	System.err.println("getClass().getName():" + i.getClass().getName());
+    	
+    	return i;
+    }
 }
