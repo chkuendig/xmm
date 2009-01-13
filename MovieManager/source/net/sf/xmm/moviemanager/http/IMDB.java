@@ -37,7 +37,9 @@ import net.sf.xmm.moviemanager.models.imdb.*;
 
 import org.apache.log4j.Logger;
 
-public class IMDB {
+
+
+public class IMDB extends IMDB_if {
   
     static Logger log = Logger.getRootLogger();    
     
@@ -46,6 +48,7 @@ public class IMDB {
     private HttpSettings settings = null;
     
     private ModelIMDbEntry lastDataModel = null;
+    
     
     public IMDB() throws Exception {
     	this(null, null, null);		
@@ -66,6 +69,29 @@ public class IMDB {
     public IMDB(HttpSettings settings) throws Exception {
     	this(null, null, settings);	
     }
+        
+    
+    public IMDB getIMDB() throws Exception {
+    	return new IMDB();
+    }
+    
+    public IMDB getIMDB(String urlID) throws Exception {
+    	return new IMDB(urlID);
+    }
+    
+    public IMDB getIMDB(String urlID, StringBuffer data) throws Exception {
+    	return new IMDB(urlID, data);
+    }
+    
+    public IMDB getIMDB(String urlID, HttpSettings settings) throws Exception {
+    	return new IMDB(urlID, settings);
+    }
+    
+    public IMDB getIMDB(HttpSettings settings) throws Exception {
+    	return new IMDB(settings);
+    }
+    
+    
     
     /**
      * The constructor. Initializes all vars (read from the net) for
@@ -579,8 +605,8 @@ public class IMDB {
 				return listModel;
 			}
 			
-			//new java.io.File("HTML-debug").mkdir();
-			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
+			new java.io.File("HTML-debug").mkdir();
+			net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
         
 			int start = 0;
 			String key = "";
@@ -624,8 +650,10 @@ public class IMDB {
 					empty = false;
 					
 					if (startIndex == -1) {
+						System.err.println("delete:" + movieHitCategory[u]);
 						startIndex = movieHitCategoryIndex[u];
 						data.delete(0, startIndex);
+						break;
 					}
 				}
 			}
@@ -654,6 +682,8 @@ public class IMDB {
 				String year = m.group(3);
 				
 				title = HttpUtil.decodeHTML(title);
+				
+				System.err.println("hit:" + title);
 				
 				if (title.equals(""))
 					continue;
