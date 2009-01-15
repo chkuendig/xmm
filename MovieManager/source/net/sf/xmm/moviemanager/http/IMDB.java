@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
 
-import net.sf.xmm.moviemanager.models.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.models.imdb.*;
 
@@ -39,7 +38,7 @@ import org.apache.log4j.Logger;
 
 
 
-public class IMDB extends IMDB_if {
+public class IMDB /*extends IMDB_if */{
   
     static Logger log = Logger.getRootLogger();    
     
@@ -47,7 +46,7 @@ public class IMDB extends IMDB_if {
     
     private HttpSettings settings = null;
     
-    private ModelIMDbEntry lastDataModel = null;
+    private ModelIMDbEntry lastDataModel;
     
     
     public IMDB() throws Exception {
@@ -70,7 +69,7 @@ public class IMDB extends IMDB_if {
     	this(null, null, settings);	
     }
         
-    
+    /*
     public IMDB getIMDB() throws Exception {
     	return new IMDB();
     }
@@ -90,7 +89,7 @@ public class IMDB extends IMDB_if {
     public IMDB getIMDB(HttpSettings settings) throws Exception {
     	return new IMDB(settings);
     }
-    
+    */
     
     
     /**
@@ -132,6 +131,8 @@ public class IMDB extends IMDB_if {
     
     private ModelIMDbEntry parseData(String urlID, StringBuffer data) throws Exception {
 	
+    	System.err.println("PARSING DATA with system IMDB");
+    	
         String date = "", title = "", directedBy = "", writtenBy = "", genre = "", rating = "", colour = "", aka = "", 
         country = "", language = "", mpaa = "", soundMix = "", runtime = "", certification = "", awards = "", plot = "", cast = "", 
         coverURL = "", coverName = "", seasonNumber = "", episodeNumber = "";
