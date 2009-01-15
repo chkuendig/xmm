@@ -2,8 +2,8 @@ package net.sf.xmm.moviemanager.http;
 
 import javax.swing.DefaultListModel;
 
-import net.sf.xmm.moviemanager.models.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 
 
 public abstract class IMDB_if {
