@@ -13,13 +13,12 @@ import java.net.URLClassLoader;
 import javax.swing.filechooser.FileSystemView;
 
 import net.sf.xmm.moviemanager.http.IMDB;
-import net.sf.xmm.moviemanager.http.IMDB_if;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
 
 import org.apache.log4j.Logger;
 
-import xeus.jcl.JarClassLoader;
-import xeus.jcl.JclObjectFactory;
+//import xeus.jcl.JarClassLoader;
+// import xeus.jcl.JclObjectFactory;
 
 public class SysUtil {
 
