@@ -188,7 +188,7 @@ public class HttpUtil {
 
 
 
-	byte [] readDataToByteArray(URL url) throws Exception {
+	public byte [] readDataToByteArray(URL url) throws Exception {
 	
 		byte[] data = {-1};
 
@@ -233,7 +233,7 @@ public class HttpUtil {
 	/**
 	 * Decodes a html string and returns its unicode string.
 	 **/
-	protected static String decodeHTML(String toDecode) {
+	public static String decodeHTML(String toDecode) {
 		String decoded = "";
 
 		try {
@@ -266,7 +266,7 @@ public class HttpUtil {
 	/**
 	 * Decodes a html string 
 	 **/
-	protected static Object [] decodeHTMLtoArray(String toDecode) {
+	public static Object [] decodeHTMLtoArray(String toDecode) {
 		ArrayList decoded = new ArrayList();
 		String tmp = "";
 
