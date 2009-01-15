@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLClassLoader;
 
 import javax.swing.filechooser.FileSystemView;
 
@@ -16,6 +17,9 @@ import net.sf.xmm.moviemanager.http.IMDB_if;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
 
 import org.apache.log4j.Logger;
+
+import xeus.jcl.JarClassLoader;
+import xeus.jcl.JclObjectFactory;
 
 public class SysUtil {
 
@@ -273,6 +277,21 @@ public class SysUtil {
         return browser;
     }
     
+    
+    /*
+    public static IMDB_if getIMDBInstance2() throws Exception {
+    
+    	JarClassLoader jcl = new JarClassLoader();
+    	jcl.add(System.getProperty("user.dir") + "/MovieManager/lib/" + "IMDB.jar"); //Load jar file   
+    	
+    	JclObjectFactory factory = JclObjectFactory.getInstance();   
+    	  
+    	//Create object of loaded class   
+    	Object obj = factory.create(jcl, "net.sf.xmm.moviemanager.http.IMDB_if");
+    	
+    	return (IMDB_if) obj;
+    }
+    
     public static IMDB_if getIMDBInstance() throws Exception {
     	
     	File imdb = new File(System.getProperty("user.dir") + "/MovieManager/lib/" + "IMDB.jar");
@@ -288,8 +307,16 @@ public class SysUtil {
     			System.err.println("new IMDB().getClass().getClassLoader():" + new IMDB().getClass().getClassLoader());
     			
     			File f = imdb;
-    			ZipClassLoader zl = new ZipClassLoader (new IMDB().getClass().getClassLoader(), f);
-    			Class c = zl.loadClass("net.sf.xmm.moviemanager.http.IMDB", true);
+    		
+    			
+    			
+    			URLClassLoader ucl = new URLClassLoader(new URL[]{f.toURL()}, IMDB.class.getClass().getClassLoader());
+    			ZipClassLoader zl = new ZipClassLoader(ucl, f);
+    			
+    			//Class c = zl.loadClass("net.sf.xmm.moviemanager.http.IMDB", true);
+    			Class c = zl.loadClass("net.sf.xmm.moviemanager.http.IMDB");
+    			
+    			
     			Object o = c.newInstance();
     			
     			//f.delete();
@@ -314,4 +341,5 @@ public class SysUtil {
     	
     	return i;
     }
+    */
 }
