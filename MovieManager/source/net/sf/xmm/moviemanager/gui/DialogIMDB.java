@@ -55,7 +55,7 @@ import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
-import net.sf.xmm.moviemanager.models.ModelIMDbSearchHit;
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
@@ -726,11 +726,13 @@ public class DialogIMDB extends JDialog {
 
     	System.err.println("getIMDbInfo");
     	try {
-    		net.sf.xmm.moviemanager.http.IMDB_if i = SysUtil.getIMDBInstance();
+    		//net.sf.xmm.moviemanager.http.IMDB_if i = SysUtil.getIMDBInstance();
     		
-    		imdb = i.getIMDB(key, MovieManager.getConfig().getHttpSettings());
+    		//imdb = i.getIMDB(key, MovieManager.getConfig().getHttpSettings());
     		
-    		//imdb = new IMDB(key, MovieManager.getConfig().getHttpSettings());
+    		//net.sf.xmm.moviemanager.http.IMDB_if i = SysUtil.getIMDBInstance();
+    		
+    		imdb = new IMDB(key, MovieManager.getConfig().getHttpSettings());
     	} catch (Exception e) {
     		log.error(e.getMessage(), e); //$NON-NLS-1$
     		return false;
