@@ -91,7 +91,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     private JTextField textFieldLoadDatabase;
     private JTextField textFieldDatabase;
     
-    private Color invalidPath = new Color(233, 180, 180);
+    private Color invalidPathColor = new Color(233, 180, 180);
     
     /**
      * The Constructor.
@@ -787,11 +787,11 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     				if (relativeCoversProgram.isSelected()) {
 
     					if (new File(coversPath).isDirectory() && (new File(coversPath).getAbsolutePath().indexOf(SysUtil.getUserDir()) == -1)) {
-    						textFieldCovers.setBackground(invalidPath);
+    						textFieldCovers.setBackground(invalidPathColor);
     						textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert.covers-inside-install.message"));
     					}
     					else if (!new File(coversPath).isDirectory() && !(new File(SysUtil.getUserDir(), coversPath)).isDirectory()) { //$NON-NLS-1$
-    						textFieldCovers.setBackground(invalidPath);
+    						textFieldCovers.setBackground(invalidPathColor);
     						textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert-covers-exist"));
     					}
     					else {
@@ -803,15 +803,27 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     				else {
     					String dbPath = MovieManager.getConfig().getDatabaseFolder(true);
 
+    					System.err.println("dbPath:" + dbPath);
+    					
+    					
+    					System.err.println("coversPath("+new File(coversPath).isDirectory()+"):" + coversPath);
+    					System.err.println("dbPath, coversPath("+new File(dbPath, coversPath).isDirectory()+"):" + new File(dbPath, coversPath));
+    					
     					if ((new File(coversPath)).isDirectory()) {
 
+    						System.err.println("coversPath.indexOf(dbPath):" + coversPath.indexOf(dbPath));
+    						
     						if (coversPath.indexOf(dbPath) == -1) {
-    							textFieldCovers.setBackground(invalidPath);
+    							textFieldCovers.setBackground(invalidPathColor);
     							textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert-covers-relative-database"));
+    						}
+    						else {
+    							textFieldCovers.setBackground(Color.WHITE);
+        						textFieldCovers.setToolTipText(null);
     						}
     					}
     					else if (!(new File(dbPath, coversPath)).isDirectory()) {
-    						textFieldCovers.setBackground(invalidPath);
+    						textFieldCovers.setBackground(invalidPathColor);
     						textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert.covers-doesnt-exist.message"));
     					}
     					else {
@@ -873,9 +885,10 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     					}
     				}
 
+    				System.err.println("coversFolder("+coversFolder.isDirectory()+"):" + coversFolder);
 
     				if (!coversFolder.isDirectory()) {
-    					textFieldCovers.setBackground(invalidPath);
+    					textFieldCovers.setBackground(invalidPathColor);
     					textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert.covers-doesnt-exist.message"));
     				}
     				else {
@@ -894,13 +907,13 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     				if (relativeQueriesProgram.isSelected()) {
 
     					if (new File(queriesPath).isDirectory() && (new File(queriesPath).getAbsolutePath().indexOf(SysUtil.getUserDir()) == -1)) {
-    						textFieldQueries.setBackground(invalidPath);
+    						textFieldQueries.setBackground(invalidPathColor);
     						textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert.queries-inside-install.message"));
     						return;
     					}
 
     					if (!new File(queriesPath).isDirectory() && !(new File(SysUtil.getUserDir(), queriesPath)).isDirectory()) { //$NON-NLS-1$
-    						textFieldQueries.setBackground(invalidPath);
+    						textFieldQueries.setBackground(invalidPathColor);
     						textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert-Queries-exist"));
     						return;
     					}
@@ -915,13 +928,13 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     					if ((new File(queriesPath)).isDirectory()) {
 
     						if (queriesPath.indexOf(dbPath) == -1) {
-    							textFieldQueries.setBackground(invalidPath);
+    							textFieldQueries.setBackground(invalidPathColor);
     							textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert-queries-relative-database"));
     							return;
     						}
     					}
     					else if (!(new File(dbPath, queriesPath)).isDirectory()) {
-    						textFieldQueries.setBackground(invalidPath);
+    						textFieldQueries.setBackground(invalidPathColor);
     						textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert.queries-doesnt-exist.message"));
     						return;
     					}
@@ -985,7 +998,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 
 
     				if (!queriesFolder.isDirectory()) {
-    					textFieldQueries.setBackground(invalidPath);
+    					textFieldQueries.setBackground(invalidPathColor);
     					textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert.queries-doesnt-exist.message"));
     					return;
     				}
