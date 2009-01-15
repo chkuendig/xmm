@@ -21,6 +21,8 @@
 package net.sf.xmm.moviemanager.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -33,22 +35,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JToolTip;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.http.IMDB;
@@ -258,7 +245,8 @@ public class DialogIMDB extends JDialog {
     	listMovies.setFont(new Font(listMovies.getFont().getName(),Font.PLAIN,listMovies.getFont().getSize()));
     	listMovies.setLayoutOrientation(JList.VERTICAL);
     	listMovies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+    	listMovies.setCellRenderer(new MovieHitListCellRenderer());
+    	
     	listMovies.addMouseListener(new MouseAdapter() {
     		public void mouseClicked(MouseEvent event) {
     			if (SwingUtilities.isLeftMouseButton(event) && event.getClickCount() >= 2) {
@@ -655,7 +643,7 @@ public class DialogIMDB extends JDialog {
      **/
     private void executeCommandSelect() {
     	int index = getMoviesList().getSelectedIndex();
-    	System.err.println("executeCommandSelect");
+    	
     	/*
     	 * When adding the file info the an existing movie, a new ModelMovieInfo object is created. 
     	 * When done, the old ModelMovieInfo object created in the 
@@ -724,7 +712,6 @@ public class DialogIMDB extends JDialog {
     public static boolean getIMDbInfo(ModelEntry modelEntry, String key) {
     	IMDB imdb;
 
-    	System.err.println("getIMDbInfo");
     	try {
     		//net.sf.xmm.moviemanager.http.IMDB_if i = SysUtil.getIMDBInstance();
     		
@@ -774,5 +761,35 @@ public class DialogIMDB extends JDialog {
     		}
     	}
     	return true;
+    }
+    
+    public class MovieHitListCellRenderer extends DefaultListCellRenderer {
+
+    	public Component getListCellRendererComponent(JList list, Object value,
+    			int index, boolean isSelected, boolean hasFocus) {
+    		super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
+
+    		if (value instanceof ModelIMDbSearchHit) {
+
+    			String category = ((ModelIMDbSearchHit) value).getHitCategory();
+    			
+    			//"Popular Titles", "Titles (Exact Matches)", "Titles (Partial Matches)", "Titles (Approx Matches)
+    				
+    			/*
+    			if (category == null)
+    				setBackground(null);    			    			
+    			else if (category.equals("Popular Titles"))
+    				setBackground(new Color(162, 179, 243));
+    			else if (category.equals("Titles (Exact Matches)"))
+    				setBackground(new Color(240, 119, 119));
+    			else if (category.equals("Titles (Partial Matches)"))
+    				setBackground(new Color(236, 240, 119));
+    			else if (category.equals("Titles (Approx Matches)"))
+    				setBackground(new Color(119, 240, 124));
+    			*/
+    			
+    		}
+    		return this;
+    	}
     }
 }
