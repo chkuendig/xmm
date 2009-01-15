@@ -146,7 +146,7 @@ public class IMDB /*extends IMDB_if */{
 		boolean isEpisode = false;
 		boolean isSeries = false;
 		
-		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("imdb.html", data);
+		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
 			
 		try {
 			/* Processes the data... */
@@ -245,10 +245,11 @@ public class IMDB /*extends IMDB_if */{
 			end = 0;
 			
 			/* Gets the rating... */
-			if ((start = data.indexOf("User Rating:", start)+ 12) != 11 &&
-				(end = data.indexOf("/10</b>",start)) != -1 &&
-				(start = data.indexOf("<b>",end-9) +3) != 2) {
-		
+			if ((start = data.indexOf("User Rating:", start)) != -1 && 
+					((start = data.indexOf("general rating", start)) != -1) &&
+					(end = data.indexOf("/10</b>",start)) != -1 &&
+					(start = data.indexOf("<b>",end-9) +3) != 2) {
+
 				rating = HttpUtil.decodeHTML(data.substring(start, end));
 				dataModel.setRating(rating);
 			}
@@ -1013,14 +1014,14 @@ public class IMDB /*extends IMDB_if */{
      * Gets the key.
      **/
     public String getUrlID() {
-		return lastDataModel.getUrlID();
+		return lastDataModel == null ? null : lastDataModel.getUrlID();
     }
 
     /**
      * Gets the date.
      **/
     public String getDate() {
-		return lastDataModel.getDate();
+		return lastDataModel == null ? null : lastDataModel.getDate();
     }
   
        
@@ -1029,7 +1030,7 @@ public class IMDB /*extends IMDB_if */{
      * Gets the title.
      **/
     public String getIMDbTitle() {
-		return lastDataModel.getTitle();
+		return lastDataModel == null ? null : lastDataModel.getTitle();
     }
   
  
@@ -1055,105 +1056,105 @@ public class IMDB /*extends IMDB_if */{
      * Gets the directed by.
      **/
     public String getDirectedBy() {
-		return lastDataModel.getDirectedBy();
+		return lastDataModel == null ? null : lastDataModel.getDirectedBy();
     }
   
     /**
      * Gets the written by.
      **/
     public String getWrittenBy() {
-		return lastDataModel.getWrittenBy();
+		return lastDataModel == null ? null : lastDataModel.getWrittenBy();
     }
   
     /**
      * Gets the genre.
      **/
     public String getGenre() {
-		return lastDataModel.getGenre();
+		return lastDataModel == null ? null : lastDataModel.getGenre();
     }
   
     /**
      * Gets the rating.
      **/
     public String getRating() {
-		return lastDataModel.getRating();
+		return lastDataModel == null ? null : lastDataModel.getRating();
     }
   
     /**
      * Gets the colour.
      **/
     public String getColour() {
-		return lastDataModel.getColour();
+		return lastDataModel == null ? null : lastDataModel.getColour();
     }
 
     /**
      * Gets the country.
      **/
     public String getCountry() {
-		return lastDataModel.getCountry();
+		return lastDataModel == null ? null : lastDataModel.getCountry();
     }
 
     /**
      * Gets the language.
      **/
     public String getLanguage() {
-		return lastDataModel.getLanguage();
+		return lastDataModel == null ? null : lastDataModel.getLanguage();
     }
     
     /**
      * Gets the plot.
      **/
     public String getPlot() {
-		return lastDataModel.getPlot();
+		return lastDataModel == null ? null : lastDataModel.getPlot();
     }
   
     /**
      * Gets the cast.
      **/
     public String getCast() {
-		return lastDataModel.getCast();
+		return lastDataModel == null ? null : lastDataModel.getCast();
     }
     
     /**
      * Gets the aka.
      **/
     public String getAka() {
-		return lastDataModel.getAka();
+		return lastDataModel == null ? null : lastDataModel.getAka();
     }
     
     /**
      * Gets the mpaa.
      **/
     public String getMpaa() {
-		return lastDataModel.getMpaa();
+		return lastDataModel == null ? null : lastDataModel.getMpaa();
     }
     
     /**
      * Gets the Sound Mix.
      **/
     public String getSoundMix() {
-		return lastDataModel.getWebSoundMix();
+		return lastDataModel == null ? null : lastDataModel.getWebSoundMix();
     }
 
     /**
      * Gets the Runtime.
      **/
     public String getRuntime() {
-		return lastDataModel.getWebRuntime();
+		return lastDataModel == null ? null : lastDataModel.getWebRuntime();
     }
     
     /**
      * Gets the Certification.
      **/
     public String getCertification() {
-		return lastDataModel.getCertification();
+		return lastDataModel == null ? null : lastDataModel.getCertification();
     }
 
     /**
      * Gets the Awards.
      **/
     public String getAwards() {
-		return lastDataModel.getAwards();
+		return lastDataModel == null ? null : lastDataModel.getAwards();
     }
     
     
@@ -1161,18 +1162,18 @@ public class IMDB /*extends IMDB_if */{
      * Gets the cover url.
      **/
     public String getCoverName() {
-		return lastDataModel.getCoverName();
+		return lastDataModel == null ? null : lastDataModel.getCoverName();
     }
     
     /**
      * Gets the cover url.
      **/
     public String getCoverURL() {
-		return lastDataModel.getCoverURL();
+		return lastDataModel == null ? null : lastDataModel.getCoverURL();
     }
   
     public byte [] getCover() {
-    	return lastDataModel.getCoverData();
+    	return lastDataModel == null ? null : lastDataModel.getCoverData();
     }
     
     /**
@@ -1200,7 +1201,7 @@ public class IMDB /*extends IMDB_if */{
      * Returns true if the last cover reading went ok..
      **/
     public boolean getCoverOK() {
-		return lastDataModel.hasCover();
+		return lastDataModel == null ? null : lastDataModel.hasCover();
     }
     
     
