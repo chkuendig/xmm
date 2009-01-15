@@ -24,12 +24,14 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
@@ -38,7 +40,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
@@ -91,10 +92,8 @@ public class HttpUtil {
 		return imdbAuthenticationSetUp;
 	}
 	
-		
-	
 	public boolean setUpIMDbAuthentication() {
-
+	
 		if (httpSettings == null) {
 			log.warn("Authentication could not be set. Missing authentication settings.");
 			return false;
@@ -109,22 +108,21 @@ public class HttpUtil {
 
 				client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
 
-				PostMethod postMethod = new PostMethod(("http://akas.imdb.com/register/login")); 
+				PostMethod postMethod = new PostMethod(("https://secure.imdb.com/register-imdb/login")); 
 
 				NameValuePair[] postData = new NameValuePair[2];
 				postData[0] = new NameValuePair("login", httpSettings.getIMDbAuthenticationUser());
 				postData[1] = new NameValuePair("password", httpSettings.getIMDbAuthenticationPassword());
 
-
 				postMethod.setRequestBody(postData);
-
+				
 				int statusCode = client.executeMethod(postMethod);
 
-				 if (statusCode == HttpStatus.SC_OK) 
+				 if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_MOVED_TEMPORARILY) 
 					 imdbAuthenticationSetUp = true;
 				 else
 					 imdbAuthenticationSetUp = false;
-				
+ 
 			} catch (Exception e) {
 				log.warn("error:" + e.getMessage());
 			}

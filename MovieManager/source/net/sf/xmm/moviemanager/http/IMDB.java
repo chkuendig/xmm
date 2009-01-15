@@ -48,7 +48,8 @@ public class IMDB /*extends IMDB_if */{
     
     private ModelIMDbEntry lastDataModel;
     
-    
+    String [] movieHitCategory = {"Popular Titles", "Titles (Exact Matches)", "Titles (Partial Matches)", "Titles (Approx Matches)"};
+	    
     public IMDB() throws Exception {
     	this(null, null, null);		
     }
@@ -68,7 +69,7 @@ public class IMDB /*extends IMDB_if */{
     public IMDB(HttpSettings settings) throws Exception {
     	this(null, null, settings);	
     }
-        
+         
     /*
     public IMDB getIMDB() throws Exception {
     	return new IMDB();
@@ -78,7 +79,7 @@ public class IMDB /*extends IMDB_if */{
     	return new IMDB(urlID);
     }
     
-    public IMDB getIMDB(String urlID, StringBuffer data) throws Exception {
+    public IMDB getIMDB(Strin g urlID, StringBuffer data) throws Exception {
     	return new IMDB(urlID, data);
     }
     
@@ -130,9 +131,7 @@ public class IMDB /*extends IMDB_if */{
         
     
     private ModelIMDbEntry parseData(String urlID, StringBuffer data) throws Exception {
-	
-    	System.err.println("PARSING DATA with system IMDB");
-    	
+		
         String date = "", title = "", directedBy = "", writtenBy = "", genre = "", rating = "", colour = "", aka = "", 
         country = "", language = "", mpaa = "", soundMix = "", runtime = "", certification = "", awards = "", plot = "", cast = "", 
         coverURL = "", coverName = "", seasonNumber = "", episodeNumber = "";
@@ -431,12 +430,7 @@ public class IMDB /*extends IMDB_if */{
   
 
    
-    /**
-     * Returns simple matches list...
-     **/
-    public DefaultListModel getSimpleMatches(String title) {
-    	return getMatches("http://akas.imdb.com/find?s=tt&q="+ title, false);	
-    }
+   
     
     
     public StringBuffer getEpisodesStream(ModelIMDbSearchHit modelSeason) {
@@ -573,28 +567,33 @@ public class IMDB /*extends IMDB_if */{
 		return model;
 	}
 	
-    
-   public DefaultListModel getSeriesMatches(String title) {
-	   
-    	DefaultListModel all = getSimpleMatches(title);
-    	
-    	for (int i = 0; i < all.getSize(); i++) {
-    		
-    		ModelIMDbSearchHit imdb = (ModelIMDbSearchHit) all.get(i);
-    		
-    		if (!imdb.getTitle().startsWith("\"")) {
-    			all.remove(i);
-    			i--;
-    		}
-    	}
-    	return all;
-    }
-    
+
+	public DefaultListModel getSeriesMatches(String title) {
+
+		DefaultListModel all = getSimpleMatches(title);
+
+		for (int i = 0; i < all.getSize(); i++) {
+
+			ModelIMDbSearchHit imdb = (ModelIMDbSearchHit) all.get(i);
+
+			if (!imdb.getTitle().startsWith("\"")) {
+				all.remove(i);
+				i--;
+			}
+		}
+		return all;
+	}
+
+	/**
+	 * Returns simple matches list...
+	 **/
+	public DefaultListModel getSimpleMatches(String title) {
+		return getMatches("http://akas.imdb.com/find?s=tt&q="+ title, false);	
+	}
+
     private DefaultListModel getMatches(String urlType, boolean moreResults) {
 		DefaultListModel listModel = new DefaultListModel();
-						
-		String [] movieHitCategory = {"Popular Titles", "Titles (Exact Matches)", "Titles (Partial Matches)", "Titles (Approx Matches)"};
-		
+			
 		try {
 		
 			URL url = new URL(urlType.replaceAll("[\\p{Blank}]+","%20"));
@@ -606,8 +605,8 @@ public class IMDB /*extends IMDB_if */{
 				return listModel;
 			}
 			
-			new java.io.File("HTML-debug").mkdir();
-			net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
+		//	new java.io.File("HTML-debug").mkdir();
+			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
         
 			int start = 0;
 			String key = "";
@@ -647,14 +646,14 @@ public class IMDB /*extends IMDB_if */{
 			
 			for (int u = 0; u < movieHitCategory.length; u++) {
 				movieHitCategoryIndex[u] = data.indexOf(movieHitCategory[u]);
+				
 				if (movieHitCategoryIndex[u] != -1)  {
 					empty = false;
 					
 					if (startIndex == -1) {
-						System.err.println("delete:" + movieHitCategory[u]);
 						startIndex = movieHitCategoryIndex[u];
-						data.delete(0, startIndex);
-						break;
+						data.delete(0, startIndex); // remove the top html 
+						movieHitCategoryIndex[u] = data.indexOf(movieHitCategory[u]);
 					}
 				}
 			}
@@ -671,7 +670,7 @@ public class IMDB /*extends IMDB_if */{
 			
 			// should match strings like the above
 			
-			Pattern p = Pattern.compile("<a\\shref=\"/title/tt(\\d{5,})/\".*?>(.+?)</a>.+?\\((\\d+(/I*)?)\\).*?(;aka\\\\s<em>.+?</em>)*?</tr><tr>");
+			Pattern p = Pattern.compile("<a\\shref=\"/title/tt(\\d{5,})/\".*?>(.+?)</a>.+?\\((\\d+(/I*)?)\\).*?(;aka\\s<em>.+?</em>)*?</td></tr>");
 			Matcher m = p.matcher(data);
 			
 			while (m.find()) {
@@ -683,8 +682,6 @@ public class IMDB /*extends IMDB_if */{
 				String year = m.group(3);
 				
 				title = HttpUtil.decodeHTML(title);
-				
-				System.err.println("hit:" + title);
 				
 				if (title.equals(""))
 					continue;
@@ -699,7 +696,17 @@ public class IMDB /*extends IMDB_if */{
 				// Aka
 				aka = grabAkaTitlesFromSearchHit(m.group(0));
 				
-				listModel.addElement(new ModelIMDbSearchHit(key, title, aka));
+				int matchIndex = m.start();
+				
+				String category = null;
+				
+				for (int i = 0; i < movieHitCategoryIndex.length; i++) {
+					
+					if (movieHitCategoryIndex[i] != -1 && matchIndex > movieHitCategoryIndex[i])
+						category = movieHitCategory[i];
+				}
+				
+				listModel.addElement(new ModelIMDbSearchHit(key, title, aka, category));
 				
 				movieCount++;
 			}
