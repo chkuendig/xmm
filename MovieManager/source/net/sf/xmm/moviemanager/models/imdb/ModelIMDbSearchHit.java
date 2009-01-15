@@ -40,6 +40,8 @@ public class ModelIMDbSearchHit {
 	// Index value in list of hits
 	public int index = -1;
 	
+	private String hitCategory = null;
+	
 	/**
 	 * Aka
 	 */
@@ -75,11 +77,18 @@ public class ModelIMDbSearchHit {
 	}
 	
 	public ModelIMDbSearchHit(String key, String title, String aka) {
+		this(key, title, aka, null);
+	}
+
+	
+	public ModelIMDbSearchHit(String key, String title, String aka, String hitCategory) {
 		urlID = key; 
 		this.title = title;
 		this.aka = aka;
+		this.hitCategory = hitCategory;
 	}
 
+	
 	/**
 	 * The constructor.
 	 **/
@@ -127,6 +136,11 @@ public class ModelIMDbSearchHit {
 		return aka;
 	}
 
+	public String getHitCategory() {
+		return hitCategory;
+	}
+	
+		
 	/**
 	 * Gets the title.
 	 **/
