@@ -1201,7 +1201,7 @@ public class IMDB /*extends IMDB_if */{
      * Returns true if the last cover reading went ok..
      **/
     public boolean getCoverOK() {
-		return lastDataModel == null ? null : lastDataModel.hasCover();
+		return lastDataModel == null ? false : lastDataModel.hasCover();
     }
     
     
