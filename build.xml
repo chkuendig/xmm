@@ -21,7 +21,9 @@
 	  run                  runs the moviemanager
 	  create-archives      creates the zip files
 	  izpackinstaller      creates the izpack java installer
-	  make-http-jar        creates the http archive 
+	  make-http-jar        creates the http archive
+	  build-mac            create Mac build 
+	  dist-mac             create Mac dmg file 
 	</echo>
   </target>
   
@@ -31,8 +33,8 @@
   <property name="dist"  location="dist"/>
   <property name="izpack.dir" location="izpack"/>
 
-  <property name="version"  value="2.7.2"/>
-  <property name="versionName"  value="2.7.2"/>
+  <property name="version"  value="2.7.3"/>
+  <property name="versionName"  value="2.7.3"/>
 
   <property name="base" value="MovieManager/"/>
   
@@ -88,7 +90,6 @@
 
  <!--	   log4j.properties, -->
   <property name="config_file_list" value="castor.properties,
-									
 										   mapping.xml,
 										   MovieManager.tmx,
 										   Temp.mdb
@@ -375,12 +376,20 @@
   
   
  <target name="izpackinstaller" >
-		 <ant antfile="izpack/build-izpack.xml" target="makeIzpackInstaller" inheritAll="true" inheritrefs="true"/>
+		 <ant antfile="packaging/izpack/build-izpack.xml" target="makeIzpackInstaller" inheritAll="true" inheritrefs="true"/>
   </target>
 
- 
 
-
+<!--
+  <target name="dist-mac" >
+		 <ant antfile="packaging/mac/build-mac.xml" target="dist-mac" inheritAll="true" inheritrefs="true"/>
+  </target>
+  
+  <target name="build-mac" >
+		 <ant antfile="packaging/mac/build-mac.xml" target="build-mac" inheritAll="true" inheritrefs="true"/>
+  </target>
+  
+ -->
 
   <!-- removes all tabs replaces those with spaces and removes unqualified EOL
 	   and replaces those with the correct EOL -->
@@ -545,7 +554,9 @@ Define the look and feels below:
 
  <target name="makeLog4jProperties" 
 		  description="Creates a log4j.properties to be used in the binary package where only warnings/error are printed to log.">
-	
+   
+   <mkdir dir="${dist}"/>
+   
 	<echo file="${dist}/log4j.properties" append="false">
 #### Using two appenders, one to log to console, another to log to a file.
 log4j.rootCategory=ALL, stdout, FileAppender
@@ -615,6 +626,117 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 
 
 
+  <property name="app-name" value="MeD's MovieManager.app"/>
+  <property name="mac-dist" value="build/mac"/>
+
+
+ <!-- BUILD Mac  -->
+ <target name="build-mac" depends="makejar, makeLog4jProperties">
+
+	  <echo message="build-mac: ${ant.file}"/>
+
+    	<property name="tempdir" value="${dist-mac}/temp.app"/>
+
+	 <!--	<delete verbose="true" dir="${dist-mac}/${app-name}"/> -->
+
+	    <mkdir dir="${tempdir}"/>
+	    <mkdir dir="${tempdir}/Contents"/>
+	    <mkdir dir="${tempdir}/Contents/MacOS"/>
+	    <mkdir dir="${tempdir}/Contents/Resources"/>
+	    <mkdir dir="${tempdir}/Contents/Resources/Java"/>
+		<mkdir dir="${tempdir}/Contents/Resources/Java/config"/>
+
+   		<copy file="packaging/mac/resources/JavaApplicationStub" todir="${tempdir}/Contents/MacOS"/>
+
+		<copy file="${dist}/log4j.properties" todir="${tempdir}/Contents/Resources/Java/config"/>
+		
+		<copy file="MovieManager/config/MovieManager.tmx" todir="${tempdir}/Contents/Resources/Java/config"/>
+    	<copy file="MovieManager/config/castor.properties" todir="${tempdir}/Contents/Resources/Java/config"/>
+    	<copy file="MovieManager/config/mapping.xml" todir="${tempdir}/Contents/Resources/Java/config"/>
+    	
+
+		<copy todir="${tempdir}/Contents/Resources/Java/reports">
+    		<fileset dir="MovieManager/reports">
+        		<include name="**/*"/>
+   			</fileset>
+		</copy>
+		
+		<copy todir="${tempdir}/Contents/Resources/Java/HTML_templates">
+		  
+		  <!-- html template files -->
+		  <fileset dir="MovieManager/HTML_templates/" 
+				   includes="${template_files}"/>
+		</copy>
+		
+<!--
+		<exec executable="chmod">
+			<arg line="755 ${tempdir}/Contents/MacOS/JavaApplicationStub"/>
+		</exec>
+ -->
+
+ 		<copy file="packaging/mac/resources/Info.plist" todir="${tempdir}/Contents"/>
+ 		<copy file="packaging/mac/resources/PkgInfo" todir="${tempdir}/Contents"/>
+		<copy file="packaging/mac/resources/MovieManager.icns" todir="${tempdir}/Contents/Resources"/>
+		<copy file="MovieManager/MovieManager.jar" todir="${tempdir}/Contents/Resources/Java"/>
+	
+		<copy todir="${tempdir}/Contents/Resources/Java/lib">
+		  <fileset dir="MovieManager/lib"
+				   includes="${library_file_list}"
+				   >
+		  </fileset>
+		</copy>
+		
+		<!--
+		<exec executable="/Developer/Tools/SetFile">
+			<arg line=" -a B ${tempdir}"/>
+		</exec>
+		-->
+
+		
+		<move file="${tempdir}" tofile="${dist-mac}/${app-name}"/>
+ </target>
+    
+ <target name="install-mac" depends="build-mac">
+   <move file="${mac-dist}/${app-name}" tofile="/Applications/${app-name}"/>
+ </target>
+ 
+  <!--
+ <property name="app-name" value="MeD's MovieManager.app"/>
+  <property name="mac-dist" value="build/mac"/>
+  -->
+
+  <!-- DIST Mac  -->
+ <target name="dist-mac" depends="build-mac">
+   
+   <echo message="dist-mac: ${ant.file}"/>
+   
+    <!--	<copy file="../Readme.rtf" todir="${mac-dist}"/> -->
+
+    	<fileset file="*.dmg" />
+    	<delete file="${mac-dist}/MovieManager.dmg"/>
+		<exec executable="hdiutil" failonerror="true">
+			<arg value="create"/>
+			<arg value="-srcfolder"/>
+			<arg value="${mac-dist}/"/>
+			<arg value="-fs"/>
+			<arg value="HFS+"/>
+			<arg value="-volname"/>
+			<arg value="MeD's Movie Manager"/>
+			<arg value="${mac-dist}/temp.dmg"/>
+			<arg value="-ov"/>
+		</exec>
+    	<delete file="${mac-dist}/Readme.rtf"/>
+    	<exec executable="hdiutil" failonerror="true">
+    		<arg line="convert ${mac-dist}/temp.dmg -format UDZO -imagekey zlib-level=-9 -o ${mac-dist}/MovieManager.dmg -ov"/>
+    	</exec>
+    	<delete file="${mac-dist}/temp.dmg"/>
+    </target>
+
+	<target name="run-mac">
+	  <exec executable="open">
+		<arg line="${mac-dist}/"/>
+	  </exec>
+	</target>
 
 
 
