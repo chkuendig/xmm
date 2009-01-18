@@ -4,6 +4,13 @@ Changelog - MeD's Movie Manager
 ========================================
 
 
+Version 2.7.3 (16-jan-2009)
+
+ - Bug fixes:
+   - Fixed IMDb, now all hits are shown.
+   - Using IMDb username and password for login.
+
+
 Version 2.7.2 (10-jan-2009)
  
  - General improvements:
