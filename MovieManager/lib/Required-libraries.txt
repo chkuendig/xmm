@@ -33,7 +33,7 @@ AppleJavaExtensions.jar			- Needed for Mac OS X adaption.
 libquaqua.jnilib				- Needed for Quaqua L&F
 quaqua-filechooser-only.jar		- Needed for Quaqua L&F
 
-jasperreports-1.2.6.jar			- Report creation utility
+jasperreports-3.0.0.jar			- Report creation utility
 poi-2.5.1-final-20040804.jar	- Needed for jasperreports
 commons-beanutils.jar			- Needed for jasperreports
 commons-codec-1.3.jar			- Needed for jasperreports
