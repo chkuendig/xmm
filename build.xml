@@ -31,7 +31,7 @@
   
   <property name="build" location="MovieManager/"/>
   <property name="dist"  location="dist"/>
-  <property name="izpack.dir" location="izpack"/>
+  <property name="izpack.dir" location="packaging/izpack"/>
 
   <property name="version"  value="2.7.3"/>
   <property name="versionName"  value="2.7.3"/>
@@ -44,28 +44,55 @@
   
   <property name="infoFiles" value="License/, Readme.rtf, Readme.txt, Changelog.txt"/>
  
-  <property name="library_file_list" value="*.jar,
-										   *.dll,
-										   Required-libraries.txt,
-										   cobra/, 
-										   driveinfo/, 
-										   drivers/*.jar, 
-										   mac/, 
-										   LookAndFeels/oalnf.jar,
-										   LookAndFeels/skinlf.jar,
-										   LookAndFeels/JTattoo.1.2.4.jar,
-										   LookAndFeels/kunststoff.jar,
-										   LookAndFeels/JGoodies-2.1.4.jar,
-										   LookAndFeels/OfficeLnFs_2.7.jar,
-										   LookAndFeels/InfoNode-1.5.jar,
-										   LookAndFeels/CLooks_13.jar,
-										   LookAndFeels/lipstikLF-1.1.jar,
-										   LookAndFeels/squareness.2.3.0.jar,
-										   LookAndFeels/PgsLookAndFeel-1.1.jar,
-										   LookAndFeels/substance-lite-4.1.jar,
-										   LookAndFeels/Oyoaha_Theme_Packs/,
-										   LookAndFeels/Skinlf_Theme_Packs/
-										   "/>
+  <property name="library_file_list" value="Required-libraries.txt,
+											cobra/cobra-0.98.2.jar,
+											cobra/js.jar,
+											driveinfo/,
+											drivers/hsqldb-1.7.3.3.jar,
+											drivers/mysql-connector-java-3.1.12-bin.jar,
+											mac/AppleJavaExtensions.jar,
+											mac/quaqua-filechooser-only.jar,
+											BrowserLauncher2-10rc4.jar,
+											jxl.jar,
+											driveinfo/sfc.jar,
+											JNative.jar,
+											retroweaver-all-2.0.jar,
+											useful.jar,
+											TableLayout.jar,
+											log4j-1.2.13.jar,
+											castor-1.2.jar,
+											ProportionLayout.jar,
+											jasperreports-3.0.0.jar,
+											commons-digester-1.7.jar,
+											commons-collections-3.2.jar,
+											commons-beanutils.jar,
+											commons-httpclient-3.0.1.jar,
+											commons-logging-1.1.jar,
+											commons-codec-1.3.jar,
+											poi-2.5.1-final-20040804.jar,
+											itext-1.4.5.jar	,
+											xercesImpl.jar,
+											xml-apis.jar,
+											gettext-commons-0.9.jar,
+											ostermillerutils_1_05_00_for_java_1_4.jar,
+											LookAndFeels/oalnf.jar,
+											LookAndFeels/skinlf.jar,
+											LookAndFeels/JTattoo.1.2.4.jar,
+											LookAndFeels/kunststoff.jar,
+											LookAndFeels/JGoodies-2.1.4.jar,
+											LookAndFeels/OfficeLnFs_2.7.jar,
+											LookAndFeels/InfoNode-1.5.jar,
+											LookAndFeels/CLooks_13.jar,
+											LookAndFeels/lipstikLF-1.1.jar,
+											LookAndFeels/squareness.2.3.0.jar,
+											LookAndFeels/PgsLookAndFeel-1.1.jar,
+											LookAndFeels/substance-lite-4.1.jar,
+											LookAndFeels/Oyoaha_Theme_Packs/,
+											LookAndFeels/Skinlf_Theme_Packs/
+											"/>
+  
+  
+  
   
   
   
@@ -249,7 +276,7 @@
 	  
 	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager" 
 				  dir="MovieManager" 
-				  includes="${mainFiles}">
+				  includes="MovieManager.exe, Applet.html, Icon.ico">
 		
 		<include name="reports/"/>
 		<include name="codecs/"/>
@@ -290,7 +317,7 @@
 	 
 	  
 	  <zipfileset prefix="MeDs-Movie-Manager-Source" dir="" includes="${infoFiles}">
-		<include name="izpack/"/>
+		<include name="packaging/"/>
 		<include name="makejar.bat"/>
 		<include name="compile.bat"/>
 		<include name="run.bat"/>
@@ -300,7 +327,6 @@
 		<include name="run.sh"/>
 		<include name="Manifest.txt"/>
 		<include name="build.xml"/>
-		<include name="build-mac.xml"/>
 		<include name="So how do I get this thing running.txt"/>
 		<include name=".classpath"/>
 		<include name=".project"/>
