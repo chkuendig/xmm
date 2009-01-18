@@ -46,8 +46,8 @@
 <native type="izpack" name="ShellLink.dll"/>
 
 <resources>
-    <res src="izpack/bin/shortcutspec/shortcutSpec.xml" id="shortcutSpec.xml"/>
-    <res src="izpack/bin/shortcutspec/Unix_shortcutSpec.xml" id="Unix_shortcutSpec.xml"/>
+    <res src="packaging/izpack/bin/shortcutspec/shortcutSpec.xml" id="shortcutSpec.xml"/>
+    <res src="packaging/izpack/bin/shortcutspec/Unix_shortcutSpec.xml" id="Unix_shortcutSpec.xml"/>
 </resources>
 
   <guiprefs height="340" resizable="yes" width="450"/>
