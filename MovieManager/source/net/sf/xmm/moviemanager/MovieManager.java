@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.net.URL;
 import java.security.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -652,16 +653,17 @@ public class MovieManager {
     
    
        
+    protected void loadDatabase() {
+    	loadDatabase(false);
+    }
     
     /**
      * Loads the database with the path read from config.ini file
      **/
-    protected void loadDatabase() {
+    protected void loadDatabase(final boolean perfromBackup) {
         
         if (!config.getLoadDatabaseOnStartup())
         	return;
-
-
         
        final ProgressBean worker = new ProgressBeanImpl() {
 
@@ -792,7 +794,7 @@ public class MovieManager {
         				if (listener != null)
         					listener.propertyChange(new PropertyChangeEvent(this, "value", null, Localizer.getString("moviemanager.progress.retrieving-movie-list")));
 
-        				//                  If database loading aborted by user
+        				// If database loading aborted by user
         				if (getCancelled()) {
         					return;
         				}
@@ -806,6 +808,20 @@ public class MovieManager {
         			if (listener != null)
         				listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
 
+        			
+        			// Perform database backup
+        			
+        			if (perfromBackup) {
+
+        				if (MovieManager.getIt().getDatabase() != null && MovieManager.getIt().getDatabase().isSetUp()) {
+
+        					if (config.handleBackupSettings())
+        						movieManager.makeDatabaseBackup();
+
+        					log.debug("Backup and new version check finished.");
+        				}
+        			}
+        			
         		} catch (Exception e) {
         			log.error("Exception:" + e.getMessage(), e);
         		}
@@ -828,14 +844,14 @@ public class MovieManager {
     
     
     static void handleVersionUpdate() {
-
+	
     	if (!config.getCheckForProgramUpdates())
     		return;
 
     	Thread t = new Thread() {
 
     		public void run() { 
-
+	
     			try {
     				String buf = new HttpUtil(getConfig().getHttpSettings()).readDataToStringBuffer(new URL("http://xmm.sourceforge.net/LatestVersion.txt")).toString();
 
@@ -851,7 +867,7 @@ public class MovieManager {
 
     					int currentLength = currentVersion.length();
     					int newLength = newVersion.length();
-
+	
     					if (currentLength > newLength) {
     						for (int i = (currentLength - newLength) ; i < currentLength; i++)
     							newVersion += "0";
@@ -860,7 +876,7 @@ public class MovieManager {
     						for (int i = (newLength - currentLength) ; i < newLength-1; i++)
     							currentVersion += "0";
     					}
-
+	
     					// Checks if the version on the home page is newer than the current version
     					if (Double.parseDouble(newVersion) > Double.parseDouble(currentVersion)) {
     						log.debug("New version available:" + lines[1]);
@@ -880,12 +896,12 @@ public class MovieManager {
      * Creating backup of the datdabase.
      */
     void makeDatabaseBackup() {
-    	
+     	
     	try {
     		String backupFolder = config.getDatabaseBackupDirectory(); 
     		
     		if (backupFolder.equals("")) {
-    			String tmp = config.getDatabasePath(false);
+    			String tmp = config.getDatabasePath(true);
 
     			if (tmp != null && !tmp.equals("")) {
     				File f = new File(tmp);
@@ -904,7 +920,7 @@ public class MovieManager {
     		}
     		
     		if (!new File(backupFolder).isDirectory()) {
-    			throw new Exception("invalid backup directory:" + backupFolder);
+    			throw new Exception("Invalid backup directory:" + backupFolder);
     		}
     		    		
     		int sizeLimit = Integer.parseInt(config.getDatabaseBackupDeleteOldest());
@@ -974,14 +990,15 @@ public class MovieManager {
     		
 //    		creating the new backup
     		String dbPath = config.getDatabasePath(true);
-
+	
+    		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    		SimpleDateFormat timeFormat = new SimpleDateFormat("HH.mm.ss");
+    		
     		Calendar c = Calendar.getInstance();
 
-    		String date = c.get(Calendar.DATE) + "." + c.get(Calendar.MONTH) + "." + c.get(Calendar.YEAR);
-    		String time = (c.get(Calendar.HOUR_OF_DAY) < 10 ? "0" + c.get(Calendar.HOUR_OF_DAY)  : "" + c.get(Calendar.HOUR_OF_DAY)) + "."; 
-    		time += ((c.get(Calendar.MINUTE) < 10) ? "0" + c.get(Calendar.MINUTE) : "" + c.get(Calendar.MINUTE)) + ".";
-    		time += ((c.get(Calendar.SECOND) < 10) ? "0" + c.get(Calendar.SECOND) : "" + c.get(Calendar.SECOND)); 
-
+    		String date = dateFormat.format(c.getTime());
+    		String time = timeFormat.format(c.getTime());
+    		
     		backupFolder += "/" + date + "/" + time;
 
     		File dbBackup = new File(backupFolder);
@@ -1152,12 +1169,12 @@ public class MovieManager {
     
     public static String getUserHome() {
     	String userHome = (String) AccessController.doPrivileged(
-    	          new PrivilegedAction() {
-    	            public Object run() {
-    	                return System.getProperty("user.home");
-    	            }
-    	          }
-    	        );
+    			new PrivilegedAction() {
+    				public Object run() {
+    					return System.getProperty("user.home");
+    				}
+    			}
+    	);
     	return userHome;
     }
     
@@ -1266,18 +1283,11 @@ public class MovieManager {
             		
             		
             		/* Loads the database. */
-            		MovieManager.getIt().loadDatabase();
+            		MovieManager.getIt().loadDatabase(true);
 
             		log.debug("Database loaded.");
             		
-            		if (MovieManager.getIt().getDatabase() != null && MovieManager.getIt().getDatabase().isSetUp()) {
-
-            			if (config.handleBackupSettings())
-            				movieManager.makeDatabaseBackup();
-
-            			handleVersionUpdate();
-            			log.debug("Backup and new version check finished.");
-            		}
+            		handleVersionUpdate();
             		            		
             	} catch (Exception e) {
             		log.error("Exception occured while intializing MeD's Movie Manager", e);
