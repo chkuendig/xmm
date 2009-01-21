@@ -146,7 +146,7 @@ public class IMDB /*extends IMDB_if */{
 		boolean isEpisode = false;
 		boolean isSeries = false;
 		
-		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
+		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
 			
 		try {
 			/* Processes the data... */
