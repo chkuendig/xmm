@@ -33,8 +33,8 @@
   <property name="dist"  location="dist"/>
   <property name="izpack.dir" location="packaging/izpack"/>
 
-  <property name="version"  value="2.7.3"/>
-  <property name="versionName"  value="2.7.3"/>
+  <property name="version"  value="2.7.4"/>
+  <property name="versionName"  value="${version}"/>
 
   <property name="base" value="MovieManager/"/>
   
@@ -51,7 +51,8 @@
 											drivers/hsqldb-1.7.3.3.jar,
 											drivers/mysql-connector-java-3.1.12-bin.jar,
 											mac/AppleJavaExtensions.jar,
-											mac/quaqua-filechooser-only.jar,
+											mac/quaqua.jar,
+											mac/libquaqua.jnilib,
 											BrowserLauncher2-10rc4.jar,
 											jxl.jar,
 											driveinfo/sfc.jar,
@@ -75,6 +76,8 @@
 											xml-apis.jar,
 											gettext-commons-0.9.jar,
 											ostermillerutils_1_05_00_for_java_1_4.jar,
+											JNativeCpp.dll,
+											MediaInfo.dll,
 											LookAndFeels/oalnf.jar,
 											LookAndFeels/skinlf.jar,
 											LookAndFeels/JTattoo.1.2.4.jar,
@@ -661,9 +664,9 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 
 	  <echo message="build-mac: ${ant.file}"/>
 
-    	<property name="tempdir" value="${dist-mac}/temp.app"/>
+    	<property name="tempdir" value="${mac-dist}/temp.app"/>
 
-	 <!--	<delete verbose="true" dir="${dist-mac}/${app-name}"/> -->
+	 <!--	<delete verbose="true" dir="${mac-dist}/${app-name}"/> -->
 
 	    <mkdir dir="${tempdir}"/>
 	    <mkdir dir="${tempdir}/Contents"/>
@@ -719,7 +722,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 		-->
 
 		
-		<move file="${tempdir}" tofile="${dist-mac}/${app-name}"/>
+		<move file="${tempdir}" tofile="${mac-dist}/${app-name}"/>
  </target>
     
  <target name="install-mac" depends="build-mac">

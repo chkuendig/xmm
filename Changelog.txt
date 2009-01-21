@@ -4,6 +4,13 @@ Changelog - MeD's Movie Manager
 ========================================
 
 
+Version 2.7.4 (20-jan-2009)
+
+ - Bug fixes:
+   - Version check is fixed.
+   - Database backup function fixed.
+
+
 Version 2.7.3 (16-jan-2009)
 
  - Bug fixes:
