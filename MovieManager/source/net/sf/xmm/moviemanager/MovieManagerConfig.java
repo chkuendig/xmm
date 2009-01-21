@@ -69,7 +69,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/**
 		 * The current version of the program.
 		 **/
-		private static final String _version = " 2.7.3"; //$NON-NLS-1$
+		private static final String _version = " 2.7.4"; //$NON-NLS-1$
 
 
 		String appTitle = " MeD's Movie Manager v" + getVersion();
@@ -974,7 +974,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 
 	public void setDatabasePath(String dbPath) {
-		databasePath = dbPath;
+		databasePath = dbPath;	
 	}
 
 	// Not the database file, but the folder containing the database files.
