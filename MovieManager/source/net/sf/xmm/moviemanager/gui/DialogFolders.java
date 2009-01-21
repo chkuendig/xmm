@@ -802,17 +802,9 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     				// Relative to database
     				else {
     					String dbPath = MovieManager.getConfig().getDatabaseFolder(true);
-
-    					System.err.println("dbPath:" + dbPath);
-    					
-    					
-    					System.err.println("coversPath("+new File(coversPath).isDirectory()+"):" + coversPath);
-    					System.err.println("dbPath, coversPath("+new File(dbPath, coversPath).isDirectory()+"):" + new File(dbPath, coversPath));
-    					
+		
     					if ((new File(coversPath)).isDirectory()) {
-
-    						System.err.println("coversPath.indexOf(dbPath):" + coversPath.indexOf(dbPath));
-    						
+	
     						if (coversPath.indexOf(dbPath) == -1) {
     							textFieldCovers.setBackground(invalidPathColor);
     							textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert-covers-relative-database"));
@@ -884,8 +876,6 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     						}
     					}
     				}
-
-    				System.err.println("coversFolder("+coversFolder.isDirectory()+"):" + coversFolder);
 
     				if (!coversFolder.isDirectory()) {
     					textFieldCovers.setBackground(invalidPathColor);
