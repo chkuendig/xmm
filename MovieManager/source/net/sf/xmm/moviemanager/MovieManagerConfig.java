@@ -358,6 +358,21 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String HTMLTemplateName = DefaultHTMLTemplateName;
 	private String HTMLTemplateStyleName = DefaultHTMLTemplateStyleName;
 
+	public void setHTMLTemplateStyleName(String HTMLTemplateStyleName) {
+		
+		try {
+			throw new Exception();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
+		this.HTMLTemplateStyleName = HTMLTemplateStyleName;
+	}
+	
+	public void setHTMLTemplateName(String HTMLTemplateName) {
+		this.HTMLTemplateName = HTMLTemplateName;
+	}
+	
 	private String lookAndFeel = "Metal";
 
 	private String skinlfThemePack = "";
@@ -1476,7 +1491,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.htmlTemplateStyle = htmlTemplateStyle;
 		
 		if (htmlTemplateStyle == null)
-			HTMLTemplateStyleName = null;
+			setHTMLTemplateStyleName(null);
 	}
 			
 
@@ -1488,7 +1503,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		htmlTemplateStyle = s;
 		
 		if (s == null)
-			HTMLTemplateStyleName = null;
+			setHTMLTemplateStyleName(null);
 	}
 	
 //	 Returns the template name, e.g. "Simple Virtue" 
@@ -1543,8 +1558,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public String getHTMLTemplateStyleName() {
 		
 		if (htmlTemplateStyle == null) {
-			if (getHTMLTemplateStyle() == null)
+			if (getHTMLTemplateStyle() == null) {
 				return HTMLTemplateStyleName; // Update style
+			}
 		}
 		
 		return htmlTemplateStyle.getName();
@@ -2038,6 +2054,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			//}
 			
 			
+			
 			URL url = null;
 
 			int appMode = MovieManager.getAppMode();
@@ -2045,24 +2062,33 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			// Applet
 			if (appMode == 1)
 				url = FileUtil.getFileURL("config/Config_Applet.ini", DialogMovieManager.applet);
-			else if (appMode == 2) {
+			else if (appMode == 2) { // Java Web Start
 				MovieManagerConfigHandler configHandler = getConfigHandler();
 				
 				if (configHandler != null)
 					url = configHandler.getConfigURL();
 												
 			} else {
-				String conf = "Config.ini";
-				long t = FileUtil.getFile(conf).lastModified();
 				
-				// The newest config file will be used
-				if (FileUtil.getFile("config/" + conf).lastModified() > t)
-					conf = "config/" + conf;
+				String conf = "Config.ini";
+				
+				if (SysUtil.isMac())
+					url = new File(SysUtil.getConfigDir(), conf).toURL();
+				else {
 					
-				url = FileUtil.getFileURL(conf);
+					long t = FileUtil.getFile(conf).lastModified();
+
+					// The newest config file will be used
+					if (FileUtil.getFile("config/" + conf).lastModified() > t)
+						conf = "config/" + conf;
+
+					url = FileUtil.getFileURL(conf);
+				}
 			}
 			if (url == null)
 				return;
+			
+			System.err.println("reading config file:" + url);
 			
 			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
@@ -2225,12 +2251,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("HTMLTemplateName:");
 			
 			if (value != null) {
-				HTMLTemplateName = value;
+				setHTMLTemplateName(value);
 			}
 						
 			value = (String) config.get("HTMLTemplateStyleName:");
-			HTMLTemplateStyleName = value;
-								
+			
+			if (value != null) {
+				setHTMLTemplateStyleName(value);
+			}
+			
 			value = (String) config.get("filterOption:");
 
 			if (value != null) {
