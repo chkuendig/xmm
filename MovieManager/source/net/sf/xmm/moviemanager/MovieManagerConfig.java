@@ -359,13 +359,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String HTMLTemplateStyleName = DefaultHTMLTemplateStyleName;
 
 	public void setHTMLTemplateStyleName(String HTMLTemplateStyleName) {
-		
-		try {
-			throw new Exception();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	
 		this.HTMLTemplateStyleName = HTMLTemplateStyleName;
 	}
 	
@@ -2087,9 +2080,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 			if (url == null)
 				return;
-			
-			System.err.println("reading config file:" + url);
-			
+		
 			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
 			// search Alias And Additional Info Default Values
@@ -3515,7 +3506,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 }
 
 		 try {
-			 
+
 			 URL url = null;
 
 			 int appMode = MovieManager.getAppMode();
@@ -3523,18 +3514,20 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			 // Applet
 			 if (appMode == 1)
 				 url = FileUtil.getFileURL("config/Config_Applet.ini", DialogMovieManager.applet);
-			 else if (appMode == 2) {
+			 else if (appMode == 2) { // Java Web Start
+
 				 MovieManagerConfigHandler configHandler = getConfigHandler();
 
 				 if (configHandler != null)
 					 url = configHandler.getConfigURL();
 
 			 } else {
-				 url = new File(SysUtil.getUserDir(), "config/Config.ini").toURL();  
-				 //FileUtil.getFileURL("config/Config.ini");
+				 if (SysUtil.isMac())
+					 url = new File(SysUtil.getConfigDir(), "Config.ini").toURL();
+				 else 
+					 url = new File(SysUtil.getUserDir(), "config/Config.ini").toURL();  
 			 }
-
-
+ 
 			 /* Gets the working dir... */
 			 // String directory = SysUtil.getUserDir();
 
