@@ -108,6 +108,15 @@ public class DialogAbout extends JDialog {
 	labelLicense.addMouseListener(new MovieManagerCommandOpenPage("http://www.fsf.org/licenses/info/GPLv2.html"));
 	panelLicenses.add(labelLicense);
 	
+	int freeMemory = (int) Runtime.getRuntime().freeMemory()/1024/1024;
+	int totalMemory = (int) Runtime.getRuntime().totalMemory()/1024/1024;
+	int maxMemory = (int) Runtime.getRuntime().maxMemory()/1024/1024;
+	
+	
+	System.err.println("freeMemory:" + freeMemory + "MiB");
+	System.err.println("totalMemory:" + totalMemory + "MiB");
+	System.err.println("maxMemory:" + maxMemory + "MiB");
+	
 	
 	/* System panel... */
 	JPanel panelSystem = new JPanel();
@@ -120,9 +129,13 @@ public class DialogAbout extends JDialog {
 									"  Architecture: " + System.getProperty("os.arch") + 
 									"<br>"+
 						
-									"Java version: " + System.getProperty("java.specification.version") +  
+									"Java version: " + System.getProperty("java.runtime.version") +  
 									"  Vendor:" + System.getProperty("java.vm.specification.vendor") + 
 									"<br>" + 
+									
+									"freeMemory: " + freeMemory + "<br>" +
+									"totalMemory: " + totalMemory + "<br>" +
+									"maxMemory: " + maxMemory + "<br>" +
 									
 									"</html>",JLabel.CENTER);
 	
@@ -159,6 +172,10 @@ public class DialogAbout extends JDialog {
 	pack();
 	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
 		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
-    }
 
+	
+	System.err.println("freeMemory:" + (Runtime.getRuntime().freeMemory()/1024/1024) + "MiB");
+	System.err.println("totalMemory:" + (Runtime.getRuntime().totalMemory()/1024/1024) + "MiB");
+	System.err.println("maxMemory:" + (Runtime.getRuntime().maxMemory()/1024/1024) + "MiB");
+    }
 }
