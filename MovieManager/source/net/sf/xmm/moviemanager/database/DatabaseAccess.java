@@ -689,38 +689,7 @@ public class DatabaseAccess extends Database {
 	    log.error("", e);
 	}
     }
-    
-    /**
-     * Makes update of the database
-     **/
-    public int makeDatabaseBackup() {
-	
-	try {
-	    String absolutePath = getPath();
-	    File currentFile = new File(absolutePath);
-	    InputStream inputStream = new FileInputStream(absolutePath);
-	    String path = absolutePath.substring(0, absolutePath.lastIndexOf(SysUtil.getDirSeparator())+1);
-	    
-	    int number = 1;
-	    while (new File(path + "Backup" + number +" of "+ currentFile.getName()).exists())
-		number++;
-	    
-	    OutputStream outputStream = new FileOutputStream(path+"Backup"+number+" of "+ currentFile.getName());
-	    byte[] data = new byte[inputStream.available()];
-	    
-	    while (inputStream.read(data)!=-1) {
-		outputStream.write(data);
-	    }
-	    outputStream.close();
-	    inputStream.close();
-	    
-	    return 1;
-	    
-	} catch (Exception e) {
-	    log.error("Exception: " + e.getMessage());
-	    return 0;
-	}
-    }
+     
 }
     
 

@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.util.FileUtil;
 
 
@@ -1179,8 +1180,8 @@ public class DatabaseHSQL extends Database {
  	    
  	    	    
  	    // Updating from hsql v1.7 to 1.8
- 	    if (properties.indexOf("compatible_version=1.7") != -1)
- 	    	makeDatabaseBackup();
+ 	   // if (properties.indexOf("compatible_version=1.7") != -1)
+ 	    //	MovieManager.getIt().makeDatabaseBackup();
  	     	    
 	    FileInputStream stream = new FileInputStream(dbScriptFile);
 	    StringBuffer stringBuffer = new StringBuffer();
@@ -1199,7 +1200,7 @@ public class DatabaseHSQL extends Database {
 			return true;
 		    }
 		    else
-			return false;
+		    	return false;
 		}
 	    }
 	    stream.close();
@@ -1214,6 +1215,7 @@ public class DatabaseHSQL extends Database {
     /**
      * Makes update of the database
      **/
+    /*
     public int makeDatabaseBackup() {
 	
 	try {
@@ -1264,14 +1266,15 @@ public class DatabaseHSQL extends Database {
 		inputStream.close();
 	    }
 	    
+	    throw new Exception();
 	    
 	} catch (Exception e) {
 	    log.error("", e);
 	    return 0;
 	}
-	return 1;
+	//return 1;
     }
-    
+    */
     
     /**
      * Deletes the database files

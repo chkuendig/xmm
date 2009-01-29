@@ -748,16 +748,13 @@ public class DatabaseMySQL extends Database {
      * Checks if the database needs an update
      **/
     public boolean isDatabaseOld() {
-	return false;
+    	return false;
     }
     
     public int makeDatabaseUpToDate() {
-	return 1;
+    	return 1;
     }
     
-    public int makeDatabaseBackup() {
-	return 1;
-    }
     
     public void deleteDatabase() {
     	;
