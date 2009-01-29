@@ -133,9 +133,9 @@ public class DialogAbout extends JDialog {
 									"  Vendor:" + System.getProperty("java.vm.specification.vendor") + 
 									"<br>" + 
 									
-									"freeMemory: " + freeMemory + "<br>" +
-									"totalMemory: " + totalMemory + "<br>" +
-									"maxMemory: " + maxMemory + "<br>" +
+									"Free vm memory: " + freeMemory + "<br>" +
+									"Total vm memory: " + totalMemory + "<br>" +
+									"Max vm memory: " + maxMemory + "<br>" +
 									
 									"</html>",JLabel.CENTER);
 	
