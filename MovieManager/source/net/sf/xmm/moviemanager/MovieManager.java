@@ -1238,8 +1238,6 @@ public class MovieManager {
 		
 			/* Must be called before the GUI is created */
 			if (SysUtil.isMac()) { 
-				System.err.println("include lib/mac in class pathmacify-1.2.jar");
-				
 				SysUtil.includeJarFilesInClasspath("lib/mac");
 				LookAndFeelManager.setupOSXLaF(); 
 			}
