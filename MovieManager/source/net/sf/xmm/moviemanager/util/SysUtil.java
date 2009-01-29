@@ -32,24 +32,54 @@ public class SysUtil {
 		String path = ""; //$NON-NLS-1$
 
 		try {
-			//java.net.URL url = MovieManager.class.getProtectionDomain().getCodeSource().getLocation();
 			java.net.URL url = FileUtil.class.getProtectionDomain().getCodeSource().getLocation();
 			
-			File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
-			//File file = new File(java.net.URLDecoder.decode(System.getProperty("user.dir"), "UTF-8"));
-
+			//System.err.println("\n\n\ngetUserDir url:" + url);
 			
+			File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
+		
 			// If running in a jar file the parent is the root dir 
 			if (file.isFile())
 				path = file.getParentFile().getAbsolutePath();
 			else
 				path = file.getAbsolutePath();
 
-			/* If running in a mac application bundle, we can't write in the application-directory, so we use the home of the user */
-			if (isMac() /* && path.indexOf(".app/Contents") > -1 */) {
+		}
+		catch (UnsupportedEncodingException e) {
+			path = System.getProperty("user.dir"); //$NON-NLS-1$
+		}
+
+		if (!path.endsWith(getDirSeparator()))
+			path += getDirSeparator();
+		
+		return path;
+	}
+
+	
+	/**
+	 * Getting the 'root directory' of the app.
+	 **/
+	public static String getConfigDir() {
+		
+		String path = ""; //$NON-NLS-1$
+
+		try {
+			java.net.URL url = FileUtil.class.getProtectionDomain().getCodeSource().getLocation();
+			
+			File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
+			
+			// If running in a jar file the parent is the root dir 
+			if (file.isFile())
+				path = file.getParentFile().getAbsolutePath();
+			else
+				path = file.getAbsolutePath();
+	
+			/* If running in a mac application bundle, we can't write in the application-directory, so we use the /Library/Application Support */
+			if (isMac()) {
+				
 				path = System.getProperty("user.home") + "/Library/Application Support/MovieManager/";
 				File dir = new File(path);
-
+	
 				if (!dir.exists()) {
 					if(!dir.mkdir()) {
 						log.error("Could not create settings folder.");
@@ -66,7 +96,8 @@ public class SysUtil {
 		
 		return path;
 	}
-
+	
+	
 	public static String getDriveDisplayName(File path) {
 
 		FileSystemView fsv = new javax.swing.JFileChooser().getFileSystemView();
