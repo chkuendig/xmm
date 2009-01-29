@@ -1045,17 +1045,17 @@ public class MovieManager {
     	try {
 
         	File f = FileUtil.getFile(MovieManager.getConfig().HTMLTemplateRootDir);
-
+	
     		if (f != null && f.isDirectory()) {
 
     			File [] templateFiles = f.listFiles();
-    			
+	
     			for (int i = 0; i < templateFiles.length; i++) {
 
     				try {
     					// For each template directory
     					if (templateFiles[i].isDirectory()) {
-
+	
     						// Finding template.txt
     						File template = new File(templateFiles[i], "template.txt");
 
@@ -1080,7 +1080,7 @@ public class MovieManager {
     							continue;
     						}
     						htmlTemplates.put(newTemplate.getName(), newTemplate);
-    						
+    					
     						// Getting the styles
     						File styles = new File(templateFiles[i], "Styles");
 
@@ -1178,8 +1178,9 @@ public class MovieManager {
     	return userHome;
     }
     
+    
     public static void main(String args[]) {
-     	    	
+     
     	boolean sandbox = isRestrictedSandbox();
     	
     	// Uses this to check if the app is running in a sandbox with limited privileges
@@ -1197,7 +1198,7 @@ public class MovieManager {
     		java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.OFF); 
 
     		File log4jConfigFile = FileUtil.getFile("config/log4j.properties"); //$NON-NLS-1$
-	
+		
     		if (log4jConfigFile.isFile()) {
     			PropertyConfigurator.configure(log4jConfigFile.getAbsolutePath());
     		} else {
@@ -1212,8 +1213,7 @@ public class MovieManager {
 		/* Writes the date. */
 		log.debug("Log Start: " + new Date(System.currentTimeMillis())); //$NON-NLS-1$
 		log.debug("MeD's Movie Manager v" + config.sysSettings.getVersion()); //$NON-NLS-1$
-				
-		
+						
 		/* Loads the config */
 		if (!sandbox)
 			config.loadConfig();
@@ -1224,22 +1224,25 @@ public class MovieManager {
 		if (startupHandler != null) {
 			startupHandler.startUp();
 		}
-		
+				
 		/* Must be executed before the JFrame (DialogMovieManager) object is created. */
 		if (config.getDefaultLookAndFeelDecorated()) {
 			DialogMovieManager.setDefaultLookAndFeelDecorated(true);
 		}
 
 		if (!sandbox) {
+							
+			SysUtil.includeJarFilesInClasspath("lib/LookAndFeels");
+			SysUtil.includeJarFilesInClasspath("lib/drivers");
+		
 			/* Must be called before the GUI is created */
 			if (SysUtil.isMac()) { 
-				SysUtil.includeJarFilesInClasspath(System.getProperty("user.dir") + "/lib/LookAndFeels");
+				System.err.println("include lib/mac in class pathmacify-1.2.jar");
+				
+				SysUtil.includeJarFilesInClasspath("lib/mac");
 				LookAndFeelManager.setupOSXLaF(); 
 			}
-			else /* Includes the avallable jar files*/
-				SysUtil.includeJarFilesInClasspath("lib/LookAndFeels");
-
-			SysUtil.includeJarFilesInClasspath("lib/drivers");
+			
 		}
 		
 		movieManager = new MovieManager();
@@ -1247,6 +1250,8 @@ public class MovieManager {
 				
 		log.debug("MovieManager object initialized.");
 				
+		
+		
 		/* Installs the Look&Feels */
 		LookAndFeelManager.instalLAFs();
 
