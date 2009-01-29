@@ -628,8 +628,11 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 	   }
 	   
 	   
-	   menuBar = new DefaultMenuBar();
-	   return menuBar.getNewInstance(internalConfig, config);
+	   //menuBar = new DefaultMenuBar();
+	   //return menuBar.getNewInstance(internalConfig, config);
+	   
+	   menuBar = new DefaultMenuBar(internalConfig, config);
+	   return (JMenuBar) menuBar;
    }
 
    
@@ -652,8 +655,9 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     		movieInfo.setTitleAt(1, "No Templates available");
     		return;
     	}
-    	
-		if (template.hasStyles()) {
+    
+    	if (template.hasStyles()) {
+						
 			String styleName = MovieManager.getConfig().getHTMLTemplateStyleName();
 			tabName = template.getName() + " > " + template.getStyle(styleName);
 		}
