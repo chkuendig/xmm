@@ -343,7 +343,7 @@ public class MovieManager {
     					return false;
     				}
 
-    				if (_database.makeDatabaseBackup() != 1) {
+    				if (!makeDatabaseBackup()) {
     					showDatabaseUpdateMessage("Backup failed"); //$NON-NLS-1$
     					return false;
     				}
@@ -385,7 +385,7 @@ public class MovieManager {
     					if (!allowDatabaseUpdate(_database.getPath())) {
     						return false;
     					}
-    					if (_database.makeDatabaseBackup() != 1) {
+    					if (!makeDatabaseBackup()) {
     						showDatabaseUpdateMessage("Backup failed"); //$NON-NLS-1$
     						return false;
     					}
@@ -862,12 +862,12 @@ public class MovieManager {
 
     				if (lines[1].length() > 0 && !lines[1].trim().equals(config.sysSettings.getVersion())) {
 
-    					String currentVersion = config.sysSettings.getVersion().replaceAll("\\.", "");
-    					String newVersion = lines[1].replaceAll("\\.", "");
+    					String currentVersion = config.sysSettings.getVersion().replaceAll("\\.", "").trim();
+    					String newVersion = lines[1].replaceAll("\\.", "").trim();
 
     					int currentLength = currentVersion.length();
     					int newLength = newVersion.length();
-	
+		
     					if (currentLength > newLength) {
     						for (int i = (currentLength - newLength) ; i < currentLength; i++)
     							newVersion += "0";
@@ -876,7 +876,7 @@ public class MovieManager {
     						for (int i = (newLength - currentLength) ; i < newLength-1; i++)
     							currentVersion += "0";
     					}
-	
+    				
     					// Checks if the version on the home page is newer than the current version
     					if (Double.parseDouble(newVersion) > Double.parseDouble(currentVersion)) {
     						log.debug("New version available:" + lines[1]);
@@ -895,8 +895,8 @@ public class MovieManager {
     /*
      * Creating backup of the datdabase.
      */
-    void makeDatabaseBackup() {
-     	
+    public boolean makeDatabaseBackup() {
+      	
     	try {
     		String backupFolder = config.getDatabaseBackupDirectory(); 
     		
@@ -916,7 +916,7 @@ public class MovieManager {
     				}
     			}
     			else
-    				return;
+    				return false;
     		}
     		
     		if (!new File(backupFolder).isDirectory()) {
@@ -1000,10 +1000,10 @@ public class MovieManager {
     		String time = timeFormat.format(c.getTime());
     		
     		backupFolder += "/" + date + "/" + time;
-
+    		    		
     		File dbBackup = new File(backupFolder);
     		dbBackup.mkdirs();
-
+	
     		if (database.isHSQL()) {
     			File tmp = new File(dbPath + ".script");
 
@@ -1031,6 +1031,7 @@ public class MovieManager {
     	} catch (Exception e) {
     		log.warn("Error occured in backup procedure:" + e.getMessage());
     	}
+    	return true;
     }
 
     public HashMap getHTMLTemplates() {
