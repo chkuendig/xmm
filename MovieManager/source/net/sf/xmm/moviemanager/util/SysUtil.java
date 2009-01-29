@@ -54,7 +54,7 @@ public class SysUtil {
 		
 		return path;
 	}
-
+	
 	
 	/**
 	 * Getting the 'root directory' of the app.
@@ -76,10 +76,10 @@ public class SysUtil {
 	
 			/* If running in a mac application bundle, we can't write in the application-directory, so we use the /Library/Application Support */
 			if (isMac()) {
-				
+			
 				path = System.getProperty("user.home") + "/Library/Application Support/MovieManager/";
 				File dir = new File(path);
-	
+		
 				if (!dir.exists()) {
 					if(!dir.mkdir()) {
 						log.error("Could not create settings folder.");
