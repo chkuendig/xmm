@@ -751,12 +751,6 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
     	String path = getPath();
     	String parentPath = path.substring(0, path.lastIndexOf(File.separator) +1);
-	
-    	if (! new File(parentPath).isDirectory()) {
-    		DialogAlert alert = new DialogAlert(dialogDatabase, "Error", "The directory does not exist");
-    		GUIUtil.show(alert, true);
-    		return null;
-    	}
     	
      	if (!databaseType.equals("MySQL")) { //$NON-NLS-1$
     		/* Creates the covers folder... */
