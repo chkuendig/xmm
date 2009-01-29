@@ -1509,12 +1509,7 @@ abstract public class Database {
 	 **/
 	public abstract int makeDatabaseUpToDate();
 
-	/**
-	 *Makes a backup of the database file(s)
-	 **/
-	public abstract int makeDatabaseBackup();
-
-
+	
 	/**
 	 * Used when converting database to keep the same ID values
 	 * Adds the fields to the general info table and returns the index added
