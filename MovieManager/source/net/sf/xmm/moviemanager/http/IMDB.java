@@ -429,10 +429,6 @@ public class IMDB /*extends IMDB_if */{
     }
 
   
-
-   
-   
-    
     
     public StringBuffer getEpisodesStream(ModelIMDbSearchHit modelSeason) {
 	
@@ -809,8 +805,7 @@ public class IMDB /*extends IMDB_if */{
     		int end = 0;
     		
     		//tmp = getClassInfo(data, className);
-    			
-    		
+    		    		    		
     		end = tmp.indexOf("<a class=\"tn15more");
     			
     		// Link to "more" will be removed
@@ -909,15 +904,24 @@ public class IMDB /*extends IMDB_if */{
     	try {
     		try {
     			String [] castSplit = toDecode.split("<td class=\"hs\">");
-    			String [] tmp;
-
+    			Pattern p = Pattern.compile("<a href=\"/name/nm\\d+/\">(.+?)</a>.+?<a\\shref=\"/character.+?>(.+?)</a>");
+    			
     			for (int i = 0; i < castSplit.length; i++) {
+    				
+    				Matcher m = p.matcher(castSplit[i]);
+    								
+    				if (m.find()) {
 
-    				tmp = HttpUtil.decodeHTML(castSplit[i]).split(" \\.\\.\\.");
-
-    				if (tmp.length == 2) {
-    					decoded.append(tmp[0].trim());
-    					decoded.append(" (" + tmp[1].trim() + "), ");
+    					int gCount = m.groupCount();
+	
+    					if (gCount == 2) {
+    							
+    						String name = m.group(1);
+    						String character = m.group(2);
+    							    					
+    						decoded.append(name);
+        					decoded.append(" (" + character + "), ");
+    					}
     				}
     			}
     			
