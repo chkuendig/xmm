@@ -298,7 +298,7 @@ public class LookAndFeelManager {
     public static void setupOSXLaF() {
         
         if (SysUtil.isMac()) {
-            
+         	
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("apple.awt.showGrowBox", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MeD's Movie Manager");
@@ -309,14 +309,15 @@ public class LookAndFeelManager {
                 UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(quaquqLAF.getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel"));
                 // Override system look and feel
                 UIManager.setLookAndFeel(quaquqLAF);
-                System.load(FileUtil.getFile(System.getProperty("user.dir") + "/lib/mac/libquaqua.jnilib").getPath());
+                System.load(FileUtil.getFile("lib/mac/libquaqua.jnilib").getPath());
+                
                 System.setProperty("Quaqua.JNI.isPreloaded","true");
                 log.debug("Quaqua installed");
             } catch (Exception e) {
-                log.error("Quaqua Look and Feel not installed: " + e);
+                log.error("Quaqua Look and Feel not installed: ", e);
             }
             catch(UnsatisfiedLinkError e) {
-                log.error("Quaqua installed, but without the native parts: " + e);
+                log.error("Quaqua installed, but without the native parts: ", e);
             }
         }
     }
@@ -328,6 +329,7 @@ public class LookAndFeelManager {
                 
                 Class[] defArgs = {DialogMovieManager.class};
                 Method registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication", defArgs);
+                
                 if (registerMethod != null) {
                     Object[] args = { MovieManager.getDialog() };
                     registerMethod.invoke(osxAdapter, args);
@@ -344,11 +346,11 @@ public class LookAndFeelManager {
             } catch (NoClassDefFoundError e) {
                 // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
                 // because OSXAdapter extends ApplicationAdapter in its def
-                log.error("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
+                log.error("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")", e);
             } catch (ClassNotFoundException e) {
                 // This shouldn't be reached; if there's a problem with the OSXAdapter we should get the 
                 // above NoClassDefFoundError first.
-                log.error("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
+                log.error("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")", e);
             } catch (Exception e) {
                 log.error("Exception while loading the OSXAdapter:");
                 e.printStackTrace();
