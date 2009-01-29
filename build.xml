@@ -52,6 +52,7 @@
 											drivers/mysql-connector-java-3.1.12-bin.jar,
 											mac/AppleJavaExtensions.jar,
 											mac/quaqua.jar,
+											mac/macify-1.2.jar,
 											mac/libquaqua.jnilib,
 											BrowserLauncher2-10rc4.jar,
 											jxl.jar,
@@ -697,11 +698,11 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 				   includes="${template_files}"/>
 		</copy>
 		
-<!--
+
 		<exec executable="chmod">
 			<arg line="755 ${tempdir}/Contents/MacOS/JavaApplicationStub"/>
 		</exec>
- -->
+
 
  		<copy file="packaging/mac/resources/Info.plist" todir="${tempdir}/Contents"/>
  		<copy file="packaging/mac/resources/PkgInfo" todir="${tempdir}/Contents"/>
