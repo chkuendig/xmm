@@ -55,7 +55,7 @@ import net.sf.xmm.moviemanager.util.SysUtil;
 
 
 
-public class DefaultMenuBar implements MovieManagerMenuBar {
+public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 
 	public static Logger log = Logger.getRootLogger();
 
@@ -85,6 +85,9 @@ public class DefaultMenuBar implements MovieManagerMenuBar {
 	JMenuItem menuItemUpdateIMDbInfo = null;
 	JMenuItem menuItemReportGenerator = null;
 
+	JMenuItem menuItemAbout = null;
+	
+	
 	InternalConfig internalConfig;
 	MovieManagerConfig config;
 	
@@ -123,6 +126,13 @@ public class DefaultMenuBar implements MovieManagerMenuBar {
 		return createMenuBar();
 	} 
 	
+	public DefaultMenuBar(InternalConfig internalConfig, MovieManagerConfig config) {
+		this.internalConfig = internalConfig;
+		this.config = config;
+		createMenuBar();
+	} 
+		
+	
 	/**
 	 * Creates the menuBar.
 	 *
@@ -130,7 +140,9 @@ public class DefaultMenuBar implements MovieManagerMenuBar {
 	 **/
 	protected JMenuBar createMenuBar() {
 		log.debug("Start creation of the MenuBar."); //$NON-NLS-1$
-		JMenuBar menuBar = new JMenuBar();
+		//JMenuBar menuBar = new JMenuBar();
+		JMenuBar menuBar = this;
+		
 		menuBar.setBorder(BorderFactory.createEmptyBorder(2,0,8,0));
 		/* Creation of the file menu. */
 		menuBar.add(createMenuFile());
@@ -352,19 +364,18 @@ public class DefaultMenuBar implements MovieManagerMenuBar {
 		log.debug("Start creation of the Tools menu."); //$NON-NLS-1$
 		menuTools = new JMenu(Localizer.getString("moviemanager.menu.tools")); //$NON-NLS-1$
 		menuTools.setMnemonic('T');
-
+	
 		/* MenuItem Preferences.
 	         For some reason, addMovie KeyEvent.VK_A doesn't work when focused
 	         on the selected movie or the filter*/
 
-		JMenuItem menuItemPrefs = new JMenuItem(Localizer.getString("moviemanager.menu.tools.preferences"),'P'); //$NON-NLS-1$
+		menuItemPrefs = new JMenuItem(Localizer.getString("moviemanager.menu.tools.preferences"),'P'); //$NON-NLS-1$
 		menuItemPrefs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemPrefs.setActionCommand("Preferences"); //$NON-NLS-1$
 		menuItemPrefs.addActionListener(new MovieManagerCommandPrefs());
-
-		menuTools.add(menuItemPrefs);
-		this.menuItemPrefs = menuItemPrefs;
 	
+		menuTools.add(menuItemPrefs);
+		
 		JMenuItem menuItemAddMultipleMovies = new JMenuItem(Localizer.getString("moviemanager.menu.tools.addmultiplemovies"),'M'); //$NON-NLS-1$
 		menuItemAddMultipleMovies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemAddMultipleMovies.setActionCommand("Add Multiple Movies"); //$NON-NLS-1$
@@ -558,7 +569,7 @@ public class DefaultMenuBar implements MovieManagerMenuBar {
 		/* A Separator. */
 		menuHelp.addSeparator();
 		/* MenuItem About. */
-		JMenuItem menuItemAbout = new JMenuItem(Localizer.getString("moviemanager.menu.help.about")); //$NON-NLS-1$
+		menuItemAbout = new JMenuItem(Localizer.getString("moviemanager.menu.help.about")); //$NON-NLS-1$
 		menuItemAbout.setActionCommand("About"); //$NON-NLS-1$
 		menuItemAbout.addActionListener(new MovieManagerCommandAbout());
 		menuHelp.add(menuItemAbout);
@@ -625,5 +636,17 @@ public class DefaultMenuBar implements MovieManagerMenuBar {
 
 		/* Makes the list selected. */
 		MovieManager.getDialog().getMoviesList().requestFocus(true);
+	}
+
+	public JMenuItem getAboutButton() {
+		return menuItemAbout;
+	}
+
+	public JMenuItem getPreferencesButton() {
+		return menuItemPrefs;
+	}
+
+	public JMenuItem getExitButton() {
+		return menuItemExit;
 	}
 }
