@@ -15,9 +15,9 @@ import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.Pictures;
 
 import com.apple.eawt.*;
-import com.apple.mrj.MRJApplicationUtils;
+//import com.apple.mrj.MRJApplicationUtils;
 
-public class OSXAdapter extends ApplicationAdapter implements com.apple.mrj.MRJAboutHandler {
+public class OSXAdapter extends ApplicationAdapter /*implements com.apple.mrj.MRJAboutHandler */ {
 
 
 	static Logger log = Logger.getRootLogger();
@@ -107,7 +107,7 @@ public class OSXAdapter extends ApplicationAdapter implements com.apple.mrj.MRJA
 		
 		defaultApplication.setApplicationIconImage(bufferedImage);
 		
-		MRJApplicationUtils.registerAboutHandler(theAdapter);
+		//MRJApplicationUtils.registerAboutHandler(theAdapter);
 		
 		//BufferedImage newIcon = new BufferedImage(originalIcon.getWidth(), originalIcon.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		//theApplication.setApplicationIconImage(image);
