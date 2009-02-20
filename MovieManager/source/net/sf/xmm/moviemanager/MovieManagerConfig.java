@@ -874,10 +874,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		return this.coversFolder;
 	}
 
+	
 	public String getCoversPath() {
-		return getCoversPath(null);
+		return getCoversPath(true);
 	}
-
+	
+	public String getCoversPath(boolean usedatabase) {
+		return getCoversPath(usedatabase ? MovieManager.getIt().getDatabase() : null);
+	}
 
 	/* Returns the absolute cover path: NOT healthy*/
 	public String getCoversPath(Database database) {
@@ -885,7 +889,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/* Get covers folder from database*/
 		String coversFolder = getCoversFolder(database);
 		String coversPath = "";
-
+	
 		/* Relative to user dir */
 		if (getUseRelativeCoversPath() == 2) {
 			coversPath = SysUtil.getUserDir() + File.separator;
@@ -897,7 +901,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			if (dbPath != null && dbPath.indexOf(SysUtil.getDirSeparator()) != -1) {
 				dbPath = dbPath.substring(0, dbPath.lastIndexOf(SysUtil.getDirSeparator()));
 			}
-			
 			coversPath = dbPath + File.separator;
 		}
 		
