@@ -35,11 +35,11 @@ import net.sf.xmm.moviemanager.util.FileUtil;
 
 public class DatabaseHSQL extends Database {
     
-    public DatabaseHSQL(String filePath) {
-	super(filePath);
-	databaseType = "HSQL";
-	_sql = new SQL(filePath, "HSQL");
-    }
+	public DatabaseHSQL(String filePath) {
+		super(filePath);
+		databaseType = "HSQL";
+		_sql = new SQL(filePath, "HSQL");
+	}
     
     
     
@@ -50,7 +50,7 @@ public class DatabaseHSQL extends Database {
 
     	String message = "";
 
-    	Exception exception = null;
+    	Exception except = null;
     	try {
     		if (!_initialized) {
     			_sql.setUp();
@@ -60,8 +60,10 @@ public class DatabaseHSQL extends Database {
     	} catch (Exception e) {
     		log.warn(e);
     		message = e.getMessage();
-
-    		exception = e;
+    		e.printStackTrace();
+    		
+    		exception = except = e;
+    		errorMessage = e.getMessage();
     		_initialized = false;
     	}
 
@@ -70,7 +72,7 @@ public class DatabaseHSQL extends Database {
 	   	Tries again after sleeping. */
     	String eMessage = "The database is already in use by another process";
 
-    	if (!_initialized && exception.getMessage().startsWith(eMessage)) {
+    	if (!_initialized && except.getMessage().startsWith(eMessage)) {
 
     		errorMessage = eMessage;
 
@@ -90,6 +92,7 @@ public class DatabaseHSQL extends Database {
     			}
     		}
     	}
+        	
     	return _initialized;
     }
 
