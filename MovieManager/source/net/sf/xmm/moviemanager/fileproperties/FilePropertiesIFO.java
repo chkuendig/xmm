@@ -148,7 +148,7 @@ class FilePropertiesIFO extends FileProperties {
 
 			int [] bits = getBits(ifoFile[pointer + startcode + 7], 1);
 
-			printBits(bits);
+			//printBits(bits);
 
 			switch (getDecimalValue(bits, 7, 6, false)) {
 
