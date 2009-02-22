@@ -40,6 +40,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
@@ -50,6 +51,8 @@ import org.apache.log4j.Logger;
 
 public class HttpUtil {
 
+	
+	
 	static Logger log = Logger.getRootLogger();
 
 	public boolean imdbAuthenticationSetUp = false;
@@ -152,7 +155,44 @@ public class HttpUtil {
 		}
 	}
 
+	class HTTPResult {
+		
+		StringBuffer data = null;
+		StatusLine statusLine = null;
+		
+		HTTPResult(StringBuffer data, StatusLine statusLine) {
+			this.data = data;
+			this.statusLine = statusLine;
+		}
+	}
+	
+	public HTTPResult readData(URL url) throws Exception {
 
+		StringBuffer data = new StringBuffer();
+		
+		if (!isSetup())
+			setup();
+		
+		GetMethod method = new GetMethod(url.toString());
+		int statusCode = client.executeMethod(method);
+		
+		if (statusCode != HttpStatus.SC_OK) {
+			log.debug("HTTP StatusCode not HttpStatus.SC_OK:(" + statusCode + "):" + method.getStatusLine());
+		}
+		
+		BufferedInputStream stream = new BufferedInputStream(method.getResponseBodyAsStream());
+
+		// Saves the page data in a string buffer... 
+		int buffer;
+
+		while ((buffer = stream.read()) != -1) {
+			data.append((char) buffer);
+		}
+		stream.close();
+		
+		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
+	}
+	
 	
 	public StringBuffer readDataToStringBuffer(URL url) throws Exception {
 
@@ -164,24 +204,23 @@ public class HttpUtil {
 		GetMethod method = new GetMethod(url.toString());
 		int statusCode = client.executeMethod(method);
 		
-		if (statusCode != HttpStatus.SC_OK)
-			log.debug("statusCode HttpStatus.SC_OK:" + (statusCode != HttpStatus.SC_OK));
-		
-		if (statusCode == HttpStatus.SC_OK) {
-			
-			data = new StringBuffer();
-			BufferedInputStream stream = new BufferedInputStream(method.getResponseBodyAsStream());
-			
-			// Saves the page data in a string buffer... 
-			int buffer;
-			
-			while ((buffer = stream.read()) != -1) {
-				data.append((char) buffer);
-			}
-			stream.close();
+		if (statusCode != HttpStatus.SC_OK) {
+			log.debug("HTTP StatusCode not HttpStatus.SC_OK:(" + statusCode + "):" + method.getStatusLine());
+		//	log.debug("HTTP StatusCode not HttpStatus.SC_OK:" + statusCode);
 		}
-		
-		return data;
+
+		data = new StringBuffer();
+		BufferedInputStream stream = new BufferedInputStream(method.getResponseBodyAsStream());
+
+		// Saves the page data in a string buffer... 
+		int buffer;
+
+		while ((buffer = stream.read()) != -1) {
+			data.append((char) buffer);
+		}
+		stream.close();
+
+		return statusCode == HttpStatus.SC_OK ? data : null;
 	}
 
 
