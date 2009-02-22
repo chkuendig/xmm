@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import javax.swing.DefaultListModel;
 
 import net.sf.xmm.moviemanager.util.StringUtil;
+import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.models.imdb.*;
 
 import org.apache.log4j.Logger;
@@ -123,7 +124,7 @@ public class IMDB /*extends IMDB_if */{
     	}
     	
     	if (data == null) {
-			throw new Exception("Error occured when reading data.");
+    		throw new Exception("Error occured when reading data.(urlID:"+ urlID +")");
 		}
     	
     	return parseData(urlID, data);
@@ -217,8 +218,10 @@ public class IMDB /*extends IMDB_if */{
 						
 						start = coverURL.lastIndexOf(".");
 
-						if (start != 0 && start != -1)
+						if (start != 0 && start != -1) {
 							coverName = urlID + coverURL.substring(start, coverURL.length());
+							dataModel.setCoverName(coverName);
+						}
 					}
 				}
 			}
@@ -362,6 +365,7 @@ public class IMDB /*extends IMDB_if */{
 			if (classInfo.containsKey("Original Air Date:"))
 				airdateContent =getDecodedClassInfo("Original Air Date:", (String) classInfo.get("Original Air Date:"));
 						
+			// Ex   29 April 2002 (Season 3, Episode 19)
 			// Ex: 5 October 1999 (Season 1, Episode 1)
 			if (airdateContent != null) {
 				Pattern p = Pattern.compile("(.+)?\\s\\(.+?(\\d+?),\\s?.+?(\\d+?)\\)");
@@ -386,36 +390,35 @@ public class IMDB /*extends IMDB_if */{
 				}
 			}
 			
-				//29 April 2002 (Season 3, Episode 19)
-			
-			/* Gets a bigger plot (if it exists...)
-			   /* Creates the url... */
+			/* Gets a bigger plot (if it exists...) */
 			URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/plotsummary");
 	    
-			data = httpUtil.readDataToStringBuffer(url);   
-	   	
+			HTTPResult result = httpUtil.readData(url);
+			data = result.data;
+			
 			/* Processes the data... */
 			start = 0;
 			end = 0;
-	    		
-			if ((start = data.indexOf("class=\"plotpar\">",start)+16) != 15 &&
-				(end=data.indexOf("</p>",start)) != -1) {
-				plot = HttpUtil.decodeHTML(data.substring(start, end));
-				
-				if (plot.indexOf("Written by") != -1)
-					plot = plot.substring(0, plot.indexOf("Written by"));
+	    					
+			if (data != null) {
+					
+				if ((start = data.indexOf("class=\"plotpar\">",start)+16) != 15 &&
+						(end=data.indexOf("</p>",start)) != -1) {
+					plot = HttpUtil.decodeHTML(data.substring(start, end));
+
+					if (plot.indexOf("Written by") != -1)
+						plot = plot.substring(0, plot.indexOf("Written by"));
+				}
 			}
-	   	   
 			
-			
-			plot = plot.trim();
-			plot = plot.replaceAll("(more)$", "");
-			
-			dataModel.setPlot(plot);
+			if (plot != null) {
+				plot = plot.trim();
+				plot = plot.replaceAll("(more)$", "");
+
+				dataModel.setPlot(plot);
+			}
 			
 			lock.tryLock((long) 10, TimeUnit.SECONDS);
-			
-			dataModel.setCoverName(coverName);
 			
 			lastDataModel = dataModel;
 			
@@ -602,7 +605,7 @@ public class IMDB /*extends IMDB_if */{
 				return listModel;
 			}
 			
-		//	new java.io.File("HTML-debug").mkdir();
+			//new java.io.File("HTML-debug").mkdir();
 			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
         
 			int start = 0;
@@ -660,14 +663,14 @@ public class IMDB /*extends IMDB_if */{
 				return listModel;
 			}
 			
-			
+			// <a href="/title/tt0496424/" onclick="(new Image()).src='/rg/find-title-1/title_popular/images/b.gif?link=/title/tt0496424/';">&#34;30 Rock&#34;</a> (2006) <small>(TV series)</small>     <div style="font-size: small">&#160;&#45;&#160;Season 3, Episode 11: 
 			// <a href="/title/tt0074853/">The Man in the Iron Mask</a> (1977) (TV)</td></tr>
 			// <a href="/title/tt0120744/">The Man in the Iron Mask</a> (1998/I)</td></tr>
 			// <a href="/title/tt0103064/">Terminator 2: Judgment Day</a> (1991)<br>&#160;aka <em>"Terminator 2 - Le jugement dernier"</em> - France<br>&#160;aka <em>"T2 - Terminator 2: Judgment Day"</em></td></tr>
 			
 			// should match strings like the above
 			
-			Pattern p = Pattern.compile("<a\\shref=\"/title/tt(\\d{5,})/\".*?>(.+?)</a>.+?\\((\\d+(/I*)?)\\).*?(;aka\\s<em>.+?</em>)*?</td></tr>");
+			Pattern p = Pattern.compile("<a\\shref=\"/title/tt(\\d{5,})/\".*?>(.+?)</a>.+?\\((\\d+(/I*)?)\\).*?(;aka\\s<em>.+?</em>)*?(?:</td></tr>|\\n)"); // last group matches series that do not end with </td></tr>
 			Matcher m = p.matcher(data);
 			
 			while (m.find()) {
