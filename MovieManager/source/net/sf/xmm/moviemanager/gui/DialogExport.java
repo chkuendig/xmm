@@ -465,6 +465,8 @@ public class DialogExport extends JDialog implements ActionListener {
         
         if (event.getSource().equals(exportButton)) {
             
+        	cancelled = false;
+        	
             /* HTMl export */
             if (tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_HTML) {
                
@@ -518,14 +520,14 @@ public class DialogExport extends JDialog implements ActionListener {
                 }
             } // CSV or Excel
             else if (tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_CSV || tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_EXCEL) {
-            	
-            	boolean exexute = true;
+            
+            	boolean execute = true;
             	JTextField textField = tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_CSV ? csvFilePath : excelFilePath;
             	
             	if (textField.getText().equals("")) {
         			DialogAlert alert = new DialogAlert(this, "Alert","Please specify a file path.");
         			GUIUtil.showAndWait(alert, true);
-        			exexute = false;
+        			execute = false;
         		}
         		else if (new File(textField.getText()).exists()) {
         			 DialogQuestion question = new DialogQuestion("File exists", "<html>The specified file already exists.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -533,15 +535,15 @@ public class DialogExport extends JDialog implements ActionListener {
         			 GUIUtil.showAndWait(question, true);
         			         			
         			 if (!question.getAnswer())
-        				 exexute = false;
+        				 execute = false;
         		}
         		else if (new File(textField.getText()).getParentFile() == null || !new File(textField.getText()).getParentFile().isDirectory()) {
         			DialogAlert alert = new DialogAlert(this, "Alert","The parent directory does not exist.");
         			GUIUtil.show(alert, true);
-        			exexute = false;
+        			execute = false;
         		}
             	
-        		if (exexute) {
+        		if (execute) {
         			executeSave();
         		}
         		else
