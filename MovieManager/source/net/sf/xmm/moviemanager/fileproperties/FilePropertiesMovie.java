@@ -152,7 +152,8 @@ public class FilePropertiesMovie {
 			};
 
 			_fileSize = Math.round((new File(filePath).length()) / 1024F / 1024F);
-
+			_location = filePath;
+			
 			/* The input stream... */
 			RandomAccessFile dataStream = new RandomAccessFile(filePath, "r");
 
@@ -250,7 +251,7 @@ public class FilePropertiesMovie {
 						_audioRate = fileProperties.getAudioRate();
 						_audioBitrate = fileProperties.getAudioBitrate();
 						_audioChannels = fileProperties.getAudioChannels();
-						_location = filePath;
+						
 						_container = fileProperties.getContainer();
 						metaData = fileProperties.getMetaData();
 						_codecLibraryIdentifier = fileProperties.getVideoCodecLibraryIdentifier();
@@ -305,7 +306,7 @@ public class FilePropertiesMovie {
 		} finally {
 
 			if (!supported) {
-				throw new Exception("File format not supported.");
+			//	throw new Exception("File format not supported.");
 			}
 		}
 	}
