@@ -496,6 +496,8 @@ public class DialogTableData extends JDialog {
 				if (newColumn.equals(sourceFieldModel.assignedTableColumn)) {
 					newColumn.setHeaderValue(null);
 					src.setState(true);
+					oldModelIndex = currentColumn;
+					currentColumn = -1;
 				}
 				else {
 					
