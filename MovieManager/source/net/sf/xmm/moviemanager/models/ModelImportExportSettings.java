@@ -80,6 +80,9 @@ public class ModelImportExportSettings {
         
     public int multiAddIMDbSelectOption = -1;
   
+    public boolean isIMDbEnabled() {
+    	return multiAddIMDbSelectOption != -1;
+    }
     
     public int mode = IMPORT_MODE_TEXT;
     public boolean overwriteWithImdbInfo = false;
