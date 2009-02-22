@@ -41,7 +41,7 @@ import com.Ostermiller.util.CSVPrinter;
 
 
 
-public class MovieManagerCommandExportCSV extends MovieManagerCommandImportExportHandler {
+public class MovieManagerCommandExportCSV extends MovieManagerCommandExportHandler {
 
 	
 	static Logger log = Logger.getRootLogger();
@@ -152,41 +152,4 @@ public class MovieManagerCommandExportCSV extends MovieManagerCommandImportExpor
 		}
 		return 0;
 	}
-			
-	
-	public Object [][] getDatabaseData() {
-
-		ArrayList generalInfoFieldNames = MovieManager.getIt().getDatabase().getGeneralInfoMovieFieldNames();
-		ArrayList additionalInfoFieldNames = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
-		ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
-
-		int columnCount = generalInfoFieldNames.size() + additionalInfoFieldNames.size() + extraInfoFieldNames.size();
-
-		DefaultListModel movieList = MovieManager.getDialog().getCurrentMoviesList();
-
-		Object [] movies = movieList.toArray();
-		Object [][] data = new Object[movies.length][columnCount];
-
-		for (int i = 0; i < movies.length; i++) {
-
-			int tableIndex = 0;
-						
-			for (int o = 0; o < generalInfoFieldNames.size(); o++) {
-				data[i][tableIndex] = ((ModelEntry) movies[i]).getValue((String) generalInfoFieldNames.get(o), "General Info");
-				tableIndex++;
-			}
-
-			for (int o = 0; o < additionalInfoFieldNames.size(); o++) {
-				data[i][tableIndex] = ((ModelEntry) movies[i]).getValue((String) additionalInfoFieldNames.get(o), "Additional Info");
-				tableIndex++;
-			}
-			
-			for (int o = 0; o < extraInfoFieldNames.size(); o++) {
-				data[i][tableIndex] = ((ModelEntry) movies[i]).getValue((String) extraInfoFieldNames.get(o), "Extra Info");
-				tableIndex++;
-			}
-		}
-		return data;
-	}
-
 }
