@@ -57,7 +57,7 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 	ModelMovieInfo modelMovieInfo = new ModelMovieInfo(false, true);
 	
 	MovieManagerCommandImportXMLDatabase(ModelImportExportSettings importSettings) {
-		this.importSettings = importSettings;
+		super(importSettings);
 	}
 	
 	public void execute() {

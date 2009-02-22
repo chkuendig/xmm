@@ -25,31 +25,22 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 
 import org.apache.log4j.Logger;
 
-
-
-
 public class MovieManagerCommandImportText extends MovieManagerCommandImportHandler {
 
-	
 	static Logger log = Logger.getRootLogger();
-	
-	ModelImportExportSettings importSettings;
-	
+
 	ArrayList movieList = null;
 	
-	ModelMovieInfo modelMovieInfo = new ModelMovieInfo(false, true);
-	
 	MovieManagerCommandImportText(ModelImportExportSettings settings) {
-		this.importSettings = settings;
-		listToAddMovieTo = settings.addToThisList;
+		super(settings);
 	}
 	
-
 	public void handleMovie(int i) {
 		
 	}
@@ -86,7 +77,8 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportHand
      	modelMovieInfo.setTitle(title);
      	
      	 try {
-     		 key = (modelMovieInfo.saveToDatabase(listToAddMovieTo)).getKey();
+     		 key = (modelMovieInfo.saveToDatabase(addToThisList)).getKey();
+     		 modelMovieInfo.saveCoverToFile();
           } catch (Exception e) {
               log.error("Saving to database failed.", e);
               key = -1; 
@@ -97,7 +89,7 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportHand
 	
 	public void retrieveMovieList() throws Exception {
 
-		File textFile = new File(importSettings.filePath);
+		File textFile = new File(settings.filePath);
 
 		if (!textFile.isFile()) {
 			throw new Exception("Text file does not exist.");

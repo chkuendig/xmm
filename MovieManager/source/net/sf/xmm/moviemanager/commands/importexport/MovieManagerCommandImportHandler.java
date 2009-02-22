@@ -22,9 +22,23 @@ public class MovieManagerCommandImportHandler implements MovieManagerCommandImpo
 	ModelMovieInfo modelMovieInfo = new ModelMovieInfo(false, true);
 	ModelMovie movie = null;
 	
-	public String listToAddMovieTo = null;
-	
 	public ArrayList movieList = null;
+	
+	ModelImportExportSettings settings;
+	
+	String addToThisList = null;
+	
+	MovieManagerCommandImportHandler(ModelImportExportSettings settings) {
+		this.settings = settings;
+		addToThisList = settings.addToThisList;
+		
+		if (settings.isIMDbEnabled() &&
+				(!MovieManager.getIt().getDatabase().isMySQL() || 
+				(MovieManager.getIt().getDatabase().isMySQL() && MovieManager.getConfig().getStoreCoversLocally())))
+			modelMovieInfo.setSaveCover(true);
+		else
+			modelMovieInfo.setSaveCover(false);
+	}
 	
 	
 	public void setCancelled(boolean cancel) {
@@ -91,9 +105,9 @@ public class MovieManagerCommandImportHandler implements MovieManagerCommandImpo
             	setAborted(true);
             
             if (dialogIMDB.dropImdbInfoSet)
-            	listToAddMovieTo = settings.skippedListName;
+            	addToThisList = settings.skippedListName;
             else
-            	listToAddMovieTo = settings.addToThisList;
+            	addToThisList = settings.addToThisList;
                         
         } else {
             DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.alert"), Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$

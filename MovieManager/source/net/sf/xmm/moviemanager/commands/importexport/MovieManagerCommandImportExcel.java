@@ -41,12 +41,10 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportHan
 
 	int titleColumnIndex = 0;
 	
-	ModelImportExportSettings settings;
 	DialogTableImport dialogImportTable = null;
 	
 	MovieManagerCommandImportExcel(ModelImportExportSettings settings) {
-		this.settings = settings;
-		listToAddMovieTo = settings.addToThisList;
+		super(settings);
 	}
 
 	public void execute() {
@@ -109,7 +107,8 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportHan
 		modelMovieInfo.setModel((ModelMovie) tmp, false, false);
 
 		try {
-			ret = modelMovieInfo.saveToDatabase(listToAddMovieTo).getKey();
+			ret = modelMovieInfo.saveToDatabase(settings.addToThisList).getKey();
+			modelMovieInfo.saveCoverToFile();
 		} catch (Exception e) {
 			log.error("Saving to database failed.", e);
 		}
