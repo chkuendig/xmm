@@ -3314,30 +3314,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("lastDialogImportType:" + getLastDialogImportType());
 		 
 		 settings.append(lineSeparator);
-		 settings.append("importTextfilePath:" + getImportTextfilePath());
-
-		 settings.append(lineSeparator);
-		 settings.append("importExcelfilePath:" + getImportExcelFilePath());
-
-		 settings.append(lineSeparator);
-		 settings.append("importXMLfilePath:" + getImportXMLfilePath());
-
-		 settings.append(lineSeparator);
-		 settings.append("importCSVfilePath:" + getImportCSVfilePath());
-
-		 settings.append(lineSeparator);
-		 settings.append("importCSVseparator:" + getImportCSVseparator());
-
-		 settings.append(lineSeparator);
-		 settings.append("importExtremefilePath:" + getImportExtremefilePath());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("importIMDbInfoEnabled:" + getImportIMDbInfoEnabled());
-
-		 settings.append(lineSeparator);
-		 settings.append("importIMDbSelectOption:" + getImportIMDbSelectOption());
-		 		 
-		 settings.append(lineSeparator);
 		 settings.append("useJTreeIcons:" + getUseJTreeIcons());
 
 		 settings.append(lineSeparator);
@@ -3429,8 +3405,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 settings.append(lineSeparator);
 		 settings.append("lastDialogImportType:" + getLastDialogImportType());
-
-		 
 		 
 		 settings.append(lineSeparator);
 		 settings.append("exportTextfilePath:" + getExportTextfilePath());
@@ -3446,8 +3420,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 
 		 settings.append(lineSeparator);
 		 settings.append("exportCSVseparator:" + getExportCSVfilePath());
-		 
-		 
+		 		 
 		 settings.append(lineSeparator);
 		 settings.append("importTextfilePath:" + getImportTextfilePath());
 		 
@@ -3459,12 +3432,19 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 
 		 settings.append(lineSeparator);
 		 settings.append("importCSVfilePath:" + getImportCSVfilePath());
+				
+		 settings.append(lineSeparator);
+		 settings.append("importCSVseparator:" + getImportCSVseparator());
+
+		 settings.append(lineSeparator);
+		 settings.append("importExtremefilePath:" + getImportExtremefilePath());
 		 
 		 settings.append(lineSeparator);
-		 settings.append("importCSVseparator:" + getImportCSVfilePath());
-		 
-		 
-		 
+		 settings.append("importIMDbInfoEnabled:" + getImportIMDbInfoEnabled());
+
+		 settings.append(lineSeparator);
+		 settings.append("importIMDbSelectOption:" + getImportIMDbSelectOption());
+		 		 
 		 
 		 // Default values in the additional info fields in DialogMovieInfo
 
