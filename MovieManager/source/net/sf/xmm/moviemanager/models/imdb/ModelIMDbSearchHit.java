@@ -28,6 +28,8 @@ public class ModelIMDbSearchHit {
 	 **/
 	private String urlID;
 
+	private String completeIMDbURLPrefix = "http://www.imdb.com/title/tt";
+		
 	/**
 	 * The title.
 	 **/
@@ -36,6 +38,7 @@ public class ModelIMDbSearchHit {
 	public StringBuffer seasonStream = null;
 	
 	public boolean processed = false;
+	public boolean error = false;
 	
 	// Index value in list of hits
 	public int index = -1;
@@ -124,6 +127,9 @@ public class ModelIMDbSearchHit {
 		return urlID; 
 	}
 
+	public String getCompleteUrl() {
+		return completeIMDbURLPrefix + urlID;
+	}
 
 	/**
 	 * Gets the title.
