@@ -44,6 +44,7 @@ import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
+import net.sf.xmm.moviemanager.util.BrowserOpener;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SwingWorker;
@@ -201,8 +202,6 @@ public class DialogIMDB extends JDialog {
     	panelMoviesList = new JPanel();
     	panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
-    	
-    	
     	listMovies = new JList() {
 
     		public String getToolTipText(MouseEvent e) {
@@ -220,9 +219,6 @@ public class DialogIMDB extends JDialog {
     				if (retVal != null && retVal.trim().equals(""))
     					retVal = null;
 				}
-    			
-				
-				
     			return retVal;
     		}
 
@@ -234,7 +230,7 @@ public class DialogIMDB extends JDialog {
     		}
     	};
 
-    	// Unfortunately this affect ALL tooltips
+    	// Unfortunately setting tooltip timeout affects ALL tooltips
     	ToolTipManager ttm = ToolTipManager.sharedInstance();
     	ttm.registerComponent(listMovies);
     	ttm.setInitialDelay(0);
@@ -249,7 +245,19 @@ public class DialogIMDB extends JDialog {
     	
     	listMovies.addMouseListener(new MouseAdapter() {
     		public void mouseClicked(MouseEvent event) {
-    			if (SwingUtilities.isLeftMouseButton(event) && event.getClickCount() >= 2) {
+    			
+    			// Open we page
+    			if (SwingUtilities.isRightMouseButton(event)) {
+    				
+    				int	index = listMovies.locationToIndex(event.getPoint());
+    				
+    				if (index >= 0) {
+    					ModelIMDbSearchHit hit = (ModelIMDbSearchHit) listMovies.getModel().getElementAt(index);
+    					BrowserOpener opener = new BrowserOpener(hit.getCompleteUrl());
+    					opener.executeOpenBrowser(MovieManager.getConfig().getSystemWebBrowser(), MovieManager.getConfig().getBrowserPath());
+    				}
+    			}
+    			else if (SwingUtilities.isLeftMouseButton(event) && event.getClickCount() >= 2) {
     				buttonSelect.doClick();
     			}
     		}
