@@ -29,6 +29,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -58,6 +60,7 @@ import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.swing.extentions.events.ModelUpdatedEvent.IllegalEventTypeException;
+import net.sf.xmm.moviemanager.util.BrowserOpener;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SwingWorker;
@@ -118,6 +121,26 @@ public class DialogTVSeries extends JDialog {
         listMovies.setLayoutOrientation(JList.VERTICAL);
         listMovies.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listMovies.setCellRenderer(new TVSeriesListCellRenderer());
+        
+        listMovies.addMouseListener(new MouseAdapter() {
+    		public void mouseClicked(MouseEvent event) {
+    			
+    			// Open we page
+    			if (SwingUtilities.isRightMouseButton(event)) {
+    				
+    				int	index = listMovies.locationToIndex(event.getPoint());
+    				
+    				if (index >= 0) {
+    					ModelIMDbSearchHit hit = (ModelIMDbSearchHit) listMovies.getModel().getElementAt(index);
+    					BrowserOpener opener = new BrowserOpener(hit.getCompleteUrl());
+    					opener.executeOpenBrowser(MovieManager.getConfig().getSystemWebBrowser(), MovieManager.getConfig().getBrowserPath());
+    				}
+    			}
+    			else if (SwingUtilities.isLeftMouseButton(event) && event.getClickCount() >= 2) {
+    				buttonSelect.doClick();
+    			}
+    		}
+    	});
         
         JScrollPane scrollPaneMovies = new JScrollPane(listMovies);
         scrollPaneMovies.setPreferredSize(new Dimension(300,255));
@@ -198,6 +221,10 @@ public class DialogTVSeries extends JDialog {
         return buttonSelect;
     }
  
+    public JButton getButtonOk() {
+        return buttonOk;
+    }
+ 
     
     public class TVSeriesListCellRenderer extends DefaultListCellRenderer {
 	  
@@ -207,7 +234,13 @@ public class DialogTVSeries extends JDialog {
 	  
 	   if (value instanceof ModelIMDbSearchHit) {
 		  
-		   if (((ModelIMDbSearchHit) value).processed) {
+		   // Make red
+		   if (((ModelIMDbSearchHit) value).error) {
+			   setBackground(new Color(191, 90, 90));
+		   }
+		   
+		   // make green
+		   else if (((ModelIMDbSearchHit) value).processed) {
 			   setBackground(new Color(125, 203, 138));
 		   }
 	   }
