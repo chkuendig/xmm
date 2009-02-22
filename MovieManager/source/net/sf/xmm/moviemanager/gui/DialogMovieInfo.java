@@ -364,7 +364,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 							movieInfoModel.getFileInfo(file);
 					} else {
 						if (movieInfoModel.isEpisode)
-							executeCommandGetTVDOTCOMInfo();
+							executeCommandGetTVDOTCOMInfo(false);
 						else
 							executeCommandGetIMDBInfo(false);
 					}
@@ -998,14 +998,16 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		buttonGetIMDBInfo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-				if (movieInfoModel.isEpisode)
-					executeCommandGetTVDOTCOMInfo();
-				else {
 				
-					if (!getMovieTitle().getText().equals(""))
-						executeCommandGetIMDBInfo(false);
-					else if (!getIMDb().getText().equals(""))
-						executeCommandGetIMDBInfo(true);
+				boolean useIMDbKey = false;
+				
+				if (getMovieTitle().getText().equals("") && !getIMDb().getText().equals(""))
+					useIMDbKey = true;
+				
+				if (movieInfoModel.isEpisode)
+					executeCommandGetTVDOTCOMInfo(useIMDbKey);
+				else {
+					executeCommandGetIMDBInfo(useIMDbKey);
 				}
 			}
 		});
@@ -2099,15 +2101,22 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	/**
 	 * Gets the tv.com info for this episode...
 	 */
-	protected void executeCommandGetTVDOTCOMInfo() {
+	protected void executeCommandGetTVDOTCOMInfo(boolean useImdbKey) {
+		
 		/* Checks the movie title... */
-		if (!getMovieTitle().getText().equals("")) { //$NON-NLS-1$
+		if (!getMovieTitle().getText().equals("") || !getIMDb().getText().equals("")) { //$NON-NLS-1$
 
-			movieInfoModel.model.setTitle(getMovieTitle().getText());
-			
 			MovieManagerCommandIMDBSearch search = new MovieManagerCommandIMDBSearch(movieInfoModel);
-			search.execute(this);
 			
+			// Search for seasons directly
+			if (useImdbKey) {
+				movieInfoModel.model.setUrlKey(getIMDb().getText());
+				search.executeSeasonSearch(this);
+			}
+			else {
+				movieInfoModel.model.setTitle(getMovieTitle().getText());
+				search.executeSeriesSearch(this);
+			}
 		} else {
 			DialogAlert alert = new DialogAlert(
 					this,
