@@ -26,8 +26,11 @@ import java.util.ArrayList;
 public class AdvancedMailbox {
 
 	ArrayList list = new ArrayList();
+	
+	// The number of currently active threads
 	int threadCount = 0;
 	
+	// To total number of threads that have been used
 	int totalThreads = 0;
 	
 	synchronized public void increaseThreadCount() {
@@ -49,8 +52,7 @@ public class AdvancedMailbox {
 	synchronized public int getTotalThreadCount() {
 		return totalThreads;
 	}
-	
-	
+		
 	synchronized public void removeElement(Object obj) throws Exception {
 		
 		if (!list.contains(obj))
