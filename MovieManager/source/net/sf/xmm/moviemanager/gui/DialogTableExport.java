@@ -35,6 +35,7 @@ import javax.swing.table.TableModel;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.swing.util.table.ColumnGroup;
 import net.sf.xmm.moviemanager.swing.util.table.GroupableTableColumnModel;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 
@@ -58,12 +59,18 @@ public class DialogTableExport extends DialogTableData {
 
 		JPanel content = new JPanel();
 		content.setLayout(new BorderLayout());        
-
+		
 		try {
 
 			int rowLen = data.length;
 			int colsLen = data[0].length;
 
+			System.err.println("Last movie:");
+			
+			for (int i = 0; i < colsLen; i++) {
+				System.err.println(data[rowLen-1][i]);
+			}
+			
 			Object [] emptyColumnNames = new Object[colsLen];
 
 			for (int i = 0; i < emptyColumnNames.length; i++)
@@ -89,28 +96,31 @@ public class DialogTableExport extends DialogTableData {
 			buttonDone.addActionListener(new ActionListener() {
 				
 				public void actionPerformed(ActionEvent e) {
-					
-					/*
+										
 					GroupableTableColumnModel columnModel = (GroupableTableColumnModel) tableHeader.getColumnModel();
 					int columnCount = table.getModel().getColumnCount();
 					
 					TableColumn newColumn = columnModel.getColumn(currentColumn);
-					boolean titleFound = false;
+					boolean columnDataSpecified = false;
 					
 					for (int i = 0; i < columnCount; i++ ) {
 						newColumn = columnModel.getColumn(i);
 						
-						if ("Title".equals(newColumn.getHeaderValue().toString()))
-							titleFound = true;
+					//	System.err.println("getHeaderValue:" + newColumn.getHeaderValue().toString() + ":");
+						
+						// Has value other than string
+						if (!(newColumn.getHeaderValue() instanceof String)) {
+							System.err.println("getHeaderValue:" + newColumn.getHeaderValue());
+							columnDataSpecified = true;					
+						}
 					}
 					
-					if (!titleFound) {
-						DialogAlert alert = new DialogAlert(dialogImportTable, "Title column missing", "Title column must be specified");
+					if (!columnDataSpecified) {
+						DialogAlert alert = new DialogAlert(dialogImportTable, "No data fields specified", "One or more data fields must be chosen to be exported");
 						GUIUtil.show(alert, true);
 						return;
 					}
-					*/
-					
+										
 					dispose();
 				}
 			}
@@ -185,11 +195,8 @@ public class DialogTableExport extends DialogTableData {
 	}
 	
 	
-	
-	
-	
 	public void updateColumnData(int oldModelIndex, int currentColumn, int initialColumnindex) {
-				
+		
 		if (oldModelIndex != -1) {
 			// Removes data in old column
 			for (int i = 0; i < databaseData.length; i++) {
@@ -197,9 +204,12 @@ public class DialogTableExport extends DialogTableData {
 			}
 		}
 		
-//		 Adds data to new column
-		for (int i = 0; i < databaseData.length; i++) {
-			tableModel.setValueAt(databaseData[i][initialColumnindex], i, currentColumn);
+		if (currentColumn != -1) {
+	
+			// Adds data to new column
+			for (int i = 0; i < databaseData.length; i++) {
+				tableModel.setValueAt(databaseData[i][initialColumnindex], i, currentColumn);
+			}
 		}
 	}
 }
