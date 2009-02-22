@@ -32,7 +32,7 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 
 
 
-public class MovieManagerCommandImportExcel extends MovieManagerCommandImportExportHandler {
+public class MovieManagerCommandImportExcel extends MovieManagerCommandImportHandler {
 
 	ModelMovie movie = null;
 
@@ -46,6 +46,7 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportExp
 	
 	MovieManagerCommandImportExcel(ModelImportExportSettings settings) {
 		this.settings = settings;
+		listToAddMovieTo = settings.addToThisList;
 	}
 
 	public void execute() {

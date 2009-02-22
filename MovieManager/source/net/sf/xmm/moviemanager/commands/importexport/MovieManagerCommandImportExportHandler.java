@@ -1,103 +1,27 @@
 package net.sf.xmm.moviemanager.commands.importexport;
 
-import java.util.ArrayList;
-
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.gui.DialogAlert;
-import net.sf.xmm.moviemanager.gui.DialogIMDB;
-import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
-import net.sf.xmm.moviemanager.models.ModelMovieInfo;
-import net.sf.xmm.moviemanager.util.GUIUtil;
-import net.sf.xmm.moviemanager.util.Localizer;
 
-import org.apache.log4j.Logger;
+public interface MovieManagerCommandImportExportHandler {
 
-public class MovieManagerCommandImportExportHandler {
-
-	static Logger log = Logger.getRootLogger();
-	boolean cancelled = false;
-	boolean aborted = false;
-	
-	ModelMovieInfo modelMovieInfo = new ModelMovieInfo(false, true);
-	ModelMovie movie = null;
-	
-	public String listToAddMovieTo = null;
-	
-	public ArrayList movieList = null;
-	
-	
-	public void setCancelled(boolean cancel) {
-		cancelled = cancel;
-		modelMovieInfo.clearModel();
-	}
+	public void setCancelled(boolean cancel);
 		
-	public void setAborted(boolean abort) {
-		aborted = abort;
-	}
+	public void setAborted(boolean abort);
 		
-	public boolean isCancelled() {
-		return cancelled;
-	}
+	public boolean isCancelled();
 	
-	public boolean isAborted() {
-		return aborted;
-	}
+	public boolean isAborted();
 	
-	public void execute() throws Exception {
-		throw new Exception("MovieManagerCommandImportExportHandler does not implement method execute!");
-	}
-	
-	public void done() throws Exception {
-		throw new Exception("MovieManagerCommandImportExportHandler does not implement method done!");
-	}
+	public void execute() throws Exception;	
+	public void done() throws Exception;
 		
-	public int addMovie(int i) throws Exception {
-		throw new Exception("MovieManagerCommandImportExportHandler does not implement method addMovie!");
-	}
+	public int addMovie(int i) throws Exception;
 	
-	public void retrieveMovieList() throws Exception {
-		throw new Exception("MovieManagerCommandImportExportHandler does not implement method retrieveMovieList!");
-	}
+	public void retrieveMovieList() throws Exception;
 	
-	public int getMovieListSize() throws Exception {
-		throw new Exception("MovieManagerCommandImportExportHandler does not implement method getMovieListSize!");
-	}
+	public int getMovieListSize() throws Exception;
 	
-	public String getNextMovie(int i) throws Exception {
-		throw new Exception("MovieManagerCommandImportExportHandler does not implement method getTitle!");
-	}
+	public String getNextMovie(int i) throws Exception;
 	
-	public void setNextModel(ModelMovie model) {
-		modelMovieInfo.setModel(model, true, false);
-	}
-	
-	
-	/**
-     * Gets the IMDB info for movies (multiAdd)
-     **/
-    public void executeCommandGetIMDBInfoMultiMovies(String searchString, String filename, ModelImportExportSettings settings, ModelMovie model) {
-      	
-        /* Checks the movie title... */
-        log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
-        
-        if (!searchString.equals("")) { //$NON-NLS-1$
-            DialogIMDB dialogIMDB = new DialogIMDB(model, searchString, filename, null, settings.multiAddIMDbSelectOption, null);
-             
-            if (dialogIMDB.cancelSet)
-            	setCancelled(true);
-            
-            if (dialogIMDB.cancelAllSet)
-            	setAborted(true);
-            
-            if (dialogIMDB.dropImdbInfoSet)
-            	listToAddMovieTo = settings.skippedListName;
-            else
-            	listToAddMovieTo = settings.addToThisList;
-                        
-        } else {
-            DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.alert"), Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
-            GUIUtil.showAndWait(alert, true);
-        }
-    }
+	public void setNextModel(ModelMovie model);
 }

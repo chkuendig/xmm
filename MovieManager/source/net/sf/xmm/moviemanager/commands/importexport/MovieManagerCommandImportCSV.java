@@ -36,7 +36,7 @@ import com.Ostermiller.util.LabeledCSVParser;
 
 
 
-public class MovieManagerCommandImportCSV extends MovieManagerCommandImportExportHandler {
+public class MovieManagerCommandImportCSV extends MovieManagerCommandImportHandler {
 
 	ModelMovie movie = null;
 
@@ -48,6 +48,7 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportExpor
 	
 	MovieManagerCommandImportCSV(ModelImportExportSettings settings) {
 		this.settings = settings;
+		listToAddMovieTo = settings.addToThisList;
 	}
 
 
@@ -113,6 +114,8 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportExpor
 
 		modelMovieInfo.setModel((ModelMovie) tmp, false, false);
 
+		System.err.println("listToAddMovieTo: " + listToAddMovieTo);
+		
 		try {
 			ret = modelMovieInfo.saveToDatabase(listToAddMovieTo).getKey();
 		} catch (Exception e) {

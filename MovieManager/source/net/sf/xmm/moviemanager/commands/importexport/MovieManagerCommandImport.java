@@ -60,7 +60,7 @@ public class MovieManagerCommandImport implements ActionListener{
 			GUIUtil.showAndWait(importMovie, true);
 			
 			importSettings = importMovie.getSettings();
-
+	
 			if (importMovie.cancelAll)
 				return;
 

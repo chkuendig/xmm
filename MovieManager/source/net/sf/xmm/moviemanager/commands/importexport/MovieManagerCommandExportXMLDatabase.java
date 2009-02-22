@@ -46,7 +46,7 @@ import org.exolab.castor.xml.Marshaller;
 
 
 
-public class MovieManagerCommandExportXMLDatabase extends MovieManagerCommandImportExportHandler {
+public class MovieManagerCommandExportXMLDatabase extends MovieManagerCommandExportHandler {
 
 	static Logger log = Logger.getRootLogger();
 

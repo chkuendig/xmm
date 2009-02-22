@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 
 
 
-public class MovieManagerCommandImportText extends MovieManagerCommandImportExportHandler {
+public class MovieManagerCommandImportText extends MovieManagerCommandImportHandler {
 
 	
 	static Logger log = Logger.getRootLogger();
@@ -44,8 +44,9 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportExpo
 	
 	ModelMovieInfo modelMovieInfo = new ModelMovieInfo(false, true);
 	
-	MovieManagerCommandImportText(ModelImportExportSettings importSettings) {
-		this.importSettings = importSettings;
+	MovieManagerCommandImportText(ModelImportExportSettings settings) {
+		this.importSettings = settings;
+		listToAddMovieTo = settings.addToThisList;
 	}
 	
 
