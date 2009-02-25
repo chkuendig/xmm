@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
 
 class SQL {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 
 	private String _url;
 

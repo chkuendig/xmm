@@ -46,7 +46,7 @@ import org.apache.log4j.Logger;
 
 abstract public class Database {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 
 	SQL _sql;
 

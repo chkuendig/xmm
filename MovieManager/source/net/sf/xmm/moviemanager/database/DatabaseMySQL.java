@@ -26,6 +26,8 @@ import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
@@ -33,6 +35,8 @@ import net.sf.xmm.moviemanager.models.ModelMovie;
 
 public class DatabaseMySQL extends Database {
     	
+	Logger log = Logger.getLogger(getClass());
+	
 	public DatabaseMySQL(String filePath) {
 		super(filePath);
 		

@@ -27,10 +27,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.util.SysUtil;
 
 public class DatabaseAccess extends Database {
     
+	Logger log = Logger.getLogger(getClass());
     
     public DatabaseAccess(String filePath) {
 	super(filePath);

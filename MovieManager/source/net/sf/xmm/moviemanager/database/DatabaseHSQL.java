@@ -29,19 +29,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.util.FileUtil;
 
 
 public class DatabaseHSQL extends Database {
     
+	Logger log = Logger.getLogger(getClass());
+	
 	public DatabaseHSQL(String filePath) {
 		super(filePath);
 		databaseType = "HSQL";
 		_sql = new SQL(filePath, "HSQL");
 	}
-    
-    
     
     /**
      * SetUp...

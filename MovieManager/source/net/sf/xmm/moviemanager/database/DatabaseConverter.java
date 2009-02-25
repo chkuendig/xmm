@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 
 public class DatabaseConverter {
     
-    static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
     
     private int lengthOfTask;
     private int current = -1;
