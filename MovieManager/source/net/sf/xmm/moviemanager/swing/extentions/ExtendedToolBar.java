@@ -41,7 +41,7 @@ import org.apache.log4j.Logger;
 
 public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMotionListener {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 
 	private JToolBar toolBar;
 	public JLabel entriesCount;

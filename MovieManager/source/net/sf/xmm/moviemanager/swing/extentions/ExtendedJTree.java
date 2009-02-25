@@ -69,7 +69,7 @@ import org.apache.log4j.Logger;
  */
 public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListener, DragSourceListener {  
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 
 	static int dummy = 0;
 	private static final int AUTOSCROLL_MARGIN = 25;

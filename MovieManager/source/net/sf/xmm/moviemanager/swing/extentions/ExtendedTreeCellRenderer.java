@@ -54,7 +54,7 @@ import org.apache.log4j.Logger;
 
 public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer, NewDatabaseLoadedEventListener {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 	
 	private HashMap coverCache = new HashMap();
 	private Icon defaultIconMovie;
