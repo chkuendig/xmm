@@ -23,10 +23,14 @@ package net.sf.xmm.moviemanager.fileproperties;
 import java.io.RandomAccessFile;
 import java.util.StringTokenizer;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.util.FileUtil;
 
 class FilePropertiesOGM extends FileProperties {
 
+	Logger log = Logger.getLogger(getClass());
+	
 	//private final int Ogm = 0x4f676753;
 	private final int End = 0x0373;
 	private final int vide = 0x65646976;

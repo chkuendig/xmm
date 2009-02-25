@@ -23,8 +23,12 @@ package net.sf.xmm.moviemanager.fileproperties;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 
+import org.apache.log4j.Logger;
+
 class FilePropertiesMPEG extends FileProperties {
 
+	Logger log = Logger.getLogger(getClass());
+	
 	//private final int[] PICTURE_START_CODE = {0x00, 0x00, 0x01, 0x00};
 
 	//private final int[] USER_DATA_START_CODE = {0x00, 0x00, 0x01, 0xb2};

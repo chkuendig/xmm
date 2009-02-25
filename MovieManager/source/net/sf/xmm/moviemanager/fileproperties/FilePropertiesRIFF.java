@@ -24,10 +24,14 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.util.FileUtil;
 
 class FilePropertiesRIFF extends FileProperties {
 
+	Logger log = Logger.getLogger(getClass());
+	
 	private final int RIFF_AVI = 0x20495641;
 
 	private final int AVI_LIST = 0x5453494c;

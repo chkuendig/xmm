@@ -22,10 +22,14 @@ package net.sf.xmm.moviemanager.fileproperties;
 
 import java.io.RandomAccessFile;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.util.FileUtil;
 
 class FilePropertiesIFO extends FileProperties {
 
+	Logger log = Logger.getLogger(getClass());
+	
 	//private final int DVDVIDEO_VMG = 0x474d56; /* 'VMG' */
 
 	private final int DVDVIDEO_VTS = 0x535456; /* 'VTS' */
