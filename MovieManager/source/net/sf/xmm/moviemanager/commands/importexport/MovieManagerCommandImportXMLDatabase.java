@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandSaveChangedNotes.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandImportXMLDatabase.java 1.0 26.09.05 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -40,13 +40,9 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Unmarshaller;
 
-
-
-
 public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImportHandler {
 
-	
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 	
 	boolean cancelled = false;
 	
@@ -82,7 +78,7 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 	}
 	
 	
-	public String getNextMovie(int i) {
+	public String getTitle(int i) {
 
 		String title = null;
 		
