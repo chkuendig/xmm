@@ -69,7 +69,7 @@ import org.xml.sax.SAXException;
 
 public class TMXResourceBundle extends ResourceBundle implements Serializable {
 
-    static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
     
     /**
      * Serial Version UID

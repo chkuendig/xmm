@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 
 public class GUIUtil {
 
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(GUIUtil.class);
 
 	public static void show(final java.awt.Container container, final boolean visible) {
 		show(container, visible, null);

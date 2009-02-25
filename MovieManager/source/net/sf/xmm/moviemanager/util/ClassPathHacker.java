@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 public class ClassPathHacker {
 
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(ClassPathHacker.class);
 
 	private static final Class[] parameters = new Class[]{URL.class};
 

@@ -27,8 +27,7 @@ import org.apache.log4j.Logger;
 
 public class StringUtil {
 
-	static Logger log = Logger.getRootLogger();
-
+	static Logger log = Logger.getLogger(StringUtil.class);
 
 	public static String cleanInt(String toBeCleaned, int debugMode) {
 

@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 
 public class SysUtil {
 
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(SysUtil.class);
 
 	/**
 	 * Getting the 'root directory' of the app.

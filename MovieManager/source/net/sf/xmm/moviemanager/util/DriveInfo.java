@@ -33,7 +33,7 @@ import stec.sfc.Win32.Win32Exception;
 
 public class DriveInfo {
 
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(DriveInfo.class);
 	
 	public static boolean initialized = true;
 	boolean valid = true;

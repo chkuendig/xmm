@@ -58,9 +58,7 @@ import org.apache.log4j.Logger;
 
 public class FileUtil {
     
-    static Logger log = Logger.getRootLogger();
-   
-    
+	static Logger log = Logger.getLogger(FileUtil.class); 
     
     public static StringBuffer readFileToStringBuffer(String filePath) throws FileNotFoundException, IOException {
 

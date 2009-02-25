@@ -9,7 +9,7 @@ import edu.stanford.ejalbert.BrowserLauncher;
 
 public class BrowserOpener {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
     
     private String url;
     

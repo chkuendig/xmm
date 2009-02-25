@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 public class Localizer {
 
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(Localizer.class);
 	
 	// static public I18n i18n;
 
