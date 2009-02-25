@@ -57,7 +57,7 @@ import net.sf.xmm.moviemanager.util.SysUtil;
 
 public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 
-	public static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 
 	JMenu menuFile = null;
 	JMenu menuDatabase = null;
