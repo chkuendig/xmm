@@ -42,6 +42,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandExit;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
+import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportHandler;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.database.DatabaseAccess;
 import net.sf.xmm.moviemanager.database.DatabaseHSQL;
@@ -74,7 +75,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 public class MovieManager {
 
-    public static Logger log;
+	static Logger log = Logger.getLogger(MovieManager.class);
     
     public static NewDatabaseLoadedHandler newDbHandler = new NewDatabaseLoadedHandler();
     public static NewMovieListLoadedHandler newMovieListLoadedHandler = new NewMovieListLoadedHandler();
