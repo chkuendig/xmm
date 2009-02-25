@@ -65,16 +65,13 @@ public class DialogAboutMovieManagerHttpParser extends JFrame {
 
 		/*Enables dispose when pushing escape*/
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
+		Action escapeAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		};
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
 		getRootPane().getActionMap().put("ESCAPE", escapeAction);
-
 
 		/* Dialog properties...*/
 		setTitle("About MeD's Movie Manager HTTP parser");
