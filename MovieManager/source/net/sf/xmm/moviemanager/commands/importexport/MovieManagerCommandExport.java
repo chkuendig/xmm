@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandImport.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)MovieManagerCommandExport.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -35,8 +35,8 @@ import org.apache.log4j.Logger;
 
 public class MovieManagerCommandExport implements ActionListener{
 
-	static Logger log = Logger.getRootLogger();
-
+	static Logger log = Logger.getLogger(MovieManagerCommandExport.class);
+	
 	ModelImportExportSettings exportSettings;
 
 	protected void execute() {
@@ -61,7 +61,9 @@ public class MovieManagerCommandExport implements ActionListener{
 				exporter = new MovieManagerCommandExportCSV(exportSettings);
 			else if (exportSettings.mode == ModelImportExportSettings.EXPORT_MODE_EXCEL)
 				exporter = new MovieManagerCommandExportExcel(exportSettings);
-				
+			else if (exportSettings.mode == ModelImportExportSettings.EXPORT_MODE_XML_DATABASE)
+				exporter = new MovieManagerCommandExportXMLDatabase(exportSettings);
+			
 			if (exporter != null) {
 				try {
 					exporter.execute();

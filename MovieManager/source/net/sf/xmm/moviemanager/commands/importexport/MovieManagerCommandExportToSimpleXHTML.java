@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 
 public class MovieManagerCommandExportToSimpleXHTML {
 
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(MovieManagerCommandExportToSimpleXHTML.class);
 
 	static String title;
 	static String sortBy;

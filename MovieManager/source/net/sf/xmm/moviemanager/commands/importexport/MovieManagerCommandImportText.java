@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandSaveChangedNotes.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandImportText.java 1.0 26.09.05 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 
 public class MovieManagerCommandImportText extends MovieManagerCommandImportHandler {
 
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(MovieManagerCommandImportHandler.class);
 
 	ArrayList movieList = null;
 	
@@ -41,17 +41,14 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportHand
 		super(settings);
 	}
 	
-	public void handleMovie(int i) {
 		
-	}
-	
 	public void execute() {
 
 		log.error("This function does nothing!!!!!");
 		
 		//DialogTableImport importTable = new DialogTableImport(MovieManager.getDialog(), importSettings.file, importSettings);
 		//GUIUtil.showAndWait(importTable, true);
-	}
+	} 
 	
 	
 	public int getMovieListSize() {
@@ -112,4 +109,6 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportHand
 		}	
 
 	}
+
+
 }

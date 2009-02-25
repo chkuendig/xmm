@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandSaveChangedNotes.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandExportCSV.java 1.0 26.09.05 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -39,14 +39,9 @@ import org.apache.log4j.Logger;
 import com.Ostermiller.util.CSVPrinter;
 
 
-
-
 public class MovieManagerCommandExportCSV extends MovieManagerCommandExportHandler {
 
-	
-	static Logger log = Logger.getRootLogger();
-
-	File output;
+	static Logger log = Logger.getLogger(MovieManagerCommandExportCSV.class);
 	
 	Object [][] data = null;
 	
@@ -89,7 +84,7 @@ public class MovieManagerCommandExportCSV extends MovieManagerCommandExportHandl
 		titleColumnIndex = dialogExportTable.titleColumnIndex;
 	}
 
-	public String getNextMovie(int i) {
+	public String getTitle(int i) {
 				
 		try {
 

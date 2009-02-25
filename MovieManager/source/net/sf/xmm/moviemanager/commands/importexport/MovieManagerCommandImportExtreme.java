@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandSaveChangedNotes.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandImportExtreme.java 1.0 26.09.05 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -36,14 +36,9 @@ import net.sf.xmm.moviemanager.util.StringUtil;
 
 import org.apache.log4j.Logger;
 
-
-
-
 public class MovieManagerCommandImportExtreme extends MovieManagerCommandImport {
 
-	
-	static Logger log = Logger.getRootLogger();
-
+	static Logger log = Logger.getLogger(MovieManagerCommandImportExtreme.class);
 	
 	File output;
 	boolean cancelled = false;

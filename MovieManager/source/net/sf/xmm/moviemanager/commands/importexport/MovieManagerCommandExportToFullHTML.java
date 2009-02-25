@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandExportToFullHTML.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)HTMLMovieGroup.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -45,7 +45,7 @@ import org.apache.log4j.Logger;
 
 class HTMLMovieGroup {
 	
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(HTMLMovieGroup.class);
 	
 	String groupTitle;
 	String fileTitle;

@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandSaveChangedNotes.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandExportExcel.java 1.0 26.09.05 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -31,6 +31,7 @@ import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.gui.DialogExport;
 import net.sf.xmm.moviemanager.gui.DialogTableExport;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
@@ -40,10 +41,8 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 import org.apache.log4j.Logger;
 
 public class MovieManagerCommandExportExcel extends MovieManagerCommandExportHandler {
-
 	
-	static Logger log = Logger.getRootLogger();
-
+	static Logger log = Logger.getLogger(MovieManagerCommandExportExcel.class);
 	
 	File output;
 	
@@ -91,7 +90,7 @@ public class MovieManagerCommandExportExcel extends MovieManagerCommandExportHan
 		titleColumnIndex = dialogExportTable.titleColumnIndex;
 	}
 
-	public String getNextMovie(int i) {
+	public String getTitle(int i) {
 				
 		try {
 

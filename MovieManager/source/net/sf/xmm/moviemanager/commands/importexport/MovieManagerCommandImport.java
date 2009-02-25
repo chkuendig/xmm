@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
 
 public class MovieManagerCommandImport implements ActionListener{
 
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(MovieManagerCommandImport.class);
 
 	boolean done = false;
 
@@ -67,7 +67,12 @@ public class MovieManagerCommandImport implements ActionListener{
 			MovieManagerCommandImportExportHandler importer = null;
 
 			
-			if (importSettings.mode == ModelImportExportSettings.IMPORT_MODE_CSV) {
+			
+			if (importSettings.mode == ModelImportExportSettings.IMPORT_MODE_TEXT) {
+				importer = new MovieManagerCommandImportText(importSettings);
+				importer.execute();
+			}
+			else if (importSettings.mode == ModelImportExportSettings.IMPORT_MODE_CSV) {
 				importer = new MovieManagerCommandImportCSV(importSettings);
 				importer.execute();
 			}

@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandSaveChangedNotes.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandImportExcel.java 1.0 26.09.05 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -20,6 +20,8 @@
 
 package net.sf.xmm.moviemanager.commands.importexport;
 
+import org.apache.log4j.Logger;
+
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -29,11 +31,10 @@ import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
-
-
-
 public class MovieManagerCommandImportExcel extends MovieManagerCommandImportHandler {
 
+	static Logger log = Logger.getLogger(MovieManagerCommandImportExcel.class);
+	
 	ModelMovie movie = null;
 
 	Object [][] tableData;
@@ -68,7 +69,7 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportHan
 	}
 
 	
-	public String getNextMovie(int i) {
+	public String getTitle(int i) {
 		modelMovieInfo.clearModel();
 
 		try {

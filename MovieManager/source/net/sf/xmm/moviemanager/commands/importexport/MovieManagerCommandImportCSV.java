@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandSaveChangedNotes.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandImportCSV.java 1.0 26.09.05 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -23,6 +23,8 @@ package net.sf.xmm.moviemanager.commands.importexport;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogTableImport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
@@ -33,11 +35,10 @@ import com.Ostermiller.util.CSVParse;
 import com.Ostermiller.util.CSVParser;
 import com.Ostermiller.util.LabeledCSVParser;
 
-
-
-
 public class MovieManagerCommandImportCSV extends MovieManagerCommandImportHandler {
 
+	static Logger log = Logger.getLogger(MovieManagerCommandImportCSV.class);
+	
 	ModelMovie movie = null;
 
 	Object [][] data;
@@ -70,7 +71,7 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportHandl
 	}
 
 	
-	public String getNextMovie(int i) {
+	public String getTitle(int i) {
 		modelMovieInfo.clearModel();
 
 		try {

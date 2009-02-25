@@ -1,5 +1,5 @@
 /**
- * @(#)DatabaseImporter.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)DatabaseImporterExporter.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
 
 public class DatabaseImporterExporter {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 
 	private int lengthOfTask = 0;
 	private int current = -1;
@@ -136,7 +136,7 @@ public class DatabaseImporterExporter {
 
 				for (int i = 0; i < lengthOfTask; i++) {
 
-					title = handler.getNextMovie(i);
+					title = handler.getTitle(i);
 					
 					if (title != null && !title.equals("")) {
 					
