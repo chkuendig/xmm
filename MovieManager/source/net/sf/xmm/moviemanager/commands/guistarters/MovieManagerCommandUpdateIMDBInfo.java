@@ -34,6 +34,8 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSaveChangedNotes;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
@@ -45,6 +47,8 @@ import net.sf.xmm.moviemanager.util.Localizer;
 
 public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionListener{
     
+	Logger log = Logger.getLogger(getClass());
+	
     boolean canceled = true;
     boolean done = false;
     JDialog dbImporter;
@@ -116,26 +120,26 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
     }
     
     protected void execute() {
-	
-//   	 If any notes have been changed, they will be saved before updating list
-    	 MovieManagerCommandSaveChangedNotes.execute();
-		 
-	cancelAll = false;
-	
-	DialogUpdateIMDbInfo importMovie = new DialogUpdateIMDbInfo(this, dbImporter);
-	
-	if (cancelAll)
-	    return;
-		
-	createAndShowGUI();
+
+    	//   	 If any notes have been changed, they will be saved before updating list
+    	MovieManagerCommandSaveChangedNotes.execute();
+
+    	cancelAll = false;
+
+    	DialogUpdateIMDbInfo importMovie = new DialogUpdateIMDbInfo(this, dbImporter);
+
+    	if (cancelAll)
+    		return;
+
+    	createAndShowGUI();
     }
-    
+
         /**
      * Invoked when an action occurs.
      **/
     public void actionPerformed(ActionEvent event) {
-	MovieManager.log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-	execute();
+    	log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
+    	execute();
     }
 }
 

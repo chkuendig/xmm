@@ -24,32 +24,33 @@ package net.sf.xmm.moviemanager.commands.guistarters;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogPrefs;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandPrefs implements ActionListener {
     
+	Logger log = Logger.getLogger(getClass());
+	
     private static DialogPrefs dialogPrefs;
     
     void execute() {
-	dialogPrefs = new DialogPrefs();
-	GUIUtil.show(dialogPrefs, true);
+    	dialogPrefs = new DialogPrefs();
+    	GUIUtil.show(dialogPrefs, true);
     }
     
     public static DialogPrefs getDialogPrefs(){
-
-               return dialogPrefs;
-
-            }
-
+    	return dialogPrefs;
+    }
     
     /**
      * Invoked when an action occurs.
      **/
     
     public void actionPerformed(ActionEvent event) {
-	MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
-	execute();
+    	log.debug("ActionPerformed: " + event.getActionCommand());
+    	execute();
     }
 }
