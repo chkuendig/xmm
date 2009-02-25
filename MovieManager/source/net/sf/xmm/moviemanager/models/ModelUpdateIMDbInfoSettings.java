@@ -23,8 +23,6 @@ package net.sf.xmm.moviemanager.models;
 
 public class ModelUpdateIMDbInfoSettings {
     
-    
-    
     public int multiAddSelectOption = 0;
     public int importMode = 0;
     public boolean overwriteWithImdbInfo = false;

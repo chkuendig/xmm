@@ -1,5 +1,5 @@
 /**
- * @(#)IMDbInfoUpdater.java 1.0 26.01.06 (dd.mm.yy)
+ * @(#)ModelImportExportSettings.java 1.0 26.01.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -22,12 +22,11 @@ package net.sf.xmm.moviemanager.models;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.util.Localizer;
 
-
-
 public class ModelImportExportSettings {
-
 	
 	public final static int IMPORT_MODE_COUNT = 5;
 	

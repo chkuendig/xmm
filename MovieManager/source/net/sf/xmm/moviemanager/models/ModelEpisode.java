@@ -27,7 +27,7 @@ import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 
 public class ModelEpisode extends ModelEntry {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 	
 	public static boolean notesHaveBeenChanged = false;
 	

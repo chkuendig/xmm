@@ -39,7 +39,7 @@ import org.exolab.castor.xml.XMLFieldDescriptor;
 
 public class ModelExportXML implements XMLClassDescriptor {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 	
 	private String movieManagerVersion = MovieManager.getConfig().sysSettings.getVersion();
 	

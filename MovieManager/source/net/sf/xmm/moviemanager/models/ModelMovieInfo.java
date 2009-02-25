@@ -43,11 +43,11 @@ import net.sf.xmm.moviemanager.util.StringUtil;
 import org.apache.log4j.Logger;
 
 public class ModelMovieInfo {
-    
+    	  
+	Logger log = Logger.getLogger(getClass());
+		
     private ModelUpdatedHandler modelUpdatedHandler = new ModelUpdatedHandler();
-    
-    static Logger log = Logger.getRootLogger();
-    
+        
     public boolean _edit = false;
     private boolean _saveCover = false;
     public boolean _hasReadProperties = false;

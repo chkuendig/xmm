@@ -29,7 +29,8 @@ import org.apache.log4j.Logger;
 
 public class ModelAdditionalInfo {
 
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(ModelAdditionalInfo.class);
+	
 	public static int additionalInfoFieldCount = 17;
 
 	private int index = -1;
@@ -752,7 +753,7 @@ public class ModelAdditionalInfo {
 			}	
 
 		} catch (Exception e) {
-			MovieManager.log.error("Exception: ", e);
+			log.error("Exception: ", e);
 		}
 
 		/* Returns the data... */
