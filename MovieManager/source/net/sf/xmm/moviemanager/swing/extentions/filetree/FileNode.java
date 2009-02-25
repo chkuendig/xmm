@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 public class FileNode implements Comparable {
 	
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 	
 	protected File m_file;
 	FileTree fileTree;

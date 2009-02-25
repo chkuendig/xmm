@@ -74,7 +74,7 @@ import org.apache.log4j.Logger;
 
 public class FileTree extends JPanel {
 
-	public static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(FileTree.class);
 
 	public AddSelectedFilesEventHandler eventHandler = new AddSelectedFilesEventHandler();
 
