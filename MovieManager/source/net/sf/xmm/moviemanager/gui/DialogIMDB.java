@@ -55,7 +55,7 @@ import org.apache.log4j.Logger;
 /* This class is a total mess */
 public class DialogIMDB extends JDialog {
     
-    static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(DialogIMDB.class);
     
     IMDB imdb = null;
     

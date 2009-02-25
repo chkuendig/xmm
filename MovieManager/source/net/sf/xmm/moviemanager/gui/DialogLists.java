@@ -61,7 +61,7 @@ import org.apache.log4j.Logger;
 
 public class DialogLists extends JDialog {
   
-    static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
     
     private java.util.List _toRemove = new ArrayList();
   

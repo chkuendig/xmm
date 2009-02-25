@@ -68,7 +68,7 @@ import org.apache.log4j.Logger;
 
 public class DialogFolders extends JDialog implements ItemListener, DocumentListener {
     
-    static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
     
     private JCheckBox setPermanentDatabase;
     

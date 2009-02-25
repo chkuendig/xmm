@@ -69,11 +69,9 @@ import org.apache.log4j.Logger;
 
 public class DialogQueries extends JDialog {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 
 	JPanel panelResult;
-
-
 
 	/**
 	 * The Constructor.

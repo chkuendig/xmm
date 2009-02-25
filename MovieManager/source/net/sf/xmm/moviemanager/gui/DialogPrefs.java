@@ -99,7 +99,8 @@ import com.oyoaha.swing.plaf.oyoaha.OyoahaLookAndFeel;
 
 public class DialogPrefs extends JDialog implements ActionListener, ItemListener {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
+	
 	private static MovieManagerConfig config = MovieManager.getConfig();
 
 	InternalConfig disabledFeatures = MovieManager.getConfig().getInternalConfig();

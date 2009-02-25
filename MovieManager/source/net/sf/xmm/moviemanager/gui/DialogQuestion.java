@@ -54,7 +54,7 @@ import org.apache.log4j.Logger;
 
 public class DialogQuestion extends JDialog  {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 
 	/**
 	 * The choosed answer.

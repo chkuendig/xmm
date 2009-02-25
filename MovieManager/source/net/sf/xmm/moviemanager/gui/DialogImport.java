@@ -63,8 +63,7 @@ import org.apache.log4j.Logger;
 
 public class DialogImport extends JDialog implements ActionListener {
 
-	static Logger log = Logger.getRootLogger();
-
+	Logger log = Logger.getLogger(getClass());
 	
 	private JTextField textFilePath;
 	private JTextField excelFilePath;
@@ -594,7 +593,7 @@ public class DialogImport extends JDialog implements ActionListener {
 		return "";
 	}
 
-	/*Saves the options to the MovieManager object*/
+	/*Saves the options to the settings object*/
 	void executeSave() {
 
 		MovieManager.getConfig().setImportIMDbInfoEnabled(enableSearchForImdbInfo.isSelected());

@@ -81,7 +81,7 @@ import org.apache.log4j.Logger;
 
 public class DialogDatabase extends JDialog implements ActionListener {
 
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(DialogDatabase.class);
 
 	static private JTextField hsqlFilePath;
 	static private JTextField accessFilePath;

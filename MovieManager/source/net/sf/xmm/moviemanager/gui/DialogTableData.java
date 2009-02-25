@@ -67,7 +67,7 @@ import org.apache.log4j.Logger;
 
 public class DialogTableData extends JDialog {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 
 	final JDialog dialogImportTable = this;
 	

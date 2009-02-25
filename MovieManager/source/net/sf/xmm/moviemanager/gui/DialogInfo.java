@@ -53,7 +53,7 @@ import org.apache.log4j.Logger;
 
 public class DialogInfo extends JDialog {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 
 	public DialogInfo(Dialog parent, String title, String infoMsg) {
 		super(parent, true);

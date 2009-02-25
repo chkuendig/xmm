@@ -119,7 +119,7 @@ import org.w3c.dom.Document;
 
 public class DialogMovieManager extends JFrame implements ComponentListener {
     
-    public static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
         
     public static MovieManagerConfig config = MovieManager.getConfig();
     
