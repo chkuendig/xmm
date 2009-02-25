@@ -51,9 +51,7 @@ import org.apache.log4j.Logger;
 
 public class HttpUtil {
 
-	
-	
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(HttpUtil.class);
 
 	public boolean imdbAuthenticationSetUp = false;
 	public boolean setUp = false;

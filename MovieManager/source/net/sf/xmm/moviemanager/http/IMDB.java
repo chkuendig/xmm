@@ -37,11 +37,9 @@ import net.sf.xmm.moviemanager.models.imdb.*;
 
 import org.apache.log4j.Logger;
 
-
-
 public class IMDB /*extends IMDB_if */{
   
-    static Logger log = Logger.getRootLogger();    
+	static Logger log = Logger.getLogger(HttpUtil.class);
     
     private HttpUtil httpUtil = new HttpUtil();
     
