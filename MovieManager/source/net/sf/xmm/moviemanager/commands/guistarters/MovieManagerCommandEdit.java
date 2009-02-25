@@ -25,13 +25,18 @@ import java.awt.event.ActionListener;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.commands.MovieManagerCommandCloseDatabase;
 import net.sf.xmm.moviemanager.gui.DialogMovieInfo;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandEdit implements ActionListener {
 
+	static Logger log = Logger.getLogger(MovieManagerCommandEdit.class);
+	
 	/**
 	 * Executes the command.
 	 **/
@@ -69,7 +74,7 @@ public class MovieManagerCommandEdit implements ActionListener {
 	 * Invoked when an action occurs.
 	 **/
 	public void actionPerformed(ActionEvent event) {
-		MovieManager.log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
+		log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 		execute();
 	}
 }

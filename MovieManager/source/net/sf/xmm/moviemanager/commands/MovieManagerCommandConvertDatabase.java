@@ -59,7 +59,7 @@ import org.apache.log4j.Logger;
 
 public class MovieManagerCommandConvertDatabase extends JPanel implements ActionListener{
     
-    static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
     
     Database newDatabase;
     ListModel movieListModel;

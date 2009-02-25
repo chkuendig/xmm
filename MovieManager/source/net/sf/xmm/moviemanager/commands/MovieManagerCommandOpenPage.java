@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 
 public class MovieManagerCommandOpenPage extends MouseAdapter implements ActionListener {
     
-    static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
         
     BrowserOpener opener;
     
@@ -55,8 +55,6 @@ public class MovieManagerCommandOpenPage extends MouseAdapter implements ActionL
      **/
     public void actionPerformed(ActionEvent event) {
         log.debug("ActionPerformed: " + event.getActionCommand());
-        
-         
         opener.executeOpenBrowser(MovieManager.getConfig().getSystemWebBrowser(), MovieManager.getConfig().getBrowserPath());
     }
 }

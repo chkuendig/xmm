@@ -25,6 +25,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogMovieInfo;
 import net.sf.xmm.moviemanager.models.ModelMovie;
@@ -32,6 +34,8 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandAddEpisode implements ActionListener {
 
+	static Logger log = Logger.getLogger(MovieManagerCommandAddEpisode.class);
+	
     /**
      * Executes the command.
      **/
@@ -49,7 +53,7 @@ public class MovieManagerCommandAddEpisode implements ActionListener {
                     DialogMovieInfo dialogMovieInfo = new DialogMovieInfo(model); //$NON-NLS-1$
                     GUIUtil.show(dialogMovieInfo, true);
                 } catch (Exception e) {
-                    MovieManager.log.error("Exception:", e);
+                    log.error("Exception:", e);
                 }
             }
         }
@@ -59,8 +63,8 @@ public class MovieManagerCommandAddEpisode implements ActionListener {
    * Invoked when an action occurs.
    **/
     public void actionPerformed(ActionEvent event) {
-	MovieManager.log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
-	execute();
+    	log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
+    	execute();
     }
 
 }

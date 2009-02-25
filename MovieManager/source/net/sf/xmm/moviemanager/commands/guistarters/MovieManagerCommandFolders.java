@@ -1,5 +1,5 @@
 /**
- * @(#)CommandFolders.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)MovieManagerCommandFolders.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Mediterranean
  * 
@@ -23,26 +23,30 @@ package net.sf.xmm.moviemanager.commands.guistarters;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.commands.MovieManagerCommandExit;
 import net.sf.xmm.moviemanager.gui.DialogFolders;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandFolders implements ActionListener {
 
-  /**
-   * Executes the command.
-   **/
-  protected static void execute() {
-      DialogFolders dialogFolders = new DialogFolders();
-      GUIUtil.show(dialogFolders, true);
-  }
-  
-  /**
-   * Invoked when an action occurs.
-   **/
-  public void actionPerformed(ActionEvent event) {
-    MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
-    execute();
-  }
+	static Logger log = Logger.getLogger(MovieManagerCommandFolders.class);
+	
+	/**
+	 * Executes the command.
+	 **/
+	protected static void execute() {
+		DialogFolders dialogFolders = new DialogFolders();
+		GUIUtil.show(dialogFolders, true);
+	}
 
+	/**
+	 * Invoked when an action occurs.
+	 **/
+	public void actionPerformed(ActionEvent event) {
+		log.debug("ActionPerformed: " + event.getActionCommand());
+		execute();
+	}
 }

@@ -20,9 +20,10 @@
 
 package net.sf.xmm.moviemanager.commands;
 
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import org.apache.log4j.Logger;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogSearch;
@@ -30,7 +31,9 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandSearch implements ActionListener {
     
-    void execute() {
+	Logger log = Logger.getLogger(getClass());
+	
+	void execute() {
     
 		if (DialogSearch.getDialogSearch() == null) {
 		    DialogSearch dialogSearch = new DialogSearch();
@@ -47,7 +50,7 @@ public class MovieManagerCommandSearch implements ActionListener {
      **/
     
     public void actionPerformed(ActionEvent event) {
-	MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
-	execute();
+    	log.debug("ActionPerformed: " + event.getActionCommand());
+    	execute();
     }
 }

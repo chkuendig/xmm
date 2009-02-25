@@ -20,7 +20,6 @@
 
 package net.sf.xmm.moviemanager.commands;
 
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -50,7 +49,7 @@ import org.apache.log4j.Logger;
 
 public class MovieManagerCommandPlay implements ActionListener {
 
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(MovieManagerCommandPlay.class);
 
 	public void actionPerformed(ActionEvent e) {
 

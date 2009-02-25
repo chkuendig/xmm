@@ -27,6 +27,8 @@ import java.util.Enumeration;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
@@ -34,6 +36,8 @@ import net.sf.xmm.moviemanager.models.ModelMovie;
 
 public class MovieManagerCommandSaveChangedNotes implements ActionListener {
 
+	Logger log = Logger.getLogger(getClass());
+	
 	/**
 	 * Executes the command.
 	 **/
@@ -95,7 +99,7 @@ public class MovieManagerCommandSaveChangedNotes implements ActionListener {
 	 * Invoked when an action occurs.
 	 **/
 	public void actionPerformed(ActionEvent event) {
-		MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
+		log.debug("ActionPerformed: " + event.getActionCommand());
 		execute();
 	}
 }

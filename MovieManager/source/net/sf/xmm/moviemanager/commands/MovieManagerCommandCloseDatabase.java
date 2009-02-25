@@ -23,41 +23,44 @@ package net.sf.xmm.moviemanager.commands;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.Database;
 
 public class MovieManagerCommandCloseDatabase implements ActionListener {
-    
-    
-    public static void execute() {
-	
-    	// If any notes have been changed, they will be saved before seaching
-    	MovieManagerCommandSaveChangedNotes.execute();
-    	
-    	Database database = MovieManager.getIt().getDatabase();
-	
-	if (database != null) {
-	    
-	    /* Closes the open database... */
-	    database.finalizeDatabase();
-	    
-	    MovieManager.getDialog().resetTreeModel();
-	    MovieManager.getDialog().getAppMenuBar().setDatabaseComponentsEnable(false);
-	    MovieManager.getDialog().setAndShowEntries(-1);
-	    MovieManager.getIt().setDatabase(null, false);
-	    
-	    MovieManagerCommandSelect.execute();
-	    
-	    if (!MovieManager.getConfig().getDatabasePathPermanent())
-		MovieManager.getConfig().setDatabasePath("");
-	}
-    }
 
-    /**
-     * Invoked when an action occurs.
-     **/
-    public void actionPerformed(ActionEvent event) {
-	MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
-	execute();
-    }
+	static Logger log = Logger.getLogger(MovieManagerCommandCloseDatabase.class);
+
+	public static void execute() {
+
+		// If any notes have been changed, they will be saved before seaching
+		MovieManagerCommandSaveChangedNotes.execute();
+
+		Database database = MovieManager.getIt().getDatabase();
+
+		if (database != null) {
+
+			/* Closes the open database... */
+			database.finalizeDatabase();
+
+			MovieManager.getDialog().resetTreeModel();
+			MovieManager.getDialog().getAppMenuBar().setDatabaseComponentsEnable(false);
+			MovieManager.getDialog().setAndShowEntries(-1);
+			MovieManager.getIt().setDatabase(null, false);
+
+			MovieManagerCommandSelect.execute();
+
+			if (!MovieManager.getConfig().getDatabasePathPermanent())
+				MovieManager.getConfig().setDatabasePath("");
+		}
+	}
+
+	/**
+	 * Invoked when an action occurs.
+	 **/
+	public void actionPerformed(ActionEvent event) {
+		log.debug("ActionPerformed: " + event.getActionCommand());
+		execute();
+	}
 }

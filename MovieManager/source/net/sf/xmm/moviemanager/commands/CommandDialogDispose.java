@@ -24,24 +24,28 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 
 public class CommandDialogDispose implements ActionListener {
 
-  private JDialog _dialog;
+	Logger log = Logger.getLogger(getClass());
 
-  /**
-   * Constructor. Initialises the _dialog var.
-   **/
-  public CommandDialogDispose(JDialog dialog) {
-     _dialog = dialog;
-  }
-  
-  /**
-   * Invoked when an action occurs.
-   **/
-  public void actionPerformed(ActionEvent event) {
-      MovieManager.log.debug("ActionPerformed: "+ event.getActionCommand());
-      _dialog.dispose();
-  }
+	private JDialog _dialog;
+
+	/**
+	 * Constructor. Initializes the _dialog var.
+	 **/
+	public CommandDialogDispose(JDialog dialog) {
+		_dialog = dialog;
+	}
+
+	/**
+	 * Invoked when an action occurs.
+	 **/
+	public void actionPerformed(ActionEvent event) {
+		log.debug("ActionPerformed: "+ event.getActionCommand());
+		_dialog.dispose();
+	}
 }

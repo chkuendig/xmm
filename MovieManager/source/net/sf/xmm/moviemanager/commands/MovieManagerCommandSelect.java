@@ -96,10 +96,10 @@ import org.w3c.dom.Document;
 
 public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelectionListener, MouseListener, ActionListener {
 
+	static Logger log = Logger.getLogger(MovieManagerCommandSelect.class);
+	
 	private JMenuItem change, setAllToSeen, setAllToUnseen, addEpisode;
 	private JMenu menuApplyToLists, menuRemoveFromLists;
-
-	public static Logger log = Logger.getRootLogger();
 
 	private static boolean ignoreValueChanged = false;
 

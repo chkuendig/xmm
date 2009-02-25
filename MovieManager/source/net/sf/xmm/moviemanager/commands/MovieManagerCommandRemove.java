@@ -40,8 +40,7 @@ import org.apache.log4j.Logger;
 
 public class MovieManagerCommandRemove implements ActionListener {
 
-	static Logger log = Logger.getRootLogger();
-	
+	static Logger log = Logger.getLogger(MovieManagerCommandRemove.class);
 	
 	/**
 	 * Executes the command.

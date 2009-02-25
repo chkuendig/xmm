@@ -1,5 +1,3 @@
-package net.sf.xmm.moviemanager.commands;
-
 /**
  * @(#)MovieManagerCommandIMDBSearch.java 1.0 26.10.08 (dd.mm.yy)
  *
@@ -19,6 +17,8 @@ package net.sf.xmm.moviemanager.commands;
  * 
  * Contact: bro3@users.sourceforge.net
  **/
+
+package net.sf.xmm.moviemanager.commands;
 
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
@@ -52,7 +52,7 @@ import net.sf.xmm.moviemanager.util.SwingWorker;
 
 public class MovieManagerCommandIMDBSearch {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 	
 	ModelMovieInfo movieInfoModel;
 	DialogTVSeries dialogTVSeries;

@@ -26,12 +26,16 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogLists;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandLists implements ActionListener {
 
+	static Logger log = Logger.getLogger(MovieManagerCommandLists.class);
+		
 	Window parent;
 
 	public MovieManagerCommandLists(Window dialog) {
@@ -56,7 +60,7 @@ public class MovieManagerCommandLists implements ActionListener {
 	 * Invoked when an action occurs.
 	 **/
 	public void actionPerformed(ActionEvent event) {
-		MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
+		log.debug("ActionPerformed: " + event.getActionCommand());
 		execute(parent);
 	}
 }

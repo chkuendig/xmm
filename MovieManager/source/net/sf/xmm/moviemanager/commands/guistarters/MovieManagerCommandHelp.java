@@ -23,6 +23,8 @@ package net.sf.xmm.moviemanager.commands.guistarters;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.util.GUIUtil;
@@ -30,20 +32,21 @@ import net.sf.xmm.moviemanager.util.Localizer;
 
 public class MovieManagerCommandHelp implements ActionListener {
 
-  /**
-   * Executes the command.
-   **/
-  protected static void execute() {
-      DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandHelp.dialog-alert.help.title"), Localizer.getString("MovieManagerCommandHelp.dialog-alert.help.message"));
-      GUIUtil.show(alert, true);
-  }
-  
-  /**
-   * Invoked when an action occurs.
-   **/
-  public void actionPerformed(ActionEvent event) {
-    MovieManager.log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-    execute();
-  }
+	static Logger log = Logger.getLogger(MovieManagerCommandHelp.class);
 
+	/**
+	 * Executes the command.
+	 **/
+	protected static void execute() {
+		DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandHelp.dialog-alert.help.title"), Localizer.getString("MovieManagerCommandHelp.dialog-alert.help.message"));
+		GUIUtil.show(alert, true);
+	}
+
+	/**
+	 * Invoked when an action occurs.
+	 **/
+	public void actionPerformed(ActionEvent event) {
+		log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
+		execute();
+	}
 }

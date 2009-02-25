@@ -31,7 +31,7 @@ import net.sf.xmm.moviemanager.database.Database;
 
 public class MovieManagerCommandExit implements ActionListener {
 
-	static Logger log = Logger.getRootLogger();
+	static Logger log = Logger.getLogger(MovieManagerCommandExit.class);
 	
     /**
      * Executes the command.
@@ -78,7 +78,7 @@ public class MovieManagerCommandExit implements ActionListener {
 	 * Invoked when an action occurs.
 	 **/
 	public void actionPerformed(ActionEvent event) {
-		MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
+		log.debug("ActionPerformed: " + event.getActionCommand());
 		execute();
 	}
 }

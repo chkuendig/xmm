@@ -25,32 +25,36 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
 
+import org.apache.log4j.Logger;
+
 import net.sf.xmm.moviemanager.MovieManager;
 
 public class MovieManagerCommandLoadList implements ActionListener {
-    
-    void execute(String column) {
+
+	Logger log = Logger.getLogger(getClass());
 	
-    	// If any notes have been changed, they will be saved before loading list
-    	MovieManagerCommandSaveChangedNotes.execute();
-    	
-	MovieManager.getConfig().setCurrentList(column);
-	MovieManager.getDialog().setListTitle(column);
-	
-	new MovieManagerCommandFilter("", null, true, true).execute();
-    //MovieManagerCommandFilter.execute();
-    }
-    
-    /**
-     * Invoked when an action occurs.
-     **/
-    
-    public void actionPerformed(ActionEvent event) {
-	MovieManager.log.debug("ActionPerformed: " + event.getActionCommand());
-	
-	if (event.getSource() instanceof JMenuItem) {
-	    ((JMenuItem) event.getSource()).setArmed(true);
+	void execute(String column) {
+
+		// If any notes have been changed, they will be saved before loading list
+		MovieManagerCommandSaveChangedNotes.execute();
+
+		MovieManager.getConfig().setCurrentList(column);
+		MovieManager.getDialog().setListTitle(column);
+
+		new MovieManagerCommandFilter("", null, true, true).execute();
+		//MovieManagerCommandFilter.execute();
 	}
-	execute(event.getActionCommand());
-    }
+
+	/**
+	 * Invoked when an action occurs.
+	 **/
+
+	public void actionPerformed(ActionEvent event) {
+		log.debug("ActionPerformed: " + event.getActionCommand());
+
+		if (event.getSource() instanceof JMenuItem) {
+			((JMenuItem) event.getSource()).setArmed(true);
+		}
+		execute(event.getActionCommand());
+	}
 }

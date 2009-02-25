@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
 
 public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.moviemanager.swing.extentions.events.ComboCheckBoxKeyEventListener {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(getClass());
 
 	private static long filterStart;
 	private static boolean mainFilter; 
