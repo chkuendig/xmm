@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandSaveChangedNotes.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandExportXMLDatabase.java 1.0 26.09.05 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -20,11 +20,9 @@
 
 package net.sf.xmm.moviemanager.commands.importexport;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -44,124 +42,111 @@ import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Marshaller;
 
 
-
-
 public class MovieManagerCommandExportXMLDatabase extends MovieManagerCommandExportHandler {
 
-	static Logger log = Logger.getRootLogger();
-
-	File output;
-	
-	ArrayList movieList = null;
+	static Logger log = Logger.getLogger(MovieManagerCommandExportXMLDatabase.class);
 
 	ModelImportExportSettings importSettings;
 
+	ModelExportXML exportXMLDatabase;
+	
+	Marshaller marshaller;
+	
+	DefaultMutableTreeNode movieList;
+	
 	MovieManagerCommandExportXMLDatabase(ModelImportExportSettings importSettings) {
 		this.importSettings = importSettings;
 	}
 
-	public void handleMovie(int i) {
-
-	}
-
-	public void execute() {
-
-	}
-
-	public void retrieveMovieList() throws Exception {
-
-	}
-
-	public String getTitle(int i) {
-
-		modelMovieInfo.clearModel();
-
+	public String getTitle(int index) {
+		
 		String title = null;
 
-		if (movieList.get(i) instanceof ModelMovie)
-			title = ((ModelMovie) movieList.get(i)).getTitle();
-		else if (movieList.get(i) instanceof ModelSeries) {
-			title = ((ModelSeries) movieList.get(i)).getMovie().getTitle();
+		DefaultMutableTreeNode node = ((DefaultMutableTreeNode) movieList.getChildAt(index));
+		Object model = node.getUserObject();
+		
+		if (model instanceof ModelMovie)
+			title = ((ModelEntry) model).getTitle();
+		else if (model instanceof ModelSeries) {
+			title = ((ModelSeries) model).getMovie().getTitle();
 		}
 
 		return title;
 	}
 
-	public int getMovieListSize() {
+	public int addMovie(int index) {
 
-		if (movieList == null)
-			return -1;
+		DefaultMutableTreeNode node = ((DefaultMutableTreeNode) movieList.getChildAt(index));
+		ModelEntry model = (ModelEntry) node.getUserObject();
 
-		return movieList.size();
+		if (!model.getHasGeneralInfoData()) {
+			model.updateGeneralInfoData();
+		}
+
+		if (!model.getHasAdditionalInfoData()) {
+			model.updateAdditionalInfoData();
+		}
+
+		// Has no children 
+		if (node.isLeaf()) {
+			exportXMLDatabase.addModelMovie((ModelMovie) model);
+		}
+		else {
+			ModelSeries serie = new ModelSeries((ModelMovie) model);
+
+			Enumeration children = node.children();
+
+			while (children.hasMoreElements()) {
+				serie.addEpisode((ModelEpisode) ((DefaultMutableTreeNode) children.nextElement()).getUserObject());
+			}
+
+			exportXMLDatabase.addModelSerie(serie);
+		}
+		return 1;
 	}
 
-	public int addMovie(int i) {
-		return 0;
+	
+	public void done() throws Exception {
+		marshaller.marshal(exportXMLDatabase);
 	}
 
+	public void execute() {
 
-	public static void execute(String outputFile) {
-
-		DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
-		ModelEntry model;
-		DefaultMutableTreeNode node;
-
-		Enumeration enumeration = root.children();
-
+		movieList = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
+		
 		try {
 
 			Mapping mapping = new Mapping(new ModelMovie().getClass().getClassLoader());
-
 			URL mappingFile = FileUtil.getFileURL("config/mapping.xml");
 
-			ModelExportXML exportXMLDatabase = new ModelExportXML(root.getChildCount());
+			exportXMLDatabase = new ModelExportXML(movieList.getChildCount());
 
 			// 1. Load the mapping information from the file
 			mapping.loadMapping(mappingFile);
 
 			String encoding = "UTF-8";
 
-			// 4. marshal the data with the total price back and print the XML in the console 
-			Marshaller marshaller = new Marshaller(new OutputStreamWriter(new FileOutputStream(outputFile), encoding));
+			marshaller = new Marshaller(new OutputStreamWriter(new FileOutputStream(importSettings.getFilePath()), encoding));
 			marshaller.setEncoding(encoding);
-			//marshaller.setMarshalAsDocument(true);
+			marshaller.setMarshalAsDocument(true);
 			marshaller.setMapping(mapping);
-
-			while (enumeration.hasMoreElements()) {
-
-				node = ((DefaultMutableTreeNode) enumeration.nextElement());
-				model = (ModelEntry) node.getUserObject();
-
-				if (!model.getHasGeneralInfoData()) {
-					model.updateGeneralInfoData();
-				}
-
-				if (!model.getHasAdditionalInfoData()) {
-					model.updateAdditionalInfoData();
-				}
-
-				/* Has no children */
-				if (node.isLeaf()) {
-					exportXMLDatabase.addModelMovie((ModelMovie) model);
-				}
-				else {
-					ModelSeries serie = new ModelSeries((ModelMovie) model);
-
-					Enumeration children = node.children();
-
-					while (children.hasMoreElements()) {
-						serie.addEpisode((ModelEpisode) ((DefaultMutableTreeNode) children.nextElement()).getUserObject());
-					}
-
-					exportXMLDatabase.addModelSerie(serie);
-				}
-			}
-
-			marshaller.marshal(exportXMLDatabase);
 
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
 			return;
 		}
+	}
+	
+	public void retrieveMovieList() throws Exception {
+
+	}
+
+
+	public int getMovieListSize() {
+
+		if (movieList == null)
+			return -1;
+
+		return movieList.getChildCount();
 	}
 }
