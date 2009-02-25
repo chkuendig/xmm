@@ -24,46 +24,46 @@ import java.util.ArrayList;
 
 public class AdditionalInfoFieldDefaultValues {
 
-    private String fieldName = "";
-    private ArrayList values;
-    
-    public AdditionalInfoFieldDefaultValues(String fieldName) {
-	
-	this.fieldName = fieldName;
-	this.values = new ArrayList();
-    }
-    
-    /* Adds to the start of the list */
-    public void insertValue(String value) {
-	
-	if (!values.contains(value) && !value.equals("")) {
-	    values.add(0, value);
-	}
-    }
-    
-    /* Adds to the end of the list */
-    public void addValue(String value) {
-	
-	if (!values.contains(value) && !value.equals("")) {
-	    values.add(value);
-	}
-    }
+	private String fieldName = "";
+	private ArrayList values;
 
-    public String getFieldName() {
-	return fieldName;
-    }
-    
-    public ArrayList getDefaultValues() {
-	return (ArrayList) values.clone();
-    }
-    
-    public String getDefaultValuesString(String separator) {
-	
-	StringBuffer retString = new StringBuffer(separator);
-	
-	for (int i = 0; i < values.size(); i++) {
-	    retString.append(values.get(i)+separator);
+	public AdditionalInfoFieldDefaultValues(String fieldName) {
+
+		this.fieldName = fieldName;
+		this.values = new ArrayList();
 	}
-	return retString.toString();
-    }
+
+	/* Adds to the start of the list */
+	public void insertValue(String value) {
+
+		if (!values.contains(value) && !value.equals("")) {
+			values.add(0, value);
+		}
+	}
+
+	/* Adds to the end of the list */
+	public void addValue(String value) {
+
+		if (!values.contains(value) && !value.equals("")) {
+			values.add(value);
+		}
+	}
+
+	public String getFieldName() {
+		return fieldName;
+	}
+
+	public ArrayList getDefaultValues() {
+		return (ArrayList) values.clone();
+	}
+
+	public String getDefaultValuesString(String separator) {
+
+		StringBuffer retString = new StringBuffer(separator);
+
+		for (int i = 0; i < values.size(); i++) {
+			retString.append(values.get(i)+separator);
+		}
+		return retString.toString();
+	}
 }
