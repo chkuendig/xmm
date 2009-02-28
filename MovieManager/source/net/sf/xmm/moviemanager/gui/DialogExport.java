@@ -253,8 +253,7 @@ public class DialogExport extends JDialog implements ActionListener {
     	csvOptionPanel.add(csvOpt);
     	
     	csvFilePath = new JTextField(27);
-    	csvFilePath.setText(MovieManager.getConfig().getExportCSVfilePath());
-    	csvFilePath.setText("");
+    	csvFilePath.setText(MovieManager.getConfig().getExportCSVFilePath());
     	
     	browseForCSVFile = new JButton("Browse");
     	browseForCSVFile.setToolTipText("Browse for a CSV file");
@@ -312,8 +311,7 @@ public class DialogExport extends JDialog implements ActionListener {
     	xmlOptionPanel.add(xmlOpt);
     	
     	xmlFilePath = new JTextField(27);
-    	xmlFilePath.setText(MovieManager.getConfig().getExportXMLfilePath());
-    	xmlFilePath.setText("");
+    	xmlFilePath.setText(MovieManager.getConfig().getExportXMLFilePath());
     	
     	browseForXMLFile = new JButton("Browse");
     	browseForXMLFile.setToolTipText("Browse for a XML file");
@@ -347,7 +345,6 @@ public class DialogExport extends JDialog implements ActionListener {
     	
     	excelFilePath = new JTextField(27);
     	excelFilePath.setText(MovieManager.getConfig().getExportExcelFilePath());
-    	excelFilePath.setText("");
     	
     	browseForEXCELFile = new JButton("Browse");
     	browseForEXCELFile.setToolTipText("Browse for a excel file");
@@ -431,7 +428,11 @@ public class DialogExport extends JDialog implements ActionListener {
     void executeSave() {
 
     	MovieManager.getConfig().setLastDialogExportType(getExportMode());
-    	    	
+    	
+    	MovieManager.getConfig().setExportCSVFilePath(csvFilePath.getText());
+    	MovieManager.getConfig().setExportExcelFilePath(excelFilePath.getText());
+    	MovieManager.getConfig().setExportXMLFilePath(xmlFilePath.getText());
+    	
     	// Save CSV separator
     	if (csvSeparator.getText().trim().length() > 0)
     		settings.csvSeparator = csvSeparator.getText().trim().charAt(0);
