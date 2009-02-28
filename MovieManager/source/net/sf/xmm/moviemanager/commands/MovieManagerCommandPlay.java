@@ -102,7 +102,10 @@ public class MovieManagerCommandPlay implements ActionListener {
 						p = Runtime.getRuntime().exec(command);
 					} else {
 						String str = "";
-						for (int i = 0; i < args.length; i++) str += args[i] + " ";
+						for (int i = 0; i < args.length; i++) {
+							str += args[i] + " ";
+						}
+						
 						log.debug("Execute default player:" + str);
 						p = Runtime.getRuntime().exec(args);
 					}
@@ -231,8 +234,12 @@ public class MovieManagerCommandPlay implements ActionListener {
 					
 					String playArg = mmc.getMediaPlayerCmdArgument();
 					
-					if (playArg != null && !playArg.equals(""))
-						commandList.add(playArg);
+					if (playArg != null && !playArg.equals("")) {
+						String [] args = playArg.split(" ");
+						
+						for (int i = 0; i < args.length; i++)
+							commandList.add(args[i]);
+					}
 										
 					
 					for (int i= 0; i < files.length; i++) {
