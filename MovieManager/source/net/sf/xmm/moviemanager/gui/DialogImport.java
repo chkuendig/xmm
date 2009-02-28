@@ -210,7 +210,7 @@ public class DialogImport extends JDialog implements ActionListener {
 
 		/* textfile path */
 		textFilePath = new JTextField(27);
-		textFilePath.setText(MovieManager.getConfig().getImportTextfilePath());
+		textFilePath.setText(MovieManager.getConfig().getImportTextFilePath());
 
 		browseForTextFile = new JButton("Browse");
 		browseForTextFile.setToolTipText("Browse for a text file");
@@ -312,7 +312,7 @@ public class DialogImport extends JDialog implements ActionListener {
 
 
 		extremeFilePath = new JTextField(27);
-		extremeFilePath.setText(MovieManager.getConfig().getImportExtremefilePath());
+		extremeFilePath.setText(MovieManager.getConfig().getImportExtremeFilePath());
 
 		browseForExtremeFile = new JButton("Browse");
 		browseForExtremeFile.setToolTipText("Browse for a extreme file");
@@ -334,7 +334,7 @@ public class DialogImport extends JDialog implements ActionListener {
 
 		/* XML file path */
 		xmlDatabaseFilePath = new JTextField(27);
-		xmlDatabaseFilePath.setText(MovieManager.getConfig().getImportXMLfilePath());
+		xmlDatabaseFilePath.setText(MovieManager.getConfig().getImportXMLFilePath());
 
 		browseForXMLDatabaseFile = new JButton("Browse");
 		browseForXMLDatabaseFile.setToolTipText("Browse for an XML file");
@@ -382,7 +382,7 @@ public class DialogImport extends JDialog implements ActionListener {
 		csvOptionPanel1.add(csvOpt);
 
 		csvFilePath = new JTextField(27);
-		csvFilePath.setText(MovieManager.getConfig().getImportCSVfilePath());
+		csvFilePath.setText(MovieManager.getConfig().getImportCSVFilePath());
 
 		browseForCSVFile = new JButton("Browse");
 		browseForCSVFile.setToolTipText("Browse for a CSV file");
@@ -602,12 +602,12 @@ public class DialogImport extends JDialog implements ActionListener {
 		
 		MovieManager.getConfig().setLastDialogImportType(getImportMode());
 
-		MovieManager.getConfig().setImportTextfilePath(textFilePath.getText());
+		MovieManager.getConfig().setImportTextFilePath(textFilePath.getText());
 		MovieManager.getConfig().setImportExcelFilePath(excelFilePath.getText());
-		MovieManager.getConfig().setImportXMLfilePath(xmlDatabaseFilePath.getText());
-		MovieManager.getConfig().setImportCSVfilePath(csvFilePath.getText());
+		MovieManager.getConfig().setImportXMLFilePath(xmlDatabaseFilePath.getText());
+		MovieManager.getConfig().setImportCSVFilePath(csvFilePath.getText());
 		MovieManager.getConfig().setImportCSVseparator(csvSeparator.getText());
-		MovieManager.getConfig().setImportExtremefilePath(extremeFilePath.getText());
+		MovieManager.getConfig().setImportExtremeFilePath(extremeFilePath.getText());
 
 
 		if (listChooser != null) {
