@@ -58,11 +58,8 @@ import javax.swing.KeyStroke;
 import javax.swing.border.TitledBorder;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandExportCSV;
 import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandExportToFullHTML;
 import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandExportToSimpleXHTML;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandExportXMLDatabase;
-import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
@@ -89,23 +86,13 @@ public class DialogExport extends JDialog implements ActionListener {
     JButton browseForCSVFile;
     
     JTextField xmlFilePath;
-    JTextField xmlSeparator;
     JComboBox xmlEncoding;
     JButton browseForXMLFile;
     
     JTextField excelFilePath;
     JButton browseForEXCELFile;
     
-    /* Returns the string in the path textfield */
-	public String getPath() {
-
-		switch (getExportMode()) {
-		case ModelImportExportSettings.EXPORT_MODE_EXCEL : return excelFilePath.getText();
-		case ModelImportExportSettings.EXPORT_MODE_XML_DATABASE : return xmlFilePath.getText();
-		case ModelImportExportSettings.EXPORT_MODE_CSV : return csvFilePath.getText();
-		}
-		return "";
-	}
+ 
     
     boolean cancelled = false;
         
@@ -400,7 +387,19 @@ public class DialogExport extends JDialog implements ActionListener {
     public boolean isCancelled() {
     	return cancelled;
     }
+    
+    /* Returns the string in the path textfield */
+	public String getPath() {
 
+		switch (getExportMode()) {
+		case ModelImportExportSettings.EXPORT_MODE_EXCEL : return excelFilePath.getText();
+		case ModelImportExportSettings.EXPORT_MODE_XML_DATABASE : return xmlFilePath.getText();
+		case ModelImportExportSettings.EXPORT_MODE_CSV : return csvFilePath.getText();
+		}
+		return "";
+	}
+
+    
     public int getExportMode() {
 
     	String title = tabs.getTitleAt(tabs.getSelectedIndex());
@@ -574,6 +573,9 @@ public class DialogExport extends JDialog implements ActionListener {
         if (saveExportFile != -1) {
 
         	JFileChooser chooser = new JFileChooser();
+        	String path = getPath();
+        	chooser.setCurrentDirectory(new File(path));
+        	
         	int returnVal = chooser.showDialog(null, "Save output file");
 
         	if (returnVal != JFileChooser.APPROVE_OPTION) {
