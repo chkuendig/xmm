@@ -286,12 +286,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	/* Import */
 	private int lastDialogImportType = 0;
 	
-	private String importTextfilePath = "";
+	private String importTextFilePath = "";
 	private String importExcelFilePath = "";
-	private String importXMLfilePath = "";
-	private String importCSVfilePath = "";
+	private String importXMLFilePath = "";
+	private String importCSVFilePath = "";
 	private String importCSVseparator = ",";
-	private String importExtremefilePath = "";
+	private String importExtremeFilePath = "";
 	
 	private int importIMDbSelectOption = 0;
 	private boolean importIMDbInfoEnabled = true;
@@ -299,10 +299,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	/* Export */
 	private int lastDialogExportType = 0;
 		
-	private String exportTextfilePath = "";
+	private String exportTextFilePath = "";
 	private String exportExcelFilePath = "";
-	private String exportXMLfilePath = "";
-	private String exportCSVfilePath = "";
+	private String exportXMLFilePath = "";
+	private String exportCSVFilePath = "";
 	private String exportCSVseparator = ",";
 			
 	private String lastFileFilterMovieInfoUsed = "";
@@ -1170,15 +1170,29 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setLastDialogExportType(int lastDialogExportType) {
 		this.lastDialogExportType = lastDialogExportType >= 0 ? lastDialogExportType : 0;
 	}
-		
-	public String getImportTextfilePath() {
-		return importTextfilePath;
+	
+	
+	// Import
+	
+	// XML 
+	public String getImportXMLFilePath() {
+		return importXMLFilePath;
 	}
 
-	public void setImportTextfilePath(String importTextfilePath) {
-		this.importTextfilePath = importTextfilePath;
+	public void setImportXMLFilePath(String importXMLFilePath) {
+		this.importXMLFilePath = importXMLFilePath;
+	}
+	
+	// Txt
+	public String getImportTextFilePath() {
+		return importTextFilePath;
 	}
 
+	public void setImportTextFilePath(String importTextFilePath) {
+		this.importTextFilePath = importTextFilePath;
+	}
+
+	// Excel
 	public String getImportExcelFilePath() {
 		return importExcelFilePath;
 	}
@@ -1187,37 +1201,22 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.importExcelFilePath = importExcelFilePath;
 	}
 
-	public String getExportExcelFilePath() {
-		return importExcelFilePath;
+	// Extreme
+	public String getImportExtremeFilePath() {
+		return importExtremeFilePath;
 	}
 
-	public void setExportExcelFilePath(String exportExcelFilePath) {
-		this.exportExcelFilePath =  exportExcelFilePath;
-	}
-
-	public String getImportXMLfilePath() {
-		return importXMLfilePath;
-	}
-
-	public void setImportXMLfilePath(String importXMLfilePath) {
-		this.importXMLfilePath = importXMLfilePath;
-	}
-
-	
-	public String getExportCSVfilePath() {
-		return exportCSVfilePath;
-	}
-
-	public void setExportCSVfilePath(String exportCSVfilePath) {
-		this.exportCSVfilePath = exportCSVfilePath;
+	public void setImportExtremeFilePath(String importExtremeFilePath) {
+		this.importExtremeFilePath = importExtremeFilePath;
 	}
 	
-	public String getImportCSVfilePath() {
-		return importCSVfilePath;
+	// CSV
+	public String getImportCSVFilePath() {
+		return importCSVFilePath;
 	}
 
-	public void setImportCSVfilePath(String importCSVfilePath) {
-		this.importCSVfilePath = importCSVfilePath;
+	public void setImportCSVFilePath(String importCSVFilePath) {
+		this.importCSVFilePath = importCSVFilePath;
 	}
 
 	public String getImportCSVseparator() {
@@ -1228,6 +1227,27 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.importCSVseparator = importCSVseparator;
 	}
 	
+	
+	// Export 
+	
+	// Excel
+	public String getExportExcelFilePath() {
+		return exportExcelFilePath;
+	}
+
+	public void setExportExcelFilePath(String exportExcelFilePath) {
+		this.exportExcelFilePath =  exportExcelFilePath;
+	}
+	
+	// CSV
+	public String getExportCSVFilePath() {
+		return exportCSVFilePath;
+	}
+
+	public void setExportCSVFilePath(String exportCSVFilePath) {
+		this.exportCSVFilePath = exportCSVFilePath;
+	}
+	
 	public String getExportCSVseparator() {
 		return exportCSVseparator;
 	}
@@ -1236,39 +1256,26 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.exportCSVseparator = exportCSVseparator;
 	}
 		
-	public String getImportExtremefilePath() {
-		return importExtremefilePath;
+	// XML
+	public String getExportXMLFilePath() {
+		return exportXMLFilePath;
+	}
+	
+	public void setExportXMLFilePath(String value) {
+		exportXMLFilePath = value;
 	}
 
-	public void setImportExtremefilePath(String importExtremefilePath) {
-		this.importExtremefilePath = importExtremefilePath;
+	// Text
+	
+	private String getExportTextFilePath() {
+		return exportTextFilePath;
+	}
+	
+	private void setExportTextFilePath(String value) {
+		exportTextFilePath = value;
 	}
 
 	
-	public String getExportXMLfilePath() {
-		return exportXMLfilePath;
-	}
-
-	private String getExportTextfilePath() {
-		return exportTextfilePath;
-	}
-
-	private String getExportExcelfilePath() {
-		return exportExcelFilePath;
-	}
-
-	private void setExportXMLfilePath(String value) {
-		exportXMLfilePath = value;
-	}
-
-	private void setExportTextfilePath(String value) {
-		exportTextfilePath = value;
-	}
-
-	private void setExportExcelfilePath(String value) {
-		exportExcelFilePath = value;
-	}
-
 	public boolean getImportIMDbInfoEnabled() {
 		return importIMDbInfoEnabled;
 	}
@@ -2660,7 +2667,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("importTextfilePath:");
 
 			if (value != null) {
-				setImportTextfilePath(value);
+				setImportTextFilePath(value);
 			}
 
 
@@ -2673,14 +2680,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("importXMLfilePath:");
 
 			if (value != null) {
-				setImportXMLfilePath(value);
+				setImportXMLFilePath(value);
 			}
 
 			
 			value = (String) config.get("importCSVfilePath:");
 
 			if (value != null) {
-				setImportCSVfilePath(value);
+				setImportCSVFilePath(value);
 			}
 
 			value = (String) config.get("importCSVseparator:");
@@ -2692,7 +2699,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("importExtremefilePath:");
 
 			if (value != null) {
-				setImportExtremefilePath(value);
+				setImportExtremeFilePath(value);
 			}
 
 
@@ -2917,7 +2924,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("importTextfilePath:");
 
 			if (value != null) {
-				setImportTextfilePath(value);
+				setImportTextFilePath(value);
 			}
 			
 			value = (String) config.get("importExcelfilePath:");
@@ -2929,13 +2936,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("importXMLfilePath:");
 
 			if (value != null) {
-				setImportXMLfilePath(value);
+				setImportXMLFilePath(value);
 			}
 			
 			value = (String) config.get("importCSVfilePath:");
 
 			if (value != null) {
-				setImportCSVfilePath(value);
+				setImportCSVFilePath(value);
 			}
 			
 			value = (String) config.get("importCSVseparator:");
@@ -2947,7 +2954,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("importExtremefilePath:");
 
 			if (value != null) {
-				setImportExtremefilePath(value);
+				setImportExtremeFilePath(value);
 			}
 			
 			value = (String) config.get("importIMDbInfoEnabled:");
@@ -2965,25 +2972,25 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("exportTextfilePath:");
 
 			if (value != null) {
-				setExportTextfilePath(value);
+				setExportTextFilePath(value);
 			}
 			
 			value = (String) config.get("exportExcelfilePath:");
 
 			if (value != null) {
-				setExportExcelfilePath(value);
+				setExportExcelFilePath(value);
 			}
 			
 			value = (String) config.get("exportXMLfilePath:");
 
 			if (value != null) {
-				setExportXMLfilePath(value);
+				setExportXMLFilePath(value);
 			}
 			
 			value = (String) config.get("exportCSVfilePath:");
 
 			if (value != null) {
-				setExportCSVfilePath(value);
+				setExportCSVFilePath(value);
 			}
 			
 			value = (String) config.get("exportCSVseparator:");
@@ -3407,37 +3414,37 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("lastDialogImportType:" + getLastDialogImportType());
 		 
 		 settings.append(lineSeparator);
-		 settings.append("exportTextfilePath:" + getExportTextfilePath());
+		 settings.append("exportTextfilePath:" + getExportTextFilePath());
 		 
 		 settings.append(lineSeparator);
-		 settings.append("exportExcelfilePath:" + getExportExcelfilePath());
+		 settings.append("exportExcelfilePath:" + getExportExcelFilePath());
 		 
 		 settings.append(lineSeparator);
-		 settings.append("exportXMLfilePath:" + getExportXMLfilePath());
+		 settings.append("exportXMLfilePath:" + getExportXMLFilePath());
 		 
 		 settings.append(lineSeparator);
-		 settings.append("exportCSVfilePath:" + getExportCSVfilePath());
+		 settings.append("exportCSVfilePath:" + getExportCSVFilePath());
 		 
 		 settings.append(lineSeparator);
-		 settings.append("exportCSVseparator:" + getExportCSVfilePath());
+		 settings.append("exportCSVseparator:" + getExportCSVFilePath());
 		 		 
 		 settings.append(lineSeparator);
-		 settings.append("importTextfilePath:" + getImportTextfilePath());
+		 settings.append("importTextfilePath:" + getImportTextFilePath());
 		 
 		 settings.append(lineSeparator);
 		 settings.append("importExcelfilePath:" + getImportExcelFilePath());
 		 
 		 settings.append(lineSeparator);
-		 settings.append("importXMLfilePath:" + getImportXMLfilePath());
+		 settings.append("importXMLfilePath:" + getImportXMLFilePath());
 		 
 		 settings.append(lineSeparator);
-		 settings.append("importCSVfilePath:" + getImportCSVfilePath());
+		 settings.append("importCSVfilePath:" + getImportCSVFilePath());
 				
 		 settings.append(lineSeparator);
 		 settings.append("importCSVseparator:" + getImportCSVseparator());
 
 		 settings.append(lineSeparator);
-		 settings.append("importExtremefilePath:" + getImportExtremefilePath());
+		 settings.append("importExtremefilePath:" + getImportExtremeFilePath());
 		 
 		 settings.append(lineSeparator);
 		 settings.append("importIMDbInfoEnabled:" + getImportIMDbInfoEnabled());
