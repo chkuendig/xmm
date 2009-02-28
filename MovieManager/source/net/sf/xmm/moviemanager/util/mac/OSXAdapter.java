@@ -3,9 +3,6 @@ package net.sf.xmm.moviemanager.util.mac;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import org.apache.log4j.Logger;
 import org.simplericity.macify.eawt.DefaultApplication;
 
@@ -15,7 +12,6 @@ import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.Pictures;
 
 import com.apple.eawt.*;
-import com.apple.mrj.MRJApplicationUtils;
 
 public class OSXAdapter extends ApplicationAdapter {
 
