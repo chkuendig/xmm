@@ -1,50 +1,54 @@
-<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 
-<project name="MeDs Movie Manager Project" default="welcome" basedir="">
-  <description>
-	MeDs Movie Manager build file
+<project name="MeDs Movie Manager Project" default="welcome"
+	basedir="">
+	<description>
+		MeDs Movie Manager build file
   </description>
-  
-  <target name="welcome">
-	<echo>
-	  =====================================
-	  === MeD's Movie Manager build.xml ===
-	  =====================================
-	  
-	  targets available:
-	  ==================
-	  clean                clears all generated files
-	  compile              compiles all java files
-	  javadoc              compiles the Javadoc
-	  all                  builds everything
-	  makejar              creates the MovieManager.jar
-	  run                  runs the moviemanager
-	  create-archives      creates the zip files
-	  izpackinstaller      creates the izpack java installer
-	  make-http-jar        creates the http archive
-	  build-mac            create Mac build 
-	  dist-mac             create Mac dmg file 
+
+	<target name="welcome">
+		<echo>
+			=====================================
+			=== MeD's Movie Manager build.xml ===
+			=====================================
+
+			targets available:
+			==================
+			clean clears all generated files
+			compile compiles all java files
+			javadoc compiles the Javadoc
+			all builds everything
+			makejar creates the MovieManager.jar
+			run runs the moviemanager
+			create-archives creates the zip files
+			izpackinstaller creates the izpack java installer
+			make-http-jar creates the http archive
+			build-mac create Mac build
+			dist-mac create Mac dmg file 
 	</echo>
-  </target>
-  
-  <!-- set global properties for this build -->
-  
-  <property name="build" location="MovieManager/"/>
-  <property name="dist"  location="dist"/>
-  <property name="izpack.dir" location="packaging/izpack"/>
+	</target>
 
-  <property name="version"  value="2.7.5"/>
-  <property name="versionName"  value="${version}"/>
+	<!-- set global properties for this build -->
 
-  <property name="base" value="MovieManager/"/>
-  
-  <property name="jasperFiles" value="*.jasper, *.png, *.jrxml"/>
-  
-  <property name="mainFiles" value="MovieManager.exe, MovieManager.jar, Applet.html, Icon.ico"/>
-  
-  <property name="infoFiles" value="License/, Readme.rtf, Readme.txt, Changelog.txt"/>
- 
-  <property name="library_file_list" value="Required-libraries.txt,
+	<property name="build" location="MovieManager/" />
+	<property name="dist" location="dist" />
+	<property name="izpack.dir" location="packaging/izpack" />
+
+	<property name="version" value="2.7.5" />
+	<property name="versionName" value="${version}" />
+
+	<property name="base" value="MovieManager/" />
+
+	<property name="jasperFiles" value="*.jasper, *.png, *.jrxml" />
+
+	<property name="mainFiles"
+		value="MovieManager.exe, MovieManager.jar, Applet.html, Icon.ico" />
+
+	<property name="infoFiles"
+		value="License/, Readme.rtf, Readme.txt, Changelog.txt" />
+
+	<property name="library_file_list"
+		value="Required-libraries.txt,
 											cobra/cobra-0.98.2.jar,
 											cobra/js.jar,
 											driveinfo/,
@@ -93,14 +97,15 @@
 											LookAndFeels/substance-lite-4.1.jar,
 											LookAndFeels/Oyoaha_Theme_Packs/,
 											LookAndFeels/Skinlf_Theme_Packs/
-											"/>
-  
-  
-  
-  
-  
-  
-  <property name="template_files" value="Simple_Virtue/Simple_Virtue.css,
+											" />
+
+
+
+
+
+
+	<property name="template_files"
+		value="Simple_Virtue/Simple_Virtue.css,
 										 Simple_Virtue/Simple_Virtue.html,
 										 Simple_Virtue/template.txt,
 										 Simple_Virtue/Styles/A_Touch_of_Blue.css,
@@ -116,492 +121,468 @@
 										 Simple_Virtue/Styles/Silver_Flower.css,
 										 Simple_Virtue/Styles/Silver_Flower.png,
 										 Simple_Virtue/Styles/Silver_Flower.style.txt
-										 "/>
-  
+										 " />
 
- <!--	   log4j.properties, -->
-  <property name="config_file_list" value="castor.properties,
+
+	<!--	   log4j.properties, -->
+	<property name="config_file_list"
+		value="castor.properties,
 										   mapping.xml,
 										   MovieManager.tmx,
 										   Temp.mdb
-										 "/>
- 
-  <!-- <property name="$(base)/base.dir"  location=""/> -->
-  <property name="source"  value="$(base)/source/"/>
-  
-   <path id="izpack.claspath">
-	<fileset dir="${izpack.dir}/lib/">
-	  <include name="*.jar"/>
-	</fileset>
-  </path>
+										 " />
+
+	<!-- <property name="$(base)/base.dir"  location=""/> -->
+	<property name="source" value="$(base)/source/" />
+
+	<path id="izpack.claspath">
+		<fileset dir="${izpack.dir}/lib/">
+			<include name="*.jar" />
+		</fileset>
+	</path>
 
 
-  <path id="project.lib.path">
-	<fileset dir="${base}/lib/">
-	  <include name="**/*.jar"/>
-	  <include name="**/**/*.jar"/>
-	  <include name="*.jar"/>
-	</fileset>
-  </path>
-  
-  
-  <path id="project.classpath">
-	<pathelement path="${classes}"/>
-	<path refid="project.lib.path"/>
-  </path>  
-  
-  
-  <target name="run" depends="compile"
-		  description="Runs the compiled moviemanager">
-	<java
-		classname="net.sf.xmm.moviemanager.MovieManager"
-		classpathref="project.lib.path"
-		classpath="MovieManager/"
-		fork="true" spawn="true"/>
-  </target>
-  
-  
-  <target name="compile" 
-		  description="Compiles code, output goes to the build dir.">
-	<javac srcdir="MovieManager/source" 
-		   classpathref="project.classpath" 
-		   destdir="${build}" source="1.4" target="1.4">
-	</javac>
-  </target>
-  
+	<path id="project.lib.path">
+		<fileset dir="${base}/lib/">
+			<include name="**/*.jar" />
+			<include name="**/**/*.jar" />
+			<include name="*.jar" />
+		</fileset>
+	</path>
 
 
-  
-  <target name="all"
-		  description="generate the distribution" >
+	<path id="project.classpath">
+		<pathelement path="${classes}" />
+		<path refid="project.lib.path" />
+	</path>
 
-	<!-- Cleans up  first -->
-	<antcall target="clean" />
 
-	<!-- Create the distribution directory -->
-	<echo>Creating directory:${dist}</echo>
-	
-	<!-- Builds the thing -->
-	<antcall target="build" />
+	<target name="run" depends="compile" description="Runs the compiled moviemanager">
+		<java classname="net.sf.xmm.moviemanager.MovieManager"
+			classpathref="project.lib.path" classpath="MovieManager/" fork="true"
+			spawn="true" />
+	</target>
 
-	<echo>Creating arhcives...</echo>
-	<antcall target="create-archives" />
 
-	<echo>Creating Izpack Installer...</echo>
-	<antcall target="izpackinstaller" />
-	
-  </target>
-  
-  
-  <target name="build" 
-		  description="generate the distribution" 
-		  depends="compile, makejar">
-	<tstamp/>
-	
-  </target>
-  
-  
+	<target name="compile" description="Compiles code, output goes to the build dir.">
+		<javac srcdir="MovieManager/source" classpathref="project.classpath"
+			destdir="${build}" source="1.4" target="1.4">
+		</javac>
+	</target>
 
 
 
-  <target name="create-archives" 
-		  description="Creates the ZIP archives."
-		  depends="compile, makejar"
-		  >
-	
-	<mkdir dir="${dist}"/>
-	<delete includeemptydirs="true">
-	  <fileset dir="${dist}" includes="**/*"/>
-	</delete>
-	
-	<antcall target="makeLookAndFeelIni"/>
-	<antcall target="makeLog4jProperties"/>
-	
-	<!-- Creating Binary zip MovieManager.v.version.bin.zip  Mirror  -->
-	<zip destfile="${dist}/MovieManager.v.${versionName}.bin.zip"
-		 update="false"
-		 compress="true" >
-	  
-	  
-	  <!-- Files in root dir (install dir)  -->
-	  <zipfileset prefix="MeDs-Movie-Manager" dir="MovieManager" 
-				  includes="${mainFiles}">
 
-		 <!--
-		<include name="config/"/>
-		<exclude name="config/Config.ini"/>
- -->
-	  </zipfileset>
+	<target name="all" description="generate the distribution">
 
-	  <zipfileset prefix="MeDs-Movie-Manager/config/" 
-				  dir="MovieManager/config/" 
-				  includes="${config_file_list}"
-				  />
-	  	
-	  <!-- Config file for log4j  -->
-	   <zipfileset prefix="MeDs-Movie-Manager/config/" 
-				  dir="${dist}" 
-				  includes="log4j.properties">
-	  </zipfileset>
+		<!-- Cleans up  first -->
+		<antcall target="clean" />
 
-	   <!-- Files for the report generator  -->
-	  <zipfileset prefix="MeDs-Movie-Manager/reports/" dir="MovieManager/reports/" 
-				  includes="*.jasper, *.png, *.jrxml"/>
-	  
-	  <!-- libraries -->
-	  <zipfileset prefix="MeDs-Movie-Manager/lib/" 
-				  dir="MovieManager/lib/" 
-				  includes="${library_file_list}"
-				  />
-	 
-	  <zipfileset prefix="MeDs-Movie-Manager/lib/LookAndFeels/" 
-				  dir="${dist}" 
-				  includes="lookAndFeels.ini">
-	  </zipfileset>
+		<!-- Create the distribution directory -->
+		<echo>Creating directory:${dist}</echo>
 
-	  <!-- html template files -->
-	  <zipfileset id="template_simple_virtue" 
-				  prefix="MeDs-Movie-Manager/HTML_templates/" 
-				  dir="MovieManager/HTML_templates/" 
-				  includes="${template_files}"/>
+		<!-- Builds the thing -->
+		<antcall target="build" />
 
-	 	 	  
-	  <zipfileset prefix="MeDs-Movie-Manager" dir=""
-				  includes="${infoFiles}"/>
-	  
-	</zip>
-	
+		<echo>Creating arhcives...</echo>
+		<antcall target="create-archives" />
+
+		<echo>Creating Izpack Installer...</echo>
+		<antcall target="izpackinstaller" />
+
+	</target>
 
 
-	<!-- Creating Source zip MovieManager.v.version.src.zip  Mirror  -->
-	<zip destfile="${dist}/MovieManager.v.${versionName}.src.zip"
-		 update="false"
-		 compress="true" >
-	  
-	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager" 
-				  dir="MovieManager" 
-				  includes="MovieManager.exe, Applet.html, Icon.ico">
-		
-		<include name="reports/"/>
-		<include name="codecs/"/>
-		<include name="images/"/>
-		<include name="queries/"/>
-		<include name="source/"/>
-		
-	  </zipfileset>
-	  
-	  <!-- config -->
-	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/config/" 
-				  dir="MovieManager/config/" 
-				  includes="${config_file_list}"
-				  />
-	  
-	  <!-- Config file for log4j  -->
-	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/config/" dir="MovieManager/config/" 
-				  includes="log4j.properties"/>
+	<target name="build" description="generate the distribution"
+		depends="compile, makejar">
+		<tstamp />
 
-	  <!-- libraries -->
-	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/lib/" 
-				  dir="MovieManager/lib/" 
-				  includes="${library_file_list}"
-				  />
-	  
-	  <zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/lib/LookAndFeels/" 
-				  dir="${dist}" 
-				  includes="lookAndFeels.ini">
-	  </zipfileset>
-
-	  
-
-	  <!-- Simple Virtue template -->
-	  <zipfileset id="template_simple_virtue" 
-				  prefix="MeDs-Movie-Manager-Source/MovieManager/HTML_templates/" 
-				  dir="MovieManager/HTML_templates/" 
-				  includes="${template_files}"/>
-	 
-	  
-	  <zipfileset prefix="MeDs-Movie-Manager-Source" dir="" includes="${infoFiles}">
-		<include name="packaging/"/>
-		<include name="makejar.bat"/>
-		<include name="compile.bat"/>
-		<include name="run.bat"/>
-		<include name="SignJar.bat"/>
-		<include name="makejar.sh"/>
-		<include name="compile.sh"/>
-		<include name="run.sh"/>
-		<include name="Manifest.txt"/>
-		<include name="build.xml"/>
-		<include name="So how do I get this thing running.txt"/>
-		<include name=".classpath"/>
-		<include name=".project"/>
-		
-		<exclude name="dist/"/>
-	  </zipfileset>
-	  
-	</zip>
-  </target>
-  
-  
-
-  
-  
-  
-  <target name="makejar" 
-		  description="Creates the MovieManager.jar file"
-		  depends="compile">
-	
-	<!-- Ensure that the timestamp has been set -->
-	<tstamp/>
-	
-	<jar destfile="MovieManager/MovieManager.jar" manifest="Manifest.txt">
-	  
-	  <fileset dir="MovieManager/">
-		
-		<include name="net/"/>
-		<include name="codecs/"/>
-		<include name="images/"/>
-		<include name="queries/"/>
-		<include name="config/MovieManager.tmx"/>
-		<include name="config/internalConfig.ini"/>
-		<include name="config/plugins.ini"/>
-	  </fileset>
-	  
-	  <manifest>
-		<attribute name="Built-By" value="${user.name} on ${TODAY}"/>
-	  </manifest>
-	  
-	</jar>
-  </target>
-  
+	</target>
 
 
-  <target name="make-http-jar" 
-		  description="Compiles code, output goes to the build dir."
-		  depends="compile">
-	
-	<!-- Ensure that the timestamp has been set -->
-	<tstamp/>
-	
-	<jar destfile="${dist}/MovieManager-http.jar" 
-		 basedir="Moviemanager/" 
-		 includes="net/sf/xmm/moviemanager/models/ModelIMDB.class, 
+
+
+
+	<target name="create-archives" description="Creates the ZIP archives."
+		depends="compile, makejar">
+
+		<mkdir dir="${dist}" />
+		<delete includeemptydirs="true">
+			<fileset dir="${dist}" includes="**/*" />
+		</delete>
+
+		<antcall target="makeLookAndFeelIni" />
+		<antcall target="makeLog4jProperties" />
+
+		<!-- Creating Binary zip MovieManager.v.version.bin.zip  Mirror  -->
+		<zip destfile="${dist}/MovieManager.v.${versionName}.bin.zip"
+			update="false" compress="true">
+
+
+			<!-- Files in root dir (install dir)  -->
+			<zipfileset prefix="MeDs-Movie-Manager" dir="MovieManager"
+				includes="${mainFiles}">
+
+				<!--
+					<include name="config/"/> <exclude name="config/Config.ini"/>
+				-->
+			</zipfileset>
+
+			<zipfileset prefix="MeDs-Movie-Manager/config/" dir="MovieManager/config/"
+				includes="${config_file_list}" />
+
+			<!-- Config file for log4j  -->
+			<zipfileset prefix="MeDs-Movie-Manager/config/" dir="${dist}"
+				includes="log4j.properties">
+			</zipfileset>
+
+			<!-- Files for the report generator  -->
+			<zipfileset prefix="MeDs-Movie-Manager/reports/" dir="MovieManager/reports/"
+				includes="*.jasper, *.png, *.jrxml" />
+
+			<!-- libraries -->
+			<zipfileset prefix="MeDs-Movie-Manager/lib/" dir="MovieManager/lib/"
+				includes="${library_file_list}" />
+
+			<zipfileset prefix="MeDs-Movie-Manager/lib/LookAndFeels/"
+				dir="${dist}" includes="lookAndFeels.ini">
+			</zipfileset>
+
+			<!-- html template files -->
+			<zipfileset id="template_simple_virtue" prefix="MeDs-Movie-Manager/HTML_templates/"
+				dir="MovieManager/HTML_templates/" includes="${template_files}" />
+
+
+			<zipfileset prefix="MeDs-Movie-Manager" dir="" includes="${infoFiles}" />
+
+		</zip>
+
+
+
+		<!-- Creating Source zip MovieManager.v.version.src.zip  Mirror  -->
+		<zip destfile="${dist}/MovieManager.v.${versionName}.src.zip"
+			update="false" compress="true">
+
+			<zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager"
+				dir="MovieManager" includes="MovieManager.exe, Applet.html, Icon.ico">
+
+				<include name="reports/" />
+				<include name="codecs/" />
+				<include name="images/" />
+				<include name="queries/" />
+				<include name="source/" />
+
+			</zipfileset>
+
+			<!-- config -->
+			<zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/config/"
+				dir="MovieManager/config/" includes="${config_file_list}" />
+
+			<!-- Config file for log4j  -->
+			<zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/config/"
+				dir="MovieManager/config/" includes="log4j.properties" />
+
+			<!-- libraries -->
+			<zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/lib/"
+				dir="MovieManager/lib/" includes="${library_file_list}" />
+
+			<zipfileset
+				prefix="MeDs-Movie-Manager-Source/MovieManager/lib/LookAndFeels/"
+				dir="${dist}" includes="lookAndFeels.ini">
+			</zipfileset>
+
+
+
+			<!-- Simple Virtue template -->
+			<zipfileset id="template_simple_virtue"
+				prefix="MeDs-Movie-Manager-Source/MovieManager/HTML_templates/" dir="MovieManager/HTML_templates/"
+				includes="${template_files}" />
+
+
+			<zipfileset prefix="MeDs-Movie-Manager-Source" dir=""
+				includes="${infoFiles}">
+				<include name="packaging/" />
+				<include name="makejar.bat" />
+				<include name="compile.bat" />
+				<include name="run.bat" />
+				<include name="SignJar.bat" />
+				<include name="makejar.sh" />
+				<include name="compile.sh" />
+				<include name="run.sh" />
+				<include name="Manifest.txt" />
+				<include name="build.xml" />
+				<include name="So how do I get this thing running.txt" />
+				<include name=".classpath" />
+				<include name=".project" />
+
+				<exclude name="dist/" />
+			</zipfileset>
+
+		</zip>
+	</target>
+
+
+
+
+
+
+	<target name="makejar" description="Creates the MovieManager.jar file"
+		depends="compile">
+
+		<!-- Ensure that the timestamp has been set -->
+		<tstamp />
+
+		<jar destfile="MovieManager/MovieManager.jar" manifest="Manifest.txt">
+
+			<fileset dir="MovieManager/">
+
+				<include name="net/" />
+				<include name="codecs/" />
+				<include name="images/" />
+				<include name="queries/" />
+				<include name="config/MovieManager.tmx" />
+				<include name="config/internalConfig.ini" />
+				<include name="config/plugins.ini" />
+			</fileset>
+
+			<manifest>
+				<attribute name="Built-By" value="${user.name} on ${TODAY}" />
+			</manifest>
+
+		</jar>
+	</target>
+
+
+
+	<target name="make-http-jar" description="Compiles code, output goes to the build dir."
+		depends="compile">
+
+		<!-- Ensure that the timestamp has been set -->
+		<tstamp />
+
+		<jar destfile="${dist}/MovieManager-http.jar" basedir="Moviemanager/"
+			includes="net/sf/xmm/moviemanager/models/ModelIMDB.class, 
 				   net/sf/xmm/moviemanager/util/StringUtil.class">
-	  
-	  <fileset dir="MovieManager/">
-		<include name="net/sf/xmm/moviemanager/http/"/>
-	  </fileset>
-	  
-	  
-<!--	  <fileset dir="MovieManager/" includes="net/sf/xmm/moviemanager/models/ModelIMDB.java,
-											 net/sf/xmm/moviemanager/util/StringUtil.java
-									   "/>
- -->	  
-	  
-	  <manifest>
-		<attribute name="Built-By" value="${user.name} on ${TODAY}"/>
-	  </manifest>
-	  
-	</jar>
-  </target>
-  
-  
- <target name="izpackinstaller" >
-		 <ant antfile="packaging/izpack/build-izpack.xml" target="makeIzpackInstaller" inheritAll="true" inheritrefs="true"/>
-  </target>
+
+			<fileset dir="MovieManager/">
+				<include name="net/sf/xmm/moviemanager/http/" />
+			</fileset>
 
 
-<!--
-  <target name="dist-mac" >
-		 <ant antfile="packaging/mac/build-mac.xml" target="dist-mac" inheritAll="true" inheritrefs="true"/>
-  </target>
-  
-  <target name="build-mac" >
-		 <ant antfile="packaging/mac/build-mac.xml" target="build-mac" inheritAll="true" inheritrefs="true"/>
-  </target>
-  
- -->
+			<!--
+				<fileset dir="MovieManager/"
+				includes="net/sf/xmm/moviemanager/models/ModelIMDB.java,
+				net/sf/xmm/moviemanager/util/StringUtil.java "/>
+			-->
 
-  <!-- removes all tabs replaces those with spaces and removes unqualified EOL
-	   and replaces those with the correct EOL -->
-  <target name="remove-crlf" description="removes all tabs and 
+			<manifest>
+				<attribute name="Built-By" value="${user.name} on ${TODAY}" />
+			</manifest>
+
+		</jar>
+	</target>
+
+
+	<target name="izpackinstaller">
+		<ant antfile="packaging/izpack/build-izpack.xml" target="makeIzpackInstaller"
+			inheritAll="true" inheritrefs="true" />
+	</target>
+
+
+	<!--
+		<target name="dist-mac" > <ant antfile="packaging/mac/build-mac.xml"
+		target="dist-mac" inheritAll="true" inheritrefs="true"/> </target>
+
+		<target name="build-mac" > <ant antfile="packaging/mac/build-mac.xml"
+		target="build-mac" inheritAll="true" inheritrefs="true"/> </target>
+	-->
+
+	<!--
+		removes all tabs replaces those with spaces and removes unqualified
+		EOL and replaces those with the correct EOL
+	-->
+	<target name="remove-crlf"
+		description="removes all tabs and 
 										  unqualified end of lines">
-	<fixcrlf srcdir="${source}"
-			 eol="lf"
-			 tab="remove"
-			 tablength="4"
-			 javafiles="yes"
-			 includes="**/*.java"
-			 />
-  </target>
-  
-  <!-- generates the javadoc -->
-  <target name="javadoc" depends="compile">
-	
-	<mkdir dir="${dist}/javadoc/"/>
-	
-	<javadoc 
-		destdir="${dist}/javadoc/"
-		author="true"
-		version="true"
-		private="true"
-		use="true"
-		windowtitle="MeD's Movie Manager Javadoc"
-		classpathref="project.classpath" 
-		
-		sourcepath="MovieManager/source/"  packagenames="net.sf.*">
-	  <doctitle>MeD's Movie Manager API Documentation</doctitle>
-	</javadoc>
-  </target> 
-  
-  
-  
-  <target name="clean"
-		  description="clean up" >
+		<fixcrlf srcdir="${source}" eol="lf" tab="remove" tablength="4"
+			javafiles="yes" includes="**/*.java" />
+	</target>
 
-	<mkdir dir="${dist}"/>
+	<!-- generates the javadoc -->
+	<target name="javadoc" depends="compile">
 
-	<!--  Delete files and directories in dist -->
-	<delete includeemptydirs="true">
-	  <fileset dir="${dist}" includes="**/*"/>
-	</delete>
-	
-	<delete file="${build}/MovieManager.jar"/>
-  </target>
-  
-  
-  
-  <!--  For signing java applet  -->
-  
-  <target name="sign" depends="makejar, generate-keys"
-		  description="Signs the generated jar file">
-	<signjar
-		jar="${base}/MovieManager.jar"
-		keystore="keys"
-		storepass="${storepass}"
-		keypass="${keypass}"
-		signedjar="MovieManager.jar"
-		alias="signFiles"
-		/>
-	<exec executable="keytool">
-	  <arg line="-export"/>
-	  <arg line="-keystore keys"/>
-	  <arg line="-storepass ${storepass}"/>
-	  <arg line="-alias signFiles"/>
-	  <arg line="-file MovieManager.cer"/>
-	</exec>
-	<delete file="${base}/MovieManager.jar"/>
-	<delete file="${base}/MovieManager.cer"/>
-	<move file="MovieManager.jar" todir="${base}"/>
-	<move file="MovieManager.cer" todir="${base}"/>
-  </target>
-  
-  <target name="generate-keys"
-		  description="Generates keys if they don't exist"
-		  unless="keys">
-	<genkey
-		alias="signFiles"
-		keystore="keys"
-		keypass="${keypass}"
-		storepass="${storepass}"
-		dname="CN=MeDs Movie Manager, OU=MeD's Movie Manager, O=xmm.sf.net, C=INT"
-		/>
-  </target>
-  
+		<mkdir dir="${dist}/javadoc/" />
+
+		<javadoc destdir="${dist}/javadoc/" author="true" version="true"
+			private="true" use="true" windowtitle="MeD's Movie Manager Javadoc"
+			classpathref="project.classpath" sourcepath="MovieManager/source/"
+			packagenames="net.sf.*">
+			<doctitle>MeD's Movie Manager API Documentation</doctitle>
+		</javadoc>
+	</target>
 
 
 
-  <target name="makeLookAndFeelIni" 
-		  description="Creates a lookAndFeels.ini file used in the distribution packages.">
-	
-	<echo file="${dist}/lookAndFeels.ini" append="false">
-      
-Here you can add new Look and Feels's.
-Make sure the look and Feel jar-file is placed in the 'LookAndFeels' directory 
-and that the correct class is given below.
-The name and classname must be enclosed in quotes.
-The names may be set to whatever fit your needs.
+	<target name="clean" description="clean up">
 
-Example:
+		<mkdir dir="${dist}" />
 
-"Metal look and feel"                    "javax.swing.plaf.metal.MetalLookAndFeel"
-"Windows look and feel"                  "com.sun.java.swing.plaf.windows.WindowsLookAndFeel"
+		<!--  Delete files and directories in dist -->
+		<delete includeemptydirs="true">
+			<fileset dir="${dist}" includes="**/*" />
+		</delete>
 
-The metal and windows look and feels are preinstalled.
-Define the look and feels below:
-#
+		<delete file="${build}/MovieManager.jar" />
+	</target>
 
-"Kunststoff"                             "com.incors.plaf.kunststoff.KunststoffLookAndFeel"                         "1.4"    
-      
-"JTattoo - Acryl"                        "com.jtattoo.plaf.acryl.AcrylLookAndFeel"                                  "1.4"    
-"JTattoo - Aero"                         "com.jtattoo.plaf.aero.AeroLookAndFeel"                                    "1.4"    
-"JTattoo - Aluminium"                    "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel"                          "1.4"    
-"JTattoo - Bernstein"                    "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel"                          "1.4"    
-"JTattoo - Fast"                         "com.jtattoo.plaf.fast.FastLookAndFeel"                                    "1.4"    
-"JTattoo - HiFi"                         "com.jtattoo.plaf.hifi.HiFiLookAndFeel"                                    "1.4"    
-"JTattoo - McWin"                        "com.jtattoo.plaf.mcwin.McWinLookAndFeel"                                  "1.4"    
-"JTattoo - Mint"                         "com.jtattoo.plaf.mint.MintLookAndFeel"                                    "1.4"    
-"JTattoo - Noire"                        "com.jtattoo.plaf.noire.NoireLookAndFeel"                                  "1.4"    
-"JTattoo - Smart"                        "com.jtattoo.plaf.smart.SmartLookAndFeel"                                  "1.4"   
-"JTattoo - Luna"                         "com.jtattoo.plaf.luna.LunaLookAndFeel"                                    "1.4"    
 
-"Pagosoft"                               "com.pagosoft.plaf.PgsLookAndFeel"                                         "1.4"   
-"Compiere"                               "org.compiere.plaf.CompiereLookAndFeel"                                    "1.5"    
-"Squareness"                             "net.beeger.squareness.SquarenessLookAndFeel"                              "1.4"    
-"InfoNode"                               "net.infonode.gui.laf.InfoNodeLookAndFeel"                                 "1.4"   
-"Lipstik"                                "com.lipstikLF.LipstikLookAndFeel"                                         "1.5"   
 
-"Jgoodies windows"                       "com.jgoodies.looks.windows.WindowsLookAndFeel"                            "1.4"    
-"Jgoodies Plastic"                       "com.jgoodies.looks.plastic.PlasticLookAndFeel"                            "1.4"    
-"Jgoodies Plastic 3D"                    "com.jgoodies.looks.plastic.Plastic3DLookAndFeel"                          "1.4"    
-"Jgoodies PlasticXP"                     "com.jgoodies.looks.plastic.PlasticXPLookAndFeel"                          "1.4"    
+	<!--  For signing java applet  -->
 
-"Office 2003"                            "org.fife.plaf.Office2003.Office2003LookAndFeel"                           "1.4"    
-"Office XP"                              "org.fife.plaf.OfficeXP.OfficeXPLookAndFeel"                               "1.4"    
-"Office VisualStudio 2005"               "org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel"               "1.4"   
+	<target name="sign" depends="makejar, generate-keys"
+		description="Signs the generated jar file">
+		<signjar jar="${base}/MovieManager.jar" keystore="keys"
+			storepass="${storepass}" keypass="${keypass}" signedjar="MovieManager.jar"
+			alias="signFiles" />
+		<exec executable="keytool">
+			<arg line="-export" />
+			<arg line="-keystore keys" />
+			<arg line="-storepass ${storepass}" />
+			<arg line="-alias signFiles" />
+			<arg line="-file MovieManager.cer" />
+		</exec>
+		<delete file="${base}/MovieManager.jar" />
+		<delete file="${base}/MovieManager.cer" />
+		<move file="MovieManager.jar" todir="${base}" />
+		<move file="MovieManager.cer" todir="${base}" />
+	</target>
 
-"Substance - Default"                    "org.jvnet.substance.SubstanceLookAndFeel"                                 "1.5"    
-"Substance - Autumn"                     "org.jvnet.substance.skin.SubstanceAutumnLookAndFeel"                      "1.5"
-"Substance - Business Black Steel"       "org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel"        "1.5"
-"Substance - Business Blue Steel"        "org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel"         "1.5"
-"Substance - Business"                   "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel"                    "1.5"
-"Substance - Challenger Deep"            "org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel"              "1.5"
-"Substance - Creme"                      "org.jvnet.substance.skin.SubstanceCremeLookAndFeel"                       "1.5"
-"Substance - EmeraldDusk"                "org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel"                 "1.5"
-"Substance - Field Of Wheat"             "org.jvnet.substance.skin.SubstanceFieldOfWheatLookAndFeel"                "1.5"
-"Substance - Green Magic"                "org.jvnet.substance.skin.SubstanceGreenMagicLookAndFeel"                  "1.5"
-"Substance - Magma"                      "org.jvnet.substance.skin.SubstanceMagmaLookAndFeel"                       "1.5"
-"Substance - Mango"                      "org.jvnet.substance.skin.SubstanceMangoLookAndFeel"                       "1.5"
-"Substance - Office Blue 2007"           "org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel"              "1.5"
-"Substance - OfficeSilver2007"           "org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel"            "1.5"
-"Substance - Raven Graphite"             "org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel"               "1.5"
-"Substance - Raven"                      "org.jvnet.substance.skin.SubstanceRavenLookAndFeel"                       "1.5"
-"Substance - Sahara"                     "org.jvnet.substance.skin.SubstanceSaharaLookAndFeel"                      "1.5"
+	<target name="generate-keys" description="Generates keys if they don't exist"
+		unless="keys">
+		<genkey alias="signFiles" keystore="keys" keypass="${keypass}"
+			storepass="${storepass}"
+			dname="CN=MeDs Movie Manager, OU=MeD's Movie Manager, O=xmm.sf.net, C=INT" />
+	</target>
+
+
+
+
+	<target name="makeLookAndFeelIni"
+		description="Creates a lookAndFeels.ini file used in the distribution packages.">
+
+		<echo file="${dist}/lookAndFeels.ini" append="false">
+
+			Here you can add new Look and Feels's.
+			Make sure the look and Feel jar-file is placed in the 'LookAndFeels'
+			directory
+			and that the correct class is given below.
+			The name and classname must be enclosed in quotes.
+			The names may be set to whatever fit your needs.
+
+			Example:
+
+			"Metal look and feel" "javax.swing.plaf.metal.MetalLookAndFeel"
+			"Windows look and feel" "com.sun.java.swing.plaf.windows.WindowsLookAndFeel"
+
+			The metal and windows look and feels are preinstalled.
+			Define the look and feels below:
+			#
+
+			"Kunststoff" "com.incors.plaf.kunststoff.KunststoffLookAndFeel" "1.4"
+
+			"JTattoo - Acryl" "com.jtattoo.plaf.acryl.AcrylLookAndFeel" "1.4"
+			"JTattoo - Aero" "com.jtattoo.plaf.aero.AeroLookAndFeel" "1.4"
+			"JTattoo - Aluminium" "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel" "1.4"
+			"JTattoo - Bernstein"
+			"com.jtattoo.plaf.bernstein.BernsteinLookAndFeel" "1.4"
+			"JTattoo - Fast" "com.jtattoo.plaf.fast.FastLookAndFeel" "1.4"
+			"JTattoo - HiFi" "com.jtattoo.plaf.hifi.HiFiLookAndFeel" "1.4"
+			"JTattoo - McWin" "com.jtattoo.plaf.mcwin.McWinLookAndFeel" "1.4"
+			"JTattoo - Mint" "com.jtattoo.plaf.mint.MintLookAndFeel" "1.4"
+			"JTattoo - Noire" "com.jtattoo.plaf.noire.NoireLookAndFeel" "1.4"
+			"JTattoo - Smart" "com.jtattoo.plaf.smart.SmartLookAndFeel" "1.4"
+			"JTattoo - Luna" "com.jtattoo.plaf.luna.LunaLookAndFeel" "1.4"
+
+			"Pagosoft" "com.pagosoft.plaf.PgsLookAndFeel" "1.4"
+			"Compiere" "org.compiere.plaf.CompiereLookAndFeel" "1.5"
+			"Squareness" "net.beeger.squareness.SquarenessLookAndFeel" "1.4"
+			"InfoNode" "net.infonode.gui.laf.InfoNodeLookAndFeel" "1.4"
+			"Lipstik" "com.lipstikLF.LipstikLookAndFeel" "1.5"
+
+			"Jgoodies windows" "com.jgoodies.looks.windows.WindowsLookAndFeel" "1.4"
+			"Jgoodies Plastic" "com.jgoodies.looks.plastic.PlasticLookAndFeel"
+			"1.4"
+			"Jgoodies Plastic 3D" "com.jgoodies.looks.plastic.Plastic3DLookAndFeel" "1.4"
+			"Jgoodies PlasticXP"
+			"com.jgoodies.looks.plastic.PlasticXPLookAndFeel" "1.4"
+
+			"Office 2003" "org.fife.plaf.Office2003.Office2003LookAndFeel" "1.4"
+			"Office XP" "org.fife.plaf.OfficeXP.OfficeXPLookAndFeel" "1.4"
+			"Office VisualStudio 2005"
+			"org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel" "1.4"
+
+			"Substance - Default" "org.jvnet.substance.SubstanceLookAndFeel"
+			"1.5"
+			"Substance - Autumn" "org.jvnet.substance.skin.SubstanceAutumnLookAndFeel"
+			"1.5"
+			"Substance - Business Black Steel"
+			"org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel"
+			"1.5"
+			"Substance - Business Blue Steel"
+			"org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel"
+			"1.5"
+			"Substance - Business" "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel"
+			"1.5"
+			"Substance - Challenger Deep"
+			"org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel" "1.5"
+			"Substance - Creme"
+			"org.jvnet.substance.skin.SubstanceCremeLookAndFeel" "1.5"
+			"Substance - EmeraldDusk"
+			"org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel" "1.5"
+			"Substance - Field Of Wheat"
+			"org.jvnet.substance.skin.SubstanceFieldOfWheatLookAndFeel" "1.5"
+			"Substance - Green Magic"
+			"org.jvnet.substance.skin.SubstanceGreenMagicLookAndFeel" "1.5"
+			"Substance - Magma"
+			"org.jvnet.substance.skin.SubstanceMagmaLookAndFeel" "1.5"
+			"Substance - Mango" "org.jvnet.substance.skin.SubstanceMangoLookAndFeel" "1.5"
+			"Substance - Office Blue 2007"
+			"org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel" "1.5"
+			"Substance - OfficeSilver2007"
+			"org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel" "1.5"
+			"Substance - Raven Graphite"
+			"org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel" "1.5"
+			"Substance - Raven"
+			"org.jvnet.substance.skin.SubstanceRavenLookAndFeel" "1.5"
+			"Substance - Sahara" "org.jvnet.substance.skin.SubstanceSaharaLookAndFeel"
+			"1.5"
 
 </echo>
 
-</target>
+	</target>
 
 
- <target name="makeLog4jProperties" 
-		  description="Creates a log4j.properties to be used in the binary package where only warnings/error are printed to log.">
-   
-   <mkdir dir="${dist}"/>
-   
-	<echo file="${dist}/log4j.properties" append="false">
-#### Using two appenders, one to log to console, another to log to a file.
-log4j.rootCategory=ALL, stdout, FileAppender
+	<target name="makeLog4jProperties"
+		description="Creates a log4j.properties to be used in the binary package where only warnings/error are printed to log.">
 
-#### First appender writes to console
-log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+		<mkdir dir="${dist}" />
 
-# Setting the lowest priority to log
-log4j.appender.stdout.Threshold=WARN
+		<echo file="${dist}/log4j.properties" append="false">
+			#### Using two appenders, one to log to console, another to log to a
+			file.
+			log4j.rootCategory=ALL, stdout, FileAppender
 
-# Setting layout
-log4j.appender.stdout.layout=net.sf.xmm.moviemanager.util.PatternLayoutByLevel
+			#### First appender writes to console
+			log4j.appender.stdout=org.apache.log4j.ConsoleAppender
 
-# Set default format for log levels not specifically set
-log4j.appender.stdout.layout.ConversionPattern = %d{ISO8601} %-5p [%t] %m%n
+			# Setting the lowest priority to log
+			log4j.appender.stdout.Threshold=WARN
+
+			# Setting layout
+			log4j.appender.stdout.layout=net.sf.xmm.moviemanager.util.PatternLayoutByLevel
+
+			# Set default format for log levels not specifically set
+			log4j.appender.stdout.layout.ConversionPattern = %d{ISO8601} %-5p [%t] %m%n
 
 # Set formats for different log levels
 log4j.appender.stdout.layout.InfoPattern = %-5p %m%n
