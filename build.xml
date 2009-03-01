@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 
-<project name="MeDs Movie Manager Project" default="welcome"
+<project name="MeDs Movie Manager Project" default="Welcome"
 	basedir="">
 	<description>
 		MeDs Movie Manager build file
   </description>
 
-	<target name="welcome">
-		<echo>
-			=====================================
-			=== MeD's Movie Manager build.xml ===
-			=====================================
-
-			targets available:
-			==================
-			clean clears all generated files
-			compile compiles all java files
-			javadoc compiles the Javadoc
-			all builds everything
-			makejar creates the MovieManager.jar
-			run runs the moviemanager
-			create-archives creates the zip files
-			izpackinstaller creates the izpack java installer
-			make-http-jar creates the http archive
-			build-mac create Mac build
-			dist-mac create Mac dmg file 
+	<target name="Welcome">
+<echo>
+	=======================================
+	==== MeD's Movie Manager build.xml ====
+	=======================================
+	
+	Targets:
+	=======================================
+	clean     - clears all generated files
+	compile   - compiles all java files
+	run       - runs the moviemanager
+	javadoc   - compiles the Javadoc
+	all       - builds everything
+	makejar   - creates the MovieManager.jar
+	archives  - creates the zip files
+	izpack    - creates the izpack java installer
+	build-mac - create Mac Application Bundle
+	dist-mac  - create Mac DMG file 
 	</echo>
 	</target>
 
@@ -185,10 +184,10 @@
 		<antcall target="build" />
 
 		<echo>Creating arhcives...</echo>
-		<antcall target="create-archives" />
+		<antcall target="archives" />
 
 		<echo>Creating Izpack Installer...</echo>
-		<antcall target="izpackinstaller" />
+		<antcall target="izpack" />
 
 	</target>
 
@@ -203,7 +202,7 @@
 
 
 
-	<target name="create-archives" description="Creates the ZIP archives."
+	<target name="archives" description="Creates the ZIP archives."
 		depends="compile, makejar">
 
 		<mkdir dir="${dist}" />
@@ -383,7 +382,7 @@
 	</target>
 
 
-	<target name="izpackinstaller">
+	<target name="izpack">
 		<ant antfile="packaging/izpack/build-izpack.xml" target="makeIzpackInstaller"
 			inheritAll="true" inheritrefs="true" />
 	</target>
@@ -471,91 +470,68 @@
 		description="Creates a lookAndFeels.ini file used in the distribution packages.">
 
 		<echo file="${dist}/lookAndFeels.ini" append="false">
+Here you can add new Look and Feels's.
+Make sure the look and Feel jar-file is placed in the 'LookAndFeels'
+directory
+and that the correct class is given below.
+The name and classname must be enclosed in quotes.
+The names may be set to whatever fit your needs.
 
-			Here you can add new Look and Feels's.
-			Make sure the look and Feel jar-file is placed in the 'LookAndFeels'
-			directory
-			and that the correct class is given below.
-			The name and classname must be enclosed in quotes.
-			The names may be set to whatever fit your needs.
+Example:
 
-			Example:
+"Metal look and feel" "javax.swing.plaf.metal.MetalLookAndFeel"
+"Windows look and feel" "com.sun.java.swing.plaf.windows.WindowsLookAndFeel"
 
-			"Metal look and feel" "javax.swing.plaf.metal.MetalLookAndFeel"
-			"Windows look and feel" "com.sun.java.swing.plaf.windows.WindowsLookAndFeel"
+The metal and windows look and feels are preinstalled.
+Define the look and feels below:
+#
 
-			The metal and windows look and feels are preinstalled.
-			Define the look and feels below:
-			#
+"Kunststoff"                       "com.incors.plaf.kunststoff.KunststoffLookAndFeel"                "1.4"
 
-			"Kunststoff" "com.incors.plaf.kunststoff.KunststoffLookAndFeel" "1.4"
+"JTattoo - Acryl"                  "com.jtattoo.plaf.acryl.AcrylLookAndFeel"                         "1.4"
+"JTattoo - Aero"                   "com.jtattoo.plaf.aero.AeroLookAndFeel"                           "1.4"
+"JTattoo - Aluminium"              "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel"                 "1.4"
+"JTattoo - Bernstein"              "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel"                 "1.4"
+"JTattoo - Fast"                   "com.jtattoo.plaf.fast.FastLookAndFeel"                           "1.4"
+"JTattoo - HiFi"                   "com.jtattoo.plaf.hifi.HiFiLookAndFeel"                           "1.4"
+"JTattoo - McWin"                  "com.jtattoo.plaf.mcwin.McWinLookAndFeel"                         "1.4"
+"JTattoo - Mint"                   "com.jtattoo.plaf.mint.MintLookAndFeel"                           "1.4"
+"JTattoo - Noire"                  "com.jtattoo.plaf.noire.NoireLookAndFeel"                         "1.4"
+"JTattoo - Smart"                  "com.jtattoo.plaf.smart.SmartLookAndFeel"                         "1.4"
+"JTattoo - Luna"                   "com.jtattoo.plaf.luna.LunaLookAndFeel"                           "1.4"
 
-			"JTattoo - Acryl" "com.jtattoo.plaf.acryl.AcrylLookAndFeel" "1.4"
-			"JTattoo - Aero" "com.jtattoo.plaf.aero.AeroLookAndFeel" "1.4"
-			"JTattoo - Aluminium" "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel" "1.4"
-			"JTattoo - Bernstein"
-			"com.jtattoo.plaf.bernstein.BernsteinLookAndFeel" "1.4"
-			"JTattoo - Fast" "com.jtattoo.plaf.fast.FastLookAndFeel" "1.4"
-			"JTattoo - HiFi" "com.jtattoo.plaf.hifi.HiFiLookAndFeel" "1.4"
-			"JTattoo - McWin" "com.jtattoo.plaf.mcwin.McWinLookAndFeel" "1.4"
-			"JTattoo - Mint" "com.jtattoo.plaf.mint.MintLookAndFeel" "1.4"
-			"JTattoo - Noire" "com.jtattoo.plaf.noire.NoireLookAndFeel" "1.4"
-			"JTattoo - Smart" "com.jtattoo.plaf.smart.SmartLookAndFeel" "1.4"
-			"JTattoo - Luna" "com.jtattoo.plaf.luna.LunaLookAndFeel" "1.4"
+"Pagosoft"                         "com.pagosoft.plaf.PgsLookAndFeel"                                "1.4"
+"Compiere"                         "org.compiere.plaf.CompiereLookAndFeel"                           "1.5"
+"Squareness"                       "net.beeger.squareness.SquarenessLookAndFeel"                     "1.4"
+"InfoNode"                         "net.infonode.gui.laf.InfoNodeLookAndFeel"                        "1.4"
+"Lipstik"                          "com.lipstikLF.LipstikLookAndFeel"                                "1.5"
 
-			"Pagosoft" "com.pagosoft.plaf.PgsLookAndFeel" "1.4"
-			"Compiere" "org.compiere.plaf.CompiereLookAndFeel" "1.5"
-			"Squareness" "net.beeger.squareness.SquarenessLookAndFeel" "1.4"
-			"InfoNode" "net.infonode.gui.laf.InfoNodeLookAndFeel" "1.4"
-			"Lipstik" "com.lipstikLF.LipstikLookAndFeel" "1.5"
+"Jgoodies windows"                 "com.jgoodies.looks.windows.WindowsLookAndFeel"                   "1.4"
+"Jgoodies Plastic"                 "com.jgoodies.looks.plastic.PlasticLookAndFeel"                   "1.4"
+"Jgoodies Plastic 3D"              "com.jgoodies.looks.plastic.Plastic3DLookAndFeel"                 "1.4"
+"Jgoodies PlasticXP"               "com.jgoodies.looks.plastic.PlasticXPLookAndFeel"                 "1.4"
 
-			"Jgoodies windows" "com.jgoodies.looks.windows.WindowsLookAndFeel" "1.4"
-			"Jgoodies Plastic" "com.jgoodies.looks.plastic.PlasticLookAndFeel"
-			"1.4"
-			"Jgoodies Plastic 3D" "com.jgoodies.looks.plastic.Plastic3DLookAndFeel" "1.4"
-			"Jgoodies PlasticXP"
-			"com.jgoodies.looks.plastic.PlasticXPLookAndFeel" "1.4"
+"Office 2003"                      "org.fife.plaf.Office2003.Office2003LookAndFeel"                  "1.4" 
+"Office XP"                        "org.fife.plaf.OfficeXP.OfficeXPLookAndFeel"                      "1.4"
+"Office VisualStudio 2005"         "org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel"      "1.4"
 
-			"Office 2003" "org.fife.plaf.Office2003.Office2003LookAndFeel" "1.4"
-			"Office XP" "org.fife.plaf.OfficeXP.OfficeXPLookAndFeel" "1.4"
-			"Office VisualStudio 2005"
-			"org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel" "1.4"
-
-			"Substance - Default" "org.jvnet.substance.SubstanceLookAndFeel"
-			"1.5"
-			"Substance - Autumn" "org.jvnet.substance.skin.SubstanceAutumnLookAndFeel"
-			"1.5"
-			"Substance - Business Black Steel"
-			"org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel"
-			"1.5"
-			"Substance - Business Blue Steel"
-			"org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel"
-			"1.5"
-			"Substance - Business" "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel"
-			"1.5"
-			"Substance - Challenger Deep"
-			"org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel" "1.5"
-			"Substance - Creme"
-			"org.jvnet.substance.skin.SubstanceCremeLookAndFeel" "1.5"
-			"Substance - EmeraldDusk"
-			"org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel" "1.5"
-			"Substance - Field Of Wheat"
-			"org.jvnet.substance.skin.SubstanceFieldOfWheatLookAndFeel" "1.5"
-			"Substance - Green Magic"
-			"org.jvnet.substance.skin.SubstanceGreenMagicLookAndFeel" "1.5"
-			"Substance - Magma"
-			"org.jvnet.substance.skin.SubstanceMagmaLookAndFeel" "1.5"
-			"Substance - Mango" "org.jvnet.substance.skin.SubstanceMangoLookAndFeel" "1.5"
-			"Substance - Office Blue 2007"
-			"org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel" "1.5"
-			"Substance - OfficeSilver2007"
-			"org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel" "1.5"
-			"Substance - Raven Graphite"
-			"org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel" "1.5"
-			"Substance - Raven"
-			"org.jvnet.substance.skin.SubstanceRavenLookAndFeel" "1.5"
-			"Substance - Sahara" "org.jvnet.substance.skin.SubstanceSaharaLookAndFeel"
-			"1.5"
+"Substance - Default"              "org.jvnet.substance.SubstanceLookAndFeel"                        "1.5"
+"Substance - Autumn"               "org.jvnet.substance.skin.SubstanceAutumnLookAndFeel"             "1.5"
+"Substance - Business Black Steel" "org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel" "1.5"
+"Substance - Business Blue Steel"  "org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel"  "1.5"
+"Substance - Business"             "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel"           "1.5"
+"Substance - Challenger Deep"      "org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel"     "1.5"
+"Substance - Creme"                "org.jvnet.substance.skin.SubstanceCremeLookAndFeel"              "1.5"
+"Substance - EmeraldDusk"          "org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel"        "1.5"
+"Substance - Field Of Wheat"       "org.jvnet.substance.skin.SubstanceFieldOfWheatLookAndFeel"       "1.5"
+"Substance - Green Magic"          "org.jvnet.substance.skin.SubstanceGreenMagicLookAndFeel"         "1.5"
+"Substance - Magma"                "org.jvnet.substance.skin.SubstanceMagmaLookAndFeel"              "1.5"
+"Substance - Mango"                "org.jvnet.substance.skin.SubstanceMangoLookAndFeel"              "1.5"
+"Substance - Office Blue 2007"     "org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel"     "1.5"
+"Substance - OfficeSilver2007"     "org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel"   "1.5"
+"Substance - Raven Graphite"       "org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel"      "1.5"
+"Substance - Raven"                "org.jvnet.substance.skin.SubstanceRavenLookAndFeel"              "1.5"
+"Substance - Sahara"               "org.jvnet.substance.skin.SubstanceSaharaLookAndFeel"             "1.5"
 
 </echo>
 
