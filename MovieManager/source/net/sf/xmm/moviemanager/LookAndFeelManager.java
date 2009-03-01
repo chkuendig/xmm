@@ -267,7 +267,9 @@ public class LookAndFeelManager {
             		continue;
             	}
             	
-            	if (line.trim().equals(""))
+            	line = line.trim();
+            	
+            	if (line.equals(""))
             		continue;
             	
             	Matcher m = p.matcher(line);
