@@ -308,6 +308,28 @@ public class SysUtil {
     }
     
     
+    public static String getSystemInfo(String separator) {
+    
+    	String sep = separator == null ? "\\n" : separator;
+    	
+    	int freeMemory = (int) Runtime.getRuntime().freeMemory()/1024/1024;
+    	int totalMemory = (int) Runtime.getRuntime().totalMemory()/1024/1024;
+    	int maxMemory = (int) Runtime.getRuntime().maxMemory()/1024/1024;
+    	
+    	return "OS: " + System.getProperty("os.name") + 
+    		   "  version: " + System.getProperty("os.version") + 
+    		   "  Architecture: " + System.getProperty("os.arch") + 
+    		   sep +
+    		   "Java version: " + System.getProperty("java.runtime.version") +  
+    		   "  Vendor:" + System.getProperty("java.vm.specification.vendor") + 
+    		   sep + 
+	
+    		   "Free vm memory: " + freeMemory + sep +
+    		   "Total vm memory: " + totalMemory + sep +
+    		   "Max vm memory: " + maxMemory;
+    }
+    
+    
     /*
     public static IMDB_if getIMDBInstance2() throws Exception {
     
