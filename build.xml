@@ -544,21 +544,20 @@ Define the look and feels below:
 		<mkdir dir="${dist}" />
 
 		<echo file="${dist}/log4j.properties" append="false">
-			#### Using two appenders, one to log to console, another to log to a
-			file.
-			log4j.rootCategory=ALL, stdout, FileAppender
+#### Using two appenders, one to log to console, another to log to a file.
+log4j.rootCategory=ALL, stdout, FileAppender
 
-			#### First appender writes to console
-			log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+#### First appender writes to console
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
 
-			# Setting the lowest priority to log
-			log4j.appender.stdout.Threshold=WARN
+# Setting the lowest priority to log
+log4j.appender.stdout.Threshold=WARN
 
-			# Setting layout
-			log4j.appender.stdout.layout=net.sf.xmm.moviemanager.util.PatternLayoutByLevel
+# Setting layout
+log4j.appender.stdout.layout=net.sf.xmm.moviemanager.util.PatternLayoutByLevel
 
-			# Set default format for log levels not specifically set
-			log4j.appender.stdout.layout.ConversionPattern = %d{ISO8601} %-5p [%t] %m%n
+# Set default format for log levels not specifically set
+log4j.appender.stdout.layout.ConversionPattern = %d{ISO8601} %-5p [%t] %m%n
 
 # Set formats for different log levels
 log4j.appender.stdout.layout.InfoPattern = %-5p %m%n
@@ -614,8 +613,11 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 
 
   <property name="app-name" value="MeD's MovieManager.app"/>
-  <property name="mac-dist" value="build/mac"/>
+  <property name="dmg-file" value="MovieManager.v.${versionName}.dmg"/>
+  <property name="mac-dist" value="${dist}/mac"/>
 
+	
+	
 
  <!-- BUILD Mac  -->
  <target name="build-mac" depends="makejar, makeLog4jProperties">
@@ -697,10 +699,21 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
    
    <echo message="dist-mac: ${ant.file}"/>
    
-    <!--	<copy file="../Readme.rtf" todir="${mac-dist}"/> -->
+    	
+ 	
+ 	<!-- Copy license files  -->
+ 	    <mkdir dir="${mac-dist}/License"/>
+ 	    <copy todir="${mac-dist}/License">
+ 	         <fileset dir="License"/>
+ 	    </copy>
 
+ 	<copy file="Readme.rtf" todir="${mac-dist}"/>
+ 	
     	<fileset file="*.dmg" />
-    	<delete file="${mac-dist}/MovieManager.dmg"/>
+ 	
+ 	<!-- Delete old file  -->
+    <delete file="${mac-dist}/${dmg-file}"/>
+ 	
 		<exec executable="hdiutil" failonerror="true">
 			<arg value="create"/>
 			<arg value="-srcfolder"/>
@@ -712,11 +725,14 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 			<arg value="${mac-dist}/temp.dmg"/>
 			<arg value="-ov"/>
 		</exec>
-    	<delete file="${mac-dist}/Readme.rtf"/>
+    	
     	<exec executable="hdiutil" failonerror="true">
-    		<arg line="convert ${mac-dist}/temp.dmg -format UDZO -imagekey zlib-level=-9 -o ${mac-dist}/MovieManager.dmg -ov"/>
+    		<arg line="convert ${mac-dist}/temp.dmg -format UDZO -imagekey zlib-level=-9 -o ${mac-dist}/${dmg-file} -ov"/>
     	</exec>
     	<delete file="${mac-dist}/temp.dmg"/>
+ 	
+ 	    <move file="${mac-dist}/${dmg-file}" todir="${dist}"/>
+ 		
     </target>
 
 	<target name="run-mac">
