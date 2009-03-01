@@ -45,6 +45,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandOpenPage;
 import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.SysUtil;
 
 public class DialogAbout extends JDialog {
 
@@ -108,41 +109,15 @@ public class DialogAbout extends JDialog {
 	labelLicense.addMouseListener(new MovieManagerCommandOpenPage("http://www.fsf.org/licenses/info/GPLv2.html"));
 	panelLicenses.add(labelLicense);
 	
-	int freeMemory = (int) Runtime.getRuntime().freeMemory()/1024/1024;
-	int totalMemory = (int) Runtime.getRuntime().totalMemory()/1024/1024;
-	int maxMemory = (int) Runtime.getRuntime().maxMemory()/1024/1024;
-	
-	
-	System.err.println("freeMemory:" + freeMemory + "MiB");
-	System.err.println("totalMemory:" + totalMemory + "MiB");
-	System.err.println("maxMemory:" + maxMemory + "MiB");
-	
-	
 	/* System panel... */
 	JPanel panelSystem = new JPanel();
 	panelSystem.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," System "),
 								   BorderFactory.createEmptyBorder(5,5,5,5)));
 	JLabel labelSystem = new JLabel("<html>" + 
-						
-									"OS: " + System.getProperty("os.name") + 
-									"  version: " + System.getProperty("os.version") + 
-									"  Architecture: " + System.getProperty("os.arch") + 
-									"<br>"+
-						
-									"Java version: " + System.getProperty("java.runtime.version") +  
-									"  Vendor:" + System.getProperty("java.vm.specification.vendor") + 
-									"<br>" + 
-									
-									"Free vm memory: " + freeMemory + "<br>" +
-									"Total vm memory: " + totalMemory + "<br>" +
-									"Max vm memory: " + maxMemory + "<br>" +
-									
-									"</html>",JLabel.CENTER);
+			SysUtil.getSystemInfo("<br>") +
+			"</html>",JLabel.CENTER);
 	
-	//labelSystem.setFont(new Font(labelSystem.getFont().getName(),Font.PLAIN,labelLicense.getFont().getSize()-2));
 	panelSystem.add(labelSystem);
-	
-	
 	
 	
 	/* All stuff together... */
@@ -172,10 +147,5 @@ public class DialogAbout extends JDialog {
 	pack();
 	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
 		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
-
-	
-	System.err.println("freeMemory:" + (Runtime.getRuntime().freeMemory()/1024/1024) + "MiB");
-	System.err.println("totalMemory:" + (Runtime.getRuntime().totalMemory()/1024/1024) + "MiB");
-	System.err.println("maxMemory:" + (Runtime.getRuntime().maxMemory()/1024/1024) + "MiB");
     }
 }
