@@ -14,6 +14,7 @@ Version 2.7.5 (01-mar-2009)
    
  - Bug fixes:
    - Some series weren't found when searching IMDb.
+   - Cast grabbed from IMDb was sometimes incomplete.
    - It's now possible to create new MySQL databases again.
    - When exporting, some data was missing in the table grid and therefore not exported. 
    - When importing movies, the covers are now saved when retrieving info from IMDb.
