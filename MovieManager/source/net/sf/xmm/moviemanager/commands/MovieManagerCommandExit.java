@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.Database;
+import net.sf.xmm.moviemanager.util.SysUtil;
 
 public class MovieManagerCommandExit implements ActionListener {
 
@@ -69,7 +70,7 @@ public class MovieManagerCommandExit implements ActionListener {
 		log.debug("Finalized " + type + " database in " + (System.currentTimeMillis() - time) + " ms.");
 
 		/* Writes the date. */
-		log.debug("Log End: "+new Date(System.currentTimeMillis()));
+		log.debug("Log End: "+new Date(System.currentTimeMillis()) + SysUtil.getLineSeparator());
 
 		MovieManager.exit();
 	}
