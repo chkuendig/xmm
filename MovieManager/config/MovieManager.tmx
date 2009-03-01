@@ -2127,13 +2127,13 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Processing import list... </seg>
+                <seg>Processing list... </seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Processing import list... </seg>
+                <seg>Processing list... </seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogDatabaseImporter.message.seconds">
@@ -6338,7 +6338,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Spørringer</seg>
+                <seg>Spï¿½rringer</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="moviemanager.menu.database.savechanhednotes">
@@ -6458,7 +6458,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Åpne Database</seg>
+                <seg>ï¿½pne Database</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="moviemanager.menu.help">
@@ -6578,7 +6578,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Verktøy</seg>
+                <seg>Verktï¿½y</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="moviemanager.menu.tools.addmultiplemovies">
@@ -6728,7 +6728,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Språk</seg>
+                <seg>Sprï¿½k</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="moviemanager.movie-info-panel.miscellaneous">
@@ -7028,7 +7028,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Nødvendig oppdatering</seg>
+                <seg>Nï¿½dvendig oppdatering</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="moviemanager.update-necessary-message">
@@ -7295,7 +7295,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>change to unseen</seg>
+                <seg>Change to unseen</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="MovieManagerCommandSelect.movie-list-popup.change-to-unseen">
@@ -7304,7 +7304,7 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>change to seen</seg>
+                <seg>Change to seen</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="MovieManagerCommandSelect.movie-list-popup.remove-from-list">
