@@ -4,6 +4,21 @@ Changelog - MeD's Movie Manager
 ========================================
 
 
+Version 2.7.5 (01-mar-2009)
+
+ - General improvements:
+   - Right-clicking an entry in the list of movies/series/episodes search hits will now open the IMDb page. 
+   - Location of files that aren't supported by the file parsers are now saved with "Get File Info" function (instead of being ignored).
+   - Better support for launching media player on OS X.
+   - If retrieving episode info fails, it will now retry two times before marking the episode as red in the list.
+   
+ - Bug fixes:
+   - Some series weren't found when searching IMDb.
+   - It's now possible to create new MySQL databases again.
+   - When exporting, some data was missing in the table grid and therefore not exported. 
+   - When importing movies, the covers are now saved when retrieving info from IMDb.
+   
+   
 Version 2.7.4 (20-jan-2009)
 
  - Bug fixes:
@@ -441,7 +456,7 @@ Version 2.21 (20-Oct-2005)
 Version 2.2 (26-Sep-2005)
  - New: 
  - Episode functionality for series, with automatic download of episode info from tv.com
- - Import function (3 modes – Simple text, excel and extreme movie manager (v4.5)
+ - Import function (3 modes ï¿½ Simple text, excel and extreme movie manager (v4.5)
  - List functionality
 
  - General improvements/fixes:
