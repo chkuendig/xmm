@@ -1213,8 +1213,10 @@ public class MovieManager {
 		log = Logger.getRootLogger();
 		
 		/* Writes the date. */
+		log.debug("================================================================================"); //$NON-NLS-1$
 		log.debug("Log Start: " + new Date(System.currentTimeMillis())); //$NON-NLS-1$
 		log.debug("MeD's Movie Manager v" + config.sysSettings.getVersion()); //$NON-NLS-1$
+		log.debug(SysUtil.getSystemInfo(SysUtil.getLineSeparator())); //$NON-NLS-1$
 						
 		/* Loads the config */
 		if (!sandbox)
