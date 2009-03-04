@@ -323,10 +323,8 @@ public class SysUtil {
     		   "Java version: " + System.getProperty("java.runtime.version") +  
     		   "  Vendor:" + System.getProperty("java.vm.specification.vendor") + 
     		   sep + 
-	
-    		   "Free vm memory: " + freeMemory + sep +
-    		   "Total vm memory: " + totalMemory + sep +
-    		   "Max vm memory: " + maxMemory;
+    		   "Free VM memory: " + freeMemory + " MB, " + "Total VM memory: " + totalMemory + " MB" + sep +
+    		   "Max VM memory: " + maxMemory + " MB" ;
     }
     
     
