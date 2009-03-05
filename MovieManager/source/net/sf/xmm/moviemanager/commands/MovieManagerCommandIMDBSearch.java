@@ -114,7 +114,7 @@ public class MovieManagerCommandIMDBSearch {
                 try {
                     DefaultListModel list = imdb.getSeriesMatches(movieInfoModel.getModel().getTitle());
                     
-                    if (list == null) {
+                    if (list.size() == 0) {
                         final DefaultListModel model = new DefaultListModel();
                         model.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogTVDOTCOM.list-item.message.no-matches-found"), null)); //$NON-NLS-1$
                         
