@@ -121,31 +121,29 @@ public class IMDbInfoUpdater {
 		return done;
 	}
 
+	public void setDone() {
+		done = true;
+	}
+	
 	/* Returns the arraylist transferred which contains all the finished database entries */
 	public ArrayList getTransferred() {
 		return transferred;
 	}
 
-
 	static boolean ready = true;
-	static int threadCount = 0;
-
 	static int successes = 0;
 
+	final ThreadHandler threadHandler = new ThreadHandler();
 	
 	public void execute() {
 
 		/* Setting the priority of the thread to 4 to give the GUI room to update more often */
 		Thread.currentThread().setPriority(4);
 
-		DefaultMutableTreeNode node;
+		
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
-		Enumeration enumeration = root.children();
-		
-		
-		ModelEntry model;
-		
-		
+		final Enumeration enumeration = root.children();
+				
 		lengthOfTask = root.getChildCount();
 
 		int failCounter = 0;
@@ -154,56 +152,65 @@ public class IMDbInfoUpdater {
 
 		try {
 
-			ModelMovieInfo modelInfo = new ModelMovieInfo();
-			IMDB imdb = new IMDB(MovieManager.getConfig().getHttpSettings());
+			Runnable threadRunner = new Runnable() {
 
-			while (enumeration.hasMoreElements()) {
+				public void run() {
 
-				if (canceled)
-					break;
+					DefaultMutableTreeNode node;
+					ModelEntry model;
 
-				while (getThreadCount() > 15)
-					Thread.sleep(500);
+					ModelMovieInfo modelInfo = new ModelMovieInfo();
+					IMDB imdb;
+					try {
+						imdb = new IMDB(MovieManager.getConfig().getHttpSettings());
 
-				node = ((DefaultMutableTreeNode) enumeration.nextElement());
+						while (enumeration.hasMoreElements()) {
 
-				model = (ModelEntry) node.getUserObject();
+							if (canceled)
+								break;
 
-				if (!model.getHasGeneralInfoData()) {
-					model.updateGeneralInfoData();
+							if (threadHandler.getThreadCount() > 5) {
+								threadHandler.waitForNextDecrease();
+								System.err.println("getThreadCount():" + threadHandler.getThreadCount());
+							}
+														
+							node = ((DefaultMutableTreeNode) enumeration.nextElement());
+							model = (ModelEntry) node.getUserObject();
+
+							if (!model.getHasGeneralInfoData()) {
+								model.updateGeneralInfoData();
+							}
+
+							if (!model.getHasAdditionalInfoData()) {
+								model.updateAdditionalInfoData();
+							}
+
+							/* wrapping each movie in a thread */
+							Thread t = new Thread(new GetInfo(modelInfo, model, imdb));
+							
+							t.start();
+						}
+						
+						setDone();
+						
+						log.debug("Done updating list!");
+						
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-
-				if (!model.getHasAdditionalInfoData()) {
-					model.updateAdditionalInfoData();
-				}
-				
-				/* wrapping each movie in a thread */
-				Thread t = new Thread(new GetInfo(modelInfo, model, imdb));
-				encreaseThreadCount();
-				t.start();
-			}
-
-			log.debug("Thread count:" + getThreadCount());
-
-			/* Waits until all the threads are finished */
-			while (getThreadCount() > 0) {
-				Thread.sleep(400);
-			}
-
-			log.debug("Done updating list!");
-
-			done = true;
-
-			//connectionManager.shutdown();
-
-		} catch (InterruptedException e) {
-			log.error("Fatal interrupted error: " + e.getMessage());
+			};
+			
+			Thread t = new Thread(threadRunner);
+			t.start();
+			
+			log.debug("Thread count:" + threadHandler.getThreadCount());
+			
 		} catch (Exception e) {
 			log.warn("Exception:" + e.getMessage());
 		}
 		
-
-
 		log.debug("Total fails:" + failCounter);
 	}
 
@@ -218,8 +225,6 @@ public class IMDbInfoUpdater {
 		int buffer;
 		boolean error = false;
 
-		GetMethod method;
-
 		GetInfo(ModelMovieInfo modelInfo, ModelEntry model, IMDB imdb) {
 			this.modelInfo = modelInfo;
 			this.model = model;
@@ -230,8 +235,10 @@ public class IMDbInfoUpdater {
 
 			try {
 
+				threadHandler.increaseThreadCount();
+				
 				while (!isReady())
-					Thread.sleep(1000);
+					Thread.sleep(500);
 
 				if (canceled)
 					return;
@@ -262,8 +269,6 @@ public class IMDbInfoUpdater {
 				for (int i = 0; i < 5; i++) {
 
 					try {
-
-						
 						
 						ModelIMDbEntry movie = imdb.grabInfo(model.getUrlKey());
 
@@ -347,7 +352,8 @@ public class IMDbInfoUpdater {
 									model.setCoverData(coverData);
 									model.setCover(imdb.getCoverName());
 
-									if (!((MovieManager.getIt().getDatabase().isMySQL()) && !MovieManager.getConfig().getStoreCoversLocally())
+									if (!((MovieManager.getIt().getDatabase().isMySQL()) 
+											&& !MovieManager.getConfig().getStoreCoversLocally()) 
 											&& (imdb.getCoverURL().indexOf("/") != -1)) {
 
 										/* Creates the new file... */
@@ -370,13 +376,10 @@ public class IMDbInfoUpdater {
 								log.error("Exception:" + e.getMessage(), e);
 							}
 						}
-						
-						
-						
 						modelInfo.saveToDatabase(model, true, null);					
 
 					} catch (Exception e) {
-						log.fatal("", e);
+						log.fatal("Exception:" + e.getMessage(), e);
 						error = true;
 					}
 
@@ -384,17 +387,18 @@ public class IMDbInfoUpdater {
 
 					if (!error)
 						break;
-
-					method.releaseConnection();
-					method = null;
 				}
 
 				encreaseSuccess();
-				
+								
 			} catch (InterruptedException e) {
 				log.error("Fatal interrupted error: " + e.getMessage());
 			} finally {
-				decreaseThreadCount();
+				try {
+					threadHandler.decreaseThreadCount();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				addTransferred(model.getTitle());
 			}
 		}
@@ -416,19 +420,76 @@ public class IMDbInfoUpdater {
 		ready = rdy;
 	}
 
-	synchronized static int getThreadCount() {
-		return threadCount;
-	}
 
-	synchronized static void encreaseThreadCount() {
-		threadCount++;
-	}
-
-	synchronized static void decreaseThreadCount() {
-		threadCount--;
-	}
 
 	synchronized static void encreaseSuccess() {
 		successes++;
+	}
+	
+	
+	public class ThreadHandler {
+
+		// The number of currently active threads
+		int threadCount = 0;
+		
+		// The total number of threads that have been used
+		int totalThreads = 0;
+		
+		synchronized public void increaseThreadCount() {
+			threadCount++;
+			totalThreads++;
+		}
+		
+		synchronized public void decreaseThreadCount() throws Exception  {
+			threadCount--;
+			notify();
+		}
+		
+		synchronized public int getThreadCount() {
+			return threadCount;
+		}
+		
+		synchronized public int getTotalThreadCount() {
+			return totalThreads;
+		}
+		
+		
+		public void waitForNextDecrease() throws Exception {
+			
+			synchronized(this) {
+				wait();
+			}
+		}
+		
+		/*
+		synchronized public void removeElement(Object obj) throws Exception {
+			
+			if (!list.contains(obj))
+				throw new Exception("Mailbox does not contain object " + obj);
+			
+			int index = list.indexOf(obj);
+			
+			list.remove(index);
+		}
+		
+		
+		synchronized public Object pop() throws Exception {
+			
+			if (list.size() == 0)
+				throw new Exception("Mailbox is empty");
+			
+			return list.remove(0);
+		}
+		
+		synchronized public void addElement(Object obj) throws Exception {
+			
+			if (list.contains(obj))
+				throw new Exception("Mailbox already contains object " + obj);
+			
+			list.add(obj);
+		}
+		*/
+		
+	
 	}
 }
