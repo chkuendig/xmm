@@ -30,7 +30,7 @@ public class AdvancedMailbox {
 	// The number of currently active threads
 	int threadCount = 0;
 	
-	// To total number of threads that have been used
+	// The total number of threads that have been used
 	int totalThreads = 0;
 	
 	synchronized public void increaseThreadCount() {
