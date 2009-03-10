@@ -171,7 +171,6 @@ public class IMDbInfoUpdater {
 
 							if (threadHandler.getThreadCount() > 5) {
 								threadHandler.waitForNextDecrease();
-								System.err.println("getThreadCount():" + threadHandler.getThreadCount());
 							}
 														
 							node = ((DefaultMutableTreeNode) enumeration.nextElement());
@@ -266,8 +265,10 @@ public class IMDbInfoUpdater {
 					return;
 				}
 
-				for (int i = 0; i < 5; i++) {
+				for (int i = 0; i < 4; i++) {
 
+					error = false;
+					
 					try {
 						
 						ModelIMDbEntry movie = imdb.grabInfo(model.getUrlKey());
@@ -420,12 +421,9 @@ public class IMDbInfoUpdater {
 		ready = rdy;
 	}
 
-
-
 	synchronized static void encreaseSuccess() {
 		successes++;
 	}
-	
 	
 	public class ThreadHandler {
 
