@@ -693,7 +693,7 @@ abstract public class Database {
 	/**
 	 * Returns a ModelAdditionalInfo on a specific movie/episode
 	 **/
-	public ModelAdditionalInfo getAdditionalInfo(int index, boolean episode) {
+	synchronized public ModelAdditionalInfo getAdditionalInfo(int index, boolean episode) {
 
 		ModelAdditionalInfo additionalInfo = null;
 
@@ -3352,7 +3352,7 @@ abstract public class Database {
 	/** Returns a MovieModel that contains the movie at the specified index
 	 * in the database.
 	 **/
-	public ModelMovie getMovie(int index) {
+	public synchronized ModelMovie getMovie(int index) {
 		ModelMovie movie = null;
 
 		try {
