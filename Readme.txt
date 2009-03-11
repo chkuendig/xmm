@@ -1,3 +1,5 @@
+.. This document is written in reStructuredText format
+
 ============================================
 MeD's Movie Manager Readme
 ============================================
