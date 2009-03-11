@@ -64,12 +64,6 @@ public class DialogTableExport extends DialogTableData {
 
 			int rowLen = data.length;
 			int colsLen = data[0].length;
-
-			System.err.println("Last movie:");
-			
-			for (int i = 0; i < colsLen; i++) {
-				System.err.println(data[rowLen-1][i]);
-			}
 			
 			Object [] emptyColumnNames = new Object[colsLen];
 
@@ -106,11 +100,8 @@ public class DialogTableExport extends DialogTableData {
 					for (int i = 0; i < columnCount; i++ ) {
 						newColumn = columnModel.getColumn(i);
 						
-					//	System.err.println("getHeaderValue:" + newColumn.getHeaderValue().toString() + ":");
-						
 						// Has value other than string
 						if (!(newColumn.getHeaderValue() instanceof String)) {
-							System.err.println("getHeaderValue:" + newColumn.getHeaderValue());
 							columnDataSpecified = true;					
 						}
 					}
