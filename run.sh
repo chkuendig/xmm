@@ -1,5 +1,5 @@
 cd MovieManager
-java -classpath $CLASSPATH:.:\
+java -Xmx256m -classpath $CLASSPATH:.:\
 lib/drivers/hsqldb-1.7.3.3.jar:\
 lib/drivers/mysql-connector-java-3.1.12-bin.jar:\
 lib/LookAndFeelsskinlf.jar:\
