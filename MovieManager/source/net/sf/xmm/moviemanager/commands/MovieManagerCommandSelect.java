@@ -403,26 +403,25 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 						}
 						
 						String tmp = tokenizer.nextToken();
-
 						
-						if (tmp.startsWith("\\\\") || 2 == 2) {
-							
+						if (tmp.startsWith("\\\\")) {
+						
 							File f = new File(tmp);
 							
-							try {
-								
-								String tmp2 ="\\\\" + tmp;
-								f = new File(tmp2);
-								
-							} catch (Exception e) {
-								log.warn("Exception:" + e.getMessage(), e);
-							}
-														
-							enable = true;
-							break;
+						//	String tmp2 = "\\\\" + tmp;
+							//f = new File(tmp2);
+							
+							/* Does not check anything at the moment. 
+							   Must test this more thoroughly.
+							  
+							  Set to true no matter
+							   */	
+							//if (f.isFile()) {
+								enable = true;
+								break;
+							//}
 						}
-						
-						if (SysUtil.isWindows() && !SysUtil.isWindowsVista() && !SysUtil.isWindows98()) {
+						else if (SysUtil.isWindows() && !SysUtil.isWindowsVista() && !SysUtil.isWindows98()) {
 							// This is used because File.exists might provoke a popup window on (some versions of) Windows.
 							String drive = tmp.substring(0, tmp.indexOf(":") + 1);
 
@@ -441,7 +440,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 							}
 						}
 
-						if (new File(tmp).exists()) {
+						if (new File(tmp).isFile()) {
 							enable = true;
 							break;
 						}
