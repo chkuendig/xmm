@@ -298,7 +298,7 @@
 				includes="${template_files}" />
 
 
-			<zipfileset prefix="MeDs-Movie-Manager-Source" dir=""
+			<zipfileset prefix="MeDs-Movie-Manager-Source" dir="" filemode="755"
 				includes="${infoFiles}">
 				<include name="packaging/" />
 				<include name="makejar.bat" />
