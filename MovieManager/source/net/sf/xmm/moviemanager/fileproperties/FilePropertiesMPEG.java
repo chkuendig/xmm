@@ -51,7 +51,7 @@ class FilePropertiesMPEG extends FileProperties {
 	 * Processes a file from the given RandomAccessFile.
 	 **/
 	protected void process(RandomAccessFile dataStream) throws Exception {
-		log.info("Start processing MPEG file.");
+		log.debug("Start processing MPEG file.");
 
 		/* Sets the pointer to offset 4*/
 		dataStream.seek(4);
@@ -105,7 +105,7 @@ class FilePropertiesMPEG extends FileProperties {
 
 		supported = true;
 
-		log.info("Processing MPEG file done.");
+		log.debug("Processing MPEG file done.");
 	}
 
 
