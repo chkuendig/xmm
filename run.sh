@@ -32,6 +32,7 @@ lib/cobra/js.jar:\
 lib/driveinfo/sfc.jar:\
 lib/mac/AppleJavaExtensions.jar:\
 lib/mac/quaqua-filechooser-only.jar \
+-Xdock:name="MeDs Movie Manager" \
 net.sf.xmm.moviemanager.MovieManager
 cd ..
 
