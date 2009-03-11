@@ -22,6 +22,8 @@ package net.sf.xmm.moviemanager.fileproperties;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -157,6 +159,13 @@ public class FilePropertiesMovie {
 			/* The input stream... */
 			RandomAccessFile dataStream = new RandomAccessFile(filePath, "r");
 
+			// Load 1MB straight into memory
+			//MappedByteBuffer map = dataStream.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, ((long) 1024*1024*3));
+			long time = System.currentTimeMillis();
+			//map.load();
+			
+			//System.err.println("map.load:" + (System.currentTimeMillis() - time));
+			
 			/* Gets the header for filetype identification... */
 			int[] header = new int[4];
 
@@ -230,9 +239,13 @@ public class FilePropertiesMovie {
 
 					if (fileProperties != null) {
 
+						time = System.currentTimeMillis();
+						
 						/* Starts parsing the file...*/
 						fileProperties.process(dataStream);
 
+						log.debug("Processed file in " + (System.currentTimeMillis() - time) + "ms");
+						
 						supported = fileProperties.isSupported();
 
 						if (supported)
