@@ -4,555 +4,639 @@ Changelog - MeD's Movie Manager
 ========================================
 
 
-Version 2.7.5 (01-mar-2009)
+Version 2.7.5 (13-mar-2009)
 
- - General improvements:
-   - Right-clicking an entry in the list of movies/series/episodes search hits will now open the IMDb page. 
-   - Location of files that aren't supported by the file parsers are now saved with "Get File Info" function (instead of being ignored).
-   - Better support for launching media player on OS X.
-   - If retrieving episode info fails, it will now retry two times before marking the episode as red in the list.
+- General improvements:
+
+  - Right-clicking an entry in the list of movies/series/episodes search hits will now open the IMDb page. 
+  - Location of files that aren't supported by the file parsers are now saved with "Get File Info" function (instead of being ignored).
+  - Better support for launching media player on OS X.
+  - If retrieving episode info fails, it will now retry two times before marking the episode as red in the list.
    
- - Bug fixes:
-   - Some series weren't found when searching IMDb.
-   - Cast grabbed from IMDb was sometimes incomplete.
-   - It's now possible to create new MySQL databases again.
-   - When exporting, some data was missing in the table grid and therefore not exported. 
-   - When importing movies, the covers are now saved when retrieving info from IMDb.
+- Bug fixes:
+
+  - Some series weren't found when searching IMDb.
+  - Cast grabbed from IMDb was sometimes incomplete.
+  - It's now possible to create new MySQL databases again.
+  - When exporting, some data was missing in the table grid and therefore not exported. 
+  - When importing movies, the covers are now saved when retrieving info from IMDb.
    
    
 Version 2.7.4 (20-jan-2009)
 
- - Bug fixes:
-   - Version check is fixed.
-   - Database backup function fixed.
+- Bug fixes:
+
+  - Version check is fixed.
+  - Database backup function fixed.
 
 
 Version 2.7.3 (16-jan-2009)
 
- - Bug fixes:
-   - Fixed IMDb, now all hits are shown.
-   - Using IMDb username and password for login.
+- Bug fixes:
+
+  - Fixed IMDb, now all hits are shown.
+  - Using IMDb username and password for login.
 
 
 Version 2.7.2 (10-jan-2009)
- 
- - General improvements:
-   - Added a new theme 'A Touch of Green' for the HTML panel. 
 
- - Bug fixes:
-   - 'Update IMDb Info' function could remove the additional info on some movies.
-   - It was not possible to retrieve DVD Info twice in one session.
-   - Add multiple movies function now saves the Cover from IMDb.
-   - Multiple bugs have been fixed in the import function.
-   	 - Marking each column with correct data field should now work 100%.
-	 - Can now when importing retrieve IMDb info.
-	 - Abort and Cancel when importing IMDb info was switched.
-   - Import function now has the option to add movies that weren't found at IMDb in a list 'Importer-skipped'. 
-   - Fixed som stuff when adding episode entries from IMDb.
-   - Saving movie titles from IMDb of specific language set in settings now works.
+- General improvements:
 
+  - Added a new theme 'A Touch of Green' for the HTML panel.
+
+- Bug fixes:
+   
+  - 'Update IMDb Info' function could remove the additional info on some movies.
+  - It was not possible to retrieve DVD Info twice in one session.
+  - Add multiple movies function now saves the Cover from IMDb.
+  - Multiple bugs have been fixed in the import function:
+    
+    * Marking each column with correct data field should now work 100%.
+    * Can now when importing retrieve IMDb info.
+    * Abort and Cancel when importing IMDb info was switched.
+  - Import function now has the option to add movies that weren't found at IMDb in a list 'Importer-skipped'. 
+  - Fixed som stuff when adding episode entries from IMDb.
+  - Saving movie titles from IMDb of specific language set in settings now works.
 
 Version 2.7.1 (20-des-2008)
  
- - Bug fixes:
-   - Old episodes will now look like they used to without "SnullEnull" in the movie list.
-   - Hopefully fixed some issues causing crashes.
+- Bug fixes:
+
+  - Old episodes will now look like they used to without "SnullEnull" in the movie list.
+  - Hopefully fixed some issues causing crashes.
 
 
 Version 2.7 (18-des-2008)
 
- - General improvements:
-   - TV.COM support has been replaced by IMDb. There should be no big changes 
-   	 except that grabbing the info will take a bit longer as more URLs must be
-	 downloaded and parsed.
+- General improvements:
 
-   - The Season and episode will be shown in the movie list for each episode.
+  - TV.COM support has been replaced by IMDb. There should be no big changes except that grabbing the info will take a bit longer as more URLs must be downloaded and parsed.
+  - The Season and episode will be shown in the movie list for each episode.
 
- - Bug fixes:
-   - IMDb changed the HTML code again.
+- Bug fixes:
+
+  - IMDb changed the HTML code again.
 
 
 Version 2.7 beta 1 (16-jul-2008)
 
- - New:
- - "Add multiple movies" function has been rewritten and contains some new features.
-   - File tree to specify which directories to search. Only local disks may be searched.
-   - Possibility of excluding/including files depending on file extensions and file name, using regular strings and regular expression.
-   - Option to exclude files that are already in the database.
-   - A list of media files to be added has also been added, which makes it easier to control which files will be added. 
- - Export to HTML will now export the currently used HTML template instead of the old HTML.
- - Export to CSV and excel file format.
+- New:
 
- - General improvements:
- - Windows will no longer appear outside of the screen if the main windows is placed near or outside the screen.
- - Added option in preferences to enable the play button in the toolbar.
- - Cover image in the HTML view is now linking to the IMDb web site for the movie. 
- - Adjustments have been made so that the movie list should load faster with big movie lists.
- - Movie list has now a color matching the current L&F. Also improved consistency when selecting multiple entries with ctrl-key pressed.
+  - "Add multiple movies" function has been rewritten and contains some new features.
+  - File tree to specify which directories to search. Only local disks may be searched.
+  - Possibility of excluding/including files depending on file extensions and file name, using regular strings and regular expression.
+  - Option to exclude files that are already in the database.
+  - A list of media files to be added has also been added, which makes it easier to control which files will be added. 
+  - Export to HTML will now export the currently used HTML template instead of the old HTML.
+  - Export to CSV and excel file format.
 
- - Bug fixes:
- - When editing an episode the key linking the episode to the series was lost.
- - The second of two movies with the same title produced in the same year wouldn't appear in the search hits.
- - Move 'The', 'A' and 'An' to end of title did not work.
- - HTML templates wouldn't load if the HTML code contained dollar signs ($). 
- - Runtime read from ifo (DVD) files were slightly off mark. Fix by gaelead.
- - Title was not added when importing movies from text file.
- - Seen/Unseen wasn't updated in HTML view unless the entry was reloaded.
- - Error alert will no longer appear when trying to save an edited movie with no cover image.
- - Error window would appear when trying to play a movie with spaces in  the file path on Windows.
- - Plot was missing from some movies.
- - Error could occur when generating reports with the Report Generator if the cover was missing.
- - Incorrect directory was used when exporting database to HTML.
+- General improvements:
+   
+  - Windows will no longer appear outside of the screen if the main windows is placed near or outside the screen.
+  - Added option in preferences to enable the play button in the toolbar.
+  - Cover image in the HTML view is now linking to the IMDb web site for the movie. 
+  - Adjustments have been made so that the movie list should load faster with big movie lists.
+  - Movie list has now a color matching the current L&F. Also improved consistency when selecting multiple entries with ctrl-key pressed.
+
+- Bug fixes:
+
+  - When editing an episode the key linking the episode to the series was lost.
+  - The second of two movies with the same title produced in the same year wouldn't appear in the search hits.
+  - Move 'The', 'A' and 'An' to end of title did not work.
+  - HTML templates wouldn't load if the HTML code contained dollar signs ($). 
+  - Runtime read from ifo (DVD) files were slightly off mark. Fix by gaelead.
+  - Title was not added when importing movies from text file.
+  - Seen/Unseen wasn't updated in HTML view unless the entry was reloaded.
+  - Error alert will no longer appear when trying to save an edited movie with no cover image.
+  - Error window would appear when trying to play a movie with spaces in  the file path on Windows.
+  - Plot was missing from some movies.
+  - Error could occur when generating reports with the Report Generator if the cover was missing.
+  - Incorrect directory was used when exporting database to HTML.
 
 
 Version 2.6.1 (19-feb-2008)
 
- - Bug fixes:
- - Fixed some bugs in cover and queries paths settings in Folders menu.
+- Bug fixes:
 
- - Note:
- - This is most importantly a repack of 2.6 as some important files were missing.
+  - Fixed some bugs in cover and queries paths settings in Folders menu.
+
+- Note:
+ 
+  - This is most importantly a repack of 2.6 as some important files were missing.
 
 
 Version 2.6 (18-feb-2008)
 
- - New:
- - HTML view of movie info using templates.
+- New:
+   
+  - HTML view of movie info using templates.
 
- - Bug fixes:
- - "Playing media files on Linux doesn't work" (Bug ID:1879542)
- - "The jasper report tool may hang during compilation" (Bug ID:1760174)
- - "Unable to add certain films" - IMDb parser slightly modified to correct this error.
- - "Moviemanager Doesn't Shut-Down" - This would only appear on Win 98. Hopefully fixed.
- - Fixed an issue with cover path relative to database/program install directory.
+- Bug fixes:
+
+  - "Playing media files on Linux doesn't work" (Bug ID:1879542)
+  - "The jasper report tool may hang during compilation" (Bug ID:1760174)
+  - "Unable to add certain films" - IMDb parser slightly modified to correct this error.
+  - "Moviemanager Doesn't Shut-Down" - This would only appear on Win 98. Hopefully fixed.
+  - Fixed an issue with cover path relative to database/program install directory.
 
 
 Version 2.5.5 (26-dec-2007)
 
- - New:
- - Database backup function for HSQL and MS Access database.
- - New version update notifier.
- - IMDb authentication.
+- New:
+ 
+  - Database backup function for HSQL and MS Access database.
+  - New version update notifier.
+  - IMDb authentication.
 
- - General improvements:
- - Search filter remembers old search queries.
- - The movie list and movie info window is now divided by a splitpane.
+- General improvements:
+ 
+  - Search filter remembers old search queries.
+  - The movie list and movie info window is now divided by a splitpane.
 
- - Bug fixes:
- - IMDb info is now saved when using the import funtion.
+- Bug fixes:
+ 
+  - IMDb info is now saved when using the import funtion.
 
 
 Version 2.5.4.2 (05-dec-2007)
 
- - Bug fixes:
- - IMDb parser gave strange results
- - Connecting to the same MySQL database from both Windows and Linux didn't always work.
+- Bug fixes:
+ 
+  - IMDb parser gave strange results
+  - Connecting to the same MySQL database from both Windows and Linux didn't always work.
 
 
 Version 2.5.4.1 (12-jul-2007)
 
- - General improvements:
- - IMDb parser slightly modified to show more hits
+- General improvements:
+ 
+  - IMDb parser slightly modified to show more hits
 
- - Bug fixes:
- - The MS Access database is now Access 2002 format instead of Access 2000. (Bug ID: 1738785)
-   This fixes a nasty database error which could make it troublesome to add/remove 'additional info' fields.
- - When using MS Access database: The user defined 'additional info' fields would be 
-   hidden if there were more than 3 (Text field in database was too small). 
- - Covers were not saved when adding movies with the 'Add Multiple Movies' function.
+- Bug fixes:
+ 
+  - The MS Access database is now Access 2002 format instead of Access 2000. (Bug ID: 1738785) This fixes a nasty database error which could make it troublesome to add/remove 'additional info' fields.
+  - When using MS Access database: The user defined 'additional info' fields would be hidden if there were more than 3 (Text field in database was too small). 
+  - Covers were not saved when adding movies with the 'Add Multiple Movies' function.
 
 
 Version 2.5.4 (10-jul-2007)
 
- - New:
- - CSV import
+- New:
+ 
+  - CSV import
 
- - General improvements:
- - It's now possible to select multiple seasons when adding episodes from tv.com (Thanks to Mel)
+- General improvements:
+ 
+  - It's now possible to select multiple seasons when adding episodes from tv.com (Thanks to Mel)
 
- - Bug fixes:
- - Searching on IMDb should work now (Didn't quite catch the changes on IMDb with the last fix ;-) )
- - Can now search the filter with Unicode characters in HSQL database (Bug ID:1730310)
- - When exporting to XML the user defined additional info values are now included (Bug ID:1727149)
- - Alias definitions (advanced search) and additional info values (add/edit movie info) are now saved again (Bug ID:1718944)
- - Covers weren't saved when using "Update IMDb Info" and storing covers relative to database (Bug ID:1718892)
- - Fixed bug: "'Set relative paths' not restored correctly" (Bug ID:1716094)
- - Fixed bug: "Problems with 'Store covers locally' (MySQL)" (Bug ID:1716100)
- - Fixed bug: "Deleting items in MySQL leaves addInfo fields" (Bug ID:1716110)
- - Fixed bug: "Covers not shown in List after load (MySQL only)" (Bug ID:1716107)
- - Plenty of other minor bugs and issues have been fixed
+- Bug fixes:
+ 
+  - Searching on IMDb should work now (Didn't quite catch the changes on IMDb with the last fix ;-) )
+  - Can now search the filter with Unicode characters in HSQL database (Bug ID:1730310)
+  - When exporting to XML the user defined additional info values are now included (Bug ID:1727149)
+  - Alias definitions (advanced search) and additional info values (add/edit movie info) are now saved again (Bug ID:1718944)
+  - Covers weren't saved when using "Update IMDb Info" and storing covers relative to database (Bug ID:1718892)
+  - Fixed bug: "'Set relative paths' not restored correctly" (Bug ID:1716094)
+  - Fixed bug: "Problems with 'Store covers locally' (MySQL)" (Bug ID:1716100)
+  - Fixed bug: "Deleting items in MySQL leaves addInfo fields" (Bug ID:1716110)
+  - Fixed bug: "Covers not shown in List after load (MySQL only)" (Bug ID:1716107)
+  - Plenty of other minor bugs and issues have been fixed
 
 
 Version 2.5.3.5 (27-jun-2007)
 
- - Bug fixes:
- - IMDb changed their html.
+- Bug fixes:
+ 
+  - IMDb changed their html.
 
 
 Version 2.5.3.4 (26-jun-2007)
 
- - Bug fixes:
- - MeD's Movie Manager can now be closed on Windows Vista.
+- Bug fixes:
+ 
+  - MeD's Movie Manager can now be closed on Windows Vista.
 
 
 Version 2.5.3.3 (03-may-2007)
 
- - Bug fixes:
- - Fixed a serious bug with the additional info fields.
+- Bug fixes:
+ 
+  - Fixed a serious bug with the additional info fields.
 
 
 Version 2.5.3.2 (03-may-2007)
 
- - Bug fixes:
- - Binaries were missing some important files.
+- Bug fixes:
+ 
+  - Binaries were missing some important files.
 
 
 Version 2.5.3 (02-may-2007)
 
- - Note:
-   This is a major bug fix release.
-   Thanks a lot to Matthias for thorough testing and bug-seeking.
+- Note:
+   
+  - This is a major bug fix release. Thanks a lot to Matthias for thorough testing and bug-seeking.
 
- - General improvements:
- - Add Multiple Movies can now grab movie title from the directory instead of the filename (Thanks to Dan Vann and Nicholas). 
- - Edit window is now opened on double click on entries in the movie list (except from series).   
+- General improvements:
 
- - Bug fixes:
- - New additional info fields would not be usable for older entries added before the new additional info field.
- - Notes from previous selected node could overwrite the value of the newly selected node.
- - Mpaa info was not shown after the movie info was grabbed from IMDb and saved.
- - Grabbing info from DVDs should now work better on Linux.
- - Location in additional info is now saved when grabbing media info from CDs.  
- - A lot of smaller fixes and improvements.
+  - Add Multiple Movies can now grab movie title from the directory instead of the filename (Thanks to Dan Vann and Nicholas). 
+  - Edit window is now opened on double click on entries in the movie list (except from series).   
+
+- Bug fixes:
+
+  - New additional info fields would not be usable for older entries added before the new additional info field.
+  - Notes from previous selected node could overwrite the value of the newly selected node.
+  - Mpaa info was not shown after the movie info was grabbed from IMDb and saved.
+  - Grabbing info from DVDs should now work better on Linux.
+  - Location in additional info is now saved when grabbing media info from CDs.  
+  - A lot of smaller fixes and improvements.
 
 
 Version 2.5.2 (29-april-2007)
 
- - General improvements:
- - No longer necessary to save changed notes manually.
+- General improvements:
+ 
+  - No longer necessary to save changed notes manually.
 
- - Bug fixes:
- - A bunch of smaller issues.
+- Bug fixes:
+ 
+  - A bunch of smaller issues.
 
 
 Version 2.5.1 (18-april-2007)
 
- - Bug fixes:
- - The movie list was not sorted.
+- Bug fixes:
+
+  - The movie list was not sorted.
  
 
 Version 2.5 (18-april-2007)
 
- - General improvements:
- - Included a lot more Look & Feels. 
+- General improvements:
+  
+  - Included a lot more Look & Feels. 
 
- - Bug fixes:
- - Bug fixed where info in add/edit was zeroed out when changing seen/unseen or cover. (Thanks to kreegee).
- - Bugfixes for the Mac GUI. (Thanks to kreegee).
- - Fixed IMDb html parsing. Now retrieves 'directed by' and 'written by'
+- Bug fixes:
+
+  - Bug fixed where info in add/edit was zeroed out when changing seen/unseen or cover. (Thanks to kreegee).
+  - Bugfixes for the Mac GUI. (Thanks to kreegee).
+  - Fixed IMDb html parsing. Now retrieves 'directed by' and 'written by'
 
 
 Version 2.5 beta 4 (07-mar-2007)
 
- - General improvements:
- - Importing excel spreadsheet should now actually work. 
- - IMDb Updater now alows skipping of entries that already contains an IMDb ID.
- - Non ASCII characters in 'directed by' and 'written by' are now converted again.
+- General improvements:
+ 
+  - Importing excel spreadsheet should now actually work. 
+  - IMDb Updater now alows skipping of entries that already contains an IMDb ID.
+  - Non ASCII characters in 'directed by' and 'written by' are now converted again.
 
- - Bug fixes:
- - Removed a few bugs from the "Add multiple movies by file" function.
- - Database converter should now work when saving to MS Access.
+- Bug fixes:
+ 
+  - Removed a few bugs from the "Add multiple movies by file" function.
+  - Database converter should now work when saving to MS Access.
 
 
 Version 2.5 beta 3 (24-feb-2007)
 
- - General improvements:
- - Added new field in the edit window shwowing the IMDb ID.
- - Excel import is improved.
+- General improvements:
+ 
+  - Added new field in the edit window shwowing the IMDb ID.
+  - Excel import is improved.
 
- - Bug fixes:
- - Fixed the IMDb parsing issue. 
+- Bug fixes:
+ 
+  - Fixed the IMDb parsing issue. 
 
 
 Version 2.5 beta 2 (21-jan-2007)
 
- - General improvements:
- - Many small improvements and fixes on the new features added in beta 1.
+- General improvements:
+ 
+  - Many small improvements and fixes on the new features added in beta 1.
 
- - Bug fixes:
- - Now saves episodes correctly.
+- Bug fixes:
+ 
+  - Now saves episodes correctly.
 
 
 Version 2.5 beta 1 (09-jan-2007)
 
- - New:
-   XML export/import of the movie list.
-   Toolbar customizable by right clicking it.
-   Play functionality (Button available by right clicking the toolbar).
-   It's now possible to have a title of a specific language imported from IMDb.
+- New:
+   
+  - XML export/import of the movie list.
+  - Toolbar customizable by right clicking it.
+  - Play functionality (Button available by right clicking the toolbar).
+  - It's now possible to have a title of a specific language imported from IMDb.
 
- - General improvements:
- - Better handling of special characters when searching the database using the filter.
- - The Update IMDb Info function now searches for info on entries that were previously ignored (missing IMDb id).
+- General improvements:
+ 
+  - Better handling of special characters when searching the database using the filter.
+  - The Update IMDb Info function now searches for info on entries that were previously ignored (missing IMDb id).
 
- - Bug fixes:
- - Fixed the parsing routine which failed if there was only one hit on IMDb search.
- - "Show covers in movielist" and relative covers-path (ID: 1602228).
- - "No Matches Found" entry not removed after adding movie (ID: 1595094).
- - Database error - additional info fields - add/delete (ID: 1595092).
+- Bug fixes:
+ 
+  - Fixed the parsing routine which failed if there was only one hit on IMDb search.
+  - "Show covers in movielist" and relative covers-path (ID: 1602228).
+  - "No Matches Found" entry not removed after adding movie (ID: 1595094).
+  - Database error - additional info fields - add/delete (ID: 1595092).
 
 
 Version 2.41 (20-oct-2006)
 
- - Bug fixes:
- - Subtitles field could be displayed multiple times if some additional info fields were hidden (ID: 1581374).
- - Issue where covers wouldn't be saved when using 'covers relative to database' option.
- - Report function can now be closed without having the process keep running.
+- Bug fixes:
+ 
+  - Subtitles field could be displayed multiple times if some additional info fields were hidden (ID: 1581374).
+  - Issue where covers wouldn't be saved when using 'covers relative to database' option.
+  - Report function can now be closed without having the process keep running.
 
 
 Version 2.40 (05-oct-2006)
 
- - New:
- - Threads with Progress Bar has been introduced to make the app more responsive during database loading and imdb/tv.com searching.
- - Now using HTTPClient to retrieve info from tv.com and IMDb. Should no longer "hang" if there are no hits.
- - New report function to create reports of the movie list.
+- New:
+ 
+  - Threads with Progress Bar has been introduced to make the app more responsive during database loading and imdb/tv.com searching.
+  - Now using HTTPClient to retrieve info from tv.com and IMDb. Should no longer "hang" if there are no hits.
+  - New report function to create reports of the movie list.
 
- - General improvements:
- - New logging system implemented (log4j) (ID: 1457323).
- - Title bar can now be changed to look and feel mode.
- - Option to choose wether a database should be loaded at startup (ID: 1488086).
- - The location and state of the main window is now saved when shutting down and restored at startup.
- - Retrieving DVD info should now work better (Correct .ifo should be chosen automatically).
- - Loading of database with many series will be faster using MySQL.
- - Covers can now be used as icons in the movie list.
+- General improvements:
+ 
+  - New logging system implemented (log4j) (ID: 1457323).
+  - Title bar can now be changed to look and feel mode.
+  - Option to choose wether a database should be loaded at startup (ID: 1488086).
+  - The location and state of the main window is now saved when shutting down and restored at startup.
+  - Retrieving DVD info should now work better (Correct .ifo should be chosen automatically).
+  - Loading of database with many series will be faster using MySQL.
+  - Covers can now be used as icons in the movie list.
 
- - Bug fixes:
- - MySQL pre v4.1 doesn't support the BOOLEAN alias, so now TINYINT is used instead. (ID: 1565396)
- - Episodes were saved so that they appeared in the wrong order (introduced in beta 4.1 versions).
- - Fixed "Episode notes were not saved" (Bug ID:1560185).
- - '"Get DVD Info" fails on Linux' should be fixed. (ID: 1513896)
- - If an error occured when removing an additional info field, it could be impossible to add er edit movies. (ID: 1376750)
- - Application could hang when opening new windows (e.g. Preferences or Queries). (Hopefully fixed)
+- Bug fixes:
+ 
+  - MySQL pre v4.1 doesn't support the BOOLEAN alias, so now TINYINT is used instead. (ID: 1565396)
+  - Episodes were saved so that they appeared in the wrong order (introduced in beta 4.1 versions).
+  - Fixed "Episode notes were not saved" (Bug ID:1560185).
+  - '"Get DVD Info" fails on Linux' should be fixed. (ID: 1513896)
+  - If an error occured when removing an additional info field, it could be impossible to add er edit movies. (ID: 1376750)
+  - Application could hang when opening new windows (e.g. Preferences or Queries). (Hopefully fixed)
 
 
 Version 2.4 Beta 4.1 (18-aug-2006)
 
- - New:
- - Movie Info update function (ID: 1488702)
- - Windows support for MediaInfo library which enabled parsing of more media files (ID: 1492010).
+- New:
+ 
+  - Movie Info update function (ID: 1488702)
+  - Windows support for MediaInfo library which enabled parsing of more media files (ID: 1492010).
 
- - Bug fixes:
- - Fixed: Searching on TV.COM reported too many seasons.
- - Fixed: Error occured when trying to modify an episode twice.
+- Bug fixes:
+ 
+  - Fixed: Searching on TV.COM reported too many seasons.
+  - Fixed: Error occured when trying to modify an episode twice.
 
 
 Version 2.4 Beta 3 (21-jul-2006)
 
- - General improvements:
- - SplitPane added between Plot/Cast/Miscellaneous and Additional Info/Notes.
- - It's now possible to use a look & feel checkbox instead of the regular seen/unseen images.
- - There is no longer a minimum size to the main window.
+- General improvements:
+ 
+  - SplitPane added between Plot/Cast/Miscellaneous and Additional Info/Notes.
+  - It's now possible to use a look & feel checkbox instead of the regular seen/unseen images.
+  - There is no longer a minimum size to the main window.
 
- - Bug fixes:
- - Fixed: Searching on TV.COM gives zero hits. (ID: 1520387).
+- Bug fixes:
+
+  - Fixed: Searching on TV.COM gives zero hits. (ID: 1520387).
 
 
 Version 2.4 Beta 2 (27-jun-2006)
 
- - New:
- - The Notes can be edited in the main window and saved with button in Database menu. The info must be saved beofore the list is changed (new searches, different list).
- - The current database can be closed. 
+- New:
+  
+  - The Notes can be edited in the main window and saved with button in Database menu. The info must be saved beofore the list is changed (new searches, different list).
+  - The current database can be closed. 
 
- - Bug fixes:
- - Fixed: It now actually works with MS Access and HSQLDB. Beta 1 gave bunch of Database errors.
-
- - The compile/run scripts have been updated to include current directory in the classpath. Basically that means it's no longer dependant on a system CLASSPATH variable containing the '.'.
+- Bug fixes:
+ 
+  - Fixed: It now actually works with MS Access and HSQLDB. Beta 1 gave bunch of Database errors.
+  - The compile/run scripts have been updated to include current directory in the classpath. Basically that means it's no longer dependant on a system CLASSPATH variable containing the '.'.
 
 
 Version 2.4 Beta (24-jun-2006)
 
- - New:
- - Queries can be displayed in a tree. (Thanks to Keith)
- - Search function is greatly enhanced (see Advanced_search.txt) (ID: 1486839)
- - Applet version - The MovieManager can now be launched as an applet using Applet.html (ID: 1492012)
+- New:
+  
+  - Queries can be displayed in a tree. (Thanks to Keith)
+  - Search function is greatly enhanced (see Advanced_search.txt) (ID: 1486839)
+  - Applet version - The MovieManager can now be launched as an applet using Applet.html (ID: 1492012)
 
- - General improvements:
- - The date field can contain any character.
- - The entire 'first aired' date is now retrieved from Tv.COM.
- - New option to move 'A ' and 'An' as well as 'The' to the beginning of title.
- - File paths can now be stored relative to the database location. (ID: 1488689)
- - It's now possible to 'lock' the current database so that it will be saved to the config file even though other databases are loaded after. (ID: 1488086)
+- General improvements:
+  
+  - The date field can contain any character.
+  - The entire 'first aired' date is now retrieved from Tv.COM.
+  - New option to move 'A ' and 'An' as well as 'The' to the beginning of title.
+  - File paths can now be stored relative to the database location. (ID: 1488689)
+  - It's now possible to 'lock' the current database so that it will be saved to the config file even though other databases are loaded after. (ID: 1488086)
  
- - Bug fixes:
- - Fixed: The move-'The'-to-the-beginning option is now saved correctly. (ID: 1488084)
- - Fixed: Not able to get info on series with only one season (ID: 1507762)
- - Fixed: The option Load last used list is buggy. (ID: 1488085)
- - Fixed: The Queries function is faulty on MySQL databases. (ID: 1504144)
- - Fixed: RIFF parser could produce OutOfMemoryError (ID: 1511820)
+- Bug fixes:
+  
+  - Fixed: The move-'The'-to-the-beginning option is now saved correctly. (ID: 1488084)
+  - Fixed: Not able to get info on series with only one season (ID: 1507762)
+  - Fixed: The option Load last used list is buggy. (ID: 1488085)
+  - Fixed: The Queries function is faulty on MySQL databases. (ID: 1504144)
+  - Fixed: RIFF parser could produce OutOfMemoryError (ID: 1511820)
 
 
 Version 2.32 (22-apr-2006)
 
- - General improvements/Bug fixes:
- - Fixed Bug: TV.COM not functioning (BugID: 1472873)
- - Fixed Bug: Location is wrong (BugID: 1457214) The path (Location field) to the imported files didn't always match.
- - Fixed Bug: MPAA information not saved (v 2.31) (BugID: 1424372)
- - Fixed Bug: The Country and Language fields could suppress the other General info fields.
-
- - Tooltip text showing aka (Also Known As) titles is now displayed when importing movies from IMDb.
- - Number of record hits in the Queries is now displayed in the title of the panel. (Thanks to Keith)
+- General improvements/Bug fixes:
+  
+  - Fixed Bug: TV.COM not functioning (BugID: 1472873)
+  - Fixed Bug: Location is wrong (BugID: 1457214) The path (Location field) to the imported files didn't always match.
+  - Fixed Bug: MPAA information not saved (v 2.31) (BugID: 1424372)
+  - Fixed Bug: The Country and Language fields could suppress the other General info fields.
+  - Tooltip text showing aka (Also Known As) titles is now displayed when importing movies from IMDb.
+  - Number of record hits in the Queries is now displayed in the title of the panel. (Thanks to Keith)
 
 
 Version 2.31 (31-jan-2006)
 
- - General improvements/Bug fixes:
- - Fixed Bug: An error occured when trying to sort by duration when using a user-defined list.
- - Fixed Bug: Error could occur when updating the database to be v2.3 compatible. 
- - Fixed Bug: When the additional info fields were customized with a different order than the default
- - an error occured when trying to add/edit movies).
+- General improvements/Bug fixes:
+  
+  - Fixed Bug: An error occured when trying to sort by duration when using a user-defined list.
+  - Fixed Bug: Error could occur when updating the database to be v2.3 compatible. 
+  - Fixed Bug: When the additional info fields were customized with a different order than the default
+  - an error occured when trying to add/edit movies).
 
 
 Version 2.3 (29-jan-2006)
 
- - New:
- - Support for MySQL database.
- - Added new fields: 'Also Known As', 'Certification', 'MPAA', 'IMDB runtime', 'Awards'.
- - Extended filter options. Can now use 'AND' and 'OR' when searching.
- - Saving last values on the additional info fields where the info isn't imported from media files.
- - The DivX container is now identified as DivX and not AVI.
- - Will now find the correct duration on openDML AVI files.
-
- - General improvements/Bug fixes:
- - Searching should now be faster as it's now done solely by the database.
- - Fixed Bug: Unable to download covers from IMDb.
- - Fixed Bug: The title of imported movie info would contain a space in the beginning.
- - Fixed Bug: The "order by" setting was not saved correctly.
- - Fixed Bug: Plot contains html code on some IMDb info.
- - Fixed Bug: '&' would appear as '&amp;' in titles imported from tv.com.
- - Fixed bug: The user defined additional info fields (extra info) 
-   wouldn't be properly removed using the remove function. (Bug introduced in v2.2)
- - Hopefully fixed Bug: Infinite loop could occur when obtaining the episodes from tv.com.
+- New:
+  
+  - Support for MySQL database.
+  - Added new fields: 'Also Known As', 'Certification', 'MPAA', 'IMDB runtime', 'Awards'.
+  - Extended filter options. Can now use 'AND' and 'OR' when searching.
+  - Saving last values on the additional info fields where the info isn't imported from media files.
+  - The DivX container is now identified as DivX and not AVI.
+  - Will now find the correct duration on openDML AVI files.
+- General improvements/Bug fixes:
+  
+  - Searching should now be faster as it's now done solely by the database.
+  - Fixed Bug: Unable to download covers from IMDb.
+  - Fixed Bug: The title of imported movie info would contain a space in the beginning.
+  - Fixed Bug: The "order by" setting was not saved correctly.
+  - Fixed Bug: Plot contains html code on some IMDb info.
+  - Fixed Bug: '&' would appear as '&amp;' in titles imported from tv.com.
+  - Fixed bug: The user defined additional info fields (extra info) wouldn't be properly removed using the remove function. (Bug introduced in v2.2)
+  - Hopefully fixed Bug: Infinite loop could occur when obtaining the episodes from tv.com.
 
 
 Version 2.22 (04-Nov-2005)
 
- - General improvements/Bug fixes:
- - Queries function has been optimized and will no longer be slow if there are many hits.
- - Fixed a bug in the extreme movie manager import function, where the info of a movie could be imported to the next movie if the info of the next movie was empty.
- - Delete function has been optimized, and will be a lot faster when deleting more than 10 entries in one go.
+- General improvements/Bug fixes:
+  
+  - Queries function has been optimized and will no longer be slow if there are many hits.
+  - Fixed a bug in the extreme movie manager import function, where the info of a movie could be imported to the next movie if the info of the next movie was empty.   
+  - Delete function has been optimized, and will be a lot faster when deleting more than 10 entries in one go.
 
 
 Version 2.21 (20-Oct-2005)
- - New: 
- - Macintosh support (tested on Mac OS X 10.3.9
 
- - General improvements/fixes:
- - Export function slightly updated - It's not possible to export parts of your collection.
- - Import function is updated to show the progress during import.
- - Extreme movie manager import is improved with language option, and a few bugfixes.
- - Opening browser on Unix/Linux platforms will not lock the application anymore.
- - Cover settings added to Preferences
+- New: 
+  
+  - Macintosh support (tested on Mac OS X 10.3.9
+
+- General improvements/fixes:
+  
+  - Export function slightly updated - It's not possible to export parts of your collection.
+  - Import function is updated to show the progress during import.
+  - Extreme movie manager import is improved with language option, and a few bugfixes.
+  - Opening browser on Unix/Linux platforms will not lock the application anymore.
+  - Cover settings added to Preferences
 
 
 Version 2.2 (26-Sep-2005)
- - New: 
- - Episode functionality for series, with automatic download of episode info from tv.com
- - Import function (3 modes � Simple text, excel and extreme movie manager (v4.5)
- - List functionality
+ 
+- New: 
 
- - General improvements/fixes:
- - Fixed important bug where additional info fields with equal names could be added.
- - Fixed bug where Covers folder couldn't be saved on HSQL database (Thanks to linebaugh).
- - Set multiple entries to seen/unseen
+  - Episode functionality for series, with automatic download of episode info from tv.com
+  - Import function (3 modes � Simple text, excel and extreme movie manager (v4.5)
+  - List functionality
+
+- General improvements/fixes:
+  
+  - Fixed important bug where additional info fields with equal names could be added.
+  - Fixed bug where Covers folder couldn't be saved on HSQL database (Thanks to linebaugh).
+  - Set multiple entries to seen/unseen
 
 
 Version 2.11 (27-Jun-2005)
 
- - General improvements/fixes:
- - 1) AVI bug fixed where the entire file would be parsed if no DivX5/Xvid bitstream version existed. 
- - 2) HSQLDB -> MS Acess conversion would leave out the extension on the access database file. Fixed. 
- - 3) Return/Enter on movie title in the Movie Info window will activate the get IMDB info. If title is empty Get file info is activated. 
- - 4) Double click on movie entry opens Movie Info in Edit mode. 
- - 5) Add/Edit functions is optimized to go a little faster. 
+- General improvements/fixes:
+  
+  - AVI bug fixed where the entire file would be parsed if no DivX5/Xvid bitstream version existed. 
+  - HSQLDB -> MS Acess conversion would leave out the extension on the access database file. Fixed. 
+  - Return/Enter on movie title in the Movie Info window will activate the get IMDB info. If title is empty Get file info is activated. 
+  - Double click on movie entry opens Movie Info in Edit mode. 
+  - Add/Edit functions is optimized to go a little faster. 
 
 
 Version 2.1 (08-Jun-2005)
- - New: 
- - 1) Main window is resizable 
- - 2) DVD and OGM file info support. 
 
- - General improvements/fixes:
- - 1) AVI video bitrate is correct. 
- - 2) Multiple files can now be selected when getting file info. 
- - 3) It should be alot safer to change Look and Feels. 
- - 4) Additional info fields can now be hidden and rearranged. 
+- New: 
+  
+  - Main window is resizable 
+  - DVD and OGM file info support. 
 
- - Note:
- - Old databases needs to be updated and will not be compatible with older versions 
+- General improvements/fixes:
+  
+  - AVI video bitrate is correct. 
+  - Multiple files can now be selected when getting file info. 
+  - It should be alot safer to change Look and Feels. 
+  - Additional info fields can now be hidden and rearranged. 
+
+- Note:
+  
+  - Old databases needs to be updated and will not be compatible with older versions 
 
 
 Version 2.02 (23-Apr-2005)
- - General improvements/fixes: 
- - 1) It's possible to select multiple entries from the movie list to make removing multiple movies easier. 
- - 2) Export feature is slightly updated. You can order output by title, directed by, rating or date. 
- - 3) It's possible to use relative paths for database, queries and covers. (If you need to move the movie manager around). 
+
+- General improvements/fixes: 
+  
+  - It's possible to select multiple entries from the movie list to make removing multiple movies easier. 
+  - Export feature is slightly updated. You can order output by title, directed by, rating or date. 
+  - It's possible to use relative paths for database, queries and covers. (If you need to move the movie manager around). 
 
 
 Version 2.01 (20-Apr-2005)
- - New: 
- - 1) Export function is slightly changed. It's now possible to divide full export list alphabetically. 
+
+- New: 
+  
+  - Export function is slightly changed. It's now possible to divide full export list alphabetically. 
 
 
 Version 2.0 (14-Apr-2005)
- - New: 
- - 1) HSQL database support which runs on Unix/Linux as well as Windows. 
- - 2) Support for custom look and feels. 
- - 3) Extended DivX5/Xvid version detection. 
- - 4) Proxy SOCKS support. 
- - 5) New icons/images has replaced the old ones. 
 
- - General improvements/fixes:
- - 1) Main window is slightly bigger which gives the additional info and notes areas more space. 
- - 2) Fixed yet another bug with the entries. 
+- New: 
+   
+  - HSQL database support which runs on Unix/Linux as well as Windows. 
+  - Support for custom look and feels. 
+  - Extended DivX5/Xvid version detection. 
+  - Proxy SOCKS support. 
+  - New icons/images has replaced the old ones. 
+
+- General improvements/fixes:
+  
+  - Main window is slightly bigger which gives the additional info and notes areas more space. 
+  - Fixed yet another bug with the entries. 
 
 
 Version 1.81 (27-Feb-2005)
- - New: 
- - Proxy support (HTTP). 
 
- - General improvements/fixes:
- - 1) Fixed a few bugs with the multi-add function. 
- - 2) Fixed a bug with the entries. Should now show correct number after deleting and adding movies. 
+- New: 
+  
+  - Proxy support (HTTP). 
+
+- General improvements/fixes:
+  
+  - Fixed a few bugs with the multi-add function. 
+  - Fixed a bug with the entries. Should now show correct number after deleting and adding movies. 
 
 
 Version 1.80 (14-Feb-2005)
- - New: 
- - 1) Multi-add feature. 
- - 2) Three more info fields has been added (Country, Language and Colour). 
- - 3) Layout can now be changed (Three different looks). 
 
- - General improvements/fixes:
- - 1) Search window is no longer modal, which means you do not need to close the search window to be able to search for movies. 
- - 2) Search options and other info is now stored in the config.ini file. 
- - 3) Fixed a bug with the entries. 
+- New: 
+  
+  - Multi-add feature. 
+  - Three more info fields has been added (Country, Language and Colour). 
+  - Layout can now be changed (Three different looks). 
+
+- General improvements/fixes:
+  
+  - Search window is no longer modal, which means you do not need to close the search window to be able to search for movies. 
+  - Search options and other info is now stored in the config.ini file. 
+  - Fixed a bug with the entries. 
 
 
 Version 1.70 (17-Jan-2005)
- - New Advanced Search: 
- - 1) Filter by: Movie Title, Director, Writer, Genre, Cast. 
- - 2) Order by: Movie Title, Director, Date, Rating. 
- - 3) Show only movies: that are Seen/Unseen, with date above/below, with rating above/below. 
 
- - Seen/Unseen can be changed directly in the main movielist, by rightclicking on a selected movie.
- - Number of entries currently in the list is now displayed in the main window.
- - HotKeys has been added to: Add Movie, Remove Movie, Edit Movie and Advanced Search, in Main window.
- - HotKeys has been added to: Save, Get File Info, Get IMDB Info and Cancel, when adding/editing a movie.
+- New: 
+  
+  - Advanced Search: 
+   
+    - Filter by: Movie Title, Director, Writer, Genre, Cast. 
+    - Order by: Movie Title, Director, Date, Rating. 
+    - Show only movies: that are Seen/Unseen, with date above/below, with rating above/below. 
+   
+  - Seen/Unseen can be changed directly in the main movielist, by rightclicking on a selected movie.
+  - Number of entries currently in the list is now displayed in the main window.
+  - HotKeys has been added to: Add Movie, Remove Movie, Edit Movie and Advanced Search, in Main window.
+  - HotKeys has been added to: Save, Get File Info, Get IMDB Info and Cancel, when adding/editing a movie.
 
- - General improvements/fixes:
- - 1) The program now retrives correct codec from .avi files, and an approximate value of the video bitrate. 
- - 2) When searching for movies only the most popular results are shown. More hits can be accessed by pushing "More Titles". 
- - 3) Shortcut to imdb movie site by clicking the image is fixed. 
- - 4) Title field is focused by default when adding and editing movies. 
+
+- General improvements/fixes:
+
+  - The program now retrives correct codec from .avi files, and an approximate value of the video bitrate. 
+  - When searching for movies only the most popular results are shown. More hits can be accessed by pushing "More Titles". 
+  - Shortcut to imdb movie site by clicking the image is fixed. 
+  - Title field is focused by default when adding and editing movies. 
 
 
 Version 1.67 beta (10-Jan-2005)
