@@ -298,23 +298,25 @@
 				includes="${template_files}" />
 
 
-			<zipfileset prefix="MeDs-Movie-Manager-Source" dir="" filemode="755"
+			<zipfileset prefix="MeDs-Movie-Manager-Source" dir=""
 				includes="${infoFiles}">
 				<include name="packaging/" />
 				<include name="makejar.bat" />
 				<include name="compile.bat" />
 				<include name="run.bat" />
 				<include name="SignJar.bat" />
-				<include name="makejar.sh" />
-				<include name="compile.sh" />
-				<include name="run.sh" />
 				<include name="Manifest.txt" />
 				<include name="build.xml" />
 				<include name="So how do I get this thing running.txt" />
 				<include name=".classpath" />
 				<include name=".project" />
-
 				<exclude name="dist/" />
+			</zipfileset>
+			
+			<zipfileset prefix="MeDs-Movie-Manager-Source" dir="" filemode="755">
+							<include name="makejar.sh" />
+							<include name="compile.sh" />
+							<include name="run.sh" />
 			</zipfileset>
 
 		</zip>
