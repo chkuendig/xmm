@@ -44,7 +44,7 @@
 		value="MovieManager.exe, MovieManager.jar, Applet.html, Icon.ico" />
 
 	<property name="infoFiles"
-		value="License/, Readme.txt, Readme.html, Changelog.txt, Changelog.html" />
+		value="License/, Readme.html, Changelog.html" />
 
 	<property name="library_file_list"
 		value="Required-libraries.txt,
@@ -300,6 +300,10 @@
 
 			<zipfileset prefix="MeDs-Movie-Manager-Source" dir=""
 				includes="${infoFiles}">
+				
+			    <include name="Readme.txt" />
+				<include name="Changelog.txt" />
+				<include name="xmm.css" />
 				<include name="packaging/" />
 				<include name="makejar.bat" />
 				<include name="compile.bat" />
