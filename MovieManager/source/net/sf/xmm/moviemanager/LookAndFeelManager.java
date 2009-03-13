@@ -356,6 +356,9 @@ public class LookAndFeelManager {
             } catch (Exception e) {
                 log.error("Exception while loading the OSXAdapter:");
                 e.printStackTrace();
+            } catch (Error e) {
+            	log.error("Exception while loading the OSXAdapter:");
+                e.printStackTrace();
             }
         }
     }
