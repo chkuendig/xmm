@@ -57,10 +57,6 @@ public class HttpUtil {
 	public boolean setUp = false;
 	
 	private HttpClient client = null;
-	//static SimpleHttpConnectionManager connectionManager = null;
-	//static MultiThreadedHttpConnectionManager connectionManager = null;
-	
-	static HttpConnectionManagerParams params = null;
 	private HttpSettings httpSettings = new HttpSettings();
 		
 	public HttpUtil() {setup();}
