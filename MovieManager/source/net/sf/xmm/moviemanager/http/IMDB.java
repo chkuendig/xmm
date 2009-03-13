@@ -309,9 +309,11 @@ public class IMDB /*extends IMDB_if */{
 			if (classInfo.containsKey("Plot:"))
 				plot = getDecodedClassInfo("Plot:", (String) classInfo.get("Plot:"));
 			
-			//if (classInfo.containsKey("Plot:"))
+			
 			cast = getDecodedClassInfo("class=\"cast\">", data);
 			cast = cast.replaceAll(" \\.\\.\\.", ",");
+			cast = HttpUtil.decodeHTML(cast);
+			
 			dataModel.setCast(cast);
 			
 			if (classInfo.containsKey("Also Known As:")) {
@@ -899,13 +901,13 @@ public class IMDB /*extends IMDB_if */{
      * Decodes a html string and returns its unicode string.
      **/
     protected static String decodeCast(String toDecode) {
-
+    	
     	StringBuffer decoded = new StringBuffer();
     	
     	try {
     		try {
     			String [] castSplit = toDecode.split("<td class=\"hs\">");
-    			Pattern p = Pattern.compile("<a href=\"/name/nm\\d+/\">(.+?)</a>.+?<a\\shref=\"/character.+?>(.+?)</a>");
+    			Pattern p = Pattern.compile("<a\\shref=\"/name/nm\\d+/\">(.+?)</a>.+?<td\\sclass=\"char\">(?:<a\\shref=\"/character.+?>)?(.+?)<");
     			
     			for (int i = 0; i < castSplit.length; i++) {
     				
