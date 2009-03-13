@@ -33,7 +33,7 @@
 	<property name="dist" location="dist" />
 	<property name="izpack.dir" location="packaging/izpack" />
 
-	<property name="version" value="2.7.5" />
+	<property name="version" value="2.7.6" />
 	<property name="versionName" value="${version}" />
 
 	<property name="base" value="MovieManager/" />
