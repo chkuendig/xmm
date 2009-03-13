@@ -44,7 +44,7 @@
 		value="MovieManager.exe, MovieManager.jar, Applet.html, Icon.ico" />
 
 	<property name="infoFiles"
-		value="License/, Readme.txt, Readme.html, Changelog.txt" />
+		value="License/, Readme.txt, Readme.html, Changelog.txt, Changelog.html" />
 
 	<property name="library_file_list"
 		value="Required-libraries.txt,
@@ -710,8 +710,9 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
  	    </copy>
 
  	<copy file="Readme.html" todir="${mac-dist}"/>
- 	
-    	<fileset file="*.dmg" />
+ 	<copy file="Changelog.html" todir="${mac-dist}"/>
+ 	 	
+    <fileset file="*.dmg" />
  	
  	<!-- Delete old file  -->
     <delete file="${mac-dist}/${dmg-file}"/>
