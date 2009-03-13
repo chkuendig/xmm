@@ -3,20 +3,78 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
 <title>Changelog - MeD's Movie Manager</title>
 <style type="text/css">
 
 /*
-:Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 5631 2008-08-24 13:01:23Z goodger $
+:Author: David Goodger
+:Contact: goodger@users.sourceforge.net
+:Date: $Date: 2005-12-18 01:56:14 +0100 (Sun, 18 Dec 2005) $
+:Revision: $Revision: 4224 $
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
+Modified by Espen A. Kristiansen and Bro
 
 See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
 customize this style sheet.
 */
+
+
+
+html {
+	 background-color: #F2F5F8;
+}
+
+body {
+	margin: 30px 0px 0px 0px;
+	    
+	
+
+	margin-left: auto; 
+	margin-right: auto;
+
+	width: 746px;
+
+    font-family: Arial, Helvetica, sans-serif;
+    
+    color: #656166;
+	
+    background-color: #ffffff;
+	
+    background-position: center;
+    background-repeat: repeat;
+
+	border: 4px 4px 4px 4px;
+	border-style: groove;
+
+	padding:30px 30px 30px 40px;  
+}
+
+
+h1.title{
+	font-family:sans-serif; font-weight:normal;  font-size:2.1em;
+	padding: 20px 20px 20px 20px;  
+	
+	color:#6DA6E2;
+	background-color: #eef3f8;
+
+	border: 4px 4px 4px 4px;
+	border-style: ridge;
+	margin: 0 0 40px 0;
+
+	text-align: center;
+}
+
+h1{border-bottom: 1px solid #aaa;  color:#a72c2c;
+	font-size:1.6em; margin-top:35px;}
+h2{font-size:1.3em; margin-top:25px;}
+
+h1, h2{
+	font-family:"Georgia",serif;  font-weight:normal;
+	padding:0;}
+
 
 /* used to remove borders from tables and images */
 .borderless, table.borderless td, table.borderless th {
@@ -45,12 +103,14 @@ blockquote.epigraph {
   margin: 2em 5em ; }
 
 dl.docutils dd {
-  margin-bottom: 0.5em }
+	margin-bottom: 0.5em;
+	margin-left: 22px;
+}
 
-/* Uncomment (and remove this text!) to get bold-faced definition list terms
 dl.docutils dt {
-  font-weight: bold }
-*/
+	font-weight: bold;
+	font-size: 0.8em;
+}
 
 div.abstract {
   margin: 2em 5em }
@@ -115,13 +175,14 @@ div.line-block div.line-block {
   margin-left: 1.5em }
 
 div.sidebar {
-  margin: 0 0 0.5em 1em ;
-  border: medium outset ;
+  margin-left: 1em ;
+  border: 3px solid #000;
   padding: 1em ;
-  background-color: #ffffee ;
-  width: 40% ;
-  float: right ;
-  clear: right }
+  background-color: #eee ;
+  width: 80% ;
+  margin: 35px 10% 35px 10%;
+  /*float: right ;
+  clear: right*/ }
 
 div.sidebar p.rubric {
   font-family: sans-serif ;
@@ -148,8 +209,11 @@ h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
 h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
   margin-top: 0.4em }
 
-h1.title {
-  text-align: center }
+/*h1.title {
+	text-align: center;
+	border-bottom: 1px dashed #000;
+	margin: 0 100px 40px 100px;
+}*/
 
 h2.subtitle {
   text-align: center }
@@ -216,11 +280,15 @@ p.topic-title {
 pre.address {
   margin-bottom: 0 ;
   margin-top: 0 ;
-  font: inherit }
+  font-family: serif ;
+  font-size: 100% }
 
 pre.literal-block, pre.doctest-block {
   margin-left: 2em ;
-  margin-right: 2em }
+  margin-right: 2em ;
+  background-color: #eee;
+  border: 1px solid #aaa;
+  padding: 5px;}
 
 span.classifier {
   font-family: sans-serif ;
@@ -277,6 +345,8 @@ h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
 h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
   font-size: 100% }
 
+tt.docutils{color:#7e2121;}
+
 ul.auto-toc {
   list-style-type: none }
 
@@ -285,7 +355,6 @@ ul.auto-toc {
 <body>
 <div class="document" id="changelog-med-s-movie-manager">
 <h1 class="title">Changelog - MeD's Movie Manager</h1>
-
 <p>Version 2.7.6 (14-mar-2009)</p>
 <ul class="simple">
 <li>General improvements:<ul>
