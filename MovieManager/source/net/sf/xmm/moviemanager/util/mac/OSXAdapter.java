@@ -4,7 +4,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 import org.apache.log4j.Logger;
-import org.simplericity.macify.eawt.DefaultApplication;
+//import org.simplericity.macify.eawt.DefaultApplication;
 
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
 import net.sf.xmm.moviemanager.gui.menubar.MovieManagerMenuBar;
@@ -22,7 +22,7 @@ public class OSXAdapter extends ApplicationAdapter {
 	private static OSXAdapter						theAdapter;
 	private static com.apple.eawt.Application		theApplication;
 
-	private static DefaultApplication defaultApplication;
+	//private static DefaultApplication defaultApplication;
 	
 	// reference to the app where the existing quit, about, prefs code is
 	private DialogMovieManager mainApp;
@@ -44,25 +44,32 @@ public class OSXAdapter extends ApplicationAdapter {
 		// displayed as the class name when run not run application bundle
 		//System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MyApplication");
 		
-		if (theApplication == null) {
-			theApplication = new com.apple.eawt.Application();
-			defaultApplication = new DefaultApplication();
-		}      
+		try {
 
-		if (theAdapter == null) {
-			theAdapter = new OSXAdapter(inApp);
+			if (theApplication == null) {
+				theApplication = new com.apple.eawt.Application();
+				//defaultApplication = new DefaultApplication();
+			}      
+
+			if (theAdapter == null) {
+				theAdapter = new OSXAdapter(inApp);
+			}
+
+			// Make sure that the about and preferences buttons in OS X works.
+			theApplication.addApplicationListener(theAdapter);
+
+			Image image = FileUtil.getImage("/images/film.png");
+			BufferedImage bufferedImage = Pictures.toBufferedImage(image);
+
+			// Sets the image in the bottom menu bar in OS x (even though it's NOT run in an application bundle)
+			//defaultApplication.setApplicationIconImage(bufferedImage);
+
+			throw new RuntimeException();
+			
+		} catch (RuntimeException e) {
+			log.warn("Error occured while registering OS X Application:" + e.getMessage());
 		}
-		
-		// Make sure that the about and preferences buttons in OS X works.
-		theApplication.addApplicationListener(theAdapter);
-	
-		Image image = FileUtil.getImage("/images/film.png");
-		BufferedImage bufferedImage = Pictures.toBufferedImage(image);
-		
-		// Sets the image in the bottom menu bar in OS x (even though it's NOT run in an application bundle)
-		defaultApplication.setApplicationIconImage(bufferedImage);
 	}
-
 	// implemented handler methods.  These are basically hooks into existing 
 	// functionality from the main app, as if it came over from another platform.
 	public void handleAbout(ApplicationEvent ae) {
