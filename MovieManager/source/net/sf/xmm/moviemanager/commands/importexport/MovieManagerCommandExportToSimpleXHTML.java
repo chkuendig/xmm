@@ -31,6 +31,7 @@ import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.HTMLEntities;
 
 import org.apache.log4j.Logger;
 
@@ -78,7 +79,7 @@ public class MovieManagerCommandExportToSimpleXHTML {
 				ModelMovie model = (ModelMovie) listModel.elementAt(i);
 
 				imdb = model.getUrlKey();
-				title = model.getTitle()+" ("+ model.getDate() +")";
+				title = HTMLEntities.htmlentities(model.getTitle()) + " ("+ model.getDate() +")";
 
 				if (!imdb.equals("")) {
 					writer.write(
@@ -92,6 +93,7 @@ public class MovieManagerCommandExportToSimpleXHTML {
 			writer.write(
 					"</ol>\n"+
 					"\n"+
+					"</body>" +
 					"<!-- END Movies Description... -->\n"+
 			"</html>\n");
 			writer.close();
