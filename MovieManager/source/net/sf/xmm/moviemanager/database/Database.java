@@ -2715,21 +2715,40 @@ abstract public class Database {
 
 		ArrayList matchValues = new ArrayList(10);
 
-		/* The regular expression will divide by every white space except if (multiple) words are capsulated by " and " or { and } */
+		/* The regular expression will divide by every white space except if (multiple) words are encapsulated by " and " or { and } */
 		//Pattern pattern = Pattern.compile("([\\p{Graph}&&[^\"]]+?)\\s|(\".+?\"+)");
 		//Pattern pattern = Pattern.compile("(\\{.+?\\})|([\\p{Graph}&&[^\"]]+?)\\s|(\".*?\"+)");
 
-		Pattern pattern = Pattern.compile("(\\{.+?\\})|([(\\p{L}|\\d)&&[^\"]]+?)\\s|(\".*?\"+)");
-
+		//Pattern pattern = Pattern.compile("(\\{.+?\\})|([(\\p{L}|\\d)&&[^\"]]+?)\\s|(\".*?\"+)");
+		//Pattern pattern = Pattern.compile("(\\{.+?\\})|([(\\p{Graph}|.)&&[^\"]]+?)\\s|(\".*?\"+)");
+		
+		//\\p{Graph}|\\p{Sc} - supports both Unicode characters as well as currency symbols
+		Pattern pattern = Pattern.compile("(\\{.+?\\})|([(\\p{Graph}|\\p{Sc})&&[^\"]]+?)\\s|(\".*?\"+)");
+			
+		
 		String tmp = "";
-
+	
 		for (Matcher m = pattern.matcher(filter+" "); m.find();) {
 
 			tmp = (m.group(0)).trim();
 
+			System.err.println("tmp:" + tmp);
+			
 			if (tmp.charAt(0) == '"' && tmp.charAt(tmp.length()-1) == '"') {
 				tmp = tmp.substring(1, tmp.length()-1);
 			}
+			
+			if (tmp.indexOf("\\") != -1) {
+				// Need to double escape, first Java, and then regex escape
+				tmp = tmp.replaceAll("\\\\", "\\\\\\\\");
+				System.err.println("new string:" + tmp);
+			}
+			
+			if (tmp.indexOf("%") != -1) {
+				tmp = tmp.replaceAll("%", "\\\\%");
+				System.err.println("new string:" + tmp);
+			}
+			
 			matchValues.add(tmp);
 		}
 
@@ -3022,14 +3041,24 @@ abstract public class Database {
 		}
 
 		Object[] values = getFilterValues(filter);
+		
+		System.err.println("values.length:" + values.length);
+		
+		if (values.length == 0)
+			return null;
+			
 		String filterTemp = processFilterValues(table, filterColumn, values, options, false);
 
+		System.err.println("filterTemp1:" + filterTemp + ":");
+		
 		if (filterTemp == null)
 			return null;
 
 		if ((filterTemp.indexOf(" AND ") != -1) || (filterTemp.indexOf(" OR ") != -1) || (filterTemp.indexOf(" XOR ") != -1))
 			filterTemp = "( "+ filterTemp +") ";
 
+		System.err.println("filterTemp2:" + filterTemp);
+		
 		if (options.where)
 			filter = "AND " + filterTemp;
 		else
@@ -3217,6 +3246,8 @@ abstract public class Database {
 		if (!options.getFilterString().trim().equals("")) {
 			sqlFilter = processFilter(options, where);
 
+			System.err.println("sqlFilter:" + sqlFilter);
+			
 			if (sqlFilter == null)
 				return listModel;
 		}
@@ -3240,10 +3271,10 @@ abstract public class Database {
 
 		sqlQuery += orderBy + ";";
 
-		log.debug("sqlQuery:\n" + sqlQuery);
-
+		PreparedStatement statement = null;
+		
 		try {
-			PreparedStatement statement = _sql.prepareStatement(sqlQuery);
+			statement = _sql.prepareStatement(sqlQuery);
 
 			for (int i = 0; i < options.searchTerms.size(); i++) {
 				statement.setString(i+1, "%" + ((String) options.searchTerms.get(i)) + "%");
@@ -3251,6 +3282,8 @@ abstract public class Database {
 
 			options.searchTerms.clear();
 
+			log.debug("Statement:" + statement);
+			
 			/* Gets the list in a result set... */
 			ResultSet resultSet = statement.executeQuery();
 
@@ -3263,6 +3296,9 @@ abstract public class Database {
 			}
 		} catch (Exception e) {
 			log.error("Exception: ", e);
+			
+			System.err.println("statement:" + statement);
+			
 			checkErrorMessage(e);
 		} finally {
 			/* Clears the Statement in the dataBase... */
