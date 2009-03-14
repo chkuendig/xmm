@@ -2732,8 +2732,6 @@ abstract public class Database {
 
 			tmp = (m.group(0)).trim();
 
-			System.err.println("tmp:" + tmp);
-			
 			if (tmp.charAt(0) == '"' && tmp.charAt(tmp.length()-1) == '"') {
 				tmp = tmp.substring(1, tmp.length()-1);
 			}
@@ -2741,12 +2739,10 @@ abstract public class Database {
 			if (tmp.indexOf("\\") != -1) {
 				// Need to double escape, first Java, and then regex escape
 				tmp = tmp.replaceAll("\\\\", "\\\\\\\\");
-				System.err.println("new string:" + tmp);
 			}
 			
 			if (tmp.indexOf("%") != -1) {
 				tmp = tmp.replaceAll("%", "\\\\%");
-				System.err.println("new string:" + tmp);
 			}
 			
 			matchValues.add(tmp);
@@ -3041,23 +3037,17 @@ abstract public class Database {
 		}
 
 		Object[] values = getFilterValues(filter);
-		
-		System.err.println("values.length:" + values.length);
-		
+				
 		if (values.length == 0)
 			return null;
 			
 		String filterTemp = processFilterValues(table, filterColumn, values, options, false);
-
-		System.err.println("filterTemp1:" + filterTemp + ":");
 		
 		if (filterTemp == null)
 			return null;
 
 		if ((filterTemp.indexOf(" AND ") != -1) || (filterTemp.indexOf(" OR ") != -1) || (filterTemp.indexOf(" XOR ") != -1))
 			filterTemp = "( "+ filterTemp +") ";
-
-		System.err.println("filterTemp2:" + filterTemp);
 		
 		if (options.where)
 			filter = "AND " + filterTemp;
@@ -3245,8 +3235,6 @@ abstract public class Database {
 
 		if (!options.getFilterString().trim().equals("")) {
 			sqlFilter = processFilter(options, where);
-
-			System.err.println("sqlFilter:" + sqlFilter);
 			
 			if (sqlFilter == null)
 				return listModel;
@@ -3296,9 +3284,6 @@ abstract public class Database {
 			}
 		} catch (Exception e) {
 			log.error("Exception: ", e);
-			
-			System.err.println("statement:" + statement);
-			
 			checkErrorMessage(e);
 		} finally {
 			/* Clears the Statement in the dataBase... */
