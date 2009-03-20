@@ -145,9 +145,7 @@ public class IMDbInfoUpdater {
 		final Enumeration enumeration = root.children();
 				
 		lengthOfTask = root.getChildCount();
-
-		int failCounter = 0;
-
+	
 		//final long time = System.currentTimeMillis();
 
 		try {
@@ -165,7 +163,7 @@ public class IMDbInfoUpdater {
 						imdb = new IMDB(MovieManager.getConfig().getHttpSettings());
 
 						while (enumeration.hasMoreElements()) {
-
+							
 							if (canceled)
 								break;
 
@@ -183,19 +181,22 @@ public class IMDbInfoUpdater {
 							if (!model.getHasAdditionalInfoData()) {
 								model.updateAdditionalInfoData();
 							}
-
+	
 							/* wrapping each movie in a thread */
 							Thread t = new Thread(new GetInfo(modelInfo, model, imdb));
 							
 							t.start();
 						}
 						
+						while (threadHandler.getThreadCount() > 0) {
+							Thread.sleep(500);
+						}
+												
 						setDone();
 						
 						log.debug("Done updating list!");
-						
+												
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -204,13 +205,9 @@ public class IMDbInfoUpdater {
 			Thread t = new Thread(threadRunner);
 			t.start();
 			
-			log.debug("Thread count:" + threadHandler.getThreadCount());
-			
 		} catch (Exception e) {
 			log.warn("Exception:" + e.getMessage());
 		}
-		
-		log.debug("Total fails:" + failCounter);
 	}
 
 	class GetInfo extends Thread {
