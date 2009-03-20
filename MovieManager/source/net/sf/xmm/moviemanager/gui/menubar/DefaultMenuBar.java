@@ -238,63 +238,56 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuFile = new JMenu(Localizer.getString("moviemanager.menu.file")); //$NON-NLS-1$
 		menuFile.setMnemonic('F');
 
-
 		/* MenuItem New. */
-		JMenuItem menuItemNew = new JMenuItem(Localizer.getString("moviemanager.menu.file.newdb"),'N'); //$NON-NLS-1$
+		menuItemNew = new JMenuItem(Localizer.getString("moviemanager.menu.file.newdb"),'N'); //$NON-NLS-1$
 		menuItemNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemNew.setActionCommand("New"); //$NON-NLS-1$
 		menuItemNew.addActionListener(new MovieManagerCommandNew());
 
 		menuFile.addSeparator();
 		menuFile.add(menuItemNew);
-		this.menuItemNew = menuItemNew;
 		
 		/* MenuItem Open. */
-		JMenuItem menuItemOpen = new JMenuItem(Localizer.getString("moviemanager.menu.file.opendb"),'O'); //$NON-NLS-1$
+		menuItemOpen = new JMenuItem(Localizer.getString("moviemanager.menu.file.opendb"),'O'); //$NON-NLS-1$
 		menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemOpen.setActionCommand("Open"); //$NON-NLS-1$
 		menuItemOpen.addActionListener(new MovieManagerCommandOpen());
 
 		menuFile.addSeparator();
 		menuFile.add(menuItemOpen);
-		this.menuItemOpen = menuItemOpen;
 		
 		/* MenuItem Close. */
-		JMenuItem menuItemClose = new JMenuItem(Localizer.getString("moviemanager.menu.file.closedb"),'C'); //$NON-NLS-1$
+		menuItemClose = new JMenuItem(Localizer.getString("moviemanager.menu.file.closedb"),'C'); //$NON-NLS-1$
 		menuItemClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, (java.awt.event.InputEvent.SHIFT_MASK | (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))));
 		menuItemClose.setActionCommand("Open"); //$NON-NLS-1$
 		menuItemClose.addActionListener(new MovieManagerCommandCloseDatabase());
 
 		menuFile.addSeparator();
 		menuFile.add(menuItemClose);
-		this.menuItemClose = menuItemClose;
 		
 		/* The Import menuItem. */
-		JMenuItem menuImport = new JMenuItem(Localizer.getString("moviemanager.menu.file.import"),'I'); //$NON-NLS-1$
+		menuImport = new JMenuItem(Localizer.getString("moviemanager.menu.file.import"),'I'); //$NON-NLS-1$
 		menuImport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, (java.awt.event.InputEvent.SHIFT_MASK | (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))));
 		menuImport.addActionListener(new MovieManagerCommandImport());
 
 		menuFile.addSeparator();
 		menuFile.add(menuImport);
-		this.menuImport = menuImport;
-	
+		
 		/* The Export menuItem. */
-		JMenuItem menuExport = new JMenuItem(Localizer.getString("moviemanager.menu.file.export"),'E'); //$NON-NLS-1$
+		menuExport = new JMenuItem(Localizer.getString("moviemanager.menu.file.export"),'E'); //$NON-NLS-1$
 		menuExport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuExport.addActionListener(new MovieManagerCommandExport());
 
 		menuFile.addSeparator();
 		menuFile.add(menuExport);
-		this.menuExport = menuExport;
 		
 		/* MenuItem Exit. */
-		JMenuItem menuItemExit = new JMenuItem(Localizer.getString("moviemanager.menu.file.exit"),'X'); //$NON-NLS-1$
+		menuItemExit = new JMenuItem(Localizer.getString("moviemanager.menu.file.exit"),'X'); //$NON-NLS-1$
 		menuItemExit.setActionCommand("Exit"); //$NON-NLS-1$
 		menuItemExit.addActionListener(new MovieManagerCommandExit());
 
 		menuFile.addSeparator();
 		menuFile.add(menuItemExit);
-		this.menuItemNew = menuItemNew;
 		
 		/* All done. */
 		log.debug("Creation of the File menu done."); //$NON-NLS-1$
