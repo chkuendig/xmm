@@ -384,6 +384,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private boolean checkForProgramUpdates = true;
 	
+	private boolean htmlViewDebugMode = false;
 	
 	private InternalConfig internalConfig = new InternalConfig();
 	
@@ -1660,9 +1661,17 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	public boolean getCheckForProgramUpdates() {
 		return checkForProgramUpdates;
+	}	
+
+	public void setHTMLViewDebugMode(boolean htmlViewDebugMode) {
+		this.htmlViewDebugMode = htmlViewDebugMode;
+	}
+
+	public boolean getHTMLViewDebugMode() {
+		return htmlViewDebugMode;
 	}
 	
-
+	
 	public void setRegularToolButtonsUsed(boolean regularToolBarButtons) {
 		this.regularToolBarButtons = regularToolBarButtons;
 	}
@@ -2909,6 +2918,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setCheckForProgramUpdates(new Boolean(value).booleanValue());
 			}
 			
+			value = (String) config.get("htmlViewDebugMode:");
+
+			if (value != null) {
+				setHTMLViewDebugMode(new Boolean(value).booleanValue());
+			}
+						
 			value = (String) config.get("lastDialogExportType:");
 
 			if (value != null) {
@@ -3406,6 +3421,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 settings.append(lineSeparator);
 		 settings.append("checkForProgramUpdates:" + getCheckForProgramUpdates());
+
+		 settings.append(lineSeparator);
+		 settings.append("htmlViewDebugMode:" + getHTMLViewDebugMode());
 
 		 settings.append(lineSeparator);
 		 settings.append("lastDialogExportType:" + getLastDialogExportType());
