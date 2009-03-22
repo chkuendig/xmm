@@ -63,6 +63,14 @@ public class MovieManagerCommandExport implements ActionListener{
 				exporter = new MovieManagerCommandExportExcel(exportSettings);
 			else if (exportSettings.mode == ModelImportExportSettings.EXPORT_MODE_XML_DATABASE)
 				exporter = new MovieManagerCommandExportXMLDatabase(exportSettings);
+			else if (exportSettings.mode == ModelImportExportSettings.EXPORT_MODE_HTML) {
+			
+				if (exportSettings.getIsHTMLSimpleMode())
+					exporter = new MovieManagerCommandExportToSimpleXHTML(exportSettings.getHTMLTitle());
+				else
+					exporter = new MovieManagerCommandExportToFullHTML(exportSettings.getHTMLAlphabeticSplit(), exportSettings.getHTMLTitle());
+			}
+			
 			
 			if (exporter != null) {
 				try {
@@ -73,6 +81,7 @@ public class MovieManagerCommandExport implements ActionListener{
 
 				if (!exporter.isCancelled()) {
 					final JDialog dialogExorter = new DialogDatabaseImporterExporter(exporter, exportSettings);
+					dialogExorter.setTitle("Exporter");
 					GUIUtil.show(dialogExorter, true);
 				}
 			}
