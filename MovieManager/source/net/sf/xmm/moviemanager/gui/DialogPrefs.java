@@ -166,7 +166,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	private JCheckBox checkForProgramUpdates;
 	private JCheckBox enablePlayButton;	
-
+	private JCheckBox checkEnableHTMLViewDebugMode;
+		
 	private JCheckBox enableSeenEditable;
 	private JCheckBox enableRightclickByCtrl;
 	private JCheckBox enableLoadLastUsedList;
@@ -879,6 +880,15 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		miscCheckBoxes.add(checkForProgramUpdates);
 
+		
+		checkEnableHTMLViewDebugMode = new JCheckBox("Enable debug mode for HTML View"); //$NON-NLS-1$
+
+		if (config.getHTMLViewDebugMode())
+			checkEnableHTMLViewDebugMode.setSelected(true);
+
+		miscCheckBoxes.add(checkEnableHTMLViewDebugMode);
+				
+		
 		enablePlayButton = new JCheckBox("Enable play button in toolbar"); //$NON-NLS-1$
 		enablePlayButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -887,7 +897,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		});
 
 
-		//setDisplayPlayButton(boolean displayPlayButton) {
 		if (config.getDisplayPlayButton())
 			enablePlayButton.setSelected(true);
 
@@ -1652,15 +1661,14 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		/* Display Queries In JTree */
 		config.setUseDisplayQueriesInTree(displayQueriesInTree.isSelected());
-
-		/* Display Queries In JTree */
-		config.setCheckForProgramUpdates(checkForProgramUpdates.isSelected());
-
-		/* Display Queries In JTree */
+	
+		/* Check for updates */
 		config.setCheckForProgramUpdates(checkForProgramUpdates.isSelected());
 
 		config.setDisplayPlayButton(enablePlayButton.isSelected());
 
+		config.setHTMLViewDebugMode(checkEnableHTMLViewDebugMode.isSelected());
+		
 
 		/* rightclick by ctrl */
 		config.setEnableCtrlMouseRightClick(enableRightclickByCtrl.isSelected());
