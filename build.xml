@@ -33,7 +33,7 @@
 	<property name="dist" location="dist" />
 	<property name="izpack.dir" location="packaging/izpack" />
 
-	<property name="version" value="2.7.6" />
+	<property name="version" value="2.7.7" />
 	<property name="versionName" value="${version}" />
 
 	<property name="base" value="MovieManager/" />
@@ -626,7 +626,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 	
 
  <!-- BUILD Mac  -->
- <target name="build-mac" depends="makejar, makeLog4jProperties">
+ <target name="build-mac" depends="makejar, makeLog4jProperties, makeLookAndFeelIni">
 
 	  <echo message="build-mac: ${ant.file}"/>
 
@@ -644,7 +644,8 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
    		<copy file="packaging/mac/resources/JavaApplicationStub" todir="${tempdir}/Contents/MacOS"/>
 
 		<copy file="${dist}/log4j.properties" todir="${tempdir}/Contents/Resources/Java/config"/>
-		
+ 		<copy file="${dist}/lookAndFeels.ini" todir="${tempdir}/Contents/Resources/Java/lib/LookAndFeels/"/>
+ 		 	
 		<copy file="MovieManager/config/MovieManager.tmx" todir="${tempdir}/Contents/Resources/Java/config"/>
     	<copy file="MovieManager/config/castor.properties" todir="${tempdir}/Contents/Resources/Java/config"/>
     	<copy file="MovieManager/config/mapping.xml" todir="${tempdir}/Contents/Resources/Java/config"/>
