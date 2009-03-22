@@ -454,37 +454,6 @@ public class IMDbInfoUpdater {
 			synchronized(this) {
 				wait();
 			}
-		}
-		
-		/*
-		synchronized public void removeElement(Object obj) throws Exception {
-			
-			if (!list.contains(obj))
-				throw new Exception("Mailbox does not contain object " + obj);
-			
-			int index = list.indexOf(obj);
-			
-			list.remove(index);
-		}
-		
-		
-		synchronized public Object pop() throws Exception {
-			
-			if (list.size() == 0)
-				throw new Exception("Mailbox is empty");
-			
-			return list.remove(0);
-		}
-		
-		synchronized public void addElement(Object obj) throws Exception {
-			
-			if (list.contains(obj))
-				throw new Exception("Mailbox already contains object " + obj);
-			
-			list.add(obj);
-		}
-		*/
-		
-	
+		}	
 	}
 }
