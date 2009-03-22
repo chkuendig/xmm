@@ -58,8 +58,8 @@ public class OSXAdapter extends ApplicationAdapter {
 			// Make sure that the about and preferences buttons in OS X works.
 			theApplication.addApplicationListener(theAdapter);
 
-			Image image = FileUtil.getImage("/images/film.png");
-			BufferedImage bufferedImage = Pictures.toBufferedImage(image);
+			//Image image = FileUtil.getImage("/images/film.png");
+			//BufferedImage bufferedImage = Pictures.toBufferedImage(image);
 
 			// Sets the image in the bottom menu bar in OS x (even though it's NOT run in an application bundle)
 			//defaultApplication.setApplicationIconImage(bufferedImage);
