@@ -36,64 +36,103 @@ import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
 
+/**
+ * The Class MovieManagerCommandExportHandler.
+ */
 public abstract class MovieManagerCommandExportHandler implements MovieManagerCommandImportExportHandler {
 
+	/** The log. */
 	static Logger log = Logger.getLogger(MovieManagerCommandExportHandler.class);
 	
+	/** The cancelled. */
 	boolean cancelled = false;
+	
+	/** The aborted. */
 	boolean aborted = false;
 	
+	/** The model movie info. */
 	ModelMovieInfo modelMovieInfo = new ModelMovieInfo(false, true);
+	
+	/** The movie. */
 	ModelMovie movie = null;
 	
+	/** The list to add movie to. */
 	public String listToAddMovieTo = null;
 	
+	/** The movie list. */
 	public ArrayList movieList = null;
 	
 	
+	/* (non-Javadoc)
+	 * @see net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler#setCancelled(boolean)
+	 */
 	public void setCancelled(boolean cancel) {
 		cancelled = cancel;
 		modelMovieInfo.clearModel();
 	}
 		
+	/* (non-Javadoc)
+	 * @see net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler#setAborted(boolean)
+	 */
 	public void setAborted(boolean abort) {
 		aborted = abort;
 	}
 		
+	/* (non-Javadoc)
+	 * @see net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler#isCancelled()
+	 */
 	public boolean isCancelled() {
 		return cancelled;
 	}
 	
+	/* (non-Javadoc)
+	 * @see net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler#isAborted()
+	 */
 	public boolean isAborted() {
 		return aborted;
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler#execute()
+	 */
 	public void execute() throws Exception {};
 	
+	/* (non-Javadoc)
+	 * @see net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler#retrieveMovieList()
+	 */
 	public abstract void retrieveMovieList() throws Exception;
 	
+	/* (non-Javadoc)
+	 * @see net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler#getMovieListSize()
+	 */
 	public abstract int getMovieListSize() throws Exception;
 		
+	/* (non-Javadoc)
+	 * @see net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler#getTitle(int)
+	 */
 	public abstract String getTitle(int i) throws Exception;
 	
+	
+	/* (non-Javadoc)
+	 * @see net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler#addMovie(int)
+	 */
 	public abstract int addMovie(int i) throws Exception;
 	
+	/* (non-Javadoc)
+	 * @see net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler#done()
+	 */
 	public void done() throws Exception {};
 	
 	
 	
 	
-	
-	
-	/*
-	public void setNextModel(ModelMovie model) {
-		modelMovieInfo.setModel(model, true, false);
-	}
-	*/
-	
-	
-    public Object [][] getDatabaseData() {
+    /**
+	 * Gets the database data.
+	 * 
+	 * @return the database data
+	 */
+	public Object [][] getDatabaseData() {
 
 		ArrayList generalInfoFieldNames = MovieManager.getIt().getDatabase().getGeneralInfoMovieFieldNames();
 		ArrayList additionalInfoFieldNames = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
