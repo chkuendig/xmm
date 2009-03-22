@@ -97,6 +97,10 @@ public class ModelImportExportSettings {
     public char csvSeparator = ',';
     public String textEncoding = null;
     
+    public String htmlTitle = null;
+    public boolean htmlAlphabeticSplit = false;
+    public boolean htmlSimpleMode = false;
+    
     public String getFilePath() {
     	return filePath;	
     }
@@ -110,6 +114,18 @@ public class ModelImportExportSettings {
     
     public void setFile(File f) {
     	file = f;
+    }
+    
+    public String getHTMLTitle() {
+    	return htmlTitle;	
+    }
+    
+    public boolean getHTMLAlphabeticSplit() {
+    	return htmlAlphabeticSplit;	
+    }
+        
+    public boolean getIsHTMLSimpleMode() {
+    	return htmlSimpleMode;	
     }
     
     public char getCSVSeparator() {
