@@ -146,15 +146,11 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 				}
 			}
 
-			System.err.println("movieGroup.getSize():" + movieGroup.getSize());
-
 			if (movieGroup.getSize() > 0) {
 				
 				movieGroup.processNext();
 				
-				
 				if (movieGroup.getSize() == 0) {
-					System.err.println("finalzing group " + movieGroup.getTitle());
 					
 					StringBuffer html = movieGroup.getHTMLMovies();
 
@@ -185,9 +181,6 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 					
 					String fName = filepath + movieGroup.getFileName();
 
-					System.err.println("outputfile:" + fName);
-					
-					//FileOutputStream writer = new FileOutputStream(outputFile);
 					FileOutputStream writer = new FileOutputStream(fName);
 
 					writer.write(output.toString().getBytes());
@@ -286,9 +279,6 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 				}
 
 				for (int i = 0; i < groups.length; i++) {
-					
-					System.err.println("groups["+i + "]:" + groups[i]);
-					
 					if (groups[i] != null)
 						movieGroups.add(groups[i]);
 				}
