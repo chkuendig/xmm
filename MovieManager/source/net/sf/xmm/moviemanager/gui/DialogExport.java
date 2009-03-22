@@ -437,6 +437,10 @@ public class DialogExport extends JDialog implements ActionListener {
     		settings.csvSeparator = csvSeparator.getText().trim().charAt(0);
     	    	
     	settings.mode = getExportMode();
+    	    	
+    	settings.htmlTitle = titleTextField.getText();
+    	settings.htmlAlphabeticSplit = enableAlphabeticSplit.isSelected();
+    	settings.htmlSimpleMode = simpleExport.isSelected();
     	
     	switch (settings.mode) {
     	case ModelImportExportSettings.EXPORT_MODE_CSV: {
@@ -481,26 +485,7 @@ public class DialogExport extends JDialog implements ActionListener {
         	
             /* HTMl export */
             if (tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_HTML) {
-               
-            	String title = titleTextField.getText();
-             
-                DefaultListModel listModel;
-                 
-                listModel = MovieManager.getDialog().getCurrentMoviesList();
-                
-                if (simpleExport.isSelected()) {
-                	new MovieManagerCommandExportToSimpleXHTML(title, listModel).execute();
-                }
-                else {
-                	setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                	
-                    if (enableAlphabeticSplit.isSelected())
-                        new MovieManagerCommandExportToFullHTML(true, title, listModel).execute();
-                    else
-                        new MovieManagerCommandExportToFullHTML(false, title, listModel).execute();
-                    
-                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                }
+            	executeSave();
             }
             // CSV or Excel
             else if (tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_CSV || 
