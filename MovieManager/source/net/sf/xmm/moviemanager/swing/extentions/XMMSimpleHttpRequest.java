@@ -238,8 +238,6 @@ public class XMMSimpleHttpRequest implements HttpRequest {
 			throw new IOException("No URL has been provided.");
 		}
 
-		//System.err.println("send content:" + content);
-
 		if(this.isAsync) {
 			// Should use a thread pool instead
 			new Thread("SimpleHttpRequest-" + url.getHost()) {
