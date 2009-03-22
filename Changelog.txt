@@ -4,6 +4,18 @@ Changelog - MeD's Movie Manager
 ========================================
 
 
+Version 2.7.7 (22-mar-2009)
+
+- General improvements:
+
+  - HTML export now opens a dialog showing the progress.
+    
+- Bug fixes:
+
+  - "Update IMDb Info" function now lists all the processed movies correctly.
+  - On OS X, the quit button in system menu and the shortcut is fixed.
+  
+
 Version 2.7.6 (14-mar-2009)
 
 - General improvements:
