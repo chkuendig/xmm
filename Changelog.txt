@@ -663,22 +663,27 @@ Version 1.70 (17-Jan-2005)
 
 
 Version 1.67 beta (10-Jan-2005)
+
  - IMDB changed some of the html structure leaving the movie manager unable to download info on most movies 
 
 
 Version 1.66 beta (10-Feb-2004)
+
  - Added remove confirmation dialog to prevent catastrophes for those of you still using this prototype... 
 
 
 Version 1.65 beta (07-Feb-2004)
+
  - IMDB links structure have changed again (thanks Kica, for noticing me) 
 
 
 Version 1.64 beta (03-Sep-2003)
+
  - IMDB links structure have changed - www.imdb.com/Title?0000000 can now also be www.imdb.com/title/tt000000 
 
 
 Version 1.63 beta (21-Jul-2003)
+
  - Help URLs changed. All pages are now @ SourceForge.net 
  - This program has been discontinued and it will be redesigned, now that I known how to design UIs... It was written has a prototype only. 
  - Feel free to leave your suggestions for the new Movie Manager to come at the Forum. 
@@ -686,19 +691,23 @@ Version 1.63 beta (21-Jul-2003)
 
 
 Version 1.62 beta (29-Jun-2003)
+
  - Bug fix: imdb ID was being lost after editing an existing movie 
 
 
 Version 1.6 beta (17-Jun-2003)
+
  - Source code is now available under the GPL license 
  - Install and source files from this version up are now hosted @ SourceForge.net 
 
 
 Version 1.5 beta (25-May-2003)
+
  - Added IMDB rating to Full HTML Export 
 
 
 Version 1.4 beta (28-Mar-2003)
+
  - The Queries list is now sorted by name 
  - The default queries aren't extracted to the Queries folder anymore, they now stay inside the .jar 
  - If you have installed a previous version, then remove the following files from the Queries folder of each database: 
@@ -714,18 +723,21 @@ Version 1.4 beta (28-Mar-2003)
 
 
 Version 1.3 beta (25-Mar-2003)
+
  - Added 42 new RIFF audio tags support 
  - Added 33 new RIFF audio tags support 
  - "Sum MB" query is now "Sum GB" 
 
 
 Version 1.2 beta (24-Mar-2003)
+
  - Fixed exit bug after database creation failed 
  - Fixed path resolution bug on database creation 
  - Some other minor and user-invisible code changes 
 
 
 Version 1.1 beta (22-Mar-2003)
+
  - Added log file 
  - Version 1.0 beta (18-Mar-2003) - Non Install ZIP File or MSI Install File 
  - You have now an install file for directory and shortcuts creation 
@@ -736,6 +748,7 @@ Version 1.1 beta (22-Mar-2003)
 
 
 Version 0.9 beta (16-Mar-2003) 
+
  - 0x2000 RIFF tag is now "AC3 Dolby Digital" and not "DVM" 
  - Fixed start connection to database bug on some systems 
  - Fixed close connection to database bug 
