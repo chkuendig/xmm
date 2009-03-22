@@ -550,35 +550,44 @@ class HTMLMovieGroup {
 
 				if (!coverFileName.equals("")) {
 
+					coverHeight = 145;
+					
 					/* Creates the output file... */
 					coverOutputFile = new File(coversPath, coverFileName);
-
+	
 					if (!coverOutputFile.createNewFile()) {
 						coverOutputFile.delete();
 					}
-
-					if (MovieManager.getIt().getDatabase().isMySQL()) {
-
-						// Write cover file to disk
-						if (!movie.getHasGeneralInfoData())
-							movie.updateGeneralInfoData(true);
-
-						if (movie.getCoverData() != null) {
-							FileUtil.writeToFile(movie.getCoverData(), coverOutputFile);
-						}
-					}
 					else {
-						/* Verifies that the input file exists... */
-						coverInputFile = new File(coversDBFolder, coverFileName);
+						if (MovieManager.getIt().getDatabase().isMySQL()) {
 
-						if (!coverInputFile.isFile()) {
-							throw new Exception("Cover file not found:" + coverInputFile.getAbsolutePath());
+							// Write cover file to disk
+							if (!movie.getHasGeneralInfoData())
+								movie.updateGeneralInfoData(true);
+
+							if (movie.getCoverData() != null) {
+								FileUtil.writeToFile(movie.getCoverData(), coverOutputFile);
+							}
+							else {
+								coverFileName = nocover;
+								coverHeight = 97;
+								coverOutputFile.delete();
+							}
 						}
+						else {
+							/* Verifies that the input file exists... */
+							coverInputFile = new File(coversDBFolder, coverFileName);
 
-						FileUtil.copyToDir(coverInputFile, new File(coversPath), coverFileName);
-					}
-
-					coverHeight = 145;
+							if (coverInputFile.isFile()) {
+								FileUtil.copyToDir(coverInputFile, new File(coversPath), coverFileName);
+							}
+							else {
+								coverFileName = nocover;
+								coverHeight = 97;
+								coverOutputFile.delete();
+							}
+						}
+					}						
 				} else {
 					coverFileName = nocover;
 					coverHeight = 97;
