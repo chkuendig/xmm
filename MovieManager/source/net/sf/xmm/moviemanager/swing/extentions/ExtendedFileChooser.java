@@ -161,6 +161,12 @@ public class ExtendedFileChooser extends JFileChooser {
 
 			File selectedFile = getSelectedFile();
 			CustomFileFilter fileFilter = (CustomFileFilter) getFileFilter();
+			
+			if (fileFilter == null) {
+				super.approveSelection();
+				return;
+			}
+			
 			String [] extenstions = fileFilter.getExtensions();
 			boolean exists = false;
 			File file = null;
