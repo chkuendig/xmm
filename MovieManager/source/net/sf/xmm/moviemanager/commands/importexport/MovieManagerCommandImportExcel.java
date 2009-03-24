@@ -108,7 +108,7 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportHan
 		modelMovieInfo.setModel((ModelMovie) tmp, false, false);
 
 		try {
-			ret = modelMovieInfo.saveToDatabase(settings.addToThisList).getKey();
+			ret = modelMovieInfo.saveToDatabase(addToThisList).getKey();
 			modelMovieInfo.saveCoverToFile();
 		} catch (Exception e) {
 			log.error("Saving to database failed.", e);
