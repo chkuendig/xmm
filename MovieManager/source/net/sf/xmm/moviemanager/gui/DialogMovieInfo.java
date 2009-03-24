@@ -921,7 +921,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		buttonSaveAndClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-				reloadMovieListAndClose(executeCommandSave(MovieManager.getConfig().getCurrentList()));
+				reloadMovieListAndClose(executeCommandSave(MovieManager.getConfig().getCurrentLists()));
 			}
 		});
 		panelButtons.add(buttonSaveAndClose);
@@ -936,7 +936,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		buttonSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-				reloadMovieList(executeCommandSave(MovieManager.getConfig().getCurrentList()));
+				reloadMovieList(executeCommandSave(MovieManager.getConfig().getCurrentLists()));
 				movieInfoModel.clearModel(true);
 				movieTitle2.requestFocus();
 				
@@ -1734,7 +1734,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 * Saves and exits... If column is not null, the movie should be added to
 	 * the list named column
 	 */
-	public ModelEntry executeCommandSave(String listName) {
+	public ModelEntry executeCommandSave(ArrayList listNames) {
 
 		movieInfoModel._hasReadProperties = false;
 
@@ -1775,7 +1775,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			movieInfoModel.saveAdditionalInfoData();
 	
 			try {
-				movieInfoModel.saveToDatabase(listName);
+				movieInfoModel.saveToDatabase(listNames);
 			} catch (Exception e) {
 				log.error("Saving to database failed.", e);
 			}
