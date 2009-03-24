@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager.models;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
@@ -87,6 +88,9 @@ public class ModelImportExportSettings {
     public boolean overwriteWithImdbInfo = false;
     
     public String addToThisList = null;
+    
+  
+    
     public String skippedListName = "Importer-skipped";
     
     public String filePath = "";
@@ -136,12 +140,11 @@ public class ModelImportExportSettings {
     	return textEncoding;	
     }
     
-      
-    public String getAddToThisList() {
-    	return addToThisList;	
+    public ArrayList getAddToThisList() {
+    	ArrayList l = new ArrayList();
+    	l.add(addToThisList);
+    	return l;
     }
-    
-    
     
 }
 
