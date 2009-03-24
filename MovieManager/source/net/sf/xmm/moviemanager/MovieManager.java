@@ -56,6 +56,7 @@ import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
 import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
+import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedHandler;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewMovieListLoadedHandler;
 import net.sf.xmm.moviemanager.util.FileUtil;
@@ -264,16 +265,22 @@ public class MovieManager {
     	else
     		options.setIncludeAkaTitlesInFilter(false);
 
-
-    	//options.setFilterString(((String) dialogMovieManager.getFilter().getSelectedItem()));
     	options.setFilterString(dialogMovieManager.getFilterString());
     	options.setOrderCategory(config.getSortOption());
     	options.setSeen(config.getFilterSeen());
-    	options.setListName(config.getCurrentList());
-
-    	if (!options.getListName().equals("Show All")) //$NON-NLS-1$
+    	
+    	options.setCurrentListNames(new ArrayList(config.getCurrentLists()));
+	    		
+    	options.setShowUnlistedEntries(config.getShowUnlistedEntries());
+    	    	
+    	// If show all lists and unlisted, the entire thing is disabled because all entries will then be retrieved
+    	if (MovieManager.getIt().getDatabase().getListsColumnNames().size() == 
+    		options.getCurrentListNames().size() && config.getShowUnlistedEntries())
+    		options.setListOption(0);
+    	
+    	else if (options.getCurrentListNames().size() > 0 || config.getShowUnlistedEntries()) 
     		options.setListOption(1);
-
+    	    	
     	options.setRatingOption(config.getRatingOption());
     	options.setRating(config.getRatingValue());
     	options.setDateOption(config.getDateOption());
@@ -424,21 +431,31 @@ public class MovieManager {
     			log.info("Loads the movies list"); //$NON-NLS-1$
 
     			ModelDatabaseSearch options = new ModelDatabaseSearch();
+    			
+    			if (config.getLoadLastUsedListAtStartup()) {
 
-    			if (config.getLoadLastUsedListAtStartup() && !config.getCurrentList().equals("Show All") && _database.listColumnExist(config.getCurrentList())) { //$NON-NLS-1$
+    				ArrayList lists = config.getCurrentLists();
+
+    				for (int i = 0; i < lists.size(); i++) {
+    					if (!_database.listColumnExist((String) lists.get(i))) { //$NON-NLS-1$
+    						lists.remove(i);
+    					}
+
+    					dialogMovieManager.setListTitle();
+    					options.setCurrentListNames(config.getCurrentLists());
+    				}
+
     				options.setListOption(1);
-    				options.setListName(config.getCurrentList());
-    				dialogMovieManager.setListTitle(config.getCurrentList());
     			}
     			else {
     				options.setListOption(0);
-    				dialogMovieManager.setListTitle("Show All"); //$NON-NLS-1$
-    				config.setCurrentList("Show All"); //$NON-NLS-1$
     			}
     			
     			if (_database.getDatabaseType().equals("MySQL"))
     				options.getFullGeneralInfo = false;
-
+    			else
+    				options.getFullGeneralInfo = true;
+    			
     			options.setFilterString(""); //$NON-NLS-1$
     			options.setOrderCategory("Title"); //$NON-NLS-1$
     			options.setSeen(0);
