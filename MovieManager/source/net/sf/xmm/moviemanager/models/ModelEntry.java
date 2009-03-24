@@ -20,6 +20,8 @@
 
 package net.sf.xmm.moviemanager.models;
 
+import java.util.ArrayList;
+
 abstract public class ModelEntry {
 
 	static public String sortCategory = "";
@@ -62,6 +64,33 @@ abstract public class ModelEntry {
 
 	ModelAdditionalInfo additionalInfo = null;
 
+	// which list this entry is a member of
+	ArrayList memberOfLists = new ArrayList();
+	
+	public ArrayList getMemberLists() {
+		return new ArrayList(memberOfLists);
+	}
+	
+	public boolean addToMemberOfList(String listName) {
+		if (memberOfLists.contains(listName))
+			return false;
+		
+		memberOfLists.add(listName);
+		return true;
+	}
+	
+	public boolean isMemberOfList(String listName) {
+		return memberOfLists.contains(listName);
+	}
+	
+	public boolean removeAsMemberOfList(String listName) {
+		if (!memberOfLists.contains(listName))
+			return false;
+		
+		memberOfLists.remove(listName);
+		return true;
+	}
+	
 	public abstract boolean isEpisode();
 
 	public boolean getHasGeneralInfoData() {
