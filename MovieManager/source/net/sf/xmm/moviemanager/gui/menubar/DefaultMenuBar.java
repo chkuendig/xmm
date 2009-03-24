@@ -418,7 +418,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 	}
 
 	public void loadDefaultMenuLists(ArrayList listColumns) {
-		menuLists.loadDefaultMenuLists();
+		menuLists.loadDefaultMenuLists(listColumns);
 	}
 	
 	
@@ -436,10 +436,8 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		}
 
 		
-		public void loadDefaultMenuLists() {
+		public void loadDefaultMenuLists(ArrayList listColumns) {
 
-			ArrayList listColumns = MovieManager.getIt().getDatabase().getListsColumnNames();
-			
 			JMenu menuLists = getMenuLists();
 
 			if (menuLists != null) {
