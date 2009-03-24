@@ -58,6 +58,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -88,7 +89,6 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
 import net.sf.xmm.moviemanager.MovieManagerConfig.InternalConfig;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandFilter;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandLoadList;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandPlay;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.database.Database;
@@ -397,15 +397,43 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     }
        
     
-    public void setListTitle(String title) {
+    public void setListTitle() {
 
     	JPanel moviesList = getPanelMovieList();
-    	moviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-    			" "+ Localizer.getString("moviemanager.listpanel-title") + " - " + title , //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    			TitledBorder.DEFAULT_JUSTIFICATION,
-    			TitledBorder.DEFAULT_POSITION,
-    			new Font(moviesList.getFont().getName(),Font.BOLD, fontSize)),
-    			BorderFactory.createEmptyBorder(0,5,5,5)));
+    	    	
+    	ArrayList lists = config.getCurrentLists();
+        
+        String listsString = "";
+        
+        for (int i = 0; i < lists.size(); i++) {
+        	
+        	if (listsString.length() == 0)
+        		listsString = (String) lists.get(i);
+        	else
+        		listsString += ", " + (String) lists.get(i);
+        }
+        
+        if (config.getShowUnlistedEntries()) {
+        
+        	if (listsString.length() == 0)
+        		listsString += "Unlisted";
+        	else
+        		listsString += ", Unlisted";
+        	
+        }
+        
+        setListTitle(Localizer.getString("moviemanager.listpanel-title") + " - " + listsString);
+    }
+    
+    public void setListTitle(String title) {
+        
+        movieListPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                " "+ title + " ", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                TitledBorder.DEFAULT_JUSTIFICATION,
+                TitledBorder.DEFAULT_POSITION,
+                new Font(movieListPanel.getFont().getName(),Font.BOLD, fontSize)),
+                BorderFactory.createEmptyBorder(0,5,5,5)));
+            	
     }
     
         
@@ -518,45 +546,70 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     }
     
     public void loadMenuLists(Database database) {
-           	
-    	JMenu menuLists = menuBar.getMenuLists();
+    	    	
     	
-        if (database != null && menuLists != null) {
-            
-            String currentList = config.getCurrentList();
-            
-            ArrayList listColumns = database.getListsColumnNames();
-            JRadioButtonMenuItem menuItem;
-            
-            menuLists.removeAll();
-            
-            ButtonGroup group = new ButtonGroup();
-            int indexCounter = 0;
-            
-            while (!listColumns.isEmpty()) {
-                
-                menuItem = new JRadioButtonMenuItem((String) listColumns.get(0));
-                menuItem.setActionCommand((String) listColumns.get(0));
-                menuItem.addActionListener(new MovieManagerCommandLoadList());
-                group.add(menuItem);
-                menuLists.add(menuItem, indexCounter);
-                
-                if (currentList.equals(listColumns.get(0)))
-                    menuItem.setSelected(true);
-                
-                listColumns.remove(0);
-                indexCounter++;
-            }
-            
-            /* Adds 'Show all' in the list */
-            menuItem = new JRadioButtonMenuItem("Show All", true); //$NON-NLS-1$
-            menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-            menuItem.setActionCommand("Show All"); //$NON-NLS-1$
-            menuItem.addActionListener(new MovieManagerCommandLoadList());
-            group.add(menuItem);
-            
-            menuLists.add(menuItem, indexCounter);
-        }
+    	menuBar.loadDefaultMenuLists(null);
+    	
+    //	JMenu menuLists = menuBar.getMenuLists();
+    	
+    //	ArrayList listColumns = database.getListsColumnNames();
+    
+    ///	menuBar.load
+    	
+    	
+//        if (database != null && menuLists != null) {
+//            
+//            ArrayList currentLists = config.getCurrentLists();
+//            
+//            ArrayList listColumns = database.getListsColumnNames();
+//            JCheckBoxMenuItem menuItem;
+//            
+//            menuLists.removeAll();
+//            
+//          //  ButtonGroup group = new ButtonGroup();
+//            int indexCounter = 0;
+//            ArrayList menuItemsList = new ArrayList();
+//            
+//            MovieManagerCommandLoadList listener = new MovieManagerCommandLoadList(menuItemsList);
+//            
+//            while (!listColumns.isEmpty()) {
+//                
+//                menuItem = new JCheckBoxMenuItem((String) listColumns.get(0));
+//                menuItem.setActionCommand((String) listColumns.get(0));
+//                menuItem.addActionListener(listener);
+//              //  group.add(menuItem);
+//                menuLists.add(menuItem /*, indexCounter*/);
+//                
+//                if (currentLists.contains(listColumns.get(0)))
+//                    menuItem.setSelected(true);
+//                
+//                listColumns.remove(0);
+//                indexCounter++;
+//                
+//                menuItemsList.add(menuItem);
+//            }
+//            
+//            menuLists.addSeparator();
+//            
+//            /* Adds 'Show all' in the list */
+//            menuItem = new JCheckBoxMenuItem("Show Unlisted"); //$NON-NLS-1$
+//        //    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+//            menuItem.setActionCommand("Unlisted"); //$NON-NLS-1$
+//            menuItem.addActionListener(listener);
+//            menuLists.add(menuItem/*, indexCounter++*/);
+//            
+//            menuLists.addSeparator();
+//            
+//            /* Adds 'Show all' in the list */
+//            menuItem = new JCheckBoxMenuItem("Show All", true); //$NON-NLS-1$
+//            menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+//            menuItem.setActionCommand("Show All"); //$NON-NLS-1$
+//            menuItem.addActionListener(listener);
+//            //group.add(menuItem);
+//            
+//            menuLists.add(menuItem/*, indexCounter*/);
+//        }
+
     }
     
     
@@ -733,13 +786,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         movieListPanel = new JPanel();
         movieListPanel.setLayout(new GridBagLayout());
         
-        movieListPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                " "+ Localizer.getString("moviemanager.listpanel-title") + " - " + config.getCurrentList() + " ", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.DEFAULT_POSITION,
-                new Font(movieListPanel.getFont().getName(),Font.BOLD, fontSize)),
-                BorderFactory.createEmptyBorder(0,5,5,5)));
-        
+        setListTitle();
         
         GridBagConstraints constraints;
         constraints = new GridBagConstraints();
@@ -1678,61 +1725,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     public ExtendedToolBar getToolBar() {
         return toolBar;
     }
-    
-       
- /*   JMenu getMenuFile1() {
-        return menuBar.getMenuFile();
-    }
-    
-    JMenu getMenuDatabase1() {
-        return menuBar.getMenuDatabase();
-    }
-    
-    JMenu getMenuTools1() {
-        return menuBar.getMenuTools();
-    }
-    
-    JMenu getMenuLists1() {
-        return menuBar.getMenuLists();
-    }
-    
-    JMenu getMenuView1() {
-        return menuBar.getMenuView();
-    }
-    
-    JMenu getMenuHelp1() {
-        return menuBar.getMenuHelp();
-    }
-    
-    JMenu getMenuUpdate1() {
-        return menuBar.getMenuUpdate();
-    }
-        
-   
-       
-    JButton getAddButton1() {
-        return toolBar.getAddButton();
-    }
-    
-    JButton getRemoveButton1() {
-        return toolBar.getRemoveButton();
-    }
-    
-    JButton getEditButton1() {
-        return toolBar.getEditButton();
-    }
-    
-    JButton getSearchButton1() {
-        return toolBar.getSearchButton();
-    }
-    
-    JButton getPlayButton1() {
-        return toolBar.getPlayButton();
-    }
-    
-    JButton getPrintButton1() {
-        return toolBar.getPrintButton();
-    }*/
     
     
     public boolean getPLayButtonVisible() {
