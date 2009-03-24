@@ -215,7 +215,9 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 				}
 
 				try {
-					ModelEntry model = movieInfoModel.saveToDatabase(addToThisList);
+					ArrayList list = new ArrayList();
+					list.add(addToThisList);
+					ModelEntry model = movieInfoModel.saveToDatabase(list);
 					MovieManagerCommandSelect.executeAndReload(model, false, false, false);
 				} catch (Exception e) {
 					log.error("Saving to database failed.", e);
