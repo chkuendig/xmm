@@ -546,70 +546,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     }
     
     public void loadMenuLists(Database database) {
-    	    	
-    	
-    	menuBar.loadDefaultMenuLists(null);
-    	
-    //	JMenu menuLists = menuBar.getMenuLists();
-    	
-    //	ArrayList listColumns = database.getListsColumnNames();
-    
-    ///	menuBar.load
-    	
-    	
-//        if (database != null && menuLists != null) {
-//            
-//            ArrayList currentLists = config.getCurrentLists();
-//            
-//            ArrayList listColumns = database.getListsColumnNames();
-//            JCheckBoxMenuItem menuItem;
-//            
-//            menuLists.removeAll();
-//            
-//          //  ButtonGroup group = new ButtonGroup();
-//            int indexCounter = 0;
-//            ArrayList menuItemsList = new ArrayList();
-//            
-//            MovieManagerCommandLoadList listener = new MovieManagerCommandLoadList(menuItemsList);
-//            
-//            while (!listColumns.isEmpty()) {
-//                
-//                menuItem = new JCheckBoxMenuItem((String) listColumns.get(0));
-//                menuItem.setActionCommand((String) listColumns.get(0));
-//                menuItem.addActionListener(listener);
-//              //  group.add(menuItem);
-//                menuLists.add(menuItem /*, indexCounter*/);
-//                
-//                if (currentLists.contains(listColumns.get(0)))
-//                    menuItem.setSelected(true);
-//                
-//                listColumns.remove(0);
-//                indexCounter++;
-//                
-//                menuItemsList.add(menuItem);
-//            }
-//            
-//            menuLists.addSeparator();
-//            
-//            /* Adds 'Show all' in the list */
-//            menuItem = new JCheckBoxMenuItem("Show Unlisted"); //$NON-NLS-1$
-//        //    menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-//            menuItem.setActionCommand("Unlisted"); //$NON-NLS-1$
-//            menuItem.addActionListener(listener);
-//            menuLists.add(menuItem/*, indexCounter++*/);
-//            
-//            menuLists.addSeparator();
-//            
-//            /* Adds 'Show all' in the list */
-//            menuItem = new JCheckBoxMenuItem("Show All", true); //$NON-NLS-1$
-//            menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-//            menuItem.setActionCommand("Show All"); //$NON-NLS-1$
-//            menuItem.addActionListener(listener);
-//            //group.add(menuItem);
-//            
-//            menuLists.add(menuItem/*, indexCounter*/);
-//        }
-
+    	ArrayList listColumns = database.getListsColumnNames();
+    	menuBar.loadDefaultMenuLists(listColumns);
     }
     
     
