@@ -41,6 +41,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -632,8 +633,12 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
 						if (database.isInitialized()) {
 
-							MovieManager.getConfig().setCurrentList("Show All"); //$NON-NLS-1$
+							//MovieManager.getConfig().setCurrentList("Show All"); //$NON-NLS-1$
 
+							// Clear list of lists
+							MovieManager.getConfig().setCurrentLists(new ArrayList());
+							MovieManager.getConfig().setShowUnlistedEntries(true);	
+							
 							/* Loads the database... */
 							updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.retrieving-movie-list")); //$NON-NLS-1$
 							MovieManager.getIt().setDatabase(database, true);
