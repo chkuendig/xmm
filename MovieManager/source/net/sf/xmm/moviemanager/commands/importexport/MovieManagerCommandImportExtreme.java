@@ -236,7 +236,7 @@ public class MovieManagerCommandImportExtreme extends MovieManagerCommandImport 
         }
      
         try {
-            ret = (modelMovieInfo.saveToDatabase(importSettings.addToThisList)).getKey();
+            ret = (modelMovieInfo.saveToDatabase(importSettings.getAddToThisList())).getKey();
         } catch (Exception e) {
             log.error("Saving to database failed.", e);
         }
