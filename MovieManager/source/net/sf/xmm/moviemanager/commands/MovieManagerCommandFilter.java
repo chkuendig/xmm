@@ -85,8 +85,8 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 		else {
 			ModelDatabaseSearch options = MovieManager.getIt().getFilterOptions();
 
-			if (options.getListName() != null && !"".equals(options.getListName()))
-				listModel = database.getMoviesList("Title", options.getListName());
+			if (options.getCurrentListNames() != null && options.getCurrentListNames().size() > 0)
+				listModel = database.getMoviesList("Title", options.getCurrentListNames());
 			else
 				listModel = database.getMoviesList("Title");
 		}
