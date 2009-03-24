@@ -1,5 +1,7 @@
 package net.sf.xmm.moviemanager.gui.menubar;
 
+import java.util.ArrayList;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -19,7 +21,10 @@ public interface MovieManagerMenuBar {
 	JMenu getMenuFile();
 	JMenu getMenuDatabase();
 	JMenu getMenuTools();
-	JMenu getMenuLists(); 
+	JMenu getMenuLists();
+	
+	public void loadDefaultMenuLists(ArrayList listColumns);
+	
 	JMenu getMenuView(); 
 	JMenu getMenuHelp(); 
 	JMenu getMenuUpdate();
