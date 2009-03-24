@@ -99,6 +99,9 @@ abstract public class Database {
 
 	ArrayList extraInfoFieldNames = null;
 
+	// Used when finding which lists a movie is memeber of.
+	public static final String listsAliasPrefix = "lists_";
+	
 	/**
 	 * The constructor. Initialized _sql;
 	 *
@@ -852,17 +855,23 @@ abstract public class Database {
 	}
 
 
+	ArrayList listsColumnNames = null;
+	
 	/**
-	 * Returns the extra info field names in a ArrayList.
+	 * Returns the names of the columns in the lists table.
 	 **/
 	public ArrayList getListsColumnNames() {
-		ArrayList list = new ArrayList();
+		
+		if (listsColumnNames != null)
+			return new ArrayList(listsColumnNames);
+		
+		listsColumnNames = new ArrayList();
 		try {
 			ResultSetMetaData metaData = _sql.executeQuery("SELECT "+ quote + "Lists" +quote + ".* FROM "+ quote + "Lists"+ quote + " WHERE 1=0;").getMetaData();
 
 			for (int i = 1; i <= metaData.getColumnCount(); i++) {
 				if (!metaData.getColumnName(i).equalsIgnoreCase("ID")) {
-					list.add(metaData.getColumnName(i));
+					listsColumnNames.add(metaData.getColumnName(i));
 				}
 			}
 
@@ -878,7 +887,7 @@ abstract public class Database {
 			}
 		}
 		/* Returns the list model... */
-		return list;
+		return new ArrayList(listsColumnNames);
 	}
 
 	public int getExtraInfoColumnCount() {
@@ -2232,12 +2241,13 @@ abstract public class Database {
 
 
 	/**
-	 * Adds and Extra Info field from the database with name field
-	 * and returns number of updated rows (none (-1)...).
+	 * Adds a new column to the Lists table
 	 **/
 	public int addListsColumn(String field) {
 		int value = 0;
 
+		listsColumnNames = null;
+		
 		String fieldType = "BOOLEAN";
 
 		if (this instanceof DatabaseAccess)
@@ -2267,6 +2277,8 @@ abstract public class Database {
 	 **/
 	public int removeListsColumn(String field) {
 
+		listsColumnNames = null;
+		
 		int value = 0;
 		try {
 			value = _sql.executeUpdate("ALTER TABLE " + quote + "Lists" + quote + " "+
@@ -2569,7 +2581,7 @@ abstract public class Database {
 
 
 
-	public String getMoviesSelectStatement() {
+	public String getMoviesSelectStatement2() {
 
 		String select = "SELECT \"General Info\".\"ID\", "+
 		"\"General Info\".\"Imdb\", "+
@@ -2597,12 +2609,110 @@ abstract public class Database {
 
 		return select;
 	}
+	
+	public String getMoviesSelectStatement() {
 
+		StringBuffer buf = new StringBuffer();
+		
+		buf.append("SELECT " + quotedGeneralInfoString + ".\"ID\", " +
+		quotedGeneralInfoString + ".\"Imdb\", "+
+		quotedGeneralInfoString + ".\"Cover\", "+
+		quotedGeneralInfoString + ".\"Date\", "+
+		quotedGeneralInfoString + ".\"Title\", "+
+		quotedGeneralInfoString + ".\"Directed By\", "+
+		quotedGeneralInfoString + ".\"Written By\", "+
+		quotedGeneralInfoString + ".\"Genre\", "+
+		quotedGeneralInfoString + ".\"Rating\", "+
+		quotedGeneralInfoString + ".\"Plot\", "+
+		quotedGeneralInfoString + ".\"Cast\", "+
+		quotedGeneralInfoString + ".\"Notes\", "+
+		quotedGeneralInfoString + ".\"Seen\", "+
+		quotedGeneralInfoString + ".\"Aka\", "+
+		quotedGeneralInfoString + ".\"Country\", "+
+		quotedGeneralInfoString + ".\"Language\", "+
+		quotedGeneralInfoString + ".\"Colour\", "+
+		quotedGeneralInfoString + ".\"Certification\", "+
+		quotedGeneralInfoString + ".\"Mpaa\", "+
+		quotedGeneralInfoString + ".\"Sound Mix\", "+
+		quotedGeneralInfoString + ".\"Web Runtime\", "+
+		quotedGeneralInfoString + ".\"Awards\" ");
+		
+		ArrayList lists = getListsColumnNames();
+		
+		if (lists != null && lists.size() > 0) {
+			
+			for (int i = 0; i < lists.size(); i++)
+				buf.append(", \"Lists\".\""+ lists.get(i) +"\" AS \"" + listsAliasPrefix + lists.get(i) + "\" ");
+		}	
+	
+		buf.append("FROM " + quotedGeneralInfoString + " ");
+
+		return buf.toString();
+	}
+
+	
+	
+	
+	 public DefaultListModel getMoviesList(String orderBy) {
+		    
+	    	ModelDatabaseSearch options = new ModelDatabaseSearch();
+	    	
+	    	options.setOrderCategory(orderBy);
+	    	options.setListOption(0);
+	    	
+	    	DefaultListModel list = getMoviesList(options);
+	    	    	
+	    	/*
+	    	DefaultListModel list2 = getDatabase().getMoviesList(orderBy);
+	    	
+	    	if (list.size() != list2.size())
+	    		System.err.println("list("+list.size()+") and list2(" + list2.size() + ") differ in size!");
+	    	
+	    	for (int i = 0; i < list.size(); i++) {
+	    		if (!(((ModelMovie)list.get(i)).getTitle()).equals(((ModelMovie)list2.get(i)).getTitle()))
+	    			System.err.println(list.get(i) + " differ with "+ list2.get(i));
+	    	}
+	    	*/
+	    	
+	    	return list;
+	    }
+	  
+	    public DefaultListModel getMoviesList(String orderBy, ArrayList lists, boolean showUnlistedMovies) {
+	    	
+	    	ModelDatabaseSearch options = new ModelDatabaseSearch();
+	    	
+	    	options.setOrderCategory(orderBy);
+	    	options.setCurrentListNames(lists);
+	    	options.setShowUnlistedEntries(showUnlistedMovies);
+	    	
+	    	if (lists.size() > 0 || showUnlistedMovies)
+	    		options.setListOption(1);
+	    		
+	    	DefaultListModel list = getMoviesList(options);
+	    	
+	    	/*
+	    	DefaultListModel list2 = getDatabase().getMoviesList(orderBy);
+	    	
+	    	if (list.size() != list2.size())
+	    		System.err.println("list("+list.size()+") and list2(" + list2.size() + ") differ in size!");
+	    	
+	    	for (int i = 0; i < list.size(); i++) {
+	    		if (!(((ModelMovie)list.get(i)).getTitle()).equals(((ModelMovie)list2.get(i)).getTitle()))
+	    			System.err.println(list.get(i) + " differ with "+ list2.get(i));
+	    	}
+	    	*/
+	    	return list;
+	    	
+	    }
+	
+	
+	
+	
 	/**
 	 * Returns a List of MovieModels that contains all the movies in the
 	 * current database sorted by the orderBy string.
 	 **/
-	public DefaultListModel getMoviesList(String orderBy) {
+	public DefaultListModel getMoviesList1(String orderBy) {
 
 		DefaultListModel listModel = new DefaultListModel();
 
@@ -2624,7 +2734,14 @@ abstract public class Database {
 
 			/* Processes the result set till the end... */
 			while (resultSet.next()) {
-				listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
+				listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), 
+						resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"),
+						resultSet.getString("Directed By"), resultSet.getString("Written By"), 
+						resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"),
+						resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), 
+						resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), 
+						resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"),
+						resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
 			}
 		} catch (Exception e) {
 			log.error("Exception: ", e);
@@ -2647,7 +2764,7 @@ abstract public class Database {
 	 * Returns a List of MovieModels that contains all the movies in the
 	 * current database sorted by the orderBy string.
 	 **/
-	public DefaultListModel getMoviesList(String orderBy, String listsColumn) {
+	public DefaultListModel getMoviesList1(String orderBy, String listsColumn) {
 
 		DefaultListModel listModel = new DefaultListModel();
 
@@ -2688,7 +2805,14 @@ abstract public class Database {
 
 			/* Processes the result set till the end... */
 			while (resultSet.next()) {
-				listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
+				listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), 
+						resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), 
+						resultSet.getString("Directed By"), resultSet.getString("Written By"), 
+						resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), 
+						resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), 
+						resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), 
+						resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"),
+						resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
 			}
 		} catch (Exception e) {
 			log.error("Exception: ", e);
@@ -3000,7 +3124,7 @@ abstract public class Database {
 		}
 
 		/* Remove all double white space */
-		filter = removeDoubleSpace(filter);
+		//filter = removeDoubleSpace(filter);
 
 		filter = filter.trim();
 
@@ -3075,39 +3199,41 @@ abstract public class Database {
 		String orderBy = options.getOrderCategory();
 		String joinTemp = "";
 
-		if (databaseType.equals("MSAccess") && ((options.getListOption() == 1) || orderBy.equals("Duration") || (filter.indexOf(additionalInfoString) != -1) || (filter.indexOf(extraInfoString) != -1))) {
-			orderBy = "\"Additional Info\".\"Duration\"";
-
+		if (databaseType.equals("MSAccess") && 
+				((options.getListOption() == 1) || orderBy.equals("Duration") || 
+						(filter.indexOf(additionalInfoString) != -1) || (filter.indexOf(extraInfoString) != -1))) {
+			
+			//orderBy = "\"Additional Info\".\"Duration\"";
+			
+			joinTemp = "\"General Info\" INNER JOIN \"Lists\" ON \"General Info\".ID=\"Lists\".ID ";
+						
 			if (orderBy.equals("Duration") || filter.indexOf(additionalInfoString) != -1)
-				joinTemp = "\"General Info\" INNER JOIN \"Additional Info\" ON \"General Info\".ID=\"Additional Info\".ID ";
-
-			if (options.getListOption() == 1) {
-
-				if (joinTemp.equals(""))
+				//joinTemp = "\"General Info\" INNER JOIN \"Additional Info\" ON \"General Info\".ID=\"Additional Info\".ID ";
+				joinTemp += "INNER JOIN ("+ joinTemp +") ON \"Additional Info\".ID=\"General Info\".ID ";
+			
+			/*
+			if (joinTemp.equals(""))
 					joinTemp += "\"General Info\" INNER JOIN \"Lists\" ON \"General Info\".ID=\"Lists\".ID ";
-				else
-					joinTemp += "INNER JOIN ("+ joinTemp +") ON \"General Info\".ID=\"Additional Info\".ID ";
-			}
-
+			else
+				joinTemp += "INNER JOIN ("+ joinTemp +") ON \"General Info\".ID=\"Lists\".ID ";
+			 */
+			
 			if (filter.indexOf(extraInfoString) != -1) {
 
-				if (joinTemp.equals(""))
-					joinTemp += "\"General Info\" INNER JOIN \"Extra Info\" ON \"General Info\".ID=\"Extra Info\".ID ";
-				else
+				//if (joinTemp.equals(""))
+					//joinTemp += "\"General Info\" INNER JOIN \"Extra Info\" ON \"General Info\".ID=\"Extra Info\".ID ";
+				//else
 					joinTemp += "INNER JOIN ("+ joinTemp +") ON \"General Info\".ID=\"Extra Info\".ID ";
 			}
-
+			
 			selectAndJoin += joinTemp;
 		}
 		else {
 
-			if (options.getListOption() == 1) {
-				selectAndJoin += "INNER JOIN "+ quote+ "Lists"+ quote+ " ON "+ quotedGeneralInfoString + ".ID = " + quote + "Lists" + quote + ".ID ";
-			}
-
+			selectAndJoin += "INNER JOIN "+ quote+ "Lists"+ quote+ " ON "+ quotedGeneralInfoString + ".ID = " + quote + "Lists" + quote + ".ID ";
+			
 			if (orderBy.equals("Duration") || filter.indexOf(additionalInfoString) != -1) {
 				orderBy = quotedAdditionalInfoString + "." + quote + "Duration" + quote;
-				//sqlQuery += "INNER JOIN \"Additional Info\" ON \"General Info\".ID = \"Additional Info\".ID ";
 				selectAndJoin += "INNER JOIN "+ quotedAdditionalInfoString + " ON "+ quotedGeneralInfoString + ".ID = "+ quotedAdditionalInfoString +".ID ";
 			}
 
@@ -3126,20 +3252,69 @@ abstract public class Database {
 	private String processAdvancedOptions(ModelDatabaseSearch options) {
 
 		String sqlQuery = "";
-		String listColumn = quote + options.getListName() + quote;
+		ArrayList currentLists = options.getCurrentListNames();
 		int option = 0;
 
 		/* List */
-		if ((option = options.getListOption()) == 1 && !listColumn.equals("")) {
-
+		if ((option = options.getListOption()) == 1) {
+	
+			
 			if (!options.where)
 				sqlQuery += "WHERE ";
 
-			sqlQuery += quote + "Lists"+ quote + "." + listColumn + "=1 ";
+			if (currentLists.size() > 0) {
 
+				sqlQuery += "(";
+				
+				for (int i = 0; i < currentLists.size(); i++) {
+
+					if (i > 0)
+						sqlQuery += " OR ";
+
+					sqlQuery += quote + "Lists"+ quote + "." +quote+ currentLists.get(i) +quote+ "=1 ";
+				}
+
+				sqlQuery += ")";
+			}
+			
+			if (options.getShowUnlistedEntries()) {
+				
+				ArrayList listNames = getListsColumnNames();
+
+				if (listNames.size() > 0) {
+
+					if (currentLists.size() > 0)
+						sqlQuery += " OR ";
+
+					sqlQuery += "(";
+
+					for (int i = 0; i < listNames.size(); i++) {
+
+						if (i > 0)
+							sqlQuery += " AND ";
+
+						//String coalesce = "COALESCE( ";
+						
+						//Nz(Value, [ValueIfNull])
+						
+						//listsAliasPrefix + lists.get(i)
+						//sqlQuery += "COALESCE(" + quote + "Lists"+ quote + "." +quote+ listNames.get(i) +quote+ ",0) = <> 1 ";
+						//sqlQuery += quote + "Lists"+ quote + "." +quote+ listNames.get(i) +quote+ " <> 1 ";
+						
+						//sqlQuery += "COALESCE(\"" + listsAliasPrefix + listNames.get(i) + "\",0)<>1 ";
+						
+						// must use a function to handle possible null values
+						sqlQuery += "COALESCE(\"Lists\".\"" + listNames.get(i) + "\",false)<>1 ";
+						
+					}
+
+					sqlQuery += ")";
+				}
+			}
+		
 			options.where = true;
-		}
-
+		}	
+		
 		/* seen */
 		if ((option = options.getSeen()) > 1) {
 
@@ -3202,7 +3377,7 @@ abstract public class Database {
 						sqlQuery += "(Val(Date) >= "+ date +") ";
 					else
 						sqlQuery += "(Val(Date) <= "+ date +") ";
-				}
+				}	
 				else {
 					if (option == 2)
 						sqlQuery += "(" +quote+ "Date" +quote+ " >= "+ date +") ";
@@ -3213,6 +3388,7 @@ abstract public class Database {
 				options.where = true;
 			}
 		}
+		
 		return sqlQuery;
 	}
 
@@ -3243,6 +3419,8 @@ abstract public class Database {
 		/* Sets the right table joins */
 		String selectAndJoin = setTableJoins(sqlFilter, options);
 
+		
+		
 		String sqlQuery = selectAndJoin + " " + sqlAdcanvedOptions + " " + sqlFilter + " ";
 
 		String orderBy = options.getOrderCategory();
@@ -3277,10 +3455,41 @@ abstract public class Database {
 
 			/* Processes the result set till the end... */
 			while (resultSet.next()) {
-				if (options.getFullGeneralInfo)
-					listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
-				else
-					listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Title"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date")));
+				ModelMovie model;
+								
+				if (options.getFullGeneralInfo) {
+					model = new ModelMovie(resultSet.getInt("ID"), 
+							resultSet.getString("Imdb"), resultSet.getString("Cover"), 
+							resultSet.getString("Date"), resultSet.getString("Title"), 
+							resultSet.getString("Directed By"), resultSet.getString("Written By"), 
+							resultSet.getString("Genre"), resultSet.getString("Rating"), 
+							resultSet.getString("Plot"), resultSet.getString("Cast"),
+							resultSet.getString("Notes"), resultSet.getBoolean("Seen"), 
+							resultSet.getString("Aka"), resultSet.getString("Country"),
+							resultSet.getString("Language"), resultSet.getString("Colour"),
+							resultSet.getString("Certification"), resultSet.getString("Mpaa"),
+							resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"),
+							resultSet.getString("Awards"));
+				}
+				else {
+					model = new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Title"),
+							resultSet.getString("Imdb"), resultSet.getString("Cover"), 
+							resultSet.getString("Date"));
+				}
+								
+				ArrayList listNames = getListsColumnNames();
+				int count = listNames.size();
+				
+				if (count > 0) {
+					
+					for (int i = 0; i < count; i++) {
+						
+						if (resultSet.getBoolean(listsAliasPrefix + listNames.get(i)))
+							model.addToMemberOfList((String) listNames.get(i));
+					}
+				}
+				listModel.addElement(model);
+				
 			}
 		} catch (Exception e) {
 			log.error("Exception: ", e);
@@ -3297,24 +3506,10 @@ abstract public class Database {
 		return listModel;
 	}
 
-	String removeDoubleSpace(String searchString) {
-
-		int index;
-
-		/*Removes all double spaces*/
-		while ((index = searchString.indexOf("  ")) != -1) {
-			searchString = removeCharAt(searchString, index);
-		}
-
-		return searchString;
-	}
-
-	static String removeCharAt(String s, int pos) {
-		return s.substring(0,pos)+s.substring(pos+1);
-	}
+	
 
 	/**
-	 * Returns a DefaultListModel that contains all the movies in the
+	 * Returns an ArrayList that contains all the movies in the
 	 * current database.
 	 **/
 	public ArrayList getEpisodeList(String orderBy) {
@@ -3352,7 +3547,18 @@ abstract public class Database {
 
 			/* Processes the result set till the end... */
 			while (resultSet.next()) {
-				list.add(new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), /*resultSet.getString("Mpaa"),*/ resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
+				list.add(new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), 
+						resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), 
+						resultSet.getString("Cover"), resultSet.getString("Date"), 
+						resultSet.getString("Title"), resultSet.getString("Directed By"), 
+						resultSet.getString("Written By"), resultSet.getString("Genre"), 
+						resultSet.getString("Rating"), resultSet.getString("Plot"), 
+						resultSet.getString("Cast"), resultSet.getString("Notes"), 
+						resultSet.getBoolean("Seen"), resultSet.getString("Aka"), 
+						resultSet.getString("Country"), resultSet.getString("Language"), 
+						resultSet.getString("Colour"), resultSet.getString("Certification"), 
+						/*resultSet.getString("Mpaa"),*/ resultSet.getString("Sound Mix"), 
+						resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
 			}
 		} catch (Exception e) {
 			log.error("Exception: ", e);
@@ -3378,6 +3584,7 @@ abstract public class Database {
 
 		try {
 			String sqlQuery = getMoviesSelectStatement();
+			
 			sqlQuery += " WHERE \"General Info\".\"ID\"="+index+";";
 
 			/* Gets the list in a result set... */
@@ -3385,7 +3592,28 @@ abstract public class Database {
 
 			/* Processes the result set till the end... */
 			if (resultSet.next()) {
-				movie = new ModelMovie(resultSet.getInt("id"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards"));
+				movie = new ModelMovie(resultSet.getInt("id"), resultSet.getString("Imdb"), 
+						resultSet.getString("Cover"), resultSet.getString("Date"), 
+						resultSet.getString("Title"), resultSet.getString("Directed By"), 
+						resultSet.getString("Written By"), resultSet.getString("Genre"), 
+						resultSet.getString("Rating"), resultSet.getString("Plot"),
+						resultSet.getString("Cast"), resultSet.getString("Notes"), 
+						resultSet.getBoolean("Seen"), resultSet.getString("Aka"), 
+						resultSet.getString("Country"), resultSet.getString("Language"),
+						resultSet.getString("Colour"), resultSet.getString("Certification"),
+						resultSet.getString("Mpaa"), resultSet.getString("Sound Mix"), 
+						resultSet.getString("Web Runtime"), resultSet.getString("Awards"));
+				
+				ArrayList listNames = getListsColumnNames();
+				int count = listNames.size();
+				
+				if (count > 0) {
+										
+					for (int i = 0; i < count; i++) {
+						if (resultSet.getBoolean(listsAliasPrefix + listNames.get(i)))
+							movie.addToMemberOfList((String) listNames.get(i));
+					}
+				}
 			}
 
 		} catch (Exception e) {
@@ -3492,220 +3720,6 @@ abstract public class Database {
 		boolean data = getBoolean("SELECT \"Lists\".\""+name+"\" "+
 				"FROM \"Lists\" "+
 				"WHERE \"Lists\".\"ID\"="+index+";", name);
-		/* Returns the data... */
-		return data;
-	}
-
-
-
-
-
-	/* Following methods are not used and are implemented in MySQL */
-
-
-	/**
-	 * Returns the title with index index...
-	 **/
-	public String getMovieTitle2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Title\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Title");
-		/* Returns the data... */
-		return data;
-	}
-
-	/**
-	 * Returns the cover with index index...
-	 **/
-	public String getCover2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Cover\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Cover");
-		/* Returns the data... */
-		return data;
-	}
-
-	/**
-	 * Returns the imdb with index index...
-	 **/
-	public String getUrlKey2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Imdb\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Imdb");
-		/* Returns the data... */
-		return data;
-	}
-
-	/**
-	 * Returns the date with index index...
-	 **/
-	public String getDate2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Date\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Date");
-		/* Returns the data... */
-		return data;
-	}
-
-	/**
-	 * Returns the \"Directed By\" with index index...
-	 **/
-	protected String getDirectedBy2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Directed By\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Directed By");
-		/* Returns the data... */
-		return data;
-	}
-
-	/**
-	 * Returns the \"Written By\" with index index...
-	 **/
-	protected String getWrittenBy2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Written By\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Written By");
-		/* Returns the data... */
-		return data;
-	}
-
-	/**
-	 * Returns the genre with index index...
-	 **/
-	protected String getGenre2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Genre\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Genre");
-		/* Returns the data... */
-		return data;
-	}
-
-	/**
-	 * Returns the rating with index index...
-	 **/
-	public String getRating2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Rating\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Rating");
-		/* Returns the data... */
-		return data;
-	}
-
-	/**
-	 * Returns the seen with index index...
-	 **/
-	public boolean getSeen2(int index) {
-
-		boolean data = getBoolean("SELECT \"General Info\".\"Seen\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Seen");
-		/* Returns the data... */
-		return data;
-	}
-
-
-	/**
-	 * Returns the plot with index index...
-	 **/
-	public String getPlot2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Plot\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Plot");
-		/* Returns the data... */
-		return data;
-	}
-
-	/**
-	 * Returns the cast with index index...
-	 **/
-	protected String getCast(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Cast\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Cast");
-		/* Returns the data... */
-		return data;
-	}
-
-	/**
-	 * Returns the notes with index index...
-	 **/
-	protected String getNotes2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Notes\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Notes");
-		/* Returns the data... */
-		return data;
-	}
-
-
-	/**
-	 * Returns the Also Known As with index index...
-	 **/
-	protected String getAka2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Aka\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Aka");
-		/* Returns the data... */
-		return data;
-	}
-
-	/**
-	 * Returns the country with index index...
-	 **/
-	protected String getCountry2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Country\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Country");
-		/* Returns the data... */
-		return data;
-	}
-
-	/**
-	 * Returns the language with index index...
-	 **/
-	protected String getLanguage2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Language\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Language");
-		/* Returns the data... */
-		return data;
-	}
-
-	/**
-	 * Returns the Colour with index index...
-	 **/
-	protected String getColour2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Colour\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Colour");
-		/* Returns the data... */
-		return data;
-	}
-
-
-	/**
-	 * Returns the Colour with index index...
-	 **/
-	protected String getCertification2(int index) {
-
-		String data = getString("SELECT \"General Info\".\"Certification\" "+
-				"FROM \"General Info\" "+
-				"WHERE \"General Info\".\"ID\"="+index+";", "Certification");
 		/* Returns the data... */
 		return data;
 	}
