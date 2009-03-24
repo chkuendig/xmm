@@ -34,20 +34,20 @@ public class ModelDatabaseSearch {
     
     
     /* The string to search for */
-    private String filterString;
+    private String filterString = "";
     
     /* ORDER BY column */
-    private String orderCategory;
+    private String orderCategory = null;
     
     public ArrayList searchTerms = new ArrayList();
     
     public boolean getFullGeneralInfo = true;
     
     public void addSearchTerm(String term) {
-	searchTerms.add(term);
+    	searchTerms.add(term);
     }
-    
-    
+       
+  
     /**
        Tells if the filter should filter out seen/unseen movies.
        0 == off
@@ -57,10 +57,11 @@ public class ModelDatabaseSearch {
     **/
     private int seen = 0; 
     
-    /* Name of list */
-    private String listName = "";
+    /* Currently chosen lists */
+    private ArrayList listNames = new ArrayList();
     
     private int listOption = 0; /* 1 == on, 0 == off */
+    private boolean showUnlistedEntries = true;
     
     
     /** 0 == disabled
@@ -133,12 +134,12 @@ public class ModelDatabaseSearch {
 	this.seen = seen;
     }
     
-    public String getListName() {
-	return listName;
+    public ArrayList getCurrentListNames() {
+    	return listNames;
     }
 
-    public void setListName(String listName) {
-	this.listName = listName;
+    public void setCurrentListNames(ArrayList listNames) {
+    	this.listNames = listNames;
     }
     
     public int getListOption() {
@@ -149,6 +150,15 @@ public class ModelDatabaseSearch {
 	this.listOption = listOption;
     }
 	
+    public boolean getShowUnlistedEntries() {
+    	return showUnlistedEntries;
+    }
+        
+    public void setShowUnlistedEntries(boolean val) {
+    	showUnlistedEntries = val;
+    }
+    
+    
     public int getRatingOption() {
 	return ratingOption;
     }
