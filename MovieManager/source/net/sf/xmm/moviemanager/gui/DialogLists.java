@@ -301,9 +301,9 @@ public class DialogLists extends JDialog {
 	for (int i=0; i<_toRemove.size(); i++) {
 	    MovieManager.getIt().getDatabase().removeListsColumn((String)_toRemove.get(i));
 	    
-	    if (((String)_toRemove.get(i)).equals(MovieManager.getConfig().getCurrentList())) {
-		MovieManager.getConfig().setCurrentList("Show All"); //$NON-NLS-1$
-		reload = true;
+	    if (MovieManager.getConfig().getCurrentLists().contains((String)_toRemove.get(i))) {
+	    	MovieManager.getConfig().getCurrentLists().remove((String)_toRemove.get(i)); //$NON-NLS-1$
+	    	reload = true;
 	    }
 	}
 	
