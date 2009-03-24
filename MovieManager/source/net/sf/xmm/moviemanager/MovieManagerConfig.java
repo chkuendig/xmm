@@ -315,8 +315,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String nocover = "nocover_puma.png";
 
 	/* Current list */
-	protected String currentList = "Show All";
-
+	protected ArrayList currentLists = new ArrayList();
+	boolean showUnlistedEntries = true;
+	
 	protected boolean multiAddListEnabled = false;
 
 	private int useRelativeDatabasePath = 0; // 0 == absolute, 2 == program location
@@ -1904,14 +1905,36 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 	
 	
-	public String getCurrentList() {
-		return currentList;
+	public ArrayList getCurrentLists() {
+		return currentLists;
 	}
 
-	public void setCurrentList(String currentList) {
-		this.currentList = currentList;
+	public boolean addToCurrentLists(String listName) {
+		
+		if (listName == null || listName.trim().equals("") ||
+				currentLists.contains(listName))
+			return false;
+		
+		currentLists.add(listName);
+		return true;
+	}
+		
+	
+	public void setCurrentLists(ArrayList currentLists) {
+		this.currentLists = currentLists;
 	}
 
+	
+	public void setShowUnlistedEntries(boolean val) {
+		showUnlistedEntries = val;
+	}
+	
+	
+	public boolean getShowUnlistedEntries() {
+		return showUnlistedEntries;
+	}
+	
+	
 	public boolean getLoadLastUsedListAtStartup() {
 		return loadLastUsedListAtStartup;
 	}
@@ -2640,10 +2663,20 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("currentList:");
 
 			if (value != null) {
-				setCurrentList(value);
+				
+				String [] lists = value.split(";");
+								
+				for (int i = 0; i < lists.length; i++) {
+					addToCurrentLists(lists[i]);
+				}
 			}
 
+			value = (String) config.get("showUnlistedEntries:");
 
+			if (value != null) {
+				setShowUnlistedEntries(new Boolean(value).booleanValue());
+			}
+			
 			value = (String) config.get("loadCurrentListAtStartup:");
 
 			if (value != null) {
@@ -3319,9 +3352,24 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append(lineSeparator);
 		 settings.append("mainMaximized:" + getMainMaximized());
 
-		 settings.append(lineSeparator);
-		 settings.append("currentList:"+ getCurrentList());
+		 if (getLoadLastUsedListAtStartup()) {
 
+			 String strTmp = "";
+
+			 for (int i = 0; i < currentLists.size(); i++)
+				 strTmp += ";" + currentLists.get(i);
+
+			 System.err.println("strTmp:"  + strTmp);
+			 
+			 if (strTmp.length() > 0) {
+				 settings.append(lineSeparator);
+				 settings.append("currentList:"+ strTmp);
+			 }
+		 }
+		 		 
+		 settings.append(lineSeparator);
+		 settings.append("showUnlistedEntries:" + getShowUnlistedEntries());
+		 		 
 		 settings.append(lineSeparator);
 		 settings.append("loadCurrentListAtStartup:" + getLoadLastUsedListAtStartup());
 
