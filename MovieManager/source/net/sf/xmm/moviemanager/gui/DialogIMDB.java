@@ -34,6 +34,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -523,11 +524,14 @@ public class DialogIMDB extends JDialog {
 
     	DefaultListModel listModel;
 
+    	ArrayList lists = new ArrayList();
+    	
     	if (addToThisList != null)
-    		listModel = MovieManager.getIt().getDatabase().getMoviesList("Title", addToThisList);
-    	else
-    		listModel = MovieManager.getIt().getDatabase().getMoviesList("Title");
-
+    		lists.add(addToThisList);
+    	    	
+    	listModel = MovieManager.getIt().getDatabase().getMoviesList("Title", lists, 
+    			MovieManager.getConfig().getShowUnlistedEntries());
+    	
     	listMovies.setModel(listModel);
     }
 
