@@ -52,6 +52,7 @@ import java.util.StringTokenizer;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -132,10 +133,10 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 		DefaultListModel list;
 
-		if (MovieManager.getConfig().getCurrentList().equals("Show All")) //$NON-NLS-1$
-			list = MovieManager.getIt().getDatabase().getMoviesList(MovieManager.getConfig().getSortOption());
-		else
-			list = MovieManager.getIt().getDatabase().getMoviesList(MovieManager.getConfig().getSortOption(), MovieManager.getConfig().getCurrentList());
+		list = MovieManager.getIt().getDatabase().getMoviesList(
+				MovieManager.getConfig().getSortOption(), 
+				MovieManager.getConfig().getCurrentLists(),
+				MovieManager.getConfig().getShowUnlistedEntries());
 
 		MovieManager.getDialog().getMoviesList().setModel(MovieManager.getDialog().createTreeModel(list, MovieManager.getIt().getDatabase().getEpisodeList("movieID"))); //$NON-NLS-1$
 
@@ -1077,6 +1078,11 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 				if (temp instanceof ModelMovie) {
 					MovieManager.getIt().getDatabase().setLists(temp.getKey(), columnName, new Boolean(apply));
+					
+					if (apply)
+						temp.addToMemberOfList(columnName);
+					else
+						temp.removeAsMemberOfList(columnName);
 				}
 			}
 		}
@@ -1158,10 +1164,16 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			menuApplyToLists = new JMenu(Localizer.getString("MovieManagerCommandSelect.movie-list-popup.apply-to-list")); //$NON-NLS-1$
 			menuRemoveFromLists = new JMenu(Localizer.getString("MovieManagerCommandSelect.movie-list-popup.remove-from-list")); //$NON-NLS-1$
 			JMenuItem temp, temp2;
-
+			
 			while (!listcolumns.isEmpty()) {
-				temp = new JMenuItem((String) listcolumns.get(0));
-				temp2 = new JMenuItem((String) listcolumns.get(0));
+				temp = new JCheckBoxMenuItem((String) listcolumns.get(0));
+				temp2 = new JCheckBoxMenuItem((String) listcolumns.get(0));
+				
+				if (selected.isMemberOfList((String) listcolumns.get(0))) {
+					temp.setSelected(true);
+					temp2.setSelected(true);
+				}
+				
 				listcolumns.remove(0);
 				temp.addActionListener(this);
 				temp2.addActionListener(this);
