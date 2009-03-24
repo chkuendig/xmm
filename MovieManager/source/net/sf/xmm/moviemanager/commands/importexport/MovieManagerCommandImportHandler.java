@@ -47,11 +47,11 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
 	
 	ModelImportExportSettings settings;
 	
-	String addToThisList = null;
+	ArrayList addToThisList = new ArrayList();
 	
 	MovieManagerCommandImportHandler(ModelImportExportSettings settings) {
 		this.settings = settings;
-		addToThisList = settings.addToThisList;
+		addToThisList.add(settings.addToThisList);
 		
 		if (settings.isIMDbEnabled() &&
 				(!MovieManager.getIt().getDatabase().isMySQL() || 
@@ -109,10 +109,12 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
             if (dialogIMDB.cancelAllSet)
             	setAborted(true);
             
+            addToThisList.clear();
+            
             if (dialogIMDB.dropImdbInfoSet)
-            	addToThisList = settings.skippedListName;
+            	addToThisList.add(settings.skippedListName);
             else
-            	addToThisList = settings.addToThisList;
+            	addToThisList.add(settings.addToThisList);
                         
         } else {
             DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.alert"), Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
