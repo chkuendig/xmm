@@ -105,7 +105,7 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 			modelMovieInfo.setModel((ModelMovie) model, false, false);
 
 			try {
-				key = (modelMovieInfo.saveToDatabase(settings.addToThisList)).getKey();
+				key = (modelMovieInfo.saveToDatabase(settings.getAddToThisList())).getKey();
 			} catch (Exception e) {
 				log.error("Saving to database failed.", e);
 			}
@@ -123,7 +123,7 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 			modelMovieInfo.setModel(seriesTmp.getMovie(), false, false);
 
 			try {
-				key = (modelMovieInfo.saveToDatabase(settings.addToThisList)).getKey();
+				key = (modelMovieInfo.saveToDatabase(settings.getAddToThisList())).getKey();
 			} catch (Exception e) {
 				log.error("Saving to database failed.", e);
 			}
