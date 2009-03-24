@@ -6,6 +6,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,6 +16,7 @@ import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -20,6 +24,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToolTip;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
@@ -30,7 +35,9 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMoviesByFi
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandCloseDatabase;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandConvertDatabase;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandExit;
+import net.sf.xmm.moviemanager.commands.MovieManagerCommandFilter;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandOpenPage;
+import net.sf.xmm.moviemanager.commands.MovieManagerCommandSaveChangedNotes;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAbout;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAdditionalInfoFields;
@@ -45,6 +52,7 @@ import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandReportGen
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandUpdateIMDBInfo;
 import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandExport;
 import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImport;
+import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.gui.DialogNewVersionInfo;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
@@ -54,7 +62,6 @@ import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
 
-
 public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 
 	Logger log = Logger.getLogger(getClass());
@@ -62,7 +69,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 	JMenu menuFile = null;
 	JMenu menuDatabase = null;
 	JMenu menuTools = null;
-	JMenu menuLists = null;
+	MenuLists menuLists = null;
 	JMenu menuView = null;
 	JMenu menuHelp = null;
 	JMenu menuUpdate = null;
@@ -400,21 +407,201 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		return menuTools;
 	}
 
-	/**
-	 * Creates the lists menu.
-	 *
-	 * @return The lists menu.
-	 **/
+	
 	protected JMenu createMenuLists() {
 		log.debug("Start creation of the Lists menu."); //$NON-NLS-1$
-		menuLists = new JMenu(Localizer.getString("moviemanager.menu.lists")); //$NON-NLS-1$
+		menuLists = new MenuLists(Localizer.getString("moviemanager.menu.lists")); //$NON-NLS-1$
 		menuLists.setMnemonic('L');
-
+		
 		log.debug("Creation of the Lists menu done."); //$NON-NLS-1$
 		return menuLists;
 	}
 
+	public void loadDefaultMenuLists(ArrayList listColumns) {
+		menuLists.loadDefaultMenuLists();
+	}
+	
+	
+	class MenuLists extends JMenu implements MouseListener, ActionListener {
 
+		Logger log = Logger.getLogger(getClass());
+		
+		ArrayList menuItemsList;
+		
+		JMenuItem showAll = null;
+		JCheckBoxMenuItem showUnlisted = null;
+				
+		MenuLists(String name) {
+			super(name);
+		}
+
+		
+		public void loadDefaultMenuLists() {
+
+			ArrayList listColumns = MovieManager.getIt().getDatabase().getListsColumnNames();
+			
+			JMenu menuLists = getMenuLists();
+
+			if (menuLists != null) {
+
+				ArrayList currentLists = config.getCurrentLists();
+
+				JCheckBoxMenuItem menuItem;
+
+				menuLists.removeAll();
+
+				int indexCounter = 0;
+				menuItemsList = new ArrayList();
+
+				while (!listColumns.isEmpty()) {
+
+					menuItem = new JCheckBoxMenuItem((String) listColumns.get(0));
+					menuItem.setActionCommand((String) listColumns.get(0));
+					
+					menuItem.addActionListener(this);
+					menuItem.addMouseListener(this);
+					menuLists.add(menuItem);
+
+					if (currentLists.contains(listColumns.get(0)))
+						menuItem.setSelected(true);
+
+					listColumns.remove(0);
+					indexCounter++;
+
+					menuItemsList.add(menuItem);
+				}
+
+				menuLists.addSeparator();
+
+				/* Adds 'Show all' in the list */
+				showUnlisted = new JCheckBoxMenuItem("Show Unlisted"); //$NON-NLS-1$
+				showUnlisted.setActionCommand("Show Unlisted"); //$NON-NLS-1$
+				showUnlisted.addActionListener(this);
+				showUnlisted.addMouseListener(this);
+				menuLists.add(showUnlisted);
+
+				showUnlisted.setSelected(config.getShowUnlistedEntries());
+				
+				menuLists.addSeparator();
+
+				/* Adds 'Show all' in the list */
+				showAll = new JMenuItem("Show All"); //$NON-NLS-1$
+				showAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+				showAll.setActionCommand("Show All"); //$NON-NLS-1$
+				showAll.addActionListener(this);
+			
+				menuLists.add(showAll);
+			}
+		}
+		
+		
+		public void setMenuItemEnabled(JCheckBoxMenuItem checkBox, boolean b) {
+			
+			checkBox.setSelected(b);
+			
+			if (checkBox.isSelected())
+				config.addToCurrentLists(checkBox.getText());
+			else
+				config.getCurrentLists().remove(checkBox.getText());
+		
+		}
+		
+		
+		void execute(JMenuItem source, boolean exclusive) {
+
+			String column = source.getText();
+			
+			// If any notes have been changed, they will be saved before loading list
+			MovieManagerCommandSaveChangedNotes.execute();
+			
+			if (!menuItemsList.contains(source)) {
+				
+				if (column.equals("Show All")) {
+					
+					showUnlisted.setSelected(true);
+					config.setShowUnlistedEntries(true);
+					
+					for (int i = 0; i < menuItemsList.size(); i++) {
+						setMenuItemEnabled((JCheckBoxMenuItem) menuItemsList.get(i), true);
+					}
+				}
+				else if (column.equals("Show Unlisted")) {
+					
+					if (!exclusive)
+						config.setShowUnlistedEntries(source.isSelected());
+					else {
+						config.setShowUnlistedEntries(true);
+						showUnlisted.setSelected(true);
+						
+						for (int i = 0; i < menuItemsList.size(); i++) {
+							setMenuItemEnabled((JCheckBoxMenuItem) menuItemsList.get(i), false);
+						}
+					}
+				}
+			}
+			else {				
+				
+				if (!exclusive)
+					setMenuItemEnabled((JCheckBoxMenuItem) source, source.isSelected());
+				else {
+										
+					setMenuItemEnabled((JCheckBoxMenuItem) source, true);
+					
+					showUnlisted.setSelected(false);
+					config.setShowUnlistedEntries(false);
+					
+					for (int i = 0; i < menuItemsList.size(); i++) {
+						
+						if (source != ((JCheckBoxMenuItem) menuItemsList.get(i)))
+							setMenuItemEnabled((JCheckBoxMenuItem) menuItemsList.get(i), false);
+					}
+				}
+			}
+			
+			boolean showAll = true;
+			
+			if (!showUnlisted.isSelected())
+					showAll = false;
+			else {
+								
+				for (int i = 0; i < menuItemsList.size(); i++) {
+					if (!((JCheckBoxMenuItem) menuItemsList.get(i)).isSelected())
+						showAll = false;
+				}
+			}
+			
+			if (showAll)
+				MovieManager.getDialog().setListTitle("List");
+			else
+				MovieManager.getDialog().setListTitle();
+			
+			new MovieManagerCommandFilter("", null, true, true).execute();
+		}
+
+		
+		public void actionPerformed(ActionEvent event) {
+			
+			if (event.getSource() instanceof JMenuItem) {
+				execute(((JMenuItem) event.getSource()), false);
+			}
+		}
+		
+		public void mouseReleased(MouseEvent event) {
+			boolean exclusive = SwingUtilities.isRightMouseButton(event);
+						
+			if (event.getSource() instanceof JMenuItem) {
+				execute(((JMenuItem) event.getSource()), exclusive);
+			}
+		}
+
+		public void mouseClicked(MouseEvent event) {}
+		public void mouseEntered(MouseEvent arg0) {}
+		public void mouseExited(MouseEvent arg0) {}
+		public void mousePressed(MouseEvent arg0) {}
+				
+	}
+
+	
 	/**
 	 * Creates the views menu.
 	 *
