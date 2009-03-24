@@ -76,6 +76,22 @@ public class StringUtil {
 		return stringBuff.toString();
 	}
 
+	String removeDoubleSpace2(String searchString) {
+
+		int index;
+
+		/*Removes all double spaces*/
+		while ((index = searchString.indexOf("  ")) != -1) {
+			searchString = removeCharAt(searchString, index);
+		}
+
+		return searchString;
+	}
+	
+
+	
+
+	
 	public static void replaceAll(StringBuffer sb, String search, String replace) {
 
 		if (replace == null)
