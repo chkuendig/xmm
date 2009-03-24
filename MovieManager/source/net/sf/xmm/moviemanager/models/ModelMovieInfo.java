@@ -406,17 +406,17 @@ public class ModelMovieInfo {
     }
     
     
-    public synchronized ModelEntry saveToDatabase(String listName) throws Exception {
+    public synchronized ModelEntry saveToDatabase(ArrayList listNames) throws Exception {
     	
     	saveAdditionalInfoData();
 
 //      Removing the cached info for the node
     	MovieManager.getDialog().getTreeCellRenderer().removeEntry(model);
     	
-    	return saveToDatabase(model, _edit, listName);
+    	return saveToDatabase(model, _edit, listNames);
     }
         
-    public synchronized ModelEntry saveToDatabase(ModelEntry modelToSave, boolean edit, String listName) throws Exception {
+    public synchronized ModelEntry saveToDatabase(ModelEntry modelToSave, boolean edit, ArrayList listNamesToApply) throws Exception {
                 
         Database database = MovieManager.getIt().getDatabase();
         ModelAdditionalInfo additionalInfo = modelToSave.getAdditionalInfo();
@@ -486,21 +486,20 @@ public class ModelMovieInfo {
                     
                     
                     /* Add new row in Lists table with default values */
-                    ArrayList listNames = database.getListsColumnNames();
+                    ArrayList dbListNames = database.getListsColumnNames();
                     ArrayList listValues = new ArrayList();
                     
-                    String applyToThisList = ""; //$NON-NLS-1$
+                   if (listNamesToApply == null)
+                	   listNamesToApply = new ArrayList();
                     
-                    if (listName != null)
-                        applyToThisList = listName;
-                    
-                    for (int i = 0; i < listNames.size(); i++) {
-                        if (listNames.get(i).equals(applyToThisList))
-                            listValues.add(new Boolean(true));
+                    for (int i = 0; i < dbListNames.size(); i++) {
+                    	
+                    	if (listNamesToApply.contains(dbListNames.get(i)))
+                    		listValues.add(new Boolean(true));
                         else
                             listValues.add(new Boolean(false));
                     }
-                    database.addLists(modelToSave.getKey(), listNames, listValues);
+                    database.addLists(modelToSave.getKey(), dbListNames, listValues);
                 }
             }
         }
