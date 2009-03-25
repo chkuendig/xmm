@@ -64,6 +64,8 @@ public class DatabaseMySQL extends Database {
 		quotedAdditionalInfoEpisodeString = quote + additionalInfoEpisodeString + quote;
 		quotedExtraInfoEpisodeString = quote + extraInfoEpisodeString + quote;
 
+		quotedListsString = quote + "Lists" + quote;
+		
 		directedByString = "Directed_By";
 		writtenByString = "Written_By";
 
