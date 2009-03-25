@@ -85,6 +85,8 @@ abstract public class Database {
 	protected String quotedAdditionalInfoEpisodeString = quote + additionalInfoEpisodeString + quote;
 	protected String quotedExtraInfoEpisodeString = quote + extraInfoEpisodeString + quote;
 
+	protected String quotedListsString = quote + "Lists" + quote;
+
 	String directedByString = "Directed By";
 	String quotedDirectedByString = quote + directedByString + quote;
 
@@ -2248,9 +2250,9 @@ abstract public class Database {
 
 		listsColumnNames = null;
 		
-		String fieldType = "BOOLEAN";
+		String fieldType = "BOOLEAN DEFAULT 0 NOT NULL";
 
-		if (this instanceof DatabaseAccess)
+		if (isMSAccess())
 			fieldType = "BIT";
 
 		try {
@@ -2580,69 +2582,57 @@ abstract public class Database {
 	}
 
 
-
-	public String getMoviesSelectStatement2() {
-
-		String select = "SELECT \"General Info\".\"ID\", "+
-		"\"General Info\".\"Imdb\", "+
-		"\"General Info\".\"Cover\", "+
-		"\"General Info\".\"Date\", "+
-		"\"General Info\".\"Title\", "+
-		"\"General Info\".\"Directed By\", "+
-		"\"General Info\".\"Written By\", "+
-		"\"General Info\".\"Genre\", "+
-		"\"General Info\".\"Rating\", "+
-		"\"General Info\".\"Plot\", "+
-		"\"General Info\".\"Cast\", "+
-		"\"General Info\".\"Notes\", "+
-		"\"General Info\".\"Seen\", "+
-		"\"General Info\".\"Aka\", "+
-		"\"General Info\".\"Country\", "+
-		"\"General Info\".\"Language\", "+
-		"\"General Info\".\"Colour\", "+
-		"\"General Info\".\"Certification\", "+
-		"\"General Info\".\"Mpaa\", "+
-		"\"General Info\".\"Sound Mix\", "+
-		"\"General Info\".\"Web Runtime\", "+
-		"\"General Info\".\"Awards\" "+
-		"FROM \"General Info\" ";
-
-		return select;
+	
+	public String getSmallMoviesSelectStatement() {
+		return getMoviesSelectStatement(false);
 	}
 	
 	public String getMoviesSelectStatement() {
+		return getMoviesSelectStatement(true);
+	}
+	
+	public String getMoviesSelectStatement(boolean full) {
 
 		StringBuffer buf = new StringBuffer();
 		
-		buf.append("SELECT " + quotedGeneralInfoString + ".\"ID\", " +
-		quotedGeneralInfoString + ".\"Imdb\", "+
-		quotedGeneralInfoString + ".\"Cover\", "+
-		quotedGeneralInfoString + ".\"Date\", "+
-		quotedGeneralInfoString + ".\"Title\", "+
-		quotedGeneralInfoString + ".\"Directed By\", "+
-		quotedGeneralInfoString + ".\"Written By\", "+
-		quotedGeneralInfoString + ".\"Genre\", "+
-		quotedGeneralInfoString + ".\"Rating\", "+
-		quotedGeneralInfoString + ".\"Plot\", "+
-		quotedGeneralInfoString + ".\"Cast\", "+
-		quotedGeneralInfoString + ".\"Notes\", "+
-		quotedGeneralInfoString + ".\"Seen\", "+
-		quotedGeneralInfoString + ".\"Aka\", "+
-		quotedGeneralInfoString + ".\"Country\", "+
-		quotedGeneralInfoString + ".\"Language\", "+
-		quotedGeneralInfoString + ".\"Colour\", "+
-		quotedGeneralInfoString + ".\"Certification\", "+
-		quotedGeneralInfoString + ".\"Mpaa\", "+
-		quotedGeneralInfoString + ".\"Sound Mix\", "+
-		quotedGeneralInfoString + ".\"Web Runtime\", "+
-		quotedGeneralInfoString + ".\"Awards\" ");
+		if (full) {
+			buf.append("SELECT " + quotedGeneralInfoString + ".\"ID\", " +
+					quotedGeneralInfoString + ".\"Imdb\", "+
+					quotedGeneralInfoString + ".\"Cover\", "+
+					quotedGeneralInfoString + ".\"Date\", "+
+					quotedGeneralInfoString + ".\"Title\", "+
+					quotedGeneralInfoString + ".\"Directed By\", "+
+					quotedGeneralInfoString + ".\"Written By\", "+
+					quotedGeneralInfoString + ".\"Genre\", "+
+					quotedGeneralInfoString + ".\"Rating\", "+
+					quotedGeneralInfoString + ".\"Plot\", "+
+					quotedGeneralInfoString + ".\"Cast\", "+
+					quotedGeneralInfoString + ".\"Notes\", "+
+					quotedGeneralInfoString + ".\"Seen\", "+
+					quotedGeneralInfoString + ".\"Aka\", "+
+					quotedGeneralInfoString + ".\"Country\", "+
+					quotedGeneralInfoString + ".\"Language\", "+
+					quotedGeneralInfoString + ".\"Colour\", "+
+					quotedGeneralInfoString + ".\"Certification\", "+
+					quotedGeneralInfoString + ".\"Mpaa\", "+
+					quotedGeneralInfoString + ".\"Sound Mix\", "+
+					quotedGeneralInfoString + ".\"Web Runtime\", "+
+					quotedGeneralInfoString + ".\"Awards\" ");
+		}
+		else {
+			buf.append("SELECT " + quotedGeneralInfoString + ".ID, " + 
+					quotedGeneralInfoString + "." + quote + "Title" + quote + ", " + 
+					quotedGeneralInfoString + "." + quote + "Imdb" + quote + ", " + 
+					quotedGeneralInfoString + "." + quote + "Cover" + quote +  ", " + 
+					quotedGeneralInfoString + "." + quote + "Date" + quote);
+		}
 		
 		ArrayList lists = getListsColumnNames();
 		
 		if (lists != null && lists.size() > 0) {
 			
 			for (int i = 0; i < lists.size(); i++)
-				buf.append(", \"Lists\".\""+ lists.get(i) +"\" AS \"" + listsAliasPrefix + lists.get(i) + "\" ");
+				buf.append(", " + quotedListsString + "." +quote+ lists.get(i) + quote+ " AS " +quote+ listsAliasPrefix + lists.get(i) + quote + " ");
 		}	
 	
 		buf.append("FROM " + quotedGeneralInfoString + " ");
@@ -2650,63 +2640,34 @@ abstract public class Database {
 		return buf.toString();
 	}
 
-	
-	
-	
-	 public DefaultListModel getMoviesList(String orderBy) {
-		    
-	    	ModelDatabaseSearch options = new ModelDatabaseSearch();
-	    	
-	    	options.setOrderCategory(orderBy);
-	    	options.setListOption(0);
-	    	
-	    	DefaultListModel list = getMoviesList(options);
-	    	    	
-	    	/*
-	    	DefaultListModel list2 = getDatabase().getMoviesList(orderBy);
-	    	
-	    	if (list.size() != list2.size())
-	    		System.err.println("list("+list.size()+") and list2(" + list2.size() + ") differ in size!");
-	    	
-	    	for (int i = 0; i < list.size(); i++) {
-	    		if (!(((ModelMovie)list.get(i)).getTitle()).equals(((ModelMovie)list2.get(i)).getTitle()))
-	    			System.err.println(list.get(i) + " differ with "+ list2.get(i));
-	    	}
-	    	*/
-	    	
-	    	return list;
-	    }
-	  
-	    public DefaultListModel getMoviesList(String orderBy, ArrayList lists, boolean showUnlistedMovies) {
-	    	
-	    	ModelDatabaseSearch options = new ModelDatabaseSearch();
-	    	
-	    	options.setOrderCategory(orderBy);
-	    	options.setCurrentListNames(lists);
-	    	options.setShowUnlistedEntries(showUnlistedMovies);
-	    	
-	    	if (lists.size() > 0 || showUnlistedMovies)
-	    		options.setListOption(1);
-	    		
-	    	DefaultListModel list = getMoviesList(options);
-	    	
-	    	/*
-	    	DefaultListModel list2 = getDatabase().getMoviesList(orderBy);
-	    	
-	    	if (list.size() != list2.size())
-	    		System.err.println("list("+list.size()+") and list2(" + list2.size() + ") differ in size!");
-	    	
-	    	for (int i = 0; i < list.size(); i++) {
-	    		if (!(((ModelMovie)list.get(i)).getTitle()).equals(((ModelMovie)list2.get(i)).getTitle()))
-	    			System.err.println(list.get(i) + " differ with "+ list2.get(i));
-	    	}
-	    	*/
-	    	return list;
-	    	
-	    }
-	
-	
-	
+
+
+	public DefaultListModel getMoviesList(String orderBy) {
+
+		ModelDatabaseSearch options = new ModelDatabaseSearch();
+
+		options.setOrderCategory(orderBy);
+		options.setListOption(0);
+
+		DefaultListModel list = getMoviesList(options);
+		return list;
+	}
+
+	public DefaultListModel getMoviesList(String orderBy, ArrayList lists, boolean showUnlistedMovies) {
+
+		 ModelDatabaseSearch options = new ModelDatabaseSearch();
+
+		 options.setOrderCategory(orderBy);
+		 options.setCurrentListNames(lists);
+		 options.setShowUnlistedEntries(showUnlistedMovies);
+
+		 if (lists.size() > 0 || showUnlistedMovies)
+			 options.setListOption(1);
+
+		 DefaultListModel list = getMoviesList(options);
+		 return list;
+	 }
+
 	
 	/**
 	 * Returns a List of MovieModels that contains all the movies in the
@@ -3194,8 +3155,8 @@ abstract public class Database {
 			selectAndJoin = getMoviesSelectStatement();
 		}
 		else
-			selectAndJoin = "SELECT " + quotedGeneralInfoString + ".ID, " + quotedGeneralInfoString + "." + quote + "Title" + quote + ", " + quotedGeneralInfoString + "." + quote + "Imdb" + quote + ", " + quotedGeneralInfoString + "." + quote + "Cover" + quote +  ", " + quotedGeneralInfoString + "." + quote + "Date" + quote + " FROM " + quotedGeneralInfoString + " ";
-
+			selectAndJoin = getSmallMoviesSelectStatement();
+		
 		String orderBy = options.getOrderCategory();
 		String joinTemp = "";
 
@@ -3203,27 +3164,13 @@ abstract public class Database {
 				((options.getListOption() == 1) || orderBy.equals("Duration") || 
 						(filter.indexOf(additionalInfoString) != -1) || (filter.indexOf(extraInfoString) != -1))) {
 			
-			//orderBy = "\"Additional Info\".\"Duration\"";
-			
 			joinTemp = "\"General Info\" INNER JOIN \"Lists\" ON \"General Info\".ID=\"Lists\".ID ";
 						
 			if (orderBy.equals("Duration") || filter.indexOf(additionalInfoString) != -1)
-				//joinTemp = "\"General Info\" INNER JOIN \"Additional Info\" ON \"General Info\".ID=\"Additional Info\".ID ";
 				joinTemp += "INNER JOIN ("+ joinTemp +") ON \"Additional Info\".ID=\"General Info\".ID ";
-			
-			/*
-			if (joinTemp.equals(""))
-					joinTemp += "\"General Info\" INNER JOIN \"Lists\" ON \"General Info\".ID=\"Lists\".ID ";
-			else
-				joinTemp += "INNER JOIN ("+ joinTemp +") ON \"General Info\".ID=\"Lists\".ID ";
-			 */
-			
+						
 			if (filter.indexOf(extraInfoString) != -1) {
-
-				//if (joinTemp.equals(""))
-					//joinTemp += "\"General Info\" INNER JOIN \"Extra Info\" ON \"General Info\".ID=\"Extra Info\".ID ";
-				//else
-					joinTemp += "INNER JOIN ("+ joinTemp +") ON \"General Info\".ID=\"Extra Info\".ID ";
+				joinTemp += "INNER JOIN ("+ joinTemp +") ON \"General Info\".ID=\"Extra Info\".ID ";
 			}
 			
 			selectAndJoin += joinTemp;
@@ -3257,8 +3204,7 @@ abstract public class Database {
 
 		/* List */
 		if ((option = options.getListOption()) == 1) {
-	
-			
+				
 			if (!options.where)
 				sqlQuery += "WHERE ";
 
@@ -3273,7 +3219,6 @@ abstract public class Database {
 
 					sqlQuery += quote + "Lists"+ quote + "." +quote+ currentLists.get(i) +quote+ "=1 ";
 				}
-
 				sqlQuery += ")";
 			}
 			
@@ -3292,19 +3237,12 @@ abstract public class Database {
 
 						if (i > 0)
 							sqlQuery += " AND ";
-
-						//String coalesce = "COALESCE( ";
-						
-						//Nz(Value, [ValueIfNull])
-						
-						//listsAliasPrefix + lists.get(i)
-						//sqlQuery += "COALESCE(" + quote + "Lists"+ quote + "." +quote+ listNames.get(i) +quote+ ",0) = <> 1 ";
-						//sqlQuery += quote + "Lists"+ quote + "." +quote+ listNames.get(i) +quote+ " <> 1 ";
-						
-						//sqlQuery += "COALESCE(\"" + listsAliasPrefix + listNames.get(i) + "\",0)<>1 ";
-						
-						// must use a function to handle possible null values
-						sqlQuery += "COALESCE(\"Lists\".\"" + listNames.get(i) + "\",false)<>1 ";
+		
+						if (isMSAccess())
+							sqlQuery += quote + "Lists"+ quote + "." +quote+ listNames.get(i) +quote+ "<>1 ";
+							//sqlQuery += "Iif(IsNull(\"Lists\".\"" + listNames.get(i) + "\"),false, \"Lists\".\"" + listNames.get(i) + "\")<>1 ";
+						else // must use a function to handle possible null values
+							sqlQuery += "COALESCE(" +quote+ "Lists" +quote+ "." +quote+ listNames.get(i) + quote+ ",false)<>1 ";
 						
 					}
 
@@ -3388,7 +3326,6 @@ abstract public class Database {
 				options.where = true;
 			}
 		}
-		
 		return sqlQuery;
 	}
 
@@ -3419,8 +3356,6 @@ abstract public class Database {
 		/* Sets the right table joins */
 		String selectAndJoin = setTableJoins(sqlFilter, options);
 
-		
-		
 		String sqlQuery = selectAndJoin + " " + sqlAdcanvedOptions + " " + sqlFilter + " ";
 
 		String orderBy = options.getOrderCategory();
@@ -3448,7 +3383,9 @@ abstract public class Database {
 
 			options.searchTerms.clear();
 
+			log.debug("sqlQuery:" + sqlQuery);
 			log.debug("Statement:" + statement);
+			
 			
 			/* Gets the list in a result set... */
 			ResultSet resultSet = statement.executeQuery();
@@ -3485,7 +3422,7 @@ abstract public class Database {
 					for (int i = 0; i < count; i++) {
 						
 						if (resultSet.getBoolean(listsAliasPrefix + listNames.get(i)))
-							model.addToMemberOfList((String) listNames.get(i));
+								model.addToMemberOfList((String) listNames.get(i));
 					}
 				}
 				listModel.addElement(model);
