@@ -2649,6 +2649,9 @@ abstract public class Database {
 		options.setOrderCategory(orderBy);
 		options.setListOption(0);
 
+		 if (isMySQL())
+			 options.getFullGeneralInfo = false;
+		
 		DefaultListModel list = getMoviesList(options);
 		return list;
 	}
@@ -2661,6 +2664,9 @@ abstract public class Database {
 		 options.setCurrentListNames(lists);
 		 options.setShowUnlistedEntries(showUnlistedMovies);
 
+		 if (isMySQL())
+			 options.getFullGeneralInfo = false;
+		 
 		 if (lists.size() > 0 || showUnlistedMovies)
 			 options.setListOption(1);
 
@@ -3071,7 +3077,7 @@ abstract public class Database {
 		String table = quotedGeneralInfoString;
 		String filterColumn = quote + options.getFilterCategory() + quote;
 
-		if (databaseType.equals("MySQL"))
+		if (isMySQL())
 			filterColumn = filterColumn.replaceAll(" ", "_");
 
 		String filter = options.getFilterString();
@@ -3079,7 +3085,7 @@ abstract public class Database {
 		filter = filter.replaceAll("\\("," \\( ");
 		filter = filter.replaceAll("\\)"," \\) ");
 
-		if (databaseType.equals("HSQL") && filter.indexOf(" XOR ") != -1) {
+		if (isHSQL() && filter.indexOf(" XOR ") != -1) {
 			errorMessage = "XOR is not a supported operator in HSQLDB";
 			return null;
 		}
@@ -3338,7 +3344,7 @@ abstract public class Database {
 
 		DefaultListModel listModel = new DefaultListModel();
 
-		String sqlAdcanvedOptions = processAdvancedOptions(options);
+		String sqlAdcancedOptions = processAdvancedOptions(options);
 
 		/* Should only be one instance of "WHERE" in the sql query. If "WHERE" is used once this is set to true */
 		boolean where = options.where;
@@ -3356,15 +3362,15 @@ abstract public class Database {
 		/* Sets the right table joins */
 		String selectAndJoin = setTableJoins(sqlFilter, options);
 
-		String sqlQuery = selectAndJoin + " " + sqlAdcanvedOptions + " " + sqlFilter + " ";
+		String sqlQuery = selectAndJoin + " " + sqlAdcancedOptions + " " + sqlFilter + " ";
 
 		String orderBy = options.getOrderCategory();
 
-		if (databaseType.equals("MySQL"))
+		if (isMySQL())
 			orderBy = orderBy.replaceAll(" ", "_");
 
 		/* if MSAccess, have to convert rating with the Val function */
-		if (databaseType.equals("MSAccess") && orderBy.equals("Rating")) {
+		if (isMSAccess() && orderBy.equals("Rating")) {
 			orderBy = "ORDER BY Val("+ orderBy +"), \"Title\"";
 		}
 		else
@@ -3520,10 +3526,20 @@ abstract public class Database {
 		ModelMovie movie = null;
 
 		try {
-			String sqlQuery = getMoviesSelectStatement();
+		
+			ModelDatabaseSearch options = new ModelDatabaseSearch();
+
+			options.setOrderCategory("");
+			options.setListOption(0);
+			
+			String selectAndJoin = setTableJoins("", options);
+			
+			//String sqlQuery = getMoviesSelectStatement();
+			String sqlQuery = selectAndJoin;
 			
 			sqlQuery += " WHERE \"General Info\".\"ID\"="+index+";";
 
+			
 			/* Gets the list in a result set... */
 			ResultSet resultSet = _sql.executeQuery(sqlQuery);
 
