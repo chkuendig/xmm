@@ -288,7 +288,7 @@ public class MovieManager {
 
     	options.setSearchAlias(config.getSearchAlias());
 
-    	if (database.getDatabaseType().equals("MySQL"))
+    	if (database.isMySQL())
     		options.getFullGeneralInfo = false;
 
     	return options;
