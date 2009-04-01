@@ -80,7 +80,7 @@ public class HttpUtil {
 	
 	public void setup() {
 		client = new HttpClient(new MultiThreadedHttpConnectionManager());
-		client.getHttpConnectionManager().getParams().setConnectionTimeout(5000);
+		client.getHttpConnectionManager().getParams().setConnectionTimeout(7000);
 		setUp = true;
 	}
 	
@@ -271,7 +271,7 @@ public class HttpUtil {
 			int end = 0;
 			for (int i=0; i < toDecode.length(); i++) {
 				if (toDecode.charAt(i)=='&' && toDecode.charAt(i+1)=='#' && (end=toDecode.indexOf(";", i))!=-1) {
-					decoded += (char)Integer.parseInt(toDecode.substring(i+2,end));
+					decoded += (char)Integer.parseInt(toDecode.substring(i+3,end), 16);
 					i = end;
 				} else if (toDecode.charAt(i)=='<' && toDecode.indexOf('>', i) != -1) {
 					i = toDecode.indexOf('>', i);
@@ -286,7 +286,8 @@ public class HttpUtil {
 			decoded = decoded.replaceAll("&nbsp;", " ");
 
 		} catch (Exception e) {
-			log.error("", e);
+			log.error("Exception:" + e.getMessage(), e);
+			System.err.println("ToDecode:" + toDecode);
 		} 
 
 		/* Returns the decoded string... */
