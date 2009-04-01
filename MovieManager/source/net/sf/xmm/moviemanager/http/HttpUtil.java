@@ -306,7 +306,7 @@ public class HttpUtil {
 			int end = 0;
 			for (int i=0; i < toDecode.length(); i++) {
 				if (toDecode.charAt(i)=='&' && toDecode.charAt(i+1)=='#' && (end=toDecode.indexOf(";", i)) != -1) {
-					tmp += (char) Integer.parseInt(toDecode.substring(i+2,end));
+					tmp += (char) Integer.parseInt(toDecode.substring(i+3,end), 16);
 					i = end;
 				} else if (toDecode.charAt(i)=='<' && toDecode.indexOf('>', i) != -1) {
 					i = toDecode.indexOf('>', i);
