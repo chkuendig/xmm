@@ -255,6 +255,10 @@ public class MovieManager {
 
 
     public ModelDatabaseSearch getFilterOptions() {
+    	return getFilterOptions(getDatabase());
+    }
+    
+    public ModelDatabaseSearch getFilterOptions(Database db) {
 
     	ModelDatabaseSearch options = new ModelDatabaseSearch();
 
@@ -269,28 +273,31 @@ public class MovieManager {
     	options.setOrderCategory(config.getSortOption());
     	options.setSeen(config.getFilterSeen());
     	
-    	options.setCurrentListNames(new ArrayList(config.getCurrentLists()));
-	    		
+    	if (config.getCurrentLists() == null)
+    		options.setCurrentListNames(new ArrayList());
+    	else
+    		options.setCurrentListNames(new ArrayList(config.getCurrentLists()));
+    	
     	options.setShowUnlistedEntries(config.getShowUnlistedEntries());
     	    	
-    	// If show all lists and unlisted, the entire thing is disabled because all entries will then be retrieved
-    	if (MovieManager.getIt().getDatabase().getListsColumnNames().size() == 
-    		options.getCurrentListNames().size() && config.getShowUnlistedEntries())
-    		options.setListOption(0);
+    	options.setListOption(0);
     	
-    	else if (options.getCurrentListNames().size() > 0 || config.getShowUnlistedEntries()) 
-    		options.setListOption(1);
-    	    	
+    	if (db != null) {
+
+    		if (options.getCurrentListNames().size() > 0 || config.getShowUnlistedEntries()) {
+    			options.setListOption(1);
+    		}
+
+    		if (db.isMySQL())
+    			options.getFullGeneralInfo = false;
+    	}
+    	
     	options.setRatingOption(config.getRatingOption());
     	options.setRating(config.getRatingValue());
     	options.setDateOption(config.getDateOption());
     	options.setDate(config.getDateValue());
-
     	options.setSearchAlias(config.getSearchAlias());
-
-    	if (database.isMySQL())
-    		options.getFullGeneralInfo = false;
-
+    	
     	return options;
     }
 
@@ -430,25 +437,41 @@ public class MovieManager {
     		
     			log.info("Loads the movies list"); //$NON-NLS-1$
 
-    			ModelDatabaseSearch options = new ModelDatabaseSearch();
-    			
+    			//ModelDatabaseSearch options = new ModelDatabaseSearch();
+    			ModelDatabaseSearch options = getFilterOptions(_database);
+
+    			// Verifies that all the lists are available
     			if (config.getLoadLastUsedListAtStartup()) {
 
     				ArrayList lists = config.getCurrentLists();
 
-    				for (int i = 0; i < lists.size(); i++) {
-    					if (!_database.listColumnExist((String) lists.get(i))) { //$NON-NLS-1$
-    						lists.remove(i);
+    				if (lists == null) {
+    					options.setListOption(0);
+    					config.setCurrentLists(new ArrayList());
+    					config.setShowUnlistedEntries(false);
+    				} else {
+
+    					for (int i = 0; i < lists.size(); i++) {
+    						if (!_database.listColumnExist((String) lists.get(i))) { //$NON-NLS-1$
+    							lists.remove(i);
+    						}
+
+    						dialogMovieManager.setListTitle();
+    						options.setCurrentListNames(config.getCurrentLists());
     					}
 
-    					dialogMovieManager.setListTitle();
-    					options.setCurrentListNames(config.getCurrentLists());
+    					if (lists.size() > 0)
+    						options.setListOption(1);
     				}
-
-    				options.setListOption(1);
+    				
+    				if (config.getShowUnlistedEntries())
+    					options.setListOption(1);
     			}
     			else {
+    				//setDefaultListsSetup(_database);
     				options.setListOption(0);
+    				config.setCurrentLists(new ArrayList());
+    				config.setShowUnlistedEntries(false);
     			}
     			
     			if (_database.getDatabaseType().equals("MySQL"))
