@@ -2664,12 +2664,13 @@ abstract public class Database {
 		 options.setCurrentListNames(lists);
 		 options.setShowUnlistedEntries(showUnlistedMovies);
 
-		 if (isMySQL())
-			 options.getFullGeneralInfo = false;
+		 options.getFullGeneralInfo = !isMySQL();
 		 
-		 if (lists.size() > 0 || showUnlistedMovies)
+		 if (getListsColumnNames().size() == lists.size() && showUnlistedMovies)
+	    		options.setListOption(0);
+		 else if (lists.size() > 0 || showUnlistedMovies) 
 			 options.setListOption(1);
-
+		
 		 DefaultListModel list = getMoviesList(options);
 		 return list;
 	 }
@@ -3389,8 +3390,10 @@ abstract public class Database {
 
 			options.searchTerms.clear();
 
-			log.debug("sqlQuery:" + sqlQuery);
-			log.debug("Statement:" + statement);
+			if (isMSAccess())
+				log.debug("sqlQuery:" + sqlQuery);
+			else
+				log.debug("Statement:" + statement);
 			
 			
 			/* Gets the list in a result set... */
