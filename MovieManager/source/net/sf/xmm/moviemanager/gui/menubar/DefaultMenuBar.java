@@ -417,11 +417,18 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		return menuLists;
 	}
 
+	/**
+	 * @param listColumns 	a list containing all the lists in the database.
+	 */
 	public void loadDefaultMenuLists(ArrayList listColumns) {
 		menuLists.loadDefaultMenuLists(listColumns);
 	}
 	
-	
+	/**
+	 * Handles the Lists menu. Loads the lists and manages the listeners
+	 * @author Bro3
+	 *
+	 */
 	class MenuLists extends JMenu implements MouseListener, ActionListener {
 
 		Logger log = Logger.getLogger(getClass());
@@ -448,19 +455,36 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 
 				menuLists.removeAll();
 
-				int indexCounter = 0;
 				menuItemsList = new ArrayList();
+				
+				// If no lists available, add shortcut for creating lists instead
+				if (listColumns.size() == 0) {
+					JMenuItem menuItemAddList = new JMenuItem("Adds lists"); //$NON-NLS-1$
+					menuItemAddList.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+					menuItemAddList.addActionListener(new MovieManagerCommandLists(MovieManager.getDialog()));
+					menuLists.add(menuItemAddList);
+					return;	
+				}
 
+				boolean setPressedNoMatter = false;
+				
+				// Everything is deselected is the same everything selected
+				if (currentLists.size() == 0 && !config.getShowUnlistedEntries()) {
+					setPressedNoMatter = true;
+				}
+				
+				int indexCounter = 0;
+				
 				while (!listColumns.isEmpty()) {
 
 					menuItem = new JCheckBoxMenuItem((String) listColumns.get(0));
 					menuItem.setActionCommand((String) listColumns.get(0));
-					
+
 					menuItem.addActionListener(this);
 					menuItem.addMouseListener(this);
 					menuLists.add(menuItem);
 
-					if (currentLists.contains(listColumns.get(0)))
+					if (currentLists.contains(listColumns.get(0)) || setPressedNoMatter)
 						menuItem.setSelected(true);
 
 					listColumns.remove(0);
@@ -468,9 +492,8 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 
 					menuItemsList.add(menuItem);
 				}
-
 				menuLists.addSeparator();
-
+		
 				/* Adds 'Show all' in the list */
 				showUnlisted = new JCheckBoxMenuItem("Show Unlisted"); //$NON-NLS-1$
 				showUnlisted.setActionCommand("Show Unlisted"); //$NON-NLS-1$
@@ -478,7 +501,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 				showUnlisted.addMouseListener(this);
 				menuLists.add(showUnlisted);
 
-				showUnlisted.setSelected(config.getShowUnlistedEntries());
+				showUnlisted.setSelected(config.getShowUnlistedEntries() || setPressedNoMatter);
 				
 				menuLists.addSeparator();
 
@@ -512,6 +535,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 			// If any notes have been changed, they will be saved before loading list
 			MovieManagerCommandSaveChangedNotes.execute();
 			
+			// Either "show all" or "Show Unlisted"
 			if (!menuItemsList.contains(source)) {
 				
 				if (column.equals("Show All")) {
@@ -536,7 +560,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 						}
 					}
 				}
-			}
+			} // Any of the lists
 			else {				
 				
 				if (!exclusive)
@@ -557,22 +581,37 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 			}
 			
 			boolean showAll = true;
+			boolean showNone = true;
+
+			if (showUnlisted.isSelected())
+				showNone = false;
+			else
+				showAll = false;
 			
-			if (!showUnlisted.isSelected())
+			for (int i = 0; i < menuItemsList.size(); i++) {
+				if (!((JCheckBoxMenuItem) menuItemsList.get(i)).isSelected())
 					showAll = false;
-			else {
-								
+				else
+					showNone = false;
+			}
+			
+
+			if (showNone) {
+				showAll = true;
+				
 				for (int i = 0; i < menuItemsList.size(); i++) {
-					if (!((JCheckBoxMenuItem) menuItemsList.get(i)).isSelected())
-						showAll = false;
+					setMenuItemEnabled((JCheckBoxMenuItem) menuItemsList.get(i), true);
 				}
+				
+				config.setShowUnlistedEntries(true);
+				showUnlisted.setSelected(true);
 			}
 			
 			if (showAll)
-				MovieManager.getDialog().setListTitle("List");
+				MovieManager.getDialog().setListTitle("List - All");
 			else
 				MovieManager.getDialog().setListTitle();
-			
+				
 			new MovieManagerCommandFilter("", null, true, true).execute();
 		}
 
