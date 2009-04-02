@@ -2644,6 +2644,8 @@ abstract public class Database {
 
 	public DefaultListModel getMoviesList(String orderBy) {
 
+		log.debug("getMoviesList(String orderBy)");
+		
 		ModelDatabaseSearch options = new ModelDatabaseSearch();
 
 		options.setOrderCategory(orderBy);
@@ -2658,6 +2660,8 @@ abstract public class Database {
 
 	public DefaultListModel getMoviesList(String orderBy, ArrayList lists, boolean showUnlistedMovies) {
 
+		log.debug("getMoviesList(String orderBy, ArrayList lists, boolean showUnlistedMovies)");
+		
 		 ModelDatabaseSearch options = new ModelDatabaseSearch();
 
 		 options.setOrderCategory(orderBy);
@@ -3212,53 +3216,59 @@ abstract public class Database {
 		/* List */
 		if ((option = options.getListOption()) == 1) {
 				
-			if (!options.where)
-				sqlQuery += "WHERE ";
-
-			if (currentLists.size() > 0) {
-
-				sqlQuery += "(";
-				
-				for (int i = 0; i < currentLists.size(); i++) {
-
-					if (i > 0)
-						sqlQuery += " OR ";
-
-					sqlQuery += quote + "Lists"+ quote + "." +quote+ currentLists.get(i) +quote+ "=1 ";
-				}
-				sqlQuery += ")";
+			// Extra verification test
+			if (currentLists.size() == 0 && !options.getShowUnlistedEntries()) {
+				log.warn("Invalid database options. getListOption == 1 when currentLists.size() == 0 and options.getShowUnlistedEntries() == false");
 			}
-			
-			if (options.getShowUnlistedEntries()) {
-				
-				ArrayList listNames = getListsColumnNames();
+			else {
+				if (!options.where)
+					sqlQuery += "WHERE ";
 
-				if (listNames.size() > 0) {
-
-					if (currentLists.size() > 0)
-						sqlQuery += " OR ";
+				if (currentLists.size() > 0) {
 
 					sqlQuery += "(";
 
-					for (int i = 0; i < listNames.size(); i++) {
+					for (int i = 0; i < currentLists.size(); i++) {
 
 						if (i > 0)
-							sqlQuery += " AND ";
-		
-						if (isMSAccess())
-							sqlQuery += quote + "Lists"+ quote + "." +quote+ listNames.get(i) +quote+ "<>1 ";
-							//sqlQuery += "Iif(IsNull(\"Lists\".\"" + listNames.get(i) + "\"),false, \"Lists\".\"" + listNames.get(i) + "\")<>1 ";
-						else // must use a function to handle possible null values
-							sqlQuery += "COALESCE(" +quote+ "Lists" +quote+ "." +quote+ listNames.get(i) + quote+ ",false)<>1 ";
-						
-					}
+							sqlQuery += " OR ";
 
+						sqlQuery += quote + "Lists"+ quote + "." +quote+ currentLists.get(i) +quote+ "=1 ";
+					}
 					sqlQuery += ")";
 				}
+
+				if (options.getShowUnlistedEntries()) {
+
+					ArrayList listNames = getListsColumnNames();
+
+					if (listNames.size() > 0) {
+
+						if (currentLists.size() > 0)
+							sqlQuery += " OR ";
+
+						sqlQuery += "(";
+
+						for (int i = 0; i < listNames.size(); i++) {
+
+							if (i > 0)
+								sqlQuery += " AND ";
+
+							if (isMSAccess())
+								sqlQuery += quote + "Lists"+ quote + "." +quote+ listNames.get(i) +quote+ "<>1 ";
+							//sqlQuery += "Iif(IsNull(\"Lists\".\"" + listNames.get(i) + "\"),false, \"Lists\".\"" + listNames.get(i) + "\")<>1 ";
+							else // must use a function to handle possible null values
+								sqlQuery += "COALESCE(" +quote+ "Lists" +quote+ "." +quote+ listNames.get(i) + quote+ ",false)<>1 ";
+
+						}
+
+						sqlQuery += ")";
+					}
+				}
+
+				options.where = true;
 			}
-		
-			options.where = true;
-		}	
+		}
 		
 		/* seen */
 		if ((option = options.getSeen()) > 1) {
@@ -3343,6 +3353,8 @@ abstract public class Database {
 	 **/
 	public DefaultListModel getMoviesList(ModelDatabaseSearch options) {
 
+		log.debug("getMoviesList(ModelDatabaseSearch options)");
+		
 		DefaultListModel listModel = new DefaultListModel();
 
 		String sqlAdcancedOptions = processAdvancedOptions(options);
@@ -3352,7 +3364,7 @@ abstract public class Database {
 
 		/* Filter */
 		String sqlFilter = "";
-
+	
 		if (!options.getFilterString().trim().equals("")) {
 			sqlFilter = processFilter(options, where);
 			
@@ -3362,9 +3374,9 @@ abstract public class Database {
 
 		/* Sets the right table joins */
 		String selectAndJoin = setTableJoins(sqlFilter, options);
-
+	
 		String sqlQuery = selectAndJoin + " " + sqlAdcancedOptions + " " + sqlFilter + " ";
-
+	
 		String orderBy = options.getOrderCategory();
 
 		if (isMySQL())
@@ -3378,7 +3390,7 @@ abstract public class Database {
 			orderBy = "ORDER BY " +quote+ orderBy +quote+ ", " +quote+ "Title" +quote;
 
 		sqlQuery += orderBy + ";";
-
+	
 		PreparedStatement statement = null;
 		
 		try {
@@ -3438,7 +3450,8 @@ abstract public class Database {
 				
 			}
 		} catch (Exception e) {
-			log.error("Exception: ", e);
+			log.error("Exception:" + e.getMessage(), e);
+			log.debug("sqlQuery:" + sqlQuery);
 			checkErrorMessage(e);
 		} finally {
 			/* Clears the Statement in the dataBase... */
