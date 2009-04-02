@@ -1904,13 +1904,18 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		mainFilterSearchValues.remove(val);
 	}
 	
-	
+	/**
+	 * @return ArrayList containing the lists that are currently selected
+	 */
 	public ArrayList getCurrentLists() {
 		return currentLists;
 	}
 
 	public boolean addToCurrentLists(String listName) {
-		
+		/*
+		if (currentLists == null)
+			currentLists = new ArrayList();
+		*/
 		if (listName == null || listName.trim().equals("") ||
 				currentLists.contains(listName))
 			return false;
@@ -2659,18 +2664,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setMainMaximized(new Boolean(value).booleanValue());
 			}
 
-
-			value = (String) config.get("currentList:");
-
-			if (value != null) {
-				
-				String [] lists = value.split(";");
-								
-				for (int i = 0; i < lists.length; i++) {
-					addToCurrentLists(lists[i]);
-				}
-			}
-
 			value = (String) config.get("showUnlistedEntries:");
 
 			if (value != null) {
@@ -2683,6 +2676,27 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setLoadLastUsedListAtStartup(new Boolean(value).booleanValue());
 			}
 
+			value = (String) config.get("currentLists:");
+
+			if (value == null) {
+			
+				// Handle special case caused by the change from single to multiple lists
+				value = (String) config.get("currentList:");
+				
+				if (value != null && value.trim().equals("")) {
+					setShowUnlistedEntries(false);
+				}
+			}
+			
+			if (value != null) {
+				
+				String [] lists = value.split(";");
+								
+				for (int i = 0; i < lists.length; i++) {
+					addToCurrentLists(lists[i]);
+				}
+			}
+			
 
 			value = (String) config.get("multiAddList:");
 
@@ -3361,7 +3375,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	 
 			 if (strTmp.length() > 0) {
 				 settings.append(lineSeparator);
-				 settings.append("currentList:"+ strTmp);
+				 settings.append("currentLists:"+ strTmp);
 			 }
 		 }
 		 		 
