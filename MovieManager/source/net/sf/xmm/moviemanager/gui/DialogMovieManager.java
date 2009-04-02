@@ -406,24 +406,19 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         String listsString = "";
         
         for (int i = 0; i < lists.size(); i++) {
-        	
-        	if (listsString.length() == 0)
-        		listsString = (String) lists.get(i);
-        	else
-        		listsString += ", " + (String) lists.get(i);
+        	listsString += " - " + (String) lists.get(i);
         }
-        
+
         if (config.getShowUnlistedEntries()) {
-        
-        	if (listsString.length() == 0)
-        		listsString += "Unlisted";
-        	else
-        		listsString += ", Unlisted";
-        	
+        	listsString += " - Unlisted";
         }
         
-        setListTitle(Localizer.getString("moviemanager.listpanel-title") + " - " + listsString);
+        if (listsString.equals(""))
+        	listsString = " - All";
+        	
+        setListTitle(Localizer.getString("moviemanager.listpanel-title") + listsString);
     }
+    
     
     public void setListTitle(String title) {
         
