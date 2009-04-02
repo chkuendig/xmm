@@ -47,7 +47,7 @@ public class IMDB /*extends IMDB_if */{
     
     private ModelIMDbEntry lastDataModel;
     
-    String [] movieHitCategory = {"Popular Titles", "Titles (Exact Matches)", "Titles (Partial Matches)", "Titles (Approx Matches)"};
+    public final String [] movieHitCategory = {"Popular Titles", "Titles (Exact Matches)", "Titles (Partial Matches)", "Titles (Approx Matches)"};
 	    
     public IMDB() throws Exception {
     	this(null, null, null);		
@@ -588,27 +588,41 @@ public class IMDB /*extends IMDB_if */{
 	 * Returns simple matches list...
 	 **/
 	public DefaultListModel getSimpleMatches(String title) {
-		return getMatches("http://akas.imdb.com/find?s=tt&q="+ title, false);	
+		return getMatches("http://akas.imdb.com/find?s=tt&q="+ title);	
 	}
 
-    private DefaultListModel getMatches(String urlType, boolean moreResults) {
-		DefaultListModel listModel = new DefaultListModel();
-			
-		try {
-		
-			URL url = new URL(urlType.replaceAll("[\\p{Blank}]+","%20"));
-			
-			StringBuffer data = httpUtil.readDataToStringBuffer(url);
-			
-			if (data == null) {
-				log.warn("Failed to retrieve data from :" + url);
-				return listModel;
-			}
-			
-			//new java.io.File("HTML-debug").mkdir();
-			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
-        
-			int start = 0;
+	
+    private DefaultListModel getMatches(String urlType) {
+
+    	try {
+
+    		URL url = new URL(urlType.replaceAll("[\\p{Blank}]+","%20"));
+
+    		StringBuffer data = httpUtil.readDataToStringBuffer(url);
+
+    		if (data == null) {
+    			log.warn("Failed to retrieve data from :" + url);
+    			return new DefaultListModel();
+    		}
+
+    		return getMatches(data);
+
+    	} catch (Exception e) {
+    		log.warn("Exception:" + e.getMessage(), e);
+    	}
+    	return null;
+    }
+
+    protected DefaultListModel getMatches(StringBuffer data) {
+
+    	DefaultListModel listModel = new DefaultListModel();
+
+    	try {
+
+    		//new java.io.File("HTML-debug").mkdir();
+    		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
+
+    		int start = 0;
 			String key = "";
 			String movieTitle = "", aka = "";
 			int titleSTart, titleEnd;
@@ -616,7 +630,7 @@ public class IMDB /*extends IMDB_if */{
 			
 			/* If there's only one movie for that title it goes directly to that site...  */
 			if (!data.substring(data.indexOf("<title>")+7, data.indexOf("<title>")+11).equals("IMDb")) {
-				
+			
 				/* Gets the title... */
 				titleSTart = data.indexOf("<title>", start)+7;
 				titleEnd = data.indexOf("</title>", titleSTart);
@@ -631,7 +645,7 @@ public class IMDB /*extends IMDB_if */{
 				
 				return listModel;
 			}
-			
+				
 			// Insert newline before each href, as dot in regex will not match newline
 			int index = 0;
 			while ((index = data.indexOf("<a href", index)) != -1) {
@@ -667,6 +681,9 @@ public class IMDB /*extends IMDB_if */{
 			// <a href="/title/tt0074853/">The Man in the Iron Mask</a> (1977) (TV)</td></tr>
 			// <a href="/title/tt0120744/">The Man in the Iron Mask</a> (1998/I)</td></tr>
 			// <a href="/title/tt0103064/">Terminator 2: Judgment Day</a> (1991)<br>&#160;aka <em>"Terminator 2 - Le jugement dernier"</em> - France<br>&#160;aka <em>"T2 - Terminator 2: Judgment Day"</em></td></tr>
+			
+			// <a href="/title/tt0822832/" onclick="(new Image()).src='/rg/find-title-1/title_popular/images/b.gif?link=/title/tt0822832/';">Marley &#x26; Me</a> (2008)     </td></tr></table> 
+			
 			
 			// should match strings like the above
 			
