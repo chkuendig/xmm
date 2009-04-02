@@ -44,7 +44,7 @@ public class DatabaseImporterExporter {
 	private int current = -1;
 	private boolean done = false;
 	private boolean canceled = false;
-	private ArrayList transferred;
+	private ArrayList transferred = new ArrayList();;
 	private ModelImportExportSettings importSettings;
 	private Dialog parent;
 
@@ -135,8 +135,6 @@ public class DatabaseImporterExporter {
 					GUIUtil.showAndWait(alert, true);
 					return;
 				}
-
-				transferred = new ArrayList(lengthOfTask);
 
 				String title = "";
 
