@@ -155,7 +155,7 @@ public class DialogLists extends JDialog {
 								      BorderFactory.createEmptyBorder(5,5,5,5)));
 	panelAddNewField.setLayout(new GridBagLayout());
 	JTextField textFieldAdd = new JTextField(22);
-	textFieldAdd.setDocument(new DocumentRegExp("[^\\p{Punct}]*")); //$NON-NLS-1$
+	textFieldAdd.setDocument(new DocumentRegExp("[\\p{Alnum}]*")); //$NON-NLS-1$
 	constraints = new GridBagConstraints();
 	constraints.gridx = 0;
 	constraints.gridy = 0;
@@ -308,9 +308,11 @@ public class DialogLists extends JDialog {
 	}
 	
 	/* Adds to database... */
-	for (int i=0; i<_toAdd.size(); i++)
+	for (int i=0; i<_toAdd.size(); i++) {
 	    MovieManager.getIt().getDatabase().addListsColumn((String)_toAdd.get(i));
-	    
+	    MovieManager.getIt().getConfig().addToCurrentLists((String)_toAdd.get(i));
+	}
+	
 	/* Loading the listmenu with the existing lists */
 	MovieManager.getDialog().loadMenuLists(MovieManager.getIt().getDatabase());
 	
