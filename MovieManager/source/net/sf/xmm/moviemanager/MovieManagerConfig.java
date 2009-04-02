@@ -68,7 +68,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/**
 		 * The current version of the program.
 		 **/
-		private static final String _version = " 2.7.7"; //$NON-NLS-1$
+		private static final String _version = " 2.8.0"; //$NON-NLS-1$
 
 
 		String appTitle = " MeD's Movie Manager v" + getVersion();
@@ -3358,9 +3358,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 			 for (int i = 0; i < currentLists.size(); i++)
 				 strTmp += ";" + currentLists.get(i);
-
-			 System.err.println("strTmp:"  + strTmp);
-			 
+	 
 			 if (strTmp.length() > 0) {
 				 settings.append(lineSeparator);
 				 settings.append("currentList:"+ strTmp);
