@@ -921,7 +921,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		buttonSaveAndClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-				reloadMovieListAndClose(executeCommandSave(MovieManager.getConfig().getCurrentLists()));
+				reloadMovieListAndClose(executeCommandSave(null));
 			}
 		});
 		panelButtons.add(buttonSaveAndClose);
@@ -936,7 +936,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		buttonSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-				reloadMovieList(executeCommandSave(MovieManager.getConfig().getCurrentLists()));
+				reloadMovieList(executeCommandSave(null));
 				movieInfoModel.clearModel(true);
 				movieTitle2.requestFocus();
 				
