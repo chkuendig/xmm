@@ -77,7 +77,7 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 	int lengthOfTask = 0;
 	long conversionStart = 0;
 	boolean canceled;
-	ArrayList transferred;
+	//ArrayList transferred;
 	
 	public MovieManagerCommandImportExportHandler handler;
 	
@@ -190,11 +190,12 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 
 			try {
 				/*First run the array of processed movies may be null*/
-				while (transferred == null) {
-					Thread.sleep(2);
+			/*	while (transferred == null) {
+					Thread.sleep(20);
 					transferred = databaseImporter.getTransferred();
 				}
-
+*/
+				
 			} catch (Exception e) {
 				log.warn("Exception:"+ e); //$NON-NLS-1$
 			}
@@ -208,17 +209,18 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 				}
 			}
 
-			while (transferred != null && transferred.size() > 0 && transferred.get(0) != null) {
+			//while (transferred != null && transferred.size() > 0 && transferred.get(0) != null) {
 
+			while (databaseImporter.hasMoreTransferred()) {
+				
 				movieCounter++;
 				int percent = ((movieCounter) * 100)/lengthOfTask;
 
 				String msg = percent+ "%  (" + (movieCounter) + Localizer.getString("DialogDatabaseImporter.message.out-of") + lengthOfTask+")     "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				progressBar.setValue(movieCounter);
 				progressBar.setString(msg);
-				taskOutput.append((movieCounter) + " - " + ((String) transferred.get(0)) + newline); //$NON-NLS-1$
+				taskOutput.append((movieCounter) + " - " + ((String) databaseImporter.getNextTransferred()) + newline); //$NON-NLS-1$
 				taskOutput.setCaretPosition(taskOutput.getDocument().getLength());
-				transferred.remove(0);
 			}
 
 			if (databaseImporter.isDone() || canceled) {
@@ -226,7 +228,7 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 
 				if (!canceled) {
 
-					taskOutput.append(movieCounter + Localizer.getString("DialogDatabaseImporter.message.entries-processed-in") + (millisecondsToString(System.currentTimeMillis() - conversionStart)) + newline); //$NON-NLS-1$
+					taskOutput.append(newline + movieCounter + Localizer.getString("DialogDatabaseImporterExporter.message.entries-processed-in") + (millisecondsToString(System.currentTimeMillis() - conversionStart)) + newline); //$NON-NLS-1$
 					closeButton.setEnabled(true);
 					cancelButton.setEnabled(false);
 					setDone(true);
@@ -239,7 +241,6 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 					timer = new Timer(milliseconds, new TimerListener());
 
 					movieCounter = 0;
-					transferred = null;
 				}
 			}
 		}
