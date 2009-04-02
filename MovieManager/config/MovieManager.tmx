@@ -1956,7 +1956,7 @@
                 <seg> database successfully transferred to a new </seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogDatabaseConverter.message.entries-processed-in">
+        <tu datatype="Text" tuid="DialogDatabaseImporterExporter.message.entries-processed-in">
             <prop type="x-Group">DialogDatabaseConverter</prop>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
