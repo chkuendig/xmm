@@ -95,12 +95,18 @@ public class DatabaseImporterExporter {
 		return done;
 	}
 
-	/* Returns the array transferred which contains all the finished database entries */
-	public ArrayList getTransferred() {
-		return transferred;
+	public synchronized boolean hasMoreTransferred() {
+		return transferred.size() > 0;
 	}
-
-
+	
+	public synchronized Object getNextTransferred() {
+		return transferred.remove(0);
+	}
+	
+	synchronized void addNewTransferred(String val) {
+		transferred.add(val);
+	}
+	
 
 	/**
 	 * The actual database import task.
@@ -150,9 +156,9 @@ public class DatabaseImporterExporter {
 							ret = handler.addMovie(i);
 
 							if (ret == -1)
-								transferred.add("Failed to import: " + title);
+								addNewTransferred("Failed to import: " + title);
 							else if (!title.equals(""))
-								transferred.add(title);
+								addNewTransferred(title);
 
 							current++;
 						}
@@ -161,7 +167,7 @@ public class DatabaseImporterExporter {
 						}
 					}
 					else {
-						transferred.add("Empty entry");
+						addNewTransferred("Empty entry");
 						current++;
 					}
 				}
