@@ -588,10 +588,10 @@ public class FileUtil {
     public static String getExtension(String fileName) {
     	if (fileName != null && fileName.indexOf(".") != -1) {
     		
-    		if (fileName.indexOf(".") == fileName.length() - 1)
+    		if (fileName.lastIndexOf(".") == fileName.length() - 1)
     			return null;
     		
-    		return fileName.substring(fileName.indexOf(".") + 1, fileName.length()); 
+    		return fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length()); 
     	}
     	return null;
     }
