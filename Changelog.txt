@@ -1,7 +1,22 @@
 
 ========================================
-Changelog - MeD's Movie Manager
+   Changelog - MeD's Movie Manager
 ========================================
+
+
+Version 2.8.0 (02-apr-2009)
+
+- General improvements:
+
+  - It's now possible to view multiple lists at the same time (combined).
+  - The lists each entry is connected to is now shown in the popup when right clicking the list entry.
+    
+- Bug fixes:
+
+  - Full HTML export would seemingly hang on the last entry (Caused by ineffective method).
+  - HTML export would sometimes fail when pressing the export button. Caused by the file chooser GUI.
+  - IMDb search on Non-ASCII characters in titles could fail.
+  - In "Add Multiple Movies", files containing more than one dot would not appear in the file tree.
 
 
 Version 2.7.7 (22-mar-2009)
