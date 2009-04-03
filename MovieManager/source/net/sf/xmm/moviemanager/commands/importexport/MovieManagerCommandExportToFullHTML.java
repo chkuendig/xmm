@@ -27,6 +27,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
@@ -76,13 +78,23 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 		
 	
 	public void execute() {
+				
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					if (!handleGetOutputFile()) {
+						cancelled = true;
+					}
+				}
+			});
+		} catch (Exception e) {
+			log.error("Exception:" + e.getMessage(), e);
+		}
 		
-		if (!handleGetOutputFile()) {
-			cancelled = true;
+		if (cancelled) {
 			return;
 		}
-			
-			
+						
 		// Copies the css files
 		try {
 			File exportDirectory = htmlOutputFile.getParentFile();
@@ -99,7 +111,7 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 					FileUtil.copyToDir(files[i], new File(exportDirectory, "Styles"));
 			}
 		} catch (Exception e) {
-			log.error("Excpetion:" + e.getMessage());
+			log.error("Excpetion:" + e.getMessage(), e);
 		}
 	}
 	
@@ -109,9 +121,13 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 		createMovieList(htmlOutputFile, coverOutputDir.getAbsolutePath());
 	}
 
+	String lastTitle = null;
+	
 	public String getTitle(int i) {
 				
 		ModelMovie model = (ModelMovie) listModel.elementAt(i);
+		System.err.println("getTitle("+i+"):" + model.getTitle());
+		lastTitle = model.getTitle();
 		
 		return model.getTitle();
 	}
@@ -133,6 +149,8 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 	
 	public int addMovie(int notUsed) {
 
+		System.err.println("addMovie lastTitle:" + lastTitle);
+		
 		try {
 
 			if (movieGroup == null) {
@@ -146,11 +164,19 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 				}
 			}
 
+			
+			
 			if (movieGroup.getSize() > 0) {
+				
+				System.err.println("processNext");
 				
 				movieGroup.processNext();
 				
+				System.err.println("movieGroup.getSize():" + movieGroup.getSize());
+				
 				if (movieGroup.getSize() == 0) {
+					
+					System.err.println("getHTMLMovies");
 					
 					StringBuffer html = movieGroup.getHTMLMovies();
 
@@ -168,15 +194,27 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 					else
 						bodyContent.append(html);
 
-
+					
+					bodyContent.append(SysUtil.getLineSeparator());
+					bodyContent.append(SysUtil.getLineSeparator());
+					bodyContent.append(SysUtil.getLineSeparator());
+						
+					System.err.println("test 2");
+					
 					output = output.insert(templateBodyIndex, bodyContent);
 
 					output.append(" ");
 
+					System.err.println("test 3");
+					
 					MovieManagerCommandSelect.processTemplateCssStyle(output);
 
-					output = HttpUtil.getHtmlNiceFormat(output);
+					System.err.println("test 4");
+					
+					//output = HttpUtil.getHtmlNiceFormat(output);
 
+					System.err.println("test 5");
+					
 					String filepath = htmlOutputFile.getParentFile().getAbsolutePath() + SysUtil.getDirSeparator();
 					
 					String fName = filepath + movieGroup.getFileName();
@@ -194,6 +232,8 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 			log.error("Exception:" + e.getMessage(), e);
 			return -1;
 		}
+		
+		System.err.println("addMovie return:" + lastTitle);
 		return 0;
 	}
 	
@@ -204,9 +244,10 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 	 **/
 	void createMovieList(File outputFile, String coversPath) {
 
+		log.debug(this.getClass() + ".createMovieList");
+		
 		startChar = new ArrayList();
 		char lastChar = ' ';
-
 		
 		String fileName = outputFile.getName();
 
@@ -306,8 +347,6 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 		} catch (Exception e) {
 			log.error("", e);
 		}
-
-		log.debug("Export function finished.");
 	}
 
 
@@ -353,188 +392,199 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 	 * Executes the command.
 	 **/
 	public boolean handleGetOutputFile() {
-		/* Opens the Export to HTML dialog... */
-		ExtendedFileChooser fileChooser = new ExtendedFileChooser();
-		fileChooser.setFileFilter(new CustomFileFilter(new String[]{"htm","html"},new String("HTML Files (*.htm, *.html)")));
 
-		if (MovieManager.getConfig().getLastMiscDir()!=null) {
-			fileChooser.setCurrentDirectory(MovieManager.getConfig().getLastMiscDir());
-		}
+		log.debug(this.getClass() + ".handleGetOutputFile()");
 
-		//fileChooser.setDialogType(ExtendedFileChooser.CUSTOM_DIALOG);
-		fileChooser.setDialogTitle("Export to HTML - Full");
-		fileChooser.setApproveButtonToolTipText("Export to file (a folder \'Covers\' will also be created)");
+		boolean ret = false;
+		
+		try {
 
-		fileChooser.setAcceptAllFileFilterUsed(false);
-		int returnVal = fileChooser.showDialog(MovieManager.getDialog(), "Export");
+			/* Opens the Export to HTML dialog... */
+			ExtendedFileChooser fileChooser = new ExtendedFileChooser();
+			fileChooser.setFileFilter(new CustomFileFilter(new String[]{"htm","html"},new String("HTML Files (*.htm, *.html)")));
 
-		while (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
-			/* Gets the path... */
-
-			/* Gets the path... */
-			File selected = fileChooser.getSelectedFile();
-			String path = selected.getParent();
-
-			String fileName = selected.getName();
-
-			if (!fileName.endsWith(".html")) {
-				fileName = fileName + ".html";
+			if (MovieManager.getConfig().getLastMiscDir() != null) {
+				fileChooser.setCurrentDirectory(MovieManager.getConfig().getLastMiscDir());
 			}
 
-			/* Creates the movielist file... */
-			File htmlFile = new File(selected.getParent(), fileName);
+			fileChooser.setDialogType(ExtendedFileChooser.CUSTOM_DIALOG);
+			fileChooser.setDialogTitle("Export to HTML - Full");
+			fileChooser.setApproveButtonToolTipText("Export to file (a folder \'Covers\' will also be created)");
 
-			//String coversPath;
-			File coversDir;
+			fileChooser.setAcceptAllFileFilterUsed(false);
 			
-			if (fileName.indexOf(".") == -1)
-				coversDir = new File(path, fileName + "_covers");
-			else
-				coversDir = new File(path, fileName.substring(0, fileName.lastIndexOf(".")) + "_covers");
+			int returnVal = fileChooser.showDialog(MovieManager.getDialog(), "Export");
+	
+			while (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
 				
-			/* Relative path to covers dir... */
-			
-			
-			if (htmlFile.exists()) {
-				DialogQuestion fileQuestion = new DialogQuestion("File already exists", "A file with the chosen filename already exists. Would you like to overwrite the old file?");
-				GUIUtil.showAndWait(fileQuestion, true);
+				/* Gets the path... */
+				File selected = fileChooser.getSelectedFile();
+				String path = selected.getParent();
 
-				if (fileQuestion.getAnswer()) {
-					
-					if (coversDir.exists()) { 
-						DialogQuestion coverQuestion = new DialogQuestion("Directory already exists.", "The directory to store covers already exists. Put cover images in the existing directory?");
-						GUIUtil.showAndWait(coverQuestion, true);
+				String fileName = selected.getName();
 
-						if (coverQuestion.getAnswer()) {
-							//export(htmlFile, coversDir.getAbsolutePath());
+				if (!fileName.endsWith(".html")) {
+					fileName = fileName + ".html";
+				}
+
+				/* Creates the movielist file... */
+				File htmlFile = new File(selected.getParent(), fileName);
+
+				//String coversPath;
+				File coversDir;
+
+				if (fileName.indexOf(".") == -1)
+					coversDir = new File(path, fileName + "_covers");
+				else
+					coversDir = new File(path, fileName.substring(0, fileName.lastIndexOf(".")) + "_covers");
+
+				/* Relative path to covers dir... */
+
+				if (htmlFile.exists()) {
+					DialogQuestion fileQuestion = new DialogQuestion("File already exists", "A file with the chosen filename already exists. Would you like to overwrite the old file?");
+					GUIUtil.showAndWait(fileQuestion, true);
+	
+					if (fileQuestion.getAnswer()) {
+
+						if (coversDir.exists()) { 
+							DialogQuestion coverQuestion = new DialogQuestion("Directory already exists.", "The directory to store covers already exists. Put cover images in the existing directory?");
+							GUIUtil.showAndWait(coverQuestion, true);
+
+							if (coverQuestion.getAnswer()) {
+								htmlOutputFile = htmlFile;
+								coverOutputDir = coversDir;
+								ret = true;
+								break;
+							}
+							else
+								returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
+
+						}
+						else {
+							htmlFile.delete();
 							htmlOutputFile = htmlFile;
 							coverOutputDir = coversDir;
+							ret = true;
 							break;
 						}
-						else
-							returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
-
 					}
-					else {
-						htmlFile.delete();
+					else 
+						returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
+
+				} 
+				else if (coversDir.exists()) { 
+					DialogQuestion coverQuestion = new DialogQuestion("Directory already exists.", "The directory to store covers already exists. Overwrite existing files?");
+					GUIUtil.showAndWait(coverQuestion, true);
+
+					if (coverQuestion.getAnswer()) {
 						htmlOutputFile = htmlFile;
 						coverOutputDir = coversDir;
+						ret = true;
 						break;
 					}
+					else {
+						returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
+					}
+
 				}
-				else 
-					returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
-
-			} 
-			else if (coversDir.exists()) { 
-				DialogQuestion coverQuestion = new DialogQuestion("Directory already exists.", "The directory to store covers already exists. Overwrite existing files?");
-				GUIUtil.showAndWait(coverQuestion, true);
-
-				if (coverQuestion.getAnswer()) {
-					htmlOutputFile = htmlFile;
-					coverOutputDir = coversDir;
-					break;
+				else if(!coversDir.mkdir()) {
+					DialogAlert coverAlert = new DialogAlert(MovieManager.getDialog(), "Couldn't create directory.", "The directory to store covers could not be created.");
+					GUIUtil.showAndWait(coverAlert, true);
 				}
 				else {
-					returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
+					htmlOutputFile = htmlFile;
+					coverOutputDir = coversDir;
+					ret = true;
+					break;
 				}
+			}
 
-			}
-			else if(!coversDir.mkdir()) {
-				DialogAlert coverAlert = new DialogAlert(MovieManager.getDialog(), "Couldn't create directory.", "The directory to store covers could not be created.");
-				GUIUtil.showAndWait(coverAlert, true);
-			}
-			else {
-				htmlOutputFile = htmlFile;
-				coverOutputDir = coversDir;
-				break;
-			}
+			/* Sets the last path... */
+			MovieManager.getConfig().setLastMiscDir(fileChooser.getCurrentDirectory());
+			return ret;
+
+		} catch (Exception e) {
+			log.error("Exception:" + e.getMessage(), e);
 		}
-		
-		/* Sets the last path... */
-		MovieManager.getConfig().setLastMiscDir(fileChooser.getCurrentDirectory());
-		
-		return true;
+		return false;
 	}
-	
 }
 
 
-
 class HTMLMovieGroup {
-	
+
 	static Logger log = Logger.getLogger(HTMLMovieGroup.class);
-	
+
 	String groupTitle;
 	String fileTitle;
 	ArrayList models = new ArrayList();
 	String coversPath;
 	StringBuffer templateBody;
 	String reportTitle = null;
-	
+
 	StringBuffer movieDataTmp = new StringBuffer();
-	
+
 	int coverWidth = 97;
-	
-	String nocover = MovieManager.getConfig().getNoCoverSmall();
+
+	String nocoverFileName = MovieManager.getConfig().getNoCoverSmall();
 	String coversDBFolder = MovieManager.getConfig().getCoversPath();
-	
+
 	HTMLMovieGroup(String groupTitle, String fileTitle, String coversPath, StringBuffer templateBody) {
 		this.groupTitle = groupTitle;
 		this.fileTitle = fileTitle;
 		this.coversPath = coversPath;
 		this.templateBody = templateBody;
 	}
-	
+
 	public String toString() {
 		return getTitle();
 	}
-	
+
 	public void setTitle(String title) {
 		//this.groupTitle = groupTitle;
 		reportTitle = title;
 	}
-	
+
 	public String getTitle() {
-		
+
 		if (groupTitle == null || groupTitle.equals(""))
 			return reportTitle;
-			
+
 		return groupTitle;
 	}
-	
+
 	public String getFileName() {
-		
+
 		if (groupTitle == null || groupTitle.equals(""))
 			return fileTitle + ".html";
 		else
 			return fileTitle + "-"+ groupTitle + ".html";
-			
-		
+
+
 	}
-	
+
 	public void addModel(ModelEntry model) {
 		models.add(model);
 	}
-	
-	
+
+
 	public int getSize() {
 		return models.size();
 	}
-	
+
 	StringBuffer getHTMLMovies() {
 		return movieDataTmp;
 	}
-	
+
 	public void processNext() {
 
 		try {
-			
+
 			int coverHeight = 0;
-			
+
 			String coverFileName;
 
-			File coverInputFile, coverOutputFile;
+			File coverInputFile, coverOutputFile = null;
 
 			ModelMovie movie = (ModelMovie) models.remove(0);
 
@@ -551,14 +601,20 @@ class HTMLMovieGroup {
 				if (!coverFileName.equals("")) {
 
 					coverHeight = 145;
-					
+
 					/* Creates the output file... */
 					coverOutputFile = new File(coversPath, coverFileName);
 	
-					if (!coverOutputFile.createNewFile()) {
-						coverOutputFile.delete();
+					boolean nocover = false;
+										
+					try {
+						coverOutputFile.createNewFile();
+					} catch (Exception e) {
+						log.error("Failed to create cover file:" + coverOutputFile);
+						nocover = true;
 					}
-					else {
+					
+					if (nocover) {
 						if (MovieManager.getIt().getDatabase().isMySQL()) {
 
 							// Write cover file to disk
@@ -569,7 +625,7 @@ class HTMLMovieGroup {
 								FileUtil.writeToFile(movie.getCoverData(), coverOutputFile);
 							}
 							else {
-								coverFileName = nocover;
+								coverFileName = nocoverFileName;
 								coverHeight = 97;
 								coverOutputFile.delete();
 							}
@@ -582,19 +638,20 @@ class HTMLMovieGroup {
 								FileUtil.copyToDir(coverInputFile, new File(coversPath), coverFileName);
 							}
 							else {
-								coverFileName = nocover;
+								coverFileName = nocoverFileName;
 								coverHeight = 97;
 								coverOutputFile.delete();
 							}
 						}
 					}						
 				} else {
-					coverFileName = nocover;
+					coverFileName = nocoverFileName;
 					coverHeight = 97;
 				}
 			} catch (Exception e) {
-				log.error("Exception: " + e.getMessage());
-				coverFileName = MovieManager.getConfig().getNoCover();
+				log.error("Exception: " + e.getMessage(), e);
+				log.error("Failed to copy cover file:" + coverOutputFile);
+				coverFileName = nocoverFileName;
 			}
 
 			String coverName = new File(coversPath).getName() + "/" + coverFileName;
@@ -602,13 +659,19 @@ class HTMLMovieGroup {
 
 			movieDataTmp.append(htmlData + "<br><br><br>");
 
+			movieDataTmp.append(SysUtil.getLineSeparator());
+			movieDataTmp.append(SysUtil.getLineSeparator());
+			movieDataTmp.append(SysUtil.getLineSeparator());
+			movieDataTmp.append(SysUtil.getLineSeparator());
+			
+			
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
 		}
 	}
-	
-	
-		
+
+
+
 	/*public StringBuffer processMovies() {
 
 		StringBuffer movieDataTmp = new StringBuffer();
@@ -633,10 +696,10 @@ class HTMLMovieGroup {
 				//	New fresh template
 				StringBuffer htmlData = new StringBuffer(templateBody.toString());
 				MovieManagerCommandSelect.processTemplateData(htmlData, movie);
-				
+
 				try {
 					coverFileName = movie.getCover();
-	
+
 					if (!coverFileName.equals("")) {
 
 						 Creates the output file... 
@@ -645,13 +708,13 @@ class HTMLMovieGroup {
 						if (!coverOutputFile.createNewFile()) {
 							coverOutputFile.delete();
 						}
-						
+
 						if (MovieManager.getIt().getDatabase().isMySQL()) {
-						
+
 							// Write cover file to disk
 							if (!movie.getHasGeneralInfoData())
 								movie.updateGeneralInfoData(true);
-							
+
 							if (movie.getCoverData() != null) {
 								FileUtil.writeToFile(movie.getCoverData(), coverOutputFile);
 							}
@@ -663,10 +726,10 @@ class HTMLMovieGroup {
 							if (!coverInputFile.isFile()) {
 								throw new Exception("Cover file not found:" + coverInputFile.getAbsolutePath());
 							}
-							
+
 							FileUtil.copyToDir(coverInputFile, new File(coversPath), coverFileName);
 						}
-						
+
 						coverHeight = 145;
 					} else {
 						coverFileName = nocover;
