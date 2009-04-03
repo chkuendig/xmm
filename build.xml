@@ -33,7 +33,7 @@
 	<property name="dist" location="dist" />
 	<property name="izpack.dir" location="packaging/izpack" />
 
-	<property name="version" value="2.7.7" />
+	<property name="version" value="2.8.0" />
 	<property name="versionName" value="${version}" />
 
 	<property name="base" value="MovieManager/" />
@@ -84,7 +84,7 @@
 											MediaInfo.dll,
 											LookAndFeels/oalnf.jar,
 											LookAndFeels/skinlf.jar,
-											LookAndFeels/JTattoo.1.2.4.jar,
+											LookAndFeels/JTattoo.1.3.0.jar,
 											LookAndFeels/kunststoff.jar,
 											LookAndFeels/JGoodies-2.1.4.jar,
 											LookAndFeels/OfficeLnFs_2.7.jar,
