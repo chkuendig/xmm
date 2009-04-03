@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileWriter;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogQuestion;
@@ -52,6 +54,7 @@ public class MovieManagerCommandExportToSimpleXHTML extends MovieManagerCommandE
 	}
 
 	public int getMovieListSize() throws Exception {
+		System.err.println("getMovieListSize:" + listModel.getSize());
 		return listModel.getSize();
 	}
 
@@ -62,12 +65,18 @@ public class MovieManagerCommandExportToSimpleXHTML extends MovieManagerCommandE
 
 	public void retrieveMovieList() throws Exception {
 		
+		log.debug(this.getClass() + ".retrieveMovieList()");
+		
+		System.err.println("outputFile:" + outputFile);
+		
 		if (outputFile == null) {
 			aborted = true;
 			return;
 		}
 		
 		listModel = MovieManager.getDialog().getCurrentMoviesList();
+		
+		System.err.println("getting list:" + listModel.size());
 		
 		writer = new FileWriter(outputFile);
 	
@@ -135,60 +144,86 @@ public class MovieManagerCommandExportToSimpleXHTML extends MovieManagerCommandE
 	 * Executes the command.
 	 **/
 	public void execute() {
-		/* Opens the Export to HTML dialog... */
-		ExtendedFileChooser fileChooser = new ExtendedFileChooser();
-		fileChooser.setFileFilter(new CustomFileFilter(new String[]{"xhtml"},new String("XHTML Files (*.xhtml)")));
-
-		if (MovieManager.getConfig().getLastMiscDir() != null) {
-			fileChooser.setCurrentDirectory(MovieManager.getConfig().getLastMiscDir());
-		}
 		
-		fileChooser.setDialogTitle("Export to XHTML - Simple");
-		fileChooser.setApproveButtonToolTipText("Export to file");
+		log.debug(this.getClass() + ".execute()");
+		
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					if (!handleGetOutputFile()) {
+						cancelled = true;
+					}
+				}
+			});
+		} catch (Exception e) {
+			log.error("Exception:" + e.getMessage(), e);
+		}
+	}
+		
+		
+	public boolean handleGetOutputFile() {
+		boolean ret = false;
+		
+		log.debug(this.getClass() + ".handleGetOutputFile()");
+		
+		try {
 
-		fileChooser.setAcceptAllFileFilterUsed(false);
-		int returnVal = fileChooser.showDialog(MovieManager.getDialog(), "Export");
+			/* Opens the Export to HTML dialog... */
+			ExtendedFileChooser fileChooser = new ExtendedFileChooser();
+			fileChooser.setFileFilter(new CustomFileFilter(new String[]{"xhtml"},new String("XHTML Files (*.xhtml)")));
 
-		while (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
-			
-			/* Gets the path... */
-			File selected = fileChooser.getSelectedFile();
-			
-			String fileName = selected.getName();
-			
-			if (!fileName.endsWith(".xhtml")) {
-				fileName = fileName + ".xhtml";
+			if (MovieManager.getConfig().getLastMiscDir() != null) {
+				fileChooser.setCurrentDirectory(MovieManager.getConfig().getLastMiscDir());
 			}
 
-			/* Creates the movielist file... */
-			File xhtmlFile = new File(selected.getParent(), fileName);
+			fileChooser.setDialogTitle("Export to XHTML - Simple");
+			fileChooser.setApproveButtonToolTipText("Export to file");
+			fileChooser.setAcceptAllFileFilterUsed(false);
+			
+			int returnVal = fileChooser.showDialog(MovieManager.getDialog(), "Export");
 	
-			if (xhtmlFile.exists()) {
-				DialogQuestion question = new DialogQuestion("File already exists", "A file with the chosen filename already exists. Would you like to overwrite the old file?");
-				GUIUtil.showAndWait(question, true);
+			while (returnVal == JFileChooser.APPROVE_OPTION) {
+	
+				/* Gets the path... */
+				File selected = fileChooser.getSelectedFile();
+				String fileName = selected.getName();
 
-				if (question.getAnswer()) {
-					xhtmlFile.delete();
+				if (!fileName.endsWith(".xhtml")) {
+					fileName = fileName + ".xhtml";
+				}
+
+				/* Creates the movielist file... */
+				File xhtmlFile = new File(selected.getParent(), fileName);
+
+				if (xhtmlFile.exists()) {
+					DialogQuestion question = new DialogQuestion("File already exists", "A file with the chosen filename already exists. Would you like to overwrite the old file?");
+					GUIUtil.showAndWait(question, true);
 					
+					if (question.getAnswer()) {
+						xhtmlFile.delete();
+						outputFile = xhtmlFile;
+						//export(xhtmlFile);
+						ret = true;
+						break;
+					}
+					else {
+						returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
+					}
+				}
+				else {
 					outputFile = xhtmlFile;
-					//export(xhtmlFile);
+					ret = true;
 					break;
 				}
+			}
 
-				else {
-					returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
-				}
-			}
-			else {
-				outputFile = xhtmlFile;
-				//export(xhtmlFile);
-				break;
-			}
+			/* Sets the last path... */
+			MovieManager.getConfig().setLastMiscDir(fileChooser.getCurrentDirectory());
+			return ret;
+			
+		} catch (Exception e) {
+			log.error("Exception:" + e.getMessage(), e);
 		}
-
-		/* Sets the last path... */
-		MovieManager.getConfig().setLastMiscDir(fileChooser.getCurrentDirectory());
+		return false;
 	}
-
-
 }
