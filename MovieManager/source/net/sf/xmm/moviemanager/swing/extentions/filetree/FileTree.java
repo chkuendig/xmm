@@ -197,14 +197,15 @@ public class FileTree extends JPanel {
 		
 		// If windows, all the hard drives are listed.
 		// On Linux, only the home directory
-
+		
 		File[] roots = File.listRoots();
-
+		
 		// Getting home $HOME variable
 		if (!SysUtil.isWindows()) {
 			String home = System.getProperty("user.home");
-			roots = new File[1];
+			roots = new File[2];
 			roots[0] = new File(home);
+			roots[1] = new File("/");
 		}
 
 
@@ -577,11 +578,13 @@ public class FileTree extends JPanel {
 				int y = event.getY();
 
 				TreePath path = fileTree.getPathForLocation(x, y);
-	
+					
 				// Sets the row selected
 				if (path == null) {
-					int rowForLocation = fileTree.getRowForLocation(x, y);
-					fileTree.setSelectionRow(rowForLocation);
+					//int rowForLocation = fileTree.getRowForLocation(x, y);
+					
+				//	System.err.println("rowForLocation:" + rowForLocation);
+					//fileTree.setSelectionRow(rowForLocation);
 				}
 				
 				if (path != null)	{
@@ -717,20 +720,17 @@ public class FileTree extends JPanel {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 
 			Object obj = node.getUserObject();
-
-
+			
 			boolean regularFile = false;
-
-			setText(obj.toString());
 			
 			if (obj instanceof Boolean) {
 				setText("Retrieving data...");
 			}
+			else if (obj instanceof IconData) {
 
-			if (obj instanceof IconData) {
-
+				setText(obj.toString());
+				
 				IconData idata = (IconData)obj;
-
 				regularFile = !idata.isFolder();
 
 				if (expanded)
@@ -740,6 +740,7 @@ public class FileTree extends JPanel {
 			}
 			else {
 				setIcon(null);
+				setText(obj.toString());
 			}
 
 			setFont(tree.getFont());
