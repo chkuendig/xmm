@@ -67,7 +67,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 	
 	private boolean showEntries = true;
 	
-	public static Dimension separatorDim = new Dimension(3, 0);
+	public static Dimension separatorDim = new Dimension(4, 0);
 
 	private int toolBarWidth = 0;
 	private int toolBarHeight = 55;
@@ -147,7 +147,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 
 	
 	
-	 /**
+	/**
      * Sets the entries variable and uppdates the showEntries Label with the new number
      **/
     public void setAndShowEntries(int entries) {
@@ -171,14 +171,12 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
     
 
 	public void addSeparator(Dimension size) {
-
-		//toolBarWidth += size.width;
-
+		toolBarWidth += size.width;
 		super.addSeparator(size);
 	}
 
 	public Component add(Component comp) {
-
+		System.err.println("toolbar add");
 		toolBarWidth += comp.getPreferredSize().width;
 			
 		comp.addMouseListener(this);
@@ -197,6 +195,14 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 		return super.add(comp, index); 
 	}
 
+	public void remove(int index) {
+		
+		toolBarWidth -= getComponentAtIndex(index).getWidth();
+		
+		System.err.println("remove new width:" + toolBarWidth);
+		
+		super.remove(index);
+	}
 
 	public Dimension getPreferredSize() {
 
@@ -232,7 +238,8 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 	}
 
 	
-//	 Makes the play button visible in the toolbar
+//	 Makes the button visible in the toolbar
+	
 	public void showButton(JButton button, boolean enable) {
 							
 		if (button.isVisible() == enable) {
@@ -261,7 +268,19 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 			return;
 		}
 					
-		showButton(buttonPlay, enable);
+		//showButton(buttonPlay, enable);
+		buttonPlay.setVisible(enable);
+		
+		if (enable) {
+			add(new JToolBar.Separator(separatorDim), 7);
+			add(buttonPlay, 8);
+		}
+		else {// Remove the button and a separator
+			remove(7);
+			remove(7);
+		}
+				
+		revalidate();
 	}
 
 //	 Makes the print button visible in the toolbar
@@ -277,7 +296,24 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 			return;
 		}
 				
-		showButton(buttonPrint, enable);
+		//showButton(buttonPrint, enable);
+		buttonPrint.setVisible(enable);
+		
+		int index = 7;
+		
+		if (buttonPlay.isVisible())
+			index = 9;
+		
+		if (enable) {
+			add(buttonPrint, index);
+			add(new JToolBar.Separator(separatorDim), index);
+		}
+		else {// Remove the button and a separator
+			remove(index);
+			remove(index);
+		}
+	
+		revalidate();
 	}
 	
 //	 Makes the add button visible in the toolbar
@@ -439,18 +475,14 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 		try {
 
 			toolBar.setRollover(true);
-
 			toolBar.putClientProperty(new String("JToolBar.isRollover"), Boolean.TRUE);
-
 			toolBar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,0), BorderFactory.createEmptyBorder(0,10,0,10)));
-
 			toolBar.setFloatable(false);
-
+			
 			toolBar.addMouseListener((ExtendedToolBar) toolBar);
 			toolBar.addMouseMotionListener((ExtendedToolBar) toolBar);
 
 			//toolBar.setBorder(new EmptyBorder(0,0,0,10));
-
 
 			/* The Add button. */
 			buttonAdd = new JButton(new ImageIcon(FileUtil.getImage("/images/add.png").getScaledInstance(27, 27, Image.SCALE_SMOOTH))); //$NON-NLS-1$
@@ -517,22 +549,20 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 			
 			add(buttonSearch);
 			
-			addSeparator(separatorDim);
+			
 			buttonPlay = constructPlayButton();
 			buttonPlay.setVisible(false);
-			add(buttonPlay);
 			
-			addSeparator(separatorDim);
 			buttonPrint = constructPrintButton();
+			buttonPrint.setVisible(false);
 			
-			add(buttonPrint);
 			
-			/* A separator. */
+			/* Panel entries */
 			
 			panelEntries = new JPanel();
 			panelEntries.setLayout(new BoxLayout(panelEntries, BoxLayout.X_AXIS));
 
-			panelEntries.setBorder(new CompoundBorder(new EmptyBorder(0,0,0,0), new CompoundBorder(new EtchedBorder(EtchedBorder.RAISED), new EmptyBorder(6,4,5,5))));
+			panelEntries.setBorder(new CompoundBorder(new EmptyBorder(0,0,0,0)	, new CompoundBorder(new EtchedBorder(EtchedBorder.RAISED), new EmptyBorder(6,4,5,5))));
 
 			panelEntries.setMaximumSize(new Dimension(56, 33));
 			panelEntries.setPreferredSize(new Dimension(56, 33));
@@ -543,15 +573,14 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 			panelEntries.add(entriesCount);
 		
 			if (!MovieManager.getConfig().getInternalConfig().isEntriesCountDisabled()) {
-				addSeparator(new Dimension(8, 3));
+				addSeparator(new Dimension(20, 3));
 				add(panelEntries);
-				toolBarWidth -= 20;
+				toolBarWidth += 10;
 			}
 		
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
-
     }
 
 	JButton constructPlayButton() {
@@ -639,6 +668,8 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 
     public void mouseClicked(MouseEvent event) {
 
+    	System.err.println("mouseClicked");
+    	
     	/* Button 2 */
     	if (SwingUtilities.isRightMouseButton(event)) {
     
