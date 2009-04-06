@@ -180,8 +180,6 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 
 				Icon icon = null;
 
-
-
 				if (useCovers) {
 
 					if (entry.getKey() != -1) {
@@ -212,7 +210,7 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 				if (useCovers) {
 
 					Object view = views.get(o);
-
+					
 					if (view != null) {
 						putClientProperty("html", view);
 					}
@@ -230,11 +228,8 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 						coverTitleBuf.append("'>");
 						coverTitleBuf.append(entry.getDate());
 						coverTitleBuf.append("</font></html>");
-
-						//String str = "<html><font size='" + fontSize + "'><b>" + entry.getTitle() + "</b></font><br><font size='" + (fontSize - 1)  + "'>" + entry.getDate() + "</font></html>";
-
+						
 						setText(coverTitleBuf.toString());
-						//setText(entry.getTitle());
 						views.put(o, getClientProperty("html"));
 					}
 				}
@@ -312,9 +307,10 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 
 
 	/**
-	 * clear cached covers
+	 * Clear cached covers and the html view cache
 	 */
 	public void clearCoverCache() {
+		views.clear();
 		coverCache.clear();
 	}
 
