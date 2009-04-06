@@ -176,7 +176,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 	}
 
 	public Component add(Component comp) {
-		System.err.println("toolbar add");
+
 		toolBarWidth += comp.getPreferredSize().width;
 			
 		comp.addMouseListener(this);
@@ -196,11 +196,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 	}
 
 	public void remove(int index) {
-		
 		toolBarWidth -= getComponentAtIndex(index).getWidth();
-		
-		System.err.println("remove new width:" + toolBarWidth);
-		
 		super.remove(index);
 	}
 
@@ -667,8 +663,6 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 
 
     public void mouseClicked(MouseEvent event) {
-
-    	System.err.println("mouseClicked");
     	
     	/* Button 2 */
     	if (SwingUtilities.isRightMouseButton(event)) {
