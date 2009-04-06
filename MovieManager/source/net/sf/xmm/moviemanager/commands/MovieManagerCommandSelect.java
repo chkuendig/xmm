@@ -285,7 +285,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	 */
 	public static void execute() {
 
-		Dimension coverDim = new Dimension(97, 97);
+		Dimension coverDim = null;
 		boolean nocover = true;
 		
 		byte [] coverData = null;
@@ -497,25 +497,24 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 					InputStream in = new ByteArrayInputStream(coverData);
 					
 					if (in != null) {
-						//Loads the image...
-						int height = 145;
 
+						coverDim = new Dimension(97, 145);
+						
 						image = javax.imageio.ImageIO.read(in);
-
-						if (MovieManager.getConfig().getPreserveCoverAspectRatio() != 0) {														
-
-							if (MovieManager.getConfig().getPreserveCoverAspectRatio() == 1 || model instanceof ModelEpisode || nocover)
-								height = ((97*image.getHeight())/image.getWidth());
-						} 
-						else if (nocover){
+		
+						if (nocover){
 							coverDim.width = image.getWidth();
 							coverDim.height = image.getHeight();
 						}
+						else if (MovieManager.getConfig().getPreserveCoverAspectRatio() != 0) {														
 
-						if (height > 145)
-							height = 145;
+							if (MovieManager.getConfig().getPreserveCoverAspectRatio() == 1 || model instanceof ModelEpisode || nocover)
+								coverDim.height = ((97*image.getHeight())/image.getWidth());
+						} 
 
-						coverDim = new Dimension(97, height);
+						if (coverDim.height > 145)
+							coverDim.height = 145;
+								
 					}
 				} catch (Exception e) {
 					log.error("Exception: " + e.getMessage(), e); //$NON-NLS-1$
