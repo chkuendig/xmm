@@ -240,7 +240,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		setResizable(false);
 
 		/* LookAndFeel panel */
-		JPanel layoutPanel = new JPanel(new GridLayout(0, 1));
+		JPanel layoutPanel = new JPanel(new BorderLayout());
 
 		layoutPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("dialogprefs.panel.look-and-feel.title")), BorderFactory.createEmptyBorder(12,0,16,0))); //$NON-NLS-1$
 
@@ -267,12 +267,14 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		JPanel seenIconPanel = new JPanel(new BorderLayout());
 		seenIconPanel.setBorder(BorderFactory.createEmptyBorder(0,20,7,20));
 
-		seenIconPanel.add(seenIconLabel, BorderLayout.WEST);
-		seenIconPanel.add(regularSeenIcon, BorderLayout.CENTER);
-		seenIconPanel.add(currentLookAndFeelIcon, BorderLayout.EAST);
-
-		layoutPanel.add(seenIconPanel);
-
+		
+		JPanel buttonOptions = new JPanel(new GridLayout(3, 3));
+		buttonOptions.setBorder(BorderFactory.createEmptyBorder(0,30,50,20));
+		
+		buttonOptions.add(seenIconLabel);
+		buttonOptions.add(regularSeenIcon);
+		buttonOptions.add(currentLookAndFeelIcon);
+		
 
 		/* Toolbar button */
 		JLabel toolBarButtonLabel = new JLabel(Localizer.getString("dialogprefs.panel.look-and-feel.toolbar-buttons-look")); //$NON-NLS-1$
@@ -296,12 +298,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		JPanel toolBarButtonPanel = new JPanel(new BorderLayout());
 		toolBarButtonPanel.setBorder(BorderFactory.createEmptyBorder(0,20,7,20));
 
-		toolBarButtonPanel.add(toolBarButtonLabel, BorderLayout.WEST);
-		toolBarButtonPanel.add(regularToolBarButtons, BorderLayout.CENTER);
-		toolBarButtonPanel.add(currentLookAndFeelButtons, BorderLayout.EAST);
-
-		layoutPanel.add(toolBarButtonPanel);
-
+		buttonOptions.add(toolBarButtonLabel);
+		buttonOptions.add(regularToolBarButtons);
+		buttonOptions.add(currentLookAndFeelButtons);
+				
 
 		/* DefaultLookAndFeelDecorated */
 		JLabel defaultLafDecoratedLabel = new JLabel(Localizer.getString("dialogprefs.panel.look-and-feel.title-bar-decoration") + ": "); //$NON-NLS-1$
@@ -324,18 +324,19 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		JPanel defaultLafDecoratedPanel = new JPanel(new BorderLayout());
 		defaultLafDecoratedPanel.setBorder(BorderFactory.createEmptyBorder(0,20,7,20));
-
-		defaultLafDecoratedPanel.add(defaultLafDecoratedLabel, BorderLayout.WEST);
-		defaultLafDecoratedPanel.add(regularDecoratedButton, BorderLayout.CENTER);
-		defaultLafDecoratedPanel.add(defaultLafDecoratedButton, BorderLayout.EAST);
-
-		layoutPanel.add(defaultLafDecoratedPanel);
-
+		
+		buttonOptions.add(defaultLafDecoratedLabel);
+		buttonOptions.add(regularDecoratedButton);
+		buttonOptions.add(defaultLafDecoratedButton);
+		
+		layoutPanel.add(buttonOptions, BorderLayout.NORTH);
 
 		/* Laf choosers */
 
 		installedLookAndFeels = UIManager.getInstalledLookAndFeels();
 
+		JPanel lafChooserPanel = new JPanel(new GridLayout(0, 1));
+		
 		/* Group the radio buttons. */
 		ButtonGroup lafGroup = new ButtonGroup();
 
@@ -347,8 +348,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		for (int i = 0; i < numberOfLookAndFeels; i++) {
 
 			// Skip the ugly motif L&F
-			if (i == 1)
+			if (installedLookAndFeels[i].getName().equals("CDE/Motif")) {
 				continue;
+			}
 
 			lookAndFeelStrings[indexCount] = installedLookAndFeels[i].getName();
 			indexCount++;
@@ -366,18 +368,20 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		enableLafChooser.addActionListener(this);
 
 		lafChooser.setPreferredSize(new Dimension(200, (int) lafChooser.getPreferredSize().getHeight()));
+		
+		JPanel customLafChooserPanel = new JPanel(new BorderLayout());
+		customLafChooserPanel.setBorder(BorderFactory.createEmptyBorder(4,20,4,20));
 
-		JPanel lafChooserPanel = new JPanel(new BorderLayout());
-		lafChooserPanel.setBorder(BorderFactory.createEmptyBorder(4,20,4,20));
+		customLafChooserPanel.add(enableLafChooser, BorderLayout.WEST);
+		customLafChooserPanel.add(lafChooser, BorderLayout.EAST);
 
-		lafChooserPanel.add(enableLafChooser, BorderLayout.WEST);
-		lafChooserPanel.add(lafChooser, BorderLayout.EAST);
+		customLafChooserPanel.setMaximumSize(new Dimension(250,30));
+		customLafChooserPanel.setPreferredSize(new Dimension(250,30));
 
-		lafChooserPanel.setMaximumSize(new Dimension(250,30));
-		lafChooserPanel.setPreferredSize(new Dimension(250,30));
+		lafChooserPanel.add(customLafChooserPanel, BorderLayout.SOUTH);
 
-		layoutPanel.add(lafChooserPanel);
-
+		
+		
 		/* Skinlf */
 
 		String [] skinlfThemePackList = LookAndFeelManager.getSkinlfThemepackList();
@@ -408,7 +412,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			skinlfPanel.add(enableSkinlf, BorderLayout.WEST);
 			skinlfPanel.add(skinlfThemePackChooser, BorderLayout.EAST);
 
-			layoutPanel.add(skinlfPanel);
+			//layoutPanel.add(skinlfPanel);
+			lafChooserPanel.add(skinlfPanel);
 			skinlfThemePackChooser.addActionListener(this);
 			enableSkinlf.addActionListener(this);
 		}
@@ -442,7 +447,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 			if ("1.5".compareTo(System.getProperty("java.version")) == 1) { //$NON-NLS-1$ //$NON-NLS-2$
 
-				layoutPanel.add(oyoahaPanel);
+				//layoutPanel.add(oyoahaPanel);
+				lafChooserPanel.add(oyoahaPanel);
 				oyoahaThemePackChooser.addActionListener(this);
 				enableOyoaha.addActionListener(this);
 				enableOyoaha.addItemListener(this);
@@ -469,8 +475,11 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		}
 
 
-
+		layoutPanel.add(lafChooserPanel, BorderLayout.SOUTH);
+		
+		
 		/* Proxy settings */
+		
 		enableProxyButton = new JCheckBox(Localizer.getString("dialogprefs.panel.proxy.enable-proxy")); //$NON-NLS-1$
 		enableProxyButton.setActionCommand("Enable Proxy"); //$NON-NLS-1$
 		enableProxyButton.addItemListener(this);
@@ -1069,7 +1078,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
         //Avoids NullPointer on Synthetica L&F.
         //scrollPane.getViewport().setBackground(UIManager.getColor("ScrollPane.background"));
 		
-		rowHeightSlider = new JSlider(6, 200, config.getMovieListRowHeight());
+		rowHeightSlider = new JSlider(6, 300, config.getMovieListRowHeight());
 		rowHeightSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				updateRowHeightExample();
@@ -1879,36 +1888,14 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			
 			public void run() {
 				MovieManager.getDialog().updateToolButtonBorder();
-
-
+				MovieManager.getDialog().updateLookAndFeelValues();
+				
 				SwingUtilities.updateComponentTreeUI(MovieManager.getDialog());
 
+				MovieManager.getDialog().resetInfoFieldsDisplay();
 				MovieManager.getDialog().updateToolButtonBorder();
-
-				MovieManager.getDialog().getDateField().setOpaque(false);
-				MovieManager.getDialog().getDateField().setBorder(null);
-
-				MovieManager.getDialog().getTitleField().setOpaque(false);
-				MovieManager.getDialog().getTitleField().setBorder(null);
-
-				MovieManager.getDialog().getDirectedByField().setOpaque(false);
-				MovieManager.getDialog().getDirectedByField().setBorder(null);
-
-				MovieManager.getDialog().getWrittenByField().setOpaque(false);
-				MovieManager.getDialog().getWrittenByField().setBorder(null);
-
-				MovieManager.getDialog().getGenreField().setOpaque(false);
-				MovieManager.getDialog().getGenreField().setBorder(null);
-
-				MovieManager.getDialog().getRatingField().setOpaque(false);
-				MovieManager.getDialog().getRatingField().setBorder(null);
-
-				MovieManager.getDialog().getCountryTextField().setOpaque(false);
-				MovieManager.getDialog().getCountryTextField().setBorder(null);
-
-				MovieManager.getDialog().getLanguageTextField().setOpaque(false);
-				MovieManager.getDialog().getLanguageTextField().setBorder(null);
-
+				MovieManager.getDialog().validate();
+				
 				/*If the search dialog is opened it will be updated*/
 				if (DialogSearch.getDialogSearch() != null) {
 					SwingUtilities.updateComponentTreeUI(DialogSearch.getDialogSearch());
@@ -1918,9 +1905,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				SwingUtilities.updateComponentTreeUI(pref);
 				pack();
 				setLafChooserPreferredSize();
-				MovieManager.getDialog().updateToolButtonBorder();
-
-				MovieManager.getDialog().validate();
 			}
 		});
 	}
