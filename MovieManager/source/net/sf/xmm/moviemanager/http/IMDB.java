@@ -20,6 +20,7 @@
 
 package net.sf.xmm.moviemanager.http;
 
+import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -455,17 +456,9 @@ public class IMDB /*extends IMDB_if */{
 			}
 
 			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/episodeStream.html", data);
-
-			int counter = 1;
-			int seasonCounter = 1;
 			
-
 		} catch (Exception e) {
-			log.error("", e);
-
-			/*if (exception == null || !exception.equals("Server redirected too many  times"))
-				exception = e.getMessage();
-				*/
+			log.error("Exception:" + e.getMessage(), e);
 		} 
 
 		return data;
@@ -498,6 +491,8 @@ public class IMDB /*extends IMDB_if */{
 					String key = m.group(2);
 					String title = m.group(3);
 
+					title = HttpUtil.decodeHTML(title);
+					
 					title = episode + title;
 					
 					listModel.addElement(new ModelIMDbSearchHit(key, title, modelSeason.getSeasonNumber()));
@@ -510,8 +505,6 @@ public class IMDB /*extends IMDB_if */{
 		/* Returns the model... */
 		return listModel;
 	}
-    
-    
     
     
     
@@ -568,34 +561,50 @@ public class IMDB /*extends IMDB_if */{
 
 	public DefaultListModel getSeriesMatches(String title) {
 
-		DefaultListModel all = getSimpleMatches(title);
+		DefaultListModel all = null;
+				
+		try {
+			all = getSimpleMatches(title);
+			
+			for (int i = 0; i < all.getSize(); i++) {
 
-		for (int i = 0; i < all.getSize(); i++) {
+				ModelIMDbSearchHit imdb = (ModelIMDbSearchHit) all.get(i);
 
-			ModelIMDbSearchHit imdb = (ModelIMDbSearchHit) all.get(i);
-
-			if (!imdb.getTitle().startsWith("\"")) {
-				all.remove(i);
-				i--;
+				if (!imdb.getTitle().startsWith("\"")) {
+					all.remove(i);
+					i--;
+				}
 			}
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		return all;
 	}
 
 	/**
 	 * Returns simple matches list...
+	 * @throws UnsupportedEncodingException 
 	 **/
-	public DefaultListModel getSimpleMatches(String title) {
-		return getMatches("http://akas.imdb.com/find?s=tt&q="+ title);	
+	public DefaultListModel getSimpleMatches(String title) throws UnsupportedEncodingException {
+					
+		//System.err.println("UTF-8:" + java.net.URLEncoder.encode(title, "UTF-8"));
+		//System.err.println("US-ASCII:" + java.net.URLEncoder.encode(title, "US-ASCII"));
+		//System.err.println("ISO-8859-1:" + java.net.URLEncoder.encode(title, "ISO-8859-1"));
+		
+		log.debug("getSimpleMatches:" + title);
+		
+		return getMatches("http://akas.imdb.com/find?s=tt&q="+ java.net.URLEncoder.encode(title, "ISO-8859-1"));
 	}
 
 	
-    private DefaultListModel getMatches(String urlType) {
+    private DefaultListModel getMatches(String strUrl) {
 
     	try {
+    		    		
+    		URL url = new URL(strUrl);
 
-    		URL url = new URL(urlType.replaceAll("[\\p{Blank}]+","%20"));
-
+    		log.debug("getMatches:" + url);
+    		
     		StringBuffer data = httpUtil.readDataToStringBuffer(url);
 
     		if (data == null) {
