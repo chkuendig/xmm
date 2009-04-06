@@ -125,7 +125,7 @@ public class DialogTVSeries extends JDialog {
         listMovies.addMouseListener(new MouseAdapter() {
     		public void mouseClicked(MouseEvent event) {
     			
-    			// Open we page
+    			// Open web page
     			if (SwingUtilities.isRightMouseButton(event)) {
     				
     				int	index = listMovies.locationToIndex(event.getPoint());
@@ -193,7 +193,7 @@ public class DialogTVSeries extends JDialog {
         getContentPane().add(all);
         
         /* Packs and sets location... */
-        setPreferredSize(new Dimension(400, 400));
+        setPreferredSize(new Dimension(460, 440));
         
         pack();
         
