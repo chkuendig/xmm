@@ -280,8 +280,8 @@ public class MovieManagerCommandIMDBSearch {
 							
 							while (mailbox_size-- > 0) {
 
-								while (mailbox.getThreadCount() > 6)
-									Thread.sleep(100);
+								while (mailbox.getThreadCount() > 2)
+									Thread.sleep(200);
 									
 								Thread oneEpisode = new Thread(new Runnable() {
 
@@ -291,7 +291,7 @@ public class MovieManagerCommandIMDBSearch {
 										
 										ModelIMDbSearchHit searchHit = null;
 										
-										int tryCount = 3;
+										int tryCount = 4;
 										
 										do {
 
@@ -409,7 +409,7 @@ public class MovieManagerCommandIMDBSearch {
 		
 		// Copy the database key if editing
 		movieInfoModel.setModel(episode, movieInfoModel._edit, false);
-	
+			
 		// The cover... 
 		if (episode.getCoverData() != null) {
 			movieInfoModel.setCover(entry.getCoverName(), episode.getCoverData(), !multipleEpisodes);
