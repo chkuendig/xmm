@@ -273,8 +273,9 @@ public class DialogIMDB extends JDialog {
     	listMovies.registerKeyboardAction(listKeyBoardActionListener,enterKeyStroke, JComponent.WHEN_FOCUSED);
     	    	
     	JScrollPane scrollPaneMovies = new JScrollPane(listMovies);
-    	scrollPaneMovies.setPreferredSize(new Dimension(300,255));
     	scrollPaneMovies.setAutoscrolls(true);
+    	
+    	setPreferredSize(new Dimension(460, 440));
     	
     	panelMoviesList.setLayout(new BorderLayout());
     	panelMoviesList.add(scrollPaneMovies, BorderLayout.CENTER);
