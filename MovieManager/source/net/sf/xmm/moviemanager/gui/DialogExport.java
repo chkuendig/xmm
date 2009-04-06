@@ -190,7 +190,7 @@ public class DialogExport extends JDialog implements ActionListener {
         titlePanel.add(titleLabel);
         titlePanel.add(titleTextField);
         
-        htmlExportPanel.add(new JLabel("The movies currently in the movie list will be exported."));
+        htmlExportPanel.add(new JLabel("The movies currently displayed in the movie list will be exported."));
         htmlExportPanel.add(exportOptionPanel);
         htmlExportPanel.add(titlePanel);
         
