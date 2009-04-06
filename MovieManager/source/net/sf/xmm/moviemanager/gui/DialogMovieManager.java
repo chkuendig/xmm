@@ -863,8 +863,12 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         toolBar.setSearchButtonLegal(!internalConfig.isSearchMenuDisabled());
         toolBar.setShowEntriesCount(!internalConfig.isEntriesCountDisabled()); 
         
-        toolBar.showPlayButton(MovieManager.getConfig().getDisplayPlayButton());
-        toolBar.showPrintButton(MovieManager.getConfig().getDisplayPrintButton());
+        if (MovieManager.getConfig().getDisplayPlayButton())
+        	toolBar.showPlayButton(true);
+        
+        if (MovieManager.getConfig().getDisplayPrintButton())
+        	toolBar.showPrintButton(true);
+        
         toolBar.setEnableButtonPopup(!internalConfig.isToolBarPopupDisabled());
                 
         /* All done. */
