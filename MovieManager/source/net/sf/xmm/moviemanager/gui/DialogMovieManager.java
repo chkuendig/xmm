@@ -344,9 +344,18 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         			getAdditionalInfoNotesSplitPane().setLastDividerLocation(config.additionalInfoNotesLastSliderPosition);
         	}
         }
-
+        
+        resetInfoFieldsDisplay();
+        
         setVisible(true);
         
+        // Must reset the text field borders in the EDT after it's visible for Substance L&F
+        SwingUtilities.invokeLater(new Runnable() {
+        	public void run() {
+        		resetInfoFieldsDisplay();
+        	}
+        });
+                        
         log.debug("MovieManager SetUp done!"); //$NON-NLS-1$
     }
     
@@ -472,6 +481,49 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         SwingUtilities.updateComponentTreeUI(filterPanel);
     }
     
+    /**
+     * Resets the display properties of the info fields.
+     * setBackground(new Color(0,0,0,0)); is necessary only for Nimbus L&F 
+     * which works differently than every other L&F because it apparantly
+     * has implemented setOpaque correctly, which every other hasn't.
+     * 
+     */
+    public void resetInfoFieldsDisplay() {
+    	
+    	getDateField().setOpaque(false);
+		getDateField().setBorder(null);
+		getDateField().setBackground(new Color(0,0,0,0));
+    	
+		getTitleField().setOpaque(false);
+		getTitleField().setBorder(null);
+		getTitleField().setBackground(new Color(0,0,0,0));
+		
+		getDirectedByField().setOpaque(false);
+		getDirectedByField().setBorder(null);
+		getDirectedByField().setBackground(new Color(0,0,0,0));
+		
+		getWrittenByField().setOpaque(false);
+		getWrittenByField().setBorder(null);
+		getWrittenByField().setBackground(new Color(0,0,0,0));
+		
+		getGenreField().setOpaque(false);
+		getGenreField().setBorder(null);
+		getGenreField().setBackground(new Color(0,0,0,0));
+		
+		getRatingField().setOpaque(false);
+		getRatingField().setBorder(null);
+		getRatingField().setBackground(new Color(0,0,0,0));
+		
+		getCountryTextField().setOpaque(false);
+		getCountryTextField().setBorder(null);
+		getCountryTextField().setBackground(new Color(0,0,0,0));
+		
+		getLanguageTextField().setOpaque(false);
+		getLanguageTextField().setBorder(null);
+		getLanguageTextField().setBackground(new Color(0,0,0,0));
+		
+    }
+    
     public void updateJTreeIcons() {
         getMoviesList().setRowHeight(config.getMovieListRowHeight() + 2);
         
@@ -492,7 +544,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     /* mode = 0 (invert), 1 (all to seen), 2(all to unseen). */
     public void updateSeen(int mode) {
         
-    	ExtendedJTree movieList = MovieManager.getDialog().getMoviesList();
+    	ExtendedJTree movieList = getMoviesList();
         
         if (movieList.getLastSelectedPathComponent() == null)
             return;
@@ -645,7 +697,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	if (template.hasStyles()) {
 						
 			String styleName = MovieManager.getConfig().getHTMLTemplateStyleName();
-			tabName = template.getName() + " > " + template.getStyle(styleName);
+			tabName = template.getName() + " -> " + template.getStyle(styleName);
 		}
 		else
 			tabName = template.getName();
@@ -962,7 +1014,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     				MovieManagerCommandSelect.execute();
     			}
 
-    			public	void mouseClicked(MouseEvent e) {}
+    			public void mouseClicked(MouseEvent e) {}
     			public void mouseEntered(MouseEvent e) {}
     			public void mouseExited(MouseEvent e) {}
     			public void mouseReleased(MouseEvent e) {}
@@ -1102,8 +1154,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         dateField = new JTextField();
         dateField.setFont(new Font(dateField.getFont().getName(), Font.BOLD, fontSize +3));
-        dateField.setBorder(null);
-        dateField.setOpaque(false);
         dateField.setEditable(false);
         
         panelDateAndTitle.add(dateField, BorderLayout.WEST);
@@ -1111,8 +1161,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         titleField = new JTextField();
         titleField.setFont(new Font("Dialog", Font.BOLD, fontSize +3)); //$NON-NLS-1$
-        titleField.setBorder(null);
-        titleField.setOpaque(false);
         titleField.setEditable(false);
         
         panelDateAndTitle.add(titleField, BorderLayout.CENTER);
@@ -1139,8 +1187,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         directedByField = new JTextField();
         directedByField.setFont(new Font(directedByField.getFont().getName(), Font.PLAIN, fontSize));
-        directedByField.setBorder(null);
-        directedByField.setOpaque(false);
         directedByField.setEditable(false);
         
         
@@ -1169,8 +1215,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         writtenByField = new JTextField();
         writtenByField.setFont(new Font(writtenByField.getFont().getName(), Font.PLAIN, fontSize));
-        writtenByField.setBorder(null);
-        writtenByField.setOpaque(false);
         writtenByField.setEditable(false);
         
         panelWritten.add(writtenByField);
@@ -1196,8 +1240,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         genreField = new JTextField();
         genreField.setFont(new Font(genreField.getFont().getName(), Font.PLAIN, fontSize));
-        genreField.setBorder(null);
-        genreField.setOpaque(false);
         genreField.setEditable(false);
         
         panelGenre.add(genreField);
@@ -1253,8 +1295,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         countryTextField = new JTextField();
         countryTextField.setFont(new Font(countryTextField.getFont().getName(), Font.PLAIN, fontSize));
-        countryTextField.setBorder(null);
-        countryTextField.setOpaque(false);
         countryTextField.setEditable(false);
         
         panelCountry.add(countryTextField);
@@ -1345,8 +1385,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         languageTextField = new JTextField();
         languageTextField.setFont(new Font(languageTextField.getFont().getName(), Font.PLAIN, fontSize));
-        languageTextField.setBorder(null);
-        languageTextField.setOpaque(false);
         languageTextField.setEditable(false);
         
         panelLanguage.add(languageTextField);
