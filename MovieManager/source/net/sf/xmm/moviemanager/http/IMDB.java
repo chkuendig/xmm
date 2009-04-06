@@ -531,12 +531,10 @@ public class IMDB /*extends IMDB_if */{
 			String title = "";
 
 			int start = data.indexOf("Seasons:");
-
+			
 			/* No season....?. */
-			if (start == -1) {
-				listModel.addElement(new ModelIMDbSearchHit(null, null, "No seasons available"));
-			}
-			else {
+			if (start != -1) {
+				
 				int end = data.indexOf("</div>", start);
 				
 				String seasons = data.substring(start, end);
