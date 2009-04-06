@@ -364,7 +364,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 							movieInfoModel.getFileInfo(file);
 					} else {
 						if (movieInfoModel.isEpisode)
-							executeCommandGetTVDOTCOMInfo(false);
+							executeCommandGetEpisodesInfo(false);
 						else
 							executeCommandGetIMDBInfo(false);
 					}
@@ -1005,7 +1005,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 					useIMDbKey = true;
 				
 				if (movieInfoModel.isEpisode)
-					executeCommandGetTVDOTCOMInfo(useIMDbKey);
+					executeCommandGetEpisodesInfo(useIMDbKey);
 				else {
 					executeCommandGetIMDBInfo(useIMDbKey);
 				}
@@ -2101,7 +2101,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	/**
 	 * Gets the tv.com info for this episode...
 	 */
-	protected void executeCommandGetTVDOTCOMInfo(boolean useImdbKey) {
+	protected void executeCommandGetEpisodesInfo(boolean useImdbKey) {
 		
 		/* Checks the movie title... */
 		if (!getMovieTitle().getText().equals("") || !getIMDb().getText().equals("")) { //$NON-NLS-1$
