@@ -808,9 +808,6 @@ class FSTransfer extends TransferHandler {
 		this.listener = listener;
 	}
 	
-	boolean isRepresentationClassURL(DataFlavor df) {
-		return java.net.URL.class.isAssignableFrom(df.getRepresentationClass());
-	}
 	
 	public boolean importData(JComponent comp, Transferable t) {
 		
@@ -874,9 +871,7 @@ class FSTransfer extends TransferHandler {
 					
 					while (iter.hasNext()) {
 						File f = (File) iter.next();
-						files.add(f);
-						System.err.println("f:" + f);
-						
+						files.add(f);						
 					}
 					
 					if (files.size() > 0) {
@@ -889,67 +884,34 @@ class FSTransfer extends TransferHandler {
 							listener.filesDropped(filesArray);
 					}
 				}
-				else if (isRepresentationClassURL(flavors[i])) {
-				
-					System.err.println("URL");
-					
-					//Class url = (Class) flavors[i].getDefaultRepresentationClass();
-					
-					Object transferObject = t.getTransferData(flavors[i]);
-					
-					System.err.println("transferObject:" + transferObject);
-					
-					//Reader reader = flavors[i].getReaderForText(t);
-					//BufferedReader br = new BufferedReader(reader);
-					
-					//File [] files = createFileArray(br);
-					
-					//System.err.println("files:" + files.length);
-					
-					//if (listener != null)
-					//	 listener.filesDropped(files);
-					
-				}
 				else {
 
 					System.err.println("isRepresentationClassReader:" + flavors[i].isRepresentationClassReader());
 					System.err.println("isRepresentationClassInputStream:" + flavors[i].isRepresentationClassInputStream());
 					System.err.println("isRepresentationClassCharBuffer:" + flavors[i].isRepresentationClassCharBuffer());
 					System.err.println("isRepresentationClassByteBuffer:" + flavors[i].isRepresentationClassByteBuffer());
-					System.err.println("isRepresentationClassRemote:" + flavors[i].isRepresentationClassRemote());
 					
 					Class resprClass = flavors[i].getRepresentationClass();
 					
 					System.err.println("resprClass:" + resprClass);
 					
-			//	for (int zz = 0; zz < flavors.length; zz++) {
 					
 					// only for java.io.Reader
 					if (flavors[i].isRepresentationClassReader() ||
 							flavors[i].isRepresentationClassInputStream() ||
-							flavors[i].isRepresentationClassCharBuffer()) {
+							flavors[i].isRepresentationClassCharBuffer() ||
+							flavors[i].isRepresentationClassByteBuffer()) {
 						
-						// Say we'll take it.
-						//evt.acceptDrop ( java.awt.dnd.DnDConstants.ACTION_COPY_OR_MOVE );
-						//  evt.acceptDrop(java.awt.dnd.DnDConstants.ACTION_COPY);
-						//log(out, "FileDrop: reader accepted.");
-
 						Reader reader = flavors[i].getReaderForText(t);
 
 						BufferedReader br = new BufferedReader(reader);
 
 						File [] files = createFileArray(br);
-						
-						//System.err.println("files:" + files.length);
-						
+												
 						if (listener != null)
 							 listener.filesDropped(files);
 
-						// Mark that drop is completed.
-						//  evt.getDropTargetContext().dropComplete(true);
-						//log(out, "FileDrop: drop complete.");
 						handled = true;
-						break;
 					}
 					
 				}
@@ -962,7 +924,7 @@ class FSTransfer extends TransferHandler {
 				}
 			}
 			
-			return true;
+			return false;
 		}
 		catch (UnsupportedFlavorException ufe) {
 			System.err.println("Ack! we should not be here.\nBad Flavor.");
@@ -986,6 +948,7 @@ class FSTransfer extends TransferHandler {
 		return true;
 		
 		if (comp instanceof ExtendedJTree) {
+			
 			for (int i = 0; i < transferFlavors.length; i++) {
 				System.err.println("transferFlavors[i]:" + transferFlavors[i]);
 								
