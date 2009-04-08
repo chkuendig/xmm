@@ -131,7 +131,7 @@ public class IMDbInfoUpdater {
 	}
 
 	static boolean ready = true;
-	static int successes = 0;
+	//static int successes = 0;
 
 	final ThreadHandler threadHandler = new ThreadHandler();
 	
@@ -167,10 +167,10 @@ public class IMDbInfoUpdater {
 							if (canceled)
 								break;
 
-							if (threadHandler.getThreadCount() > 5) {
+							if (threadHandler.getThreadCount() > 0) {
 								threadHandler.waitForNextDecrease();
 							}
-														
+							
 							node = ((DefaultMutableTreeNode) enumeration.nextElement());
 							model = (ModelEntry) node.getUserObject();
 
@@ -216,6 +216,8 @@ public class IMDbInfoUpdater {
 		ModelEntry model;
 		IMDB imdb;
 
+		private final int tryTimes = 4;
+		
 		InputStream stream;
 		StringBuffer data = null;
 		int buffer;
@@ -233,8 +235,8 @@ public class IMDbInfoUpdater {
 
 				threadHandler.increaseThreadCount();
 				
-				while (!isReady())
-					Thread.sleep(500);
+			//	while (!isReady())
+				Thread.sleep(50);
 
 				if (canceled)
 					return;
@@ -262,12 +264,12 @@ public class IMDbInfoUpdater {
 					return;
 				}
 
-				for (int i = 0; i < 4; i++) {
+				for (int i = 0; i < tryTimes; i++) {
 
 					error = false;
 					
 					try {
-						
+												
 						ModelIMDbEntry movie = imdb.grabInfo(model.getUrlKey());
 
 						if (title == 1 || (title == 2 && model.getTitle().equals(""))) {
@@ -385,9 +387,10 @@ public class IMDbInfoUpdater {
 
 					if (!error)
 						break;
+					
+					// Sleep before next try
+					Thread.sleep(500);
 				}
-
-				encreaseSuccess();
 								
 			} catch (InterruptedException e) {
 				log.error("Fatal interrupted error: " + e.getMessage());
@@ -397,7 +400,13 @@ public class IMDbInfoUpdater {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				addTransferred(model.getTitle());
+				
+				if (error) {
+					addTransferred("Failed to retrive info on " + model.getTitle());
+					log.warn("failed to retrieve info for entry " + model.getTitle());
+				} 
+				else
+					addTransferred(model.getTitle());	
 			}
 		}
 	}
@@ -418,9 +427,10 @@ public class IMDbInfoUpdater {
 		ready = rdy;
 	}
 
+/*	
 	synchronized static void encreaseSuccess() {
 		successes++;
-	}
+	}*/
 	
 	public class ThreadHandler {
 
