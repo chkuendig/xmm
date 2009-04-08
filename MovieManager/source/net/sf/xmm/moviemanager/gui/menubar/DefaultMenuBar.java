@@ -479,7 +479,8 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 
 					menuItem = new JCheckBoxMenuItem((String) listColumns.get(0));
 					menuItem.setActionCommand((String) listColumns.get(0));
-
+					menuItem.setToolTipText("Right click to uniquely select");
+					
 					menuItem.addActionListener(this);
 					menuItem.addMouseListener(this);
 					menuLists.add(menuItem);
@@ -494,9 +495,10 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 				}
 				menuLists.addSeparator();
 		
-				/* Adds 'Show all' in the list */
+				/* Adds 'Show Unlisted' in the list */
 				showUnlisted = new JCheckBoxMenuItem("Show Unlisted"); //$NON-NLS-1$
 				showUnlisted.setActionCommand("Show Unlisted"); //$NON-NLS-1$
+				showUnlisted.setToolTipText("Right click to uniquely select");
 				showUnlisted.addActionListener(this);
 				showUnlisted.addMouseListener(this);
 				menuLists.add(showUnlisted);
