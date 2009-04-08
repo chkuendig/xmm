@@ -39,6 +39,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -938,6 +939,16 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         moviesList.setCellRenderer(treeCellRenderer);
         MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(treeCellRenderer);
          
+        moviesList.setTreeDropListener(new ExtendedJTree.FileDropListener() {
+
+        	public void filesDropped(File[] files) {
+				
+        		for (int i = 0; i < files.length; i++) {
+					System.err.println("files["+i+"]:" + files[i]);
+				}
+			}
+        });	
+        
         /* All done. */
         log.debug("Creation of the List done."); //$NON-NLS-1$
         return scrollPane;
