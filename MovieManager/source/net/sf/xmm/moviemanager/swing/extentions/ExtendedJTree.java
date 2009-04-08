@@ -49,6 +49,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -807,6 +808,10 @@ class FSTransfer extends TransferHandler {
 		this.listener = listener;
 	}
 	
+	boolean isRepresentationClassURL(DataFlavor df) {
+		return java.net.URL.class.isAssignableFrom(df.getRepresentationClass());
+	}
+	
 	public boolean importData(JComponent comp, Transferable t) {
 		
 		System.err.println("importData:" + comp);
@@ -884,13 +889,38 @@ class FSTransfer extends TransferHandler {
 							listener.filesDropped(filesArray);
 					}
 				}
+				else if (isRepresentationClassURL(flavors[i])) {
+				
+					System.err.println("URL");
+					
+					//Class url = (Class) flavors[i].getDefaultRepresentationClass();
+					
+					Object transferObject = t.getTransferData(flavors[i]);
+					
+					System.err.println("transferObject:" + transferObject);
+					
+					//Reader reader = flavors[i].getReaderForText(t);
+					//BufferedReader br = new BufferedReader(reader);
+					
+					//File [] files = createFileArray(br);
+					
+					//System.err.println("files:" + files.length);
+					
+					//if (listener != null)
+					//	 listener.filesDropped(files);
+					
+				}
 				else {
 
 					System.err.println("isRepresentationClassReader:" + flavors[i].isRepresentationClassReader());
 					System.err.println("isRepresentationClassInputStream:" + flavors[i].isRepresentationClassInputStream());
 					System.err.println("isRepresentationClassCharBuffer:" + flavors[i].isRepresentationClassCharBuffer());
 					System.err.println("isRepresentationClassByteBuffer:" + flavors[i].isRepresentationClassByteBuffer());
-										
+					System.err.println("isRepresentationClassRemote:" + flavors[i].isRepresentationClassRemote());
+					
+					Class resprClass = flavors[i].getRepresentationClass();
+					
+					System.err.println("resprClass:" + resprClass);
 					
 			//	for (int zz = 0; zz < flavors.length; zz++) {
 					
@@ -912,7 +942,7 @@ class FSTransfer extends TransferHandler {
 						
 						//System.err.println("files:" + files.length);
 						
-						 if (listener != null)
+						if (listener != null)
 							 listener.filesDropped(files);
 
 						// Mark that drop is completed.
@@ -924,10 +954,11 @@ class FSTransfer extends TransferHandler {
 					
 				}
 				
-				if(!handled){
+				if (!handled){
+					//System.err.println("not handles");
 					//     log( out, "FileDrop: not a file list or reader - abort." );
 					//evt.rejectDrop();
-					return false;
+					//return false;
 				}
 			}
 			
@@ -939,6 +970,9 @@ class FSTransfer extends TransferHandler {
 		}
 		catch (IOException ioe) {
 			System.out.println("Something failed during import:\n" + ioe);
+		}
+		catch (Exception ioe) {
+			log.warn("Exception:" + ioe.getMessage(), ioe);
 		}
 		return false;
 	}
