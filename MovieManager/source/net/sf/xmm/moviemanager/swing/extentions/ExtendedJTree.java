@@ -44,11 +44,19 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
+import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -77,6 +85,8 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 	private DefaultTreeModel dtModel;
 	private DefaultMutableTreeNode root;
 	public static final boolean displayFilesInTree = false;
+	
+	ExtendedJTree extendedTree = this;
 	
 	int firstShiftRow = 0;
 	int currentRow = 0;
@@ -171,6 +181,10 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 
 	   addMouseListener(new TreeMouseListener());
 
+	   setDragEnabled(false);
+	   
+	    
+	   /*
 	   DragSource dragSource = DragSource.getDefaultDragSource();
 
 	   dragSource.createDefaultDragGestureRecognizer(this, // component where drag originates
@@ -178,7 +192,8 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 			   this ); // drag gesture recognizer
 
 	   new DropTarget( this, getTargetListener() );
-
+*/
+	   
 	   addTreeSelectionListener( new TreeSelectionListener() {
 		   public void valueChanged( TreeSelectionEvent e ) {
 			   DefaultMutableTreeNode node = ( DefaultMutableTreeNode ) getLastSelectedPathComponent();
@@ -324,10 +339,12 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 		    public void actionPerformed( ActionEvent e )
 		    {
 			 */
+				System.err.println("dragOver");
+				
 				try {
 
-					if (1 == 1)
-						return;
+					//if (1 == 1)
+						//return;
 
 					int x = dragEvent.getLocation().x;
 					int y = dragEvent.getLocation().y;
@@ -376,18 +393,22 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 			 * Handles the 'drop' of the object into a node on the JTree.
 			 * @param dtde The DropTargetDropEvent.
 			 */
-			public void drop(DropTargetDropEvent dtde) {
+			
+			public void drop2(DropTargetDropEvent dtde) {
 
 				try {
 
 					// Ok, get the dropped object and try to figure out what it is.
 					Transferable tr = dtde.getTransferable();
 
-					DefaultMutableTreeNode [] nodes = (DefaultMutableTreeNode []) tr.getTransferData(TransferableNode.NODE_FLAVOR);
+					//DefaultMutableTreeNode [] nodes = (DefaultMutableTreeNode []) tr.getTransferData(TransferableNode.NODE_FLAVOR);
+					Object [] nodes = (Object []) tr.getTransferData(TransferableNode.NODE_FLAVOR);
 
+					
+					
 					if (nodes != null)
 						for (int i = 0; i < nodes.length; i++)
-							log.debug("dragged: " + nodes[i].getUserObject());
+							log.debug("dragged: " + nodes[i]);
 
 
 					DataFlavor[] flavors = tr.getTransferDataFlavors();
@@ -400,19 +421,19 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 							// Great! Accept copy drops...
 							dtde.acceptDrop( DnDConstants.ACTION_MOVE );
 							///////////
-							/*
-					      DefaultMutableTreeNode parentNode = ( DefaultMutableTreeNode ) getLastPathComponent();
-					      if( draggedNode.isRoot() || parentNode == draggedNode.getParent() || draggedNode.isNodeDescendant( parentNode ) )
-					      {
-					      target.setSelectionPath( null );
-					      return ( false );
-					      }
-					      else
-					      {
-					      target.setSelectionPath( pathTarget );
-					      return ( true );
-					      }
-							 */
+							
+//					      DefaultMutableTreeNode parentNode = ( DefaultMutableTreeNode ) getLastPathComponent();
+//					      if( draggedNode.isRoot() || parentNode == draggedNode.getParent() || draggedNode.isNodeDescendant( parentNode ) )
+//					      {
+//					      target.setSelectionPath( null );
+//					      return ( false );
+//					      }
+//					      else
+//					      {
+//					      target.setSelectionPath( pathTarget );
+//					      return ( true );
+//					      }
+							
 							///////////
 							log.debug( "Successful file list drop.\n\n" );
 							// And add the list of file names to our text area
@@ -457,10 +478,112 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 					dtde.rejectDrop();
 				}
 				catch(Exception e) {
-					log.error(e.getMessage());
+					log.error(e.getMessage(), e);
 					dtde.rejectDrop();  
 				}
 			}
+			
+			
+			
+			  public void drop(java.awt.dnd.DropTargetDropEvent evt) {
+				  
+				  log.debug("FileDrop: drop event." );
+                  
+				  try { 
+					  
+					  DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
+					  
+					  System.err.println("parentNode:" + parentNode);
+					  
+					  // Get whatever was dropped
+                      java.awt.datatransfer.Transferable tr = evt.getTransferable();
+
+                      // Is it a file list?
+                      if (tr.isDataFlavorSupported (java.awt.datatransfer.DataFlavor.javaFileListFlavor))
+                      {
+                          // Say we'll take it.
+                          //evt.acceptDrop ( java.awt.dnd.DnDConstants.ACTION_COPY_OR_MOVE );
+                          evt.acceptDrop ( java.awt.dnd.DnDConstants.ACTION_COPY );
+                          log.debug("FileDrop: file list accepted.");
+
+                          // Get a useful list
+                          java.util.List fileList = (java.util.List) 
+                              tr.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
+                          java.util.Iterator iterator = fileList.iterator();
+
+                          // Convert list to array
+                          java.io.File[] filesTemp = new java.io.File[ fileList.size() ];
+                          fileList.toArray( filesTemp );
+                          final java.io.File[] files = filesTemp;
+
+                          // Alert listener to drop.
+                       //   if (listener != null )
+                         //     listener.filesDropped( files );
+
+                          // Mark that drop is completed.
+                          evt.getDropTargetContext().dropComplete(true);
+                          log.debug("FileDrop: drop complete.");
+                      }   // end if: file list
+                      else // this section will check for a reader flavor.
+                      {
+                          // Thanks, Nathan!
+                          // BEGIN 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
+                          DataFlavor[] flavors = tr.getTransferDataFlavors();
+                          boolean handled = false;
+                          for (int zz = 0; zz < flavors.length; zz++) {
+                        	  
+                        	  System.err.println("getReaderForText:" + flavors[zz].getReaderForText(tr));
+                        	  
+                              if (flavors[zz].isRepresentationClassReader()) {
+                                  // Say we'll take it.
+                                  //evt.acceptDrop ( java.awt.dnd.DnDConstants.ACTION_COPY_OR_MOVE );
+                                  evt.acceptDrop(java.awt.dnd.DnDConstants.ACTION_COPY);
+                                  log.debug("FileDrop: reader accepted.");
+
+                                  Reader reader = flavors[zz].getReaderForText(tr);
+
+                                  BufferedReader br = new BufferedReader(reader);
+                                  
+                                //  if (listener != null)
+                                  //    listener.filesDropped(createFileArray(br, out));
+                                  
+                                  // Mark that drop is completed.
+                                  evt.getDropTargetContext().dropComplete(true);
+                                  log.debug("FileDrop: drop complete.");
+                                  handled = true;
+                                  break;
+                              }
+                          }
+                          if(!handled){
+                        	  log.debug("FileDrop: not a file list or reader - abort.");
+                              evt.rejectDrop();
+                          }
+                          // END 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
+                      }   // end else: not a file list
+                  }   // end try
+                  catch ( java.io.IOException io) {
+                	  log.debug("FileDrop: IOException - abort:" );
+                     // io.printStackTrace( out );
+                      evt.rejectDrop();
+                  }   // end catch IOException
+                  catch (java.awt.datatransfer.UnsupportedFlavorException ufe) 
+                  {   log.debug("FileDrop: UnsupportedFlavorException - abort:");
+                  evt.rejectDrop();
+                  }   // end catch: UnsupportedFlavorException
+                  finally
+                  {
+                      // If it's a Swing component, reset its border
+                   /*
+                	  if( c instanceof javax.swing.JComponent )
+                      {   javax.swing.JComponent jc = (javax.swing.JComponent) c;
+                          jc.setBorder( normalBorder );
+                          log.debug("FileDrop: normal border restored." );
+                      }   // end if: JComponent
+                   */
+                  }   // end finally
+              }   // end drop
+			  
+			  
 		};
 		return dtl;
 	}
@@ -638,7 +761,285 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 	}
 
 
+	/**
+     * Implement this inner interface to listen for when files are dropped. For example
+     * your class declaration may begin like this:
+     * <code><pre>
+     *      public class MyClass implements FileDrop.Listener
+     *      ...
+     *      public void filesDropped( java.io.File[] files )
+     *      {
+     *          ...
+     *      }   // end filesDropped
+     *      ...
+     * </pre></code>
+     *
+     * @since 1.1
+     */
+    public static interface FileDropListener {
+       
+        /**
+         * This method is called when files have been successfully dropped.
+         *
+         * @param files An array of <tt>File</tt>s that were dropped.
+         * @since 1.0
+         */
+        public abstract void filesDropped( java.io.File[] files );
+        
+        
+    }   // end inner-interface Listener
+    
+    
+    public void setTreeDropListener(FileDropListener listener) {
+    	setTransferHandler(new FSTransfer(listener));
+    }
+    
+}
 
+
+class FSTransfer extends TransferHandler {
+	
+	static Logger log = Logger.getLogger(FSTransfer.class);
+	
+	ExtendedJTree.FileDropListener listener = null;
+	
+	FSTransfer(ExtendedJTree.FileDropListener listener) {
+		this.listener = listener;
+	}
+	
+	public boolean importData(JComponent comp, Transferable t) {
+		
+		System.err.println("importData:" + comp);
+		
+		
+		// Make sure we have the right starting points
+		if (!(comp instanceof ExtendedJTree)) {
+			return false;
+		}
+		
+		
+		// DataFlavor[mimetype=text/uri-list;representationclass=java.io.Reader]
+		// DataFlavor[mimetype=text/uri-list;representationclass=java.lang.String]
+		// DataFlavor[mimetype=x-special/gnome-icon-list;representationclass=java.io.InputStream]
+		
+		
+		// Grab the tree, its model and the root node
+		/*
+		ExtendedJTree tree = (ExtendedJTree) comp;
+		DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
+		 */
+		
+		try {
+			
+			//java.util.List data = (java.util.List) t.getTransferData(DataFlavor.javaFileListFlavor);
+			
+			/*
+			Iterator i = data.iterator();
+			
+			while (i.hasNext()) {
+				File f = (File)i.next();
+				
+				System.err.println("f:" + f);
+				//root.add(new DefaultMutableTreeNode(f.getName()));
+			}
+			*/
+		//	model.reload();
+			
+					
+			DataFlavor[] flavors = t.getTransferDataFlavors();
+		
+			boolean handled = false;
+
+			//System.err.println("flavors.length:" + flavors.length);
+			
+			for (int i = 0; i < flavors.length; i++) {
+
+				System.err.println("flavors["+i+"]:" + flavors[i]);
+				
+				if (flavors[i].equals(DataFlavor.javaFileListFlavor)) {
+					System.err.println("is javaFileListFlavor");
+					
+					
+					java.util.List data = (java.util.List) t.getTransferData(DataFlavor.javaFileListFlavor);
+					
+					Iterator iter = data.iterator();
+					
+					ArrayList files = new ArrayList();
+					
+					while (iter.hasNext()) {
+						File f = (File) iter.next();
+						files.add(f);
+						System.err.println("f:" + f);
+						
+					}
+					
+					if (files.size() > 0) {
+					
+						File [] filesArray = new File[files.size()];
+						
+						files.toArray(filesArray);
+						
+						if (listener != null)
+							listener.filesDropped(filesArray);
+					}
+				}
+				else {
+
+					System.err.println("isRepresentationClassReader:" + flavors[i].isRepresentationClassReader());
+					System.err.println("isRepresentationClassInputStream:" + flavors[i].isRepresentationClassInputStream());
+					System.err.println("isRepresentationClassCharBuffer:" + flavors[i].isRepresentationClassCharBuffer());
+					System.err.println("isRepresentationClassByteBuffer:" + flavors[i].isRepresentationClassByteBuffer());
+										
+					
+			//	for (int zz = 0; zz < flavors.length; zz++) {
+					
+					// only for java.io.Reader
+					if (flavors[i].isRepresentationClassReader() ||
+							flavors[i].isRepresentationClassInputStream() ||
+							flavors[i].isRepresentationClassCharBuffer()) {
+						
+						// Say we'll take it.
+						//evt.acceptDrop ( java.awt.dnd.DnDConstants.ACTION_COPY_OR_MOVE );
+						//  evt.acceptDrop(java.awt.dnd.DnDConstants.ACTION_COPY);
+						//log(out, "FileDrop: reader accepted.");
+
+						Reader reader = flavors[i].getReaderForText(t);
+
+						BufferedReader br = new BufferedReader(reader);
+
+						File [] files = createFileArray(br);
+						
+						//System.err.println("files:" + files.length);
+						
+						 if (listener != null)
+							 listener.filesDropped(files);
+
+						// Mark that drop is completed.
+						//  evt.getDropTargetContext().dropComplete(true);
+						//log(out, "FileDrop: drop complete.");
+						handled = true;
+						break;
+					}
+					
+				}
+				
+				if(!handled){
+					//     log( out, "FileDrop: not a file list or reader - abort." );
+					//evt.rejectDrop();
+					return false;
+				}
+			}
+			
+			return true;
+		}
+		catch (UnsupportedFlavorException ufe) {
+			System.err.println("Ack! we should not be here.\nBad Flavor.");
+			ufe.printStackTrace();
+		}
+		catch (IOException ioe) {
+			System.out.println("Something failed during import:\n" + ioe);
+		}
+		return false;
+	}
+
+	// We only support file lists on FSTrees...
+	public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
+		
+		System.err.println("canImport");	
+		
+		if (true)
+		return true;
+		
+		if (comp instanceof ExtendedJTree) {
+			for (int i = 0; i < transferFlavors.length; i++) {
+				System.err.println("transferFlavors[i]:" + transferFlavors[i]);
+								
+				System.err.println("javaFileListFlavor:" + transferFlavors[i].equals(DataFlavor.javaFileListFlavor));
+				System.err.println("isRepresentationClassReader:" + transferFlavors[i].isRepresentationClassReader());
+				
+				if (transferFlavors[i].equals(DataFlavor.javaFileListFlavor)) {
+					return true;
+				}
+				else if (transferFlavors[i].isRepresentationClassReader())
+					return true;
+				else
+					return false;
+				
+			}
+			System.err.println("return true");
+			//return true;
+		}
+		return false;
+	}
+	
+	
+	/*
+	 // BEGIN 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
+                            DataFlavor[] flavors = tr.getTransferDataFlavors();
+                            boolean handled = false;
+                            for (int zz = 0; zz < flavors.length; zz++) {
+                                if (flavors[zz].isRepresentationClassReader()) {
+                                    // Say we'll take it.
+                                    //evt.acceptDrop ( java.awt.dnd.DnDConstants.ACTION_COPY_OR_MOVE );
+                                    evt.acceptDrop(java.awt.dnd.DnDConstants.ACTION_COPY);
+                                    log(out, "FileDrop: reader accepted.");
+
+                                    Reader reader = flavors[zz].getReaderForText(tr);
+
+                                    BufferedReader br = new BufferedReader(reader);
+
+                                    if(listener != null)
+                                        listener.filesDropped(createFileArray(br, out));
+
+                                    // Mark that drop is completed.
+                                    evt.getDropTargetContext().dropComplete(true);
+                                    log(out, "FileDrop: drop complete.");
+                                    handled = true;
+                                    break;
+                                }
+                            }
+                            if(!handled){
+                                log( out, "FileDrop: not a file list or reader - abort." );
+                                evt.rejectDrop();
+                            }
+                            // END 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
+	 
+	 */
+	
+	
+	
+	
+	 // Nathan Blomquist -- Linux (KDE/Gnome) support added.
+    private static String ZERO_CHAR_STRING = "" + (char) 0;
+    
+    private static File[] createFileArray(BufferedReader bReader)
+    {
+       try { 
+           java.util.List list = new java.util.ArrayList();
+           java.lang.String line = null;
+                      
+           while ((line = bReader.readLine()) != null) {
+               try {
+            	   
+                   // kde seems to append a 0 char to the end of the reader
+                   if (ZERO_CHAR_STRING.equals(line)) 
+                	   continue; 
+                   
+                   System.err.println("line:" + line);
+                   
+                   java.io.File file = new java.io.File(new java.net.URI(line));
+                   list.add(file);
+               } catch (Exception ex) {
+                   log.warn("Error with " + line + ": " + ex.getMessage());
+               }
+           }
+           return (java.io.File[]) list.toArray(new File[list.size()]);
+       } catch (IOException ex) {
+           log.warn("FileDrop: IOException");
+       }
+       return new File[0];
+    }
 }
 
 
@@ -676,15 +1077,13 @@ class TransferableNode implements Transferable {
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 		return Arrays.asList(flavors).contains(flavor);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 }
 
 
