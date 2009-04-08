@@ -2,6 +2,8 @@ package net.sf.xmm.moviemanager.http;
 
 import static org.junit.Assert.*;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.swing.DefaultListModel;
 
 import org.junit.Test;
@@ -22,13 +24,23 @@ public class IMDBTest {
 
 		String input = "La fille sur le pon";
 
-		DefaultListModel matches = imdb.getSimpleMatches(input);
+		DefaultListModel matches = null;
+		try {
+			matches = imdb.getSimpleMatches(input);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		assertTrue("The number of results does not match the expected for input " + input, matches.getSize() ==  20);
 
 
 		input = "Marly & Me";
 
-		matches = imdb.getSimpleMatches(input);
+		try {
+			matches = imdb.getSimpleMatches(input);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		assertTrue("The number of results does not match the expected for input " + input, matches.getSize() ==  20);
 
 
