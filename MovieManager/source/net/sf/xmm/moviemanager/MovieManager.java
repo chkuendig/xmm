@@ -279,13 +279,13 @@ public class MovieManager {
     	else
     		options.setCurrentListNames(new ArrayList(config.getCurrentLists()));
     	
-    	options.setShowUnlistedEntries(config.getShowUnlistedEntries());
+    	options.setShowUnlistedEntries(config.getShowUnlistedEntries() && options.getCurrentListNames().size() > 0);
     	    	
     	options.setListOption(0);
     	
     	if (db != null) {
 
-    		if (options.getCurrentListNames().size() > 0 || config.getShowUnlistedEntries()) {
+    		if (options.getCurrentListNames().size() > 0 || options.getShowUnlistedEntries()) {
     			options.setListOption(1);
     		}
 
@@ -464,9 +464,6 @@ public class MovieManager {
     					if (lists.size() > 0)
     						options.setListOption(1);
     				}
-    				
-    				if (config.getShowUnlistedEntries())
-    					options.setListOption(1);
     			}
     			else {
     				//setDefaultListsSetup(_database);
@@ -1271,7 +1268,12 @@ public class MovieManager {
     	appndr.setFile(logFile);
     	appndr.activateOptions();
     	
+    	
+    	System.err.println("ALLUSERSPROFILE:" + System.getenv("ALLUSERSPROFILE"));
+    	System.err.println("APPDATA:" + System.getenv("APPDATA"));
+    	System.err.println("ProgramData:" + System.getenv("ProgramData"));
 		
+    	
 		/* Writes the date. */
 		log.debug("================================================================================"); //$NON-NLS-1$
 		log.debug("Log Start: " + new Date(System.currentTimeMillis())); //$NON-NLS-1$
