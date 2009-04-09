@@ -126,7 +126,6 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 	public String getTitle(int i) {
 				
 		ModelMovie model = (ModelMovie) listModel.elementAt(i);
-		System.err.println("getTitle("+i+"):" + model.getTitle());
 		lastTitle = model.getTitle();
 		
 		return model.getTitle();
@@ -148,8 +147,6 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 	int movieGroupNumber = 0;
 	
 	public int addMovie(int notUsed) {
-
-		System.err.println("addMovie lastTitle:" + lastTitle);
 		
 		try {
 
@@ -163,20 +160,12 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 					throw new Exception("No more movies to process!");
 				}
 			}
-
-			
 			
 			if (movieGroup.getSize() > 0) {
 				
-				System.err.println("processNext");
-				
 				movieGroup.processNext();
 				
-				System.err.println("movieGroup.getSize():" + movieGroup.getSize());
-				
 				if (movieGroup.getSize() == 0) {
-					
-					System.err.println("getHTMLMovies");
 					
 					StringBuffer html = movieGroup.getHTMLMovies();
 
@@ -199,22 +188,15 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 					bodyContent.append(SysUtil.getLineSeparator());
 					bodyContent.append(SysUtil.getLineSeparator());
 						
-					System.err.println("test 2");
-					
 					output = output.insert(templateBodyIndex, bodyContent);
 
 					output.append(" ");
 
-					System.err.println("test 3");
-					
 					MovieManagerCommandSelect.processTemplateCssStyle(output);
-
-					System.err.println("test 4");
-					
+	
+					// Too slow for big strings
 					//output = HttpUtil.getHtmlNiceFormat(output);
-
-					System.err.println("test 5");
-					
+	
 					String filepath = htmlOutputFile.getParentFile().getAbsolutePath() + SysUtil.getDirSeparator();
 					
 					String fName = filepath + movieGroup.getFileName();
@@ -233,7 +215,6 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 			return -1;
 		}
 		
-		System.err.println("addMovie return:" + lastTitle);
 		return 0;
 	}
 	
