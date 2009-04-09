@@ -687,9 +687,13 @@ public class DialogIMDB extends JDialog {
              Then the second time it plusses the time and size to match.
              When multiadding the next file info should be directly added to the old, not replace it
     		 */
-    		modelInfoTmp._edit = true;
+    		
     		modelInfoTmp._hasReadProperties = true;
-    		modelInfoTmp.getFileInfo(new File[] {multiAddFile});
+    		try {
+				modelInfoTmp.getFileInfo(new File[] {multiAddFile});
+			} catch (Exception e) {
+				log.error("Error occured while retrieving file info.", e);
+			}
 
     		try {
     			modelInfoTmp.saveToDatabase(null);
