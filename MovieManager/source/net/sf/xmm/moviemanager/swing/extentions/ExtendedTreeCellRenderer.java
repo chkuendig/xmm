@@ -115,7 +115,9 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 			scrollPane.getViewport().addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					TreeNode node = (DefaultMutableTreeNode) finalTree.getLastSelectedPathComponent();
-					((DefaultTreeModel) finalTree.getModel()).nodeChanged(node); 
+					
+					if (finalTree.getModel() != null)
+						((DefaultTreeModel) finalTree.getModel()).nodeChanged(node); 
 				}
 			});
 		}
