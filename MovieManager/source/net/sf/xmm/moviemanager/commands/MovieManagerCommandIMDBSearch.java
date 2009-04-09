@@ -168,7 +168,7 @@ public class MovieManagerCommandIMDBSearch {
 			dialogTVSeries.buttonSelect.setEnabled(false);
 			dialogTVSeries.buttonSelectAll.setEnabled(false);
 		}
-		else if (!movieInfoModel._edit) {
+		else if (!movieInfoModel.isEditMode()) {
 			dialogTVSeries.getMoviesList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			dialogTVSeries.buttonSelectAll.setEnabled(true);
 		}
@@ -238,7 +238,7 @@ public class MovieManagerCommandIMDBSearch {
 				dialogTVSeries.getMoviesList().setModel(allEpisodes);
 				dialogTVSeries.getMoviesList().setSelectedIndex(0);
 				
-				if (!movieInfoModel._edit) {
+				if (!movieInfoModel.isEditMode()) {
 					dialogTVSeries.getMoviesList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					dialogTVSeries.buttonSelectAll.setEnabled(true);
 				}
@@ -408,7 +408,7 @@ public class MovieManagerCommandIMDBSearch {
 		episode.setMovieKey(movieKey); 
 		
 		// Copy the database key if editing
-		movieInfoModel.setModel(episode, movieInfoModel._edit, false);
+		movieInfoModel.setModel(episode, movieInfoModel.isEditMode(), false);
 			
 		// The cover... 
 		if (episode.getCoverData() != null) {
