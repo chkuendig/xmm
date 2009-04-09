@@ -76,11 +76,10 @@ import org.apache.log4j.Logger;
  * This class is a type of JTree that uses Drag and Drop, and performs auto-scrolling when dragging images beyond
  * the bounds of the JTrees JScrollPane.
  */
-public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListener, DragSourceListener {  
+public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureListener, DragSourceListener*/ {  
 
 	Logger log = Logger.getLogger(getClass());
 
-	static int dummy = 0;
 	private static final int AUTOSCROLL_MARGIN = 25;
 	private Insets autoscrollInsets = new Insets( 0, 0, 0, 0 );    // AutoScroll methods.
 	private DefaultTreeModel dtModel;
@@ -198,11 +197,9 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 	   addTreeSelectionListener( new TreeSelectionListener() {
 		   public void valueChanged( TreeSelectionEvent e ) {
 			   DefaultMutableTreeNode node = ( DefaultMutableTreeNode ) getLastSelectedPathComponent();
-			   getChildren( node );
+			   getChildren(node);
 		   }
 	   });
-	   
-	 
    }	
 
    /*
@@ -267,6 +264,9 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 	//////////////////////////////////////////////////////////////////
 	// Drag Listeners                                               //
 	//////////////////////////////////////////////////////////////////
+	
+	// NOT IN USE
+	/*
 	public void dragGestureRecognized(DragGestureEvent e) {
 
 
@@ -287,17 +287,18 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 					nodes[i] = null;
 			}
 
-			/* Feature not yet ready */
+		
 			drag = false;
 
 			//_movieManager.getImage("/images/serie.png").getScaledInstance(25,25, Image.SCALE_SMOOTH))
 
-			if (drag)
-				e.startDrag(Toolkit.getDefaultToolkit().createCustomCursor(FileUtil.getImage("/images/movie.png"), new Point(0, 0), "MoveDrop"), new TransferableNode(nodes), this);
+		//	if (drag)
+			//	e.startDrag(Toolkit.getDefaultToolkit().createCustomCursor(FileUtil.getImage("/images/movie.png"), new Point(0, 0), "MoveDrop"), new TransferableNode(nodes), this);
 			//e.startDrag(DragSource.DefaultMoveDrop, new TransferableNode(nodes), this);
 		}
 	}
-
+*/
+	/*
 	public void dragDropEnd (DragSourceDropEvent e) {
 		DefaultMutableTreeNode [] nodes = getSelectedNodes();
 
@@ -323,7 +324,7 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 		log.debug( "<dropActionChanged> Action Changed" );
 	}
 
-
+*/
 
 
 	////////////////////
@@ -333,21 +334,23 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 	 * Creates a 'Drop' (from Drag and Drop)  Listener for the JTree.
 	 * @return The DropTargetListener for this JTree.
 	 */
-	public DropTargetListener getTargetListener() {
+	
+//	public DropTargetListener getTargetListener() {
 
-		DropTargetListener dtl = new DropTargetAdapter() {
-			/**
-			 * Gets the current node in the JTree that the object is being dragged over.
-			 * @param dtde The DropTargetDragEvent.
-			 */
+	//	DropTargetListener dtl = new DropTargetAdapter() {
+//			/**
+//			 * Gets the current node in the JTree that the object is being dragged over.
+//			 * @param dtde The DropTargetDragEvent.
+//			 */
+			
+			/*
 			public void dragOver(final DropTargetDragEvent dragEvent)
-			{ /*
-		    Timer timerHover = new Timer( 1000, new ActionListener()
-		    {
-		    public void actionPerformed( ActionEvent e )
-		    {
-			 */
-				System.err.println("dragOver");
+			{ 
+//		    Timer timerHover = new Timer( 1000, new ActionListener()
+//		    {
+//		    public void actionPerformed( ActionEvent e )
+//		    {
+//			 
 				
 				try {
 
@@ -386,22 +389,22 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 						//DragSource.DefaultMoveNoDrop
 					}
 
-					/*
-		      }
-		      } );
-		      timerHover.start();
-					 */
+//					
+//		      }
+//		      } );
+//		      timerHover.start();
+//					 
 
 				} catch (Exception e) {
 					log.error("", e);
 				}
 			}
-
+*/
 			/**
 			 * Handles the 'drop' of the object into a node on the JTree.
 			 * @param dtde The DropTargetDropEvent.
 			 */
-			
+	/*		
 			public void drop2(DropTargetDropEvent dtde) {
 
 				try {
@@ -501,8 +504,6 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 					  
 					  DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) getLastSelectedPathComponent();
 					  
-					  System.err.println("parentNode:" + parentNode);
-					  
 					  // Get whatever was dropped
                       java.awt.datatransfer.Transferable tr = evt.getTransferable();
 
@@ -540,7 +541,6 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
                           boolean handled = false;
                           for (int zz = 0; zz < flavors.length; zz++) {
                         	  
-                        	  System.err.println("getReaderForText:" + flavors[zz].getReaderForText(tr));
                         	  
                               if (flavors[zz].isRepresentationClassReader()) {
                                   // Say we'll take it.
@@ -581,13 +581,13 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
                   finally
                   {
                       // If it's a Swing component, reset its border
-                   /*
-                	  if( c instanceof javax.swing.JComponent )
-                      {   javax.swing.JComponent jc = (javax.swing.JComponent) c;
-                          jc.setBorder( normalBorder );
-                          log.debug("FileDrop: normal border restored." );
-                      }   // end if: JComponent
-                   */
+                   
+//                	  if( c instanceof javax.swing.JComponent )
+//                      {   javax.swing.JComponent jc = (javax.swing.JComponent) c;
+//                          jc.setBorder( normalBorder );
+//                          log.debug("FileDrop: normal border restored." );
+//                      }   // end if: JComponent
+                   
                   }   // end finally
               }   // end drop
 			  
@@ -596,6 +596,8 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 		return dtl;
 	}
 
+	*/
+	
 	////////////////////
 	// MISC FUNCTIONS //
 	////////////////////
@@ -743,7 +745,7 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 		{
 			scrollPathToVisible(new TreePath( childNode.getPath()));
 		}
-		//log.debug( "Count: "+(++dummy) );
+		
 	}
 
 
@@ -767,41 +769,9 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 			}
 		}
 	}
-
-
-	/**
-     * Implement this inner interface to listen for when files are dropped. For example
-     * your class declaration may begin like this:
-     * <code><pre>
-     *      public class MyClass implements FileDrop.Listener
-     *      ...
-     *      public void filesDropped( java.io.File[] files )
-     *      {
-     *          ...
-     *      }   // end filesDropped
-     *      ...
-     * </pre></code>
-     *
-     * @since 1.1
-     */
-    public static interface FileDropListener {
-       
-        /**
-         * This method is called when files have been successfully dropped.
-         *
-         * @param files An array of <tt>File</tt>s that were dropped.
-         * @since 1.0
-         */
-        public abstract void filesDropped( java.io.File[] files );
-        
-        
-    }   // end inner-interface Listener
-    
- 
-    
 }
 
-
+/*
 class FSTransfer extends TransferHandler {
 	
 	static Logger log = Logger.getLogger(FSTransfer.class);
@@ -836,23 +806,23 @@ class FSTransfer extends TransferHandler {
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
 		 */
 		
-		try {
+	//	try {
 			
 			//java.util.List data = (java.util.List) t.getTransferData(DataFlavor.javaFileListFlavor);
 			
-			/*
-			Iterator i = data.iterator();
 			
-			while (i.hasNext()) {
-				File f = (File)i.next();
-				
-				System.err.println("f:" + f);
-				//root.add(new DefaultMutableTreeNode(f.getName()));
-			}
-			*/
+//			Iterator i = data.iterator();
+//			
+//			while (i.hasNext()) {
+//				File f = (File)i.next();
+//				
+//				System.err.println("f:" + f);
+//				//root.add(new DefaultMutableTreeNode(f.getName()));
+//			}
+			
 		//	model.reload();
 			
-					
+					/*
 			DataFlavor[] flavors = t.getTransferDataFlavors();
 		
 			boolean handled = false;
@@ -973,8 +943,6 @@ class FSTransfer extends TransferHandler {
 		return false;
 	}
 	
-	
-	/*
 	 // BEGIN 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
                             DataFlavor[] flavors = tr.getTransferDataFlavors();
                             boolean handled = false;
@@ -1005,7 +973,7 @@ class FSTransfer extends TransferHandler {
                             }
                             // END 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
 	 
-	 */
+	
 	
 	
 	
@@ -1040,10 +1008,12 @@ class FSTransfer extends TransferHandler {
        }
        return new File[0];
     }
-}
+    */
+//}
 
 
 
+/*
 class TransferableNode implements Transferable {
 
 	public static final DataFlavor NODE_FLAVOR = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType, "Node");
@@ -1078,38 +1048,4 @@ class TransferableNode implements Transferable {
 		return Arrays.asList(flavors).contains(flavor);
 	}
 }
-
-
-//import java.awt.Rectangle;
-
-//import javax.swing.JTree;
-//import javax.swing.tree.TreePath;
-//import javax.swing.tree.*;
-//import javax.swing.event.*;
-
-//import java.lang.reflect.*;
-//import java.util.*;
-
-//public class ExtendedJTree extends JTree {
-
-///* Resets the value of the X- coordinate */
-//public void scrollPathToVisible2(TreePath path, int xCoordinate) {
-
-//if(path != null) {
-//makeVisible(path);
-//Rectangle bounds = getPathBounds(path);
-
-//if(bounds != null) {
-
-//if (xCoordinate != -1)
-//bounds.setRect(xCoordinate, bounds.getY(), bounds.getWidth(), bounds.getHeight());
-
-//scrollRectToVisible(bounds);
-
-//if (accessibleContext != null) {
-//((AccessibleJTree)accessibleContext).fireVisibleDataPropertyChange();
-//}
-//}
-//}
-//}
-//}
+*/
