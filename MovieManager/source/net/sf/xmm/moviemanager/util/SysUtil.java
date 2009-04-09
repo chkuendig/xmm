@@ -62,29 +62,29 @@ public class SysUtil {
 	 **/
 	public static File getConfigDir() throws Exception {
 		
-		//String path = ""; //$NON-NLS-1$
 		File dir = null;
 		
 		try {
-			
-			dir = new File(getUserDir(), "config");
-				
+							
 			/* If running in a mac application bundle, we can't write in the application-directory, so we use the /Library/Application Support */
 			if (isMac()) {
-			
 				String path = System.getProperty("user.home") + "/Library/Application Support/MovieManager/";
 				dir = new File(path);
-		
-				if (!dir.exists()) {
-					if(!dir.mkdir()) {
-						log.error("Could not create settings folder.");
-						throw new Exception("Could not create settings folder:" + dir);
-					}
-				}
 			}
 			else if (isWindowsVista()) {
-				dir = new File(System.getProperty("user.home"), "Application Data");
+				dir = new File(System.getProperty("user.home"), "Application Data/MovieManager");
 			}
+	
+			if (dir != null) {
+								
+				if(!dir.exists() && !dir.mkdir()) {
+					log.error("Could not create settings folder.");
+					throw new Exception("Could not create settings folder:" + dir);
+				}
+			}
+			else
+				dir = new File(getUserDir(), "config");
+						
 		}
 		catch (Exception e) {
 			log.warn("Exception:" + e.getMessage(), e);
