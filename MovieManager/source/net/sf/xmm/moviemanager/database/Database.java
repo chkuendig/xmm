@@ -241,7 +241,7 @@ abstract public class Database {
 	/**
 	 * Returns the result of the query (formated) in a string.
 	 **/
-	public String getQueryResult(String query) {
+	public synchronized String getQueryResult(String query) {
 
 		//long t1 = System.currentTimeMillis();
 		String queryResult = "";
@@ -309,7 +309,7 @@ abstract public class Database {
      /**
 	 * Returns the number of rows in the General Info id column
 	 **/
-	public int getDatabaseSize() {
+	public synchronized int getDatabaseSize() {
 
 		int size = -1;
 
@@ -410,7 +410,7 @@ abstract public class Database {
 	/**
 	 * Returns the Resolution with index index named name...
 	 **/
-	public String getString(String query, String field) {
+	protected String getString(String query, String field) {
 
 		String data = "";
 		try {
@@ -437,7 +437,7 @@ abstract public class Database {
 	/**
 	 * Returns the Duration with index index named name...
 	 **/
-	public int getInt(String query, String field) {
+	private int getInt(String query, String field) {
 
 		int data = -1;
 		try {
@@ -467,7 +467,7 @@ abstract public class Database {
 	/**
 	 * Returns the if the movie at the specific index is a member of the specified list with name name...
 	 **/
-	public boolean getBoolean(String query, String field) {
+	protected boolean getBoolean(String query, String field) {
 
 		boolean data = false;
 		try {
@@ -495,7 +495,7 @@ abstract public class Database {
 	/**
 	 * Returns the CD_Cases with index index named name...
 	 **/
-	public double getDouble(String query, String field) {
+	private double getDouble(String query, String field) {
 
 		double data = -1;
 		try {
@@ -524,7 +524,7 @@ abstract public class Database {
 	/**
 	 * Returns the active additional info fields.
 	 **/
-	public int [] getActiveAdditionalInfoFields() {
+	public synchronized int [] getActiveAdditionalInfoFields() {
 
 		String data = "";
 		String columnName = "Active Additional Info Fields";
@@ -698,7 +698,7 @@ abstract public class Database {
 	/**
 	 * Returns a ModelAdditionalInfo on a specific movie/episode
 	 **/
-	synchronized public ModelAdditionalInfo getAdditionalInfo(int index, boolean episode) {
+	public synchronized ModelAdditionalInfo getAdditionalInfo(int index, boolean episode) {
 
 		ModelAdditionalInfo additionalInfo = null;
 
@@ -844,7 +844,7 @@ abstract public class Database {
 	}
 
 
-	public boolean listColumnExist(String columnName) {
+	public synchronized boolean listColumnExist(String columnName) {
 
 		ArrayList columnNames = getListsColumnNames();
 
@@ -862,7 +862,7 @@ abstract public class Database {
 	/**
 	 * Returns the names of the columns in the lists table.
 	 **/
-	public ArrayList getListsColumnNames() {
+	public synchronized ArrayList getListsColumnNames() {
 		
 		if (listsColumnNames != null)
 			return new ArrayList(listsColumnNames);
@@ -892,7 +892,7 @@ abstract public class Database {
 		return new ArrayList(listsColumnNames);
 	}
 
-	public int getExtraInfoColumnCount() {
+	public synchronized int getExtraInfoColumnCount() {
 
 		if (extraInfoFieldNames == null)
 			getExtraInfoFieldNames(true);
@@ -900,7 +900,7 @@ abstract public class Database {
 		return extraInfoFieldNames.size();
 	}
 
-	public ArrayList getExtraInfoFieldNames(boolean fromDatabase) {
+	public synchronized ArrayList getExtraInfoFieldNames(boolean fromDatabase) {
 	
 		if (fromDatabase || extraInfoFieldNames == null) {
 			extraInfoFieldNames = getExtraInfoFieldNames();
@@ -911,7 +911,7 @@ abstract public class Database {
 	/**
 	 * Returns the Extra Info field names in a ArrayList.
 	 **/
-	private ArrayList getExtraInfoFieldNames() {
+	private synchronized ArrayList getExtraInfoFieldNames() {
 
 		ArrayList list = new ArrayList();
 
@@ -945,7 +945,7 @@ abstract public class Database {
 	/**
 	 * Returns the Extra Info field names in a ArrayList.
 	 **/
-	public ArrayList getExtraInfoEpisodesFieldNames() {
+	public synchronized ArrayList getExtraInfoEpisodesFieldNames() {
 
 		ArrayList list = new ArrayList();
 		try {
@@ -978,7 +978,7 @@ abstract public class Database {
 	/**
 	 * Returns the additional info field names in a ArrayList.
 	 **/
-	public ArrayList getAdditionalInfoFieldNames() {
+	public synchronized ArrayList getAdditionalInfoFieldNames() {
 		ArrayList list = new ArrayList();
 		String query = "SELECT " + quotedAdditionalInfoString + ".* "+ "FROM "+ quotedAdditionalInfoString +" WHERE 1=0;";
 
@@ -1011,7 +1011,7 @@ abstract public class Database {
 	/**
 	 * Returns the additional info field names in a ArrayList.
 	 **/
-	public ArrayList getGeneralInfoMovieFieldNames() {
+	public synchronized ArrayList getGeneralInfoMovieFieldNames() {
 
 		ArrayList list = new ArrayList();
 		String query = "SELECT " + quotedGeneralInfoString +".* "+ "FROM "+ quotedGeneralInfoString +" WHERE 1=0;";
@@ -1049,7 +1049,7 @@ abstract public class Database {
 	/**
 	 * Returns the table names.
 	 **/
-	public ArrayList getTableNames() {
+	public synchronized ArrayList getTableNames() {
 		ArrayList list = new ArrayList();
 		try {
 
@@ -1080,7 +1080,7 @@ abstract public class Database {
 	 * Adds the fields of movie with 'index' to the \"Additional Info\" table and
 	 * returns the number of updated rows.
 	 **/
-	public int addAdditionalInfo(ModelAdditionalInfo model) {
+	public synchronized int addAdditionalInfo(ModelAdditionalInfo model) {
 		return addAdditionalInfo(model.getKey(), model);
 	}
 
@@ -1089,7 +1089,7 @@ abstract public class Database {
 	 * Adds the fields of movie with 'index' to the \"Additional Info\" table and
 	 * returns the number of updated rows.
 	 **/
-	public int addAdditionalInfo(int index, ModelAdditionalInfo model) {
+	public synchronized int addAdditionalInfo(int index, ModelAdditionalInfo model) {
 		int value = 0;
 
 		try {
@@ -1174,7 +1174,7 @@ abstract public class Database {
 	}
 
 
-	public int addAdditionalInfoEpisode(ModelAdditionalInfo model) {
+	public synchronized int addAdditionalInfoEpisode(ModelAdditionalInfo model) {
 		return addAdditionalInfoEpisode(model.getKey(), model);
 	}
 
@@ -1183,7 +1183,7 @@ abstract public class Database {
 	 * Adds the fields of movie with 'index' to the additional info table and
 	 * returns the number of updated rows.
 	 **/
-	public int addAdditionalInfoEpisode(int index, ModelAdditionalInfo model) {
+	public synchronized int addAdditionalInfoEpisode(int index, ModelAdditionalInfo model) {
 		int value = 0;
 
 		try {
@@ -1273,7 +1273,7 @@ abstract public class Database {
 	 * Sets the fields of movie index to the \"Additional Info\" table and returns the number of
 	 * updated rows.
 	 **/
-	public int setAdditionalInfo(int index, ModelAdditionalInfo model) {
+	public synchronized int setAdditionalInfo(int index, ModelAdditionalInfo model) {
 		int value = 0;
 
 		try {
@@ -1388,7 +1388,7 @@ abstract public class Database {
 	 * Sets the fields of movie index to the \"Additional Info\" table and returns the number of
 	 * updated rows.
 	 **/
-	public int setAdditionalInfoEpisode(int index, ModelAdditionalInfo model) {
+	public synchronized int setAdditionalInfoEpisode(int index, ModelAdditionalInfo model) {
 		int value = 0;
 
 		try {
@@ -1525,7 +1525,7 @@ abstract public class Database {
 	 * Used when converting database to keep the same ID values
 	 * Adds the fields to the general info table and returns the index added
 	 **/
-	protected int addGeneralInfo(int index, String title, String cover, byte [] coverData, String IMDB,
+	protected synchronized int addGeneralInfo(int index, String title, String cover, byte [] coverData, String IMDB,
 			String date, String directedBy, String writtenBy,
 			String genre, String rating, boolean seen, String aka,
 			String country, String language, String colour,
@@ -1601,7 +1601,7 @@ abstract public class Database {
 	 * Adds the fields to the general info table and returns the index added or
 	 * -1 if insert failed.
 	 **/
-	public int addGeneralInfo(ModelMovie model) {
+	public synchronized int addGeneralInfo(ModelMovie model) {
 		int index = -1;
 
 		try {
@@ -1680,7 +1680,7 @@ abstract public class Database {
 	 * Adds the fields to the general info table and returns the index added
 	 * Returns -1 if insert failed.
 	 **/
-	public int addGeneralInfoEpisode(ModelEpisode model) {
+	public synchronized int addGeneralInfoEpisode(ModelEpisode model) {
 
 		int index = -1;
 
@@ -1852,7 +1852,7 @@ abstract public class Database {
 
 
 
-	public int setGeneralInfoEpisode(ModelEpisode model) {
+	public synchronized int setGeneralInfoEpisode(ModelEpisode model) {
 		return setGeneralInfoEpisode(model.getKey(), model);
 	}
 
@@ -1860,7 +1860,7 @@ abstract public class Database {
 	 * Sets the fields of movie index to the general info table and returns the number of
 	 * updated rows.
 	 **/
-	public int setGeneralInfoEpisode(int index, ModelEpisode model) {
+	public synchronized int setGeneralInfoEpisode(int index, ModelEpisode model) {
 		int value = 0;
 		try {
 			PreparedStatement statement;
@@ -1948,7 +1948,7 @@ abstract public class Database {
 	 * Adds the values in fieldValuesList with names in fieldNamesList to movie
 	 * index in the Extra Info table.
 	 **/
-	public void addExtraInfoMovie(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
+	public synchronized void addExtraInfoMovie(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
 
 		try {
 			String query = "INSERT INTO " + quotedExtraInfoString +
@@ -1986,7 +1986,7 @@ abstract public class Database {
 	 * Sets the fieldName of movie index in the Extra Info table to fieldValue and
 	 * returns the number of updated rows.
 	 **/
-	public int setExtraInfoMovie(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
+	public synchronized int setExtraInfoMovie(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
 
 		if (fieldNamesList == null || fieldValuesList == null)
 			return 1;
@@ -2035,7 +2035,7 @@ abstract public class Database {
 	 * index in the Extra Info table.
 	 * Return values. -1 error, 0 = success, 1 = aborted
 	 **/
-	public int addExtraInfoEpisode(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
+	public synchronized int addExtraInfoEpisode(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
 
 		int ret = 0;
 
@@ -2074,7 +2074,7 @@ abstract public class Database {
 	 * Sets the fieldName of movie index in the Extra Info table to fieldValue and
 	 * returns the number of updated rows.
 	 **/
-	public int setExtraInfoEpisode(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
+	public synchronized int setExtraInfoEpisode(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
 
 		if (fieldNamesList == null || fieldValuesList == null)
 			return 1;
@@ -2118,7 +2118,7 @@ abstract public class Database {
 	 * Adds the values in fieldValuesList with names in fieldNamesList to movie
 	 * index in the extra info table.
 	 **/
-	public void addLists(int index, ArrayList columnNamesList, ArrayList fieldValuesList) {
+	public synchronized void addLists(int index, ArrayList columnNamesList, ArrayList fieldValuesList) {
 		try {
 			/* Creates an empty row... */
 			int value = _sql.executeUpdate("INSERT INTO " + quote + "Lists" + quote + " "+
@@ -2154,7 +2154,7 @@ abstract public class Database {
 	 * Sets the fieldName of movie index in the extra info table to fieldValue and
 	 * returns the number of updated rows.
 	 **/
-	public int setLists(int index, String fieldName, Boolean fieldValue) {
+	public synchronized int setLists(int index, String fieldName, Boolean fieldValue) {
 		int value = 0;
 
 		try {
@@ -2185,7 +2185,7 @@ abstract public class Database {
 	 * Sets the fields of movie index to the general info table and returns the number of
 	 * updated rows.
 	 **/
-	public int setSeen(int index, boolean seen) {
+	public synchronized int setSeen(int index, boolean seen) {
 
 		int value = 0;
 		try {
@@ -2215,7 +2215,7 @@ abstract public class Database {
 	 * Sets the fields of movie index to the general info table and returns the number of
 	 * updated rows.
 	 **/
-	public int setSeenEpisode(int index, boolean seen) {
+	public synchronized int setSeenEpisode(int index, boolean seen) {
 
 		int value = 0;
 		try {
@@ -2245,7 +2245,7 @@ abstract public class Database {
 	/**
 	 * Adds a new column to the Lists table
 	 **/
-	public int addListsColumn(String field) {
+	public synchronized int addListsColumn(String field) {
 		int value = 0;
 
 		listsColumnNames = null;
@@ -2277,7 +2277,7 @@ abstract public class Database {
 	 * Removes and Extra Info field from the database with name field
 	 * and returns number of updated rows (none (-1)...).
 	 **/
-	public int removeListsColumn(String field) {
+	public synchronized int removeListsColumn(String field) {
 
 		listsColumnNames = null;
 		
@@ -2301,7 +2301,7 @@ abstract public class Database {
 	}
 
 
-	public int addExtraInfoFieldName(String field) {
+	public synchronized int addExtraInfoFieldName(String field) {
 
 		if (addExtraInfoMovieFieldName(field) == -2)
 			return -1;
@@ -2319,7 +2319,7 @@ abstract public class Database {
 	 * Adds an Extra Info field from the database with name field
 	 * and returns -2 if an exception occurs.
 	 **/
-	protected int addExtraInfoMovieFieldName(String field) {
+	protected synchronized int addExtraInfoMovieFieldName(String field) {
 		int value = 0;
 
 		String fieldType = "TEXT";
@@ -2351,7 +2351,7 @@ abstract public class Database {
 	 * Adds and Extra Info field from the database with name field
 	 * and returns -2 if an exception occurs.
 	 **/
-	protected int addExtraInfoEpisodeFieldName(String field) {
+	protected synchronized int addExtraInfoEpisodeFieldName(String field) {
 		int value = 0;
 
 		String fieldType = "TEXT";
@@ -2381,7 +2381,7 @@ abstract public class Database {
 
 
 
-	public int removeExtraInfoFieldName(String field) {
+	public synchronized int removeExtraInfoFieldName(String field) {
 
 		if (removeExtraInfoMovieFieldName(field) == -2)
 			return -1;
@@ -2399,7 +2399,7 @@ abstract public class Database {
 	 * Removes an Extra Info field from the database with name field
 	 * and returns number of updated rows (none (-1)...).
 	 **/
-	protected int removeExtraInfoMovieFieldName(String field) {
+	protected synchronized int removeExtraInfoMovieFieldName(String field) {
 
 		int value = 0;
 		try {
@@ -2425,7 +2425,7 @@ abstract public class Database {
 	 * Removes and Extra Info field from the database with name field
 	 * and returns number of updated rows (none (-1)...).
 	 **/
-	protected int removeExtraInfoEpisodeFieldName(String field) {
+	protected synchronized int removeExtraInfoEpisodeFieldName(String field) {
 
 		int value = 0;
 		try {
@@ -2451,7 +2451,7 @@ abstract public class Database {
 	/**
 	 * Sets the active additional info fields.
 	 **/
-	public void setActiveAdditionalInfoFields(int [] activeAdditionalInfoFields) {
+	public synchronized void setActiveAdditionalInfoFields(int [] activeAdditionalInfoFields) {
 
 		String activeFields = "";
 
@@ -2509,7 +2509,7 @@ abstract public class Database {
 	/**
 	 * Sets the folders Covers and Queries for this database.
 	 **/
-	public int setFolders(String coversFolder, String queriesFolder) {
+	public synchronized int setFolders(String coversFolder, String queriesFolder) {
 
 		int value = 0;
 		String folders = quote + "Folders" + quote;
@@ -2560,7 +2560,7 @@ abstract public class Database {
 	/**
 	 * Returns the Covers folder for this database.
 	 **/
-	public String getCoversFolder() {
+	public synchronized String getCoversFolder() {
 
 		String data = getString("SELECT " + quote + "Folders" + quote +"." + quote + "Covers" + quote + " "+
 				"FROM " + quote + "Folders" + quote + " "+
@@ -2572,7 +2572,7 @@ abstract public class Database {
 	/**
 	 * Returns the Queries folder for this database.
 	 **/
-	public String getQueriesFolder() {
+	public synchronized String getQueriesFolder() {
 
 		String data = getString("SELECT " + quote + "Folders" + quote + "." + quote + "Queries" + quote + " "+
 				"FROM " + quote + "Folders" + quote + " "+
@@ -2583,15 +2583,15 @@ abstract public class Database {
 
 
 	
-	public String getSmallMoviesSelectStatement() {
+	public synchronized String getSmallMoviesSelectStatement() {
 		return getMoviesSelectStatement(false);
 	}
 	
-	public String getMoviesSelectStatement() {
+	public synchronized String getMoviesSelectStatement() {
 		return getMoviesSelectStatement(true);
 	}
 	
-	public String getMoviesSelectStatement(boolean full) {
+	public synchronized String getMoviesSelectStatement(boolean full) {
 
 		StringBuffer buf = new StringBuffer();
 		
@@ -2642,7 +2642,7 @@ abstract public class Database {
 
 
 
-	public DefaultListModel getMoviesList(String orderBy) {
+	public synchronized DefaultListModel getMoviesList(String orderBy) {
 
 		log.debug("getMoviesList(String orderBy)");
 		
@@ -2658,7 +2658,7 @@ abstract public class Database {
 		return list;
 	}
 
-	public DefaultListModel getMoviesList(String orderBy, ArrayList lists, boolean showUnlistedMovies) {
+	public synchronized DefaultListModel getMoviesList(String orderBy, ArrayList lists, boolean showUnlistedMovies) {
 
 		log.debug("getMoviesList(String orderBy, ArrayList lists, boolean showUnlistedMovies)");
 		
@@ -2684,7 +2684,7 @@ abstract public class Database {
 	 * Returns a List of MovieModels that contains all the movies in the
 	 * current database sorted by the orderBy string.
 	 **/
-	public DefaultListModel getMoviesList1(String orderBy) {
+	public synchronized DefaultListModel getMoviesList1(String orderBy) {
 
 		DefaultListModel listModel = new DefaultListModel();
 
@@ -2736,7 +2736,7 @@ abstract public class Database {
 	 * Returns a List of MovieModels that contains all the movies in the
 	 * current database sorted by the orderBy string.
 	 **/
-	public DefaultListModel getMoviesList1(String orderBy, String listsColumn) {
+	public synchronized DefaultListModel getMoviesList1(String orderBy, String listsColumn) {
 
 		DefaultListModel listModel = new DefaultListModel();
 
@@ -3351,7 +3351,7 @@ abstract public class Database {
 	 * Part of the advanced search function
 	 * Returns a List of MovieModels according to the search options
 	 **/
-	public DefaultListModel getMoviesList(ModelDatabaseSearch options) {
+	public synchronized DefaultListModel getMoviesList(ModelDatabaseSearch options) {
 
 		log.debug("getMoviesList(ModelDatabaseSearch options)");
 		
@@ -3471,7 +3471,7 @@ abstract public class Database {
 	 * Returns an ArrayList that contains all the movies in the
 	 * current database.
 	 **/
-	public ArrayList getEpisodeList(String orderBy) {
+	public synchronized ArrayList getEpisodeList(String orderBy) {
 		ArrayList list = new ArrayList(100);
 
 		try {
@@ -3604,7 +3604,7 @@ abstract public class Database {
 	/**
 	 * Returns a ModelMovie with the general info on a specific episode
 	 **/
-	public ModelEpisode getEpisode(int index) {
+	public synchronized ModelEpisode getEpisode(int index) {
 		ModelEpisode episode = null;
 
 		try {
@@ -3659,7 +3659,7 @@ abstract public class Database {
 	/**
 	 * Returns the Extra Info field value with index index named name...
 	 **/
-	public String getExtraInfoMovieField(int index, String name) {
+	public synchronized String getExtraInfoMovieField(int index, String name) {
 
 		String data = getString("SELECT \"Extra Info\".\""+name+"\" "+
 				"FROM \"Extra Info\" "+
@@ -3671,7 +3671,7 @@ abstract public class Database {
 	/**
 	 * Returns the Extra Info field with index index named name...
 	 **/
-	public String getExtraInfoEpisodeField(int index, String name) {
+	public synchronized String getExtraInfoEpisodeField(int index, String name) {
 
 		String data = getString("SELECT \"Extra Info Episodes\".\""+name+"\" "+
 				"FROM \"Extra Info Episodes\" "+
@@ -3684,7 +3684,7 @@ abstract public class Database {
 	/**
 	 * Returns true if the movie at the specific index is a member of the specified list with name name...
 	 **/
-	protected boolean getList(int index, String name) {
+	protected synchronized boolean getList(int index, String name) {
 
 		boolean data = getBoolean("SELECT \"Lists\".\""+name+"\" "+
 				"FROM \"Lists\" "+
