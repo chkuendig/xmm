@@ -574,13 +574,13 @@ log4j.appender.stdout.layout.FatalPattern = %-5p %l%n %m%n
 
 #### Second appender writes to file
 log4j.appender.FileAppender=org.apache.log4j.RollingFileAppender
-log4j.appender.FileAppender.File=Log.txt
+#log4j.appender.FileAppender.File=Log.txt
 
 # Setting the lowest priority to log
 log4j.appender.FileAppender.Threshold=ALL
 
 # Control the maximum log file size
-log4j.appender.FileAppender.MaxFileSize=200KB
+log4j.appender.FileAppender.MaxFileSize=300KB
 
 # Setting layout
 log4j.appender.FileAppender.layout=net.sf.xmm.moviemanager.util.PatternLayoutByLevel
