@@ -944,27 +944,103 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         moviesList.setCellRenderer(treeCellRenderer);
         MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(treeCellRenderer);
        
-        /*
-        moviesList.setTreeDropListener(new ExtendedJTree.FileDropListener() {
-
-        	public void filesDropped(File[] files) {
-				
+        new FileDrop(moviesList, new FileDrop.Listener() {
+        	public void filesDropped(final java.io.File[] files ) {   
         		for (int i = 0; i < files.length; i++) {
-					System.err.println("files["+i+"]:" + files[i]);
-				}
-			}
-        });	
-        */
-        
-        
- 	   new FileDrop(moviesList, new FileDrop.Listener() {
- 		   public void filesDropped( java.io.File[] files ) {   
- 			   for (int i = 0; i < files.length; i++) {
- 				System.err.println("!!!files["+i+"]:" + files[i]);
- 			}
- 		   }   
- 	   });
- 	           
+        			System.err.println("!!!files["+i+"]:" + files[i]);
+        		}
+        		
+        		Point p = moviesList.getMousePosition();
+        		
+        		System.err.println("p:" + p);
+        		
+        		final ExtendedJTree movieList = getMoviesList();
+        		
+        		ModelEntry selected = (ModelEntry) ((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject();
+		                		
+        		JPopupMenu popupMenu = new JPopupMenu();
+        		        		
+        		final JMenuItem addNewEntry = new JMenuItem("Add new entry");
+        		popupMenu.add(addNewEntry); //$NON-NLS-1$
+        		
+        		final JMenuItem addToCurrent = new JMenuItem("Add to selected entry");
+        		
+        		if (selected != null)
+        			popupMenu.add(addToCurrent); //$NON-NLS-1$
+        		       		
+        		        		
+        		ActionListener listener = new ActionListener() {
+        			public void actionPerformed(ActionEvent event) {
+        				        		
+        				ModelMovieInfo modelMovieInfo = null;
+        				boolean addNew = true;
+        				
+        				if (event.getSource().equals(addToCurrent)) {
+
+        					addNew = false;
+        					
+        					if (movieList.getLastSelectedPathComponent() == null)
+        						return;
+
+        					/* The currently visible entry */
+        					ModelEntry selected = (ModelEntry) ((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject();
+
+        					if (selected.getKey() == -1)
+        						return;
+
+        					modelMovieInfo = new ModelMovieInfo(selected, true);
+        				}
+        				else if (event.getSource().equals(addNewEntry)) {
+        					
+        					DialogMovieInfo dialogMovieInfo = new DialogMovieInfo();
+        					modelMovieInfo = dialogMovieInfo.movieInfoModel;
+        					GUIUtil.show(dialogMovieInfo, true);
+        				}
+        				
+        				boolean success = false;
+        				
+        				try {
+							modelMovieInfo.getFileInfo(files);
+							success = true;
+						} catch (FileNotFoundException fe) {
+							log.warn("Could not find file " + fe.getMessage());
+							
+							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Error occured", "<html>An error occured while retrieving file info:<br>File not found:" + fe.getMessage() + "</html>", true);
+							GUIUtil.show(alert, true);
+							
+						} catch (Exception e) {
+							log.warn("Exception:" + e.getMessage(), e);
+							
+							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Error occured", "<html>An error occured while retrieving file info:<br>" + e.getMessage() + "</html>", true);
+							GUIUtil.show(alert, true);
+						}
+    				
+						if (!addNew && success) {
+							try {
+								modelMovieInfo.saveToDatabase();
+								
+								MovieManagerCommandSelect.reloadCurrentModel();
+							} catch (Exception e) {
+								log.warn("Exception:" + e.getMessage(), e);
+								
+								DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Error occured", "An error occured while saving data to database");
+								GUIUtil.show(alert, true);
+							}
+						}
+						
+        				for (int i = 0; i < files.length; i++) {
+                			System.err.println("files["+i+"]:" + files[i]);
+                		}
+        			}
+        		};
+        		        		
+        		addToCurrent.addActionListener(listener);
+        		addNewEntry.addActionListener(listener);
+        		
+        		popupMenu.setLocation(p);
+        		popupMenu.show(movieList, p.x, p.y);
+        	}   
+        });
         
         /* All done. */
         log.debug("Creation of the List done."); //$NON-NLS-1$
