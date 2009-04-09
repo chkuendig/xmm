@@ -54,7 +54,6 @@ public class MovieManagerCommandExportToSimpleXHTML extends MovieManagerCommandE
 	}
 
 	public int getMovieListSize() throws Exception {
-		System.err.println("getMovieListSize:" + listModel.getSize());
 		return listModel.getSize();
 	}
 
@@ -67,17 +66,13 @@ public class MovieManagerCommandExportToSimpleXHTML extends MovieManagerCommandE
 		
 		log.debug(this.getClass() + ".retrieveMovieList()");
 		
-		System.err.println("outputFile:" + outputFile);
-		
 		if (outputFile == null) {
 			aborted = true;
 			return;
 		}
 		
 		listModel = MovieManager.getDialog().getCurrentMoviesList();
-		
-		System.err.println("getting list:" + listModel.size());
-		
+				
 		writer = new FileWriter(outputFile);
 	
 		/* The html header... */      
