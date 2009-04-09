@@ -571,7 +571,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 			if (!MovieManager.getConfig().getInternalConfig().isEntriesCountDisabled()) {
 				addSeparator(new Dimension(20, 3));
 				add(panelEntries);
-				toolBarWidth += 10;
+				//toolBarWidth += 10;
 			}
 		
 		} catch (Exception e) {
