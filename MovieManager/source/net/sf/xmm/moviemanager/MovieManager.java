@@ -1256,11 +1256,12 @@ public class MovieManager {
     	String logFile = null;
     	
     	try {
-			if (SysUtil.isMac())
+			if (SysUtil.isMac() || SysUtil.isWindowsVista())
 				logFile = new File(SysUtil.getConfigDir(), "Log.txt").getAbsolutePath();
     	} catch (Exception e1) {
 			e1.printStackTrace();
 		} finally {
+			
 			if (logFile == null)
 				logFile = new File(SysUtil.getUserDir(), "Log.txt").getAbsolutePath();
 		}
