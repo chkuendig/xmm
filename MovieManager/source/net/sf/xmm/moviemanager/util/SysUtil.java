@@ -58,43 +58,41 @@ public class SysUtil {
 	
 	/**
 	 * Getting the 'root directory' of the app.
+	 * @throws Exception 
 	 **/
-	public static String getConfigDir() {
+	public static File getConfigDir() throws Exception {
 		
-		String path = ""; //$NON-NLS-1$
-
+		//String path = ""; //$NON-NLS-1$
+		File dir = null;
+		
 		try {
 			java.net.URL url = FileUtil.class.getProtectionDomain().getCodeSource().getLocation();
 			
-			File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
+			dir = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
 			
 			// If running in a jar file the parent is the root dir 
-			if (file.isFile())
-				path = file.getParentFile().getAbsolutePath();
-			else
-				path = file.getAbsolutePath();
-	
+			if (dir.isFile())
+				dir = dir.getParentFile();
+				
 			/* If running in a mac application bundle, we can't write in the application-directory, so we use the /Library/Application Support */
 			if (isMac()) {
 			
-				path = System.getProperty("user.home") + "/Library/Application Support/MovieManager/";
-				File dir = new File(path);
+				String path = System.getProperty("user.home") + "/Library/Application Support/MovieManager/";
+				dir = new File(path);
 		
 				if (!dir.exists()) {
 					if(!dir.mkdir()) {
 						log.error("Could not create settings folder.");
+						throw new Exception("Could not create settings folder:" + dir);
 					}
 				}
 			}
 		}
 		catch (UnsupportedEncodingException e) {
-			path = System.getProperty("user.dir"); //$NON-NLS-1$
+			dir = new File(System.getProperty("user.dir")); //$NON-NLS-1$
 		}
 
-		if (!path.endsWith(getDirSeparator()))
-			path += getDirSeparator();
-		
-		return path;
+		return dir;
 	}
 	
 	
