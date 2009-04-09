@@ -287,7 +287,6 @@ public class HttpUtil {
 
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
-			System.err.println("ToDecode:" + toDecode);
 		} 
 
 		/* Returns the decoded string... */
