@@ -137,8 +137,12 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 
 			movieInfoModel.setAdditionalInfoFieldsEmpty();
 
-			/*Getting the fileinfo from file*/
-			movieInfoModel.getFileInfo(tempFile);
+			/* Getting the fileinfo from file */
+			try {
+				movieInfoModel.getFileInfo(tempFile);
+			} catch (Exception e) {
+				log.warn("Exception:" + e.getMessage(), e);
+			}
 
 			/*Used if editing existing movie*/
 			movieInfoModel.setMultiAddFile(tempFile[0]);
