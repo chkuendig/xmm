@@ -80,7 +80,6 @@ import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeNode;
 import net.sf.xmm.moviemanager.util.BrowserOpener;
-import net.sf.xmm.moviemanager.util.DriveInfo;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.StringUtil;
@@ -442,16 +441,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 							if (drive.length() == 0)
 								continue;
 
-							try {
-								DriveInfo d = new DriveInfo(drive);
-
-								if (!d.isInitialized() || !d.isValid() || d.isRemovable()) {
-									continue;
-								}
-
-							} catch(Exception e) {
-								log.warn("Exception:" + e.getMessage());
-							}
 						}
 
 						if (new File(tmp).isFile()) {

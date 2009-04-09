@@ -46,7 +46,6 @@ import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
-import net.sf.xmm.moviemanager.util.DriveInfo;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
@@ -730,35 +729,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		if (lastFileDir == null)
 			return null;
 
-		try {
-
-			if (SysUtil.isWindows() && !SysUtil.isWindows98()) {
-				String tmp = lastFileDir.getAbsolutePath();
-
-				if (tmp.indexOf(":") != -1) {
-					String drive = tmp.substring(0, tmp.indexOf(":") + 1);
-
-					if (drive.length() != 0) {
-						try {
-							DriveInfo d = new DriveInfo(drive);
-
-							if (d.isInitialized() && d.isValid() && lastFileDir.exists() ) {
-								return lastFileDir;
-							}
-						} catch (NoClassDefFoundError e) {
-							log.warn("Exception:" + e.getMessage());
-							return lastFileDir;
-						}
-					}
-				}
-			}
-			else if (lastFileDir.exists()) {
-				return lastFileDir;
-			}
-
-		} catch (Exception e) {
-			log.warn("Exception:" + e.getMessage());
+		if (lastFileDir.exists()) {
+			return lastFileDir;
 		}
+		
 		return new File("");
 	}
 
