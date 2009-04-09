@@ -115,33 +115,22 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	private int EXTRA_START = 17;
 
 	public List _fieldDocuments = new ArrayList();
-
 	public List _fieldUnits = new ArrayList();
 
 	public ModelMovieInfo movieInfoModel;
 
-	public static final DataFlavor[] flavors = { DataFlavor.javaFileListFlavor };
-
+	DialogMovieInfo dialogMovieInfo = this;
+	
 	JTextField date;
-
 	JTextField imdb;
-
 	JTextField colour;
-
 	JTextField movieTitle;
-
 	JTextField directed;
-
 	JTextField written;
-
 	JTextField genre;
-
 	JTextField rating;
-
 	JTextField country;
-
 	JTextField language;
-		
 	JCheckBox seenBox;
 
 	JLabel cover;
@@ -216,8 +205,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		});
 
 		movieInfoModel = new ModelMovieInfo(model, false);
-
-		movieInfoModel._edit = true;
 
 		if (movieInfoModel.isEpisode)
 			setUp(Localizer.getString("DialogMovieInfo.title.edit-episode"));
@@ -354,19 +341,24 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		movieTitle.addKeyListener(new KeyAdapter() {
 
-			public void keyPressed(KeyEvent e) {
+			public void keyPressed(KeyEvent event) {
 
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				if (event.getKeyCode() == KeyEvent.VK_ENTER) {
 
-					if (getMovieTitle().getText().equals("")) { //$NON-NLS-1$
-						File[] file = executeGetFile();
-						if (file != null)
-							movieInfoModel.getFileInfo(file);
-					} else {
-						if (movieInfoModel.isEpisode)
-							executeCommandGetEpisodesInfo(false);
-						else
-							executeCommandGetIMDBInfo(false);
+					try {
+						if (getMovieTitle().getText().equals("")) { //$NON-NLS-1$
+							File[] file = executeGetFile();
+							
+							if (file != null)
+								movieInfoModel.getFileInfo(file);
+						} else {
+							if (movieInfoModel.isEpisode)
+								executeCommandGetEpisodesInfo(false);
+							else
+								executeCommandGetIMDBInfo(false);
+						}
+					} catch (Exception e) {
+						log.warn("Exception:" + e.getMessage(), e);
 					}
 				}
 			}
@@ -792,8 +784,39 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		/* Creates the Additional Info... */
 		JPanel panelAdditionalInfo = new JPanel();
 
-		panelAdditionalInfo.setTransferHandler(new FileTransferHandler());
-
+		new net.sf.xmm.moviemanager.util.FileDrop(panelAdditionalInfo, new net.sf.xmm.moviemanager.util.FileDrop.Listener() {   
+        	public void filesDropped(final File[] files) {
+        		
+        		for (int i = 0; i < files.length; i++) {
+        			        			
+        			if (files[i].isDirectory()) {
+        				DialogAlert alert = new DialogAlert(dialogMovieInfo,
+        						net.sf.xmm.moviemanager.util.Localizer.getString("DialogMovieInfo.alert.title.alert"), //$NON-NLS-2$
+								"Please provide a valid media file:" + files[i]); //$NON-NLS-1$ /
+        				GUIUtil.showAndWait(alert, true);
+        				return;
+        			}
+        			
+        			if (!files[i].isFile()) {
+        				DialogAlert alert = new DialogAlert(dialogMovieInfo,
+        						net.sf.xmm.moviemanager.util.Localizer.getString("DialogMovieInfo.alert.title.alert"), //$NON-NLS-2$
+								"File not found:" + files[i]); //$NON-NLS-1$ /
+        				GUIUtil.showAndWait(alert, true);
+        				return;
+        			}
+				}
+        		
+        		try {
+					movieInfoModel.getFileInfo(files);
+				} catch (Exception e) {
+					log.warn("Exception:" + e.getMessage(), e);
+					
+					DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Error occured", "<html>An error occured while retrieving file info:<br>" + e.getMessage() + "</html>", true);
+					GUIUtil.show(alert, true);
+				}
+        	}
+		});
+		
 		panelAdditionalInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
 												Localizer.getString("DialogMovieInfo.panel-additional-info.title"), //$NON-NLS-1$
 												TitledBorder.DEFAULT_JUSTIFICATION,
@@ -929,7 +952,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		
 		JButton buttonSave = new JButton(Localizer.getString("DialogMovieInfo.button-save.text.save")); //$NON-NLS-1$
 		// Disabled if edit
-		buttonSave.setEnabled(!movieInfoModel._edit);
+		buttonSave.setEnabled(!movieInfoModel.isEditMode());
 		buttonSave.setToolTipText(Localizer.getString("DialogMovieInfo.button-save.tooltip")); //$NON-NLS-1$
 		buttonSave.setActionCommand("MovieInfo - Save"); //$NON-NLS-1$
 		buttonSave.setMnemonic(KeyEvent.VK_A);
@@ -970,9 +993,13 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				public void actionPerformed(ActionEvent event) {
 					log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 					
-					File[] file = executeGetFile();
-					if (file != null) {
-						movieInfoModel.getFileInfo(file);
+					try {
+						File[] file = executeGetFile();
+						if (file != null) {
+							movieInfoModel.getFileInfo(file);
+						}
+					} catch (Exception e) {
+						log.warn("Exception:" + e.getMessage(), e);
 					}
 				}
 			});
@@ -1497,10 +1524,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		int [] activeAdditionalInfoFields;
 
 		activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
-			
-		if (movieInfoModel.getLastFieldIndex() != -1
-				&& movieInfoModel._saveLastFieldValue.get(movieInfoModel.getLastFieldIndex()).toString().equals(new Boolean(true).toString())) {
-
+		
+		if (movieInfoModel.getLastFieldIndex() != -1) {
+	
 			int oldIndex = activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()];
 			
 			/* Duration... */
@@ -1576,9 +1602,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	public void updateCurrentAdditionalInfoFieldFromModel() {
 
 		int [] activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
-		
+
 		int currentFieldIndex = getAdditionalInfoFields().getSelectedIndex();
-		
+
 		String currentFieldIndexValue = ""; //$NON-NLS-1$
 
 		if (currentFieldIndex != -1) {
@@ -1586,9 +1612,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 			if (currentFieldIndexValue == null)
 				currentFieldIndexValue = "";
-			
+
 			int oldIndex = activeAdditionalInfoFields[currentFieldIndex];
-			
+
 			/* Duration - Displays the new info... */
 			if (oldIndex == 1) {
 				/* Recreates the panel... */
@@ -1623,7 +1649,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 				/* Displays... */
 				if (!movieInfoModel.getFieldValues().get(activeAdditionalInfoFields[currentFieldIndex]).equals("")) { //$NON-NLS-1$
-					
+
 					int time = Integer.parseInt((String) movieInfoModel.getFieldValues().get(activeAdditionalInfoFields[currentFieldIndex]));
 					int hours = time / 3600;
 					int mints = time / 60 - hours * 60;
@@ -1633,19 +1659,19 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 					secdsText.setText(String.valueOf(secds));
 				}
 				// Any extra info fields 
-				
+
 				/* Subtitle, Resolution, video codec, video rate, video bit rate, audio codec, autio rate, 
 				autio bit rate, audio channels, container, media info, and all the extra info fields */
-				}	
-				else if (oldIndex == 0 || (oldIndex >=5 && oldIndex <= 12) || oldIndex >= 15) {
-				
+			}	
+			else if (oldIndex == 0 || (oldIndex >=5 && oldIndex <= 12) || oldIndex >= 15) {
+
 				getAdditionalInfoValuePanel().removeAll();
 
 				SteppedComboBox fields;
 
 				fields = new SteppedComboBox(new String[] { "", "" }); //$NON-NLS-1$ //$NON-NLS-2$
 				fields.setFont(new Font(fields.getFont().getName(), Font.PLAIN,	fontSize));
-				
+
 				/*
 				 * If using oyoaha laf the border needs to be set to make the
 				 * combobox smaller
@@ -1661,13 +1687,13 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 				/* Getting the stored additional info values */
 				AdditionalInfoFieldDefaultValues valuesObj = (AdditionalInfoFieldDefaultValues) 
-					MovieManager.getConfig().getAdditionalInfoDefaultValues().get(movieInfoModel.getFieldNames().get(currentFieldIndex));
+				MovieManager.getConfig().getAdditionalInfoDefaultValues().get(movieInfoModel.getFieldNames().get(currentFieldIndex));
 
 				comboBoxModel.addElement(currentFieldIndexValue);
 
 				FontMetrics fontmetrics = getFontMetrics(getFont());
 				int line_widths;
-					
+
 				int maxPopupWidth = fontmetrics.stringWidth(currentFieldIndexValue);
 
 				if (valuesObj != null) {
@@ -1714,18 +1740,18 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			} else {
 				/* Adds document... */
 				((JTextField) getAdditionalInfoValuePanel().
-				 getComponent(0)).setDocument((Document) _fieldDocuments.get(activeAdditionalInfoFields[currentFieldIndex]));
-				
+						getComponent(0)).setDocument((Document) _fieldDocuments.get(activeAdditionalInfoFields[currentFieldIndex]));
+
 				((JTextField) getAdditionalInfoValuePanel().getComponent(0)).setText(currentFieldIndexValue);
 				((JTextField) getAdditionalInfoValuePanel().getComponent(0)).setCaretPosition(0);
 			}
 		}
-		
+
 		/* Changes units... */
 		getAdditionalInfoUnits().setText((String) _fieldUnits.get(activeAdditionalInfoFields[currentFieldIndex]));
 		/* Revalidates... */
 		getAdditionalInfoUnits().revalidate();
-		
+
 		/* updates index... */
 		movieInfoModel.setLastFieldIndex(currentFieldIndex);
 	}
@@ -1833,7 +1859,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			/* Reloads... */
 
 			// long time = System.currentTimeMillis();
-			MovieManagerCommandSelect.executeAndReload(reloadEntry,	movieInfoModel._edit, movieInfoModel.isEpisode, true);
+			MovieManagerCommandSelect.executeAndReload(reloadEntry,	movieInfoModel.isEditMode(), movieInfoModel.isEpisode, true);
 		}
 	}
 
@@ -1842,7 +1868,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		if (reloadEntry != null && reloadEntry.getKey() != -1) {
 
 			// long time = System.currentTimeMillis();
-			MovieManagerCommandSelect.executeAndReload(reloadEntry, movieInfoModel._edit, movieInfoModel.isEpisode, true);
+			MovieManagerCommandSelect.executeAndReload(reloadEntry, movieInfoModel.isEditMode(), movieInfoModel.isEpisode, true);
 
 			/* Exits... */
 			dispose();
@@ -1925,7 +1951,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		/* Opens the Open dialog... */
 		ExtendedFileChooser fileChooser = new ExtendedFileChooser();
-		// JFileChooser fileChooser = new JFileChooser();
 
 		try {
 			fileChooser.setFileSelectionMode(ExtendedFileChooser.DIRECTORIES_ONLY);
@@ -2055,9 +2080,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 					}
 
 					size = size / (1024 * 1024);
-
+					
 					movieInfoModel.getFieldValues().set(2, String.valueOf((int) size));
-					movieInfoModel._saveLastFieldValue.set(2, new Boolean(true));
 				}
 			}
 		} catch (Exception e) {
@@ -2099,7 +2123,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	}
 
 	/**
-	 * Gets the tv.com info for this episode...
+	 * Gets the IMDb for this episode...
 	 */
 	protected void executeCommandGetEpisodesInfo(boolean useImdbKey) {
 		
@@ -2126,46 +2150,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		}
 	}
 
-	/* Drag & Drop media files in the additional info field panel */
-	class FileTransferHandler extends TransferHandler {
-
-		public int getSourceActions(JComponent c) {
-			return TransferHandler.COPY;
-		}
-
-		public boolean canImport(JComponent comp, DataFlavor flavor[]) {
-			if (!(comp instanceof JPanel)) {
-				return false;
-			}
-			for (int i = 0, n = flavor.length; i < n; i++) {
-				for (int j = 0, m = flavors.length; j < m; j++) {
-					if (flavor[i].equals(flavors[j])) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-
-		public boolean importData(JComponent comp, Transferable t) {
-
-			if (comp instanceof JPanel) {
-
-				if (t.isDataFlavorSupported(flavors[0])) {
-					try {
-						java.util.List list = (java.util.List) t.getTransferData(flavors[0]);
-						movieInfoModel.getFileInfo((File[]) list.toArray());
-						
-					} catch (UnsupportedFlavorException ignored) {
-					} catch (java.io.IOException ignored) {
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			return false;
-		}
-	}
 
 	public void modelUpdatedEvent(ModelUpdatedEvent event) {
 		
