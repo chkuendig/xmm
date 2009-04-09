@@ -2121,7 +2121,17 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					if (FileUtil.getFile("config/" + conf).lastModified() > t)
 						conf = "config/" + conf;
 
-					url = FileUtil.getFileURL(conf);
+					// Change default location on Vista from program directory to System.getenv("APPDATA")
+					if (SysUtil.isWindowsVista()) {
+						File newConfig = new File(SysUtil.getConfigDir(), conf);
+						
+						if (newConfig.isFile())
+							url = newConfig.toURL();
+						else
+							url = FileUtil.getFileURL(conf);
+					}
+					else
+						url = FileUtil.getFileURL(conf);
 				}
 			}
 			if (url == null)
@@ -3589,17 +3599,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					 url = configHandler.getConfigURL();
 
 			 } else {
-				 if (SysUtil.isMac())
+				 if (SysUtil.isMac() || SysUtil.isWindowsVista())
 					 url = new File(SysUtil.getConfigDir(), "Config.ini").toURL();
 				 else 
 					 url = new File(SysUtil.getUserDir(), "config/Config.ini").toURL();  
 			 }
- 
-			 /* Gets the working dir... */
-			 // String directory = SysUtil.getUserDir();
-
-			 /* Gets the File ini... */
-			 //File ini = new File(directory, "config/Config.ini");
+ 	
 
 			 File config = new File(url.getFile());
 
