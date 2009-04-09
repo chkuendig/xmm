@@ -73,6 +73,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.RollingFileAppender;
 
 public class MovieManager {
 
@@ -1250,7 +1251,26 @@ public class MovieManager {
     	else
     		BasicConfigurator.configure();
 		
-		log = Logger.getRootLogger();
+    	log = Logger.getRootLogger();
+    	
+    	// Places the Log file in the user directory (the program location)
+    	RollingFileAppender appndr = (RollingFileAppender) log.getAppender("FileAppender");
+    	
+    	String logFile = null;
+    	
+    	try {
+			if (SysUtil.isMac())
+				logFile = new File(SysUtil.getConfigDir(), "Log.txt").getAbsolutePath();
+    	} catch (Exception e1) {
+			e1.printStackTrace();
+		} finally {
+			if (logFile == null)
+				logFile = new File(SysUtil.getUserDir(), "Log.txt").getAbsolutePath();
+		}
+    		
+    	appndr.setFile(logFile);
+    	appndr.activateOptions();
+    	
 		
 		/* Writes the date. */
 		log.debug("================================================================================"); //$NON-NLS-1$
