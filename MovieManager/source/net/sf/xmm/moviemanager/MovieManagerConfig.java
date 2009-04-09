@@ -2088,12 +2088,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 		 
 		try {
 
-			//if (SysUtil.isWindowsVista()) {
-//			System.getenv("ALLUSERSPROFILE")
-			//}
-			
-			
-			
 			URL url = null;
 
 			int appMode = MovieManager.getAppMode();
@@ -2121,10 +2115,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					if (FileUtil.getFile("config/" + conf).lastModified() > t)
 						conf = "config/" + conf;
 
+					System.err.println("isWindowsVista:" + SysUtil.isWindowsVista());
+					
 					// Change default location on Vista from program directory to System.getenv("APPDATA")
 					if (SysUtil.isWindowsVista()) {
-						File newConfig = new File(SysUtil.getConfigDir(), conf);
+						File newConfig = new File(SysUtil.getConfigDir(), "Config.ini");
 						
+						System.err.println("newConfig.isFile():" + newConfig.isFile() + ":" + newConfig);
+												
 						if (newConfig.isFile())
 							url = newConfig.toURL();
 						else
@@ -2137,6 +2135,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			if (url == null)
 				return;
 		
+			log.debug("Loading configuration data from " + url.toString());
+			
 			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
 			// search Alias And Additional Info Default Values
@@ -3605,7 +3605,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					 url = new File(SysUtil.getUserDir(), "config/Config.ini").toURL();  
 			 }
  	
-
 			 File config = new File(url.getFile());
 
 			 /* If it exists deletes... */
@@ -3617,6 +3616,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			 if (!config.createNewFile()) {
 				 throw new Exception("Cannot create config file.");
 			 }
+			 
+			 log.debug("Saving configuration data: " + config);
 			 
 			 FileUtil.writeToFile(config.getAbsolutePath(), settings);
 			 				 
