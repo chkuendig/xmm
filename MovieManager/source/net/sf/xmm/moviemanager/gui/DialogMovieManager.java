@@ -946,13 +946,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
        
         new FileDrop(moviesList, new FileDrop.Listener() {
         	public void filesDropped(final java.io.File[] files ) {   
-        		for (int i = 0; i < files.length; i++) {
-        			System.err.println("!!!files["+i+"]:" + files[i]);
-        		}
         		
         		Point p = moviesList.getMousePosition();
-        		
-        		System.err.println("p:" + p);
         		
         		final ExtendedJTree movieList = getMoviesList();
         		
@@ -1027,10 +1022,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 								GUIUtil.show(alert, true);
 							}
 						}
-						
-        				for (int i = 0; i < files.length; i++) {
-                			System.err.println("files["+i+"]:" + files[i]);
-                		}
         			}
         		};
         		        		
@@ -1708,8 +1699,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 
         		Point p = additionalInfoScrollPane.getMousePosition();
         		
-        		System.err.println("p:" + p);
-        		
         		JPopupMenu popupMenu = new JPopupMenu();
         		JMenuItem add = new JMenuItem("Add file info");
         		add.addActionListener(new ActionListener() {
@@ -1758,10 +1747,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 								GUIUtil.show(alert, true);
 							}
 						}
-						
-        				for (int i = 0; i < files.length; i++) {
-                			System.err.println("files["+i+"]:" + files[i]);
-                		}
         			}
         		});
         		        		
