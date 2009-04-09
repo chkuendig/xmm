@@ -478,8 +478,6 @@ public class ModelMovieInfo {
             }
         } else {
             
-        	System.err.println("saveAdditionalInfo");
-        	
         	/* Editing movie */
             if (edit) {
             	
@@ -575,16 +573,12 @@ public class ModelMovieInfo {
     			duration += Integer.parseInt((String) _fieldValues.get(1));
     		}
 
-    		System.err.println("duration:" + duration);
-
     		if (duration != -1) {
     			_fieldValues.set(1, String.valueOf(duration));
     		} else {
     			_fieldValues.set(1, ""); //$NON-NLS-1$
     		}
 
-    		System.err.println("new duration:" + _fieldValues.get(1));
-    		
     		int fileSize = properties.getFileSize();
 
     		if (_hasReadProperties && fileSize != -1 && !((String) _fieldValues.get(2)).equals("")) { //$NON-NLS-1$
@@ -670,9 +664,7 @@ public class ModelMovieInfo {
     		}
 
     		_hasReadProperties = true;
-
-    		System.err.println("new duration:" + _fieldValues.get(1));
-    		
+	
     		modelChanged(this, "AdditionalInfo");
 
     	} catch (Exception e) {
