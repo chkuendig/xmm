@@ -157,7 +157,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			}
 		});
 
-		movieInfoModel = new ModelMovieInfo(false);
+		setModelMovieInfo(new ModelMovieInfo(false));
 
 		setUp(Localizer.getString("DialogMovieInfo.title.add-movie"));
 		loadEmptyAdditionalFields();
@@ -181,8 +181,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		if (model.getKey() == -1)
 			throw new Exception("MovieKey cannot be -1");
 
-		movieInfoModel = new ModelMovieInfo(new ModelSeries(model));
-
+		setModelMovieInfo(new ModelMovieInfo(new ModelSeries(model)));
+		
 		setUp(Localizer.getString("DialogMovieInfo.title.add-episode"));
 
 		loadEmptyAdditionalFields();
@@ -204,7 +204,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			}
 		});
 
-		movieInfoModel = new ModelMovieInfo(model, false);
+		setModelMovieInfo(new ModelMovieInfo(model, false));
 
 		if (movieInfoModel.isEpisode)
 			setUp(Localizer.getString("DialogMovieInfo.title.edit-episode"));
@@ -215,6 +215,11 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		loadMovieInfo();
 	}
 
+	public void setModelMovieInfo(ModelMovieInfo model) {
+		movieInfoModel = model;
+		movieInfoModel.addModelChangedEventListenener(this);
+	}
+	
 	/**
 	 * Sets up the dialog...
 	 */
@@ -239,8 +244,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
 		fontSize = MovieManager.getIt().getFontSize();
-		movieInfoModel.addModelChangedEventListenener(this);
-
+		
 		JPanel panelMovieInfo = new JPanel();
 
 		panelMovieInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,7,0,7), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.getString("DialogMovieInfo.panel-movie-info.title."), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(panelMovieInfo.getFont().getName(),Font.BOLD, fontSize))), BorderFactory.createEmptyBorder(0,5,0,5))); //$NON-NLS-1$
