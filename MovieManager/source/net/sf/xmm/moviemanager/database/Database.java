@@ -218,7 +218,7 @@ abstract public class Database {
 	/**
 	 * Not really in use
 	 **/
-	String getSQLReservedKeywords() {
+	public synchronized String getSQLReservedKeywords() {
 
 		DatabaseMetaData metaData = _sql.getMetaData();
 
@@ -3215,12 +3215,19 @@ abstract public class Database {
 
 		/* List */
 		if ((option = options.getListOption()) == 1) {
-				
+			
 			// Extra verification test
-			if (currentLists.size() == 0 && !options.getShowUnlistedEntries()) {
-				log.warn("Invalid database options. getListOption == 1 when currentLists.size() == 0 and options.getShowUnlistedEntries() == false");
+			if (currentLists.size() == 0 && 
+					(!options.getShowUnlistedEntries() || (options.getShowUnlistedEntries() && getListsColumnNames().size() == 0))) {
+				
+				if (!options.getShowUnlistedEntries())
+					log.warn("Invalid database options! getListOption == 1 when currentLists.size() == 0 and options.getShowUnlistedEntries() == false");
+				else {
+					log.warn("Invalid database options! getShowUnlistedEntries is true while getListsColumnNames().size() == 0");
+				}
 			}
 			else {
+				
 				if (!options.where)
 					sqlQuery += "WHERE ";
 
@@ -3374,7 +3381,7 @@ abstract public class Database {
 
 		/* Sets the right table joins */
 		String selectAndJoin = setTableJoins(sqlFilter, options);
-	
+		
 		String sqlQuery = selectAndJoin + " " + sqlAdcancedOptions + " " + sqlFilter + " ";
 	
 		String orderBy = options.getOrderCategory();
