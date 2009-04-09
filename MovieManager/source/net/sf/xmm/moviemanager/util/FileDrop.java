@@ -273,17 +273,16 @@ public class FileDrop
         
         if( supportsDnD() )
         {   // Make a drop listener
-            dropListener = new java.awt.dnd.DropTargetListener()
-            {   public void dragEnter( java.awt.dnd.DropTargetDragEvent evt )
+            dropListener = new java.awt.dnd.DropTargetListener() {   
+            	
+            //	TreePath originalTreePath = null;
+            	
+            	public void dragEnter( java.awt.dnd.DropTargetDragEvent evt )
                 {       log( out, "FileDrop: dragEnter event." );
-
-                System.err.println("isDragOk( out, evt ):" +isDragOk( out, evt ));
-                
+    
                     // Is this an acceptable drag event?
                     if( isDragOk( out, evt ) )
                     {
-                    	System.err.println(" instanceof JTree:" + (c instanceof JTree));
-                    	System.err.println("c:" + c);
                     	
                     	if (c instanceof javax.swing.JComponent ) {
                         	
@@ -292,15 +291,11 @@ public class FileDrop
                         		if (normalBorder == null)
                         			normalBorder = jc.getBorder();
 
-                        		System.err.println("jc:" + jc);
-                        		System.err.println("jc:" + jc.hashCode());
-                        		System.err.println("normalBorder:" + normalBorder);
-
                         		log( out, "FileDrop: normal border saved." );
                         		jc.setBorder( dragBorder );
                         		log( out, "FileDrop: drag border set." );
                         	
-                        }   // end if: JComponent   
+                        }  
 
                         // Acknowledge that it's okay to enter
                         //evt.acceptDrag( java.awt.dnd.DnDConstants.ACTION_COPY_OR_MOVE );
@@ -325,6 +320,9 @@ public class FileDrop
     					int y = evt.getLocation().y;
     					TreePath path = tree.getClosestPathForLocation( x, y );
     					
+    				//	if (originalTreePath == null)
+    					//	originalTreePath = tree.getLeadSelectionPath();
+    					
     					DropTargetDropEvent tempDTDropEvent = new DropTargetDropEvent(evt.getDropTargetContext(), evt.getLocation(), 0, 0);
     					Transferable dragData = tempDTDropEvent.getTransferable();
 
@@ -333,6 +331,22 @@ public class FileDrop
     					}
                 	} 
                 }  
+                
+                public void dragExit( java.awt.dnd.DropTargetEvent evt )  {   
+                	log( out, "FileDrop: dragExit event." );
+                	
+                	if (c instanceof JTree) {
+                		JTree tree = (JTree) c;
+
+                		//if (originalTreePath != null)
+                			//tree.setSelectionPath(originalTreePath);
+                	}// If it's a Swing component, reset its border
+                	else if (c instanceof javax.swing.JComponent) {
+                		javax.swing.JComponent jc = (javax.swing.JComponent) c;
+                		jc.setBorder( normalBorder );
+                		log( out, "FileDrop: normal border restored." );
+                	}   // end if: JComponent
+                }   // end dragExit
                 
                 public void drop( java.awt.dnd.DropTargetDropEvent evt )
                 {   log( out, "FileDrop: drop event." );
@@ -413,31 +427,17 @@ public class FileDrop
                     }   // end catch: UnsupportedFlavorException
                     finally
                     {
-                    	System.err.println("c:" + c);
-                    	System.err.println("JComponent:" + (c instanceof javax.swing.JComponent));
-                    	
-                    	
+                    		
                         // If it's a Swing component, reset its border
                         if( c instanceof javax.swing.JComponent )
                         {   javax.swing.JComponent jc = (javax.swing.JComponent) c;
-                        
-                        	System.err.println("setborder normalBorder:" + normalBorder);
-                            jc.setBorder( normalBorder );
-                           
-                            log( out, "FileDrop: normal border restored." );
+                        	jc.setBorder( normalBorder );
+                        	log( out, "FileDrop: normal border restored." );
                         }   // end if: JComponent
                     }   // end finally
                 }   // end drop
 
-                public void dragExit( java.awt.dnd.DropTargetEvent evt ) 
-                {   log( out, "FileDrop: dragExit event." );
-                    // If it's a Swing component, reset its border
-                    if( c instanceof javax.swing.JComponent )
-                    {   javax.swing.JComponent jc = (javax.swing.JComponent) c;
-                        jc.setBorder( normalBorder );
-                        log( out, "FileDrop: normal border restored." );
-                    }   // end if: JComponent
-                }   // end dragExit
+               
 
                 public void dropActionChanged( java.awt.dnd.DropTargetDragEvent evt ) 
                 {   log( out, "FileDrop: dropActionChanged event." );
@@ -585,7 +585,6 @@ public class FileDrop
                 log( out, flavors[i].toString() );
         }   // end if: logging enabled
         
-        //System.err.println("isDragOk:" + ok);
         return ok;
     }   // end isDragOk
     
