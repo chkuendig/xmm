@@ -1144,7 +1144,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 
     	JPanel generalInfoPanel = createGeneralInfo();
 
-    	double size[][] = {{info.clearthought.layout.TableLayout.FILL}, {generalInfoPanel.getPreferredSize().getHeight() + 20, info.clearthought.layout.TableLayout.FILL}};
+    	double size[][] = {{info.clearthought.layout.TableLayout.FILL}, {generalInfoPanel.getPreferredSize().getHeight(), info.clearthought.layout.TableLayout.FILL}};
 
     	panelMovieInfo.setLayout(new info.clearthought.layout.TableLayout(size));
     	panelMovieInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,4,3,3), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
@@ -1239,6 +1239,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         JPanel panelGeneralInfo = new JPanel();
         panelGeneralInfo.setLayout(new GridBagLayout());
+        panelGeneralInfo.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+        
         
         GridBagConstraints constraints;
         
