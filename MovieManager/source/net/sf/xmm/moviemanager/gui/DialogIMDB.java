@@ -275,7 +275,8 @@ public class DialogIMDB extends JDialog {
     	JScrollPane scrollPaneMovies = new JScrollPane(listMovies);
     	scrollPaneMovies.setAutoscrolls(true);
     	
-    	setPreferredSize(new Dimension(460, 440));
+    	//setPreferredSize(new Dimension(460, 440));
+    	setMinimumSize(new Dimension(460, 440));
     	
     	panelMoviesList.setLayout(new BorderLayout());
     	panelMoviesList.add(scrollPaneMovies, BorderLayout.CENTER);
