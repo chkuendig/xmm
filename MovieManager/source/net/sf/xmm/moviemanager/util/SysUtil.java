@@ -72,7 +72,13 @@ public class SysUtil {
 				dir = new File(path);
 			}
 			else if (isWindowsVista()) {
-				dir = new File(System.getProperty("user.home"), "Application Data/MovieManager");
+				
+				String path = System.getenv("APPDATA");
+				
+				if (path == null)
+					path = System.getProperty("user.home") + "/" + "Application Data";
+					
+				dir = new File(path, "MovieManager");
 			}
 	
 			if (dir != null) {
