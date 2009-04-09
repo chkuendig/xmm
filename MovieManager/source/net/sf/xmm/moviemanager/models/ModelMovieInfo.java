@@ -23,6 +23,7 @@ package net.sf.xmm.moviemanager.models;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -48,19 +49,21 @@ public class ModelMovieInfo {
 		
     private ModelUpdatedHandler modelUpdatedHandler = new ModelUpdatedHandler();
         
-    public boolean _edit = false;
+    private boolean _edit = false;
     private boolean _saveCover = false;
-    public boolean _hasReadProperties = false;
+    public boolean _hasReadProperties = false; // File info has been read and stored
     public boolean isEpisode = false;
     
-    private int _lastFieldIndex = -1;
-    public List _saveLastFieldValue = new ArrayList();
+    private int _lastFieldIndex = -1; // the last additional info field that was displayed
+    
     private List _fieldNames = new ArrayList();
     private List _fieldValues = new ArrayList();
     
     public boolean saveAdditionalInfo = true;
     
+    // The index of the first extra info field
     public int EXTRA_START = 17;
+    
     
     /* Used when multiadding movies, if adding fileinfo
      to existing movie */
@@ -107,6 +110,8 @@ public class ModelMovieInfo {
     
     /* Initializes with the info from a model (Editing entry) */
     public ModelMovieInfo(ModelEntry model, boolean loadEmptyAdditionalInfoFields) {
+    	    	
+    	_edit = true;
     	
         if (model instanceof ModelEpisode) {
             this.model = new ModelEpisode((ModelEpisode) model);
@@ -129,13 +134,17 @@ public class ModelMovieInfo {
     public ModelEntry getModel() {
     	return  model;
     }
+        
+    public boolean isEditMode() {
+    	return _edit;
+    }
     
     public List getFieldNames() {
     	
     	if (!model.getHasAdditionalInfoData())
     		model.updateAdditionalInfoData();
     	
-    	return  _fieldNames;    	
+    	return _fieldNames;    	
     }
     
     public void setFieldNames(List fieldNames) {
@@ -359,27 +368,36 @@ public class ModelMovieInfo {
         if (!((String) _fieldValues.get(1)).equals("")) { //$NON-NLS-1$
             additionalInfo.setDuration(Integer.parseInt((String) _fieldValues.get(1)));
         }
+        else
+        	additionalInfo.setDuration(0);
         
         // file size
         if (!((String) _fieldValues.get(2)).equals("")) { //$NON-NLS-1$
             additionalInfo.setFileSize(Integer.parseInt((String) _fieldValues.get(2)));
         }
+        else
+        	additionalInfo.setFileSize(0);
         
         // Cds
         if (!((String) _fieldValues.get(3)).equals("")) { //$NON-NLS-1$
             additionalInfo.setCDs(Integer.parseInt((String) _fieldValues.get(3)));
         }	 
+        else
+        	additionalInfo.setCDs(0);
         
         // CD cases
         if (!((String) _fieldValues.get(4)).equals("")) { //$NON-NLS-1$
             additionalInfo.setCDCases(Double.parseDouble((String) _fieldValues.get(4)));
         }
+        else
+        	additionalInfo.setCDCases(0);
         
         // File count
         if (!((String) _fieldValues.get(14)).equals("")) { //$NON-NLS-1$
             additionalInfo.setFileCount(Integer.parseInt((String) _fieldValues.get(14)));
-            
         }
+        else
+        	additionalInfo.setFileCount(0);
 		
         additionalInfo.setSubtitles((String) _fieldValues.get(0));
         additionalInfo.setResolution((String) _fieldValues.get(5));
@@ -398,13 +416,16 @@ public class ModelMovieInfo {
         
         ArrayList extraFieldValuesList = new ArrayList();
         
-        for (int i = EXTRA_START; i <  _fieldNames.size(); i++) {
+        for (int i = EXTRA_START; i < _fieldNames.size(); i++) {
             extraFieldValuesList.add( _fieldValues.get(i));
         }
         additionalInfo.setExtraInfoFieldValues(extraFieldValuesList);
         
     }
     
+    public synchronized ModelEntry saveToDatabase() throws Exception {
+    	return saveToDatabase(null);
+    }
     
     public synchronized ModelEntry saveToDatabase(ArrayList listNames) throws Exception {
     	
@@ -418,7 +439,7 @@ public class ModelMovieInfo {
         
     public synchronized ModelEntry saveToDatabase(ModelEntry modelToSave, boolean edit, ArrayList listNamesToApply) throws Exception {
                 
-        Database database = MovieManager.getIt().getDatabase();
+    	Database database = MovieManager.getIt().getDatabase();
         ModelAdditionalInfo additionalInfo = modelToSave.getAdditionalInfo();
         
         if (isEpisode) {
@@ -457,10 +478,11 @@ public class ModelMovieInfo {
             }
         } else {
             
+        	System.err.println("saveAdditionalInfo");
+        	
+        	/* Editing movie */
             if (edit) {
-                
-                /* Editing movie */
-                
+            	
                 database.setGeneralInfo((ModelMovie) modelToSave);
                 
                 if (saveAdditionalInfo) {
@@ -473,7 +495,7 @@ public class ModelMovieInfo {
             } else {
                 /* Adding new movie */
                 
-                int index = MovieManager.getIt().getDatabase().addGeneralInfo((ModelMovie) modelToSave);
+            	int index = MovieManager.getIt().getDatabase().addGeneralInfo((ModelMovie) modelToSave);
                 
                 modelToSave.setKey(index);
                 
@@ -522,159 +544,148 @@ public class ModelMovieInfo {
     
     /**
      * Gets the file properties...
+     * @throws Exception 
      **/
-    public void getFileInfo(File [] file) {
+    public void getFileInfo(File [] file) throws Exception {
         
         for (int i = 0; i < file.length; i++) {
             
             if (!file[i].isFile())
-                continue;
+                throw new FileNotFoundException(file[i].getAbsolutePath());
             
-            try {
-                /* Reads the info... */
-            	FilePropertiesMovie properties = new FilePropertiesMovie(file[i].getAbsolutePath(), MovieManager.getConfig().getUseMediaInfoDLL());
-                
-                getFileInfo(properties);
-                
-            } catch (Exception e) {
-                log.error("Exception: " + e.getMessage()); //$NON-NLS-1$
-            }
+            /* Reads the info... */
+            FilePropertiesMovie properties = new FilePropertiesMovie(file[i].getAbsolutePath(), MovieManager.getConfig().getUseMediaInfoDLL());
+
+            getFileInfo(properties);
         }
     }    
     
-    
+
     public void getFileInfo(FilePropertiesMovie properties) {
-        
-        try {
-            
-            if (!properties.getSubtitles().equals("")) //$NON-NLS-1$
-                _fieldValues.set(0, properties.getSubtitles());
-            
-            /* Saves info... */
-            int duration = properties.getDuration();
-             
-            if (_hasReadProperties && duration != -1 && !((String) _fieldValues.get(1)).equals("")) { //$NON-NLS-1$
-            	duration += Integer.parseInt((String) _fieldValues.get(1));
-            }
-            
-            if (duration != -1) {
-                _fieldValues.set(1, String.valueOf(duration));
-                _saveLastFieldValue.set(1, new Boolean(false));
-            } else {
-                _fieldValues.set(1, ""); //$NON-NLS-1$
-            }
-            
-            int fileSize = properties.getFileSize();
-            
-            if (_hasReadProperties && fileSize != -1 && !((String) _fieldValues.get(2)).equals("")) { //$NON-NLS-1$
-                fileSize += Integer.parseInt((String) _fieldValues.get(2));
-            }
-            
-            if (fileSize != -1) {
-                _fieldValues.set(2,String.valueOf(fileSize));
-                _saveLastFieldValue.set(2, new Boolean(false));
-            } else {
-                _fieldValues.set(2,""); //$NON-NLS-1$
-            }
-            
-            if (fileSize != -1) {
-                int cds = (int)Math.ceil(fileSize / 702.0);
-                _fieldValues.set(3,String.valueOf(cds));
-                _saveLastFieldValue.set(3, new Boolean(false));
-            }
-            
-            if (((String) _fieldValues.get(4)).equals("")) { //$NON-NLS-1$
-                _fieldValues.set(4,String.valueOf(1));
-                _saveLastFieldValue.set(4, new Boolean(false));
-            }
-            
-            _fieldValues.set(5,properties.getVideoResolution());
-            _fieldValues.set(6,properties.getVideoCodec());
-            _fieldValues.set(7,properties.getVideoRate());
-            _fieldValues.set(8,properties.getVideoBitrate());
-            _fieldValues.set(9,properties.getAudioCodec());
-            _fieldValues.set(10,properties.getAudioRate());
-            _fieldValues.set(11,properties.getAudioBitrate());
-            
-            String audioChannels = properties.getAudioChannels();
-            _fieldValues.set(12, audioChannels);
-            
-             String location = properties.getLocation();
 
-             String currentValue = (String) _fieldValues.get(13);
+    	try {
 
-             if (!currentValue.equals("") && _hasReadProperties) {
+    		if (!properties.getSubtitles().equals("")) //$NON-NLS-1$
+    			_fieldValues.set(0, properties.getSubtitles());
 
-            	 StringTokenizer tokenizer = new StringTokenizer(currentValue, "*"); //$NON-NLS-1$
-            	 boolean fileAlreadyAdded = false;
+    		/* Saves info... */
+    		int duration = properties.getDuration();
 
-            	 while (tokenizer.hasMoreTokens()) {
-            		 if (tokenizer.nextToken().equals(location))
-            			 fileAlreadyAdded = true;
-            	 }
+    		if (_hasReadProperties && duration != -1 && !((String) _fieldValues.get(1)).equals("")) { //$NON-NLS-1$
+    			duration += Integer.parseInt((String) _fieldValues.get(1));
+    		}
 
-            	 if (fileAlreadyAdded)
-            		 log.warn("file already added"); //$NON-NLS-1$
-            	 else {
-            		 currentValue += "*" + location; //$NON-NLS-1$
-            		 _fieldValues.set(13, currentValue);
-            	 }
-             }
-             else 
-            	 _fieldValues.set(13, location);
+    		System.err.println("duration:" + duration);
 
-             
-            int fileCount = 1;
-            if (_hasReadProperties && !((String) _fieldValues.get(14)).equals("")) { //$NON-NLS-1$
-                fileCount += Integer.parseInt((String) _fieldValues.get(14));
-            }
-            
-            _fieldValues.set(14, String.valueOf(fileCount));
-            
-            _fieldValues.set(15, properties.getContainer());
-            
-            _fieldValues.set(16, model.getAdditionalInfo().getMediaType());
-            
-            /* Sets title if title field is empty... */
-            if (model.getTitle().equals("")) { //$NON-NLS-1$
-                
-                if (properties.getMetaDataTagInfo("INAM") != null && !properties.getMetaDataTagInfo("INAM").equals("")) //$NON-NLS-1$ //$NON-NLS-2$
-                    setTitle(properties.getMetaDataTagInfo("INAM")); //$NON-NLS-1$
-                
-                else {
-                    String title = properties.getFileName();
-                    
-                    if (title.lastIndexOf(".") != -1) //$NON-NLS-1$
-                        title = title.substring(0, title.lastIndexOf('.'));
-                    
-                    setTitle(title);
-                }
-            }
-            
-            if (_lastFieldIndex != -1)
-            /* The value currently in the selected index will not be saved, but be replaced by the new info */
-            	_saveLastFieldValue.set(_lastFieldIndex, new Boolean(false).toString());
-            
-            for (int u = 0; u < _saveLastFieldValue.size(); u++) {
-                _saveLastFieldValue.set(u, new Boolean(true));
-            }
-            
-            _hasReadProperties = true;
-            
-            modelChanged(this, "AdditionalInfo");
-            
-        } catch (Exception e) {
-            log.error("Exception: " + e.getMessage(), e); //$NON-NLS-1$
-        }
-        
+    		if (duration != -1) {
+    			_fieldValues.set(1, String.valueOf(duration));
+    		} else {
+    			_fieldValues.set(1, ""); //$NON-NLS-1$
+    		}
+
+    		System.err.println("new duration:" + _fieldValues.get(1));
+    		
+    		int fileSize = properties.getFileSize();
+
+    		if (_hasReadProperties && fileSize != -1 && !((String) _fieldValues.get(2)).equals("")) { //$NON-NLS-1$
+    			fileSize += Integer.parseInt((String) _fieldValues.get(2));
+    		}
+
+    		if (fileSize != -1) {
+    			_fieldValues.set(2,String.valueOf(fileSize));
+    		} else {
+    			_fieldValues.set(2,""); //$NON-NLS-1$
+    		}
+
+    		if (fileSize != -1) {
+    			int cds = (int)Math.ceil(fileSize / 702.0);
+    			_fieldValues.set(3,String.valueOf(cds));
+    		}
+
+    		if (((String) _fieldValues.get(4)).equals("")) { //$NON-NLS-1$
+    			_fieldValues.set(4,String.valueOf(1));
+    		}
+
+    		_fieldValues.set(5,properties.getVideoResolution());
+    		_fieldValues.set(6,properties.getVideoCodec());
+    		_fieldValues.set(7,properties.getVideoRate());
+    		_fieldValues.set(8,properties.getVideoBitrate());
+    		_fieldValues.set(9,properties.getAudioCodec());
+    		_fieldValues.set(10,properties.getAudioRate());
+    		_fieldValues.set(11,properties.getAudioBitrate());
+
+    		String audioChannels = properties.getAudioChannels();
+    		_fieldValues.set(12, audioChannels);
+
+    		String location = properties.getLocation();
+
+    		String currentValue = (String) _fieldValues.get(13);
+
+    		if (!currentValue.equals("") && _hasReadProperties) {
+
+    			StringTokenizer tokenizer = new StringTokenizer(currentValue, "*"); //$NON-NLS-1$
+    			boolean fileAlreadyAdded = false;
+
+    			while (tokenizer.hasMoreTokens()) {
+    				if (tokenizer.nextToken().equals(location))
+    					fileAlreadyAdded = true;
+    			}
+
+    			if (fileAlreadyAdded)
+    				log.warn("file already added"); //$NON-NLS-1$
+    			else {
+    				currentValue += "*" + location; //$NON-NLS-1$
+    				_fieldValues.set(13, currentValue);
+    			}
+    		}
+    		else 
+    			_fieldValues.set(13, location);
+
+
+    		int fileCount = 1;
+    		if (_hasReadProperties && !((String) _fieldValues.get(14)).equals("")) { //$NON-NLS-1$
+    			fileCount += Integer.parseInt((String) _fieldValues.get(14));
+    		}
+
+    		_fieldValues.set(14, String.valueOf(fileCount));
+
+    		_fieldValues.set(15, properties.getContainer());
+
+    		_fieldValues.set(16, model.getAdditionalInfo().getMediaType());
+
+    		/* Sets title if title field is empty... */
+    		if (model.getTitle().equals("")) { //$NON-NLS-1$
+
+    			if (properties.getMetaDataTagInfo("INAM") != null && !properties.getMetaDataTagInfo("INAM").equals("")) //$NON-NLS-1$ //$NON-NLS-2$
+    				setTitle(properties.getMetaDataTagInfo("INAM")); //$NON-NLS-1$
+
+    			else {
+    				String title = properties.getFileName();
+
+    				if (title.lastIndexOf(".") != -1) //$NON-NLS-1$
+    					title = title.substring(0, title.lastIndexOf('.'));
+
+    				setTitle(title);
+    			}
+    		}
+
+    		_hasReadProperties = true;
+
+    		System.err.println("new duration:" + _fieldValues.get(1));
+    		
+    		modelChanged(this, "AdditionalInfo");
+
+    	} catch (Exception e) {
+    		log.error("Exception: " + e.getMessage(), e); //$NON-NLS-1$
+    	}
+
     }
     
-    
+        
     public void initializeAdditionalInfo(boolean loadEmpty) {
        
         ModelAdditionalInfo additionalInfo = null;
         
-        _saveLastFieldValue = new ArrayList();
         _fieldNames = new ArrayList();
         _fieldValues = new ArrayList();
         
@@ -686,7 +697,6 @@ public class ModelMovieInfo {
             additionalInfo = model.getAdditionalInfo();
         }   
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Subtitles"); //$NON-NLS-1$
             
         if (loadEmpty)
@@ -694,7 +704,6 @@ public class ModelMovieInfo {
         else if (additionalInfo != null)
             _fieldValues.add(additionalInfo.getSubtitles());
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Duration"); //$NON-NLS-1$
         
         
@@ -704,7 +713,6 @@ public class ModelMovieInfo {
             _fieldValues.add(""); //$NON-NLS-1$
         }
          
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("File Size"); //$NON-NLS-1$
         
 	   
@@ -714,7 +722,6 @@ public class ModelMovieInfo {
             _fieldValues.add(""); //$NON-NLS-1$
         }
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("CDs"); //$NON-NLS-1$
         
         if (!loadEmpty && additionalInfo != null && additionalInfo.getCDs() > 0) {
@@ -723,7 +730,6 @@ public class ModelMovieInfo {
             _fieldValues.add(""); //$NON-NLS-1$
         }
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("CD Cases"); //$NON-NLS-1$
         
         if (!loadEmpty && additionalInfo != null && additionalInfo.getCDCases() > 0) {
@@ -732,7 +738,6 @@ public class ModelMovieInfo {
             _fieldValues.add(""); //$NON-NLS-1$
         }
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Resolution"); //$NON-NLS-1$
         
         if (loadEmpty)
@@ -740,7 +745,6 @@ public class ModelMovieInfo {
         else if (additionalInfo != null)
             _fieldValues.add(additionalInfo.getResolution());
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Video Codec"); //$NON-NLS-1$
         
         if (loadEmpty)
@@ -748,7 +752,6 @@ public class ModelMovieInfo {
         else if (additionalInfo != null)
             _fieldValues.add(additionalInfo.getVideoCodec());
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Video Rate"); //$NON-NLS-1$
         
         if (loadEmpty)
@@ -756,7 +759,6 @@ public class ModelMovieInfo {
         else if (additionalInfo != null)
             _fieldValues.add(additionalInfo.getVideoRate());
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Video Bit Rate"); //$NON-NLS-1$
         
         if (loadEmpty)
@@ -764,7 +766,6 @@ public class ModelMovieInfo {
         else if (additionalInfo != null)
             _fieldValues.add(additionalInfo.getVideoBitrate());
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Audio Codec"); //$NON-NLS-1$
         
         if (loadEmpty)
@@ -772,7 +773,6 @@ public class ModelMovieInfo {
         else if (additionalInfo != null)
             _fieldValues.add(additionalInfo.getAudioCodec());
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Audio Rate"); //$NON-NLS-1$
         
         if (loadEmpty)
@@ -780,7 +780,6 @@ public class ModelMovieInfo {
         else if (additionalInfo != null)
             _fieldValues.add(additionalInfo.getAudioRate());
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Audio Bit Rate"); //$NON-NLS-1$
         
         if (loadEmpty)
@@ -788,7 +787,6 @@ public class ModelMovieInfo {
         else if (additionalInfo != null)
             _fieldValues.add(additionalInfo.getAudioBitrate());
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Audio Channels"); //$NON-NLS-1$
         
         if (loadEmpty)
@@ -796,7 +794,6 @@ public class ModelMovieInfo {
         else if (additionalInfo != null)
             _fieldValues.add(additionalInfo.getAudioChannels());
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Location"); //$NON-NLS-1$
         
         if (loadEmpty)
@@ -804,7 +801,6 @@ public class ModelMovieInfo {
         else if (additionalInfo != null)
             _fieldValues.add(additionalInfo.getFileLocation());
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("File Count"); //$NON-NLS-1$
         
         
@@ -814,7 +810,6 @@ public class ModelMovieInfo {
             _fieldValues.add(""); //$NON-NLS-1$
         }
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Container"); //$NON-NLS-1$
         
         if (loadEmpty)
@@ -822,7 +817,6 @@ public class ModelMovieInfo {
         else if (additionalInfo != null)
             _fieldValues.add(additionalInfo.getContainer());
         
-        _saveLastFieldValue.add(new Boolean(true));
         _fieldNames.add("Media Type"); //$NON-NLS-1$
         
         if (loadEmpty)
@@ -848,7 +842,6 @@ public class ModelMovieInfo {
         }
         
         for (int i = EXTRA_START; i < _fieldNames.size(); i++) {
-            _saveLastFieldValue.add(new Boolean(true));
             
             if (loadEmpty) {
                 _fieldValues.add("");
@@ -1015,7 +1008,7 @@ public class ModelMovieInfo {
     
     /**
      * *
-     * * @param addNewEpisode     true is a new episode will be added
+     * * @param addNewEpisode     true if a new episode will be added
      */
     public void clearModel(boolean addNewEpisode) {
 		
@@ -1065,7 +1058,4 @@ public class ModelMovieInfo {
             }
         }
     }
-    
-   
-    
 }
