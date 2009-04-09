@@ -201,9 +201,16 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
 			   getChildren( node );
 		   }
 	   });
+	   
+	 
+   }	
+
+   /*
+   public void setTreeDropListener(FileDropListener listener) {
+   	setTransferHandler(new FSTransfer(listener));
    }
-
-
+*/
+   
    /**
     * Constructor.
     * @param root The Root node for the JTree.
@@ -790,10 +797,7 @@ public class ExtendedJTree extends JTree implements Autoscroll, DragGestureListe
         
     }   // end inner-interface Listener
     
-    
-    public void setTreeDropListener(FileDropListener listener) {
-    	setTransferHandler(new FSTransfer(listener));
-    }
+ 
     
 }
 
@@ -861,8 +865,7 @@ class FSTransfer extends TransferHandler {
 				
 				if (flavors[i].equals(DataFlavor.javaFileListFlavor)) {
 					System.err.println("is javaFileListFlavor");
-					
-					
+										
 					java.util.List data = (java.util.List) t.getTransferData(DataFlavor.javaFileListFlavor);
 					
 					Iterator iter = data.iterator();
@@ -1074,13 +1077,6 @@ class TransferableNode implements Transferable {
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 		return Arrays.asList(flavors).contains(flavor);
 	}
-
-
-
-
-
-
-
 }
 
 
