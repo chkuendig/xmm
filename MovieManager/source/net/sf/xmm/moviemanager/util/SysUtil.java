@@ -57,7 +57,7 @@ public class SysUtil {
 	
 	
 	/**
-	 * Getting the 'root directory' of the app.
+	 * 
 	 * @throws Exception 
 	 **/
 	public static File getConfigDir() throws Exception {
@@ -66,13 +66,8 @@ public class SysUtil {
 		File dir = null;
 		
 		try {
-			java.net.URL url = FileUtil.class.getProtectionDomain().getCodeSource().getLocation();
 			
-			dir = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
-			
-			// If running in a jar file the parent is the root dir 
-			if (dir.isFile())
-				dir = dir.getParentFile();
+			dir = new File(getUserDir(), "config");
 				
 			/* If running in a mac application bundle, we can't write in the application-directory, so we use the /Library/Application Support */
 			if (isMac()) {
@@ -87,9 +82,12 @@ public class SysUtil {
 					}
 				}
 			}
+			else if (isWindowsVista()) {
+				dir = new File(System.getProperty("user.home"), "Application Data");
+			}
 		}
-		catch (UnsupportedEncodingException e) {
-			dir = new File(System.getProperty("user.dir")); //$NON-NLS-1$
+		catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
 		}
 
 		return dir;
