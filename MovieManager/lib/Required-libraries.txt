@@ -3,9 +3,14 @@ Required libraries for MeD's Movie Manager v2.7
 These libraries can be found in the MovieManager binary or source release.
 
 BrowserLauncher2-10rc4.jar		- Browser launcher java library
+
+castor-1.2.jar					- Object-XML binding utility.
+xercesImpl.jar					- Required by castor with Java 1.4
+xml-apis.jar					- Required by castor for Java 1.4 (org/w3c/dom/ranges/DocumentRange)
+
 commons-httpclient-3.0.1.jar	- HTTP java library
-commons-logging-1.1.jar			- logging library required by other libraries.
-itext-1.4.5.jar					- Needed for jasperreports
+commons-logging-1.1.jar			- Logging library required by other libraries (castor, httpclient).
+
 
 jxl.jar							- Java excel driver
 log4j-1.2.13.jar				- Java logging library
@@ -16,10 +21,6 @@ skinlf.jar						- Skin L&F
 TableLayout.jar					- Free layout manager
 useful.jar						- Java library with Swing Tree classes extension
 
-castor-1.2.jar					- Object-XML binding utility.
-xercesImpl.jar
-
-xml-apis.jar					- org/w3c/dom/ranges/DocumentRange for Java 1.4
 
 JNative.jar						- Simple JNI library
 JNative.dll						- Requiered windows libarary for JNative
@@ -34,19 +35,19 @@ libquaqua.jnilib				- Needed for Quaqua L&F
 quaqua-filechooser-only.jar		- Needed for Quaqua L&F
 
 jasperreports-3.0.0.jar			- Report creation utility
+itext-1.4.5.jar					- Needed for jasperreports
 poi-2.5.1-final-20040804.jar	- Needed for jasperreports
 commons-beanutils.jar			- Needed for jasperreports
 commons-codec-1.3.jar			- Needed for jasperreports
 commons-collections-3.2.jar		- Needed for jasperreports
 commons-digester-1.7.jar		- Needed for jasperreports
+
 sfc.jar							- DriveInfo
  
-
-The following libraries are necessary when running in applet mode:
+In applet mode, these are the only required libraries:
 
 TableLayout.jar						  	   Layout of the main window
 useful.jar								   JTree extension
 BrowserLauncher2-10rc4.jar				   Launching web browser when clicking cover 
 log4j-1.2.13.jar						   Logging library
 mysql-connector-java-3.1.12-bin.jar		   MySQL driver
-spin.jar								   Progress bar
