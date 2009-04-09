@@ -40,6 +40,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -68,6 +69,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -99,15 +101,18 @@ import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelMovie;
+import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedToolBar;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeNode;
 import net.sf.xmm.moviemanager.swing.extentions.JComboCheckBox;
 import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerPlayHandler;
+import net.sf.xmm.moviemanager.util.FileDrop;
 
 import org.apache.log4j.Logger;
 import org.dotuseful.ui.tree.AutomatedTreeModel;
@@ -938,7 +943,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         moviesList.setCellRenderer(treeCellRenderer);
         MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(treeCellRenderer);
-         
+       
+        /*
         moviesList.setTreeDropListener(new ExtendedJTree.FileDropListener() {
 
         	public void filesDropped(File[] files) {
@@ -948,6 +954,17 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 				}
 			}
         });	
+        */
+        
+        
+ 	   new FileDrop(moviesList, new FileDrop.Listener() {
+ 		   public void filesDropped( java.io.File[] files ) {   
+ 			   for (int i = 0; i < files.length; i++) {
+ 				System.err.println("!!!files["+i+"]:" + files[i]);
+ 			}
+ 		   }   
+ 	   });
+ 	           
         
         /* All done. */
         log.debug("Creation of the List done."); //$NON-NLS-1$
@@ -1353,7 +1370,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         	JButton play = new JButton(new ImageIcon(FileUtil.getImage("/images/play.png").getScaledInstance(20,20,Image.SCALE_SMOOTH)));
         	play.setPreferredSize(new Dimension(27, 27));
         	
-        	// Uses plugin playhandler is it exists
+        	// Uses plugin playhandler if it exists
         	MovieManagerPlayHandler playHandler = MovieManager.getConfig().getPlayHandler();
         	play.setActionCommand("Play"); //$NON-NLS-1$
         	
@@ -1607,6 +1624,74 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         additionalInfoScrollPane = new JScrollPane(additionalInfoTextArea);
         additionalInfoScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        new net.sf.xmm.moviemanager.util.FileDrop(additionalInfoTextArea, new net.sf.xmm.moviemanager.util.FileDrop.Listener() {   
+        	public void filesDropped(final File[] files) {
+
+        		Point p = additionalInfoScrollPane.getMousePosition();
+        		
+        		System.err.println("p:" + p);
+        		
+        		JPopupMenu popupMenu = new JPopupMenu();
+        		JMenuItem add = new JMenuItem("Add file info");
+        		add.addActionListener(new ActionListener() {
+        			public void actionPerformed(ActionEvent event) {
+        				
+        				ExtendedJTree movieList = getMoviesList();
+        		        
+        		        if (movieList.getLastSelectedPathComponent() == null)
+        		            return;
+        		        
+        		        /* The currently visible entry */
+        		        ModelEntry selected = (ModelEntry) ((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject();
+        		        
+        		        if (selected.getKey() == -1)
+        		            return;
+        		        
+        				ModelMovieInfo modelMovieInfo = new ModelMovieInfo(selected, true);
+        		        
+        				boolean success = false;
+        				
+        				try {
+							modelMovieInfo.getFileInfo(files);
+							success = true;
+						} catch (FileNotFoundException fe) {
+							log.warn("Could not find file " + fe.getMessage());
+							
+							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Error occured", "<html>An error occured while retrieving file info:<br>File not found:" + fe.getMessage() + "</html>", true);
+							GUIUtil.show(alert, true);
+							
+						} catch (Exception e) {
+							log.warn("Exception:" + e.getMessage(), e);
+							
+							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Error occured", "<html>An error occured while retrieving file info:<br>" + e.getMessage() + "</html>", true);
+							GUIUtil.show(alert, true);
+						}
+    				
+						if (success) {
+							try {
+								modelMovieInfo.saveToDatabase();
+								
+								MovieManagerCommandSelect.reloadCurrentModel();
+							} catch (Exception e) {
+								log.warn("Exception:" + e.getMessage(), e);
+								
+								DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Error occured", "An error occured while saving data to database");
+								GUIUtil.show(alert, true);
+							}
+						}
+						
+        				for (int i = 0; i < files.length; i++) {
+                			System.err.println("files["+i+"]:" + files[i]);
+                		}
+        			}
+        		});
+        		        		
+        		popupMenu.add(add); //$NON-NLS-1$
+        		popupMenu.setLocation(p);
+        		popupMenu.show(additionalInfoScrollPane, p.x, p.y);
+        	}   
+        }); 
         
         additionalInfo.add(additionalInfoScrollPane, BorderLayout.CENTER);
         
