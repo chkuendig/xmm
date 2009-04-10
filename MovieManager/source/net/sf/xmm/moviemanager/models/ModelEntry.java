@@ -121,6 +121,20 @@ abstract public class ModelEntry {
 		return additionalInfo;
 	}
 
+	/**
+	 * Used by Castor for XML export/import
+	 * @param list
+	 */
+	public void setMemberOfLists(ArrayList list) {
+		memberOfLists = list;
+	}
+	
+	/**
+	 * Used by Castor for XML export/import
+	 */
+	public ArrayList getMemberOfLists() {
+		return memberOfLists;
+	}
 	
 	public void setAdditionalInfo(ModelAdditionalInfo additionalInfo) {
 		this.additionalInfo = additionalInfo;
