@@ -198,7 +198,7 @@ public class FileNode implements Comparable {
 		File[] files = listFiles();
 
 		if (files == null)
-			return null;
+			return new FileNode[0];
 
 		ArrayList validFiles = new ArrayList();
 
@@ -209,9 +209,7 @@ public class FileNode implements Comparable {
 		}
 
 		FileNode [] allFiles = new FileNode[validFiles.size()];
-
 		allFiles = (FileNode []) validFiles.toArray(allFiles);
-
 		Arrays.sort(allFiles);
 
 		return allFiles;
