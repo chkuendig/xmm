@@ -142,7 +142,10 @@ public class ModelImportExportSettings {
     
     public ArrayList getAddToThisList() {
     	ArrayList l = new ArrayList();
-    	l.add(addToThisList);
+    	
+    	if (addToThisList != null)
+    		l.add(addToThisList);
+    	
     	return l;
     }
     
