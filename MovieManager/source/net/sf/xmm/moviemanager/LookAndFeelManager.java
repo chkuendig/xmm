@@ -72,7 +72,7 @@ public class LookAndFeelManager {
         try {
             config.numberOfLookAndFeels = installedLookAndFeels.length;
             
-            if (getSkinlfThemepackList() != null && config.getLookAndFeelType() == LookAndFeelType.Skinlf) {
+            if (getSkinlfThemepackList() != null && config.getLookAndFeelType() == LookAndFeelType.SkinlfLaF) {
                 
                 /* Sets the themepack and then sets the skinlf look and feel */
                 Skin skin = SkinLookAndFeel.loadThemePack(config.getSkinlfThemePackDir()+ config.getSkinlfThemePack());
@@ -83,7 +83,7 @@ public class LookAndFeelManager {
             }
             
           
-            if (config.getLookAndFeelType() == LookAndFeelType.Custom) {
+            if (config.getLookAndFeelType() == LookAndFeelType.CustomLaF) {
                 for (int i = 0; i < installedLookAndFeels.length; i++) {
                     if (installedLookAndFeels[i].getName().equals(config.getLookAndFeelString())) {
                         UIManager.setLookAndFeel(installedLookAndFeels[i].getClassName());
