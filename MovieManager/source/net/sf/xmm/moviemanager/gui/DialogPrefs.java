@@ -91,11 +91,14 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
+import static net.sf.xmm.moviemanager.MovieManagerConfig.LookAndFeelType;
+
 import org.apache.log4j.Logger;
 
 import com.l2fprod.gui.plaf.skin.Skin;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
-import com.oyoaha.swing.plaf.oyoaha.OyoahaLookAndFeel;
+
+
 
 public class DialogPrefs extends JDialog implements ActionListener, ItemListener {
 
@@ -112,9 +115,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	private JCheckBox enableLafChooser;
 	private JComboBox skinlfThemePackChooser;
 	private JCheckBox enableSkinlf;
-	private JComboBox oyoahaThemePackChooser;
-	private JCheckBox enableOyoaha;
-
+	
 	private UIManager.LookAndFeelInfo[] installedLookAndFeels;
 
 	private JRadioButton regularToolBarButtons;
@@ -418,59 +419,18 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			enableSkinlf.addActionListener(this);
 		}
 
-		String [] oyoahaThemePackList = LookAndFeelManager.getOyoahaThemepackList();
-
-		if (oyoahaThemePackList != null) {
-
-			enableOyoaha = new JCheckBox(Localizer.getString("dialogprefs.panel.look-and-feel.endable-oyoaha-laf.text")); //$NON-NLS-1$
-			enableOyoaha.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
-			lafGroup.add(enableOyoaha);
-
-			oyoahaThemePackChooser = new JComboBox(oyoahaThemePackList);
-			oyoahaThemePackChooser.setSelectedItem(config.getOyoahaThemePack());
-			oyoahaThemePackChooser.setEnabled(false);
-
-			String currentOyoahaThemePack = config.getOyoahaThemePack();
-
-			for (int i = 0; i < oyoahaThemePackList.length; i++) {
-				if (oyoahaThemePackList[i].equals(currentOyoahaThemePack)) {
-					oyoahaThemePackChooser.setSelectedItem(currentOyoahaThemePack);
-					break;
-				}
-			}
-
-			JPanel oyoahaPanel = new JPanel(new BorderLayout());
-			oyoahaPanel.setBorder(BorderFactory.createEmptyBorder(4,20,4,20));
-
-			oyoahaPanel.add(enableOyoaha, BorderLayout.WEST);
-			oyoahaPanel.add(oyoahaThemePackChooser, BorderLayout.EAST);
-
-			if ("1.5".compareTo(System.getProperty("java.version")) == 1) { //$NON-NLS-1$ //$NON-NLS-2$
-
-				//layoutPanel.add(oyoahaPanel);
-				lafChooserPanel.add(oyoahaPanel);
-				oyoahaThemePackChooser.addActionListener(this);
-				enableOyoaha.addActionListener(this);
-				enableOyoaha.addItemListener(this);
-			}
-		}
 
 		setLafChooserPreferredSize();
 
-		if ((skinlfThemePackList != null) && (config.getLookAndFeelType() == 1)) {
+		if ((skinlfThemePackList != null) && (config.getLookAndFeelType() == LookAndFeelType.SkinlfLaF)) {
 			enableSkinlf.setSelected(true);
 			skinlfThemePackChooser.setEnabled(true);
-		}
-
-		else if ((oyoahaThemePackList != null) && (config.getLookAndFeelType() == 2)) {
-			enableOyoaha.setSelected(true);
-			oyoahaThemePackChooser.setEnabled(true);
 		}
 		else {
 			enableLafChooser.setSelected(true);
 			lafChooser.setEnabled(true);
 
-			if ((skinlfThemePackList == null) && (oyoahaThemePackList == null))
+			if (skinlfThemePackList == null)
 				enableLafChooser.setEnabled(false);
 		}
 
@@ -1733,8 +1693,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	}
 	
 	
-	// 0 == Custom, 1 = skinlf, 2 == Oyoaha
-	void setLookAndFeel(final int type) {
+	void setLookAndFeel(final LookAndFeelType type) {
 
 		final DialogPrefs prefs = this;
 		
@@ -1743,9 +1702,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				prefs.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				
 				switch (type) {
-					case 0: {setCustomLookAndFeel(0); break;}
-					case 1: {setSkinlfLookAndFeel(); break;}
-					case 2: {setOyoahaLookAndFeel(); break;}
+					case CustomLaF: {setCustomLookAndFeel(0); break;}
+					case SkinlfLaF: {setSkinlfLookAndFeel(); break;}
 				}
 				MovieManager.getDialog().updateLookAndFeelValues();
 				prefs.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -1821,28 +1779,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		config.setSkinlfThemePack(selectedItem);
 	}
 
-	void setOyoahaLookAndFeel() {
-		String selectedItem = (String) oyoahaThemePackChooser.getSelectedItem();
-		String oyoahaThemePackPath = config.getOyoahaThemePackDir() + selectedItem;
-
-		try {
-			File file = new File(oyoahaThemePackPath);
-			OyoahaLookAndFeel lnf = new OyoahaLookAndFeel();
-
-			/*If the index 0 is selected the default theme is loaded*/
-			if(file.exists() && oyoahaThemePackChooser.getSelectedIndex() != 0)
-				lnf.setOyoahaTheme(file);
-
-			UIManager.setLookAndFeel(lnf);
-			updateLookAndFeel();
-
-		} catch (Exception e) {
-			log.error("Exception: "+ e.getMessage()); //$NON-NLS-1$
-			showErrorMessage(e.getMessage(),"Oyoaha"); //$NON-NLS-1$
-			return;
-		}
-		config.setOyoahaThemePack(selectedItem);
-	}
+	
 
 	void showErrorMessage(String error, String name) {
 
@@ -1868,16 +1805,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		GUIUtil.showAndWait(alert, true);
 	}
 
+	
 	void setLafChooserPreferredSize() {
-
-		if (skinlfThemePackChooser != null && oyoahaThemePackChooser != null) {
-			double width = lafChooser.getPreferredSize().getWidth() -  oyoahaThemePackChooser.getPreferredSize().getWidth();
-			width = oyoahaThemePackChooser.getPreferredSize().getWidth()+ (width/2);
-			skinlfThemePackChooser.setPreferredSize(new Dimension((int) width, (int) skinlfThemePackChooser.getPreferredSize().getHeight()));
-		}
-		else if (skinlfThemePackChooser != null && oyoahaThemePackChooser == null) {
-			skinlfThemePackChooser.setPreferredSize(new Dimension(lafChooser.getPreferredSize()));
-		}
+		skinlfThemePackChooser.setPreferredSize(new Dimension(lafChooser.getPreferredSize()));
 	}
 
 	void updateLookAndFeel() throws Exception {
@@ -2017,38 +1947,19 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				skinlfThemePackChooser.setEnabled(true);
 				lafChooser.setEnabled(false);
 
-				if (oyoahaThemePackChooser != null)
-					oyoahaThemePackChooser.setEnabled(false);
-
-				config.setLookAndFeelType(1);
-				setLookAndFeel(1);
+				config.setLookAndFeelType(LookAndFeelType.SkinlfLaF);
+				setLookAndFeel(LookAndFeelType.SkinlfLaF);
 				
 			}
-
-			else if(enableOyoaha != null && enableOyoaha.isSelected()) {
-
-				oyoahaThemePackChooser.setEnabled(true);
-				lafChooser.setEnabled(false);
-
-				if (skinlfThemePackChooser != null)
-					skinlfThemePackChooser.setEnabled(false);
-
-				config.setLookAndFeelType(2);
-				setLookAndFeel(2);
-
-				MovieManager.getDialog().updateToolButtonBorder();
-			}
-
+			
 			else {
 				lafChooser.setEnabled(true);
 
-				if (oyoahaThemePackChooser != null)
-					oyoahaThemePackChooser.setEnabled(false);
 				if (skinlfThemePackChooser != null)
 					skinlfThemePackChooser.setEnabled(false);
 
-				config.setLookAndFeelType(0);
-				setLookAndFeel(2);
+				config.setLookAndFeelType(LookAndFeelType.CustomLaF);
+				setLookAndFeel(LookAndFeelType.CustomLaF);
 			}
 		}
 
@@ -2097,20 +2008,13 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		/*Layout*/
 		if (event.getSource().equals(lafChooser)) {
-			
-			setLookAndFeel(0);
+			setLookAndFeel(LookAndFeelType.CustomLaF);
 			
 		}
 		if (event.getSource().equals(skinlfThemePackChooser)) {
-			setLookAndFeel(1);
-			//MovieManager.getDialog().updateLookAndFeelValues();
+			setLookAndFeel(LookAndFeelType.SkinlfLaF);
 		}
 
-		if (event.getSource().equals(oyoahaThemePackChooser)) {
-			setLookAndFeel(2);
-			
-			//MovieManager.getDialog().updateLookAndFeelValues();
-		}
 
 		MovieManager.getDialog().getMoviesList().requestFocus(true);
 	}
