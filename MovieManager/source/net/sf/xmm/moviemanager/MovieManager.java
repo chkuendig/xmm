@@ -302,6 +302,16 @@ public class MovieManager {
     	return options;
     }
 
+    
+    public void addDatabaseList(String listName) {
+    	
+		log.info("Ceating list " + listName);
+		
+		MovieManager.getIt().getDatabase().addListsColumn(listName);
+		MovieManager.getIt().getConfig().addToCurrentLists(listName);
+		
+		getDialog().loadMenuLists();
+    }
 
     public int [] getActiveAdditionalInfoFields() {
     	return activeAdditionalInfoFields;
