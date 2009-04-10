@@ -33,6 +33,7 @@ import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import net.sf.xmm.moviemanager.MovieManagerConfig.LookAndFeelType;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
@@ -44,7 +45,6 @@ import org.apache.log4j.Logger;
 
 import com.l2fprod.gui.plaf.skin.Skin;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
-import com.oyoaha.swing.plaf.oyoaha.OyoahaLookAndFeel;
 
 public class LookAndFeelManager {
     
@@ -72,7 +72,7 @@ public class LookAndFeelManager {
         try {
             config.numberOfLookAndFeels = installedLookAndFeels.length;
             
-            if (getSkinlfThemepackList() != null && config.getLookAndFeelType() == 1) {
+            if (getSkinlfThemepackList() != null && config.getLookAndFeelType() == LookAndFeelType.Skinlf) {
                 
                 /* Sets the themepack and then sets the skinlf look and feel */
                 Skin skin = SkinLookAndFeel.loadThemePack(config.getSkinlfThemePackDir()+ config.getSkinlfThemePack());
@@ -82,19 +82,8 @@ public class LookAndFeelManager {
                 UIManager.setLookAndFeel("com.l2fprod.gui.plaf.skin.SkinLookAndFeel");
             }
             
-            if (getOyoahaThemepackList() != null && config.getLookAndFeelType() == 2 ) {
-                
-                File theme = new File(config.getOyoahaThemePackDir()+ config.getOyoahaThemePack());
-                OyoahaLookAndFeel lnf = new OyoahaLookAndFeel();
-                
-                if(theme.isFile())
-                    lnf.setOyoahaTheme(theme);
-                
-                UIManager.setLookAndFeel(lnf);
-            }
-            
-            /*Any lookAndFeel but skinlf and oyoaha*/
-            if (config.getLookAndFeelType() != 1 && config.getLookAndFeelType() != 2) {
+          
+            if (config.getLookAndFeelType() == LookAndFeelType.Custom) {
                 for (int i = 0; i < installedLookAndFeels.length; i++) {
                     if (installedLookAndFeels[i].getName().equals(config.getLookAndFeelString())) {
                         UIManager.setLookAndFeel(installedLookAndFeels[i].getClassName());
