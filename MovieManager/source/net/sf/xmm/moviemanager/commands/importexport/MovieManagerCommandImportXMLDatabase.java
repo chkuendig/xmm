@@ -95,17 +95,48 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 		int key = -1;
 		Object model = movieList.get(i);
 
+		boolean isModelMovie = true;
+		
+		if (model instanceof ModelSeries) {
+			isModelMovie = false;
+		}
+		else if (!(model instanceof ModelMovie)) {
+			log.warn("Invalid model "+ model +". Must be either ModelMovie or ModelSeries");
+			return -1;
+		}
+		
+		// Creates a list of the database lists this movie is member of.
+		ArrayList addToTheseLists = settings.getAddToThisList();
+		
+		ArrayList <String> memberLists = null;
+		
+		if (isModelMovie)
+			memberLists = ((ModelMovie) model).getMemberLists();
+		else
+			memberLists = ((ModelMovie) ((ModelSeries) model).getMovie()).getMemberLists();
+		
+		addToTheseLists.addAll(memberLists);
+		
+		
+		ArrayList <String> databaseLists = MovieManager.getIt().getDatabase().getListsColumnNames();
+		
+		// If a list doesn't exist, add it to the database
+		for (int j = 0; j < memberLists.size(); j++) {
+			if (!databaseLists.contains(memberLists.get(j))) {
+				log.info("List " + memberLists.get(j) + " not found in database.");
+				
+				MovieManager.getIt().addDatabaseList(memberLists.get(j));
+				
+				//MovieManager.getIt().getDatabase().addListsColumn(memberLists.get(j));
+			}
+		}
+		
 		if (model instanceof ModelMovie) {
 
-			/*
-			while(((ModelMovie) model).getAdditionalInfo().getExtraInfoFieldValues().size() < MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false).size())
-				((ModelMovie) model).getAdditionalInfo().getExtraInfoFieldValues().add(0, "");
-*/
-			
 			modelMovieInfo.setModel((ModelMovie) model, false, false);
 
 			try {
-				key = (modelMovieInfo.saveToDatabase(settings.getAddToThisList())).getKey();
+				key = (modelMovieInfo.saveToDatabase(addToTheseLists)).getKey();
 			} catch (Exception e) {
 				log.error("Saving to database failed.", e);
 			}
@@ -115,15 +146,10 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 			ModelSeries seriesTmp = (ModelSeries) model;
 			ModelEpisode episodeTmp;
 
-			/*
-			while(((ModelMovie) seriesTmp.getMovie()).getAdditionalInfo().getExtraInfoFieldValues().size() < MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false).size())
-				((ModelMovie) seriesTmp.getMovie()).getAdditionalInfo().getExtraInfoFieldValues().add(0, "");
-			 */
-
 			modelMovieInfo.setModel(seriesTmp.getMovie(), false, false);
-
+						
 			try {
-				key = (modelMovieInfo.saveToDatabase(settings.getAddToThisList())).getKey();
+				key = (modelMovieInfo.saveToDatabase(addToTheseLists)).getKey();
 			} catch (Exception e) {
 				log.error("Saving to database failed.", e);
 			}
@@ -134,12 +160,6 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 				episodeTmp = (ModelEpisode) seriesTmp.episodes.get(u);
 				episodeTmp.setMovieKey(movieKey);
 
-			/*
-			 * 	while(episodeTmp.getAdditionalInfo().getExtraInfoFieldValues().size() < MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false).size()) {
-					episodeTmp.getAdditionalInfo().getExtraInfoFieldValues().add(0, "");
-
-				}*/
-				
 				modelMovieInfo.setModel(episodeTmp, false, false);
 
 				try {
