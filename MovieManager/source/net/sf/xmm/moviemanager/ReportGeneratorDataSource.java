@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -50,7 +51,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
      * @param defaultCoverImageURL URL - default image for movies without cover
      * @param testmode boolean - if true only dummydata is returned
      */
-    public ReportGeneratorDataSource(List movies, String sortField, JProgressBar progressBar, URL defaultCoverImageURL, boolean testmode) {
+    public ReportGeneratorDataSource(final List movies, String sortField, final JProgressBar progressBar, URL defaultCoverImageURL, boolean testmode) {
         this.progressBar = progressBar;
         this.defaultCoverImageURL = defaultCoverImageURL;
         this.testmode = testmode;
@@ -62,9 +63,13 @@ public class ReportGeneratorDataSource implements JRDataSource {
         }
         
         if (progressBar != null) {
-            progressBar.setMinimum(0);
-            progressBar.setMaximum(movies.size());
-            progressBar.setValue(0);
+        	 SwingUtilities.invokeLater(new Runnable() {
+             	public void run() {
+             		 progressBar.setMinimum(0);
+                     progressBar.setMaximum(movies.size());
+                     progressBar.setValue(0);
+             	}
+             });
         }
         
         iterator = movies.iterator();
@@ -90,9 +95,12 @@ public class ReportGeneratorDataSource implements JRDataSource {
                     entry = MovieManager.getIt().getDatabase().getEpisode(key);
                 }
                 if (progressBar != null) {
-                    progressBar.setValue(count++);
+                	 SwingUtilities.invokeLater(new Runnable() {
+                     	public void run() {
+                     		progressBar.setValue(count++);
+                     	}
+                     });
                 }
-                //Thread.yield();
             }
             return true;
         }

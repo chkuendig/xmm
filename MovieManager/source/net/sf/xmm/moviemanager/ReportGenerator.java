@@ -40,6 +40,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -260,7 +261,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
      * @param panel JPanel - report preview will be added to this parent
      *   container.
      */
-    private void createReport(JPanel panel) {
+    private void createReport(final JPanel panel) {
         buttonAction.setText("Abort");
         cardLayout1.show(jPanel4, "progress");
 
@@ -328,21 +329,32 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
             
             ds = new ReportGeneratorDataSource(movies, selectedLayout.sortField, progressBar, FileUtil.getImageURL("/images/movie.png"), false);
             
-            JasperPrint print = JasperFillManager.fillReport(new File(reportsDir, selectedLayout.filename).getAbsolutePath(), parms, ds);
+            final JasperPrint print = JasperFillManager.fillReport(new File(reportsDir, selectedLayout.filename).getAbsolutePath(), parms, ds);
           
             if (ds != null) {
                 ds = null;
-                JRViewer viewerPanel = new JRViewer(print);
-                panel.removeAll();
-                panel.add(viewerPanel, BorderLayout.CENTER);
-                cardLayout1.show(jPanel4, "report");
-                viewerPanel.setFitWidthZoomRatio();
-                buttonAction.setText("Select Layout");
+                
+                SwingUtilities.invokeLater(new Runnable() {
+                	public void run() {
+
+                		JRViewer viewerPanel = new JRViewer(print);
+                		panel.removeAll();
+                		panel.add(viewerPanel, BorderLayout.CENTER);
+                		cardLayout1.show(jPanel4, "report");
+                		viewerPanel.setFitWidthZoomRatio();
+                		buttonAction.setText("Select Layout");
+                	}
+                });
             }
         }
         catch (Exception ex) {
-            labelProgress.setText("Error generating report");
-            progressBar.setValue(0);
+        	 SwingUtilities.invokeLater(new Runnable() {
+             	public void run() {
+             		labelProgress.setText("Error generating report");
+                    progressBar.setValue(0);
+             	}
+             });
+            
             Logger.getRootLogger().error("Error generating report", ex);
         }
     }
