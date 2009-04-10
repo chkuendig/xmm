@@ -46,7 +46,7 @@ public class MovieManagerCommandExportXMLDatabase extends MovieManagerCommandExp
 
 	static Logger log = Logger.getLogger(MovieManagerCommandExportXMLDatabase.class);
 
-	ModelImportExportSettings importSettings;
+	ModelImportExportSettings exportSettings;
 
 	ModelExportXML exportXMLDatabase;
 	
@@ -54,8 +54,8 @@ public class MovieManagerCommandExportXMLDatabase extends MovieManagerCommandExp
 	
 	DefaultMutableTreeNode movieList;
 	
-	MovieManagerCommandExportXMLDatabase(ModelImportExportSettings importSettings) {
-		this.importSettings = importSettings;
+	MovieManagerCommandExportXMLDatabase(ModelImportExportSettings exportSettings) {
+		this.exportSettings = exportSettings;
 	}
 
 	public String getTitle(int index) {
@@ -124,9 +124,9 @@ public class MovieManagerCommandExportXMLDatabase extends MovieManagerCommandExp
 			// 1. Load the mapping information from the file
 			mapping.loadMapping(mappingFile);
 
-			String encoding = "UTF-8";
-
-			marshaller = new Marshaller(new OutputStreamWriter(new FileOutputStream(importSettings.getFilePath()), encoding));
+			String encoding = exportSettings.textEncoding;
+			
+			marshaller = new Marshaller(new OutputStreamWriter(new FileOutputStream(exportSettings.getFilePath()), encoding));
 			marshaller.setEncoding(encoding);
 			marshaller.setMarshalAsDocument(true);
 			marshaller.setMapping(mapping);
