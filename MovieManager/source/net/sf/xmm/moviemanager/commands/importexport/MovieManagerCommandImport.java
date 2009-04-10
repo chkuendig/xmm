@@ -158,16 +158,8 @@ public class MovieManagerCommandImport implements ActionListener{
 	 **/
 	public void actionPerformed(ActionEvent event) {
 		log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$'
-		
-		Thread t = new Thread() {
-			public void run() {
-				execute();
-			}
-		};
-		t.start();
+		execute();
 	}
-	
-	
 }
 
 
