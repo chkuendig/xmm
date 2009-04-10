@@ -457,14 +457,12 @@ public class DialogExport extends JDialog implements ActionListener {
     	//	break;
     //	}
     	case ModelImportExportSettings.EXPORT_MODE_XML_DATABASE: {
+    		settings.filePath = xmlFilePath.getText();
     		settings.textEncoding = (String) xmlEncoding.getSelectedItem();
     		break;
     	}
     	case ModelImportExportSettings.EXPORT_MODE_HTML: {}
     	}
-    	
-    	
-    	
     }
     
     
