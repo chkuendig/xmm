@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSaveChangedNotes;
 import net.sf.xmm.moviemanager.gui.DialogDatabaseImporterExporter;
@@ -38,7 +39,8 @@ public class MovieManagerCommandExport implements ActionListener{
 	static Logger log = Logger.getLogger(MovieManagerCommandExport.class);
 	
 	ModelImportExportSettings exportSettings;
-
+	DialogExport dialogExport = null;
+	
 	protected void execute() {
 
 		try {
@@ -46,9 +48,13 @@ public class MovieManagerCommandExport implements ActionListener{
 			// If any notes have been changed, they will be saved before changing list
 			MovieManagerCommandSaveChangedNotes.execute();
 
-			DialogExport dialogExport = new DialogExport();
-			GUIUtil.showAndWait(dialogExport, true);
-
+			 SwingUtilities.invokeLater(new Runnable() {
+		        	public void run() {
+		        		dialogExport = new DialogExport();
+		        		GUIUtil.showAndWait(dialogExport, true);
+		        	}
+		        });
+			 	
 			exportSettings = dialogExport.getSettings();
 
 			if (dialogExport.isCancelled())
@@ -96,7 +102,13 @@ public class MovieManagerCommandExport implements ActionListener{
 	 **/
 	public void actionPerformed(ActionEvent event) {
 		log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-		execute();
+		
+		Thread t = new Thread() {
+			public void run() {
+				execute();
+			}
+		};
+		t.start();
 	}
 }
 
