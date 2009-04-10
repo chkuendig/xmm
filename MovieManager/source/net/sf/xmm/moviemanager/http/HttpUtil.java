@@ -271,7 +271,14 @@ public class HttpUtil {
 			int end = 0;
 			for (int i=0; i < toDecode.length(); i++) {
 				if (toDecode.charAt(i)=='&' && toDecode.charAt(i+1)=='#' && (end=toDecode.indexOf(";", i))!=-1) {
-					decoded += (char)Integer.parseInt(toDecode.substring(i+3,end), 16);
+					
+					// May be hex i.e. &#x27; or decimal i.e. &#32;
+					
+					if (toDecode.charAt(i+2)=='x')
+						decoded += (char)Integer.parseInt(toDecode.substring(i+3,end), 16);
+					else
+						decoded += (char)Integer.parseInt(toDecode.substring(i+2,end), 10);
+					
 					i = end;
 				} else if (toDecode.charAt(i)=='<' && toDecode.indexOf('>', i) != -1) {
 					i = toDecode.indexOf('>', i);
@@ -280,13 +287,14 @@ public class HttpUtil {
 				}
 			}
 
-			// replacing html code like &quot; and &amp;
+			// replacing html code "&quot;", "&amp;" and "&nbsp;"
 			decoded = decoded.replaceAll("&amp;", "&");
 			decoded = decoded.replaceAll("&quot;", "\"");
 			decoded = decoded.replaceAll("&nbsp;", " ");
 
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
+			log.debug("Input:" + toDecode);
 		} 
 
 		/* Returns the decoded string... */
