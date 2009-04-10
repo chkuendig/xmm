@@ -1266,15 +1266,11 @@ public class MovieManager {
 				logFile = new File(SysUtil.getUserDir(), "Log.txt").getAbsolutePath();
 		}
     		
-    	appndr.setFile(logFile);
-    	appndr.activateOptions();
-    	
-    	
-    	System.err.println("ALLUSERSPROFILE:" + System.getenv("ALLUSERSPROFILE"));
-    	System.err.println("APPDATA:" + System.getenv("APPDATA"));
-    	System.err.println("ProgramData:" + System.getenv("ProgramData"));
-		
-    	
+		if (appndr.getFile() == null) {
+			appndr.setFile(logFile);
+			appndr.activateOptions();
+		}
+		    	
 		/* Writes the date. */
 		log.debug("================================================================================"); //$NON-NLS-1$
 		log.debug("Log Start: " + new Date(System.currentTimeMillis())); //$NON-NLS-1$
