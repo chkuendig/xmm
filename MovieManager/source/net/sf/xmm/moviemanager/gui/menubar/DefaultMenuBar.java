@@ -420,8 +420,12 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 	/**
 	 * @param listColumns 	a list containing all the lists in the database.
 	 */
-	public void loadDefaultMenuLists(ArrayList listColumns) {
-		menuLists.loadDefaultMenuLists(listColumns);
+	public void loadDefaultMenuLists(final ArrayList listColumns) {
+		SwingUtilities.invokeLater(new Runnable() {
+        	public void run() {
+        		menuLists.loadDefaultMenuLists(listColumns);
+        	}
+        });
 	}
 	
 	/**
@@ -802,7 +806,17 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 	/**
 	 * Sets enabled/disabled the related database components.
 	 **/
-	public void setDatabaseComponentsEnable(boolean enable) {
+
+	public void setDatabaseComponentsEnable(final boolean enable) {
+		SwingUtilities.invokeLater(new Runnable() {
+        	public void run() {
+        		setDatabaseComponentsEnable(enable);
+        	}
+        });
+	}
+	
+	// Created wrapper method for calling this method on the EDT
+	private void setDatabaseComponentsEnable(boolean enable, boolean notUsed) {
 	
 		if (menuItemClose != null)
 			menuItemClose.setEnabled(enable);
