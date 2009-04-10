@@ -375,9 +375,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private String oyoahaThemePackDir;
 
-	public enum LookAndFeelType {Custom, Skinlf}
+	public enum LookAndFeelType {CustomLaF, SkinlfLaF}
 	
-	private LookAndFeelType lookAndFeelType = LookAndFeelType.Custom; /*0 = custom, 1 = skinlf, 2 = oyoaha*/
+	private LookAndFeelType lookAndFeelType = LookAndFeelType.CustomLaF; /*0 = custom, 1 = skinlf, 2 = oyoaha*/
 
 	public int numberOfLookAndFeels;
 
@@ -2251,7 +2251,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				
 				try {
 					int val = Integer.parseInt(value);
-					laf = val == 1 ? LookAndFeelType.Skinlf : LookAndFeelType.Custom;
+					laf = val == 1 ? LookAndFeelType.SkinlfLaF : LookAndFeelType.CustomLaF;
 				} catch (Exception e) {
 				}
 				
