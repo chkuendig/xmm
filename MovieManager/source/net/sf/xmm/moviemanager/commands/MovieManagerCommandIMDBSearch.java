@@ -112,7 +112,7 @@ public class MovieManagerCommandIMDBSearch {
 		SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 try {
-                    DefaultListModel list = imdb.getSeriesMatches(movieInfoModel.getModel().getTitle());
+                	final DefaultListModel list = imdb.getSeriesMatches(movieInfoModel.getModel().getTitle());
                     
                     if (list.size() == 0) {
                         final DefaultListModel model = new DefaultListModel();
@@ -132,14 +132,19 @@ public class MovieManagerCommandIMDBSearch {
                             return this;
                     }
                     
-                    if (list.getSize() == 0)
-                        executeErrorMessage();
-                    else 
-                    	dialogTVSeries.getMoviesList().setModel(list);
-                    
-                    dialogTVSeries.getMoviesList().setSelectedIndex(0);
-                    
-                    dialogTVSeries.getButtonSelect().setEnabled(true);
+                    SwingUtilities.invokeLater(new Runnable() {
+                    	
+                    	public void run() {
+                    		
+                    		if (list.getSize() == 0)
+                                executeErrorMessage();
+                            else 
+                            	dialogTVSeries.getMoviesList().setModel(list);
+                            
+                            dialogTVSeries.getMoviesList().setSelectedIndex(0);
+                            dialogTVSeries.getButtonSelect().setEnabled(true);
+                    	}
+                    });
                 }
                 catch (Exception e) {
                     return ""; //$NON-NLS-1$
