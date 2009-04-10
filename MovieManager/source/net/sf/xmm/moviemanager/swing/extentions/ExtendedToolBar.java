@@ -165,8 +165,15 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
             value += String.valueOf(entries);
         }
         
-        entriesCount.setText(value);
-        entriesCount.updateUI();
+        final String finalValue = value;
+        
+        SwingUtilities.invokeLater(new Runnable() {
+        	public void run() {
+        		 entriesCount.setText(finalValue);
+        	}
+        });
+       
+        //entriesCount.updateUI();
     }
     
 
