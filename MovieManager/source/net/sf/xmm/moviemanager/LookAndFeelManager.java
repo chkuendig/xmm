@@ -104,7 +104,13 @@ public class LookAndFeelManager {
             }
             
             ExtendedTreeCellRenderer.setDefaultColors();
-            SwingUtilities.updateComponentTreeUI(MovieManager.getDialog());
+            
+            SwingUtilities.invokeLater(new Runnable() {
+            	public void run() {
+            	 SwingUtilities.updateComponentTreeUI(MovieManager.getDialog());
+            	}
+            });
+           
             
         } catch (Exception e) {
             log.error("Exception: " + e.getMessage());
