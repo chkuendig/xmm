@@ -25,10 +25,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSaveChangedNotes;
 import net.sf.xmm.moviemanager.gui.DialogDatabaseImporterExporter;
+import net.sf.xmm.moviemanager.gui.DialogExport;
 import net.sf.xmm.moviemanager.gui.DialogImport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
@@ -47,6 +49,7 @@ public class MovieManagerCommandImport implements ActionListener{
 
 	ModelImportExportSettings importSettings;
 
+	DialogImport importMovie = null;
 
 	protected void execute() {
 
@@ -55,18 +58,19 @@ public class MovieManagerCommandImport implements ActionListener{
 			// If any notes have been changed, they will be saved before changing list
 			MovieManagerCommandSaveChangedNotes.execute();
 
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					importMovie = new DialogImport();
+					GUIUtil.showAndWait(importMovie, true);
+				}
+			});
 
-			DialogImport importMovie = new DialogImport();
-			GUIUtil.showAndWait(importMovie, true);
-			
 			importSettings = importMovie.getSettings();
 	
 			if (importMovie.cancelAll)
 				return;
 
 			MovieManagerCommandImportExportHandler importer = null;
-
-			
 			
 			if (importSettings.mode == ModelImportExportSettings.IMPORT_MODE_TEXT) {
 				importer = new MovieManagerCommandImportText(importSettings);
@@ -158,7 +162,13 @@ public class MovieManagerCommandImport implements ActionListener{
 	 **/
 	public void actionPerformed(ActionEvent event) {
 		log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$'
-		execute();
+		
+		Thread t = new Thread() {
+			public void run() {
+				execute();
+			}
+		};
+		t.start();
 	}
 }
 
