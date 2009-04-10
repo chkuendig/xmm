@@ -598,6 +598,11 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         }
     }
     
+    
+    public void loadMenuLists() {
+    	loadMenuLists(MovieManager.getIt().getDatabase());
+    }
+    
     public void loadMenuLists(Database database) {
     	ArrayList listColumns = database.getListsColumnNames();
     	menuBar.loadDefaultMenuLists(listColumns);
