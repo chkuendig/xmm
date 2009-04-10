@@ -58,7 +58,7 @@ public class MovieManagerCommandImport implements ActionListener{
 			// If any notes have been changed, they will be saved before changing list
 			MovieManagerCommandSaveChangedNotes.execute();
 
-			SwingUtilities.invokeLater(new Runnable() {
+			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
 					importMovie = new DialogImport();
 					GUIUtil.showAndWait(importMovie, true);
