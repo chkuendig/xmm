@@ -89,7 +89,10 @@
 	  <bind-xml name="awards" location="GeneralInfo"/>
 	</field>
 	
-	
+	<field name="memberOfLists" type="string" collection="arraylist">
+      <bind-xml name="memberOfList" />
+    </field>
+		
 	<field name="ModelAdditionalInfo" type="net.sf.xmm.moviemanager.models.ModelAdditionalInfo" get-method="getUpdatedAdditionalInfo" set-method="setAdditionalInfo">
 	  <bind-xml name="ModelAdditionalInfo"/>
 	</field>
