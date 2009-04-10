@@ -1676,13 +1676,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				fields = new SteppedComboBox(new String[] { "", "" }); //$NON-NLS-1$ //$NON-NLS-2$
 				fields.setFont(new Font(fields.getFont().getName(), Font.PLAIN,	fontSize));
 
-				/*
-				 * If using oyoaha laf the border needs to be set to make the
-				 * combobox smaller
-				 */
-				if (MovieManager.getConfig().getLookAndFeelType() == 2)
-					fields.setBorder(BorderFactory.createLoweredBevelBorder());
-
 				fields.setEditable(true);
 
 				fields.setPreferredSize(new Dimension(valueComboBoxWidth, valueComboBoxHeight));
