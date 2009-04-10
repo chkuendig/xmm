@@ -375,7 +375,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private String oyoahaThemePackDir;
 
-	private int lookAndFeelType = 0; /*0 = custom, 1 = skinlf, 2 = oyoaha*/
+	public enum LookAndFeelType {Custom, Skinlf}
+	
+	private LookAndFeelType lookAndFeelType = LookAndFeelType.Custom; /*0 = custom, 1 = skinlf, 2 = oyoaha*/
 
 	public int numberOfLookAndFeels;
 
@@ -1589,11 +1591,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.skinlfThemePackDir = skinlfThemePackDir;
 	}
 
-	public int getLookAndFeelType() {
+	public LookAndFeelType getLookAndFeelType() {
 		return lookAndFeelType;
 	}
 
-	public void setLookAndFeelType(int lafType) {
+	public void setLookAndFeelType(LookAndFeelType lafType) {
 		this.lookAndFeelType = lafType;
 	}
 
@@ -2244,9 +2246,23 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("lookAndFeelType:");
 
 			if (value != null) {
-				setLookAndFeelType(Integer.parseInt(value));
+				
+				LookAndFeelType laf = null;
+				
+				try {
+					int val = Integer.parseInt(value);
+					laf = val == 1 ? LookAndFeelType.Skinlf : LookAndFeelType.Custom;
+				} catch (Exception e) {
+				}
+				
+				try {
+					laf  = LookAndFeelType.valueOf(value);
+				} catch (Exception e) {
+				}
+				
+				if (laf != null)
+					setLookAndFeelType(laf);
 			}
-
 
 			value = (String) config.get("regularToolButtonsUsed:");
 
