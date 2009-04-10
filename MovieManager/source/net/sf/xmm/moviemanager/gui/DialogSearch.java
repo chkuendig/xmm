@@ -748,112 +748,13 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 					tableNames = MovieManager.getIt().getDatabase().getTableNames();
 
 					generalInfoFields = MovieManager.getIt().getDatabase().getGeneralInfoMovieFieldNames();
-					generalAliasPanel = new JPanel(new GridLayout(generalInfoFields.size()+1, 3));
-
-					JLabel tableName;
-					JLabel columnName;
-					JTextField alias;
-
-					String tmpKey;
-
-					generalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.table-name")));   
-					generalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.column-name")));
-					generalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.alias")));
-
-					HashMap searchAlias = MovieManager.getConfig().getSearchAlias();
-
-					for (int i = 0; i < generalInfoFields.size(); i++) {
-
-						tableName = new JLabel((String) tableNames.get(5));
-						columnName = new JLabel((String) generalInfoFields.get(i));
-						alias = new JTextField(10);
-						
-						if (generalInfoFields.get(i).equals("CoverData"))
-							continue;
-						
-						tmpKey = (((String) tableNames.get(5)).toLowerCase() +"."+ (String) generalInfoFields.get(i)).replaceAll("_", " ");
-
-						if (searchAlias.containsKey(tmpKey)) {
-							alias.setText((String) searchAlias.get(tmpKey));
-						}
-
-						generalAliasPanel.add(tableName);   
-						generalAliasPanel.add(columnName);
-						generalAliasPanel.add(alias);
-
-						generalInfoFieldsCount++;
-					}
-
 					additionalInfoFields = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
 					extraInfoFields = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
-
-					additionalAliasPanel = new JPanel(new GridLayout(additionalInfoFields.size()+ extraInfoFields.size() +1, 3));
-
-					additionalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.table-name")));   
-					additionalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.column-name")));
-					additionalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.alias")));
-
-					String tmpColumn;
-					String table = (String) tableNames.get(0);
-
-					for (int i = 0;i < additionalInfoFields.size(); i++) {
-
-						tmpColumn = (String) additionalInfoFields.get(i);
-
-						tableName = new JLabel(table);
-						columnName = new JLabel(tmpColumn);
-						alias = new JTextField(10);
-
-						if (tmpColumn.equals("SubTitles"))
-							tmpColumn = tmpColumn.replaceFirst("SubTitles", "Subtitles");
-
-						tmpKey = (table.toLowerCase() +"."+ tmpColumn).replaceAll("_", " ");
-
-						if (searchAlias.containsKey(tmpKey)) {
-							alias.setText((String) searchAlias.get(tmpKey));
-						}
-
-						additionalAliasPanel.add(tableName);   
-						additionalAliasPanel.add(columnName);
-						additionalAliasPanel.add(alias);
-
-						additionalInfoFieldsCount++;
-					}
-
-					
-					for (int i = 0;i < extraInfoFields.size(); i++) {
-
-						tableName = new JLabel((String) tableNames.get(2));
-						columnName = new JLabel((String) extraInfoFields.get(i));
-						alias = new JTextField(10);
-
-						tmpKey = (((String) tableNames.get(2)).toLowerCase() +"."+ (String) extraInfoFields.get(i)).replaceAll("_", " ");
-
-						if (searchAlias.containsKey(tmpKey)) {
-							alias.setText((String) searchAlias.get(tmpKey));
-						}
-
-						additionalAliasPanel.add(tableName);   
-						additionalAliasPanel.add(columnName);
-						additionalAliasPanel.add(alias);
-
-						additionalInfoFieldsCount++;
-					}
 
 					/* Changes done to visible GUI is done in the EDT */
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
-							int index = allTabbedPanes.getSelectedIndex();
-							
-							allTabbedPanes.remove(1);
-							allTabbedPanes.remove(1);
-
-							allTabbedPanes.add(Localizer.getString("DialogSearch.tab.alias.general-info.title"), generalAliasPanel);
-							allTabbedPanes.add(Localizer.getString("DialogSearch.tab.alias.additional-info.title"), additionalAliasPanel);
-
-							allTabbedPanes.setSelectedIndex(index);
-							
-							pack();
+							setUpSearchAliasPanel();
 						}
 					});
 
@@ -869,6 +770,113 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	}
 
 
+	// Must be called from the EDT
+	private void setUpSearchAliasPanel() {
+		
+		generalAliasPanel = new JPanel(new GridLayout(generalInfoFields.size()+1, 3));
+
+		JLabel tableName;
+		JLabel columnName;
+		JTextField alias;
+
+		String tmpKey;
+
+		generalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.table-name")));   
+		generalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.column-name")));
+		generalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.alias")));
+
+		HashMap searchAlias = MovieManager.getConfig().getSearchAlias();
+
+		for (int i = 0; i < generalInfoFields.size(); i++) {
+
+			tableName = new JLabel((String) tableNames.get(5));
+			columnName = new JLabel((String) generalInfoFields.get(i));
+			alias = new JTextField(10);
+
+			if (generalInfoFields.get(i).equals("CoverData"))
+				continue;
+
+			tmpKey = (((String) tableNames.get(5)).toLowerCase() +"."+ (String) generalInfoFields.get(i)).replaceAll("_", " ");
+
+			if (searchAlias.containsKey(tmpKey)) {
+				alias.setText((String) searchAlias.get(tmpKey));
+			}
+
+			generalAliasPanel.add(tableName);   
+			generalAliasPanel.add(columnName);
+			generalAliasPanel.add(alias);
+
+			generalInfoFieldsCount++;
+		}
+
+
+		additionalAliasPanel = new JPanel(new GridLayout(additionalInfoFields.size()+ extraInfoFields.size() +1, 3));
+
+		additionalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.table-name")));   
+		additionalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.column-name")));
+		additionalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.alias")));
+
+		String tmpColumn;
+		String table = (String) tableNames.get(0);
+
+		for (int i = 0;i < additionalInfoFields.size(); i++) {
+
+			tmpColumn = (String) additionalInfoFields.get(i);
+
+			tableName = new JLabel(table);
+			columnName = new JLabel(tmpColumn);
+			alias = new JTextField(10);
+
+			if (tmpColumn.equals("SubTitles"))
+				tmpColumn = tmpColumn.replaceFirst("SubTitles", "Subtitles");
+
+			tmpKey = (table.toLowerCase() +"."+ tmpColumn).replaceAll("_", " ");
+
+			if (searchAlias.containsKey(tmpKey)) {
+				alias.setText((String) searchAlias.get(tmpKey));
+			}
+
+			additionalAliasPanel.add(tableName);   
+			additionalAliasPanel.add(columnName);
+			additionalAliasPanel.add(alias);
+
+			additionalInfoFieldsCount++;
+		}
+
+
+		for (int i = 0;i < extraInfoFields.size(); i++) {
+
+			tableName = new JLabel((String) tableNames.get(2));
+			columnName = new JLabel((String) extraInfoFields.get(i));
+			alias = new JTextField(10);
+
+			tmpKey = (((String) tableNames.get(2)).toLowerCase() +"."+ (String) extraInfoFields.get(i)).replaceAll("_", " ");
+
+			if (searchAlias.containsKey(tmpKey)) {
+				alias.setText((String) searchAlias.get(tmpKey));
+			}
+
+			additionalAliasPanel.add(tableName);   
+			additionalAliasPanel.add(columnName);
+			additionalAliasPanel.add(alias);
+
+			additionalInfoFieldsCount++;
+		}
+
+
+		int index = allTabbedPanes.getSelectedIndex();
+
+		allTabbedPanes.remove(1);
+		allTabbedPanes.remove(1);
+
+		allTabbedPanes.add(Localizer.getString("DialogSearch.tab.alias.general-info.title"), generalAliasPanel);
+		allTabbedPanes.add(Localizer.getString("DialogSearch.tab.alias.additional-info.title"), additionalAliasPanel);
+
+		allTabbedPanes.setSelectedIndex(index);
+
+		pack();
+	}
+	
 
 	public static DialogSearch getDialogSearch() {
 		return dialogSearch;
