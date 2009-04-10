@@ -129,7 +129,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	
 	private HashMap nodesInFileLists = new HashMap();
 		
-	boolean addListValidItem = true;
+	private boolean addListMustContainValidItemsAlert = false; // denotes if the list contains an alert
 	
 	/* The int stores the ints 0,1 or 2.
        0 for ask awlays, 1 for automatically select first hit, 
@@ -811,14 +811,21 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 	public boolean validateAddList() {
 				
+		log.debug("validateAddList");
+		
 		DefaultListModel listModel = (DefaultListModel) filesToAddList.getModel();
 		
-		if (listModel.getSize() == 0 || !addListValidItem) {
+		System.err.println("listModel.getSize():" + listModel.getSize());
+		System.err.println("addListMustContainValidItemsAlert:" + addListMustContainValidItemsAlert);
+		
+		if (listModel.getSize() == 0 || addListMustContainValidItemsAlert) {
 			
-			if (listModel.getSize() == 0) {
+			// Does not contain the alert, it is added
+			if (!addListMustContainValidItemsAlert) {
 				listModel.addElement("List must contain movies to add");
-				addListValidItem = false;
+				addListMustContainValidItemsAlert = true;
 			}
+			System.err.println("return false");
 			return false;
 		}
 		
@@ -861,7 +868,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 		if (event.getSource().equals(buttonAddMovies)) {
 			log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-			executeSave();
+		//	executeSave();
+			// Another listener on this button handles the rest
 		}
 
 		if (event.getSource().equals(buttonAddList)) {
@@ -993,11 +1001,11 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		addSelectedMediaFilesToAddList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				if (!addListValidItem) {
+				if (addListMustContainValidItemsAlert) {
 					DefaultListModel listModel = (DefaultListModel) filesToAddList.getModel();
 					listModel.clear();
+					addListMustContainValidItemsAlert = false;
 				}
-								
 				addSelectedMediaFilesToAddList();
 			}
 		});
@@ -1006,10 +1014,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		mediaFileListButtonPanel.add(clearToAddFileList);
 		mediaFileListButtonPanel.add(addSelectedMediaFilesToAddList);
 
-
 		mediaFilesListPanel.add(mediaFileListScrollPane, BorderLayout.CENTER);
 		mediaFilesListPanel.add(mediaFileListButtonPanel, BorderLayout.EAST);
-
 
 
 		/* The files to add panel. */
