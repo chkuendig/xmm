@@ -1067,13 +1067,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	((JComboCheckBox.JComboCheckBoxEditor) comboBoxFilter.getEditor()).addComboCheckBoxKeyEventListener(new MovieManagerCommandFilter("", null, true, true));
     	comboBoxFilter.setFont(new Font(comboBoxFilter.getFont().getName(), Font.PLAIN,	fontSize));
 
-    	/*
-    	 * If using oyoaha laf the border needs to be set to make the
-    	 * combobox smaller
-    	 */
-    	if (MovieManager.getConfig().getLookAndFeelType() == 2)
-    		comboBoxFilter.setBorder(BorderFactory.createLoweredBevelBorder());
-    
     	filter.add(comboBoxFilter, BorderLayout.CENTER);
         
     	/* All done. */
