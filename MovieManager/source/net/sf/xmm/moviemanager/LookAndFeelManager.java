@@ -201,7 +201,8 @@ public class LookAndFeelManager {
         	
         	BufferedReader reader = new BufferedReader(new FileReader(lookAndFeel));
         	//Pattern p = Pattern.compile("\"(.+?)\"\\s+?\"(.+?)\".*");
-        	Pattern p = Pattern.compile("\"(.+?)\"\\s+?\"(.+?)\"\\s+?\"(.+?)\".*");
+        	Pattern p = Pattern.compile("\"(.+?)\"\\s+?\"(.+?)\"\\s+?\"(.+?)\"\\s*(?:\"(.+?)\")?.*");
+        	//Pattern p = Pattern.compile("\"(.+?)\"\\s+?\"(.+?)\"\\s+?\"(.+?)\"\\s*?(\".+?\")?.*");
         	
         	double javaVersion = Double.parseDouble(System.getProperty("java.version").substring(0, 3));
         	
@@ -227,17 +228,41 @@ public class LookAndFeelManager {
             		continue;
             	
             	Matcher m = p.matcher(line);
-            	            	
-            	if (!m.matches() || m.groupCount() != 3)
+            	
+            	if (!m.matches() || m.groupCount() < 3)
             		continue;
-            		
+            	            	
             	try {
             		
             		double javaVersionSupported =  Double.parseDouble(m.group(3));
             		
+            		// Check java version
             		if (javaVersionSupported > javaVersion)
             			continue;
+            		
+            		// Check platform
+            		if (m.groupCount() == 4) {
+            			String os = m.group(4);
             			
+            			if (os != null) {
+
+            				// Currently there is only the office and jgoodies L&F which is unique for Windows and Quaque for Mac.
+
+            				if (os.indexOf("Windows") != -1) {
+            					if (!SysUtil.isWindows())	            				
+            						continue;
+            				}
+            				else if (os.indexOf("Mac") != -1) {
+            					if (!SysUtil.isMac())	            				
+            						continue;
+            				}
+            				else if (os.indexOf("Linux") != -1) {
+            					if (!SysUtil.isLinux())	            				
+            						continue;
+            				}
+            			}
+            		}
+            		            		
 					UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(m.group(1), m.group(2)));
                 }
                 catch (SecurityException s) {
