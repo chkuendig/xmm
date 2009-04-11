@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -392,28 +393,29 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			enableSkinlf.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
 			lafGroup.add(enableSkinlf);
 
-			skinlfThemePackChooser = new JComboBox(skinlfThemePackList);
-			skinlfThemePackChooser.setSelectedItem(config.getSkinlfThemePack());
-			skinlfThemePackChooser.setEnabled(false);
-
-			String currentSkinlfThemePack = config.getSkinlfThemePack();
-
+			// Prettify the names by removing zip
 			for (int i = 0; i < skinlfThemePackList.length; i++) {
-				if (skinlfThemePackList[i].equals(currentSkinlfThemePack)) {
-					skinlfThemePackChooser.setSelectedItem(currentSkinlfThemePack);
-					break;
-				}
-				if (i == skinlfThemePackList.length-1)
-					skinlfThemePackChooser.setSelectedIndex(0);
+				skinlfThemePackList[i] = skinlfThemePackList[i].replace(".zip", "");
 			}
-
+			
+			Arrays.sort(skinlfThemePackList);
+			
+			skinlfThemePackChooser = new JComboBox(skinlfThemePackList);
+			skinlfThemePackChooser.setEnabled(false);
+						
+			String currentSkinlfThemePack = config.getSkinlfThemePack().replace(".zip", "");
+			skinlfThemePackChooser.setSelectedItem(currentSkinlfThemePack);
+			
+			if (skinlfThemePackChooser.getSelectedIndex() == -1)
+				skinlfThemePackChooser.setSelectedIndex(0);
+			
+			
 			JPanel skinlfPanel = new JPanel(new BorderLayout());
 			skinlfPanel.setBorder(BorderFactory.createEmptyBorder(4,20,4,20));
 
 			skinlfPanel.add(enableSkinlf, BorderLayout.WEST);
 			skinlfPanel.add(skinlfThemePackChooser, BorderLayout.EAST);
 
-			//layoutPanel.add(skinlfPanel);
 			lafChooserPanel.add(skinlfPanel);
 			skinlfThemePackChooser.addActionListener(this);
 			enableSkinlf.addActionListener(this);
@@ -1753,7 +1755,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	}
 
 	void setSkinlfLookAndFeel() {
-		String selectedItem = (String) skinlfThemePackChooser.getSelectedItem();
+		String selectedItem = (String) skinlfThemePackChooser.getSelectedItem() + ".zip";
 		String skinlfThemePackPath = config.getSkinlfThemePackDir() + selectedItem;
 
 		try {
