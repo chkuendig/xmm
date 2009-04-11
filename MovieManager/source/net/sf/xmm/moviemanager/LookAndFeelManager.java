@@ -72,35 +72,64 @@ public class LookAndFeelManager {
         try {
             config.numberOfLookAndFeels = installedLookAndFeels.length;
             
-            if (getSkinlfThemepackList() != null && config.getLookAndFeelType() == LookAndFeelType.SkinlfLaF) {
-                
-                /* Sets the themepack and then sets the skinlf look and feel */
-                Skin skin = SkinLookAndFeel.loadThemePack(config.getSkinlfThemePackDir()+ config.getSkinlfThemePack());
-                SkinLookAndFeel.setSkin(skin);
-                LookAndFeel laf = new SkinLookAndFeel();
-                UIManager.setLookAndFeel(laf);
-                UIManager.setLookAndFeel("com.l2fprod.gui.plaf.skin.SkinLookAndFeel");
-            }
+            boolean laFSet = false;
             
-          
-            if (config.getLookAndFeelType() == LookAndFeelType.CustomLaF) {
-                for (int i = 0; i < installedLookAndFeels.length; i++) {
-                    if (installedLookAndFeels[i].getName().equals(config.getLookAndFeelString())) {
-                        UIManager.setLookAndFeel(installedLookAndFeels[i].getClassName());
-                        break;
-                    }
-                }
-            }
-            
-            ExtendedTreeCellRenderer.setDefaultColors();
-            
-            SwingUtilities.invokeLater(new Runnable() {
-            	public void run() {
-            	 SwingUtilities.updateComponentTreeUI(MovieManager.getDialog());
+            if (config.getLookAndFeelType() == LookAndFeelType.CustomLaF && 
+            		!config.getLookAndFeelString().equals("Metal")) {
+
+            	for (int i = 0; i < installedLookAndFeels.length; i++) {
+            		if (installedLookAndFeels[i].getName().equals(config.getLookAndFeelString())) {
+            			UIManager.setLookAndFeel(installedLookAndFeels[i].getClassName());
+            			laFSet = true;
+            			break;
+            		}
             	}
-            });
-           
-            
+            }
+        
+
+            if (config.getLookAndFeelType() == LookAndFeelType.SkinlfLaF &&
+            		getSkinlfThemepackList() != null) {
+                
+            	File theme = new File(config.getSkinlfThemePackDir(), config.getSkinlfThemePack());
+            	
+            	// All the theme file names were changed (prettyfied). Handle if old theme name is loaded from config 
+            	if (!theme.isFile()) {
+            		 String newName = theme.getName();
+                     newName = newName.replace("themepack", "");
+                     
+                     char[] newNameArray = newName.toCharArray();
+                     newNameArray[0] = Character.toUpperCase(newNameArray[0]);
+                     theme = new File(theme.getParentFile(), new String(newNameArray));
+            	}
+            	
+            	if (theme.isFile()) {
+            		/* Sets the themepack and then sets the skinlf look and feel */
+            		Skin skin = SkinLookAndFeel.loadThemePack(theme.getAbsolutePath());
+            		SkinLookAndFeel.setSkin(skin);
+            		LookAndFeel laf = new SkinLookAndFeel();
+            		UIManager.setLookAndFeel(laf);
+            		laFSet = true;
+            	}
+            	else {
+            		log.debug("SkinLf theme file not found:" + theme);
+            		log.debug("Default Look & Feel is used.");
+            		
+            		config.setLookAndFeelType(LookAndFeelType.CustomLaF);
+            		config.setLookAndFeelString("Metal");
+            	}
+            }
+
+
+            ExtendedTreeCellRenderer.setDefaultColors();
+
+            if (laFSet) {
+            	SwingUtilities.invokeLater(new Runnable() {
+            		public void run() {
+            			SwingUtilities.updateComponentTreeUI(MovieManager.getDialog());
+            		}
+            	});
+            }
+
         } catch (Exception e) {
             log.error("Exception: " + e.getMessage());
             e.printStackTrace();
@@ -122,34 +151,18 @@ public class LookAndFeelManager {
                 config.setSkinlfThemePackDir(SysUtil.getUserDir() + dirSep + "lib/LookAndFeels" + dirSep + "Skinlf_Theme_Packs" + dirSep);
                 dir = new File(config.getSkinlfThemePackDir());
                 
-                if (!dir.exists() && !MovieManager.isMacAppBundle()) {
-                    dir.mkdirs();
-                    
-                    String text = "Here you can add new Skinlf themes."+ SysUtil.getLineSeparator()+
-                    "Simply put the .zip files into the 'Skinlf Theme Packs' directory.";
-                    
-                    File skinlf = null;
-                    
-                    skinlf = new File(config.getSkinlfThemePackDir() + "Skinlf.txt");
-                    
-                    if (skinlf.createNewFile()) {
-                        
-                        /* Writes the skinlf textfile. */
-                        FileOutputStream stream = new FileOutputStream(skinlf);
-                        for (int i = 0; i < text.length(); i++) {
-                            stream.write(text.charAt(i));
-                        }
-                        stream.close();
-                    }
-                    return null;
+                if (!dir.exists()) {
+                	return null;
                 }
-                
+                File [] listFiles = dir.listFiles();
                 String [] list = dir.list();
                 ArrayList themePackList = new ArrayList();
-                if(list != null) {
+                
+                if (list != null) {
                     for (int i = 0; i < list.length; i++) {
-                        if (list[i].endsWith(".zip"))
+                        if (list[i].endsWith(".zip")) {
                             themePackList.add(list[i]);
+                        }
                     }
                 }
                 if (themePackList.size() == 0)
@@ -166,60 +179,6 @@ public class LookAndFeelManager {
         return null;
     }
     
-    
-    
-    public static String [] getOyoahaThemepackList() {
-        
-        try {
-            MovieManagerConfig config = MovieManager.getConfig();
-            
-            if (!MovieManager.isApplet()) {
-            	            	
-            	String dirSep = SysUtil.getDirSeparator();
-                config.setOyoahaThemePackDir(SysUtil.getUserDir() + dirSep + "lib/LookAndFeels" + dirSep + "Oyoaha_Theme_Packs" + dirSep);
-                File dir = new File(config.getOyoahaThemePackDir());
-                
-                ArrayList themePackList = new ArrayList();
-                themePackList.add("Default Theme");
-                
-                if (!dir.exists()) {
-                    dir.mkdir();
-                    
-                    String text = "Here you can add new Oyoaha themes."+ SysUtil.getLineSeparator()+
-                    "Simply put the .zotm files into the 'Oyoaha Theme Packs' directory.";
-                    
-                    File oyoaha = null;
-                    
-                    oyoaha = new File(config.getOyoahaThemePackDir() + "Oyoaha.txt");
-                    
-                    if (oyoaha.mkdirs() && oyoaha.createNewFile()) {
-                        /* Writes the oyoaha textfile. */
-                        FileOutputStream stream = new FileOutputStream(oyoaha);
-                        for (int i=0; i < text.length(); i++) {
-                            stream.write(text.charAt(i));
-                        }
-                        stream.close();
-                    }
-                }
-                else {
-                    String [] list = dir.list();
-                    
-                    for (int i = 0; i < list.length; i++) {
-                        if (list[i].endsWith(".zotm"))
-                            themePackList.add(list[i]);
-                    }
-                }
-                
-                String [] tempList = new String[themePackList.toArray().length];
-                tempList = (String[]) themePackList.toArray(tempList);
-                
-                return tempList;
-            }
-        } catch (Exception e) {
-            log.error("", e);
-        }
-        return null;
-    }
     
     
     protected static void instalLAFs() {
