@@ -633,12 +633,6 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
 						if (database.isInitialized()) {
 
-							//MovieManager.getConfig().setCurrentList("Show All"); //$NON-NLS-1$
-
-							// Clear list of lists
-							MovieManager.getConfig().setCurrentLists(new ArrayList());
-							MovieManager.getConfig().setShowUnlistedEntries(true);	
-							
 							/* Loads the database... */
 							updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.retrieving-movie-list")); //$NON-NLS-1$
 							MovieManager.getIt().setDatabase(database, true);
@@ -955,8 +949,6 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
     public static void showDatabaseMessage(Window parent, Database _database, String msg) {
 
-    	
-    	
     	String title = ""; //$NON-NLS-1$
 
     	String message = _database.getErrorMessage();
@@ -970,7 +962,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     	if (message == null) {
     		message = ""; //$NON-NLS-1$
     	}
-
+    	
     	if (message.indexOf("Failed to connect to database") != -1 && _database.isMySQL()) { //$NON-NLS-1$
     		message = Localizer.getString("DialogDatabase.mysql.message.failed-to-connect"); //$NON-NLS-1$
 
@@ -1014,7 +1006,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     	}
     	else if (message.equals("org.hsqldb.jdbcDriver")) { //$NON-NLS-1$
     		title = Localizer.getString("DialogDatabase.mysql.title.failed-to-load-hsql-driver"); //$NON-NLS-1$
-    		message = "<html> The HSQL database driver should be placed in the \"lib/drivers\" directory <br> or in any other directory included in the classpath</html>"; //$NON-NLS-1$
+    		message = "<html> The HSQL database driver should be placed in the \"lib/drivers\" directory.</html>"; //$NON-NLS-1$
     	}
     	else if (message.equals("The database is already in use by another process")) { //$NON-NLS-1$
     		message = "<html>The database is already in use by another process.</html>"; //$NON-NLS-1$
@@ -1029,7 +1021,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     		message = "<html> Table creation was denied. <br>" + message; //$NON-NLS-1$
     	}
 
-    	if (message.equals("Connection reset")) { //$NON-NLS-1$
+    	else if (message.equals("Connection reset")) { //$NON-NLS-1$
 
     		MovieManager.getDialog().getAppMenuBar().setDatabaseComponentsEnable(false);
 
@@ -1067,12 +1059,11 @@ public class DialogDatabase extends JDialog implements ActionListener {
     			}
     		}
     	}
-
-    	if (message.equals("MySQL server is out of space")) { //$NON-NLS-1$
+    	else if (message.equals("MySQL server is out of space")) { //$NON-NLS-1$
     		title = Localizer.getString("DialogDatabase.alert.mysql.title.server-out-of-space"); //$NON-NLS-1$
     		message = Localizer.getString("DialogDatabase.alert.mysql.message.server-out-of-space"); //$NON-NLS-1$
     	}
-
+    	
     	if (!message.equals("")) { //$NON-NLS-1$
 
     		String msg2 = ""; //$NON-NLS-1$
