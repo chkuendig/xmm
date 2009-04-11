@@ -185,6 +185,8 @@ public class LookAndFeelManager {
         
         try {
         	           
+        	log.debug("Installing Look & Feels.");
+        	
         	File lookAndFeel;
         	
         	if (!MovieManager.isMacAppBundle()) {
@@ -200,7 +202,6 @@ public class LookAndFeelManager {
         	}
         	
         	BufferedReader reader = new BufferedReader(new FileReader(lookAndFeel));
-        	//Pattern p = Pattern.compile("\"(.+?)\"\\s+?\"(.+?)\".*");
         	Pattern p = Pattern.compile("\"(.+?)\"\\s+?\"(.+?)\"\\s+?\"(.+?)\"\\s*(?:\"(.+?)\")?.*");
         	//Pattern p = Pattern.compile("\"(.+?)\"\\s+?\"(.+?)\"\\s+?\"(.+?)\"\\s*?(\".+?\")?.*");
         	
@@ -262,8 +263,15 @@ public class LookAndFeelManager {
             				}
             			}
             		}
-            		            		
-					UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(m.group(1), m.group(2)));
+           		
+            		try {
+						Class.forName(m.group(2));
+						UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(m.group(1), m.group(2)));
+					} catch (ClassNotFoundException e) {
+						log.warn("Failed to locate L&F class " + m.group(2));
+					} catch(Exception e) {
+						log.warn("Exception:" + e .getMessage());
+					}										
                 }
                 catch (SecurityException s) {
                     log.error("SecurityException: "+ s);
