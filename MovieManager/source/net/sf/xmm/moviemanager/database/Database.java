@@ -349,9 +349,16 @@ abstract public class Database {
 			return;
 		}
 
+		System.err.println("message:" + message);
+		
 		if (message.indexOf("Access denied") != -1) {
 			errorMessage = message;
 			MovieManager.getIt().processDatabaseError(this);
+		} 
+		else if (message.indexOf("Connection refused: connect") != -1) {
+			errorMessage = "Connection refused: connect";
+			// This error happens only on connect and is checked for when connecting
+		//	MovieManager.getIt().processDatabaseError(this);
 		}
 		else if (message.indexOf("Connection reset") != -1) {
 			errorMessage = "Connection reset";
@@ -402,8 +409,7 @@ abstract public class Database {
 		}
 		else if (!message.equals(""))
 			MovieManager.getIt().processDatabaseError(this);
-
-
+		
 	}
 
 
