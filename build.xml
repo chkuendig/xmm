@@ -470,75 +470,80 @@
 	</target>
 
 
-
-
 	<target name="makeLookAndFeelIni"
 		description="Creates a lookAndFeels.ini file used in the distribution packages.">
 
 		<echo file="${dist}/lookAndFeels.ini" append="false">
 Here you can add new Look and Feels's.
-Make sure the look and Feel jar-file is placed in the 'LookAndFeels'
-directory
+Make sure the look and Feel jar-file is placed in the 'LookAndFeels' directory 
 and that the correct class is given below.
 The name and classname must be enclosed in quotes.
 The names may be set to whatever fit your needs.
 
-Example:
+# Name                                   Class name                                                         Java version  System
 
-"Metal look and feel" "javax.swing.plaf.metal.MetalLookAndFeel"
-"Windows look and feel" "com.sun.java.swing.plaf.windows.WindowsLookAndFeel"
+"Liquid"                                 "com.birosoft.liquid.LiquidLookAndFeel"                                "1.5"      
 
-The metal and windows look and feels are preinstalled.
-Define the look and feels below:
-#
+"JTattoo - Acryl"                        "com.jtattoo.plaf.acryl.AcrylLookAndFeel"                              "1.4"    
+"JTattoo - Aero"                         "com.jtattoo.plaf.aero.AeroLookAndFeel"                                "1.4"    
+"JTattoo - Aluminium"                    "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel"                      "1.4"    
+"JTattoo - Bernstein"                    "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel"                      "1.4"    
+"JTattoo - Fast"                         "com.jtattoo.plaf.fast.FastLookAndFeel"                                "1.4"    
+"JTattoo - HiFi"                         "com.jtattoo.plaf.hifi.HiFiLookAndFeel"                                "1.4"    
+"JTattoo - McWin"                        "com.jtattoo.plaf.mcwin.McWinLookAndFeel"                              "1.4"    
+"JTattoo - Mint"                         "com.jtattoo.plaf.mint.MintLookAndFeel"                                "1.4"    
+"JTattoo - Noire"                        "com.jtattoo.plaf.noire.NoireLookAndFeel"                              "1.4"    
+"JTattoo - Smart"                        "com.jtattoo.plaf.smart.SmartLookAndFeel"                              "1.4"   
+"JTattoo - Luna"                         "com.jtattoo.plaf.luna.LunaLookAndFeel"                                "1.4"    
 
-"Kunststoff"                       "com.incors.plaf.kunststoff.KunststoffLookAndFeel"                "1.4"
+"Substance - Autumn"                     "org.jvnet.substance.skin.SubstanceAutumnLookAndFeel"                  "1.6"
+"Substance - Business Black Steel"       "org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel"      "1.6"
+"Substance - Business Blue Steel"        "org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel"       "1.6"
+"Substance - Business"                   "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel"                "1.6"
+"Substance - Challenger Deep"            "org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel"          "1.6"
+"Substance - CremeCoffee"                "org.jvnet.substance.skin.SubstanceCremeCoffeeLookAndFeel"             "1.6"
+"Substance - Creme"                      "org.jvnet.substance.skin.SubstanceCremeLookAndFeel"                   "1.6"
+"Substance - EmeraldDusk"                "org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel"             "1.6"
+"Substance - Magma"                      "org.jvnet.substance.skin.SubstanceMagmaLookAndFeel"                   "1.6"
+"Substance - MistAqua"                   "org.jvnet.substance.skin.SubstanceMistAquaLookAndFeel"                "1.6"
+"Substance - MistSilver"                 "org.jvnet.substance.skin.SubstanceMistSilverLookAndFeel"              "1.6"
+"Substance - Moderate"                   "org.jvnet.substance.skin.SubstanceModerateLookAndFeel"                "1.6"
+"Substance - NebulaBrickWall"            "org.jvnet.substance.skin.SubstanceNebulaBrickWallLookAndFeel"         "1.6"
+"Substance - Nebula"                     "org.jvnet.substance.skin.SubstanceNebulaLookAndFeel"                  "1.6"
+"Substance - Office Blue 2007"           "org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel"          "1.6"
+"Substance - OfficeSilver2007"           "org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel"        "1.6"
+"Substance - Raven Graphite Glass"       "org.jvnet.substance.skin.SubstanceRavenGraphiteGlassLookAndFeel"      "1.6"
+"Substance - Raven Graphite"             "org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel"           "1.6"
+"Substance - Raven"                      "org.jvnet.substance.skin.SubstanceRavenLookAndFeel"                   "1.6"
+"Substance - Sahara"                     "org.jvnet.substance.skin.SubstanceSaharaLookAndFeel"                  "1.6"
 
-"JTattoo - Acryl"                  "com.jtattoo.plaf.acryl.AcrylLookAndFeel"                         "1.4"
-"JTattoo - Aero"                   "com.jtattoo.plaf.aero.AeroLookAndFeel"                           "1.4"
-"JTattoo - Aluminium"              "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel"                 "1.4"
-"JTattoo - Bernstein"              "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel"                 "1.4"
-"JTattoo - Fast"                   "com.jtattoo.plaf.fast.FastLookAndFeel"                           "1.4"
-"JTattoo - HiFi"                   "com.jtattoo.plaf.hifi.HiFiLookAndFeel"                           "1.4"
-"JTattoo - McWin"                  "com.jtattoo.plaf.mcwin.McWinLookAndFeel"                         "1.4"
-"JTattoo - Mint"                   "com.jtattoo.plaf.mint.MintLookAndFeel"                           "1.4"
-"JTattoo - Noire"                  "com.jtattoo.plaf.noire.NoireLookAndFeel"                         "1.4"
-"JTattoo - Smart"                  "com.jtattoo.plaf.smart.SmartLookAndFeel"                         "1.4"
-"JTattoo - Luna"                   "com.jtattoo.plaf.luna.LunaLookAndFeel"                           "1.4"
+"Synthetica Default"                     "de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel"            "1.5"
+"Synthetica BlackStar"                   "de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel"           "1.5"
+"Synthetica BlueSteel"                   "de.javasoft.plaf.synthetica.SyntheticaBlueSteelLookAndFeel"           "1.5"
+"Synthetica BlackMoon"                   "de.javasoft.plaf.synthetica.SyntheticaBlackMoonLookAndFeel"           "1.5"
+"Synthetica BlueMoon"                    "de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel"            "1.5"
+"Synthetica SilverMoon"                  "de.javasoft.plaf.synthetica.SyntheticaSilverMoonLookAndFeel"          "1.5"
+"Synthetica BlueIce"                     "de.javasoft.plaf.synthetica.SyntheticaBlueIceLookAndFeel"             "1.5"
+"Synthetica GreenDream"                  "de.javasoft.plaf.synthetica.SyntheticaGreenDreamLookAndFeel"          "1.5"
 
-"Pagosoft"                         "com.pagosoft.plaf.PgsLookAndFeel"                                "1.4"
-"Compiere"                         "org.compiere.plaf.CompiereLookAndFeel"                           "1.5"
-"Squareness"                       "net.beeger.squareness.SquarenessLookAndFeel"                     "1.4"
-"InfoNode"                         "net.infonode.gui.laf.InfoNodeLookAndFeel"                        "1.4"
-"Lipstik"                          "com.lipstikLF.LipstikLookAndFeel"                                "1.5"
+"Kunststoff"                             "com.incors.plaf.kunststoff.KunststoffLookAndFeel"                     "1.4"    
 
-"Jgoodies windows"                 "com.jgoodies.looks.windows.WindowsLookAndFeel"                   "1.4"
-"Jgoodies Plastic"                 "com.jgoodies.looks.plastic.PlasticLookAndFeel"                   "1.4"
-"Jgoodies Plastic 3D"              "com.jgoodies.looks.plastic.Plastic3DLookAndFeel"                 "1.4"
-"Jgoodies PlasticXP"               "com.jgoodies.looks.plastic.PlasticXPLookAndFeel"                 "1.4"
+"Jgoodies windows"                       "com.jgoodies.looks.windows.WindowsLookAndFeel"                        "1.4"     "Windows"
+"Jgoodies Plastic"                       "com.jgoodies.looks.plastic.PlasticLookAndFeel"                        "1.4"    
+"Jgoodies Plastic 3D"                    "com.jgoodies.looks.plastic.Plastic3DLookAndFeel"                      "1.4"    
+"Jgoodies PlasticXP"                     "com.jgoodies.looks.plastic.PlasticXPLookAndFeel"                      "1.4"    
 
-"Office 2003"                      "org.fife.plaf.Office2003.Office2003LookAndFeel"                  "1.4" 
-"Office XP"                        "org.fife.plaf.OfficeXP.OfficeXPLookAndFeel"                      "1.4"
-"Office VisualStudio 2005"         "org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel"      "1.4"
+"Office 2003"                            "org.fife.plaf.Office2003.Office2003LookAndFeel"                       "1.4"     "Windows"  
+"Office XP"                              "org.fife.plaf.OfficeXP.OfficeXPLookAndFeel"                           "1.4"     "Windows"    
+"Office VisualStudio 2005"               "org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel"           "1.4"     "Windows"  
 
-"Substance - Default"              "org.jvnet.substance.SubstanceLookAndFeel"                        "1.5"
-"Substance - Autumn"               "org.jvnet.substance.skin.SubstanceAutumnLookAndFeel"             "1.5"
-"Substance - Business Black Steel" "org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel" "1.5"
-"Substance - Business Blue Steel"  "org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel"  "1.5"
-"Substance - Business"             "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel"           "1.5"
-"Substance - Challenger Deep"      "org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel"     "1.5"
-"Substance - Creme"                "org.jvnet.substance.skin.SubstanceCremeLookAndFeel"              "1.5"
-"Substance - EmeraldDusk"          "org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel"        "1.5"
-"Substance - Field Of Wheat"       "org.jvnet.substance.skin.SubstanceFieldOfWheatLookAndFeel"       "1.5"
-"Substance - Green Magic"          "org.jvnet.substance.skin.SubstanceGreenMagicLookAndFeel"         "1.5"
-"Substance - Magma"                "org.jvnet.substance.skin.SubstanceMagmaLookAndFeel"              "1.5"
-"Substance - Mango"                "org.jvnet.substance.skin.SubstanceMangoLookAndFeel"              "1.5"
-"Substance - Office Blue 2007"     "org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel"     "1.5"
-"Substance - OfficeSilver2007"     "org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel"   "1.5"
-"Substance - Raven Graphite"       "org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel"      "1.5"
-"Substance - Raven"                "org.jvnet.substance.skin.SubstanceRavenLookAndFeel"              "1.5"
-"Substance - Sahara"               "org.jvnet.substance.skin.SubstanceSaharaLookAndFeel"             "1.5"
-
+"Pagosoft"                               "com.pagosoft.plaf.PgsLookAndFeel"                                     "1.4"   
+"InfoNode"                               "net.infonode.gui.laf.InfoNodeLookAndFeel"                             "1.4"   
+"Compiere"                               "org.compiere.plaf.CompiereLookAndFeel"                                "1.5"    
+"Squareness"                             "net.beeger.squareness.SquarenessLookAndFeel"                          "1.4"    
+"Lipstik"                                "com.lipstikLF.LipstikLookAndFeel"                                     "1.5"   
+"eaSynth"                                "com.easynth.lookandfeel.EaSynthLookAndFeel"                           "1.5"
+"NimROD"                                 "com.nilo.plaf.nimrod.NimRODLookAndFeel"                               "1.5"
 </echo>
 
 	</target>
