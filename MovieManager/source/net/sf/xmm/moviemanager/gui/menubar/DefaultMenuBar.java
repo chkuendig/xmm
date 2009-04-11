@@ -804,9 +804,8 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 
 
 	/**
-	 * Sets enabled/disabled the related database components.
+	 * Wrapper method for calling setDatabaseComponentsEnable(boolean, boolean) method on the EDT
 	 **/
-
 	public void setDatabaseComponentsEnable(final boolean enable) {
 		SwingUtilities.invokeLater(new Runnable() {
         	public void run() {
@@ -815,11 +814,12 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
         });
 	}
 	
-	// Created wrapper method for calling this method on the EDT
+	
+	/**
+	 * Sets enabled/disabled the related database components.
+	 **/
 	private void setDatabaseComponentsEnable(boolean enable, boolean notUsed) {
 	
-		System.err.println("setDatabaseComponentsEnable");
-		
 		if (menuItemClose != null)
 			menuItemClose.setEnabled(enable);
 
