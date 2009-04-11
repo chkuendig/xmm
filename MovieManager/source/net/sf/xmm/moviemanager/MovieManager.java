@@ -626,7 +626,7 @@ public class MovieManager {
             
             dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(false);
             
-            DialogAlert alert = new DialogAlert(getDialog(), "Server shutdown in progress", "<html>MySQL server is shutting down."); //$NON-NLS-1$
+            DialogAlert alert = new DialogAlert(getDialog(), "Server shutdown in progress", "<html>MySQL server is shutting down.</html>"); //$NON-NLS-1$
             GUIUtil.showAndWait(alert, true);
             
             database = null;
@@ -658,6 +658,9 @@ public class MovieManager {
             		setDatabase(new DatabaseMySQL(database.getPath()), false);
             	}
             }
+        }	
+        else if (error.equals("Connection refused: connect")) {
+        	//Should be handled by DialogDatabase
         }
         else if (error.equals("Socket Write Error")) {
         	
@@ -677,7 +680,6 @@ public class MovieManager {
         	DialogAlert alert = new DialogAlert(dialogMovieManager, "Unknown Host", "<html>The host could not be found.</html>"); //$NON-NLS-1$ //$NON-NLS-2$
             GUIUtil.showAndWait(alert, true);
         }   
-        
         else if (error.equals("Communications link failure")) {
         	
         	dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(false);
@@ -901,6 +903,8 @@ public class MovieManager {
 
     		public void run() { 
 	
+    			Thread.currentThread().setPriority(MIN_PRIORITY);
+    			
     			try {
     				String buf = new HttpUtil(getConfig().getHttpSettings()).readDataToStringBuffer(new URL("http://xmm.sourceforge.net/LatestVersion.txt")).toString();
 
@@ -935,6 +939,8 @@ public class MovieManager {
     			} catch (Exception e) {
     				log.warn("CheckForProgramUpdates aborted:" + e.getMessage());
     			}
+    			
+    			log.debug("handleVersionUpdate finished.");
     		}
     	};
     	t.start();
@@ -1318,11 +1324,7 @@ public class MovieManager {
 		
 		movieManager = new MovieManager();
 		movieManager.sandbox = sandbox;
-				
-		log.debug("MovieManager object initialized.");
-				
-		
-		
+						
 		/* Installs the Look&Feels */
 		LookAndFeelManager.instalLAFs();
 
