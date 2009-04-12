@@ -39,40 +39,47 @@ public class MovieManagerCommandExit implements ActionListener {
      **/
 	public static void execute() {
 
-		// If any notes have been changed, they will be saved before exiting
-		MovieManagerCommandSaveChangedNotes.execute();
+		try {
+
+			// If any notes have been changed, they will be saved before exiting
+			MovieManagerCommandSaveChangedNotes.execute();
+
+			log.debug("Shutting down...");
+
+			// Gets config from toolbar
+			MovieManager.getConfig().setDisplayPlayButton(MovieManager.getDialog().getPLayButtonVisible());
+			MovieManager.getConfig().setDisplayPrintButton(MovieManager.getDialog().getPrintButtonVisible());
+
+			// Saving config file
+			MovieManager.getConfig().saveConfig();
+
+			/* Finalizes the main frame... */
+			try {
+				MovieManager.getDialog().finalize();
+			} catch (Exception e) {
+				log.debug("MovieManager.getDialog().finalize() produced errors.");
+			}
+
+			Database db = MovieManager.getIt().getDatabase();
+			String type = "";
+
+			long time = System.currentTimeMillis();
+
+			if (db != null) {
+				/* Finalizing database... */
+				db.finalizeDatabase();
+
+				type = db.getDatabaseType();
+			}
+
+			log.debug("Finalized " + type + " database in " + (System.currentTimeMillis() - time) + " ms.");
+
+			/* Writes the date. */
+			log.debug("Log End: "+new Date(System.currentTimeMillis()) + SysUtil.getLineSeparator());
 			
-		log.debug("Shutting down...");
-
-		/* Finalizes the main frame... */
-		MovieManager.getDialog().finalize();
-
-		
-		// Gets config from toolbar
-		MovieManager.getConfig().setDisplayPlayButton(MovieManager.getDialog().getPLayButtonVisible());
-		MovieManager.getConfig().setDisplayPrintButton(MovieManager.getDialog().getPrintButtonVisible());
-		
-		// Saving config file
-		MovieManager.getConfig().saveConfig();
-		
-		Database db = MovieManager.getIt().getDatabase();
-		String type = "";
-
-		long time = System.currentTimeMillis();
-		
-		if (db != null) {
-			/* Finalizing database... */
-			db.finalizeDatabase();
-
-			type = db.getDatabaseType();
+		} finally {
+			MovieManager.exit();
 		}
-
-		log.debug("Finalized " + type + " database in " + (System.currentTimeMillis() - time) + " ms.");
-
-		/* Writes the date. */
-		log.debug("Log End: "+new Date(System.currentTimeMillis()) + SysUtil.getLineSeparator());
-
-		MovieManager.exit();
 	}
 
 	/**
