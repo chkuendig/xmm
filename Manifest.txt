@@ -2,10 +2,8 @@ Main-Class: net.sf.xmm.moviemanager.MovieManager
 Class-Path: lib/drivers/hsqldb-1.7.3.3.jar
   lib/drivers/mysql-connector-java-3.1.12-bin.jar
   lib/LookAndFeels/skinlf.jar
-  lib/LookAndFeels/oalnf.jar
   lib/BrowserLauncher2-10rc4.jar
   lib/jxl.jar
-  lib/driveinfo/sfc.jar
   lib/JNative.jar
   lib/retroweaver-all-2.0.jar
   lib/useful.jar
@@ -27,7 +25,7 @@ Class-Path: lib/drivers/hsqldb-1.7.3.3.jar
   lib/gettext-commons-0.9.jar
   lib/ostermillerutils_1_05_00_for_java_1_4.jar
   lib/mac/AppleJavaExtensions.jar
-  lib/mac/quaqua-filechooser-only.jar
+  lib/mac/quaqua.jar
   lib/cobra/cobra-0.98.2.jar
   lib/cobra/js.jar
 
