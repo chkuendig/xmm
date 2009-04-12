@@ -30,7 +30,7 @@ System Requirements:
 ~~~~~~~~~~~~~~~~~~~~~
 
 1.  Microsoft Windows / GNU+Linux / OS X
-2.  Java Runtime Environment 1.4.2 or latter.
+2.  Java Runtime Environment 1.5 or latter.
     Download @ http://java.com
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
