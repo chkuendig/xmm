@@ -69,6 +69,9 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 	
 	public static Dimension separatorDim = new Dimension(4, 0);
 
+	boolean lookAndFeelMode = false;
+	int lookAndFeelExtraWidth = 20;
+	
 	private int toolBarWidth = 0;
 	private int toolBarHeight = 55;
 
@@ -214,6 +217,10 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 		try {
 			dim.width = toolBarWidth;
 			dim.height = toolBarHeight;
+			
+			if (lookAndFeelMode)
+				dim.width += lookAndFeelExtraWidth;
+			
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
 		}
@@ -227,17 +234,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 	}
 
 	public Dimension getMinimumSize() {
-
-		Dimension dim = new Dimension();
-			
-		try {
-			dim.width = toolBarWidth;
-			dim.height = toolBarHeight;
-		} catch (Exception e) {
-			log.error("Exception:" + e.getMessage(), e);
-		}
-		
-		return dim;
+		return getPreferredSize();
 	}
 
 	
@@ -578,7 +575,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 			if (!MovieManager.getConfig().getInternalConfig().isEntriesCountDisabled()) {
 				addSeparator(new Dimension(20, 3));
 				add(panelEntries);
-				//toolBarWidth += 10;
+				toolBarWidth -= 10;
 			}
 		
 		} catch (Exception e) {
@@ -694,6 +691,8 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 
     public void updateToolButtonBorderToCurrentLaf() {
 
+    	lookAndFeelMode = true;
+    	
     	getAddButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,15,3,15), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
     	getRemoveButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,15,3,15), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
     	getEditButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,13,3,13), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
@@ -701,7 +700,6 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 
     	buttonPlay.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,13,3,13), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
     	buttonPrint.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,13,3,13), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-
 
     	Dimension dim = new Dimension(45, 45);
 
@@ -723,7 +721,9 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 
     }
 
-   public void updateToolButtonBorderToRegular() {
+    public void updateToolButtonBorderToRegular() {
+
+    	lookAndFeelMode = false;
 
     	setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,0), BorderFactory.createEmptyBorder(0,0,0,0)));
 
