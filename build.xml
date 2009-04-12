@@ -208,10 +208,7 @@
 		depends="compile, makejar">
 
 		<mkdir dir="${dist}" />
-		<delete includeemptydirs="true">
-			<fileset dir="${dist}" includes="**/*" />
-		</delete>
-
+		
 		<antcall target="makeLookAndFeelIni" />
 		<antcall target="makeLog4jProperties" />
 
