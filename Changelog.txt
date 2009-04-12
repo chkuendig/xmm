@@ -16,6 +16,7 @@ Version 2.8.0 (12-apr-2009)
   - The lists each entry is connected to is now shown in the popup when right clicking the list entry.
   - Drag and Drop of media files has been added to the movie list and additional info in main window.
   - This version should work better with some Look & Feels, and a few more are included.
+  - Config file and log file is no longer written to the application directory on Windows Vista, and should now work a lot better on that OS.
 
 - Bug fixes:
 
