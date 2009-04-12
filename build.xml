@@ -167,7 +167,7 @@
 
 	<target name="compile" description="Compiles code, output goes to the build dir.">
 		<javac srcdir="MovieManager/source" classpathref="project.classpath"
-			destdir="${build}" source="1.4" target="1.4">
+			destdir="${build}" source="1.5" target="1.5">
 		</javac>
 	</target>
 
