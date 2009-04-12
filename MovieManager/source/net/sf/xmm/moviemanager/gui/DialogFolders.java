@@ -291,7 +291,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         textFieldConfigLocation = new JTextField(30);
         
         try {
-			textFieldConfigLocation.setText(SysUtil.getConfigDir().getAbsolutePath() + "/");
+			textFieldConfigLocation.setText(SysUtil.getConfigDir().getAbsolutePath() + SysUtil.getDirSeparator());
 		} catch (Exception e) {
 			log.warn("Exception:" + e.getMessage(), e);
 		}
