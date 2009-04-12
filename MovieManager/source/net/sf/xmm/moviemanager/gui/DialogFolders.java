@@ -90,6 +90,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     private JTextField textFieldQueries;
     private JTextField textFieldLoadDatabase;
     private JTextField textFieldDatabase;
+    private JTextField textFieldConfigLocation;
     
     private Color invalidPathColor = new Color(233, 180, 180);
     
@@ -274,6 +275,34 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         constraints.insets = new Insets(5,5,5,5);
         constraints.anchor = GridBagConstraints.WEST;
         panelFolders.add(setPermanentDatabase, constraints);
+        
+        
+        /* Config location */
+        
+        JLabel labelConfigLocation = new JLabel("Config location"); //$NON-NLS-1$
+        labelConfigLocation.setFont(new Font(labelConfigLocation.getFont().getName(),Font.PLAIN, labelConfigLocation.getFont().getSize()));
+        constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = 5;
+        constraints.insets = new Insets(5,5,5,5);
+        constraints.anchor = GridBagConstraints.WEST;
+        panelFolders.add(labelConfigLocation, constraints);
+        
+        textFieldConfigLocation = new JTextField(30);
+        
+        try {
+			textFieldConfigLocation.setText(SysUtil.getConfigDir().getAbsolutePath() + "/");
+		} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
+		}
+        
+        textFieldConfigLocation.setEditable(false);
+        constraints = new GridBagConstraints();
+        constraints.gridx = 1;
+        constraints.gridy = 5;
+        constraints.insets = new Insets(5,5,5,5);
+        panelFolders.add(textFieldConfigLocation, constraints);
+             
         
         
         /* All stuff together... */
