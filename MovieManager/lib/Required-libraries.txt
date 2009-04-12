@@ -15,12 +15,10 @@ commons-logging-1.1.jar			- Logging library required by other libraries (castor,
 jxl.jar							- Java excel driver
 log4j-1.2.13.jar				- Java logging library
 
-oalnf.jar						- Oyoaha L&F
 skinlf.jar						- Skin L&F
 
 TableLayout.jar					- Free layout manager
 useful.jar						- Java library with Swing Tree classes extension
-
 
 JNative.jar						- Simple JNI library
 JNative.dll						- Requiered windows libarary for JNative
@@ -32,7 +30,7 @@ ostermillerutils_1_05_00_for_java_1_4.jar - CSV library
 
 AppleJavaExtensions.jar			- Needed for Mac OS X adaption.
 libquaqua.jnilib				- Needed for Quaqua L&F
-quaqua-filechooser-only.jar		- Needed for Quaqua L&F
+quaqua.jar		                - Needed for Quaqua L&F
 
 jasperreports-3.0.0.jar			- Report creation utility
 itext-1.4.5.jar					- Needed for jasperreports
@@ -42,7 +40,6 @@ commons-codec-1.3.jar			- Needed for jasperreports
 commons-collections-3.2.jar		- Needed for jasperreports
 commons-digester-1.7.jar		- Needed for jasperreports
 
-sfc.jar							- DriveInfo
  
 In applet mode, these are the only required libraries:
 
