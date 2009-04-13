@@ -249,12 +249,6 @@ public class MovieManager {
     }
     
  
-
-    public void setMovieListHighlightEntireRow(boolean movieListHighlightEntireRow) {
-    	config.setMovieListHighlightEntireRow(movieListHighlightEntireRow);
-    }
-
-
     public ModelDatabaseSearch getFilterOptions() {
     	return getFilterOptions(getDatabase());
     }
