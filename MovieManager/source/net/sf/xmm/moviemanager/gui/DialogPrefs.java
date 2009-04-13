@@ -362,7 +362,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		enableLafChooser.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
 		lafGroup.add(enableLafChooser);
 
-		String currentLookAndFeel = config.getLookAndFeelString();
+		String currentLookAndFeel = config.getCustomLookAndFeel();
 
 		lafChooser.setSelectedItem(currentLookAndFeel);
 		lafChooser.setEnabled(false);
@@ -1738,7 +1738,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			log.error("Exception:" + e.getMessage(), e); //$NON-NLS-1$
 
 			String lafName = (String) lafChooser.getSelectedItem();
-			lafChooser.setSelectedItem(config.getLookAndFeelString());
+			lafChooser.setSelectedItem(config.getCustomLookAndFeel());
 
 			/* Calls itself recursively to restore the old look and feel */
 			if (counter < 1) {
@@ -1750,7 +1750,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			}
 			return;
 		}
-		config.setLookAndFeelString(selectedItem);
+		config.setCustomLookAndFeel(selectedItem);
 		//MovieManager.getIt().addSplitPaneMouseListeners();
 	}
 

@@ -1565,11 +1565,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		return numberOfLookAndFeels;
 	}
 
-	public String getLookAndFeelString() {
+	public String getCustomLookAndFeel() {
 		return lookAndFeel;
 	}
 
-	public void setLookAndFeelString(String lookAndFeel) {
+	public void setCustomLookAndFeel(String lookAndFeel) {
 		this.lookAndFeel = lookAndFeel;
 	}
 
@@ -2215,7 +2215,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("lookAndFeel:");
 
 			if (value != null) {
-				setLookAndFeelString(value);
+				setCustomLookAndFeel(value);
 			}
 
 
@@ -3148,7 +3148,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("databasePathPermanent:" + getDatabasePathPermanent());
 
 		 settings.append(lineSeparator);
-		 settings.append("lookAndFeel:" + getLookAndFeelString());
+		 settings.append("lookAndFeel:" + getCustomLookAndFeel());
 
 		 settings.append(lineSeparator);
 		 settings.append("skinlfTheme:" + getSkinlfThemePack());

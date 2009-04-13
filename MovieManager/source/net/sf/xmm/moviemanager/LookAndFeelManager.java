@@ -56,14 +56,14 @@ public class LookAndFeelManager {
         
         UIManager.LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
         
-        if (config.getLookAndFeelString().equals("")) {
+        if (config.getCustomLookAndFeel().equals("")) {
             LookAndFeel currentLAF = UIManager.getLookAndFeel();
             if (currentLAF != null) {
-                config.setLookAndFeelString(currentLAF.getName());
+                config.setCustomLookAndFeel(currentLAF.getName());
             } else {
                 for(int i = 0;i<installedLookAndFeels.length;i++) {
                     if(installedLookAndFeels[i].getClassName().equals(UIManager.getSystemLookAndFeelClassName())) {
-                        config.setLookAndFeelString(installedLookAndFeels[i].getName());
+                        config.setCustomLookAndFeel(installedLookAndFeels[i].getName());
                     }
                 }
             }
@@ -75,10 +75,10 @@ public class LookAndFeelManager {
             boolean laFSet = false;
             
             if (config.getLookAndFeelType() == LookAndFeelType.CustomLaF && 
-            		!config.getLookAndFeelString().equals("Metal")) {
+            		!config.getCustomLookAndFeel().equals("Metal")) {
 
             	for (int i = 0; i < installedLookAndFeels.length; i++) {
-            		if (installedLookAndFeels[i].getName().equals(config.getLookAndFeelString())) {
+            		if (installedLookAndFeels[i].getName().equals(config.getCustomLookAndFeel())) {
             			UIManager.setLookAndFeel(installedLookAndFeels[i].getClassName());
             			laFSet = true;
             			break;
@@ -115,7 +115,7 @@ public class LookAndFeelManager {
             		log.debug("Default Look & Feel is used.");
             		
             		config.setLookAndFeelType(LookAndFeelType.CustomLaF);
-            		config.setLookAndFeelString("Metal");
+            		config.setCustomLookAndFeel("Metal");
             	}
             }
 

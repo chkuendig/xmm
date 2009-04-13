@@ -69,6 +69,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.MovieManagerConfig.LookAndFeelType;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAddEpisode;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandEdit;
 import net.sf.xmm.moviemanager.http.HttpUtil;
@@ -587,7 +588,14 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			if (font != null)
 				fontname = ((Font) font).getFontName();
 
-			misc.append("<html><FONT  SIZE=3 FACE=\""+ fontname +"\">"); //$NON-NLS-1$ //$NON-NLS-2$
+			String fontSize = "4";
+			
+			if (MovieManager.getConfig().getLookAndFeelType() == LookAndFeelType.CustomLaF &&
+					("Metal".equals(MovieManager.getConfig().getCustomLookAndFeel()) ||
+							"Nimbus".equals(MovieManager.getConfig().getCustomLookAndFeel())))
+				fontSize = "3";
+			
+			misc.append("<html><font size="+fontSize+" face=\""+ fontname +"\">"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (!model.getWebSoundMix().equals("")) //$NON-NLS-1$
 				misc.append("<b>" + Localizer.getString("MovieManagerCommandSelect.miscellaneous-panel.field.sound-mix.title") + "</b><br>" + model.getWebSoundMix() + "<br><br>"); //$NON-NLS-1$ //$NON-NLS-2$
