@@ -369,15 +369,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private String skinlfThemePack = "";
 
-	private String oyoahaThemePack = "";
-
 	private String skinlfThemePackDir;
 
 	private String oyoahaThemePackDir;
 
 	public enum LookAndFeelType {CustomLaF, SkinlfLaF}
 	
-	private LookAndFeelType lookAndFeelType = LookAndFeelType.CustomLaF; /*0 = custom, 1 = skinlf, 2 = oyoaha*/
+	private LookAndFeelType lookAndFeelType = LookAndFeelType.CustomLaF;
 
 	public int numberOfLookAndFeels;
 
@@ -1599,14 +1597,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.lookAndFeelType = lafType;
 	}
 
-	public String getOyoahaThemePack() {
-		return oyoahaThemePack;
-	}
-
-	public void setOyoahaThemePack(String oyoahaThemePack) {
-		this.oyoahaThemePack = oyoahaThemePack;
-	}
-
 	public String getOyoahaThemePackDir() {
 		return oyoahaThemePackDir;
 	}
@@ -2233,13 +2223,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 			if (value != null) {
 				setSkinlfThemePack(value);
-			}
-
-
-			value = (String) config.get("oyoahaTheme:");
-
-			if (value != null) {
-				setOyoahaThemePack(value);
 			}
 
 
@@ -3169,9 +3152,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 settings.append(lineSeparator);
 		 settings.append("skinlfTheme:" + getSkinlfThemePack());
-
-		 settings.append(lineSeparator);
-		 settings.append("oyoahaTheme:" + getOyoahaThemePack());
 
 		 settings.append(lineSeparator);
 		 settings.append("lookAndFeelType:" + getLookAndFeelType());
