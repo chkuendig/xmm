@@ -160,8 +160,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private boolean mainMaximized = false;
 
-	private boolean movieListHighlightEntireRow = true;
-
 	private boolean enableCtrlMouseRightClick = false;
 
 	/* 0 == No, 1 == Preserve all, 2 == Preserve episode covers only */
@@ -343,6 +341,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public int additionalInfoNotesSliderPosition = -1;
 	public int additionalInfoNotesLastSliderPosition = -1;
 
+	int plotCastMiscellaneousIndex = 0;
+	
 	public final String HTMLTemplateRoot = "HTML_templates/";
 			
 	
@@ -370,8 +370,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String skinlfThemePack = "";
 
 	private String skinlfThemePackDir;
-
-	private String oyoahaThemePackDir;
 
 	public enum LookAndFeelType {CustomLaF, SkinlfLaF}
 	
@@ -718,10 +716,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 
 	/**
-	 * Returns the last fileChooser directory. Since the File.exists() method
-	 * produces a requst to insert disc into cd-rom (at least on Win2k) a
-	 * test to see if the directory is writable is done to avoid the error.
-	 *
 	 * @return The last fileChooser directory.
 	 **/
 	public File getLastFileDir() {
@@ -1113,15 +1107,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setMovieListRowHeight(int movieListRowHeight) {
 		this.movieListRowHeight = movieListRowHeight;
 	}
-
-	public boolean getMovieListHighlightEntireRow() {
-		return movieListHighlightEntireRow;
-	}
-
-	public void setMovieListHighlightEntireRow(boolean movieListHighlightEntireRow) {
-		this.movieListHighlightEntireRow = movieListHighlightEntireRow;
-	}
-
+	
 	public boolean getEnableCtrlMouseRightClick() {
 		return enableCtrlMouseRightClick;
 	}
@@ -1553,6 +1539,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 	
 	
+	public int getPlotCastMiscellaneousIndex() {
+		return plotCastMiscellaneousIndex;
+	}
+	
+	public void setPlotCastMiscellaneousIndex(int plotCastMiscellaneousIndex) {
+		this.plotCastMiscellaneousIndex = plotCastMiscellaneousIndex;
+	}
+	
+	
 	public boolean getDefaultLookAndFeelDecorated() {
 		return defaultLookAndFeelDecorated;
 	}
@@ -1597,13 +1592,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.lookAndFeelType = lafType;
 	}
 
-	public String getOyoahaThemePackDir() {
-		return oyoahaThemePackDir;
-	}
-
-	public void setOyoahaThemePackDir(String oyoahaThemePackDir) {
-		this.oyoahaThemePackDir = oyoahaThemePackDir;
-	}
 
 	public void setDisplayPlayButton(boolean displayPlayButton) {
 		this.displayPlayButton = displayPlayButton;
@@ -2266,8 +2254,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			if (value != null) {
 				setDefaultLookAndFeelDecorated(new Boolean(value).booleanValue());
 			}
-
 			
+			value = (String) config.get("plotCastMiscellaneousIndex:");
+			
+			if (value != null) {
+				setPlotCastMiscellaneousIndex(Integer.parseInt(value));
+			}
+						
 			value = (String) config.get("HTMLTemplateName:");
 			
 			if (value != null) {
@@ -2774,14 +2767,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			if (value != null) {
 				setMovieListRowHeight(Integer.parseInt(value));
 			}
-
-
-			value = (String) config.get("movieListHighlightEntireRow:");
-
-			if (value != null) {
-				movieListHighlightEntireRow = new Boolean(value).booleanValue();
-			}
-
+			
 			value = (String) config.get("enableCtrlMouseRightClick:");
 
 			if (value != null) {
@@ -3166,6 +3152,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("defaultLookAndFeelDecorated:" + getDefaultLookAndFeelDecorated());
 
 		 settings.append(lineSeparator);
+		 settings.append("plotCastMiscellaneousIndex:" + getPlotCastMiscellaneousIndex());
+		 
+		 settings.append(lineSeparator);
 		 settings.append("HTMLTemplateName:" + getHTMLTemplateName());
 		 		 
 		 if (getHTMLTemplateStyleName() != null) {
@@ -3388,10 +3377,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 settings.append(lineSeparator);
 		 settings.append("movieListRowHeight:"+ Integer.toString(getMovieListRowHeight()));
-
-		 settings.append(lineSeparator);
-		 settings.append("movieListHighlightEntireRow:" + getMovieListHighlightEntireRow());
-
+		 
 		 settings.append(lineSeparator);
 		 settings.append("enableCtrlMouseRightClick:" + getEnableCtrlMouseRightClick());
 
