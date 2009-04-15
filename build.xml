@@ -201,17 +201,16 @@
 	</target>
 
 
-
+	<target name="predist" description="Execute before using the dist directory" depends="build">
+	  <mkdir dir="${dist}" />
+	  <antcall target="makeLookAndFeelIni" />
+	  <antcall target="makeLog4jProperties" />
+	</target>
 
 
 	<target name="archives" description="Creates the ZIP archives."
-		depends="compile, makejar">
-
-		<mkdir dir="${dist}" />
-		
-		<antcall target="makeLookAndFeelIni" />
-		<antcall target="makeLog4jProperties" />
-
+		depends="predist">
+	  
 		<!-- Creating Binary zip MovieManager.v.version.bin.zip  Mirror  -->
 		<zip destfile="${dist}/MovieManager.v.${versionName}.bin.zip"
 			update="false" compress="true">
@@ -387,7 +386,7 @@
 	</target>
 
 
-	<target name="izpack">
+	<target name="izpack" depends="predist">
 		<ant antfile="packaging/izpack/build-izpack.xml" target="makeIzpackInstaller"
 			inheritAll="true" inheritrefs="true" />
 	</target>
@@ -553,9 +552,7 @@ ${newline}
 	<target name="makeLog4jProperties"
 		description="Creates a log4j.properties to be used in the binary package where only warnings/error are printed to log.">
 
-		<mkdir dir="${dist}" />
-
-		<echo file="${dist}/log4j.properties" append="false">
+	  <echo file="${dist}/log4j.properties" append="false">
 #### Using two appenders, one to log to console, another to log to a file.
 log4j.rootCategory=ALL, stdout, FileAppender
 
@@ -632,7 +629,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 	
 
  <!-- BUILD Mac  -->
- <target name="build-mac" depends="makejar, makeLog4jProperties, makeLookAndFeelIni">
+ <target name="build-mac" depends="predist">
 
 	  <echo message="build-mac: ${ant.file}"/>
 
