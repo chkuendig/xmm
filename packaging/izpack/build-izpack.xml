@@ -35,8 +35,9 @@
 	  <appversion>@{version}</appversion>
 	  
 	  <url>http://xmm.sourceforge.net</url>
-	  <javaversion>1.4</javaversion>
-	  
+	  <javaversion>1.5</javaversion>
+	  	<requiresjdk>no</requiresjdk>
+	  <run-privileged condition="izpack.windowsinstall.vista|izpack.windowsinstall.7"/>
 	  </info>
 
 <variables>
@@ -44,7 +45,9 @@
 </variables>
 
 <native type="izpack" name="ShellLink.dll"/>
-
+<native type="izpack" name="ShellLink_x64.dll"/>
+	  	
+	  	
 <resources>
     <res src="packaging/izpack/bin/shortcutspec/shortcutSpec.xml" id="shortcutSpec.xml"/>
     <res src="packaging/izpack/bin/shortcutspec/Unix_shortcutSpec.xml" id="Unix_shortcutSpec.xml"/>
