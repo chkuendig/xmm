@@ -2069,8 +2069,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					if (FileUtil.getFile("config/" + conf).lastModified() > t)
 						conf = "config/" + conf;
 
-					System.err.println("isWindowsVista:" + SysUtil.isWindowsVista());
-					
 					// Change default location on Vista from program directory to System.getenv("APPDATA")
 					if (SysUtil.isWindowsVista()) {
 						File newConfig = new File(SysUtil.getConfigDir(), "Config.ini");
