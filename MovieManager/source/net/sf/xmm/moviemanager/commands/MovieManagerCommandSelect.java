@@ -588,13 +588,14 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			if (font != null)
 				fontname = ((Font) font).getFontName();
 
-			String fontSize = "4";
+			String fontSize = "3";
 			
 			if (MovieManager.getConfig().getLookAndFeelType() == LookAndFeelType.CustomLaF &&
-					("Metal".equals(MovieManager.getConfig().getCustomLookAndFeel()) ||
-							"Nimbus".equals(MovieManager.getConfig().getCustomLookAndFeel())))
-				fontSize = "3";
+							("Nimbus".equals(MovieManager.getConfig().getCustomLookAndFeel()) ||
+									(MovieManager.getConfig().getCustomLookAndFeel().indexOf("Synthetica") != -1)))
+				fontSize = "4";
 			
+				
 			misc.append("<html><font size="+fontSize+" face=\""+ fontname +"\">"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (!model.getWebSoundMix().equals("")) //$NON-NLS-1$
