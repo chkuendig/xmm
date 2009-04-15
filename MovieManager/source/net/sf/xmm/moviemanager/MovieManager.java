@@ -1276,7 +1276,7 @@ public class MovieManager {
 				logFile = new File(SysUtil.getUserDir(), "Log.txt").getAbsolutePath();
 		}
     		
-		if (appndr.getFile() == null) {
+		if (appndr != null && appndr.getFile() == null) {
 			appndr.setFile(logFile);
 			appndr.activateOptions();
 		}
