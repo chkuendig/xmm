@@ -82,6 +82,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -1166,7 +1168,18 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	tabbedPlotCastMiscellaneous.add(Localizer.getString("moviemanager.movie-info-panel.plot_and_cast"), plotAndCast); //$NON-NLS-1$
     	tabbedPlotCastMiscellaneous.add(Localizer.getString("moviemanager.movie-info-panel.miscellaneous"), miscellaneous); //$NON-NLS-1$
 
-
+    	tabbedPlotCastMiscellaneous.addChangeListener(new ChangeListener() {
+    		public void stateChanged(ChangeEvent arg0) {
+    			MovieManager.getConfig().setPlotCastMiscellaneousIndex(tabbedPlotCastMiscellaneous.getSelectedIndex());
+			}
+    	});
+    	
+    	int tabIndex = MovieManager.getConfig().getPlotCastMiscellaneousIndex();
+    	
+    	if (tabIndex >= 0 && tabIndex < tabbedPlotCastMiscellaneous.getTabCount())
+    		tabbedPlotCastMiscellaneous.setSelectedIndex(tabIndex);
+    		
+    	
     	JPanel tabbedPanel = new JPanel(new BorderLayout());
     	tabbedPanel.add(tabbedPlotCastMiscellaneous, BorderLayout.CENTER);
 
