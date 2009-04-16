@@ -424,7 +424,9 @@ public class FileUtil {
     }
     
     
-  
+    public static void writeToFile(File file, String dataString) {
+    	writeToFile(file.getAbsolutePath(), dataString, null);
+    }
     
     public static void writeToFile(String fileName, String dataString) {
     	StringBuffer data = new StringBuffer(dataString);
