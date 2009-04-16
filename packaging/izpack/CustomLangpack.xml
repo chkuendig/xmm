@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+
+<!-- The English langpack -->
+
+<langpack>
+    <str id="TargetPanel.warn" txt="<html>The directory already exists! Please uninstall any previous installations to this directory!<br><center>Are you sure you want to continue?</center></html>"/>
+</langpack>
