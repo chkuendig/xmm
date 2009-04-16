@@ -46,7 +46,9 @@
 
 <native type="izpack" name="ShellLink.dll"/>
 <native type="izpack" name="ShellLink_x64.dll"/>
-	  	
+<native type="3rdparty" name="COIOSHelper.dll" stage="both">
+  <os family="windows"/>
+</native>
 	  	
 <resources>
     <res src="packaging/izpack/shortcutspec/shortcutSpec.xml" id="shortcutSpec.xml"/>
@@ -69,7 +71,12 @@
 	<panel classname="SimpleFinishPanel"/>
   </panels>
   
-
+  <listeners>
+	<listener installer="RegistryInstallerListener"
+	  uninstaller="RegistryUninstallerListener" >
+	  <os family="windows"/>
+	</listener>
+  </listeners>
 
   <packs>
 	<pack name="MeD's Movie Manager files" required="yes">
