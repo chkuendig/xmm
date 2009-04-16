@@ -67,7 +67,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/**
 		 * The current version of the program.
 		 **/
-		private static final String _version = " 2.8.0"; //$NON-NLS-1$
+		private static final String _version = " 2.8.0.1"; //$NON-NLS-1$
 
 
 		String appTitle = " MeD's Movie Manager v" + getVersion();
