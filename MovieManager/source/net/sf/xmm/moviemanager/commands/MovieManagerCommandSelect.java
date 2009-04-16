@@ -754,9 +754,16 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 							
 			template = HttpUtil.getHtmlNiceFormat(template);
 			
-			if (MovieManager.getConfig().getHTMLViewDebugMode())
-				FileUtil.writeToFile(new File(templateFile.getParentFile(), "debug_template.html").toString(), template.toString());
+			if (MovieManager.getConfig().getHTMLViewDebugMode()) {
 				
+				File path = new File(templateFile.getParentFile(), "debug_template.html"); 
+				
+				if (SysUtil.isMac() || SysUtil.isWindowsVista())
+					path = SysUtil.getConfigDir();
+				
+				FileUtil.writeToFile(path, template.toString());
+			}
+			
 			Reader r = new StringReader(template.toString());
 			InputSourceImpl impl = new InputSourceImpl(r, templateFile.getParentFile().toURI().toString());
 						
