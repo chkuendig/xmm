@@ -51,12 +51,17 @@
 <native type="3rdparty" name="COIOSHelper.dll" stage="both">
   <os family="windows"/>
 </native>
+
+	  	<dynamicvariables>
+	  	<variable name="APP_FOLDER_NAME" value="MeDs-Movie-Manager" />
+	  	</dynamicvariables>
 	  	
 <resources>
     <res src="packaging/izpack/shortcutspec/shortcutSpec.xml" id="shortcutSpec.xml"/>
     <res src="packaging/izpack/shortcutspec/Unix_shortcutSpec.xml" id="Unix_shortcutSpec.xml"/>
 
   <res id="CustomLangpack.xml_eng" src="packaging/izpack/CustomLangpack.xml"/>
+  <res id="TargetPanel.dir" src="packaging/izpack/TargetDir.txt"/>
 	  	
 </resources>
 	  	
@@ -83,6 +88,7 @@
   </listeners>
 
 	  
+	 
 	  	
   <packs>
 	<pack name="MeD's Movie Manager files" required="yes">
