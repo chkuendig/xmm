@@ -912,15 +912,29 @@ public class MovieManager {
     					String currentVersion = config.sysSettings.getVersion().replaceAll("\\.", "").trim();
     					String newVersion = lines[1].replaceAll("\\.", "").trim();
 
+    					// check if only digits. If not, aborted (won't notice about betas)
+    					for (int i = 0; i < newVersion.length(); i++) {
+    						if (!Character.isDigit(newVersion.charAt(i)))
+    							log.debug("Aborting version check. New version contains non-digits:" + newVersion);
+    					}
+    					
+    					// Cut string at first non-digit character
+    					for (int i = 0; i < currentVersion.length(); i++) {
+    						if (!Character.isDigit(currentVersion.charAt(i))) {
+    							currentVersion = currentVersion.substring(0, i);
+    							break;
+    						}
+    					}
+    					    					
     					int currentLength = currentVersion.length();
     					int newLength = newVersion.length();
 		
     					if (currentLength > newLength) {
-    						for (int i = (currentLength - newLength) ; i < currentLength; i++)
+    						while (newVersion.length() < currentLength)
     							newVersion += "0";
     					}
     					else if (currentLength < newLength) {
-    						for (int i = (newLength - currentLength) ; i < newLength-1; i++)
+    						while (currentVersion.length() < newLength)
     							currentVersion += "0";
     					}
     				
