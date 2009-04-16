@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 
 <project name="MeDs Movie Manager IzPack installer" default="makeIzpackInstaller" basedir="">
   <description>
@@ -42,6 +42,8 @@
 
 <variables>
 <variable name="DesktopShortcutCheckboxEnabled" value="true"/>
+<!-- <variable name="ApplicationShortcutPath" value="ApplicationShortcuts"/>
+-->
 </variables>
 
 <native type="izpack" name="ShellLink.dll"/>
@@ -53,10 +55,12 @@
 <resources>
     <res src="packaging/izpack/shortcutspec/shortcutSpec.xml" id="shortcutSpec.xml"/>
     <res src="packaging/izpack/shortcutspec/Unix_shortcutSpec.xml" id="Unix_shortcutSpec.xml"/>
-</resources>
 
+  <res id="CustomLangpack.xml_eng" src="packaging/izpack/CustomLangpack.xml"/>
+	  	
+</resources>
+	  	
   <guiprefs height="340" resizable="yes" width="450"/>
-  
   
   <locale> 
 	<langpack iso3="eng"/>
@@ -78,6 +82,8 @@
 	</listener>
   </listeners>
 
+	  
+	  	
   <packs>
 	<pack name="MeD's Movie Manager files" required="yes">
 	  <description>MeD's Movie Manager files</description>
