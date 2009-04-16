@@ -70,7 +70,7 @@
             -->
 
     <shortcut
-            name="MeD's Movie Manager"
+            name="MeDs Movie Manager"
 			Categories="Application;Development;"
             description="Run MeD's Movie Manager"
 			iconFile="$INSTALL_PATH/Icon.ico"
@@ -91,7 +91,7 @@
     </shortcut>
 
 	<shortcut
-            name="MeD's Movie Manager Uninstall"
+            name="MeDs Movie Manager Uninstall"
             programGroup="yes"
             desktop="no"
             applications="no"
@@ -100,15 +100,19 @@
 			
 			target="java"
 			commandLine=" -jar &quot;$INSTALL_PATH/Uninstaller/uninstaller.jar&quot;"
-			TryExec="java -jar &quot;$INSTALL_PATH/Uninstaller/uninstaller.jar&quot;"
-			
+								
             description="Run uninstaller for MeD's Movie Manager"
 			type="Application"
 			encoding="UTF-8"
 			iconFile="$INSTALL_PATH/Icon.ico"
-			createForAll="false"
+			
 			>
 	</shortcut>
+
+<!--  
+createForAll="false"
+         initialState="noShow"
+TryExec="java -jar &quot;$INSTALL_PATH/Uninstaller/uninstaller.jar&quot;"-->
 
  <!--
 
