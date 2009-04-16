@@ -4,7 +4,7 @@
 
     <skipIfNotSupported/>
 
-    <programGroup defaultName="MeD's Movie Manager" location="applications"/>
+    <programGroup defaultName="MeD-s-Movie-Manager" location="applications"/>
 
     <!--
       <shortcut
@@ -41,7 +41,7 @@
     </shortcut>
 	
     <shortcut
-            name="Uninstall MeD's Movie Manager"
+            name="Uninstall-MeD-s-Movie-Manager"
             programGroup="yes"
             desktop="no"
             applications="no"
@@ -49,6 +49,8 @@
             startup="no"
             target="$INSTALL_PATH\Uninstaller\uninstaller.jar"
             commandLine=""
+            iconFile="%SystemRoot%\system32\SHELL32.dll"
+            iconIndex="31"
             description="Run uninstaller for MeD's Movie Manager">
 
 	</shortcut>
