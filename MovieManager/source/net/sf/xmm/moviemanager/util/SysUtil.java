@@ -266,18 +266,33 @@ public class SysUtil {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
 		return os != null && os.toLowerCase().startsWith("Windows 98"); //$NON-NLS-1$
 	}
+	
+	public static boolean isWindowsXP() {
+		String os = System.getProperty("os.name"); //$NON-NLS-1$
+		String osVersion = System.getProperty("os.version"); //$NON-NLS-1$
+			
+		return os != null && osVersion != null
+			&& os.toLowerCase().indexOf("windows") != -1 &&
+			osVersion.equals("5.1"); //$NON-NLS-1$
+	}
 
+	/**
+	 * Bug in Java (not yet fixed in 1.6.0_13) causing System.getProperty("os.name")
+	 * to return "Windows XP" on Windows Vista.
+	 * System.getProperty("os.version") returns "6.0" on Windows Vista and "5.1" on XP
+	 * @return
+	 */
 	public static boolean isWindowsVista() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
 		String osVersion = System.getProperty("os.version"); //$NON-NLS-1$
 			
 		return os != null && osVersion != null
-			&& os.toLowerCase().indexOf("vista") != -1 &&
+			&& os.toLowerCase().indexOf("windows") != -1 &&
 			osVersion.equals("6.0"); //$NON-NLS-1$
 	}
 
 	/**
-	 * But in Java (not yet fixed in 1.6.0_13) causing System.getProperty("os.name")
+	 * Bug in Java (not yet fixed in 1.6.0_13) causing System.getProperty("os.name")
 	 * to return "Windows Vista" on Windows 7.
 	 * System.getProperty("os.version") returns "6.1" on Windows 7 and "6.0" on Vista
 	 * @return
@@ -287,7 +302,7 @@ public class SysUtil {
 		String osVersion = System.getProperty("os.version"); //$NON-NLS-1$
 			
 		return os != null && osVersion != null
-			&& os.toLowerCase().indexOf("vista") != -1 &&
+			&& os.toLowerCase().indexOf("windows") != -1 &&
 			osVersion.equals("6.1"); //$NON-NLS-1$
 	}
 	
