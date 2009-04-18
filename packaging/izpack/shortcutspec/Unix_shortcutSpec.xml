@@ -71,7 +71,7 @@
 
     <shortcut
             name="MeDs Movie Manager"
-			Categories="Application;Development;"
+			Categories="Application"
             description="Run MeD's Movie Manager"
 			iconFile="$INSTALL_PATH/Icon.ico"
 			type="Application"
@@ -101,6 +101,7 @@
 			target="java"
 			commandLine=" -jar &quot;$INSTALL_PATH/Uninstaller/uninstaller.jar&quot;"
 								
+			KdeSubstUID="false"
             description="Run uninstaller for MeD's Movie Manager"
 			type="Application"
 			encoding="UTF-8"
