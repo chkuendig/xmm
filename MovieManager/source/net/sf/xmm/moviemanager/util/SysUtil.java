@@ -239,39 +239,59 @@ public class SysUtil {
 
 	public static boolean isMac() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		return os != null && os.toLowerCase().startsWith("mac") ? true : false; //$NON-NLS-1$
+		return os != null && os.toLowerCase().startsWith("mac"); //$NON-NLS-1$
 	}
 
 	public static boolean isOSX() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		return os != null && os.toLowerCase().startsWith("Mac OS X") ? true : false; //$NON-NLS-1$
+		return os != null && os.toLowerCase().startsWith("Mac OS X"); //$NON-NLS-1$
 	}
 
 	public static boolean isLinux() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		return os != null && os.toLowerCase().startsWith("linux") ? true : false; //$NON-NLS-1$
+		return os != null && os.toLowerCase().startsWith("linux"); //$NON-NLS-1$
 	}
 
 	public static boolean isSolaris() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		return os != null && (os.toLowerCase().startsWith("sunos") || os.toLowerCase().startsWith("solaris")) ? true : false; //$NON-NLS-1$ //$NON-NLS-2$
+		return os != null && (os.toLowerCase().startsWith("sunos") || os.toLowerCase().startsWith("solaris")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static boolean isWindows() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		return os != null && os.toLowerCase().startsWith("windows") ? true : false; //$NON-NLS-1$
+		return os != null && os.toLowerCase().startsWith("windows"); //$NON-NLS-1$
 	}
 
 	public static boolean isWindows98() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		return os != null && os.toLowerCase().startsWith("Windows 98") ? true : false; //$NON-NLS-1$
+		return os != null && os.toLowerCase().startsWith("Windows 98"); //$NON-NLS-1$
 	}
 
 	public static boolean isWindowsVista() {
 		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		return os != null && os.toLowerCase().indexOf("vista") != -1 ? true : false; //$NON-NLS-1$
+		String osVersion = System.getProperty("os.version"); //$NON-NLS-1$
+			
+		return os != null && osVersion != null
+			&& os.toLowerCase().indexOf("vista") != -1 &&
+			osVersion.equals("6.0"); //$NON-NLS-1$
 	}
 
+	/**
+	 * But in Java (not yet fixed in 1.6.0_13) causing System.getProperty("os.name")
+	 * to return "Windows Vista" on Windows 7.
+	 * System.getProperty("os.version") returns "6.1" on Windows 7 and "6.0" on Vista
+	 * @return
+	 */
+	public static boolean isWindows7() {
+		String os = System.getProperty("os.name"); //$NON-NLS-1$
+		String osVersion = System.getProperty("os.version"); //$NON-NLS-1$
+			
+		return os != null && osVersion != null
+			&& os.toLowerCase().indexOf("vista") != -1 &&
+			osVersion.equals("6.1"); //$NON-NLS-1$
+	}
+	
+	
 	public static void openFileLocationOnWindows(File file) {
 		try {
 			//Desktop.getDesktop().browse(file.toURI());
