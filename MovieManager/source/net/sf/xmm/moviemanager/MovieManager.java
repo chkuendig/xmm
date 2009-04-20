@@ -279,7 +279,9 @@ public class MovieManager {
     	
     	if (db != null) {
 
-    		if (options.getCurrentListNames().size() > 0 || options.getShowUnlistedEntries()) {
+    		// If there are no lists, or if all the lists are shown in addition to the unlisted ones, no point in enabling lists
+    		if (options.getCurrentListNames().size() > 0 || 
+    				(options.getShowUnlistedEntries() && options.getCurrentListNames().size() != MovieManager.getIt().getDatabase().getListsColumnNames().size())) {
     			options.setListOption(1);
     		}
 
