@@ -349,8 +349,6 @@ abstract public class Database {
 			return;
 		}
 
-		System.err.println("message:" + message);
-		
 		if (message.indexOf("Access denied") != -1) {
 			errorMessage = message;
 			MovieManager.getIt().processDatabaseError(this);
@@ -3083,7 +3081,7 @@ abstract public class Database {
 	 * Part of the advanced search function
 	 * Used by method getMoviesList(ModelDatabaseSearch options)
 	 */
-	private String processFilter(ModelDatabaseSearch options, boolean where) {
+	private String processFilter(ModelDatabaseSearch options) {
 
 		String table = quotedGeneralInfoString;
 		String filterColumn = quote + options.getFilterCategory() + quote;
@@ -3154,8 +3152,15 @@ abstract public class Database {
 		if (options.where)
 			filter = "AND " + filterTemp;
 		else
-			filter = "WHERE " + filterTemp;
+			filter = "WHERE (" + filterTemp;
 
+		if (!options.where) {
+			if (!filter.equals(""))
+				filter += ")";
+		
+			options.where = true;
+		}
+				
 		return filter;
 	}
 
@@ -3231,11 +3236,14 @@ abstract public class Database {
 				else {
 					log.warn("Invalid database options! getShowUnlistedEntries is true while getListsColumnNames().size() == 0");
 				}
+			} // Showing all the lists and those not on lists is the same as disabling the lists.
+			else if (currentLists.size() == getListsColumnNames().size() && options.getShowUnlistedEntries()) {
+				log.warn("Invalid database options! getListOption == 1 when currentLists.size ("+ currentLists.size() +") == getListsColumnNames().size ("+ getListsColumnNames().size() +") and options.getShowUnlistedEntries() == true");
 			}
 			else {
 				
 				if (!options.where)
-					sqlQuery += "WHERE ";
+					sqlQuery += "WHERE (";
 
 				if (currentLists.size() > 0) {
 
@@ -3289,7 +3297,7 @@ abstract public class Database {
 			if (options.where)
 				sqlQuery += "AND ";
 			else
-				sqlQuery += "WHERE ";
+				sqlQuery += "WHERE (";
 
 			if (option == 2)
 				sqlQuery += "("+ quotedGeneralInfoString +"." +quote+ "Seen" +quote+ " = 1) ";
@@ -3307,7 +3315,7 @@ abstract public class Database {
 			if (options.where)
 				sqlQuery += "AND ";
 			else
-				sqlQuery += "WHERE ";
+				sqlQuery += "WHERE (";
 
 			/* if MSAccess, have to convert rating with the Val function */
 			if (databaseType.equals("MSAccess")) {
@@ -3337,7 +3345,7 @@ abstract public class Database {
 				if (options.where)
 					sqlQuery += "AND ";
 				else
-					sqlQuery += "WHERE ";
+					sqlQuery += "WHERE (";
 
 				/* if MSAccess, have to convert date with the Val function */
 				if (databaseType.equals("MSAccess")) {
@@ -3356,6 +3364,10 @@ abstract public class Database {
 				options.where = true;
 			}
 		}
+		
+		if (!sqlQuery.equals(""))
+			sqlQuery += ")";
+		
 		return sqlQuery;
 	}
 
@@ -3372,14 +3384,11 @@ abstract public class Database {
 
 		String sqlAdcancedOptions = processAdvancedOptions(options);
 
-		/* Should only be one instance of "WHERE" in the sql query. If "WHERE" is used once this is set to true */
-		boolean where = options.where;
-
 		/* Filter */
 		String sqlFilter = "";
 	
 		if (!options.getFilterString().trim().equals("")) {
-			sqlFilter = processFilter(options, where);
+			sqlFilter = processFilter(options);
 			
 			if (sqlFilter == null)
 				return listModel;
