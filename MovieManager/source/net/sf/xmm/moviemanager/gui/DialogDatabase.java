@@ -983,6 +983,10 @@ public class DialogDatabase extends JDialog implements ActionListener {
     		message = Localizer.getString("DialogDatabase.mysql.message.unknow-host"); //$NON-NLS-1$
     		title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
     	}
+    	else if (message.indexOf("Network is unreachable") != -1 && _database.isMySQL()) { //$NON-NLS-1$
+    		message = "Network is unreachable"; //$NON-NLS-1$
+    		title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
+    	}
     	else if (message.indexOf("Connection timed out") != -1 || message.indexOf("Connection refused: connect") != -1 && _database.isMySQL()) { //$NON-NLS-1$
     		message = "<html> Connection timed out...<br>Make sure you have network access and that the IP and port is correct.</html>"; //$NON-NLS-1$
     		title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
