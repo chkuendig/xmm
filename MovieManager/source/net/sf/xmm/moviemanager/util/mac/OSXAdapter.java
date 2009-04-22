@@ -1,15 +1,10 @@
 package net.sf.xmm.moviemanager.util.mac;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 
 import org.apache.log4j.Logger;
-//import org.simplericity.macify.eawt.DefaultApplication;
 
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
 import net.sf.xmm.moviemanager.gui.menubar.MovieManagerMenuBar;
-import net.sf.xmm.moviemanager.util.FileUtil;
-import net.sf.xmm.moviemanager.util.Pictures;
 
 import com.apple.eawt.*;
 
