@@ -67,6 +67,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
@@ -101,7 +102,7 @@ public class FileTree extends JPanel {
 	private Color colorExists = new Color(0, 0, 0);
 
 		
-	HashMap existingMediaFiles = null;
+	HashMap<String, ModelEntry> existingMediaFiles = null;
 	boolean filterOutDuplicateFiles = true;
 	
 	
@@ -114,10 +115,10 @@ public class FileTree extends JPanel {
 	/* 
 	 * Key = filepath, obj = IconData
 	 */
-	private HashMap changedNodes = new HashMap();
+	private HashMap<String, IconData> changedNodes = new HashMap<String, IconData>();
 
-	private HashMap visibleNodes = new HashMap();
-	private HashMap expandedNodes = new HashMap();
+	private HashMap<DefaultMutableTreeNode, DefaultMutableTreeNode> visibleNodes = new HashMap<DefaultMutableTreeNode, DefaultMutableTreeNode>();
+	private HashMap<FileNode, FileNode> expandedNodes = new HashMap<FileNode, FileNode>();
 
 	public void addVisibleNode(DefaultMutableTreeNode node) {
 		visibleNodes.put(node, node);
@@ -140,9 +141,9 @@ public class FileTree extends JPanel {
 
 	JMenuItem excludeAll, includeAll, folder, includeContent, addFiles = null;
 		
-	ArrayList validExtensions = new ArrayList();
+	ArrayList<String> validExtensions = new ArrayList<String>();
 	
-	public void setValidExtension(ArrayList validExtensions) {
+	public void setValidExtension(ArrayList<String> validExtensions) {
 		this.validExtensions = validExtensions;
 		updateNodes();
 	}
@@ -160,11 +161,11 @@ public class FileTree extends JPanel {
 	
 	public void updateNodes() {
 			
-		Iterator it = expandedNodes.keySet().iterator();
+		Iterator<FileNode> it = expandedNodes.keySet().iterator();
 		
 		while (it.hasNext()) {
 			
-			FileNode fileNode = (FileNode) it.next();
+			FileNode fileNode = it.next();
 			// If children were changed
 			DefaultMutableTreeNode node = fileNode.updateNodes(validExtensions);
 			
@@ -174,7 +175,7 @@ public class FileTree extends JPanel {
 		}
 	}
 	
-	public ArrayList getValidExtension() {
+	public ArrayList<String> getValidExtension() {
 		return validExtensions;
 	}
 	
@@ -183,7 +184,7 @@ public class FileTree extends JPanel {
 		updateCurrentCells();
 	}
 	
-	public FileTree(HashMap existingMediaFiles) {
+	public FileTree(HashMap<String, ModelEntry> existingMediaFiles) {
 		this();
 		this.existingMediaFiles = existingMediaFiles;
 	}
@@ -320,8 +321,8 @@ public class FileTree extends JPanel {
 
 			public void run() {
 
-				Set set = visibleNodes.keySet();
-				Iterator it = set.iterator();
+				Set<DefaultMutableTreeNode> set = visibleNodes.keySet();
+				Iterator<DefaultMutableTreeNode> it = set.iterator();
 
 				while (it.hasNext()) {
 
@@ -374,9 +375,9 @@ public class FileTree extends JPanel {
 		return selectedFiles;
 	}
 
-	public ArrayList getSelectedFiles() {
+	public ArrayList<FileNode> getSelectedFiles() {
 
-		ArrayList selectedFiles = new ArrayList();
+		ArrayList<FileNode> selectedFiles = new ArrayList<FileNode>();
 		TreePath [] selectPaths = fileTree.getSelectionPaths();
 
 		for (int i = 0; i < selectPaths.length; i++) {
@@ -391,16 +392,16 @@ public class FileTree extends JPanel {
 	/*
 	 * Searches the entire directory tree and returns the files according to the users selections.
 	 */
-	public ArrayList getFilesFromDirectoryTree(boolean includeMatchesOnly) {
+	public ArrayList<FileNode> getFilesFromDirectoryTree(boolean includeMatchesOnly) {
 
-		ArrayList files = new ArrayList();
-		Set keySet = changedNodes.keySet();
-		Object [] keys = keySet.toArray();
+		ArrayList<FileNode> files = new ArrayList<FileNode>();
+		Set<String> keySet = changedNodes.keySet();
+		String [] keys = keySet.toArray(new String[keySet.size()]);
 		
-		Arrays.sort(keys, new Comparator() {
+		Arrays.sort(keys, new Comparator<String>() {
 
-			public int compare(Object s1, Object s2) {
-				return ((String)s1).compareTo(((String)s2));
+			public int compare(String s1, String s2) {
+				return s1.compareTo(s2);
 			}	
 
 			public boolean equals(Object obj) {
@@ -418,7 +419,7 @@ public class FileTree extends JPanel {
 	}
 
 
-	void addFiles(Object dir, ArrayList files, Object [] keys, boolean includeAll) {
+	void addFiles(Object dir, ArrayList<FileNode> files, Object [] keys, boolean includeAll) {
 
 		int iconType = IconData.REGULAR_FOLDER;
 		File directory;
@@ -466,7 +467,7 @@ public class FileTree extends JPanel {
 	}
 
 	// Adds all the media files with valid extension to the array list
-	void addValidMediaFiles(File dir, ArrayList files) {
+	void addValidMediaFiles(File dir, ArrayList<FileNode> files) {
 		
 		File [] dirFiles = dir.listFiles();
 

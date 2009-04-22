@@ -941,8 +941,8 @@ public class DatabaseMySQL extends Database {
 
 			String tempValue = "";
 
-			ArrayList extraInfoFieldNames = getExtraInfoFieldNames(true);
-			ArrayList extraInfoFieldValues = new ArrayList();
+			ArrayList<String> extraInfoFieldNames = getExtraInfoFieldNames(true);
+			ArrayList<String> extraInfoFieldValues = new ArrayList<String>();
 
 			if (episode)
 				resultSet = getExtraInfoEpisodeResultSet(index);
@@ -999,15 +999,15 @@ public class DatabaseMySQL extends Database {
     }
     
     public boolean listColumnExist(String columnName) {
-	
-	ArrayList columnNames = getListsColumnNames();
-	
-	while (!columnNames.isEmpty()) {
-	    if (columnNames.get(0).equals(columnName))
-		return true;
-	    columnNames.remove(0);
-	}
-	return false;
+
+    	ArrayList<String> columnNames = getListsColumnNames();
+
+    	while (!columnNames.isEmpty()) {
+    		if (columnNames.get(0).equals(columnName))
+    			return true;
+    		columnNames.remove(0);
+    	}
+    	return false;
     }
     
     
@@ -1597,8 +1597,8 @@ public class DatabaseMySQL extends Database {
      * Returns a DefaultListModel that contains all the movies in the
      * current database.
      **/
-    public ArrayList getEpisodeList(String sortBy) {
-	ArrayList list = new ArrayList(100);
+    public ArrayList<ModelEpisode> getEpisodeList(String sortBy) {
+	ArrayList<ModelEpisode> list = new ArrayList<ModelEpisode>(100);
 	
 	try {
 	    /* Gets the list in a result set... */

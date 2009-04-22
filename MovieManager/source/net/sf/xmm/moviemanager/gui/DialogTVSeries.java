@@ -33,8 +33,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -52,18 +50,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
-import net.sf.xmm.moviemanager.http.IMDB;
-import net.sf.xmm.moviemanager.models.ModelEntry;
-import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovie;
-import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
-import net.sf.xmm.moviemanager.swing.extentions.events.ModelUpdatedEvent.IllegalEventTypeException;
 import net.sf.xmm.moviemanager.util.BrowserOpener;
-import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.SwingWorker;
 
 import org.apache.log4j.Logger;
 

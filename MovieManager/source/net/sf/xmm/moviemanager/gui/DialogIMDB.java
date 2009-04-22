@@ -21,7 +21,6 @@
 package net.sf.xmm.moviemanager.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -49,7 +48,6 @@ import net.sf.xmm.moviemanager.util.BrowserOpener;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SwingWorker;
-import net.sf.xmm.moviemanager.util.SysUtil;
 
 import org.apache.log4j.Logger;
 
@@ -79,7 +77,6 @@ public class DialogIMDB extends JDialog {
     boolean switchBetweenIMDBAndDatabase = false;
     boolean addWithoutIMDBInfo = false;
     
-    boolean addMultiplMovieByFile;
     
     long time;
     
@@ -156,7 +153,6 @@ public class DialogIMDB extends JDialog {
         this.modelEntry = modelEntry;
         this.multiAddFile = multiAddFile;
         this.addToThisList = addToThisList;
-        this.addMultiplMovieByFile = addMultiplMovieByFile;
         
         /* Sets parent... */
         this.multiAdd = true;
@@ -526,7 +522,7 @@ public class DialogIMDB extends JDialog {
 
     	DefaultListModel listModel;
 
-    	ArrayList lists = new ArrayList();
+    	ArrayList<String> lists = new ArrayList<String>();
     	
     	if (addToThisList != null)
     		lists.add(addToThisList);

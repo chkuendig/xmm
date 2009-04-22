@@ -52,7 +52,6 @@ import javax.swing.ListSelectionModel;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
-import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.Localizer;
 
@@ -62,15 +61,15 @@ public class DialogAdditionalInfoFields extends JDialog {
   
 	Logger log = Logger.getLogger(getClass());
        
-    private java.util.List _toRemove = new ArrayList();
+    private java.util.List<String> _toRemove = new ArrayList<String>();
   
-    private java.util.List _toAdd = new ArrayList();
+    private java.util.List<String> _toAdd = new ArrayList<String>();
   
-    private ArrayList additionalInfoFieldList;
+    private ArrayList<String> additionalInfoFieldList;
     
-    private java.util.List _originalExtraList;
+    private java.util.List<String> _originalExtraList;
     
-    private ArrayList fieldsList;
+    private ArrayList<String> fieldsList;
     
     /**
      * The Constructor.
@@ -104,7 +103,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 	/* fieldsList contains all the additional info fields  */
 	additionalInfoFieldList = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
 	
-	fieldsList = (ArrayList) additionalInfoFieldList.clone();
+	fieldsList = new ArrayList<String>(additionalInfoFieldList);
 	
 	/* Contains all the existing extra info fields */
 	_originalExtraList = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);

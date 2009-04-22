@@ -23,7 +23,7 @@ public interface MovieManagerMenuBar {
 	JMenu getMenuTools();
 	JMenu getMenuLists();
 	
-	public void loadDefaultMenuLists(ArrayList listColumns);
+	public void loadDefaultMenuLists(ArrayList<String> listColumns);
 	
 	JMenu getMenuView(); 
 	JMenu getMenuHelp(); 

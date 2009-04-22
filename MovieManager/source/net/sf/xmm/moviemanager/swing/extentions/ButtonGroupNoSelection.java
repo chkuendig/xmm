@@ -33,7 +33,7 @@ import javax.swing.ButtonModel;
 public class ButtonGroupNoSelection extends ButtonGroup implements Serializable {
 
     // the list of buttons participating in this group
-    protected Vector buttons = new Vector();
+    protected Vector<AbstractButton> buttons = new Vector<AbstractButton>();
 
     /**
      * The current selection.
@@ -88,7 +88,7 @@ public class ButtonGroupNoSelection extends ButtonGroup implements Serializable 
      * this group.
      * @return an <code>Enumeration</code> of the buttons in this group
      */
-    public Enumeration getElements() {
+    public Enumeration<AbstractButton> getElements() {
         return buttons.elements();
     }
 

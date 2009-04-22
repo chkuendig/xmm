@@ -19,16 +19,16 @@ public class ModelHTMLTemplate {
 	
 	String templateDirName = "";
 	
-	ArrayList styles = new ArrayList();
+	ArrayList<ModelHTMLTemplateStyle> styles = new ArrayList<ModelHTMLTemplateStyle>();
 	
 	private boolean hasStyles = false;
 	
-	public ModelHTMLTemplate(String templateDirName, ArrayList info) throws Exception {
+	public ModelHTMLTemplate(String templateDirName, ArrayList<String> info) throws Exception {
 		
 		this.templateDirName = templateDirName;
 		
 		for (int i = 0; i < info.size(); i++) {
-			String tmp = (String) info.get(i);
+			String tmp = info.get(i);
 			
 			String [] split = tmp.split("=");
 			
@@ -95,7 +95,7 @@ public class ModelHTMLTemplate {
 		hasStyles = true;
 	}
 	
-	public ArrayList getStyles() {
+	public ArrayList<ModelHTMLTemplateStyle> getStyles() {
 		return styles;
 	}
 

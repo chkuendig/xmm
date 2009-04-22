@@ -6,7 +6,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -52,7 +51,6 @@ import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandReportGen
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandUpdateIMDBInfo;
 import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandExport;
 import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImport;
-import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.gui.DialogNewVersionInfo;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
@@ -420,7 +418,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 	/**
 	 * @param listColumns 	a list containing all the lists in the database.
 	 */
-	public void loadDefaultMenuLists(final ArrayList listColumns) {
+	public void loadDefaultMenuLists(final ArrayList<String> listColumns) {
 		SwingUtilities.invokeLater(new Runnable() {
         	public void run() {
         		menuLists.loadDefaultMenuLists(listColumns);
@@ -437,7 +435,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 
 		Logger log = Logger.getLogger(getClass());
 		
-		ArrayList menuItemsList;
+		ArrayList<JCheckBoxMenuItem> menuItemsList;
 		
 		JMenuItem showAll = null;
 		JCheckBoxMenuItem showUnlisted = null;
@@ -447,19 +445,19 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		}
 
 		
-		public void loadDefaultMenuLists(ArrayList listColumns) {
+		public void loadDefaultMenuLists(ArrayList<String> listColumns) {
 
 			JMenu menuLists = getMenuLists();
 
 			if (menuLists != null) {
 
-				ArrayList currentLists = config.getCurrentLists();
+				ArrayList<String> currentLists = config.getCurrentLists();
 
 				JCheckBoxMenuItem menuItem;
 
 				menuLists.removeAll();
 
-				menuItemsList = new ArrayList();
+				menuItemsList = new ArrayList<JCheckBoxMenuItem>();
 				
 				// If no lists available, add shortcut for creating lists instead
 				if (listColumns.size() == 0) {
@@ -656,20 +654,20 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuView = new JMenu("View"); //$NON-NLS-1$
 		menuView.setMnemonic('V');
 
-		final HashMap templates = MovieManager.getIt().getHTMLTemplates();
+		final HashMap<String, ModelHTMLTemplate> templates = MovieManager.getIt().getHTMLTemplates();
 		String currentTemplateName = MovieManager.getConfig().getHTMLTemplateName();
 		String currentTemplateStyleName = MovieManager.getConfig().getHTMLTemplateStyleName();
 
 		try {
 			ButtonGroup buttonGroup = new ButtonGroup();
 
-			Set keys = templates.keySet();
-			Iterator keysIt = keys.iterator();
+			Set<String> keys = templates.keySet();
+			Iterator<String> keysIt = keys.iterator();
 
 			while (keysIt.hasNext()) {
-				String templateName = (String) keysIt.next();
+				String templateName = keysIt.next();
 				ModelHTMLTemplate template = (ModelHTMLTemplate) templates.get(templateName);
-				ArrayList styles = template.getStyles();
+				ArrayList<ModelHTMLTemplateStyle> styles = template.getStyles();
 
 				JMenu templateMenu = new JMenu(template.getName()) {
 					public JToolTip createToolTip() {

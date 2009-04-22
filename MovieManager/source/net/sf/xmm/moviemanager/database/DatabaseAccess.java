@@ -21,15 +21,10 @@
 package net.sf.xmm.moviemanager.database;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
-import net.sf.xmm.moviemanager.util.SysUtil;
 
 public class DatabaseAccess extends Database {
     
@@ -315,7 +310,7 @@ public class DatabaseAccess extends Database {
 	    
 	    _sql.clear();
 
-	    ArrayList columns = getExtraInfoFieldNames(true);
+	    ArrayList<String> columns = getExtraInfoFieldNames(true);
 	    String field;
 	    /* Copying existing extra info table columns to the extra info episode table */
 	    
@@ -565,136 +560,136 @@ public class DatabaseAccess extends Database {
 	}
 	return value;
     }
-    
-    
+
+
     public int makeDatabaseUpToDate() {
-	
-	int ret = 0;
-	
-	if (isDatabaseOldVersion180()) {
-	    log.info("Updating database to be v1.80 compatible");
-	    
-	    if ((ret = updateDatabaseVersion180()) != 1) {
-		errorMessage = "<html>An error occured while updating database to be v1.80 compatible.<br>Errorcode:"+ ret+ "<html>";
-		log.warn(errorMessage);
-		return ret;
-	    }
-	}
-	if (isDatabaseOldVersion21()) {
-	    log.info("Updating database to be v2.1 compatible");
-	    
-	    if ((ret = updateDatabaseVersion21()) != 1) {
-		errorMessage = "<html>An error occured while updating database to be v2.1 compatible.<br>Errorcode:"+ ret+ "<html>";
-		log.warn(errorMessage);
-		return ret;
-	    }
-	}
-	if (isDatabaseOldVersion22()) {
-	    log.info("Updating database to be v2.2 compatible");
-	    
-	    if ((ret = updateDatabaseVersion22()) != 1) {
-		errorMessage = "<html>An error occured while updating database to be v2.2 compatible.<br>Errorcode:"+ ret+ "<html>";
-		log.warn(errorMessage);
-		return ret;
-	    }
-	}
-	
-	if (isDatabaseOldVersion23()) {
-	    log.info("Updating database to be v2.3 compatible");
-	    
-	    if ((ret = updateDatabaseVersion23()) != 1) {
-		errorMessage = "<html>An error occured while updating database to be v2.3 compatible.<br>Errorcode:"+ ret+ "<html>";
-		log.warn(errorMessage);
-		return ret;
-	    }
-	}
-	return 1;
+
+    	int ret = 0;
+
+    	if (isDatabaseOldVersion180()) {
+    		log.info("Updating database to be v1.80 compatible");
+
+    		if ((ret = updateDatabaseVersion180()) != 1) {
+    			errorMessage = "<html>An error occured while updating database to be v1.80 compatible.<br>Errorcode:"+ ret+ "<html>";
+    			log.warn(errorMessage);
+    			return ret;
+    		}
+    	}
+    	if (isDatabaseOldVersion21()) {
+    		log.info("Updating database to be v2.1 compatible");
+
+    		if ((ret = updateDatabaseVersion21()) != 1) {
+    			errorMessage = "<html>An error occured while updating database to be v2.1 compatible.<br>Errorcode:"+ ret+ "<html>";
+    			log.warn(errorMessage);
+    			return ret;
+    		}
+    	}
+    	if (isDatabaseOldVersion22()) {
+    		log.info("Updating database to be v2.2 compatible");
+
+    		if ((ret = updateDatabaseVersion22()) != 1) {
+    			errorMessage = "<html>An error occured while updating database to be v2.2 compatible.<br>Errorcode:"+ ret+ "<html>";
+    			log.warn(errorMessage);
+    			return ret;
+    		}
+    	}
+
+    	if (isDatabaseOldVersion23()) {
+    		log.info("Updating database to be v2.3 compatible");
+
+    		if ((ret = updateDatabaseVersion23()) != 1) {
+    			errorMessage = "<html>An error occured while updating database to be v2.3 compatible.<br>Errorcode:"+ ret+ "<html>";
+    			log.warn(errorMessage);
+    			return ret;
+    		}
+    	}
+    	return 1;
     }
-    
-    
+
+
     /**
      * Checks if fields added in v1.80 exists
      **/
     private boolean isDatabaseOldVersion180() {
-	boolean old = false;
-	
-	ArrayList fieldNames = getGeneralInfoMovieFieldNames();
-	
-	if (!fieldNames.contains("Aka"))
-	    old = true;
-	
-	return old;
+    	boolean old = false;
+
+    	ArrayList<String> fieldNames = getGeneralInfoMovieFieldNames();
+
+    	if (!fieldNames.contains("Aka"))
+    		old = true;
+
+    	return old;
     }
-    
-    
+
+
     /**
      * Checks if fields added in v2.1 exists
      **/
     private boolean isDatabaseOldVersion21() {
-	boolean old = false;
-	
-	ArrayList columnNames = getAdditionalInfoFieldNames();
-	
-	if (!columnNames.contains("Container"))
-	    old = true;
-	
-	return old;
+    	boolean old = false;
+
+    	ArrayList<String> columnNames = getAdditionalInfoFieldNames();
+
+    	if (!columnNames.contains("Container"))
+    		old = true;
+
+    	return old;
     }
-    
-     /**
+
+    /**
      * Checks if fields added in v2.2 exists
      **/
     private boolean isDatabaseOldVersion22() {
-	boolean old = false;
-	
-	ArrayList tableNames = getTableNames();
-	
-	if (!tableNames.contains("General Info Episodes"))
-	    old = true;
-	
-	return old;
+    	boolean old = false;
+
+    	ArrayList<String> tableNames = getTableNames();
+
+    	if (!tableNames.contains("General Info Episodes"))
+    		old = true;
+
+    	return old;
     }
-    
-     /**
+
+    /**
      * Checks if fields added in v2.3 exists
      **/
     private boolean isDatabaseOldVersion23() {
-	boolean old = false;
-	
-	ArrayList fieldNames = getGeneralInfoMovieFieldNames();
-	
-	if (!fieldNames.contains("Awards") || !fieldNames.contains("Sound Mix"))
-	    old = true;
-	
-	return old;
-    }
-    
-    public boolean isDatabaseOld() {
-	
-	getTableNames();
+    	boolean old = false;
 
-	if (isDatabaseOldVersion23() || isDatabaseOldVersion22() || isDatabaseOldVersion21() || isDatabaseOldVersion180())
-	    return true;
-	
-	return false;
+    	ArrayList<String> fieldNames = getGeneralInfoMovieFieldNames();
+
+    	if (!fieldNames.contains("Awards") || !fieldNames.contains("Sound Mix"))
+    		old = true;
+
+    	return old;
     }
-    
-    
+
+    public boolean isDatabaseOld() {
+
+    	getTableNames();
+
+    	if (isDatabaseOldVersion23() || isDatabaseOldVersion22() || isDatabaseOldVersion21() || isDatabaseOldVersion180())
+    		return true;
+
+    	return false;
+    }
+
+
     public void deleteDatabase() {
-	
-	finalizeDatabase();
-	
-	try {
-	    File f = new File(getPath());
-	    f.delete();
-	    
-	} catch (Exception e) {
-	    log.error("", e);
-	}
+
+    	finalizeDatabase();
+
+    	try {
+    		File f = new File(getPath());
+    		f.delete();
+
+    	} catch (Exception e) {
+    		log.error("", e);
+    	}
     }
-     
+
 }
-    
+
 
 
 

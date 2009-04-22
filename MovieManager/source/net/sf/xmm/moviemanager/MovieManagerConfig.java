@@ -239,9 +239,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private HashMap<String, String> searchAlias = new HashMap<String, String>();
 
 	/* Stores default values for additional info fields, key == fieldName */
-	private HashMap<String, AdditionalInfoFieldDefaultValues> additionalInfoDefaultValues = new HashMap();
+	private HashMap<String, AdditionalInfoFieldDefaultValues> additionalInfoDefaultValues = new HashMap<String, AdditionalInfoFieldDefaultValues>();
 
-	private ArrayList<String> mainFilterSearchValues = new ArrayList();
+	private ArrayList<String> mainFilterSearchValues = new ArrayList<String>();
 	
 	private boolean loadDatabaseOnStartup = true;
 

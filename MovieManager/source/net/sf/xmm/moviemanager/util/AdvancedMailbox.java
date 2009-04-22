@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 public class AdvancedMailbox {
 
-	ArrayList list = new ArrayList();
+	ArrayList<Object> list = new ArrayList<Object>();
 	
 	// The number of currently active threads
 	int threadCount = 0;

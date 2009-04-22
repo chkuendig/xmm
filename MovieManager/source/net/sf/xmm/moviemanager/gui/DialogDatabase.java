@@ -41,7 +41,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -327,8 +326,6 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		if (MovieManager.getIt().getDatabase() != null && MovieManager.getIt().getDatabase().isMySQL()) {
 			String path = MovieManager.getConfig().getDatabasePath(false);
 		}
-
-		
 
 		JPanel mysqlOptionPanel = new JPanel(new GridLayout(0, 1));
 		mysqlOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogDatabase.mysql.settings")), BorderFactory.createEmptyBorder(0,5,5,5))); //$NON-NLS-1$

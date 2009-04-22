@@ -67,6 +67,7 @@ import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.AddSelectedFilesEvent;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.AddSelectedFilesEventListener;
+import net.sf.xmm.moviemanager.swing.extentions.filetree.FileNode;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTree;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.GUIUtil;
@@ -125,9 +126,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	JPanel optionsPanel;
 	JPanel all;
 	
-	HashMap existingMediaFiles = new HashMap();
+	HashMap<String, ModelEntry> existingMediaFiles = new HashMap<String, ModelEntry>();
 	
-	private HashMap nodesInFileLists = new HashMap();
+	private HashMap<FileNode, FileNode> nodesInFileLists = new HashMap<FileNode, FileNode>();
 		
 	private boolean addListMustContainValidItemsAlert = false; // denotes if the list contains an alert
 	
@@ -322,7 +323,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		
 		fileTree.eventHandler.addAddSelectedFilesEventListener(new AddSelectedFilesEventListener() {
 			public void addSelectedFilesEventOccurred(AddSelectedFilesEvent evt) {
-				ArrayList files =  fileTree.getSelectedFiles();
+				ArrayList<FileNode> files =  fileTree.getSelectedFiles();
 				addFilesToAddToList(files);
 			}
 		});
@@ -549,7 +550,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		//listPanel.setLayout(new BorderLayout());
 		listPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogAddMultipleMovies.panel-add-to-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
-		ArrayList columnListNames = MovieManager.getIt().getDatabase().getListsColumnNames();
+		ArrayList<String> columnListNames = MovieManager.getIt().getDatabase().getListsColumnNames();
 		Object [] listNames = columnListNames.toArray();
 
 		if (listNames.length == 0) {
@@ -644,7 +645,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		
 		
 		// Adding valid extension
-		ArrayList ext = MovieManager.getConfig().getMultiAddValidExtensions();
+		ArrayList<String> ext = MovieManager.getConfig().getMultiAddValidExtensions();
 				
 		if (ext.contains("avi"))
 			aviExtension.setSelected(true);
@@ -665,7 +666,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	
 	void updateExtensionoOnTree() {
 				
-		ArrayList validExtensions = new ArrayList();
+		ArrayList<String> validExtensions = new ArrayList<String>();
 		
 		if (aviExtension.isSelected())
 			validExtensions.add("avi");
@@ -730,7 +731,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		
 		
 		
-		ArrayList ext = new ArrayList();
+		ArrayList<String> ext = new ArrayList<String>();
 		
 		if (aviExtension.isSelected())
 			ext.add("avi");
@@ -749,7 +750,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	
 	
 
-	void addFilesToAddToList(ArrayList files) {
+	void addFilesToAddToList(ArrayList<FileNode> files) {
 
 		DefaultListModel model = (DefaultListModel) filesToAddList.getModel();
 
@@ -763,7 +764,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	}
 	
 	
-	void addFilesToFileList(ArrayList files) {
+	void addFilesToFileList(ArrayList<FileNode> files) {
 		
 		DefaultListModel model = (DefaultListModel) mediaFileList.getModel();
 		
@@ -842,7 +843,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			executeSave();
 									
 			setCursor(new Cursor(Cursor.WAIT_CURSOR));
-			ArrayList files =  fileTree.getFilesFromDirectoryTree(true);
+			ArrayList<FileNode> files =  fileTree.getFilesFromDirectoryTree(true);
 			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			
 			if (files == null || files.size() == 0) {
@@ -926,13 +927,13 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		 }
 	}
 	
-	public ArrayList getMoviesToAdd() {
+	public ArrayList<FileNode> getMoviesToAdd() {
 		
-		ArrayList list = new ArrayList();
+		ArrayList<FileNode> list = new ArrayList<FileNode>();
 		
 		DefaultListModel listModel = (DefaultListModel) filesToAddList.getModel();
 		
-		Enumeration	enumeration = listModel.elements();
+		Enumeration<FileNode> enumeration = (Enumeration<FileNode>) listModel.elements();
 		
 		while (enumeration.hasMoreElements()) {
 			list.add(enumeration.nextElement());

@@ -23,15 +23,10 @@ package net.sf.xmm.moviemanager.database;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import org.apache.log4j.Logger;
 
-import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.util.FileUtil;
 
 
@@ -833,7 +828,7 @@ public class DatabaseHSQL extends Database {
 	    value = 2;
 	}
 	
-	ArrayList columns = getExtraInfoFieldNames(true);
+	ArrayList<String> columns = getExtraInfoFieldNames(true);
 	String field;
 	
 	/* Copying existing extra info table columns to the extra info episode table */
@@ -1024,7 +1019,7 @@ public class DatabaseHSQL extends Database {
     private boolean isDatabaseOldVersion21() {
 	boolean old = false;
 	
-	ArrayList fieldNames = getAdditionalInfoFieldNames();
+	ArrayList<String> fieldNames = getAdditionalInfoFieldNames();
 	
 	if (!fieldNames.contains("Container"))
 	    old = true;
@@ -1038,7 +1033,7 @@ public class DatabaseHSQL extends Database {
     private boolean isDatabaseOldVersion22() {
 	boolean old = false;
 	
-	ArrayList tableNames = getTableNames();
+	ArrayList<String> tableNames = getTableNames();
 	
 	if (!tableNames.contains("General Info Episodes"))
 	    old = true;
@@ -1052,7 +1047,7 @@ public class DatabaseHSQL extends Database {
     private boolean isDatabaseOldVersion23() {
 	boolean old = false;
 	
-	ArrayList fieldNames = getGeneralInfoMovieFieldNames();
+	ArrayList<String> fieldNames = getGeneralInfoMovieFieldNames();
 	
 	if (!fieldNames.contains("Awards"))
 	    old = true;

@@ -25,9 +25,7 @@ import java.util.ArrayList;
 
 import javax.swing.JDialog;
 
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandAddMultipleMovies;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
-import net.sf.xmm.moviemanager.gui.DialogMovieInfo;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SwingWorker;
@@ -44,7 +42,7 @@ public class DatabaseImporterExporter {
 	private int current = -1;
 	private boolean done = false;
 	private boolean canceled = false;
-	private ArrayList transferred = new ArrayList();;
+	private ArrayList<String> transferred = new ArrayList<String>();
 	private ModelImportExportSettings importSettings;
 	private Dialog parent;
 
@@ -113,8 +111,6 @@ public class DatabaseImporterExporter {
 	 * This runs in a SwingWorker thread.
 	 */
 	class Importer {
-
-		ArrayList movielist = null;
 
 		int extraInfoFieldsCount;
 

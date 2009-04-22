@@ -36,48 +36,32 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
@@ -204,7 +188,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     
 //  The movies that are currently displayed in the movie list
     DefaultListModel currentMovieList;
-    ArrayList currentEpisodeList;
+    ArrayList<ModelEpisode> currentEpisodeList;
     
     
     ExtendedTreeCellRenderer extendedTreeCellRenderer;
@@ -220,7 +204,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     }
       
     
-    public void setCurrentLists(DefaultListModel currentMovieList, ArrayList currentEpisodeList) {
+    public void setCurrentLists(DefaultListModel currentMovieList, ArrayList<ModelEpisode> currentEpisodeList) {
     	this.currentMovieList = currentMovieList;
     	this.currentEpisodeList = currentEpisodeList;
     }
@@ -229,7 +213,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	return currentMovieList;
     }
     
-    public ArrayList getCurrentEpisodesList() {
+    public ArrayList<ModelEpisode> getCurrentEpisodesList() {
     	return currentEpisodeList;
     }
     
@@ -369,7 +353,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     
    
     
-    public DefaultTreeModel createTreeModel(DefaultListModel movieList, ArrayList episodes) {
+    public DefaultTreeModel createTreeModel(DefaultListModel movieList, ArrayList<ModelEpisode> episodes) {
         
         Object[] movies = movieList.toArray();
         
@@ -388,7 +372,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
             /* Adding episodes */
             for (int u = 0; u < episodes.size(); u++) {
                 
-                if (tempKey == ((ModelEpisode) episodes.get(u)).getMovieKey()) {
+                if (tempKey == episodes.get(u).getMovieKey()) {
                     
                     temp2 = new ExtendedTreeNode((ModelEntry) episodes.get(u));
                     temp.add(temp2);
@@ -407,7 +391,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	setTreeModel(null, null, null);
     }
     
-    public void setTreeModel(DefaultTreeModel model, DefaultListModel movieList, ArrayList episodeList) {
+    public void setTreeModel(DefaultTreeModel model, DefaultListModel movieList, ArrayList<ModelEpisode> episodeList) {
     	moviesList.setModel(model);
     	setCurrentLists(movieList, episodeList);
     	MovieManager.newMovieListLoadedHandler.newMovieListLoaded(this);
@@ -416,9 +400,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     
     public void setListTitle() {
 
-    	JPanel moviesList = getPanelMovieList();
-    	    	
-    	ArrayList lists = config.getCurrentLists();
+    	ArrayList<String> lists = config.getCurrentLists();
         
         String listsString = "";
         
@@ -606,7 +588,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     }
     
     public void loadMenuLists(Database database) {
-    	ArrayList listColumns = database.getListsColumnNames();
+    	ArrayList<String> listColumns = database.getListsColumnNames();
     	menuBar.loadDefaultMenuLists(listColumns);
     }
     
@@ -1061,11 +1043,11 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	
     	filter.add(label, BorderLayout.WEST);
     	
-    	ArrayList filterValues = config.getMainFilterSearchValues();
+    	ArrayList<String> filterValues = config.getMainFilterSearchValues();
     	JCheckBox [] items = new JCheckBox[filterValues.size()];
     	    	
     	for (int i = 0; i < items.length; i++)
-    		items[i] = new JCheckBox((String) filterValues.get(i));
+    		items[i] = new JCheckBox(filterValues.get(i));
     	    	
     	
     	comboBoxFilter = new JComboCheckBox(items); //$NON-NLS-1$ //$NON-NLS-2$
