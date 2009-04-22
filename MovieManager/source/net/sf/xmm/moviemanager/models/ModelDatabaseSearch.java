@@ -39,7 +39,7 @@ public class ModelDatabaseSearch {
     /* ORDER BY column */
     private String orderCategory = null;
     
-    public ArrayList searchTerms = new ArrayList();
+    public ArrayList<String> searchTerms = new ArrayList<String>();
     
     public boolean getFullGeneralInfo = true;
     
@@ -58,7 +58,7 @@ public class ModelDatabaseSearch {
     private int seen = 0; 
     
     /* Currently chosen lists */
-    private ArrayList listNames = new ArrayList();
+    private ArrayList<String> listNames = new ArrayList<String>();
     
     private int listOption = 0; /* 1 == on, 0 == off */
     private boolean showUnlistedEntries = true;
@@ -82,7 +82,7 @@ public class ModelDatabaseSearch {
     private String date = "";
     
     
-    private HashMap searchAlias;
+    private HashMap<String, String> searchAlias;
     
     /* Used by the database  */
     public  boolean where;
@@ -134,11 +134,11 @@ public class ModelDatabaseSearch {
 	this.seen = seen;
     }
     
-    public ArrayList getCurrentListNames() {
+    public ArrayList<String> getCurrentListNames() {
     	return listNames;
     }
 
-    public void setCurrentListNames(ArrayList listNames) {
+    public void setCurrentListNames(ArrayList<String> listNames) {
     	this.listNames = listNames;
     }
     
@@ -191,11 +191,11 @@ public class ModelDatabaseSearch {
 	this.date = date;
     }
     
-    public HashMap getSearchAlias() {
+    public HashMap<String, String> getSearchAlias() {
 	return searchAlias;
     }
 
-    public void setSearchAlias(HashMap searchAlias) {
+    public void setSearchAlias(HashMap<String, String> searchAlias) {
 	this.searchAlias = searchAlias;
     }
     
