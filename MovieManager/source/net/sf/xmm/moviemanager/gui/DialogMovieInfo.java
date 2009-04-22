@@ -31,9 +31,6 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -67,7 +64,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.TransferHandler;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileSystemView;
@@ -114,8 +110,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 	private int EXTRA_START = 17;
 
-	public List _fieldDocuments = new ArrayList();
-	public List _fieldUnits = new ArrayList();
+	public List<PlainDocument> _fieldDocuments = new ArrayList<PlainDocument>();
+	public List<String> _fieldUnits = new ArrayList<String>();
 
 	public ModelMovieInfo movieInfoModel;
 
@@ -948,7 +944,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		buttonSaveAndClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-				reloadMovieListAndClose(executeCommandSave(null));
+				reloadMovieListAndClose(executeCommandSave());
 			}
 		});
 		panelButtons.add(buttonSaveAndClose);
@@ -963,7 +959,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		buttonSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-				reloadMovieList(executeCommandSave(null));
+				reloadMovieList(executeCommandSave());
 				movieInfoModel.clearModel(true);
 				movieTitle2.requestFocus();
 				
@@ -1695,11 +1691,11 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 				if (valuesObj != null) {
 
-					ArrayList values = valuesObj.getDefaultValues();
+					ArrayList<String> values = valuesObj.getDefaultValues();
 					String temp;
 
 					while (!values.isEmpty()) {
-						temp = (String) values.remove(0);
+						temp = values.remove(0);
 						if (!temp.equals(currentFieldIndexValue)) {
 							comboBoxModel.addElement(temp);
 
@@ -1754,10 +1750,25 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	}
 
 	/**
+	 * If option to add movie to current list on enabled. Use lists, else null
+	 * @return
+	 */
+	public ModelEntry executeCommandSave() {
+		
+		ArrayList <String> listNames = null;
+				
+		if (MovieManager.getConfig().getAddNewMoviesToCurrentLists()) {
+			listNames = MovieManager.getConfig().getCurrentLists();
+		}
+				
+		return executeCommandSave(listNames);
+	}
+	
+	/**
 	 * Saves and exits... If column is not null, the movie should be added to
 	 * the list named column
 	 */
-	public ModelEntry executeCommandSave(ArrayList listNames) {
+	public ModelEntry executeCommandSave(ArrayList<String> listNames) {
 
 		movieInfoModel._hasReadProperties = false;
 
@@ -1990,7 +2001,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				/* Get the ifo files */
 				list = selectedFile.listFiles();
 
-				ArrayList ifoList = new ArrayList(4);
+				ArrayList<File> ifoList = new ArrayList<File>(4);
 
 				for (int i = 0; i < list.length; i++) {
 					
