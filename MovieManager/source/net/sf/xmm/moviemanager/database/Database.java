@@ -99,7 +99,7 @@ abstract public class Database {
 	String webRuntimeString = "Web Runtime";
 	String quotedWebRuntimeString = quote + webRuntimeString + quote;
 
-	ArrayList extraInfoFieldNames = null;
+	ArrayList<String> extraInfoFieldNames = null;
 
 	// Used when finding which lists a movie is memeber of.
 	public static final String listsAliasPrefix = "lists_";
@@ -253,7 +253,7 @@ abstract public class Database {
 		try {
 			ResultSet resultSet = _sql.executeQueryForwardOnly(query);
 			ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-			ArrayList names = new ArrayList();
+			ArrayList<String> names = new ArrayList<String>();
 
 			data.append("  |-----\n");
 
@@ -267,7 +267,7 @@ abstract public class Database {
 
 					for (int i=0; i<names.size(); i++) {
 						data.append("  |   ");
-						data.append((String)names.get(i));
+						data.append(names.get(i));
 						data.append(": ");
 
 						if ((tempData = resultSet.getString(i+1)) != null)
@@ -560,11 +560,11 @@ abstract public class Database {
 		}
 		StringTokenizer tokenizer = new StringTokenizer(data, ":");
 
-		ArrayList extraFields = getExtraInfoFieldNames();
+		ArrayList<String> extraFields = getExtraInfoFieldNames();
 
 		int fieldCount = ModelAdditionalInfo.additionalInfoFieldCount() + extraFields.size();
 
-		ArrayList activeFields = new ArrayList(20);
+		ArrayList<Integer> activeFields = new ArrayList<Integer>(20);
 
 		/* Nothing saved to 'active additional info fields' */
 		if (tokenizer.countTokens() == 0) {
@@ -784,8 +784,8 @@ abstract public class Database {
 
 				_sql.clear();
 
-				ArrayList extraInfoFieldNames = getExtraInfoFieldNames(false);
-				ArrayList extraInfoFieldValues = new ArrayList();
+				ArrayList<String> extraInfoFieldNames = getExtraInfoFieldNames(false);
+				ArrayList<String> extraInfoFieldValues = new ArrayList<String>();
 
 				if (episode)
 					resultSet = getExtraInfoEpisodeResultSet(index);
@@ -850,7 +850,7 @@ abstract public class Database {
 
 	public synchronized boolean listColumnExist(String columnName) {
 
-		ArrayList columnNames = getListsColumnNames();
+		ArrayList<String> columnNames = getListsColumnNames();
 
 		while (!columnNames.isEmpty()) {
 			if (columnNames.get(0).equals(columnName))
@@ -861,17 +861,17 @@ abstract public class Database {
 	}
 
 
-	ArrayList listsColumnNames = null;
+	ArrayList<String> listsColumnNames = null;
 	
 	/**
 	 * Returns the names of the columns in the lists table.
 	 **/
-	public synchronized ArrayList getListsColumnNames() {
+	public synchronized ArrayList<String> getListsColumnNames() {
 		
 		if (listsColumnNames != null)
-			return new ArrayList(listsColumnNames);
+			return new ArrayList<String>(listsColumnNames);
 		
-		listsColumnNames = new ArrayList();
+		listsColumnNames = new ArrayList<String>();
 		try {
 			ResultSetMetaData metaData = _sql.executeQuery("SELECT "+ quote + "Lists" +quote + ".* FROM "+ quote + "Lists"+ quote + " WHERE 1=0;").getMetaData();
 
@@ -893,7 +893,7 @@ abstract public class Database {
 			}
 		}
 		/* Returns the list model... */
-		return new ArrayList(listsColumnNames);
+		return new ArrayList<String>(listsColumnNames);
 	}
 
 	public synchronized int getExtraInfoColumnCount() {
@@ -904,20 +904,20 @@ abstract public class Database {
 		return extraInfoFieldNames.size();
 	}
 
-	public synchronized ArrayList getExtraInfoFieldNames(boolean fromDatabase) {
+	public synchronized ArrayList<String> getExtraInfoFieldNames(boolean fromDatabase) {
 	
 		if (fromDatabase || extraInfoFieldNames == null) {
 			extraInfoFieldNames = getExtraInfoFieldNames();
 		}
-		return new ArrayList(extraInfoFieldNames);
+		return new ArrayList<String>(extraInfoFieldNames);
 	}
 
 	/**
 	 * Returns the Extra Info field names in a ArrayList.
 	 **/
-	private synchronized ArrayList getExtraInfoFieldNames() {
+	private synchronized ArrayList<String> getExtraInfoFieldNames() {
 
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 
 		try {
 			String query = "SELECT " + quotedExtraInfoString +".* "+ "FROM "+ quotedExtraInfoString +" WHERE 1=0;";
@@ -949,9 +949,9 @@ abstract public class Database {
 	/**
 	 * Returns the Extra Info field names in a ArrayList.
 	 **/
-	public synchronized ArrayList getExtraInfoEpisodesFieldNames() {
+	public synchronized ArrayList<String> getExtraInfoEpisodesFieldNames() {
 
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 		try {
 			String query = "SELECT " + quotedExtraInfoEpisodeString +".* "+ "FROM "+ quotedExtraInfoEpisodeString +" WHERE 1=0;";
 
@@ -982,8 +982,8 @@ abstract public class Database {
 	/**
 	 * Returns the additional info field names in a ArrayList.
 	 **/
-	public synchronized ArrayList getAdditionalInfoFieldNames() {
-		ArrayList list = new ArrayList();
+	public synchronized ArrayList<String> getAdditionalInfoFieldNames() {
+		ArrayList<String> list = new ArrayList<String>();
 		String query = "SELECT " + quotedAdditionalInfoString + ".* "+ "FROM "+ quotedAdditionalInfoString +" WHERE 1=0;";
 
 		try {
@@ -1015,9 +1015,9 @@ abstract public class Database {
 	/**
 	 * Returns the additional info field names in a ArrayList.
 	 **/
-	public synchronized ArrayList getGeneralInfoMovieFieldNames() {
+	public synchronized ArrayList<String> getGeneralInfoMovieFieldNames() {
 
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 		String query = "SELECT " + quotedGeneralInfoString +".* "+ "FROM "+ quotedGeneralInfoString +" WHERE 1=0;";
 
 		try {
@@ -1053,8 +1053,8 @@ abstract public class Database {
 	/**
 	 * Returns the table names.
 	 **/
-	public synchronized ArrayList getTableNames() {
-		ArrayList list = new ArrayList();
+	public synchronized ArrayList<String> getTableNames() {
+		ArrayList<String> list = new ArrayList<String>();
 		try {
 
 			String[] tableTypes = { "TABLE" };
@@ -1952,7 +1952,7 @@ abstract public class Database {
 	 * Adds the values in fieldValuesList with names in fieldNamesList to movie
 	 * index in the Extra Info table.
 	 **/
-	public synchronized void addExtraInfoMovie(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
+	public synchronized void addExtraInfoMovie(int index, ArrayList<String> fieldNamesList, ArrayList<String> fieldValuesList) {
 
 		try {
 			String query = "INSERT INTO " + quotedExtraInfoString +
@@ -1990,7 +1990,7 @@ abstract public class Database {
 	 * Sets the fieldName of movie index in the Extra Info table to fieldValue and
 	 * returns the number of updated rows.
 	 **/
-	public synchronized int setExtraInfoMovie(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
+	public synchronized int setExtraInfoMovie(int index, ArrayList<String> fieldNamesList, ArrayList<String> fieldValuesList) {
 
 		if (fieldNamesList == null || fieldValuesList == null)
 			return 1;
@@ -2039,7 +2039,7 @@ abstract public class Database {
 	 * index in the Extra Info table.
 	 * Return values. -1 error, 0 = success, 1 = aborted
 	 **/
-	public synchronized int addExtraInfoEpisode(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
+	public synchronized int addExtraInfoEpisode(int index, ArrayList<String> fieldNamesList, ArrayList<String> fieldValuesList) {
 
 		int ret = 0;
 
@@ -2078,7 +2078,7 @@ abstract public class Database {
 	 * Sets the fieldName of movie index in the Extra Info table to fieldValue and
 	 * returns the number of updated rows.
 	 **/
-	public synchronized int setExtraInfoEpisode(int index, ArrayList fieldNamesList, ArrayList fieldValuesList) {
+	public synchronized int setExtraInfoEpisode(int index, ArrayList<String> fieldNamesList, ArrayList<String> fieldValuesList) {
 
 		if (fieldNamesList == null || fieldValuesList == null)
 			return 1;
@@ -2093,10 +2093,10 @@ abstract public class Database {
 				_sql.clear();
 
 				statement = _sql.prepareStatement("UPDATE " + quotedExtraInfoEpisodeString + " "+
-						"SET " + quotedExtraInfoEpisodeString + "."+ quote + (String) fieldNamesList.get(i) + quote + "=? "+
+						"SET " + quotedExtraInfoEpisodeString + "."+ quote + fieldNamesList.get(i) + quote + "=? "+
 						"WHERE " + quotedExtraInfoEpisodeString + ".ID=?;");
 
-				statement.setString(1, (String) fieldValuesList.get(i));
+				statement.setString(1, fieldValuesList.get(i));
 				statement.setInt(2, index);
 				value = statement.executeUpdate();
 			}
@@ -2122,7 +2122,7 @@ abstract public class Database {
 	 * Adds the values in fieldValuesList with names in fieldNamesList to movie
 	 * index in the extra info table.
 	 **/
-	public synchronized void addLists(int index, ArrayList columnNamesList, ArrayList fieldValuesList) {
+	public synchronized void addLists(int index, ArrayList<String> columnNamesList, ArrayList<Boolean> fieldValuesList) {
 		try {
 			/* Creates an empty row... */
 			int value = _sql.executeUpdate("INSERT INTO " + quote + "Lists" + quote + " "+
@@ -2631,7 +2631,7 @@ abstract public class Database {
 					quotedGeneralInfoString + "." + quote + "Date" + quote);
 		}
 		
-		ArrayList lists = getListsColumnNames();
+		ArrayList<String> lists = getListsColumnNames();
 		
 		if (lists != null && lists.size() > 0) {
 			
@@ -2662,7 +2662,7 @@ abstract public class Database {
 		return list;
 	}
 
-	public synchronized DefaultListModel getMoviesList(String orderBy, ArrayList lists, boolean showUnlistedMovies) {
+	public synchronized DefaultListModel getMoviesList(String orderBy, ArrayList<String> lists, boolean showUnlistedMovies) {
 
 		log.debug("getMoviesList(String orderBy, ArrayList lists, boolean showUnlistedMovies)");
 		
@@ -2813,7 +2813,7 @@ abstract public class Database {
 	 */
 	private Object[] getFilterValues(String filter) {
 
-		ArrayList matchValues = new ArrayList(10);
+		ArrayList<String> matchValues = new ArrayList<String>(10);
 
 		/* The regular expression will divide by every white space except if (multiple) words are encapsulated by " and " or { and } */
 		//Pattern pattern = Pattern.compile("([\\p{Graph}&&[^\"]]+?)\\s|(\".+?\"+)");
@@ -2941,7 +2941,7 @@ abstract public class Database {
 						String setkey;
 						String setValue;
 
-						for (Iterator iterator = map.iterator(); iterator.hasNext();) {
+						for (Iterator<Map.Entry> iterator = map.iterator(); iterator.hasNext();) {
 
 							Map.Entry entry = (Map.Entry) iterator.next();
 							setkey = (String) entry.getKey();
@@ -3221,7 +3221,7 @@ abstract public class Database {
 	private String processAdvancedOptions(ModelDatabaseSearch options) {
 
 		String sqlQuery = "";
-		ArrayList currentLists = options.getCurrentListNames();
+		ArrayList<String> currentLists = options.getCurrentListNames();
 		int option = 0;
 
 		/* List */
@@ -3261,7 +3261,7 @@ abstract public class Database {
 
 				if (options.getShowUnlistedEntries()) {
 
-					ArrayList listNames = getListsColumnNames();
+					ArrayList<String> listNames = getListsColumnNames();
 
 					if (listNames.size() > 0) {
 
@@ -3457,7 +3457,7 @@ abstract public class Database {
 							resultSet.getString("Date"));
 				}
 								
-				ArrayList listNames = getListsColumnNames();
+				ArrayList<String> listNames = getListsColumnNames();
 				int count = listNames.size();
 				
 				if (count > 0) {
@@ -3493,8 +3493,8 @@ abstract public class Database {
 	 * Returns an ArrayList that contains all the movies in the
 	 * current database.
 	 **/
-	public synchronized ArrayList getEpisodeList(String orderBy) {
-		ArrayList list = new ArrayList(100);
+	public synchronized ArrayList<ModelEpisode> getEpisodeList(String orderBy) {
+		ArrayList<ModelEpisode> list = new ArrayList<ModelEpisode>(100);
 
 		try {
 			/* Gets the list in a result set... */
@@ -3595,7 +3595,7 @@ abstract public class Database {
 						resultSet.getString("Mpaa"), resultSet.getString("Sound Mix"), 
 						resultSet.getString("Web Runtime"), resultSet.getString("Awards"));
 				
-				ArrayList listNames = getListsColumnNames();
+				ArrayList<String> listNames = getListsColumnNames();
 				int count = listNames.size();
 				
 				if (count > 0) {
