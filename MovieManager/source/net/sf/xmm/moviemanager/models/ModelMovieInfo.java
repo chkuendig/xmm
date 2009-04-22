@@ -56,8 +56,8 @@ public class ModelMovieInfo {
     
     private int _lastFieldIndex = -1; // the last additional info field that was displayed
     
-    private List _fieldNames = new ArrayList();
-    private List _fieldValues = new ArrayList();
+    private List<String> _fieldNames = new ArrayList<String>();
+    private List<String> _fieldValues = new ArrayList<String>();
     
     public boolean saveAdditionalInfo = true;
     
@@ -139,7 +139,7 @@ public class ModelMovieInfo {
     	return _edit;
     }
     
-    public List getFieldNames() {
+    public List<String> getFieldNames() {
     	
     	if (!model.getHasAdditionalInfoData())
     		model.updateAdditionalInfoData();
@@ -147,11 +147,11 @@ public class ModelMovieInfo {
     	return _fieldNames;    	
     }
     
-    public void setFieldNames(List fieldNames) {
+    public void setFieldNames(List<String> fieldNames) {
     	_fieldNames = fieldNames;
     }
     
-    public List getFieldValues() {
+    public List<String> getFieldValues() {
     	
     	if (!model.getHasAdditionalInfoData())
 			model.updateAdditionalInfoData();	
@@ -159,7 +159,7 @@ public class ModelMovieInfo {
     	return _fieldValues;
     }
     
-    public void setFieldValues(List fieldValues) {
+    public void setFieldValues(List<String> fieldValues) {
     	 _fieldValues = fieldValues;
     }
     
@@ -414,7 +414,7 @@ public class ModelMovieInfo {
         additionalInfo.setMediaType((String) _fieldValues.get(16));
         
         
-        ArrayList extraFieldValuesList = new ArrayList();
+        ArrayList<String> extraFieldValuesList = new ArrayList<String>();
         
         for (int i = EXTRA_START; i < _fieldNames.size(); i++) {
             extraFieldValuesList.add( _fieldValues.get(i));
@@ -427,7 +427,7 @@ public class ModelMovieInfo {
     	return saveToDatabase(null);
     }
     
-    public synchronized ModelEntry saveToDatabase(ArrayList listNames) throws Exception {
+    public synchronized ModelEntry saveToDatabase(ArrayList<String> listNames) throws Exception {
     	
     	saveAdditionalInfoData();
 
@@ -437,8 +437,19 @@ public class ModelMovieInfo {
     	return saveToDatabase(model, _edit, listNames);
     }
         
-    public synchronized ModelEntry saveToDatabase(ModelEntry modelToSave, boolean edit, ArrayList listNamesToApply) throws Exception {
+    public synchronized ModelEntry saveToDatabase(ModelEntry modelToSave, boolean edit, ArrayList <String> listNamesToApply) throws Exception {
                 
+    	System.err.println("listNamesToApply:" + listNamesToApply);
+    	
+    	if (listNamesToApply != null) {
+    		
+    		System.err.println("listNamesToApply.size:" + listNamesToApply.size());
+    		
+    		for (String list : listNamesToApply)
+    			System.err.println("list:" + list);
+    		
+    	}
+    	
     	Database database = MovieManager.getIt().getDatabase();
         ModelAdditionalInfo additionalInfo = modelToSave.getAdditionalInfo();
         
@@ -506,11 +517,11 @@ public class ModelMovieInfo {
                     
                     
                     /* Add new row in Lists table with default values */
-                    ArrayList dbListNames = database.getListsColumnNames();
-                    ArrayList listValues = new ArrayList();
+                    ArrayList<String> dbListNames = database.getListsColumnNames();
+                    ArrayList<Boolean> listValues = new ArrayList<Boolean>();
                     
                    if (listNamesToApply == null)
-                	   listNamesToApply = new ArrayList();
+                	   listNamesToApply = new ArrayList<String>();
                     
                     for (int i = 0; i < dbListNames.size(); i++) {
                     	
@@ -678,8 +689,8 @@ public class ModelMovieInfo {
        
         ModelAdditionalInfo additionalInfo = null;
         
-        _fieldNames = new ArrayList();
-        _fieldValues = new ArrayList();
+        _fieldNames = new ArrayList<String>();
+        _fieldValues = new ArrayList<String>();
         
         if (!loadEmpty) {
          	
@@ -817,8 +828,8 @@ public class ModelMovieInfo {
             _fieldValues.add(additionalInfo.getMediaType());
         
         
-        ArrayList extraFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(true);
-        ArrayList extraFieldValues = null;
+        ArrayList<String> extraFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(true);
+        ArrayList<String> extraFieldValues = null;
         
         if (!loadEmpty && additionalInfo != null)
             extraFieldValues = additionalInfo.getExtraInfoFieldValues();
@@ -918,8 +929,8 @@ public class ModelMovieInfo {
 	
     	boolean removeDuplicates = !MovieManager.getConfig().getIncludeAkaLanguageCodes();
 
-    	ArrayList akaKeys = new ArrayList();
-    	ArrayList akaValues = new ArrayList();
+    	ArrayList<String> akaKeys = new ArrayList<String>();
+    	ArrayList<String> akaValues = new ArrayList<String>();
 
     	String title = modelToModify.getTitle();
     	String akaTitles = modelToModify.getAka();
