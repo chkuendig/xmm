@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 public class SimpleMailbox {
 
-	ArrayList msgs = new ArrayList();
+	ArrayList<String> msgs = new ArrayList<String>();
 	
 	synchronized public String getMessage() {
 		
