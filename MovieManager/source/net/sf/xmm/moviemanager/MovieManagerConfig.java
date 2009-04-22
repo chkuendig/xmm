@@ -236,16 +236,18 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	/*Any string, for instance 1990*/
 	private String dateValue = "";
 
-	private HashMap searchAlias = new HashMap();
+	private HashMap<String, String> searchAlias = new HashMap<String, String>();
 
 	/* Stores default values for additional info fields, key == fieldName */
-	private HashMap additionalInfoDefaultValues = new HashMap();
+	private HashMap<String, AdditionalInfoFieldDefaultValues> additionalInfoDefaultValues = new HashMap();
 
-	private ArrayList mainFilterSearchValues = new ArrayList();
+	private ArrayList<String> mainFilterSearchValues = new ArrayList();
 	
 	private boolean loadDatabaseOnStartup = true;
 
 	private boolean loadLastUsedListAtStartup = false;
+	private boolean addNewMoviesToCurrentLists = false;
+		
 	private boolean seenEditableInMainWindow = true;
 
 	//private boolean autoMoveThe = false;
@@ -267,7 +269,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean multiAddRegexStringEnabled = false;
 	private boolean multiAddRegexStringNegated = false;
 
-	private ArrayList multiAddValidExtensions = new ArrayList();
+	private ArrayList <String> multiAddValidExtensions = new ArrayList<String>();
 	private String multiAddCustomExtensions = "";
 	
 	private int multiAddSelectOption = 0;
@@ -312,7 +314,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String nocover = "nocover_puma.png";
 
 	/* Current list */
-	protected ArrayList currentLists = new ArrayList();
+	protected ArrayList <String> currentLists = new ArrayList<String>();
 	boolean showUnlistedEntries = true;
 	
 	protected boolean multiAddListEnabled = false;
@@ -419,7 +421,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		private boolean searchAliasEnabled = true;
 		private boolean sensitivePrintMode = false;
 		
-		private HashMap plugins = new HashMap();
+		private HashMap<String, String> plugins = new HashMap<String, String>();
 		
 		public void addPlugin(String key, String value) {
 			if (key != null && !"".equals(key) && value != null && !"".equals(value))
@@ -432,11 +434,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		
 		InternalConfig() {}
 		
-		InternalConfig(ArrayList lines) {
+		InternalConfig(ArrayList<String> lines) {
 							
 			for (int i = 0; i < lines.size(); i++) {
 			
-				String line = (String) lines.get(i);
+				String line = lines.get(i);
 													
 				if (line.startsWith("toolBarPopup:")) 
 					toolBarPopup = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
@@ -617,7 +619,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			if (inputStream == null)
 				return;
 			
-			ArrayList lines = FileUtil.readArrayList(new InputStreamReader(inputStream));
+			ArrayList<String> lines = FileUtil.readArrayList(new InputStreamReader(inputStream));
 						
 			if (lines != null) {
 				internalConfig = new InternalConfig(lines);
@@ -1333,7 +1335,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 
 	
-	public ArrayList getMultiAddValidExtensions() {
+	public ArrayList<String> getMultiAddValidExtensions() {
 		return multiAddValidExtensions;
 	}
 
@@ -1348,7 +1350,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		return extStr;
 	}
 	
-	public void setMultiAddValidExtension(ArrayList ext) {
+	public void setMultiAddValidExtension(ArrayList<String> ext) {
 		multiAddValidExtensions = ext;
 	}
 	
@@ -1837,16 +1839,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 
 	
-	
-	public HashMap getSearchAlias() {
+	public HashMap<String, String> getSearchAlias() {
 		return searchAlias;
 	}
 	
-	public HashMap getAdditionalInfoDefaultValues() {
+	public HashMap<String, AdditionalInfoFieldDefaultValues> getAdditionalInfoDefaultValues() {
 		return additionalInfoDefaultValues;
 	}
 	
-	public ArrayList getMainFilterSearchValues() {
+	public ArrayList<String> getMainFilterSearchValues() {
 		return mainFilterSearchValues;
 	}
 	
@@ -1861,7 +1862,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	/**
 	 * @return ArrayList containing the lists that are currently selected
 	 */
-	public ArrayList getCurrentLists() {
+	public ArrayList <String> getCurrentLists() {
 		return currentLists;
 	}
 
@@ -1879,7 +1880,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 		
 	
-	public void setCurrentLists(ArrayList currentLists) {
+	public void setCurrentLists(ArrayList<String> currentLists) {
 		this.currentLists = currentLists;
 	}
 
@@ -1902,6 +1903,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.loadLastUsedListAtStartup = loadLastUsedListAtStartup;
 	}
 
+	public boolean getAddNewMoviesToCurrentLists() {
+		return addNewMoviesToCurrentLists;
+	}
+
+	public void setAddNewMoviesToCurrentLists(boolean addNewMoviesToCurrentLists) {
+		this.addNewMoviesToCurrentLists = addNewMoviesToCurrentLists;
+	}
+	
 	public boolean getUseJTreeIcons() {
 		return useJTreeIcons;
 	}
@@ -2092,11 +2101,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 
 			// search Alias And Additional Info Default Values
-			ArrayList searchAliasList = new ArrayList();
-			ArrayList additionalFieldDefaults = new ArrayList();
-			ArrayList mainFilterDefaults = new ArrayList();
+			ArrayList<String> searchAliasList = new ArrayList<String>();
+			ArrayList<String> additionalFieldDefaults = new ArrayList<String>();
+			ArrayList<String> mainFilterDefaults = new ArrayList<String>();
 			
-			HashMap config = new HashMap();
+			HashMap<String, String> config = new HashMap<String, String>();
 						
 			String tmp, key, value;
 
@@ -2650,6 +2659,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setLoadLastUsedListAtStartup(new Boolean(value).booleanValue());
 			}
 
+			value = (String) config.get("addNewMoviesToCurrentLists:");
+
+			if (value != null) {
+				setAddNewMoviesToCurrentLists(new Boolean(value).booleanValue());
+			}
+			
+			
 			value = (String) config.get("currentLists:");
 
 			if (value == null) {
@@ -3351,7 +3367,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 		 
 		 settings.append(lineSeparator);
 		 settings.append("loadCurrentListAtStartup:" + getLoadLastUsedListAtStartup());
-
+		
+		 settings.append(lineSeparator);
+		 settings.append("addNewMoviesToCurrentLists:" + getAddNewMoviesToCurrentLists());
+		 
 		 settings.append(lineSeparator);
 		 settings.append("multiAddList:" + getMultiAddList());
 
@@ -3516,11 +3535,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 
 		 // Search aliases
 		 
-		 HashMap searchAlias = getSearchAlias();
+		 HashMap<String, String> searchAlias = getSearchAlias();
 		 String key;
 		 String val;
 
-		 for (Iterator i = searchAlias.keySet().iterator(); i.hasNext();) {
+		 for (Iterator<String> i = searchAlias.keySet().iterator(); i.hasNext();) {
 			 key = (String) i.next();
 			 val = (String) searchAlias.get(key);
 
@@ -3529,7 +3548,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 }
 		 
 		 
-		 ArrayList filterValues = getMainFilterSearchValues();
+		 ArrayList<String> filterValues = getMainFilterSearchValues();
 		 
 		 for (int i = 0; i < filterValues.size(); i++) {
 			 settings.append("mainFilterSearchValues:" + (String) filterValues.get(i));
