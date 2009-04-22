@@ -110,7 +110,7 @@ public class FileUtil {
     
     
    
-    public static ArrayList readFileToArrayList(File file) throws FileNotFoundException, IOException {
+    public static ArrayList<String> readFileToArrayList(File file) throws FileNotFoundException, IOException {
 
     	if (!file.isFile()) {
     		if (!FileUtil.getFile(file.toString()).isFile()) 
@@ -127,8 +127,8 @@ public class FileUtil {
 
     	
     	
-    public static ArrayList readArrayList(Reader input) throws FileNotFoundException, IOException {
-    	ArrayList ret = new ArrayList();
+    public static ArrayList<String> readArrayList(Reader input) throws FileNotFoundException, IOException {
+    	ArrayList<String> ret = new ArrayList<String>();
     	
     	BufferedReader reader = new BufferedReader(input);
     	String tmp;
