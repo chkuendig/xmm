@@ -70,7 +70,7 @@
             -->
 
     <shortcut
-            name="MeDs Movie Manager"
+            name="MeD&#8217;s Movie Manager"
 			Categories="Application"
             description="Run MeD's Movie Manager"
 			iconFile="$INSTALL_PATH/Icon.ico"
@@ -91,7 +91,7 @@
     </shortcut>
 
 	<shortcut
-            name="MeDs Movie Manager Uninstall"
+            name="MeD&#8217;s Movie Manager Uninstall"
             programGroup="yes"
             desktop="no"
             applications="no"
