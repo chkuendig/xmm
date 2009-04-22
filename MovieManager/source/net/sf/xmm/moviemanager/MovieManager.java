@@ -26,7 +26,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.io.FileWriter;
 import java.net.URL;
 import java.security.*;
 import java.text.SimpleDateFormat;
@@ -42,7 +41,6 @@ import javax.swing.tree.DefaultTreeModel;
 
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandExit;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportHandler;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.database.DatabaseAccess;
 import net.sf.xmm.moviemanager.database.DatabaseHSQL;
@@ -52,11 +50,10 @@ import net.sf.xmm.moviemanager.gui.DialogDatabase;
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
 import net.sf.xmm.moviemanager.gui.DialogQuestion;
 import net.sf.xmm.moviemanager.http.HttpUtil;
-import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
 import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
+import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
-import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedHandler;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewMovieListLoadedHandler;
 import net.sf.xmm.moviemanager.util.FileUtil;
@@ -70,7 +67,6 @@ import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerStartupHandler;
 
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.RollingFileAppender;
@@ -117,7 +113,7 @@ public class MovieManager {
     	return sandbox;
     }
     
-    public HashMap htmlTemplates = new HashMap();
+    public HashMap<String, ModelHTMLTemplate> htmlTemplates = new HashMap<String, ModelHTMLTemplate>();
     
     public ModelHTMLTemplate getTemplate(String name) {
     	return (ModelHTMLTemplate) htmlTemplates.get(name);
@@ -269,19 +265,19 @@ public class MovieManager {
     	options.setSeen(config.getFilterSeen());
     	
     	if (config.getCurrentLists() == null)
-    		options.setCurrentListNames(new ArrayList());
+    		options.setCurrentListNames(new ArrayList<String>());
     	else
-    		options.setCurrentListNames(new ArrayList(config.getCurrentLists()));
+    		options.setCurrentListNames(new ArrayList<String>(config.getCurrentLists()));
     	
     	options.setShowUnlistedEntries(config.getShowUnlistedEntries() && options.getCurrentListNames().size() > 0);
     	    	
     	options.setListOption(0);
     	
     	if (db != null) {
-
+	
     		// If there are no lists, or if all the lists are shown in addition to the unlisted ones, no point in enabling lists
-    		if (options.getCurrentListNames().size() > 0 || 
-    				(options.getShowUnlistedEntries() && options.getCurrentListNames().size() != MovieManager.getIt().getDatabase().getListsColumnNames().size())) {
+    		if ((options.getCurrentListNames().size() > 0 || options.getShowUnlistedEntries()) &&
+    				!(options.getShowUnlistedEntries() && options.getCurrentListNames().size() == db.getListsColumnNames().size())) {
     			options.setListOption(1);
     		}
 
@@ -304,7 +300,7 @@ public class MovieManager {
 		log.info("Ceating list " + listName);
 		
 		MovieManager.getIt().getDatabase().addListsColumn(listName);
-		MovieManager.getIt().getConfig().addToCurrentLists(listName);
+		MovieManager.getConfig().addToCurrentLists(listName);
 		
 		getDialog().loadMenuLists();
     }
@@ -450,31 +446,35 @@ public class MovieManager {
     			// Verifies that all the lists are available
     			if (config.getLoadLastUsedListAtStartup()) {
 
-    				ArrayList lists = config.getCurrentLists();
+    				ArrayList<String> lists = config.getCurrentLists();
 
     				if (lists == null) {
     					options.setListOption(0);
-    					config.setCurrentLists(new ArrayList());
+    					config.setCurrentLists(new ArrayList<String>());
     					config.setShowUnlistedEntries(false);
     				} else {
 
+    					boolean changed = false;
+    					
     					for (int i = 0; i < lists.size(); i++) {
+    						
     						if (!_database.listColumnExist((String) lists.get(i))) { //$NON-NLS-1$
     							lists.remove(i);
+    							changed = true;
     						}
-
-    						dialogMovieManager.setListTitle();
-    						options.setCurrentListNames(config.getCurrentLists());
     					}
-
-    					if (lists.size() > 0)
-    						options.setListOption(1);
+    					
+    					if (changed) {
+    						options = getFilterOptions(_database);
+    					}
+    					
+    					dialogMovieManager.setListTitle();
     				}
     			}
     			else {
     				//setDefaultListsSetup(_database);
     				options.setListOption(0);
-    				config.setCurrentLists(new ArrayList());
+    				config.setCurrentLists(new ArrayList<String>());
     				config.setShowUnlistedEntries(false);
     			}
     			
@@ -496,7 +496,7 @@ public class MovieManager {
     			}
 
     			DefaultListModel moviesList = _database.getMoviesList(options);
-    			ArrayList episodesList = _database.getEpisodeList("movieID"); //$NON-NLS-1$
+    			ArrayList<ModelEpisode> episodesList = _database.getEpisodeList("movieID"); //$NON-NLS-1$
     			DefaultTreeModel treeModel = dialogMovieManager.createTreeModel(moviesList, episodesList);
     			
     			if (cancelRelativePaths && !isApplet()) {
@@ -1099,7 +1099,7 @@ public class MovieManager {
     	return true;
     }
 
-    public HashMap getHTMLTemplates() {
+    public HashMap<String, ModelHTMLTemplate> getHTMLTemplates() {
     	return htmlTemplates;
     }
 
@@ -1131,7 +1131,7 @@ public class MovieManager {
     							continue;
     						}
 
-    						ArrayList lines = FileUtil.readFileToArrayList(template);
+    						ArrayList<String> lines = FileUtil.readFileToArrayList(template);
     						
     						if (lines == null) {
     							log.error("Failed to read file "  + template);
