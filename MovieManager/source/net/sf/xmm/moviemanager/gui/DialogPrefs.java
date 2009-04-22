@@ -173,6 +173,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	private JCheckBox enableSeenEditable;
 	private JCheckBox enableRightclickByCtrl;
 	private JCheckBox enableLoadLastUsedList;
+	private JCheckBox enableAddNewMoviesToCurrentLists;
+	
 	private JCheckBox enableUseJTreeIcons;
 	private JCheckBox enableUseJTreeCovers;
 
@@ -963,7 +965,16 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		if (!MovieManager.getConfig().getInternalConfig().getDisableLoadLastUsedList())
 			movieListPanel.add(enableLoadLastUsedList);
 
+		
+		/* Enable load last used list */
+		enableAddNewMoviesToCurrentLists = new JCheckBox("Add new movies to current lists"); 
+		enableAddNewMoviesToCurrentLists.setActionCommand("Enable Add new movies to current lists"); //$NON-NLS-1$
 
+		if (config.getAddNewMoviesToCurrentLists())
+			enableAddNewMoviesToCurrentLists.setSelected(true);
+		
+		movieListPanel.add(enableAddNewMoviesToCurrentLists);
+		
 		/* Enable Use JTree Icons */
 		enableUseJTreeIcons = new JCheckBox(Localizer.getString("dialogprefs.panel.movie-list.enable-icons-in-movie-list")); //$NON-NLS-1$
 		enableUseJTreeIcons.setActionCommand("Enable JTree Icons"); //$NON-NLS-1$
@@ -1647,6 +1658,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		/* Load Last List At Startup */
 		config.setLoadLastUsedListAtStartup(enableLoadLastUsedList.isSelected());
 
+		/* Add new movies to current lists */
+		config.setAddNewMoviesToCurrentLists(enableAddNewMoviesToCurrentLists.isSelected());
+		
 		/* Icons in JTree */
 		config.setUseJTreeIcons(enableUseJTreeIcons.isSelected());
 
