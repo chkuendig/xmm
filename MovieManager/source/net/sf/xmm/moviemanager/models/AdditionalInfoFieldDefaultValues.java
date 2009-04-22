@@ -25,12 +25,12 @@ import java.util.ArrayList;
 public class AdditionalInfoFieldDefaultValues {
 
 	private String fieldName = "";
-	private ArrayList values;
+	private ArrayList<String> values;
 
 	public AdditionalInfoFieldDefaultValues(String fieldName) {
 
 		this.fieldName = fieldName;
-		this.values = new ArrayList();
+		this.values = new ArrayList<String>();
 	}
 
 	/* Adds to the start of the list */
@@ -53,8 +53,8 @@ public class AdditionalInfoFieldDefaultValues {
 		return fieldName;
 	}
 
-	public ArrayList getDefaultValues() {
-		return (ArrayList) values.clone();
+	public ArrayList<String> getDefaultValues() {
+		return new ArrayList<String>(values);
 	}
 
 	public String getDefaultValuesString(String separator) {
