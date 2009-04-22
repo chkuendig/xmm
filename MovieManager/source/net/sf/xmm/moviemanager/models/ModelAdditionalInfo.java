@@ -57,7 +57,7 @@ public class ModelAdditionalInfo {
 	private static int extraInfoChanged = 0;
 	private int lastExtraInfoCount = 0;
 
-	private HashMap extraInfoFieldValuesMap = new HashMap();
+	private HashMap<String, String> extraInfoFieldValuesMap = new HashMap<String, String>();
 	
 	boolean initialized = false;
 	
@@ -107,7 +107,7 @@ public class ModelAdditionalInfo {
 	
 	public String getExtraInfoFieldName(int index) {
 
-		ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+		ArrayList<String> extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 		
 		if (index >= extraInfoFieldNames.size())
 			return "";
@@ -127,7 +127,7 @@ public class ModelAdditionalInfo {
 	
 	public String getExtraInfoFieldValue(int index) {
 
-		ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+		ArrayList<String> extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 				
 		if (index >= 0 && index < extraInfoFieldNames.size()) {
 			String column = (String) extraInfoFieldNames.get(index);
@@ -140,10 +140,10 @@ public class ModelAdditionalInfo {
 	}
 
 
-	public ArrayList getExtraInfoFieldValues() {
+	public ArrayList<String> getExtraInfoFieldValues() {
 		
-		ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
-		ArrayList extraInfoFieldValues = new ArrayList();
+		ArrayList<String> extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+		ArrayList<String> extraInfoFieldValues = new ArrayList<String>();
 		
 		for (int i = 0; i < extraInfoFieldNames.size(); i++) {
 			
@@ -157,9 +157,9 @@ public class ModelAdditionalInfo {
 	}
 
 
-	public void setExtraInfoFieldValues(ArrayList extraInfoFieldValues) {
+	public void setExtraInfoFieldValues(ArrayList<String> extraInfoFieldValues) {
 		 
-		ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+		ArrayList<String> extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 	
 		if (extraInfoFieldValues.size() != extraInfoFieldNames.size()) {
 			
@@ -193,7 +193,7 @@ public class ModelAdditionalInfo {
 	
 		try {
 
-			ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+			ArrayList<String> extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 			
 			if (!extraInfoFieldNames.contains(extraInfoFieldName)) {
 				
@@ -440,7 +440,7 @@ public class ModelAdditionalInfo {
 		}
 		else if (tableName.equals("Extra Info")) {
 
-			ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+			ArrayList<String> extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 			
 			for (int i = 0; i < extraInfoFieldNames.size(); i++) {
 				if (fieldName.equals(extraInfoFieldNames.get(i))) {
@@ -500,7 +500,7 @@ public class ModelAdditionalInfo {
 		}
 		else if (tableName.equals("Extra Info")) {
 
-			ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+			ArrayList<String> extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 			
 			for (int i = 0; i < extraInfoFieldNames.size(); i++) {
 				if (fieldName.equals(extraInfoFieldNames.get(i))) {
