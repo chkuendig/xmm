@@ -65,13 +65,13 @@ public class SysUtil {
 		File dir = null;
 		
 		try {
-							
+			
 			/* If running in a mac application bundle, we can't write in the application-directory, so we use the /Library/Application Support */
 			if (isMac()) {
 				String path = System.getProperty("user.home") + "/Library/Application Support/MovieManager/";
 				dir = new File(path);
 			}
-			else if (isWindowsVista()) {
+			else if (isWindowsVista() || isWindows7()) {
 				
 				String path = System.getenv("APPDATA");
 				
