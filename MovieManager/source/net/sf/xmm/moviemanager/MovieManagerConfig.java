@@ -3486,7 +3486,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("exportCSVfilePath:" + getExportCSVFilePath());
 		 
 		 settings.append(lineSeparator);
-		 settings.append("exportCSVseparator:" + getExportCSVFilePath());
+		 settings.append("exportCSVseparator:" + getExportCSVseparator());
 		 		 
 		 settings.append(lineSeparator);
 		 settings.append("importTextfilePath:" + getImportTextFilePath());
