@@ -345,7 +345,9 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuItemConvertDatabase = new JMenuItem(Localizer.getString("moviemanager.menu.database.covertdb")); //$NON-NLS-1$
 		menuItemConvertDatabase.setActionCommand("Convert Database"); //$NON-NLS-1$
 		menuItemConvertDatabase.addActionListener(new MovieManagerCommandConvertDatabase());
-		menuDatabase.add(menuItemConvertDatabase);
+		
+		if (SysUtil.isWindows())
+			menuDatabase.add(menuItemConvertDatabase);
 
 		/* All done. */
 		log.debug("Creation of the Database menu done."); //$NON-NLS-1$
