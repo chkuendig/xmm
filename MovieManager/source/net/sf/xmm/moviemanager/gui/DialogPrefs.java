@@ -1823,7 +1823,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	
 	void setLafChooserPreferredSize() {
-		skinlfThemePackChooser.setPreferredSize(new Dimension(lafChooser.getPreferredSize()));
+		
+		if (skinlfThemePackChooser != null)
+			skinlfThemePackChooser.setPreferredSize(new Dimension(lafChooser.getPreferredSize()));
 	}
 
 	void updateLookAndFeel() throws Exception {
