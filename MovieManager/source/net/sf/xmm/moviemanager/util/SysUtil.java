@@ -8,12 +8,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLClassLoader;
 
 import javax.swing.filechooser.FileSystemView;
 
-import net.sf.xmm.moviemanager.http.IMDB;
-import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
 
 import org.apache.log4j.Logger;
 
@@ -33,8 +30,6 @@ public class SysUtil {
 
 		try {
 			java.net.URL url = FileUtil.class.getProtectionDomain().getCodeSource().getLocation();
-			
-			//System.err.println("\n\n\ngetUserDir url:" + url);
 			
 			File file = new File(java.net.URLDecoder.decode(url.getPath(), "UTF-8")); //$NON-NLS-1$
 		
@@ -128,7 +123,7 @@ public class SysUtil {
 		if (className != null) {
 
 			try {
-				Class classForName = Class.forName(className);
+				Class<?> classForName = Class.forName(className);
 				Object classInstance = classForName.newInstance();
 				log.debug("Successfully loaded LoginHandler");
 				return classInstance;
@@ -383,15 +378,11 @@ public class SysUtil {
     	
     	File imdb = new File(System.getProperty("user.dir") + "/MovieManager/lib/" + "IMDB.jar");
     	
-    	System.err.println("imdb:" + imdb);
-    	
     	if (imdb.isFile()) {
-
-    		System.err.println("IMDB.jar found!");
-    		
+	
     		try {
     		
-    			System.err.println("new IMDB().getClass().getClassLoader():" + new IMDB().getClass().getClassLoader());
+    			System.out.println("new IMDB().getClass().getClassLoader():" + new IMDB().getClass().getClassLoader());
     			
     			File f = imdb;
     		
@@ -408,9 +399,9 @@ public class SysUtil {
     			
     			//f.delete();
     			
-    			System.err.println("getClass:" + o.getClass());
+    			System.out.println("getClass:" + o.getClass());
     			
-    			System.err.println("getClass().getName():" + o.getClass().getName());
+    			System.out.println("getClass().getName():" + o.getClass().getName());
     			
     			return (IMDB_if) o;
 
@@ -421,10 +412,10 @@ public class SysUtil {
     	
     	IMDB_if i = new IMDB();
     	
-    	System.err.println("Returning default IMDB");
+    	System.out.println("Returning default IMDB");
     	
-    	System.err.println("getClass:" + i.getClass());
-    	System.err.println("getClass().getName():" + i.getClass().getName());
+    	System.out.println("getClass:" + i.getClass());
+    	System.out.println("getClass().getName():" + i.getClass().getName());
     	
     	return i;
     }
