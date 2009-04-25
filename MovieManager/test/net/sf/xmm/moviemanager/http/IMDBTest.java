@@ -3,8 +3,10 @@ package net.sf.xmm.moviemanager.http;
 import static org.junit.Assert.*;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
-import javax.swing.DefaultListModel;
+
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 
 import org.junit.Test;
 
@@ -24,13 +26,13 @@ public class IMDBTest {
 
 		String input = "La fille sur le pon";
 
-		DefaultListModel matches = null;
+		ArrayList<ModelIMDbSearchHit> matches = null;
 		try {
 			matches = imdb.getSimpleMatches(input);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		assertTrue("The number of results does not match the expected for input " + input, matches.getSize() ==  20);
+		assertTrue("The number of results does not match the expected for input " + input, matches.size() ==  20);
 
 
 		input = "Marly & Me";
@@ -41,10 +43,10 @@ public class IMDBTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		assertTrue("The number of results does not match the expected for input " + input, matches.getSize() ==  20);
+		assertTrue("The number of results does not match the expected for input " + input, matches.size() ==  20);
 
 
-		for (int i = 0; i < matches.getSize(); i++)
+		for (int i = 0; i < matches.size(); i++)
 			System.out.println("matches.get("+i+"):" + matches.get(i));	
 
 	}
@@ -102,12 +104,12 @@ public class IMDBTest {
 		// Should NOT match because of (VG) which means Video Game
 		testData.append("<a href=\"/title/tt0311669/\" onclick=\"(new Image()).src='/rg/find-title-2/title_exact/images/b.gif?link=/title/tt0311669/';\">Predator</a> (1989) (VG)     </td></tr></table>");
 		
-		DefaultListModel matches = imdb.getMatches(testData);
+		ArrayList<ModelIMDbSearchHit> matches = imdb.getMatches(testData);
 		
-		assertTrue("The number of results does not match the expected", matches.getSize() ==  6);
+		assertTrue("The number of results does not match the expected", matches.size() ==  6);
 		
 
-		for (int i = 0; i < matches.getSize(); i++)
+		for (int i = 0; i < matches.size(); i++)
 			System.out.println("matches.get("+i+"):" + matches.get(i));
 
 	}
