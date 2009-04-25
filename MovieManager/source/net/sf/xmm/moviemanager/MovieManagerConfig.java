@@ -2044,46 +2044,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 		 
 		try {
 
-			URL url = null;
-
-			int appMode = MovieManager.getAppMode();
+			URL url = SysUtil.getConfigURL();
 			
-			// Applet
-			if (appMode == 1)
-				url = FileUtil.getFileURL("config/Config_Applet.ini", DialogMovieManager.applet);
-			else if (appMode == 2) { // Java Web Start
-				MovieManagerConfigHandler configHandler = getConfigHandler();
-				
-				if (configHandler != null)
-					url = configHandler.getConfigURL();
-												
-			} else {
-				
-				String conf = "Config.ini";
-				
-				if (SysUtil.isMac())
-					url = new File(SysUtil.getConfigDir(), conf).toURL();
-				else {
-					
-					long t = FileUtil.getFile(conf).lastModified();
-
-					// The newest config file will be used
-					if (FileUtil.getFile("config/" + conf).lastModified() > t)
-						conf = "config/" + conf;
-
-					// Change default location on Vista from program directory to System.getenv("APPDATA")
-					if (SysUtil.isWindowsVista() || SysUtil.isWindows7()) {
-						File newConfig = new File(SysUtil.getConfigDir(), "Config.ini");
-												
-						if (newConfig.isFile())
-							url = newConfig.toURL();
-						else
-							url = FileUtil.getFileURL(conf);
-					}
-					else
-						url = FileUtil.getFileURL(conf);
-				}
-			}
 			if (url == null)
 				return;
 		
