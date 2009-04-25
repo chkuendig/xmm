@@ -27,9 +27,9 @@
 	<classpathentry kind="lib" path="MovieManager/lib/useful.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/xml-apis.jar"/>
-	<classpathentry kind="lib" path="MovieManager/lib/LookAndFeels/skinlf.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/castor-1.2.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/mac/AppleJavaExtensions.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="MovieManager/lib/skinlf.jar"/>
 	<classpathentry kind="output" path="MovieManager"/>
 </classpath>
