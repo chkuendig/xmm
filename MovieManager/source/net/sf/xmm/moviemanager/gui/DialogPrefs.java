@@ -1141,7 +1141,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		playerPanel.add(mediaPlayerFilePanel, c);
 
 
-		JLabel cmdArgLabel = new JLabel("Command line argument:");
+		JLabel cmdArgLabel = new JLabel("Command line arguments:");
 		mediaPlayerCmdArgument = new JTextField(15);
 		mediaPlayerCmdArgument.setText(config.getMediaPlayerCmdArgument());
 
