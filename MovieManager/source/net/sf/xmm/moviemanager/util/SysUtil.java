@@ -12,6 +12,10 @@ import java.net.URL;
 import javax.swing.filechooser.FileSystemView;
 
 
+import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.gui.DialogMovieManager;
+import net.sf.xmm.moviemanager.util.plugins.MovieManagerConfigHandler;
+
 import org.apache.log4j.Logger;
 
 //import xeus.jcl.JarClassLoader;
@@ -92,6 +96,82 @@ public class SysUtil {
 		}
 
 		return dir;
+	}
+	
+	
+	public static URL getConfigURL() {
+
+		URL url = null;
+		
+		try {
+			int appMode = MovieManager.getAppMode();
+
+			// Applet
+			if (appMode == 1)
+				url = FileUtil.getFileURL("config/Config_Applet.ini", DialogMovieManager.applet);
+			else if (appMode == 2) { // Java Web Start
+				MovieManagerConfigHandler configHandler = MovieManager.getConfig().getConfigHandler();
+
+				if (configHandler != null)
+					url = configHandler.getConfigURL();
+
+			} else {
+
+				String conf = "Config.ini";
+
+				if (SysUtil.isMac())
+					url = new File(SysUtil.getConfigDir(), conf).toURL();
+				else {
+
+					boolean checkOldInstallDir = true;
+					long t = FileUtil.getFile(conf).lastModified();
+
+					// The newest config file will be used
+					if (FileUtil.getFile("config/" + conf).lastModified() > t)
+						conf = "config/" + conf;
+
+					// Change default location on Vista from program directory to System.getenv("APPDATA")
+					if (SysUtil.isWindowsVista() || SysUtil.isWindows7()) {
+						File newConfig = new File(SysUtil.getConfigDir(), "Config.ini");
+
+						if (newConfig.isFile()) {
+							url = newConfig.toURL();
+							checkOldInstallDir = false;
+						}
+						else 
+							url = FileUtil.getFileURL(conf);
+					}
+					else {
+						url = FileUtil.getFileURL(conf);
+
+						if (new File(url.toString()).isFile())
+							checkOldInstallDir = false;
+					}
+					// changed default install directory in cross-platform installer from "MeD's Movie Manager" to "MeDs-Movie-Manager"
+					if (checkOldInstallDir) {
+
+						File userDir = new File(getUserDir());
+
+						if (userDir.getName().equals("MeDs-Movie-Manager")) {
+
+							// Check old install dir
+							File oldInstallDir = new File(userDir.getParentFile(), "MeD's Movie Manager");
+							File tmpConfig = new File(oldInstallDir, "config/Config.ini");
+
+							if (tmpConfig.isFile()) {
+								url = tmpConfig.toURL();
+							}
+							else if ((tmpConfig = new File(oldInstallDir, "Config.ini")).isFile()) {
+								url = tmpConfig.toURL();
+							}						
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
+		}
+		return url;
 	}
 	
 	
