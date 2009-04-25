@@ -65,6 +65,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.AddSelectedFilesEvent;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.AddSelectedFilesEventListener;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileNode;
@@ -463,8 +464,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				// Adding all the file paths of each media file from the database
 				if (filterOutDuplicates.isSelected() && !existingMediaFiles.isEmpty()) {
 
-					DefaultListModel movies = MovieManager.getIt().getDatabase().getMoviesList("Title");
-
+					ArrayList<ModelMovie> list = MovieManager.getIt().getDatabase().getMoviesList("Title");
+					DefaultListModel movies = GUIUtil.toDefaultListModel(list);
+					
 					for (int i = 0; i < movies.size(); i++) {
 
 						ModelEntry model = (ModelEntry) movies.get(i);
@@ -811,13 +813,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	}
 
 	public boolean validateAddList() {
-				
-		log.debug("validateAddList");
 		
 		DefaultListModel listModel = (DefaultListModel) filesToAddList.getModel();
-		
-		System.err.println("listModel.getSize():" + listModel.getSize());
-		System.err.println("addListMustContainValidItemsAlert:" + addListMustContainValidItemsAlert);
 		
 		if (listModel.getSize() == 0 || addListMustContainValidItemsAlert) {
 			
@@ -826,7 +823,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				listModel.addElement("List must contain movies to add");
 				addListMustContainValidItemsAlert = true;
 			}
-			System.err.println("return false");
+			
 			return false;
 		}
 		
@@ -880,17 +877,13 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			//optionsPanel.remove(5);
 			
 			optionsPanel.remove(listPanel);
-			
 			listPanel = makeListPanel();
-			
 			optionsPanel.add(listPanel, 4);
+			
 			pack();
 			GUIUtil.show(this, true);
 		}
-
-		
-
-
+			
 		if (event.getSource().equals(enableAddMoviesToList)) {
 
 			if (enableAddMoviesToList.isSelected())

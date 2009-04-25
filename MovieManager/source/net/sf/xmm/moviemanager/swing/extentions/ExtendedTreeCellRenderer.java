@@ -56,7 +56,7 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 
 	Logger log = Logger.getLogger(getClass());
 	
-	private HashMap coverCache = new HashMap();
+	private HashMap<String, Icon> coverCache = new HashMap<String, Icon>();
 	private Icon defaultIconMovie;
 	private Icon defaultIconSerie;
 	private String folder;
@@ -75,7 +75,7 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 	private static Color selectionBackground;
 		
 	
-	Map views = new HashMap();
+	Map<ModelEntry, Object> views = new HashMap<ModelEntry, Object>();
 	
 	public void removeNode(DefaultMutableTreeNode node) {
 		
@@ -211,7 +211,7 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 
 				if (useCovers) {
 
-					Object view = views.get(o);
+					Object view = views.get(entry);
 					
 					if (view != null) {
 						putClientProperty("html", view);
@@ -232,7 +232,7 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 						coverTitleBuf.append("</font></html>");
 						
 						setText(coverTitleBuf.toString());
-						views.put(o, getClientProperty("html"));
+						views.put(entry, getClientProperty("html"));
 					}
 				}
 				else {

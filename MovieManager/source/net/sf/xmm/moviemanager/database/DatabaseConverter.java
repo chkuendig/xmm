@@ -48,7 +48,7 @@ public class DatabaseConverter {
 	lengthOfTask = length;
     }
     
-    public void go(final Database newDatabase, final ListModel movieListModel, final ArrayList episodeList) {
+    public void go(final Database newDatabase, final ListModel movieListModel, final ArrayList<ModelEpisode> episodeList) {
         final SwingWorker worker = new SwingWorker() {
 		public Object construct() {
 		    current = -1;
@@ -90,7 +90,7 @@ public class DatabaseConverter {
      * This runs in a SwingWorker thread.
      */
     class Converter {
-        Converter(Database newDatabase, ListModel movieListModel,  ArrayList episodeList) {
+        Converter(Database newDatabase, ListModel movieListModel,  ArrayList<ModelEpisode> episodeList) {
 	    
 	    /* Setting the priority of the thrad to 4 to give the GUI room to update more often */
 	    Thread.currentThread().setPriority(4);
@@ -106,11 +106,11 @@ public class DatabaseConverter {
 		newDatabase.setFolders(cDb.getCoversFolder(), cDb.getQueriesFolder());
 		newDatabase.setActiveAdditionalInfoFields(cDb.getActiveAdditionalInfoFields());
 		
-		ArrayList extraFieldNamesList = cDb.getExtraInfoFieldNames(true);
-		ArrayList extraFieldValuesList;
+		ArrayList<String> extraFieldNamesList = cDb.getExtraInfoFieldNames(true);
+		ArrayList<String> extraFieldValuesList;
 		
-		ArrayList listsColumnNamesList = cDb.getListsColumnNames();
-		ArrayList listsRecordValueList;
+		ArrayList<String> listsColumnNamesList = cDb.getListsColumnNames();
+		ArrayList<Boolean> listsRecordValueList;
 		
 		
 		/* Transferring movie entries */
@@ -136,7 +136,7 @@ public class DatabaseConverter {
 				newDatabase.addAdditionalInfo(index, addInfo);
 				
 				/* Copies the data in the extra info fields */
-				extraFieldValuesList = new ArrayList();
+				extraFieldValuesList = new ArrayList<String>();
 				
 				for (int u = 0; u < extraFieldNamesList.size(); u++)
 				    extraFieldValuesList.add(cDb.getExtraInfoMovieField(key, (String) extraFieldNamesList.get(u)));
@@ -145,7 +145,7 @@ public class DatabaseConverter {
 				
 				
 				/* Copies the data in the lists fields */
-				listsRecordValueList = new ArrayList();
+				listsRecordValueList = new ArrayList<Boolean>();
 				
 				for (int u = 0; u < listsColumnNamesList.size(); u++)
 				    listsRecordValueList.add(new Boolean(cDb.getList(key, (String) listsColumnNamesList.get(u))));

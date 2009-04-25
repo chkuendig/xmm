@@ -46,101 +46,94 @@ import net.sf.xmm.moviemanager.util.Localizer;
 
 
 public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionListener{
-    
+
 	Logger log = Logger.getLogger(getClass());
-	
-    boolean canceled = true;
-    boolean done = false;
-    JDialog dbImporter;
-        
-    boolean cancelAll = false;
-   
-    ModelImportExportSettings importSettings;
-    
-    void createAndShowGUI() {
-	
-	/* Owner, title, modal=true */
-	dbImporter = new JDialog(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandUpdateIMDBInfo.dialog-imdb-info-updater.title"), true); //$NON-NLS-1$
-	dbImporter.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-	
-	final JComponent newContentPane = new DialogUpdateIMDbInfo(this, dbImporter);
-        newContentPane.setOpaque(true);
-        dbImporter.setContentPane(newContentPane);
-	dbImporter.pack();
-	dbImporter.addWindowListener(new WindowAdapter() {
-		public void windowClosing(WindowEvent e) {
-		    dbImporter.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		    
-		    if (canceled || done) {
-			dbImporter.dispose();
-			MovieManagerCommandSelect.execute();
-		    }
-		}
-	    });
-	
-	/*Dispose on escape*/
-	KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-	Action escapeAction = new AbstractAction() {
-		public void actionPerformed(ActionEvent e) {
-		    
-		    if (canceled || done) {
-			dbImporter.dispose();
-			MovieManagerCommandSelect.execute();
-		    }
-		}
-	    };
-	
-	dbImporter.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-	dbImporter.getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
-	
-	MovieManager mm = MovieManager.getIt();
-	
-	setLocation((int) mm.getLocation().getX()+(mm.getWidth()-getWidth())/2,
-		    (int) mm.getLocation().getY()+(mm.getHeight()-getHeight())/2);
-	
-	dbImporter.setLocation((int)mm.getLocation().getX()+(mm.getWidth()- dbImporter.getWidth())/2,
-			  (int)mm.getLocation().getY()+(mm.getHeight()- dbImporter.getHeight())/2);
-	GUIUtil.show(dbImporter, true);
-    }
-    
-    public void setCanceled(boolean canceled) {
-	this.canceled = canceled;
-    }
-    
-    public void setDone(boolean done) {
-	this.done = done;
-    }
-    
-    public void dispose() {
-	GUIUtil.show(dbImporter, false);
-    }
-    
-    public void setCancelAll(boolean value) {
-	cancelAll = value;
-    }
-    
-    protected void execute() {
 
-    	//   	 If any notes have been changed, they will be saved before updating list
-    	MovieManagerCommandSaveChangedNotes.execute();
+	boolean canceled = true;
+	boolean done = false;
+	JDialog dbImporter;
 
-    	cancelAll = false;
+	boolean cancelAll = false;
 
-    	DialogUpdateIMDbInfo importMovie = new DialogUpdateIMDbInfo(this, dbImporter);
+	ModelImportExportSettings importSettings;
 
-    	if (cancelAll)
-    		return;
+	void createAndShowGUI() {
 
-    	createAndShowGUI();
-    }
+		/* Owner, title, modal=true */
+		dbImporter = new JDialog(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandUpdateIMDBInfo.dialog-imdb-info-updater.title"), true); //$NON-NLS-1$
+		dbImporter.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        /**
-     * Invoked when an action occurs.
-     **/
-    public void actionPerformed(ActionEvent event) {
-    	log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-    	execute();
-    }
+		final JComponent newContentPane = new DialogUpdateIMDbInfo(this, dbImporter);
+		newContentPane.setOpaque(true);
+		dbImporter.setContentPane(newContentPane);
+		dbImporter.pack();
+		dbImporter.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				dbImporter.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+				if (canceled || done) {
+					dbImporter.dispose();
+					MovieManagerCommandSelect.execute();
+				}
+			}
+		});
+
+		/*Dispose on escape*/
+		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		Action escapeAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+
+				if (canceled || done) {
+					dbImporter.dispose();
+					MovieManagerCommandSelect.execute();
+				}
+			}
+		};
+
+		dbImporter.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+		dbImporter.getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
+
+		MovieManager mm = MovieManager.getIt();
+
+		setLocation((int) mm.getLocation().getX()+(mm.getWidth()-getWidth())/2,
+				(int) mm.getLocation().getY()+(mm.getHeight()-getHeight())/2);
+
+		dbImporter.setLocation((int)mm.getLocation().getX()+(mm.getWidth()- dbImporter.getWidth())/2,
+				(int)mm.getLocation().getY()+(mm.getHeight()- dbImporter.getHeight())/2);
+		GUIUtil.show(dbImporter, true);
+	}
+
+	public void setCanceled(boolean canceled) {
+		this.canceled = canceled;
+	}
+
+	public void setDone(boolean done) {
+		this.done = done;
+	}
+
+	public void dispose() {
+		GUIUtil.show(dbImporter, false);
+	}
+
+	public void setCancelAll(boolean value) {
+		cancelAll = value;
+	}
+
+	protected void execute() {
+
+		// If any notes have been changed, they will be saved before updating list
+		MovieManagerCommandSaveChangedNotes.execute();
+
+		createAndShowGUI();
+	}
+
+	/**
+	 * Invoked when an action occurs.
+	 **/
+	public void actionPerformed(ActionEvent event) {
+		log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
+		execute();
+	}
 }
 
     

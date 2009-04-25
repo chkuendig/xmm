@@ -44,7 +44,6 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JButton;
@@ -187,7 +186,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     JTabbedPane movieInfo;
     
 //  The movies that are currently displayed in the movie list
-    DefaultListModel currentMovieList;
+    ArrayList<ModelMovie> currentMovieList;
     ArrayList<ModelEpisode> currentEpisodeList;
     
     
@@ -204,12 +203,12 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     }
       
     
-    public void setCurrentLists(DefaultListModel currentMovieList, ArrayList<ModelEpisode> currentEpisodeList) {
+    public void setCurrentLists(ArrayList<ModelMovie> currentMovieList, ArrayList<ModelEpisode> currentEpisodeList) {
     	this.currentMovieList = currentMovieList;
     	this.currentEpisodeList = currentEpisodeList;
     }
     
-    public DefaultListModel getCurrentMoviesList() {
+    public ArrayList<ModelMovie> getCurrentMoviesList() {
     	return currentMovieList;
     }
     
@@ -353,21 +352,19 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     
    
     
-    public DefaultTreeModel createTreeModel(DefaultListModel movieList, ArrayList<ModelEpisode> episodes) {
+    public DefaultTreeModel createTreeModel(ArrayList<ModelMovie> movies, ArrayList<ModelEpisode> episodes) {
         
-        Object[] movies = movieList.toArray();
-        
-        ExtendedTreeNode root = new ExtendedTreeNode(new ModelMovie(-1, null, null, null, "Loading Database", null, null, null, null, null, null, null, false, null, null, null, null, null, null, null, null, null)); //$NON-NLS-1$
+    	ExtendedTreeNode root = new ExtendedTreeNode(new ModelMovie(-1, null, null, null, "Loading Database", null, null, null, null, null, null, null, false, null, null, null, null, null, null, null, null, null)); //$NON-NLS-1$
         
         DefaultTreeModel model = new AutomatedTreeModel(root, false);
         
         ExtendedTreeNode temp, temp2;
         int tempKey = 0;
         
-        for (int i = 0; i < movies.length; i++) {
+        for (int i = 0; i < movies.size(); i++) {
             
-            temp = new ExtendedTreeNode((ModelEntry) movies[i]);
-            tempKey = ((ModelEntry) movies[i]).getKey();
+            temp = new ExtendedTreeNode(movies.get(i));
+            tempKey = movies.get(i).getKey();
             
             /* Adding episodes */
             for (int u = 0; u < episodes.size(); u++) {
@@ -391,7 +388,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	setTreeModel(null, null, null);
     }
     
-    public void setTreeModel(DefaultTreeModel model, DefaultListModel movieList, ArrayList<ModelEpisode> episodeList) {
+    public void setTreeModel(DefaultTreeModel model, ArrayList<ModelMovie> movieList, ArrayList<ModelEpisode> episodeList) {
     	moviesList.setModel(model);
     	setCurrentLists(movieList, episodeList);
     	MovieManager.newMovieListLoadedHandler.newMovieListLoaded(this);
@@ -644,7 +641,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 	   if (!defaultMenu) {
 
 		   try {
-			   Class menuBarClass = Class.forName(className);
+			   Class<?> menuBarClass = Class.forName(className);
 			   menuBar = (MovieManagerMenuBar) menuBarClass.newInstance();
 			   return menuBar.getNewInstance(internalConfig, config);
 
@@ -833,7 +830,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	if (className != null) {
 
     		try {
-    			Class menuBarClass = Class.forName(className);
+    			Class<?> menuBarClass = Class.forName(className);
     			toolBar = (ExtendedToolBar) menuBarClass.newInstance();
     		} catch (ClassNotFoundException e) {
     			log.error("ClassNotFoundException. Failed to load class " + className);

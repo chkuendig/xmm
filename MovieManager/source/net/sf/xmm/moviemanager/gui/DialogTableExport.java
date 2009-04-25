@@ -142,7 +142,7 @@ public class DialogTableExport extends DialogTableData {
 			
 			// Finding columns with values
 			
-			ArrayList columns = new ArrayList();
+			ArrayList<Integer> columns = new ArrayList<Integer>();
 			
 			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 				tmpColumn = columnModel.getColumn(columnIndex);
@@ -170,7 +170,7 @@ public class DialogTableExport extends DialogTableData {
 			for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
 				
 				for (int row = 0; row < tableModel.getRowCount(); row++) {
-					int colIndex = ((Integer) columns.get(columnIndex)).intValue();
+					int colIndex = columns.get(columnIndex).intValue();
 					output[row][columnIndex] = (String) table.getModel().getValueAt(row, colIndex);
 				
 					if (colIndex == titleColumnIndex)

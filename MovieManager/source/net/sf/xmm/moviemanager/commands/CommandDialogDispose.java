@@ -26,7 +26,6 @@ import javax.swing.JDialog;
 
 import org.apache.log4j.Logger;
 
-import net.sf.xmm.moviemanager.MovieManager;
 
 public class CommandDialogDispose implements ActionListener {
 

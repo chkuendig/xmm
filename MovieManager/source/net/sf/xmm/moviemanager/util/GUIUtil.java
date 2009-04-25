@@ -25,7 +25,9 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
@@ -140,5 +142,17 @@ public class GUIUtil {
 		if (SwingUtilities.isEventDispatchThread()) {
 			throw new Error("assertion failed: on EDT");
 		}
+	}
+	
+	
+	public static DefaultListModel toDefaultListModel(ArrayList<?> list) {
+
+		DefaultListModel listModel = new DefaultListModel();
+
+		for (int i = 0; i < list.size(); i++) {
+			listModel.addElement(list.get(i));
+		}
+
+		return listModel;
 	}
 } 

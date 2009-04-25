@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
  * @author olba2
  */
 public class ReportGeneratorDataSource implements JRDataSource {
-    private Iterator iterator;
+    private Iterator<ModelEntry> iterator;
     private ModelEntry entry;
     private JProgressBar progressBar;
     private int count = 0;
@@ -51,7 +51,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
      * @param defaultCoverImageURL URL - default image for movies without cover
      * @param testmode boolean - if true only dummydata is returned
      */
-    public ReportGeneratorDataSource(final List movies, String sortField, final JProgressBar progressBar, URL defaultCoverImageURL, boolean testmode) {
+    public ReportGeneratorDataSource(final List<ModelEntry> movies, String sortField, final JProgressBar progressBar, URL defaultCoverImageURL, boolean testmode) {
         this.progressBar = progressBar;
         this.defaultCoverImageURL = defaultCoverImageURL;
         this.testmode = testmode;
@@ -342,10 +342,10 @@ public class ReportGeneratorDataSource implements JRDataSource {
 
         		// Extra info
         		else {
-        			ArrayList extra = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+        			ArrayList<String> extra = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
         			if (extra != null) {
         				for (int i = 0; i < extra.size(); i++) {
-        					if (name.equalsIgnoreCase( (String) extra.get(i))) {
+        					if (name.equalsIgnoreCase(extra.get(i))) {
         						ret = a.getExtraInfoFieldValue(i);
         					}
         				}
@@ -363,7 +363,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
     /**
      * Movie comparater, sorts movies by named field
      */
-    private class MovieComparator implements Comparator {
+    private class MovieComparator implements Comparator<ModelEntry> {
         private String sortField;
 
         public MovieComparator(String sortField) {
@@ -371,11 +371,9 @@ public class ReportGeneratorDataSource implements JRDataSource {
 
         }
 
-        public int compare(Object o1, Object o2) {
-        	        	
-        	ModelEntry m1 = (ModelEntry) o1;
-            ModelEntry m2 = (ModelEntry) o2;
-            int result = 0;
+        public int compare(ModelEntry m1, ModelEntry m2) {
+        
+        	int result = 0;
             
             if (sortField.equalsIgnoreCase("Genre")) {
                 result = m1.getGenre().compareToIgnoreCase(m2.getGenre());
@@ -506,11 +504,11 @@ public class ReportGeneratorDataSource implements JRDataSource {
 
                     // Extra info
                     else {
-                        ArrayList extra1 = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+                        ArrayList<String> extra1 = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
                         
                         if (extra1 != null) {
                             for (int i = 0; i < extra1.size(); i++) {
-                                if (sortField.equalsIgnoreCase( (String) extra1.get(i))) {
+                                if (sortField.equalsIgnoreCase(extra1.get(i))) {
                                     result = a1.getExtraInfoFieldValue(i).compareToIgnoreCase(a2.getExtraInfoFieldValue(i));
                                 }
                             }

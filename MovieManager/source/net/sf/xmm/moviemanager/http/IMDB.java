@@ -30,8 +30,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.DefaultListModel;
-
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.models.imdb.*;
@@ -112,7 +110,7 @@ public class IMDB /*extends IMDB_if */{
     
     public ModelIMDbEntry grabInfo(String urlID, StringBuffer data) throws Exception {
     	
-    	long time = System.currentTimeMillis();
+    	//long time = System.currentTimeMillis();
     	
     	if (urlID == null && data == null)
     		throw new Exception("Input data is null.");
@@ -136,7 +134,7 @@ public class IMDB /*extends IMDB_if */{
         country = "", language = "", mpaa = "", soundMix = "", runtime = "", certification = "", awards = "", plot = "", cast = "", 
         coverURL = "", coverName = "", seasonNumber = "", episodeNumber = "";
     	  
-    	long time = System.currentTimeMillis();
+    	//long time = System.currentTimeMillis();
     	
 		int start = 0;
 		int end = 0;
@@ -232,7 +230,7 @@ public class IMDB /*extends IMDB_if */{
 				Thread t = new Thread(new Runnable() {
 					public void run() {
 						try {
-							long coverTime = System.currentTimeMillis();
+							//long coverTime = System.currentTimeMillis();
 							lock.lock();
 							retrieveCover(dataModel);
 						} finally {
@@ -262,10 +260,10 @@ public class IMDB /*extends IMDB_if */{
 			
 			// Gets the directed by... 
 			
-			HashMap classInfo = decodeClassInfo(data);
+			HashMap<String, String> classInfo = decodeClassInfo(data);
 			
 			String tmp = "";
-			ArrayList list;
+			ArrayList <String> list;
 			
 			if (classInfo.containsKey("Director:")) {
 				directedBy = getDecodedClassInfo("Director:", (String) classInfo.get("Director:"));
@@ -378,7 +376,7 @@ public class IMDB /*extends IMDB_if */{
 
 					if (gCount == 3) {
 							
-						String airdat = m.group(1);
+						//String airdat = m.group(1);
 						String season = m.group(2);
 						String episode = m.group(3);
 	
@@ -466,9 +464,9 @@ public class IMDB /*extends IMDB_if */{
     
     
     
-    public static DefaultListModel getEpisodes(ModelIMDbSearchHit modelSeason, StringBuffer stream) {
+    public static ArrayList<ModelIMDbSearchHit> getEpisodes(ModelIMDbSearchHit modelSeason, StringBuffer stream) {
 
-		DefaultListModel listModel = new DefaultListModel();
+    	ArrayList<ModelIMDbSearchHit> hits = new ArrayList<ModelIMDbSearchHit>();
 		
 		try {
 
@@ -495,22 +493,22 @@ public class IMDB /*extends IMDB_if */{
 					
 					title = episode + title;
 					
-					listModel.addElement(new ModelIMDbSearchHit(key, title, modelSeason.getSeasonNumber()));
+					hits.add(new ModelIMDbSearchHit(key, title, modelSeason.getSeasonNumber()));
 				}
 			}
 
 		} catch (Exception e) {
 			log.error("", e);
 		}
-		/* Returns the model... */
-		return listModel;
+	
+		return hits;
 	}
     
     
     
-	public DefaultListModel getSeasons(ModelIMDbSearchHit modelSeries) {
+	public ArrayList<ModelIMDbSearchHit> getSeasons(ModelIMDbSearchHit modelSeries) {
 
-		DefaultListModel listModel = new DefaultListModel();
+		ArrayList<ModelIMDbSearchHit> hits = new ArrayList<ModelIMDbSearchHit>();
 				
 		String urlString = "http://akas.imdb.com/title/tt" + modelSeries.getUrlID();
 				
@@ -537,16 +535,15 @@ public class IMDB /*extends IMDB_if */{
 				
 				while (seasons.indexOf(season + seasonCount) != -1) {
 					title = modelSeries.getTitle()+ " - Season "+ seasonCount;
-					listModel.addElement(new ModelIMDbSearchHit(modelSeries.getUrlID(), title, seasonCount));
+					hits.add(new ModelIMDbSearchHit(modelSeries.getUrlID(), title, seasonCount));
 					seasonCount++;
 				}
 			}
 		} catch (Exception e) {
 			log.error("", e);
 		} 
-		/* Returns the model... */
 
-		return listModel;
+		return hits;
 	}
 	
 	
@@ -559,16 +556,16 @@ public class IMDB /*extends IMDB_if */{
 	}
 	
 
-	public DefaultListModel getSeriesMatches(String title) {
+	public ArrayList<ModelIMDbSearchHit> getSeriesMatches(String title) {
 
-		DefaultListModel all = null;
+		ArrayList<ModelIMDbSearchHit> all = null;
 				
 		try {
 			all = getSimpleMatches(title);
 			
-			for (int i = 0; i < all.getSize(); i++) {
+			for (int i = 0; i < all.size(); i++) {
 
-				ModelIMDbSearchHit imdb = (ModelIMDbSearchHit) all.get(i);
+				ModelIMDbSearchHit imdb = all.get(i);
 
 				if (!imdb.getTitle().startsWith("\"")) {
 					all.remove(i);
@@ -576,7 +573,7 @@ public class IMDB /*extends IMDB_if */{
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			log.warn("Exception:" + e.getMessage(), e);
 		}
 		return all;
 	}
@@ -585,11 +582,11 @@ public class IMDB /*extends IMDB_if */{
 	 * Returns simple matches list...
 	 * @throws UnsupportedEncodingException 
 	 **/
-	public DefaultListModel getSimpleMatches(String title) throws UnsupportedEncodingException {
+	public ArrayList<ModelIMDbSearchHit> getSimpleMatches(String title) throws UnsupportedEncodingException {
 					
-		//System.err.println("UTF-8:" + java.net.URLEncoder.encode(title, "UTF-8"));
-		//System.err.println("US-ASCII:" + java.net.URLEncoder.encode(title, "US-ASCII"));
-		//System.err.println("ISO-8859-1:" + java.net.URLEncoder.encode(title, "ISO-8859-1"));
+		//System.out.println("UTF-8:" + java.net.URLEncoder.encode(title, "UTF-8"));
+		//System.out.println("US-ASCII:" + java.net.URLEncoder.encode(title, "US-ASCII"));
+		//System.out.println("ISO-8859-1:" + java.net.URLEncoder.encode(title, "ISO-8859-1"));
 		
 		log.debug("getSimpleMatches:" + title);
 		
@@ -597,7 +594,7 @@ public class IMDB /*extends IMDB_if */{
 	}
 
 	
-    private DefaultListModel getMatches(String strUrl) {
+    private ArrayList<ModelIMDbSearchHit> getMatches(String strUrl) {
 
     	try {
     		    		
@@ -609,7 +606,7 @@ public class IMDB /*extends IMDB_if */{
 
     		if (data == null) {
     			log.warn("Failed to retrieve data from :" + url);
-    			return new DefaultListModel();
+    			return new ArrayList<ModelIMDbSearchHit>();
     		}
 
     		return getMatches(data);
@@ -620,9 +617,9 @@ public class IMDB /*extends IMDB_if */{
     	return null;
     }
 
-    protected DefaultListModel getMatches(StringBuffer data) {
+    protected ArrayList<ModelIMDbSearchHit> getMatches(StringBuffer data) {
 
-    	DefaultListModel listModel = new DefaultListModel();
+    	ArrayList<ModelIMDbSearchHit> listModel = new ArrayList<ModelIMDbSearchHit>();
 
     	try {
 
@@ -648,7 +645,7 @@ public class IMDB /*extends IMDB_if */{
 				}
 				
 				aka = getDecodedClassInfo("Also Known As:", data);
-				listModel.addElement(new ModelIMDbSearchHit(key, movieTitle, aka));
+				listModel.add(new ModelIMDbSearchHit(key, movieTitle, aka));
 				
 				return listModel;
 			}
@@ -730,7 +727,7 @@ public class IMDB /*extends IMDB_if */{
 						category = movieHitCategory[i];
 				}
 				
-				listModel.addElement(new ModelIMDbSearchHit(key, title, aka, category));
+				listModel.add(new ModelIMDbSearchHit(key, title, aka, category));
 				
 				movieCount++;
 			}
@@ -762,9 +759,9 @@ public class IMDB /*extends IMDB_if */{
     }
   
  
-    protected HashMap decodeClassInfo(StringBuffer data) {
+    protected HashMap<String, String> decodeClassInfo(StringBuffer data) {
     		
-    	HashMap classInfo = new HashMap();
+    	HashMap<String, String> classInfo = new HashMap<String, String>();
     	
     	Pattern p = Pattern.compile("<div.*?class=\"info\">.+?<.+?>(.*?)<.+?>(.+?)</div>", Pattern.DOTALL);
 		Matcher m = p.matcher(data);
@@ -811,9 +808,7 @@ public class IMDB /*extends IMDB_if */{
     
     
     protected static String getDecodedClassInfo(String className, StringBuffer data) {
-    	String decoded = "";
     	String tmp = getClassInfo(data, className);
-
     	return getDecodedClassInfo(className, tmp);
     }
     
@@ -872,8 +867,8 @@ public class IMDB /*extends IMDB_if */{
     /**
      * Returns the name of the link; <a href="">name</a>
      **/
-    protected static ArrayList getLinkContentName(String toDecode) {
-    	ArrayList decoded = new ArrayList();
+    protected static ArrayList<String> getLinkContentName(String toDecode) {
+    	ArrayList<String> decoded = new ArrayList<String>();
     	String tmp = "";
 		
 		try {

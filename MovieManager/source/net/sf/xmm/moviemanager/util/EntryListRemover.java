@@ -43,7 +43,7 @@ public class EntryListRemover {
 	Logger log = Logger.getLogger(getClass());
 
 	DefaultTreeModel listModel;
-	ArrayList entries;
+	ArrayList<DefaultMutableTreeNode> entries;
 	TreePath[] selectedPaths;
 
 	Database database;
@@ -59,10 +59,10 @@ public class EntryListRemover {
 		listModel = (DefaultTreeModel) moviesList.getModel();
 
 		selectedPaths = moviesList.getSelectionPaths();
-		entries = new ArrayList(selectedPaths.length);
+		entries = new ArrayList<DefaultMutableTreeNode>(selectedPaths.length);
 
 		for (int i = 0; i < selectedPaths.length; i++)
-			entries.add(selectedPaths[i].getLastPathComponent());
+			entries.add((DefaultMutableTreeNode) selectedPaths[i].getLastPathComponent());
 
 		selectedIndex = moviesList.getMinSelectionRow();
 	}

@@ -65,10 +65,10 @@ abstract public class ModelEntry {
 	ModelAdditionalInfo additionalInfo = null;
 
 	// which list this entry is a member of
-	ArrayList memberOfLists = new ArrayList();
+	ArrayList<String> memberOfLists = new ArrayList<String>();
 	
-	public ArrayList getMemberLists() {
-		return new ArrayList(memberOfLists);
+	public ArrayList<String> getMemberLists() {
+		return new ArrayList<String>(memberOfLists);
 	}
 	
 	public boolean addToMemberOfList(String listName) {
@@ -125,14 +125,14 @@ abstract public class ModelEntry {
 	 * Used by Castor for XML export/import
 	 * @param list
 	 */
-	public void setMemberOfLists(ArrayList list) {
+	public void setMemberOfLists(ArrayList<String> list) {
 		memberOfLists = list;
 	}
 	
 	/**
 	 * Used by Castor for XML export/import
 	 */
-	public ArrayList getMemberOfLists() {
+	public ArrayList<String> getMemberOfLists() {
 		return memberOfLists;
 	}
 	

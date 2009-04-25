@@ -27,7 +27,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelExportXML;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
@@ -46,7 +45,7 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 	
 	boolean cancelled = false;
 	
-	ArrayList movieList = null;
+	ArrayList<?> movieList = null;
 	
 	ModelMovieInfo modelMovieInfo = new ModelMovieInfo(false, true);
 	
@@ -106,7 +105,7 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 		}
 		
 		// Creates a list of the database lists this movie is member of.
-		ArrayList addToTheseLists = settings.getAddToThisList();
+		ArrayList<String> addToTheseLists = settings.getAddToThisList();
 		
 		ArrayList <String> memberLists = null;
 		

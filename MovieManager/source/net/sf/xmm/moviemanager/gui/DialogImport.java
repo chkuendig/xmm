@@ -473,7 +473,7 @@ public class DialogImport extends JDialog implements ActionListener {
 		listPanel.setLayout(new BorderLayout());
 		listPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Add to list "), BorderFactory.createEmptyBorder(5,5,5,5)));
 
-		ArrayList columnListNames = MovieManager.getIt().getDatabase().getListsColumnNames();
+		ArrayList<String> columnListNames = MovieManager.getIt().getDatabase().getListsColumnNames();
 		Object [] listNames = columnListNames.toArray();
 
 		if (listNames.length == 0) {

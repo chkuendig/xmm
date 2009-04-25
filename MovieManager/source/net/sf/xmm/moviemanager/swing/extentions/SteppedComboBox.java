@@ -6,6 +6,7 @@ import java.util.Vector;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
 import javax.swing.plaf.basic.ComboPopup;
@@ -71,7 +72,7 @@ public class SteppedComboBox extends JComboBox {
 		popupWidth = width;
 	}
  
-	public SteppedComboBox(Vector items) {
+	public SteppedComboBox(Vector<Object> items) {
 		super(items);
 		popupWidth = 0;
 	}
@@ -85,7 +86,9 @@ public class SteppedComboBox extends JComboBox {
 		return new Dimension(popupWidth, 30);
 	}
 	
-
+	public JTextField getEditorComponent() {
+		return ((JTextField) getEditor().getEditorComponent());
+	}
 	
 	public Dimension getPopupSize() {
 		Dimension size = getSize();

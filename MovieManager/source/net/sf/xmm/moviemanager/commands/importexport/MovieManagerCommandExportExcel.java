@@ -22,18 +22,13 @@ package net.sf.xmm.moviemanager.commands.importexport;
 
 import java.io.File;
 import java.io.StringWriter;
-import java.util.ArrayList;
-
-import javax.swing.DefaultListModel;
 
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.gui.DialogExport;
 import net.sf.xmm.moviemanager.gui.DialogTableExport;
-import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.util.GUIUtil;

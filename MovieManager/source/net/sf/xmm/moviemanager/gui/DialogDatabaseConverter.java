@@ -41,6 +41,7 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandConvertDatabase;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.database.DatabaseAccess;
 import net.sf.xmm.moviemanager.database.DatabaseConverter;
+import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
@@ -63,7 +64,7 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
     private String newline = "\n"; //$NON-NLS-1$
     Database newDatabase;
     ListModel movieListModel;
-    ArrayList episodeList;
+    ArrayList<ModelEpisode> episodeList;
     int movieCounter = 0;
     int counter = 0;
     int lengthOfTask = 0;
@@ -72,7 +73,7 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
     String[] transferred;
     public MovieManagerCommandConvertDatabase parent;
     
-    public DialogDatabaseConverter(final Database newDatabase, ListModel movieListModel, ArrayList episodeList, final MovieManagerCommandConvertDatabase parent) {
+    public DialogDatabaseConverter(final Database newDatabase, ListModel movieListModel, ArrayList<ModelEpisode> episodeList, final MovieManagerCommandConvertDatabase parent) {
         super(new BorderLayout());
         this.parent = parent;
 	this.newDatabase = newDatabase;

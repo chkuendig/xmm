@@ -27,29 +27,29 @@ import java.util.Vector;
 import javax.swing.JComponent;
 
 public class FontManager {
-    
-    private static Vector components = new Vector();
-    
-    static GraphicsEnvironment graphics  = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    
-    String [] getAvailableFontFamilyNames() {
-	return graphics.getAvailableFontFamilyNames();
-    }
-    
-    
-    public static void addComponent(JComponent c) {
-	components.add(c);
-    }
-    
-    public static void setFont(Font f) {
-	
-	// UIManager.put("Button.font", new Font("SansSerif",1,11));
-// 	UIManager.put("Label.font" , new Font("SansSerif",0,12));
-// 	UIManager.put("Menu.font", new Font("MS Sans Serif",0,12));
-// 	UIManager.put("MenuItem.font", new Font("MS Sans Serif",0,11));
-// 	UIManager.put("TextField.font",new Font("MS Sans Serif",0,12));
-	
-	for (int i = 0; i < components.size(); i++)
-	    ((JComponent) components.get(i)).setFont(f);
-    }
+
+	private static Vector<JComponent> components = new Vector<JComponent>();
+
+	static GraphicsEnvironment graphics  = GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+	String [] getAvailableFontFamilyNames() {
+		return graphics.getAvailableFontFamilyNames();
+	}
+
+
+	public static void addComponent(JComponent c) {
+		components.add(c);
+	}
+
+	public static void setFont(Font f) {
+
+		// UIManager.put("Button.font", new Font("SansSerif",1,11));
+		// 	UIManager.put("Label.font" , new Font("SansSerif",0,12));
+		// 	UIManager.put("Menu.font", new Font("MS Sans Serif",0,12));
+		// 	UIManager.put("MenuItem.font", new Font("MS Sans Serif",0,11));
+		// 	UIManager.put("TextField.font",new Font("MS Sans Serif",0,12));
+
+		for (int i = 0; i < components.size(); i++)
+			((JComponent) components.get(i)).setFont(f);
+	}
 }

@@ -20,6 +20,8 @@
 
 package net.sf.xmm.moviemanager.commands.importexport;
 
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
 
 import jxl.Cell;
@@ -35,8 +37,8 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportHan
 
 	static Logger log = Logger.getLogger(MovieManagerCommandImportExcel.class);
 	
-	ModelMovie movie = null;
-
+	ArrayList<ModelMovie> movieList = null;
+	
 	Object [][] tableData;
 	int len = -1;
 

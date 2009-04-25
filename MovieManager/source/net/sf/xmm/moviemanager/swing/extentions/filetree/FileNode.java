@@ -10,7 +10,7 @@ import net.sf.xmm.moviemanager.util.FileUtil;
 
 import org.apache.log4j.Logger;
 
-public class FileNode implements Comparable {
+public class FileNode implements Comparable<FileNode> {
 	
 	Logger log = Logger.getLogger(getClass());
 	
@@ -52,18 +52,16 @@ public class FileNode implements Comparable {
 		return m_file.getName().length() > 0 ? m_file.getName() : m_file.getPath();
 	}
 
-	public int compareTo(Object nodeCompare) {
+	public int compareTo(FileNode nodeCompare) {
 		
-		FileNode node = (FileNode) nodeCompare;
+		if (isDirectory() != nodeCompare.isDirectory())
+			return isDirectory() && !nodeCompare.isDirectory() ? -1 : 1;
 		
-		if (isDirectory() != node.isDirectory())
-			return isDirectory() && !node.isDirectory() ? -1 : 1;
-		
-		return m_file.getName().compareToIgnoreCase(node.m_file.getName());
+		return m_file.getName().compareToIgnoreCase(nodeCompare.m_file.getName());
 	}
 		
 	
-	public boolean expand(DefaultMutableTreeNode parent, ArrayList validExtensions)	{
+	public boolean expand(DefaultMutableTreeNode parent, ArrayList<String> validExtensions)	{
 		DefaultMutableTreeNode flag = (DefaultMutableTreeNode)parent.getFirstChild();
 
 		treeNode = parent;
@@ -112,7 +110,7 @@ public class FileNode implements Comparable {
 		return true;
 	}
 
-	public DefaultMutableTreeNode updateNodes(ArrayList validExtensions) {
+	public DefaultMutableTreeNode updateNodes(ArrayList<String> validExtensions) {
 
 		boolean changed = false;
 		
@@ -194,13 +192,13 @@ public class FileNode implements Comparable {
 	}
 
 	
-	FileNode [] getValidChildren(ArrayList validExtensions, boolean includeDirectories) {
+	FileNode [] getValidChildren(ArrayList<String> validExtensions, boolean includeDirectories) {
 		File[] files = listFiles();
 
 		if (files == null)
 			return new FileNode[0];
 
-		ArrayList validFiles = new ArrayList();
+		ArrayList<FileNode> validFiles = new ArrayList<FileNode>();
 
 		for (int i = 0; i < files.length; i++)	{
 			if (files[i].isFile() && validExtensions.contains(FileUtil.getExtension(files[i].getName())) || (includeDirectories && files[i].isDirectory())) {

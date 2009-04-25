@@ -66,7 +66,7 @@ public class MovieManagerCommandSaveChangedNotes implements ActionListener {
 			DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
 			ModelEntry model;
 			DefaultMutableTreeNode node;
-			Enumeration enumeration = root.children();
+			Enumeration<DefaultMutableTreeNode> enumeration = root.children();
 
 			while (enumeration.hasMoreElements()) {
 
@@ -79,7 +79,7 @@ public class MovieManagerCommandSaveChangedNotes implements ActionListener {
 
 				/* Has children */
 				if (ModelEpisode.notesHaveBeenChanged && !node.isLeaf()) {
-					Enumeration episodeEnumeration = node.children();
+					Enumeration<DefaultMutableTreeNode> episodeEnumeration = node.children();
 
 					while (episodeEnumeration.hasMoreElements()) {
 						model = (ModelEntry) ((DefaultMutableTreeNode) episodeEnumeration.nextElement()).getUserObject();

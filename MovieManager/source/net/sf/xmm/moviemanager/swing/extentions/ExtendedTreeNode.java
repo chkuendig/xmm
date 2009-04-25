@@ -30,15 +30,16 @@ import net.sf.xmm.moviemanager.models.ModelEpisode;
 import org.dotuseful.ui.tree.AutomatedTreeNode;
 
 
-public class ExtendedTreeNode extends AutomatedTreeNode implements Comparable  {
+public class ExtendedTreeNode extends AutomatedTreeNode implements Comparable<ExtendedTreeNode>  {
 
-	int modelType = 0; /* 0 = ModelMovie, 1 == ModelEpisode */
+	enum ModelType {movieType, episodeType};
+	ModelType modelType = ModelType.movieType;
 
 	public ExtendedTreeNode(ModelEntry m) {
 		super(m);
 
 		if (m instanceof ModelEpisode)
-			modelType = 1;
+			modelType = ModelType.episodeType;
 	}
 
 	public int hashCode() {
@@ -50,10 +51,9 @@ public class ExtendedTreeNode extends AutomatedTreeNode implements Comparable  {
 		super.setUserObject(userObject);
 	}
 
-	public int compareTo(Object o) { 
-		ExtendedTreeNode n = (ExtendedTreeNode) o;
+	public int compareTo(ExtendedTreeNode n) { 
 
-		if (modelType == 0) {
+		if (modelType == ModelType.movieType) {
 
 			switch (ModelEntry.sort) {
 

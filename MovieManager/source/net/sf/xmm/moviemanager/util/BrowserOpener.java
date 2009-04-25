@@ -77,7 +77,7 @@ public class BrowserOpener {
                             else if (browser.equals("Default") && SysUtil.isMac()) {
                             	//System.out.println("macUtils:" + url);
                             	
-                                Class macUtils = Class.forName("com.apple.mrj.MRJFileUtils");
+                                Class<?> macUtils = Class.forName("com.apple.mrj.MRJFileUtils");
                                 Method openURL = macUtils.getDeclaredMethod("openURL", new Class[] {String.class});
                                 openURL.invoke(null, new Object[] {url});
                             }

@@ -1,10 +1,7 @@
 package net.sf.xmm.moviemanager.swing.util.table;
 
 import java.util.Iterator;
-import java.util.Vector;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
 
 /**
@@ -37,9 +34,10 @@ public class GroupableTableHeader extends JTableHeader {
      */    
     public void setColumnMargin() {
         int columnMargin = getColumnModel().getColumnMargin();
-        Iterator iter = ((GroupableTableColumnModel)columnModel).columnGroupIterator();
+        Iterator<ColumnGroup> iter = ((GroupableTableColumnModel) columnModel).columnGroupIterator();
+        
         while (iter.hasNext()) {
-            ColumnGroup cGroup = (ColumnGroup)iter.next();
+            ColumnGroup cGroup = iter.next();
             cGroup.setColumnMargin(columnMargin);
         }
     }

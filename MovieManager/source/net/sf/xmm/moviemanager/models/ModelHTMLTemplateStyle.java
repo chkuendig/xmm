@@ -20,12 +20,12 @@ public class ModelHTMLTemplateStyle {
 	
 	String imageFileNames = null;
 		
-	public ModelHTMLTemplateStyle(ModelHTMLTemplate parentTemplate, ArrayList info) throws Exception {
+	public ModelHTMLTemplateStyle(ModelHTMLTemplate parentTemplate, ArrayList<String> info) throws Exception {
 		
 		this. parentTemplate = parentTemplate;
 		
 		for (int i = 0; i < info.size(); i++) {
-			String tmp = (String) info.get(i);
+			String tmp = info.get(i);
 			
 			String [] split = tmp.split("=");
 			

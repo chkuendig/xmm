@@ -25,7 +25,6 @@ import java.awt.event.ActionListener;
 
 import org.apache.log4j.Logger;
 
-import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogQueries;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 

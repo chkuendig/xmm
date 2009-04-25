@@ -24,9 +24,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -438,18 +436,7 @@ public class ModelMovieInfo {
     }
         
     public synchronized ModelEntry saveToDatabase(ModelEntry modelToSave, boolean edit, ArrayList <String> listNamesToApply) throws Exception {
-                
-    	System.err.println("listNamesToApply:" + listNamesToApply);
-    	
-    	if (listNamesToApply != null) {
-    		
-    		System.err.println("listNamesToApply.size:" + listNamesToApply.size());
-    		
-    		for (String list : listNamesToApply)
-    			System.err.println("list:" + list);
-    		
-    	}
-    	
+      
     	Database database = MovieManager.getIt().getDatabase();
         ModelAdditionalInfo additionalInfo = modelToSave.getAdditionalInfo();
         

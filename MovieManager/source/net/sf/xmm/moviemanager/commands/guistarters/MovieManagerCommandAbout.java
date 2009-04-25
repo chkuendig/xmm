@@ -26,9 +26,7 @@ import java.awt.event.ActionListener;
 
 import org.apache.log4j.Logger;
 
-import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogAbout;
-import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandAbout implements ActionListener {

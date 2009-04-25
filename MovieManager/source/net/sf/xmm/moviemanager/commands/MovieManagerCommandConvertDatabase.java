@@ -47,6 +47,8 @@ import net.sf.xmm.moviemanager.database.DatabaseAccess;
 import net.sf.xmm.moviemanager.database.DatabaseHSQL;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogDatabaseConverter;
+import net.sf.xmm.moviemanager.models.ModelEpisode;
+import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.util.FileUtil;
@@ -63,7 +65,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     
     Database newDatabase;
     ListModel movieListModel;
-    ArrayList episodeList;
+    ArrayList<ModelEpisode> episodeList;
     boolean canceled = true;
     boolean done = false;
     boolean dbOpened = false;
@@ -83,15 +85,15 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     			((DatabaseHSQL)newDatabase).createDatabaseTables();
 
     			/* Adds extra info field names */
-    			ArrayList columnNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+    			ArrayList<String> columnNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
     			
     			for (int i = 0; i < columnNames.size(); i++)
-    				newDatabase.addExtraInfoFieldName((String) columnNames.get(i));
+    				newDatabase.addExtraInfoFieldName(columnNames.get(i));
 
     			/* Adds lists columns */
     			columnNames = MovieManager.getIt().getDatabase().getListsColumnNames();
     			for (int i = 0; i < columnNames.size(); i++)
-    				newDatabase.addListsColumn((String) columnNames.get(i));
+    				newDatabase.addListsColumn(columnNames.get(i));
 
     		}
     		else {
@@ -100,7 +102,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     			File dataBaseFile = new File(filePath);
 
     			if (!dataBaseFile.createNewFile()) {
-			    throw new Exception("Cannot create database file."); //$NON-NLS-1$
+    				throw new Exception("Cannot create database file."); //$NON-NLS-1$
     			}
 
     			/* Copies the empty database file in the package to the new file... */
@@ -122,14 +124,14 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     			newDatabase.setUp();
 
     			/* Adds extra info field names */
-    			ArrayList columnNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+    			ArrayList<String> columnNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
     			for (int i = 0; i < columnNames.size(); i++)
-    				newDatabase.addExtraInfoFieldName((String) columnNames.get(i));
+    				newDatabase.addExtraInfoFieldName(columnNames.get(i));
 
     			/* Adds lists columns */
     			columnNames = MovieManager.getIt().getDatabase().getListsColumnNames();
     			for (int i = 0; i < columnNames.size(); i++)
-    				newDatabase.addListsColumn((String) columnNames.get(i));
+    				newDatabase.addListsColumn(columnNames.get(i));
     		}
 
     	} catch (Exception e) {
@@ -287,9 +289,10 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
     		GUIUtil.showAndWait(alert, true);
     	}
     	else {
-    		movieListModel = MovieManager.getIt().getDatabase().getMoviesList("Title"); //$NON-NLS-1$
-    		episodeList = MovieManager.getIt().getDatabase().getEpisodeList("movieID"); //$NON-NLS-1$
-
+    		ArrayList<ModelMovie> list = MovieManager.getIt().getDatabase().getMoviesList(); //$NON-NLS-1$
+    		movieListModel = GUIUtil.toDefaultListModel(list);
+    		episodeList = MovieManager.getIt().getDatabase().getEpisodeList(); //$NON-NLS-1$
+    		
     		int listModelSize = movieListModel.getSize();
 
     		if (listModelSize == 0) {

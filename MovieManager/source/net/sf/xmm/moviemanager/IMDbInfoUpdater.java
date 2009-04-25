@@ -21,10 +21,7 @@
 package net.sf.xmm.moviemanager;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
@@ -33,7 +30,6 @@ import javax.swing.tree.DefaultTreeModel;
 
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandDialogIMDB;
 import net.sf.xmm.moviemanager.database.Database;
-import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovie;
@@ -42,11 +38,6 @@ import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.SwingWorker;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 
 
@@ -58,7 +49,7 @@ public class IMDbInfoUpdater {
 	private int current = -1;
 	private boolean done = false;
 	private boolean canceled = false;
-	private ArrayList transferred = new ArrayList();
+	private ArrayList<String> transferred = new ArrayList<String>();
 
 	Database database = MovieManager.getIt().getDatabase();
 
@@ -126,7 +117,7 @@ public class IMDbInfoUpdater {
 	}
 	
 	/* Returns the arraylist transferred which contains all the finished database entries */
-	public ArrayList getTransferred() {
+	public ArrayList<String> getTransferred() {
 		return transferred;
 	}
 
@@ -135,6 +126,7 @@ public class IMDbInfoUpdater {
 
 	final ThreadHandler threadHandler = new ThreadHandler();
 	
+	@SuppressWarnings("unchecked")
 	public void execute() {
 
 		/* Setting the priority of the thread to 4 to give the GUI room to update more often */
@@ -142,7 +134,7 @@ public class IMDbInfoUpdater {
 
 		
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
-		final Enumeration enumeration = root.children();
+		final Enumeration<DefaultMutableTreeNode> enumeration = root.children();
 				
 		lengthOfTask = root.getChildCount();
 	
@@ -171,7 +163,7 @@ public class IMDbInfoUpdater {
 								threadHandler.waitForNextDecrease();
 							}
 							
-							node = ((DefaultMutableTreeNode) enumeration.nextElement());
+							node = enumeration.nextElement();
 							model = (ModelEntry) node.getUserObject();
 
 							if (!model.getHasGeneralInfoData()) {

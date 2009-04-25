@@ -52,7 +52,7 @@ public class JComboCheckBox extends JComboBox {
 	private boolean enter = false;
 	private boolean mouseOrKey = false; // true = mouse, false = key
 
-	private ArrayList enteredValues = new ArrayList();
+	private ArrayList<String> enteredValues = new ArrayList<String>();
 
 	private JList combolist = null;
 	private ComboCheckBoxRenderer comboBoxRenderer;
@@ -198,8 +198,6 @@ public class JComboCheckBox extends JComboBox {
 		public void mouseClicked(MouseEvent e) {}
 		public void mousePressed(MouseEvent me) {
 
-			//System.out.println("mousePressed");
-
 			mouseOrKey = true;
 			selectCheckBoxMouseState = false;
 
@@ -209,8 +207,8 @@ public class JComboCheckBox extends JComboBox {
 
 				if (compName != null && compName.equals("ComboBox.list")) {
 
-					int index = combolist.locationToIndex(me.getPoint());
-					JCheckBox box = (JCheckBox) getItemAt(index);
+					//int index = combolist.locationToIndex(me.getPoint());
+					//JCheckBox box = (JCheckBox) getItemAt(index);
 
 					int x = me.getX();
 
@@ -223,10 +221,9 @@ public class JComboCheckBox extends JComboBox {
 	}
 
 
-	public void addItem(String anObject) {
-		String str = (String) anObject;
-
-		if (anObject != null && !"".equals(anObject))
+	public void addItem(String str) {
+		
+		if (str != null && !"".equals(str))
 			addItem(new JCheckBox(str));
 	}
 

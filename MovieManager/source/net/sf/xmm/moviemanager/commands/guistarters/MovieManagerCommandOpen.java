@@ -26,7 +26,6 @@ import java.awt.event.ActionListener;
 
 import org.apache.log4j.Logger;
 
-import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSaveChangedNotes;
 import net.sf.xmm.moviemanager.gui.DialogDatabase;
 import net.sf.xmm.moviemanager.util.GUIUtil;

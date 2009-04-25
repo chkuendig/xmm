@@ -20,8 +20,6 @@
 
 package net.sf.xmm.moviemanager.models.imdb;
 
-import java.util.ArrayList;
-
 public class ModelIMDbSeries extends ModelIMDbMovie {
     
 	public ModelIMDbSeries() {}

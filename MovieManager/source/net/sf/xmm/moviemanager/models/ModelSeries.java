@@ -26,7 +26,7 @@ public class ModelSeries {
     
     ModelMovie movie;
 
-    public ArrayList episodes = new ArrayList();
+    public ArrayList<ModelEpisode> episodes = new ArrayList<ModelEpisode>();
     
     /* Empty constructor for XML export */
     public ModelSeries() {}
@@ -51,7 +51,7 @@ public class ModelSeries {
         episodes.add(episode);
     }
 
-    public ArrayList getEpisodes() {
+    public ArrayList<ModelEpisode> getEpisodes() {
      return episodes;   
     }
 }

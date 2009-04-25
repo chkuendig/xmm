@@ -43,11 +43,9 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
 	ModelMovieInfo modelMovieInfo = new ModelMovieInfo(false, true);
 	ModelMovie movie = null;
 	
-	public ArrayList movieList = null;
-	
 	ModelImportExportSettings settings;
 	
-	ArrayList addToThisList = new ArrayList();
+	ArrayList<String> addToThisList = new ArrayList<String>();
 	
 	MovieManagerCommandImportHandler(ModelImportExportSettings settings) {
 		this.settings = settings;

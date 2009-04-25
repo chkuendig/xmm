@@ -30,7 +30,6 @@ import javax.swing.SwingUtilities;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSaveChangedNotes;
 import net.sf.xmm.moviemanager.gui.DialogDatabaseImporterExporter;
-import net.sf.xmm.moviemanager.gui.DialogExport;
 import net.sf.xmm.moviemanager.gui.DialogImport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;

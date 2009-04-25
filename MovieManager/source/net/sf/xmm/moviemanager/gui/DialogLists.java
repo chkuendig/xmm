@@ -63,11 +63,11 @@ public class DialogLists extends JDialog {
   
 	Logger log = Logger.getLogger(getClass());
     
-    private java.util.List _toRemove = new ArrayList();
+    private java.util.List <String> _toRemove = new ArrayList<String>();
   
-    private java.util.List _toAdd = new ArrayList();
+    private java.util.List <String> _toAdd = new ArrayList<String>();
   
-    private java.util.List _originalList;
+    private java.util.List <String> _originalList;
   
     private JList listExistingFields;
     
@@ -280,14 +280,14 @@ public class DialogLists extends JDialog {
     }
     
     private boolean containsIgnoreCase(JList list, String field) {
-	
-	Object[] existingFields = ((DefaultListModel) list.getModel()).toArray();
-	
-	for (int i = 0; i < existingFields.length; i++) {
-	    if (((String) existingFields[i]).equalsIgnoreCase(field))
-		return true;
-	}
-	return false;
+
+    	Object[] existingFields = ((DefaultListModel) list.getModel()).toArray();
+
+    	for (int i = 0; i < existingFields.length; i++) {
+    		if (((String) existingFields[i]).equalsIgnoreCase(field))
+    			return true;
+    	}
+    	return false;
     }
 
     /**
@@ -299,18 +299,18 @@ public class DialogLists extends JDialog {
 	
 	/* Removes from database... */
 	for (int i=0; i<_toRemove.size(); i++) {
-	    MovieManager.getIt().getDatabase().removeListsColumn((String)_toRemove.get(i));
+	    MovieManager.getIt().getDatabase().removeListsColumn(_toRemove.get(i));
 	    
-	    if (MovieManager.getConfig().getCurrentLists().contains((String)_toRemove.get(i))) {
-	    	MovieManager.getConfig().getCurrentLists().remove((String)_toRemove.get(i)); //$NON-NLS-1$
+	    if (MovieManager.getConfig().getCurrentLists().contains(_toRemove.get(i))) {
+	    	MovieManager.getConfig().getCurrentLists().remove(_toRemove.get(i)); //$NON-NLS-1$
 	    	reload = true;
 	    }
 	}
 	
 	/* Adds to database... */
 	for (int i=0; i<_toAdd.size(); i++) {
-	    MovieManager.getIt().getDatabase().addListsColumn((String)_toAdd.get(i));
-	    MovieManager.getIt().getConfig().addToCurrentLists((String)_toAdd.get(i));
+	    MovieManager.getIt().getDatabase().addListsColumn(_toAdd.get(i));
+	    MovieManager.getConfig().addToCurrentLists(_toAdd.get(i));
 	}
 	
 	/* Loading the listmenu with the existing lists */

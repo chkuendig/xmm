@@ -3,16 +3,16 @@ package net.sf.xmm.moviemanager.util;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DropTargetDropEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 
@@ -126,7 +126,7 @@ public class FileDrop
      * @since 1.0
      */
     public FileDrop(
-    final java.io.PrintStream out,
+    final PrintStream out,
     final java.awt.Component c,
     final Listener listener )
     {   this( out,  // Logging stream
@@ -156,7 +156,7 @@ public class FileDrop
      * @since 1.0
      */
     public FileDrop(
-    final java.io.PrintStream out,
+    final PrintStream out,
     final java.awt.Component c,
     final boolean recursive,
     final Listener listener)
@@ -233,7 +233,7 @@ public class FileDrop
      * @since 1.0
      */
     public FileDrop(
-    final java.io.PrintStream out,
+    final PrintStream out,
     final java.awt.Component c,
     final javax.swing.border.Border dragBorder,
     final Listener listener) 
@@ -264,7 +264,7 @@ public class FileDrop
      * @since 1.0
      */
     public FileDrop(
-    final java.io.PrintStream out,
+    final PrintStream out,
     final java.awt.Component c,
     final javax.swing.border.Border dragBorder,
     final boolean recursive,
@@ -336,7 +336,7 @@ public class FileDrop
                 	log( out, "FileDrop: dragExit event." );
                 	
                 	if (c instanceof JTree) {
-                		JTree tree = (JTree) c;
+                		//JTree tree = (JTree) c;
 
                 		//if (originalTreePath != null)
                 			//tree.setSelectionPath(originalTreePath);
@@ -364,14 +364,14 @@ public class FileDrop
                             log( out, "FileDrop: file list accepted." );
 
                             // Get a useful list
-                            java.util.List fileList = (java.util.List) 
+                            List <File> fileList = (List<File>) 
                                 tr.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
-                            java.util.Iterator iterator = fileList.iterator();
+                            //Iterator <File> iterator = fileList.iterator();
 
                             // Convert list to array
-                            java.io.File[] filesTemp = new java.io.File[ fileList.size() ];
-                            fileList.toArray( filesTemp );
-                            final java.io.File[] files = filesTemp;
+                            File[] filesTemp = new File[fileList.size()];
+                            fileList.toArray(filesTemp);
+                            final File[] files = filesTemp;
 
                             // Alert listener to drop.
                             if( listener != null )
@@ -415,7 +415,7 @@ public class FileDrop
                             // END 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
                         }   // end else: not a file list
                     }   // end try
-                    catch ( java.io.IOException io) 
+                    catch ( IOException io) 
                     {   log( out, "FileDrop: IOException - abort:" );
                         io.printStackTrace( out );
                         evt.rejectDrop();
@@ -469,7 +469,7 @@ public class FileDrop
         {   
             boolean support = false;
             try
-            {   Class arbitraryDndClass = Class.forName( "java.awt.dnd.DnDConstants" );
+            {   Class<?> arbitraryDndClass = Class.forName( "java.awt.dnd.DnDConstants" );
                 support = true;
             }   // end try
             catch( Exception e )
@@ -486,21 +486,21 @@ public class FileDrop
      private static File[] createFileArray(BufferedReader bReader, PrintStream out)
      {
         try { 
-            java.util.List list = new java.util.ArrayList();
-            java.lang.String line = null;
+            List<File> list = new ArrayList<File>();
+            String line = null;
             while ((line = bReader.readLine()) != null) {
                 try {
                     // kde seems to append a 0 char to the end of the reader
                     if(ZERO_CHAR_STRING.equals(line)) continue; 
                     
-                    java.io.File file = new java.io.File(new java.net.URI(line));
+                    File file = new File(new java.net.URI(line));
                     list.add(file);
                 } catch (Exception ex) {
                     log(out, "Error with " + line + ": " + ex.getMessage());
                 }
             }
 
-            return (java.io.File[]) list.toArray(new File[list.size()]);
+            return (File[]) list.toArray(new File[list.size()]);
         } catch (IOException ex) {
             log(out, "FileDrop: IOException");
         }
@@ -509,7 +509,7 @@ public class FileDrop
      // END 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
      
     
-    private void makeDropTarget( final java.io.PrintStream out, final java.awt.Component c, boolean recursive )
+    private void makeDropTarget( final PrintStream out, final java.awt.Component c, boolean recursive )
     {
         // Make drop target
         final java.awt.dnd.DropTarget dt = new java.awt.dnd.DropTarget();
@@ -556,7 +556,7 @@ public class FileDrop
     
     
     /** Determine if the dragged data is a file list. */
-    private boolean isDragOk( final java.io.PrintStream out, final java.awt.dnd.DropTargetDragEvent evt )
+    private boolean isDragOk( final PrintStream out, final java.awt.dnd.DropTargetDragEvent evt )
     {   boolean ok = false;
         
         // Get data flavors being dragged
@@ -590,7 +590,7 @@ public class FileDrop
     
     
     /** Outputs <tt>message</tt> to <tt>out</tt> if it's not null. */
-    private static void log( java.io.PrintStream out, String message )
+    private static void log( PrintStream out, String message )
     {   // Log message if requested
         if( out != null )
             out.println( message );
@@ -625,7 +625,7 @@ public class FileDrop
      * @param recursive Recursively unregister components within a container
      * @since 1.0
      */
-    public static boolean remove( java.io.PrintStream out, java.awt.Component c, boolean recursive )
+    public static boolean remove( PrintStream out, java.awt.Component c, boolean recursive )
     {   // Make sure we support dnd.
         if( supportsDnD() )
         {   log( out, "FileDrop: Removing drag-and-drop hooks." );
@@ -670,7 +670,7 @@ public class FileDrop
          * @param files An array of <tt>File</tt>s that were dropped.
          * @since 1.0
          */
-        public abstract void filesDropped( java.io.File[] files );
+        public abstract void filesDropped( File[] files );
         
         
     }   // end inner-interface Listener
@@ -693,7 +693,7 @@ public class FileDrop
      */
     public static class Event extends java.util.EventObject {
 
-        private java.io.File[] files;
+        private File[] files;
 
         /**
          * Constructs an {@link Event} with the array
@@ -704,7 +704,7 @@ public class FileDrop
          * @source The event source
          * @since 1.1
          */
-        public Event( java.io.File[] files, Object source ) {
+        public Event( File[] files, Object source ) {
             super( source );
             this.files = files;
         }   // end constructor
@@ -716,7 +716,7 @@ public class FileDrop
          * @return array of files that were dropped
          * @since 1.1
          */
-        public java.io.File[] getFiles() {
+        public File[] getFiles() {
             return files;
         }   // end getFiles
     
@@ -846,7 +846,7 @@ public class FileDrop
          * @param fetcher The {@link Fetcher} that will return the data object
          * @since 1.1
          */
-        public TransferableObject( Class dataClass, Fetcher fetcher )
+        public TransferableObject( Class<?> dataClass, Fetcher fetcher )
         {   this.fetcher = fetcher;
             this.customFlavor = new java.awt.datatransfer.DataFlavor( dataClass, MIME_TYPE );
         }   // end constructor
@@ -906,7 +906,7 @@ public class FileDrop
          * @since 1.1
          */
         public Object getTransferData( java.awt.datatransfer.DataFlavor flavor )
-        throws java.awt.datatransfer.UnsupportedFlavorException, java.io.IOException 
+        throws java.awt.datatransfer.UnsupportedFlavorException, IOException 
         {   
             // Native object
             if( flavor.equals( DATA_FLAVOR ) )

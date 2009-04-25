@@ -116,9 +116,9 @@ public class DialogTableImport extends DialogTableData {
 		}
 	}
 	
-	public ArrayList retrieveMovieListFromTable() {
+	public ArrayList<ModelMovie> retrieveMovieListFromTable() {
 
-		ArrayList movieList = new ArrayList(10);
+		ArrayList<ModelMovie> movieList = new ArrayList<ModelMovie>(10);
 		
 		try {
 			

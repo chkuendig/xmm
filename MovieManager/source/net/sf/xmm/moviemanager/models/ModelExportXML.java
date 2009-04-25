@@ -24,6 +24,7 @@ package net.sf.xmm.moviemanager.models;
 import java.util.ArrayList;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.util.StringUtil;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.mapping.AccessMode;
@@ -43,26 +44,26 @@ public class ModelExportXML implements XMLClassDescriptor {
 	
 	private String movieManagerVersion = MovieManager.getConfig().sysSettings.getVersion();
 	
-    private ArrayList movies;
-    private ArrayList series;
+    private ArrayList<ModelMovie> movies;
+    private ArrayList<ModelSeries> series;
     
     public ModelExportXML() {
-    	movies = new ArrayList();
-        series = new ArrayList();
+    	movies = new ArrayList<ModelMovie>();
+        series = new ArrayList<ModelSeries>();
     }
     
     public ModelExportXML(int size) {
-    	movies = new ArrayList(size);
-        series = new ArrayList(size);
+    	movies = new ArrayList<ModelMovie>(size);
+        series = new ArrayList<ModelSeries>(size);
     }
     
     public String getMovieManagerVersion() {
     	return movieManagerVersion;
     }
     
-    public ArrayList getCombindedList() {
+    public ArrayList<Object> getCombindedList() {
 	
-        ArrayList combinded = new ArrayList(movies.size() + series.size());
+        ArrayList<Object> combinded = new ArrayList<Object>(movies.size() + series.size());
         
         combinded.addAll(movies);
         combinded.addAll(series);
@@ -81,19 +82,19 @@ public class ModelExportXML implements XMLClassDescriptor {
     	return count;
     }
     
-    public ArrayList getMovies() {
+    public ArrayList<ModelMovie> getMovies() {
      return movies;   
     }
     
-    public ArrayList getSeries() {
+    public ArrayList<ModelSeries> getSeries() {
     	return series;   
     }
 
-    public void setMovies(ArrayList movies) {
+    public void setMovies(ArrayList<ModelMovie> movies) {
     	this.movies = movies;   
     }
 
-    public void setSeries(ArrayList series) {
+    public void setSeries(ArrayList<ModelSeries> series) {
     	this.series = series;   
     }
 
@@ -116,90 +117,75 @@ public class ModelExportXML implements XMLClassDescriptor {
 
     public XMLFieldDescriptor[] getAttributeDescriptors() {
         log.debug("getAttributeDescriptors()");
-        // TODO Auto-generated method stub
         return null;
     }
 
     public XMLFieldDescriptor getContentDescriptor() {
         log.debug("getContentDescriptor()");
-        // TODO Auto-generated method stub
         return null;
     }
 
     public XMLFieldDescriptor[] getElementDescriptors() {
         log.debug("getElementDescriptors()");
-        // TODO Auto-generated method stub
         return null;
     }
 
     public XMLFieldDescriptor getFieldDescriptor(String arg0, String arg1, NodeType arg2) {
         log.debug("getFieldDescriptor");
-        // TODO Auto-generated method stub
         return null;
     }
 
     public String getNameSpacePrefix() {
         log.debug("getNameSpacePrefix()");
-        // TODO Auto-generated method stub
         return null;
     }
 
     public String getNameSpaceURI() {
         log.debug("getNameSpaceURI()");
-        // TODO Auto-generated method stub
         return null;
     }
 
     public TypeValidator getValidator() {
         log.debug("getValidator()");
-        // TODO Auto-generated method stub
         return null;
     }
 
     public String getXMLName() {
         log.debug("getXMLName()");
-        // TODO Auto-generated method stub
         return null;
     }
 
     public boolean canAccept(String arg0, String arg1, Object arg2) {
 		log.debug("canAccept");
-        // TODO Auto-generated method stub
         return false;
     }
 
-    public Class getJavaClass() {
+    public Class<?> getJavaClass() {
         log.debug("getJavaClass()");
-        // TODO Auto-generated method stub
         return null;
     }
 
     public FieldDescriptor[] getFields() {
         log.debug("getFields()");
-        // TODO Auto-generated method stub
         return null;
     }
 
     public ClassDescriptor getExtends() {
         log.debug("getExtends()");
-        // TODO Auto-generated method stub
         return null;
     }
 
     public FieldDescriptor getIdentity() {
         log.debug("getIdentity()");
-        // TODO Auto-generated method stub
         return null;
     }
 
     public AccessMode getAccessMode() {
         log.debug("getAccessMode()");
-        // TODO Auto-generated method stub
         return null;
     }
 
 	public boolean isChoice() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
@@ -208,86 +194,32 @@ public class ModelExportXML implements XMLClassDescriptor {
 	 */
 	 void validateModel(ModelMovie movie) {
 	    	
-	    	removeInvalidXMLCharacters(movie.getTitle());
-	    	removeInvalidXMLCharacters(movie.getAka());
-	    	removeInvalidXMLCharacters(movie.getAwards());
-	    	removeInvalidXMLCharacters(movie.getCast());
-	    	removeInvalidXMLCharacters(movie.getCertification());
-	    	removeInvalidXMLCharacters(movie.getColour());
-	    	removeInvalidXMLCharacters(movie.getCompleteUrl());
-	    	removeInvalidXMLCharacters(movie.getCountry());
-	    	removeInvalidXMLCharacters(movie.getCover());
-	    	removeInvalidXMLCharacters(movie.getDate());
-	    	removeInvalidXMLCharacters(movie.getDirectedBy());
-	    	removeInvalidXMLCharacters(movie.getGenre());
-	    	removeInvalidXMLCharacters(movie.getLanguage());
-	    	removeInvalidXMLCharacters(movie.getMpaa());
-	    	removeInvalidXMLCharacters(movie.getNotes());
-	    	removeInvalidXMLCharacters(movie.getPlot());
-	    	removeInvalidXMLCharacters(movie.getRating());
-	    	removeInvalidXMLCharacters(movie.getSortCategory());
-	    	removeInvalidXMLCharacters(movie.getSortDate());
-	    	removeInvalidXMLCharacters(movie.getUrlKey());
-	    	removeInvalidXMLCharacters(movie.getWebRuntime());
-	    	removeInvalidXMLCharacters(movie.getWebSoundMix());
-	    	removeInvalidXMLCharacters(movie.getWrittenBy());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getTitle());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getAka());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getAwards());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getCast());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getCertification());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getColour());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getCompleteUrl());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getCountry());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getCover());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getDate());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getDirectedBy());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getGenre());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getLanguage());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getMpaa());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getNotes());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getPlot());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getRating());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getSortCategory());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getSortDate());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getUrlKey());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getWebRuntime());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getWebSoundMix());
+	    	StringUtil.removeInvalidXMLCharacters(movie.getWrittenBy());
 	    	
 	    	ModelAdditionalInfo add = movie.getAdditionalInfo();
 	        	
-	    	removeInvalidXMLCharacters(add.getAdditionalInfoString());
+	    	StringUtil.removeInvalidXMLCharacters(add.getAdditionalInfoString());
 	    }
-	 
-	 
-	
-	/**
-	 * This method ensures that the output String has only valid XML unicode characters as specified by the
-	 * XML 1.0 standard. For reference, please see the
-	 * standard. This method will return an empty String if the input is null or empty.
-	 *
-	 * @author Donoiu Cristian, GPL
-	 * @param  The String whose non-valid characters we want to remove.
-	 * @return The in String, stripped of non-valid characters.
-	 */
-	public static String removeInvalidXMLCharacters(String s) {
-
-		StringBuilder out = new StringBuilder();                // Used to hold the output.
-		int codePoint;                                          // Used to reference the current character.
-
-		//String ss = "\ud801\udc00";                           // This is actualy one unicode character, represented by two code units!!!.
-		
-		//System.out.println(ss.codePointCount(0, ss.length()));// See: 1
-
-		int i=0;
-
-		while(i<s.length()) {
-
-			//System.out.println("i=" + i);
-
-			codePoint = s.codePointAt(i);                       // This is the unicode code of the character.
-
-			if ((codePoint == 0x9) ||          				    // Consider testing larger ranges first to improve speed. 
-
-					(codePoint == 0xA) ||
-
-					(codePoint == 0xD) ||
-
-					((codePoint >= 0x20) && (codePoint <= 0xD7FF)) ||
-
-					((codePoint >= 0xE000) && (codePoint <= 0xFFFD)) ||
-
-					((codePoint >= 0x10000) && (codePoint <= 0x10FFFF))) {
-
-				out.append(Character.toChars(codePoint));
-
-			}
-			else {
-				System.err.println("Not including:" + codePoint + " :");
-				System.err.println("input:" + s);
-			}
-
-			i+= Character.charCount(codePoint);                 // Increment with the number of code units(java chars) needed to represent a Unicode char.  
-
-		}
-		return out.toString();
-	} 
 }

@@ -74,7 +74,7 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
     int lengthOfTask = 0;
     long conversionStart = 0;
     boolean canceled;
-    ArrayList transferred;
+    ArrayList<String> transferred;
     MovieManagerCommandUpdateIMDBInfo parent;
     
     JCheckBox skipEntriesWithIMDbID;

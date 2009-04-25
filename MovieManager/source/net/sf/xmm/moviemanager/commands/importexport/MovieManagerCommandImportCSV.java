@@ -22,6 +22,7 @@ package net.sf.xmm.moviemanager.commands.importexport;
 
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
@@ -43,6 +44,8 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportHandl
 
 	Object [][] data;
 	int len = -1;
+	
+	ArrayList<ModelMovie> movieList = null;
 	
 	DialogTableImport dialogImportTable = null;
 	

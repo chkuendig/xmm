@@ -32,7 +32,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Enumeration;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -83,9 +82,9 @@ public class DialogTableData extends JDialog {
 
 	public int titleColumnIndex = -1;
 	
-	ArrayList generalInfoFieldNames = null;
-	ArrayList additionalInfoFieldNames = null;
-	ArrayList extraInfoFieldNames = null;
+	ArrayList<String> generalInfoFieldNames = null;
+	ArrayList<String> additionalInfoFieldNames = null;
+	ArrayList<String> extraInfoFieldNames = null;
 
 	JPopupMenu headerPopupMenu;
 
@@ -557,11 +556,11 @@ public class DialogTableData extends JDialog {
 				GroupableTableColumnModel cm = (GroupableTableColumnModel) table.getColumnModel();
 				ColumnGroup tmpGroup;
 
-				ArrayList columnGroups = cm.getColumnGroups();
+				ArrayList<ColumnGroup> columnGroups = cm.getColumnGroups();
 	
 				for (int i = 0; i < columnCount; i++) {
 					
-					tmpGroup = (ColumnGroup) columnGroups.get(i);
+					tmpGroup = columnGroups.get(i);
 					
 					tempVal = (String) table.getModel().getValueAt(row, i);
 
@@ -587,7 +586,7 @@ public class DialogTableData extends JDialog {
 
 			// Finding columns with values
 			
-			ArrayList columns = new ArrayList();
+			ArrayList<Integer> columns = new ArrayList<Integer>();
 			
 			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 				tmpColumn = columnModel.getColumn(columnIndex);
@@ -614,7 +613,7 @@ public class DialogTableData extends JDialog {
 			
 			for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
 				for (int row = 0; row < tableModel.getRowCount(); row++) {
-					int colIndex = ((Integer) columns.get(columnIndex)).intValue();
+					int colIndex = columns.get(columnIndex).intValue();
 					output[row][columnIndex] = (String) table.getModel().getValueAt(row, colIndex);
 				
 					if (colIndex == titleColumnIndex)
@@ -644,7 +643,7 @@ public class DialogTableData extends JDialog {
 			
 			// Finding columns with values
 			
-			ArrayList columns = new ArrayList();
+			ArrayList<Integer> columns = new ArrayList<Integer>();
 			
 			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
 				tmpColumn = columnModel.getColumn(columnIndex);
@@ -672,7 +671,7 @@ public class DialogTableData extends JDialog {
 			for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
 				
 				for (int row = 0; row < tableModel.getRowCount(); row++) {
-					int colIndex = ((Integer) columns.get(columnIndex)).intValue();
+					int colIndex = columns.get(columnIndex).intValue();
 					output[row][columnIndex] = (String) table.getModel().getValueAt(row, colIndex);
 				
 					if (colIndex == titleColumnIndex)
@@ -689,9 +688,9 @@ public class DialogTableData extends JDialog {
 	
 	
 	
-	public ArrayList retrieveMovieListFromTable() {
+	public ArrayList<ModelMovie> retrieveMovieListFromTable() {
 
-		ArrayList movieList = new ArrayList(10);
+		ArrayList<ModelMovie> movieList = new ArrayList<ModelMovie>(10);
 		
 		try {
 			

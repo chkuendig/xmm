@@ -20,15 +20,10 @@
 
 package net.sf.xmm.moviemanager.commands.importexport;
 
-import java.io.File;
 import java.io.StringWriter;
-import java.util.ArrayList;
-
-import javax.swing.DefaultListModel;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogTableExport;
-import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.util.FileUtil;

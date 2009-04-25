@@ -58,7 +58,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	boolean titleOption = false;
 	String addToThisList = null;
 
-	ArrayList moviesToAdd;
+	ArrayList<String> moviesToAdd;
 
 	DialogAddMultipleMovies damm;
 
@@ -96,7 +96,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		enableExludeString = damm.getMultiAddExcludeStringEnabled();
 		excludeString = damm.getMultiAddExcludeString();
 
-		ArrayList fileList = damm.getMoviesToAdd();
+		ArrayList <FileNode> fileList = damm.getMoviesToAdd();
 
 		if (fileList == null) {
 			return;
@@ -119,7 +119,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	}
 
 
-	protected void createMovies(ArrayList fileList) {
+	protected void createMovies(ArrayList<FileNode> fileList) {
 
 		FileNode fileNode;
 		File [] tempFile = new File[1];
@@ -213,13 +213,16 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 			else {
 				try {
 					boolean status = movieInfoModel.saveCoverToFile();
+				
+					if (!status)
+						log.debug("Cover for title " + movieInfoModel.model.getTitle() + " not saved to file.");
 					
 				} catch (Exception e) {
 					log.warn("Exception: " + e.getMessage()); //$NON-NLS-1$
 				}
 
 				try {
-					ArrayList list = new ArrayList();
+					ArrayList<String> list = new ArrayList<String>();
 					list.add(addToThisList);
 					ModelEntry model = movieInfoModel.saveToDatabase(list);
 					MovieManagerCommandSelect.executeAndReload(model, false, false, true);

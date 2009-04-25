@@ -108,7 +108,7 @@ public class FilePropertiesMovie {
 	 **/
 	private String _container = "";
 
-	private ArrayList metaData;
+	private ArrayList<String> metaData;
 
 	protected String fileName = "";
 
@@ -164,7 +164,7 @@ public class FilePropertiesMovie {
 			long time = System.currentTimeMillis();
 			//map.load();
 			
-			//System.err.println("map.load:" + (System.currentTimeMillis() - time));
+			//System.out.println("map.load:" + (System.currentTimeMillis() - time));
 			
 			/* Gets the header for filetype identification... */
 			int[] header = new int[4];
@@ -345,7 +345,7 @@ public class FilePropertiesMovie {
 	/**
 	 * @return 		list of meta data
 	 **/
-	public ArrayList getMetaData() {
+	public ArrayList<String> getMetaData() {
 		return metaData;
 	}
 

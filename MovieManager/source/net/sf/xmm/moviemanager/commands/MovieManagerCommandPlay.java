@@ -22,15 +22,11 @@ package net.sf.xmm.moviemanager.commands;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
-import javax.swing.JTextArea;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
@@ -38,11 +34,9 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
 import net.sf.xmm.moviemanager.models.ModelEntry;
-import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.SimpleMailbox;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
-import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerStreamerHandler;
 
 import org.apache.log4j.Logger;
@@ -69,9 +63,7 @@ public class MovieManagerCommandPlay implements ActionListener {
 	
 		
 	public static void execute(final SimpleMailbox mailbox) throws IOException, InterruptedException {
-		
-		String error = "";
-		
+			
 		/**
 		 * Runs the command using Runtimes exec method.
 		 * @author Bro
@@ -213,7 +205,7 @@ public class MovieManagerCommandPlay implements ActionListener {
 				}
 				else {
 					// each file is enclosed by quotes.	
-					ArrayList commandList = new ArrayList();
+					ArrayList<String> commandList = new ArrayList<String>();
 					
 					cmd = mmc.getMediaPlayerPath();
 					

@@ -22,17 +22,9 @@ package net.sf.xmm.moviemanager.commands.importexport;
 
 import java.util.ArrayList;
 
-import javax.swing.DefaultListModel;
-
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.gui.DialogAlert;
-import net.sf.xmm.moviemanager.gui.DialogIMDB;
-import net.sf.xmm.moviemanager.models.ModelEntry;
-import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
-import net.sf.xmm.moviemanager.util.GUIUtil;
-import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
 
@@ -54,13 +46,14 @@ public abstract class MovieManagerCommandExportHandler implements MovieManagerCo
 	ModelMovieInfo modelMovieInfo = new ModelMovieInfo(false, true);
 	
 	/** The movie. */
-	ModelMovie movie = null;
+	//private ModelMovie movie = null;
+
+	/** The movie list. */
+	//private ArrayList movieList = null;
 	
 	/** The list to add movie to. */
 	public String listToAddMovieTo = null;
 	
-	/** The movie list. */
-	public ArrayList movieList = null;
 	
 	
 	/* (non-Javadoc)
@@ -124,7 +117,9 @@ public abstract class MovieManagerCommandExportHandler implements MovieManagerCo
 	 */
 	public void done() throws Exception {};
 	
-	
+	 // ArrayList<ModelMovie> list = database.getMoviesList(options);
+	//listModel = GUIUtil.toDefaultListModel(list);
+
 	
 	
     /**
@@ -134,37 +129,35 @@ public abstract class MovieManagerCommandExportHandler implements MovieManagerCo
 	 */
 	public Object [][] getDatabaseData() {
 
-		ArrayList generalInfoFieldNames = MovieManager.getIt().getDatabase().getGeneralInfoMovieFieldNames();
-		ArrayList additionalInfoFieldNames = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
-		ArrayList extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
+		ArrayList<String> generalInfoFieldNames = MovieManager.getIt().getDatabase().getGeneralInfoMovieFieldNames();
+		ArrayList<String> additionalInfoFieldNames = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
+		ArrayList<String> extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 
 		int columnCount = generalInfoFieldNames.size() + additionalInfoFieldNames.size() + extraInfoFieldNames.size();
 
-		DefaultListModel movieList = MovieManager.getDialog().getCurrentMoviesList();
+		ArrayList<ModelMovie> movies = MovieManager.getDialog().getCurrentMoviesList();
+		Object [][] data = new Object[movies.size()][columnCount];
 
-		Object [] movies = movieList.toArray();
-		Object [][] data = new Object[movies.length][columnCount];
-
-		for (int i = 0; i < movies.length; i++) {
+		for (int i = 0; i < movies.size(); i++) {
 
 			int tableIndex = 0;
 						
-			if (!((ModelEntry) movies[i]).getHasAdditionalInfoData())
-				((ModelEntry) movies[i]).updateAdditionalInfoData();
+			if (!movies.get(i).getHasAdditionalInfoData())
+				movies.get(i).updateAdditionalInfoData();
 				
 			
 			for (int o = 0; o < generalInfoFieldNames.size(); o++) {
-				data[i][tableIndex] = ((ModelEntry) movies[i]).getValue((String) generalInfoFieldNames.get(o), "General Info");
+				data[i][tableIndex] = movies.get(i).getValue((String) generalInfoFieldNames.get(o), "General Info");
 				tableIndex++;
 			}
 
 			for (int o = 0; o < additionalInfoFieldNames.size(); o++) {
-				data[i][tableIndex] = ((ModelEntry) movies[i]).getValue((String) additionalInfoFieldNames.get(o), "Additional Info");
+				data[i][tableIndex] = movies.get(i).getValue((String) additionalInfoFieldNames.get(o), "Additional Info");
 				tableIndex++;
 			}
 			
 			for (int o = 0; o < extraInfoFieldNames.size(); o++) {
-				data[i][tableIndex] = ((ModelEntry) movies[i]).getValue((String) extraInfoFieldNames.get(o), "Extra Info");
+				data[i][tableIndex] = movies.get(i).getValue((String) extraInfoFieldNames.get(o), "Extra Info");
 				tableIndex++;
 			}
 		}

@@ -466,18 +466,24 @@ public class DialogIMDB extends JDialog {
     	if (isMultiAdd() && !getUrlKeyOnly) { 
     		
     		try {
-    			DefaultListModel list = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchString);
+    			ArrayList<ModelIMDbSearchHit> hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchString);
+    			DefaultListModel list = new DefaultListModel();
+    			
     			/*Number of movie hits*/
-    			int listSize = list.getSize();
+    			int hitCount = hits.size();
 
-    			if (list.getSize() == 0) {
+    			if (hitCount == 0) {
     				list.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
     			}
-
+    			else {
+    				for (ModelIMDbSearchHit hit : hits)
+    					list.addElement(hit);
+    			}
+    			
     			listMovies.setModel(list);
     			listMovies.setSelectedIndex(0);
 
-    			if (executeCommandMultipleMoviesSelectCheck(listSize) == 1) {
+    			if (executeCommandMultipleMoviesSelectCheck(hitCount) == 1) {
     				GUIUtil.showAndWait(this, true);
     			}
 
@@ -489,12 +495,18 @@ public class DialogIMDB extends JDialog {
     		SwingWorker worker = new SwingWorker() {
     			public Object construct() {
     				try {
-    					DefaultListModel list = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(modelEntry.getTitle());
-
-    					if (list.getSize() == 0) {
+    				
+    					ArrayList<ModelIMDbSearchHit> hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(modelEntry.getTitle());
+    	    			DefaultListModel list = new DefaultListModel();
+    	    			
+    					if (hits.size() == 0) {
     						list.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
     					}
-
+    					else {
+    						for (ModelIMDbSearchHit hit : hits)
+    	    					list.addElement(hit);
+    					}
+    					
     					listMovies.setModel(list);
     					listMovies.setSelectedIndex(0);
 
@@ -527,9 +539,10 @@ public class DialogIMDB extends JDialog {
     	if (addToThisList != null)
     		lists.add(addToThisList);
     	    	
-    	listModel = MovieManager.getIt().getDatabase().getMoviesList("Title", lists, 
+    	ArrayList<ModelMovie> list = MovieManager.getIt().getDatabase().getMoviesList("Title", lists, 
     			MovieManager.getConfig().getShowUnlistedEntries());
-    	
+    	listModel = GUIUtil.toDefaultListModel(list);
+    			
     	listMovies.setModel(listModel);
     }
 
@@ -544,17 +557,26 @@ public class DialogIMDB extends JDialog {
     		DefaultListModel listModel = new DefaultListModel();
 
     		try {
-    			listModel = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchStringField.getText());
+    			ArrayList<ModelIMDbSearchHit> hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchStringField.getText());
+    			
+    			/*Number of movie hits*/
+    			int hitCount = hits.size();
+
+    			if (hitCount < 0) {
+    				for (ModelIMDbSearchHit hit : hits)
+    					listModel.addElement(hit);
+    			}
+    			    			
     		} catch (Exception e) {
     			executeErrorMessage(e.getMessage());
 
     			e.printStackTrace();
     			dispose();
     		}
-
-    		if (listModel.getSize() == 0) {
-    			listModel.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
-    		}
+    		
+    		if (listModel.getSize() == 0)
+    		listModel.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
+    		
     		
     		getMoviesList().setModel(listModel);
     		getMoviesList().setSelectedIndex(0);
@@ -785,7 +807,7 @@ public class DialogIMDB extends JDialog {
 
     		if (value instanceof ModelIMDbSearchHit) {
 
-    			String category = ((ModelIMDbSearchHit) value).getHitCategory();
+    			//String category = ((ModelIMDbSearchHit) value).getHitCategory();
     			
     			//"Popular Titles", "Titles (Exact Matches)", "Titles (Partial Matches)", "Titles (Approx Matches)
     				

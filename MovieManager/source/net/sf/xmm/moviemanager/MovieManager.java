@@ -36,7 +36,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
-import javax.swing.DefaultListModel;
 import javax.swing.tree.DefaultTreeModel;
 
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandExit;
@@ -54,6 +53,7 @@ import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
+import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedHandler;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewMovieListLoadedHandler;
 import net.sf.xmm.moviemanager.util.FileUtil;
@@ -281,6 +281,18 @@ public class MovieManager {
     			options.setListOption(1);
     		}
 
+    		ArrayList <String> currentLists = options.getCurrentListNames();
+    		ArrayList <String> dbLists = db.getListsColumnNames();
+    		    		
+    		// Verify all lists. When changing database, this might be a problem
+    		for (String list : currentLists) {
+    			if (!dbLists.contains(list)) {
+    				log.warn("Found list " + list + " in currentLists which does not exist in database.");
+    				MovieManager.getConfig().getCurrentLists().remove(list);
+    				currentLists.remove(list);
+    			}
+    		}
+    		
     		if (db.isMySQL())
     			options.getFullGeneralInfo = false;
     	}
@@ -494,9 +506,9 @@ public class MovieManager {
     			if (progressBean != null && progressBean.getCancelled()) {
     				return false;
     			}
-
-    			DefaultListModel moviesList = _database.getMoviesList(options);
-    			ArrayList<ModelEpisode> episodesList = _database.getEpisodeList("movieID"); //$NON-NLS-1$
+    			
+    			ArrayList<ModelMovie> moviesList = _database.getMoviesList(options);
+    			ArrayList<ModelEpisode> episodesList = _database.getEpisodeList(); //$NON-NLS-1$
     			DefaultTreeModel treeModel = dialogMovieManager.createTreeModel(moviesList, episodesList);
     			
     			if (cancelRelativePaths && !isApplet()) {
@@ -1235,7 +1247,7 @@ public class MovieManager {
     
     public static String getUserHome() {
     	String userHome = (String) AccessController.doPrivileged(
-    			new PrivilegedAction() {
+    			new PrivilegedAction<Object>() {
     				public Object run() {
     					return System.getProperty("user.home");
     				}
@@ -1282,7 +1294,7 @@ public class MovieManager {
     	String logFile = null;
     	
     	try {
-			if (SysUtil.isMac() || SysUtil.isWindowsVista())
+			if (SysUtil.isMac() || SysUtil.isWindowsVista() || SysUtil.isWindows7())
 				logFile = new File(SysUtil.getConfigDir(), "Log.txt").getAbsolutePath();
     	} catch (Exception e1) {
 			e1.printStackTrace();

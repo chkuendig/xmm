@@ -20,9 +20,9 @@ public class GroupableTableColumnModel extends DefaultTableColumnModel {
      * Hold the list of ColumnGroups which define what group each normal
      * column is within, if any.
      */    
-    protected ArrayList columnGroups = new ArrayList();
+    protected ArrayList <ColumnGroup> columnGroups = new ArrayList<ColumnGroup>();
     
-	public ArrayList getColumnGroups() {
+	public ArrayList<ColumnGroup> getColumnGroups() {
 		return columnGroups;
 	}
 
@@ -39,7 +39,7 @@ public class GroupableTableColumnModel extends DefaultTableColumnModel {
      * ColumnGroup list.
      * @return Iterator over ColumnGroups
      */    
-    public Iterator columnGroupIterator() {
+    public Iterator<ColumnGroup> columnGroupIterator() {
         return columnGroups.iterator();
     }
     
@@ -61,12 +61,12 @@ public class GroupableTableColumnModel extends DefaultTableColumnModel {
      * @param col Column
      * @return ColumnGroup iterator
      */    
-    public Iterator getColumnGroups(TableColumn col) {
+    public Iterator <ColumnGroup> getColumnGroups(TableColumn col) {
         if (columnGroups.isEmpty()) return null;
-        Iterator iter = columnGroups.iterator();
+        Iterator <ColumnGroup> iter = columnGroups.iterator();
         while (iter.hasNext()) {
             ColumnGroup cGroup = (ColumnGroup)iter.next();
-            Vector v_ret = (Vector)cGroup.getColumnGroups(col,new Vector());
+            Vector <ColumnGroup> v_ret = cGroup.getColumnGroups(col,new Vector<ColumnGroup>());
             if (v_ret != null) {
                 return v_ret.iterator();
             }

@@ -22,7 +22,6 @@ package net.sf.xmm.moviemanager;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -154,9 +153,9 @@ public class LookAndFeelManager {
                 if (!dir.exists()) {
                 	return null;
                 }
-                File [] listFiles = dir.listFiles();
+               // File [] listFiles = dir.listFiles();
                 String [] list = dir.list();
-                ArrayList themePackList = new ArrayList();
+                ArrayList<String> themePackList = new ArrayList<String>();
                 
                 if (list != null) {
                     for (int i = 0; i < list.length; i++) {
@@ -293,7 +292,7 @@ public class LookAndFeelManager {
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MeD's Movie Manager");
             
             try {
-                Class quaquaClass = ClassLoader.getSystemClassLoader().loadClass("ch.randelshofer.quaqua.QuaquaLookAndFeel");
+                Class<?> quaquaClass = ClassLoader.getSystemClassLoader().loadClass("ch.randelshofer.quaqua.QuaquaLookAndFeel");
                 LookAndFeel quaquqLAF = (LookAndFeel) quaquaClass.newInstance();
                 UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(quaquqLAF.getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel"));
                 // Override system look and feel
@@ -314,9 +313,9 @@ public class LookAndFeelManager {
     public static void macOSXRegistration() {
         if (SysUtil.isMac()) {
             try {
-                Class osxAdapter = ClassLoader.getSystemClassLoader().loadClass("net.sf.xmm.moviemanager.util.mac.OSXAdapter");
+                Class<?> osxAdapter = ClassLoader.getSystemClassLoader().loadClass("net.sf.xmm.moviemanager.util.mac.OSXAdapter");
                 
-                Class[] defArgs = {DialogMovieManager.class};
+                Class<?>[] defArgs = {DialogMovieManager.class};
                 Method registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication", defArgs);
                 
                 if (registerMethod != null) {

@@ -31,10 +31,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.swing.DefaultListModel;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
@@ -441,7 +440,7 @@ abstract public class Database {
 	/**
 	 * Returns the Duration with index index named name...
 	 **/
-	private int getInt(String query, String field) {
+/*	private int getInt(String query, String field) {
 
 		int data = -1;
 		try {
@@ -455,17 +454,17 @@ abstract public class Database {
 			log.error("Exception: ", e);
 			checkErrorMessage(e);
 		} finally {
-			/* Clears the Statement in the dataBase... */
+	
 			try {
 				_sql.clear();
 			} catch (Exception e) {
 				log.error("Exception: " + e.getMessage());
 			}
 		}
-		/* Returns the data... */
+	
 		return data;
 	}
-
+*/
 
 
 	/**
@@ -499,7 +498,7 @@ abstract public class Database {
 	/**
 	 * Returns the CD_Cases with index index named name...
 	 **/
-	private double getDouble(String query, String field) {
+/*	private double getDouble(String query, String field) {
 
 		double data = -1;
 		try {
@@ -512,17 +511,17 @@ abstract public class Database {
 			log.error("Exception: ", e);
 			checkErrorMessage(e);
 		} finally {
-			/* Clears the Statement in the dataBase... */
+		
 			try {
 				_sql.clear();
 			} catch (Exception e) {
 				log.error("Exception: " + e.getMessage());
 			}
 		}
-		/* Returns the data... */
+	
 		return data;
 	}
-
+*/
 
 
 	/**
@@ -575,7 +574,7 @@ abstract public class Database {
 		}
 		else {
 			try {
-				int index = 0;
+				
 				int tmp;
 
 				while (tokenizer.hasMoreTokens()) {
@@ -2644,12 +2643,12 @@ abstract public class Database {
 		return buf.toString();
 	}
 
+	public synchronized ArrayList<ModelMovie> getMoviesList() {
+		return getMoviesList("Title");
+	}
 
+	public synchronized ArrayList<ModelMovie> getMoviesList(String orderBy) {
 
-	public synchronized DefaultListModel getMoviesList(String orderBy) {
-
-		log.debug("getMoviesList(String orderBy)");
-		
 		ModelDatabaseSearch options = new ModelDatabaseSearch();
 
 		options.setOrderCategory(orderBy);
@@ -2658,11 +2657,10 @@ abstract public class Database {
 		 if (isMySQL())
 			 options.getFullGeneralInfo = false;
 		
-		DefaultListModel list = getMoviesList(options);
-		return list;
+		return getMoviesList(options);
 	}
 
-	public synchronized DefaultListModel getMoviesList(String orderBy, ArrayList<String> lists, boolean showUnlistedMovies) {
+	public synchronized ArrayList<ModelMovie> getMoviesList(String orderBy, ArrayList<String> lists, boolean showUnlistedMovies) {
 
 		log.debug("getMoviesList(String orderBy, ArrayList lists, boolean showUnlistedMovies)");
 		
@@ -2679,15 +2677,15 @@ abstract public class Database {
 		 else if (lists.size() > 0 || showUnlistedMovies) 
 			 options.setListOption(1);
 		
-		 DefaultListModel list = getMoviesList(options);
-		 return list;
-	 }
+		return getMoviesList(options);
+	}
 
 	
 	/**
 	 * Returns a List of MovieModels that contains all the movies in the
 	 * current database sorted by the orderBy string.
 	 **/
+	/*
 	public synchronized DefaultListModel getMoviesList1(String orderBy) {
 
 		DefaultListModel listModel = new DefaultListModel();
@@ -2705,10 +2703,8 @@ abstract public class Database {
 		}
 
 		try {
-			/* Gets the list in a result set... */
 			ResultSet resultSet = _sql.executeQuery(sqlQuery);
 
-			/* Processes the result set till the end... */
 			while (resultSet.next()) {
 				listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), 
 						resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"),
@@ -2723,23 +2719,22 @@ abstract public class Database {
 			log.error("Exception: ", e);
 			checkErrorMessage(e);
 		} finally {
-			/* Clears the Statement in the dataBase... */
 			try {
 				_sql.clear();
 			} catch (Exception e) {
 				log.error("Exception: " + e.getMessage());
 			}
 		}
-		/* Returns the list model... */
 		return listModel;
 	}
-
+*/
 
 
 	/**
 	 * Returns a List of MovieModels that contains all the movies in the
 	 * current database sorted by the orderBy string.
 	 **/
+	/*
 	public synchronized DefaultListModel getMoviesList1(String orderBy, String listsColumn) {
 
 		DefaultListModel listModel = new DefaultListModel();
@@ -2776,10 +2771,8 @@ abstract public class Database {
 
 		try {
 
-			/* Gets the list in a result set... */
 			ResultSet resultSet = _sql.executeQuery(sqlQuery);
 
-			/* Processes the result set till the end... */
 			while (resultSet.next()) {
 				listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), 
 						resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), 
@@ -2794,17 +2787,15 @@ abstract public class Database {
 			log.error("Exception: ", e);
 			checkErrorMessage(e);
 		} finally {
-			/* Clears the Statement in the dataBase... */
 			try {
 				_sql.clear();
 			} catch (Exception e) {
 				log.error("Exception: " + e.getMessage());
 			}
 		}
-		/* Returns the list model... */
 		return listModel;
 	}
-
+*/
 
 
 	/**
@@ -2937,13 +2928,13 @@ abstract public class Database {
 
 					if (options.getSearchAlias().containsValue(tableField[0])) {
 
-						Set map = (options.getSearchAlias()).entrySet();
+						Set<Entry<String, String>> map = (options.getSearchAlias()).entrySet();
 						String setkey;
 						String setValue;
 
-						for (Iterator<Map.Entry> iterator = map.iterator(); iterator.hasNext();) {
+						for (Iterator<Map.Entry<String, String>> iterator = map.iterator(); iterator.hasNext();) {
 
-							Map.Entry entry = (Map.Entry) iterator.next();
+							Map.Entry<String, String> entry = iterator.next();
 							setkey = (String) entry.getKey();
 							setValue = (String) entry.getValue();
 
@@ -3371,16 +3362,17 @@ abstract public class Database {
 		return sqlQuery;
 	}
 
-
+	
+	
 	/**
 	 * Part of the advanced search function
 	 * Returns a List of MovieModels according to the search options
 	 **/
-	public synchronized DefaultListModel getMoviesList(ModelDatabaseSearch options) {
+	public synchronized ArrayList<ModelMovie> getMoviesList(ModelDatabaseSearch options) {
 
 		log.debug("getMoviesList(ModelDatabaseSearch options)");
 		
-		DefaultListModel listModel = new DefaultListModel();
+		ArrayList<ModelMovie> list = new ArrayList<ModelMovie>();
 
 		String sqlAdcancedOptions = processAdvancedOptions(options);
 
@@ -3391,7 +3383,7 @@ abstract public class Database {
 			sqlFilter = processFilter(options);
 			
 			if (sqlFilter == null)
-				return listModel;
+				return list;
 		}
 
 		/* Sets the right table joins */
@@ -3468,7 +3460,7 @@ abstract public class Database {
 								model.addToMemberOfList((String) listNames.get(i));
 					}
 				}
-				listModel.addElement(model);
+				list.add(model);
 				
 			}
 		} catch (Exception e) {
@@ -3484,10 +3476,13 @@ abstract public class Database {
 			}
 		}
 		/* Returns the list model... */
-		return listModel;
+		return list;
 	}
 
 	
+	public synchronized ArrayList<ModelEpisode> getEpisodeList() {
+		return getEpisodeList("movieID");
+	}
 
 	/**
 	 * Returns an ArrayList that contains all the movies in the

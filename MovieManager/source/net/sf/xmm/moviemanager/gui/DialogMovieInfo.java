@@ -1722,8 +1722,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				fields.setModel(comboBoxModel);
 
 				/* Setting the caret position of the combobox */
-				((JTextField) fields.getEditor().getEditorComponent())
-				.setCaretPosition(0);
+				fields.getEditorComponent().setCaretPosition(0);
 
 				getAdditionalInfoValuePanel().add(fields);
 

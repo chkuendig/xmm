@@ -22,7 +22,8 @@ public class ColumnGroup {
      * Holds the TableColumn or ColumnGroup objects contained
      * within this ColumnGroup instance.
      */    
-    protected Vector v;
+    @SuppressWarnings("unchecked")
+	protected Vector v;
     /**
      * The ColumnGroup instance name.
      */    
@@ -47,7 +48,8 @@ public class ColumnGroup {
      * @param text Name of the ColumnGroup which will be displayed
      * when the ColumnGroup is renderered.
      */    
-    public ColumnGroup(TableCellRenderer renderer,String text) {
+    @SuppressWarnings("unchecked")
+	public ColumnGroup(TableCellRenderer renderer,String text) {
         if (renderer == null) {
             this.renderer = new DefaultTableCellRenderer() {
                 public Component getTableCellRendererComponent(JTable table, Object value,
@@ -80,7 +82,8 @@ public class ColumnGroup {
      * ColumnGroup instance.
      * @param obj TableColumn or ColumnGroup
      */
-    public void add(Object obj) {
+    @SuppressWarnings("unchecked")
+	public void add(Object obj) {
         if (obj == null) { return; }
         v.addElement(obj);
     }
@@ -93,15 +96,21 @@ public class ColumnGroup {
      * @param c TableColumn
      * @return Vector containing the ColumnGroup/s
      */
-    public Vector getColumnGroups(TableColumn c, Vector g) {
+    @SuppressWarnings("unchecked")
+	public Vector<ColumnGroup> getColumnGroups(TableColumn c, Vector g) {
+    	
         g.addElement(this);
-        if (v.contains(c)) return g;
+        
+        if (v.contains(c)) 
+        	return g;
+        
         Iterator iter = v.iterator();
         while (iter.hasNext()) {
             Object obj = iter.next();
+            
             if (obj instanceof ColumnGroup) {
-                Vector groups =
-                (Vector)((ColumnGroup)obj).getColumnGroups(c,(Vector)g.clone());
+            	ColumnGroup cGroup = (ColumnGroup) obj;
+                Vector<ColumnGroup> groups = cGroup.getColumnGroups(c, new Vector<ColumnGroup>(g));
                 if (groups != null) return groups;
             }
         }
@@ -139,7 +148,8 @@ public class ColumnGroup {
      * @param table the table the header is being rendered in
      * @return the dimension of the ColumnGroup
      */    
-    public Dimension getSize(JTable table) {
+    @SuppressWarnings("unchecked")
+	public Dimension getSize(JTable table) {
         Component comp = renderer.getTableCellRendererComponent(
         table, getHeaderValue(), false, false,-1, -1);
         int height = comp.getPreferredSize().height;
@@ -162,7 +172,8 @@ public class ColumnGroup {
      * held TableColumns and/or ColumnGroups.
      * @param margin the margin
      */    
-    public void setColumnMargin(int margin) {
+    @SuppressWarnings("unchecked")
+	public void setColumnMargin(int margin) {
         this.margin = margin;
         Iterator iter = v.iterator();
         while (iter.hasNext()) {

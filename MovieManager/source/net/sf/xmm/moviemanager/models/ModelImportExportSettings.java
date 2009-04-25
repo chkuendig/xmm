@@ -23,7 +23,6 @@ package net.sf.xmm.moviemanager.models;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
 
 import net.sf.xmm.moviemanager.util.Localizer;
 
@@ -140,8 +139,8 @@ public class ModelImportExportSettings {
     	return textEncoding;	
     }
     
-    public ArrayList getAddToThisList() {
-    	ArrayList l = new ArrayList();
+    public ArrayList<String> getAddToThisList() {
+    	ArrayList<String> l = new ArrayList<String>();
     	
     	if (addToThisList != null)
     		l.add(addToThisList);

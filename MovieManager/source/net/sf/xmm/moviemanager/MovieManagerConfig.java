@@ -24,12 +24,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +34,6 @@ import java.util.StringTokenizer;
 
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
-import net.sf.xmm.moviemanager.gui.menubar.DefaultMenuBar;
-import net.sf.xmm.moviemanager.gui.menubar.MovieManagerMenuBar;
 import net.sf.xmm.moviemanager.http.HttpSettings;
 import net.sf.xmm.moviemanager.models.AdditionalInfoFieldDefaultValues;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
@@ -50,7 +44,6 @@ import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerConfigHandler;
-import net.sf.xmm.moviemanager.util.plugins.MovieManagerGUIChangeHandler;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerPlayHandler;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerStartupHandler;
@@ -2079,10 +2072,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 						conf = "config/" + conf;
 
 					// Change default location on Vista from program directory to System.getenv("APPDATA")
-					if (SysUtil.isWindowsVista()) {
+					if (SysUtil.isWindowsVista() || SysUtil.isWindows7()) {
 						File newConfig = new File(SysUtil.getConfigDir(), "Config.ini");
-						
-						System.err.println("newConfig.isFile():" + newConfig.isFile() + ":" + newConfig);
 												
 						if (newConfig.isFile())
 							url = newConfig.toURL();
@@ -3515,7 +3506,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 
 		 // Default values in the additional info fields in DialogMovieInfo
 
-		 HashMap defaultValues = getAdditionalInfoDefaultValues();
+		 HashMap<String, AdditionalInfoFieldDefaultValues> defaultValues = getAdditionalInfoDefaultValues();
 		 AdditionalInfoFieldDefaultValues value;
 
 		 Object[] keys = defaultValues.keySet().toArray();
@@ -3572,7 +3563,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					 url = configHandler.getConfigURL();
 
 			 } else {
-				 if (SysUtil.isMac() || SysUtil.isWindowsVista())
+				 if (SysUtil.isMac() || SysUtil.isWindowsVista() || SysUtil.isWindows7())
 					 url = new File(SysUtil.getConfigDir(), "Config.ini").toURL();
 				 else 
 					 url = new File(SysUtil.getUserDir(), "config/Config.ini").toURL();  

@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -34,7 +35,8 @@ public class CoverTransferHandler extends TransferHandler {
     * (non-Javadoc)
     * @see javax.swing.TransferHandler#importData(javax.swing.JComponent, java.awt.datatransfer.Transferable)
     */
-   public boolean importData(JComponent c, Transferable t) {
+   @SuppressWarnings("unchecked")
+public boolean importData(JComponent c, Transferable t) {
 
       if (!canImport(c, t.getTransferDataFlavors())) {
            return false;
@@ -42,7 +44,7 @@ public class CoverTransferHandler extends TransferHandler {
        try {
            if (hasFileFlavor(t.getTransferDataFlavors())) {
 
-               java.util.List files = (java.util.List) t.getTransferData(DataFlavor.javaFileListFlavor);
+               List<File> files = (List) t.getTransferData(DataFlavor.javaFileListFlavor);
                for (int i = 0; i < files.size(); i++) {
                    File file = (File) files.get(i);
                    return importCover(file.toURL());

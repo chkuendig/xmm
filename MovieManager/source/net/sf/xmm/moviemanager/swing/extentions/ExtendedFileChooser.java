@@ -53,7 +53,7 @@ public class ExtendedFileChooser extends JFileChooser {
 	private JList jList;
 	private ExtendedFileChooser fileChooser;
 	private File lastSelectedFile = null;
-	private ArrayList directories;
+	private ArrayList<File> directories;
 	private boolean approveSelected = false;
 	private String fileAlreadyExistWarningMessage = "";
 
@@ -664,7 +664,7 @@ public class ExtendedFileChooser extends JFileChooser {
 
 
 
-	public static Component findComponent(Component comp, Class c) {
+	public static Component findComponent(Component comp, Class<JTextField> c) {
 
 		if(c.isAssignableFrom(comp.getClass())) {
 			return comp;
@@ -799,12 +799,12 @@ public class ExtendedFileChooser extends JFileChooser {
 				//String absolutePath = fileChooser.getSelectedFile().getAbsolutePath();
 				char upperCasePartialName = Character.toUpperCase(ke.getKeyChar());
 
-				directories = new ArrayList(listModel.getSize());
+				directories = new ArrayList<File>(listModel.getSize());
 
 				for (int i = 0; i < listModel.getSize(); i++) {
 					if (Character.toUpperCase(((File) listModel.getElementAt(i)).getName().charAt(0))
 							== upperCasePartialName)
-						directories.add(listModel.getElementAt(i));
+						directories.add((File) listModel.getElementAt(i));
 				}
 
 				int index = 0;
@@ -819,9 +819,9 @@ public class ExtendedFileChooser extends JFileChooser {
 				}
 
 				if (directories.size() > 0) {
-					lastSelectedFile = (File) directories.get(index);
-					fileChooser.setSelectedFile((File) directories.get(index));
-					fileChooser.ensureFileIsVisible((File) directories.get(index));
+					lastSelectedFile = directories.get(index);
+					fileChooser.setSelectedFile(directories.get(index));
+					fileChooser.ensureFileIsVisible(directories.get(index));
 				}
 
 				updateNameField();

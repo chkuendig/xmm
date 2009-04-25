@@ -23,23 +23,17 @@ package net.sf.xmm.moviemanager.commands.importexport;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.StringWriter;
 import java.util.ArrayList;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogQuestion;
-import net.sf.xmm.moviemanager.gui.DialogTableExport;
-import net.sf.xmm.moviemanager.http.HttpUtil;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
-import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.util.FileUtil;
@@ -48,14 +42,10 @@ import net.sf.xmm.moviemanager.util.SysUtil;
 
 import org.apache.log4j.Logger;
 
-import com.Ostermiller.util.CSVPrinter;
-
-
 public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExportHandler {
 
 	static Logger log = Logger.getLogger(MovieManagerCommandExportToFullHTML.class);
 	
-	 ArrayList startChar;
 	 boolean divideAlphabetically;
 	 String reportTitle;
 	
@@ -67,8 +57,8 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 		
 	StringBuffer templateSkeleton  = null;
 	
-	DefaultListModel listModel = MovieManager.getDialog().getCurrentMoviesList();
-	
+	ArrayList<ModelMovie> movieList = MovieManager.getDialog().getCurrentMoviesList();
+		
 	public MovieManagerCommandExportToFullHTML(boolean divideAlphabetically, String reportTitle) {
 		this.divideAlphabetically = divideAlphabetically;
 		this.reportTitle = reportTitle;
@@ -125,14 +115,14 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 	
 	public String getTitle(int i) {
 				
-		ModelMovie model = (ModelMovie) listModel.elementAt(i);
+		ModelMovie model = movieList.get(i);
 		lastTitle = model.getTitle();
 		
 		return model.getTitle();
 	}
 	
 	public int getMovieListSize() {
-		return listModel.size();
+		return movieList.size();
 	}
 	
 	public void done() throws Exception {
@@ -142,7 +132,7 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 		
 	
 	HTMLMovieGroup movieGroup = null;
-	ArrayList movieGroups = null;
+	ArrayList<HTMLMovieGroup> movieGroups = null;
 	
 	int movieGroupNumber = 0;
 	
@@ -227,9 +217,6 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 
 		log.debug(this.getClass() + ".createMovieList");
 		
-		startChar = new ArrayList();
-		char lastChar = ' ';
-		
 		String fileName = outputFile.getName();
 
 		if (fileName.endsWith(".htm") || fileName.endsWith(".html")) {
@@ -240,7 +227,7 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 		
 		StringBuffer templateBody = null;
 
-		movieGroups = new ArrayList();
+		movieGroups = new ArrayList<HTMLMovieGroup>();
 
 		int templateBodyEndIndex = -1;
 
@@ -267,9 +254,9 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 
 				HTMLMovieGroup [] groups = new HTMLMovieGroup[28];
 
-				for (int i = 0; i < listModel.getSize(); i++) {
+				for (int i = 0; i < movieList.size(); i++) {
 
-					model = (ModelMovie) listModel.elementAt(i);
+					model = movieList.get(i);
 
 					char c = Character.toLowerCase(model.getTitle().charAt(0));
 					int groupIndex = -1;
@@ -309,8 +296,8 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 				tmpGroup = new HTMLMovieGroup("", fileName, coversPath, templateBody);
 				movieGroups.add(tmpGroup);
 
-				for (int i = 0; i < listModel.getSize(); i++) {
-					model = (ModelMovie) listModel.elementAt(i);
+				for (int i = 0; i < movieList.size(); i++) {
+					model = movieList.get(i);
 					tmpGroup.addModel(model);
 				}
 			}
@@ -332,7 +319,7 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 
 
 
-	static String getLinks(ArrayList htmlGroups, int i) {
+	static String getLinks(ArrayList<HTMLMovieGroup> htmlGroups, int i) {
 		
 		StringBuffer buf = new StringBuffer();
 
@@ -341,7 +328,7 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 
 			for (int u = 0; u < htmlGroups.size(); u++) {
 
-				HTMLMovieGroup tmpG  = (HTMLMovieGroup) htmlGroups.get(u);
+				HTMLMovieGroup tmpG  = htmlGroups.get(u);
 				String link;
 	
 				if (i == u)
@@ -498,7 +485,7 @@ class HTMLMovieGroup {
 
 	String groupTitle;
 	String fileTitle;
-	ArrayList models = new ArrayList();
+	ArrayList<ModelEntry> models = new ArrayList<ModelEntry>();
 	String coversPath;
 	StringBuffer templateBody;
 	String reportTitle = null;

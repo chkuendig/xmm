@@ -22,8 +22,8 @@ package net.sf.xmm.moviemanager.commands.importexport;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
@@ -47,18 +47,18 @@ public class MovieManagerCommandExportToSimpleXHTML extends MovieManagerCommandE
 	File outputFile = null;
 	FileWriter writer = null;
 	
-	DefaultListModel listModel = null;
-	
+	ArrayList<ModelMovie> movieList = null;
+	  
 	public MovieManagerCommandExportToSimpleXHTML(String _title) {
 		title = _title;
 	}
 
 	public int getMovieListSize() throws Exception {
-		return listModel.getSize();
+		return movieList.size();
 	}
 
 	public String getTitle(int i) throws Exception {
-		ModelMovie model = (ModelMovie) listModel.elementAt(i);
+		ModelMovie model = movieList.get(i);
 		return model.getTitle();
 	}
 
@@ -71,7 +71,7 @@ public class MovieManagerCommandExportToSimpleXHTML extends MovieManagerCommandE
 			return;
 		}
 		
-		listModel = MovieManager.getDialog().getCurrentMoviesList();
+		movieList = MovieManager.getDialog().getCurrentMoviesList();
 				
 		writer = new FileWriter(outputFile);
 	
@@ -115,7 +115,7 @@ public class MovieManagerCommandExportToSimpleXHTML extends MovieManagerCommandE
 			String imdb = "imdb";
 			String title = "title";
 
-			ModelMovie model = (ModelMovie) listModel.elementAt(i);
+			ModelMovie model = movieList.get(i);
 
 			imdb = model.getUrlKey();
 			title = HTMLEntities.htmlentities(model.getTitle()) + " ("+ model.getDate() +")";

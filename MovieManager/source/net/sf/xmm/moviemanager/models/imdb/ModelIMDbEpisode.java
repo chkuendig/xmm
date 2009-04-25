@@ -20,9 +20,6 @@
 
 package net.sf.xmm.moviemanager.models.imdb;
 
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.database.DatabaseMySQL;
-
 public class ModelIMDbEpisode extends ModelIMDbEntry {
 	
 	private String seasonNumber = "";

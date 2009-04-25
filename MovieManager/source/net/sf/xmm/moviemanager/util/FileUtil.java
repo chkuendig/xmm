@@ -514,7 +514,7 @@ public class FileUtil {
     		
     	try {
     		ZipFile zip = new ZipFile(zipFile);
-    		Enumeration entries = zip.entries();
+    		Enumeration<? extends ZipEntry> entries = zip.entries();
     			    		
     		while (entries.hasMoreElements()) {
     			ZipEntry entry = (ZipEntry) entries.nextElement();

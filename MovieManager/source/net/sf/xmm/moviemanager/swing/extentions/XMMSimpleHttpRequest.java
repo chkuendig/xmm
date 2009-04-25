@@ -77,6 +77,7 @@ public class XMMSimpleHttpRequest implements HttpRequest {
 	 * Response headers are set in this map after
 	 * a response is received.
 	 */
+	@SuppressWarnings("unchecked")
 	protected java.util.Map responseHeadersMap;
 
 	/**
@@ -173,6 +174,7 @@ public class XMMSimpleHttpRequest implements HttpRequest {
 		return this.responseHeaders;
 	}
 
+	@SuppressWarnings("unchecked")
 	public synchronized String getResponseHeader(String headerName) {
 		Map headers = this.responseHeadersMap;
 		return headers == null ? null : (String) headers.get(headerName);

@@ -27,7 +27,7 @@ public class GroupableTableHeaderUI extends BasicTableHeaderUI {
      * Contains a list of ColumnGroups that have already been painted
      * in the current paint request.
      */
-    protected Vector paintedGroups = new Vector();
+    protected Vector<ColumnGroup> paintedGroups = new Vector<ColumnGroup>();
     
 
 
@@ -49,20 +49,20 @@ public class GroupableTableHeaderUI extends BasicTableHeaderUI {
         int column = 0;
         Dimension size = header.getSize();
         Rectangle cellRect  = new Rectangle(0, 0, size.width, size.height);
-        Hashtable h = new Hashtable();
-        int columnMargin = cm.getColumnMargin();
+        Hashtable<ColumnGroup, Rectangle> h = new Hashtable<ColumnGroup, Rectangle>();
+       // int columnMargin = cm.getColumnMargin();
         
-        Enumeration columns = cm.getColumns();
+        Enumeration <TableColumn> columns = cm.getColumns();
         while (columns.hasMoreElements()) {
             cellRect.height = size.height;
             cellRect.y      = 0;
             TableColumn aColumn = (TableColumn)columns.nextElement();
-            Iterator colGrpIter = cm.getColumnGroups(aColumn);
+            Iterator <ColumnGroup> colGrpIter = cm.getColumnGroups(aColumn);
             if (colGrpIter != null) {
                 int groupHeight = 0;
                 while (colGrpIter.hasNext()) {
                     ColumnGroup cGroup = (ColumnGroup)colGrpIter.next();
-                    Rectangle groupRect = (Rectangle)h.get(cGroup);
+                    Rectangle groupRect = h.get(cGroup);
                     if (groupRect == null) {
                         groupRect = new Rectangle(cellRect);
                         Dimension d = cGroup.getSize(header.getTable());
@@ -139,10 +139,10 @@ public class GroupableTableHeaderUI extends BasicTableHeaderUI {
             Component comp = renderer.getTableCellRendererComponent(
             header.getTable(), aColumn.getHeaderValue(), false, false,-1, column);
             int cHeight = comp.getPreferredSize().height;
-            Iterator iter = columnModel.getColumnGroups(aColumn);
+            Iterator<ColumnGroup> iter = columnModel.getColumnGroups(aColumn);
             if (iter != null) {
                 while (iter.hasNext()) {
-                    ColumnGroup cGroup = (ColumnGroup)iter.next();
+                    ColumnGroup cGroup = iter.next();
                     cHeight += cGroup.getSize(header.getTable()).height;
                 }
             }
@@ -172,9 +172,9 @@ public class GroupableTableHeaderUI extends BasicTableHeaderUI {
      */
     public Dimension getPreferredSize(JComponent c) {
         long width = 0;
-        Enumeration columns = header.getColumnModel().getColumns();
+        Enumeration<TableColumn> columns = header.getColumnModel().getColumns();
         while (columns.hasMoreElements()) {
-            TableColumn aColumn = (TableColumn)columns.nextElement();
+            TableColumn aColumn = columns.nextElement();
             width = width + aColumn.getPreferredWidth();
         }
         return createHeaderSize(width);

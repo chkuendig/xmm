@@ -62,6 +62,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandFilter;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
@@ -160,10 +161,10 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	int generalInfoFieldsCount = 0;
 	int additionalInfoFieldsCount = 0;
 
-	ArrayList tableNames = null;
-	ArrayList generalInfoFields = null;
-	ArrayList additionalInfoFields = null;
-	ArrayList extraInfoFields = null;
+	ArrayList<String> tableNames = null;
+	ArrayList<String> generalInfoFields = null;
+	ArrayList<String> additionalInfoFields = null;
+	ArrayList<String> extraInfoFields = null;
 	
 	JTabbedPane allTabbedPanes;
 
@@ -499,7 +500,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 					public void actionPerformed(ActionEvent e) {
 												
 						int index = allTabbedPanes.getSelectedIndex();
-						HashMap searchAlias = MovieManager.getConfig().getSearchAlias();
+						HashMap<String, String> searchAlias = MovieManager.getConfig().getSearchAlias();
 						
 						String tmpKey;
 						
@@ -507,9 +508,9 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 
 							for (int i = 0; i < generalInfoFields.size(); i++) {
 							
-								tmpKey = "general info." + ((String) generalInfoFields.get(i)).replaceAll("_", " ");
+								tmpKey = "general info." + generalInfoFields.get(i).replaceAll("_", " ");
 								searchAlias.remove(tmpKey);
-								searchAlias.put(tmpKey, ((String) generalInfoFields.get(i)).replaceAll("_", " "));
+								searchAlias.put(tmpKey, generalInfoFields.get(i).replaceAll("_", " "));
 							}
 							
 							run();
@@ -518,9 +519,9 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 
 							for (int i = 0; i < additionalInfoFields.size(); i++) {
 								
-								tmpKey = "additional info."+ ((String) additionalInfoFields.get(i)).replaceAll("_", " ");
+								tmpKey = "additional info."+ additionalInfoFields.get(i).replaceAll("_", " ");
 								searchAlias.remove(tmpKey);
-								searchAlias.put(tmpKey, ((String) additionalInfoFields.get(i)).replaceAll("_", " "));
+								searchAlias.put(tmpKey, additionalInfoFields.get(i).replaceAll("_", " "));
 							}
 							run();
 						}						
@@ -785,18 +786,18 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 		generalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.column-name")));
 		generalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.alias")));
 
-		HashMap searchAlias = MovieManager.getConfig().getSearchAlias();
+		HashMap<String, String> searchAlias = MovieManager.getConfig().getSearchAlias();
 
 		for (int i = 0; i < generalInfoFields.size(); i++) {
 
-			tableName = new JLabel((String) tableNames.get(5));
-			columnName = new JLabel((String) generalInfoFields.get(i));
+			tableName = new JLabel(tableNames.get(5));
+			columnName = new JLabel(generalInfoFields.get(i));
 			alias = new JTextField(10);
 
 			if (generalInfoFields.get(i).equals("CoverData"))
 				continue;
 
-			tmpKey = (((String) tableNames.get(5)).toLowerCase() +"."+ (String) generalInfoFields.get(i)).replaceAll("_", " ");
+			tmpKey = (tableNames.get(5).toLowerCase() +"."+ generalInfoFields.get(i)).replaceAll("_", " ");
 
 			if (searchAlias.containsKey(tmpKey)) {
 				alias.setText((String) searchAlias.get(tmpKey));
@@ -1094,6 +1095,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 		if (enableDateButton.isSelected()) {
 			if (dateTextField.getText().length() != 4) {
 				DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogSearch.alert.title.alert"), Localizer.getString("DialogSearch.alert.message.date-must-be-4-integers"), true);
+				GUIUtil.show(alert, true);
 				return;
 			}
 		}
@@ -1120,7 +1122,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 		else if ("Duration".equals(finalSort))
 			ModelEntry.sort = 5;
 
-		HashMap searchAlias = MovieManager.getConfig().getSearchAlias();
+		HashMap<String, String> searchAlias = MovieManager.getConfig().getSearchAlias();
 		searchAlias.clear();
 
 		String tmp;

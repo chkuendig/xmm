@@ -106,7 +106,7 @@ abstract class FileProperties {
 	/**
 	 * list of meta data.
 	 **/
-	private ArrayList metaData;
+	private ArrayList<String> metaData;
 
 	protected String filePath = "";
 
@@ -289,14 +289,14 @@ abstract class FileProperties {
 	/**
 	 * Sets the meta data ArrayList.
 	 **/
-	protected void setMetaData(ArrayList metaData) {
+	protected void setMetaData(ArrayList<String> metaData) {
 		this.metaData = metaData;
 	}
 
 	/**
 	 * Returns the meta data ArrayList.
 	 **/
-	protected ArrayList getMetaData() {
+	protected ArrayList<String> getMetaData() {
 		return metaData;
 	}
 

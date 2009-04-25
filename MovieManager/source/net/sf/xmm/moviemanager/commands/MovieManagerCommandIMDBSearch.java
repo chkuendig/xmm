@@ -39,7 +39,6 @@ import net.sf.xmm.moviemanager.gui.DialogTVSeries;
 import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
-import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEpisode;
@@ -61,7 +60,7 @@ public class MovieManagerCommandIMDBSearch {
 	
 	 /* The current mode (Season/episode */
     private static int mode = 0;
-    private ArrayList streamsArray = new ArrayList();
+    private ArrayList<ArrayList<ModelIMDbSearchHit>> streamsArray = new ArrayList<ArrayList<ModelIMDbSearchHit>>();
     
     private JDialog parent;
     
@@ -112,8 +111,12 @@ public class MovieManagerCommandIMDBSearch {
 		SwingWorker worker = new SwingWorker() {
             public Object construct() {
                 try {
-                	final DefaultListModel list = imdb.getSeriesMatches(movieInfoModel.getModel().getTitle());
-                    
+                	ArrayList<ModelIMDbSearchHit> hits = imdb.getSeriesMatches(movieInfoModel.getModel().getTitle());
+                	final DefaultListModel list = new DefaultListModel();
+                	
+                	for (ModelIMDbSearchHit hit : hits)
+                		list.addElement(hit);
+                	
                     if (list.size() == 0) {
                         final DefaultListModel model = new DefaultListModel();
                         model.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogTVDOTCOM.list-item.message.no-matches-found"), null)); //$NON-NLS-1$
@@ -166,8 +169,12 @@ public class MovieManagerCommandIMDBSearch {
 	
 	public void handleGetSeasons(ModelIMDbSearchHit seriesHit) {
 		
-		DefaultListModel seasonList = imdb.getSeasons(seriesHit);
-		
+		ArrayList<ModelIMDbSearchHit> hits = imdb.getSeasons(seriesHit);
+    	DefaultListModel seasonList = new DefaultListModel();
+    	
+    	for (ModelIMDbSearchHit hit : hits)
+    		seasonList.addElement(hit);
+    		
 		if (seasonList.size() == 0) {
 			seasonList.addElement(new ModelIMDbSearchHit("-1", "No seasons found", 0));
 			dialogTVSeries.buttonSelect.setEnabled(false);
@@ -220,21 +227,21 @@ public class MovieManagerCommandIMDBSearch {
 				for( int i = 0; i < seasons; i++) {
 					selected = (ModelIMDbSearchHit) selectedValues[i];
 					episodesStream = imdb.getEpisodesStream(selected);
-					streamsArray.add(imdb.getEpisodes(selected, episodesStream));
+					streamsArray.add(IMDB.getEpisodes(selected, episodesStream));
 				}
 
 				DefaultListModel allEpisodes = new DefaultListModel();
-				DefaultListModel tempList = new DefaultListModel();
+				ArrayList<ModelIMDbSearchHit> tempList = new ArrayList<ModelIMDbSearchHit>();
 
 				int indexInList = 0;
 				
-				for (Iterator it = streamsArray.iterator(); it.hasNext();) {
-					tempList = (DefaultListModel) it.next();
-					episodes = tempList.getSize();
+				for (Iterator <ArrayList<ModelIMDbSearchHit>> it = streamsArray.iterator(); it.hasNext();) {
+					tempList = it.next();
+					episodes = tempList.size();
 
 					for (int i = 0; i < episodes; i++) {
 						
-						ModelIMDbSearchHit tmp = (ModelIMDbSearchHit) tempList.getElementAt(i);
+						ModelIMDbSearchHit tmp = tempList.get(i);
 						tmp.index = indexInList++;
 						allEpisodes.addElement(tmp);
 					}
@@ -349,9 +356,6 @@ public class MovieManagerCommandIMDBSearch {
 
 								oneEpisode.start();
 								mailbox.increaseThreadCount();				
-								
-								boolean execute = false;
-
 							}	
 							
 							// All threads wait

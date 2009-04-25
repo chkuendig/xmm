@@ -177,13 +177,12 @@ public class ModelAdditionalInfo {
 
 	
 //	 Used when importing/exporting XML with Castor
-	public ArrayList getExtraInfoFieldNames2() {
-		//return getExtraInfoFieldNames();
+	public ArrayList<String> getExtraInfoFieldNames2() {
 		return MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 	}
 	
 //	 Used when importing/exporting XML with Castor
-	public HashMap getExtraInfoFieldValuesMap() {
+	public HashMap<String, String> getExtraInfoFieldValuesMap() {
 		return extraInfoFieldValuesMap;
 	}
 	

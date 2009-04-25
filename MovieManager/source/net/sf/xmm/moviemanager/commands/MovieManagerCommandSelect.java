@@ -33,7 +33,6 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,14 +42,9 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.StringTokenizer;
 
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -64,7 +58,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -93,7 +86,6 @@ import org.lobobrowser.html.UserAgentContext;
 import org.lobobrowser.html.parser.DocumentBuilderImpl;
 import org.lobobrowser.html.parser.InputSourceImpl;
 import org.lobobrowser.html.test.SimpleHtmlRendererContext;
-import org.lobobrowser.html.test.SimpleHttpRequest;
 import org.lobobrowser.html.test.SimpleUserAgentContext;
 import org.w3c.dom.Document;
 
@@ -112,8 +104,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	static File lastTemplateFile = null;
 	static StringBuffer lastTemplate = null;
 	
-	static HashMap coverTemp = null;
-	
 	static String nocoverName = null;
 	static byte [] nocoverData = null;
 	
@@ -131,16 +121,14 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	 **/
 	public static void executeAndReload(int selectedIndex) {
 
-		DefaultListModel list;
-
-		list = MovieManager.getIt().getDatabase().getMoviesList(
+		 ArrayList<ModelMovie> list = MovieManager.getIt().getDatabase().getMoviesList(
 				MovieManager.getConfig().getSortOption(), 
 				MovieManager.getConfig().getCurrentLists(),
 				MovieManager.getConfig().getShowUnlistedEntries());
 
-		MovieManager.getDialog().getMoviesList().setModel(MovieManager.getDialog().createTreeModel(list, MovieManager.getIt().getDatabase().getEpisodeList("movieID"))); //$NON-NLS-1$
+		MovieManager.getDialog().getMoviesList().setModel(MovieManager.getDialog().createTreeModel(list, MovieManager.getIt().getDatabase().getEpisodeList())); //$NON-NLS-1$
 
-		if (selectedIndex < 0 || selectedIndex > list.getSize())
+		if (selectedIndex < 0 || selectedIndex > list.size())
 			selectedIndex = 0;
 
 		final int index = selectedIndex;
@@ -215,11 +203,11 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 					ExtendedTreeNode child = new ExtendedTreeNode(new ModelEpisode((ModelEpisode) reloadEntry));
 
 					int index = 0;
-					Enumeration e = node.children();
+					Enumeration<ExtendedTreeNode> e = node.children();
 					
 					while (e.hasMoreElements()) {
 					
-						ExtendedTreeNode child2 = (ExtendedTreeNode) e.nextElement();
+						ExtendedTreeNode child2 = e.nextElement();
 						
 						if (child.compareTo(child2) < 0)
 							break;
@@ -263,22 +251,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		/*Updates the entries value shown in the right side of the toolbars.*/
 		MovieManager.getDialog().setAndShowEntries();
 	}
-
-
-	protected static ArrayList createNodeList(TreeModel model) {
-
-		DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) model).getRoot();
-		int childCount = root.getChildCount();
-		ArrayList list = new ArrayList(childCount);
-
-		for (int i = 0; i < childCount; i++) {
-			if (!((DefaultMutableTreeNode) root.getChildAt(i)).isLeaf())
-				list.add(root.getChildAt(i));
-		}
-
-		return list;
-	}
-
 
 	/**
 	 * Fixes the cover data and makes sure the info panels are populated with the movie info.
@@ -435,7 +407,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 								break;
 							//}
 						}
-						else if (SysUtil.isWindows() && !SysUtil.isWindowsVista() && !SysUtil.isWindows98()) {
+						else {
 							// This is used because File.exists might provoke a popup window on (some versions of) Windows.
 							String drive = tmp.substring(0, tmp.indexOf(":") + 1);
 
@@ -758,7 +730,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 				
 				File path = new File(templateFile.getParentFile(), "debug_template.html"); 
 				
-				if (SysUtil.isMac() || SysUtil.isWindowsVista())
+				if (SysUtil.isMac() || SysUtil.isWindowsVista() || SysUtil.isWindows7())
 					path = SysUtil.getConfigDir();
 				
 				FileUtil.writeToFile(path, template.toString());
@@ -1161,7 +1133,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		if (popupMenu.getSubElements().length > 0)
 			popupMenu.add(new JPopupMenu.Separator());
 
-		ArrayList listcolumns = MovieManager.getIt().getDatabase().getListsColumnNames();
+		ArrayList<String> listcolumns = MovieManager.getIt().getDatabase().getListsColumnNames();
 
 		if (listcolumns.size() > 0 && !(movieList.getSelectionCount() == 1 && selected instanceof ModelEpisode)) {
 
@@ -1191,7 +1163,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 		// Disable when in applet mode 
 		if (MovieManager.isApplet()) {
-			ArrayList menuItems = new ArrayList();
+			ArrayList<MenuElement> menuItems = new ArrayList<MenuElement>();
 
 			MenuElement [] elements  = popupMenu.getSubElements();
 			menuItems.addAll(Arrays.asList(elements));

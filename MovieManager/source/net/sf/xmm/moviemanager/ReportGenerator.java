@@ -26,7 +26,6 @@ import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -57,6 +56,7 @@ import net.sf.jasperreports.view.JRViewer;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
+import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
@@ -265,19 +265,20 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         buttonAction.setText("Abort");
         cardLayout1.show(jPanel4, "progress");
 
-        LinkedList movies = new LinkedList();
+        LinkedList<ModelEntry> movies = new LinkedList<ModelEntry>();
         boolean includeEpisodes = checkBoxEpisodes.isSelected();
         if (radioButtonAllMovies.isSelected()) { // load all movies from database
             labelProgress.setText("Loading movies... Please wait");
             progressBar.setValue(0);
+            
             Database database = MovieManager.getIt().getDatabase();
-            DefaultListModel moviesList = database.getMoviesList("Title");
-            ArrayList episodesList = includeEpisodes ? database.getEpisodeList("movieID") : null;
-            Object[] m = moviesList.toArray();
-            for (int i = 0; i < m.length; i++) {
-                movies.add(m[i]);
+            ArrayList<ModelMovie> movieList = database.getMoviesList();
+            ArrayList<ModelEpisode> episodesList = includeEpisodes ? database.getEpisodeList() : null;
+            
+            for (int i = 0; i < movieList.size(); i++) {
+                movies.add(movieList.get(i));
                 if (includeEpisodes) { // add episodes
-                    int tempKey = ( (ModelEntry) m[i]).getKey();
+                    int tempKey = movieList.get(i).getKey();
                     for (int u = 0; u < episodesList.size(); u++) {
                         if (tempKey == ( (ModelEpisode) episodesList.get(u)).getMovieKey()) {
                             movies.add(episodesList.get(u));
@@ -301,7 +302,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
                     }
                 }
                 if (addnode) {
-                    movies.add(node.getUserObject());
+                    movies.add((ModelEntry) node.getUserObject());
                 }
                 if (includeEpisodes) {
                     int episodeCount = node.getChildCount();
@@ -315,7 +316,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
                             }
                         }
                         if (addnode) {
-                            movies.add(episodeNode.getUserObject());
+                            movies.add((ModelEntry) episodeNode.getUserObject());
                         }
                     }
                 }
@@ -324,7 +325,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
 
         try {
             labelProgress.setText("Generating report... Please wait");
-            HashMap parms = new HashMap();
+            HashMap<String, String> parms = new HashMap<String, String>();
             parms.put("logo", FileUtil.getImageURL("/images/filmFolder.png").toString());
             
             ds = new ReportGeneratorDataSource(movies, selectedLayout.sortField, progressBar, FileUtil.getImageURL("/images/movie.png"), false);
@@ -578,21 +579,21 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
      */
     public static void printDirect(JTree tree) {
         // list of selected movies
-        LinkedList movies = new LinkedList();
+        LinkedList<ModelEntry> movies = new LinkedList<ModelEntry>();
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
         int n = root.getChildCount();
         for (int i = 0; i < n; i++) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) root.getChildAt(i);
             int row = tree.getRowForPath(new TreePath(node.getPath()));
             if (tree.isRowSelected(row)) {
-                movies.add(node.getUserObject());
+                movies.add((ModelEntry) node.getUserObject());
             }
             int episodeCount = node.getChildCount();
             for (int j = 0; j < episodeCount; j++) {
                 DefaultMutableTreeNode episodeNode = (DefaultMutableTreeNode) node.getChildAt(j);
                 row = tree.getRowForPath(new TreePath(episodeNode.getPath()));
                 if (tree.isRowSelected(row)) {
-                    movies.add(episodeNode.getUserObject());
+                    movies.add((ModelEntry) episodeNode.getUserObject());
                 }
             }
         }
@@ -600,7 +601,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
         // print it
         if (!movies.isEmpty()) {
             try {
-                HashMap parms = new HashMap();
+                HashMap<String, String> parms = new HashMap<String, String>();
                 parms.put("logo", FileUtil.getImageURL("/images/filmFolder.png").toString());
                 ReportGeneratorDataSource ds = new ReportGeneratorDataSource(movies, "none", null, FileUtil.getImageURL("/images/movie.png"), false);
                 JasperPrint print = JasperFillManager.fillReport(reportsDir + "movie_details.jasper", parms, ds);

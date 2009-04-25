@@ -94,10 +94,10 @@ public class MovieManagerCommandExportXMLDatabase extends MovieManagerCommandExp
 		else {
 			ModelSeries serie = new ModelSeries((ModelMovie) model);
 
-			Enumeration children = node.children();
+			Enumeration<? extends DefaultMutableTreeNode> children = node.children();
 
 			while (children.hasMoreElements()) {
-				serie.addEpisode((ModelEpisode) ((DefaultMutableTreeNode) children.nextElement()).getUserObject());
+				serie.addEpisode((ModelEpisode) children.nextElement().getUserObject());
 			}
 
 			exportXMLDatabase.addModelSerie(serie);

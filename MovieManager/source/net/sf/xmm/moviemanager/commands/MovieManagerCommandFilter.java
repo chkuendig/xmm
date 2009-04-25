@@ -31,9 +31,11 @@ import javax.swing.tree.DefaultTreeModel;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
+import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
 import net.sf.xmm.moviemanager.swing.extentions.events.ComboCheckBoxKeyEvent;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 
@@ -43,12 +45,12 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 
 	private static long filterStart;
 	private static boolean mainFilter; 
-	private static javax.swing.JComponent movieList;
+	private static javax.swing.JComponent movieListComponent;
 	private static boolean addEmptyEntry = false;
 	private static String noHitsMessage = "Empty Database";
 	
 	public MovieManagerCommandFilter(String _filterString, javax.swing.JComponent _movieList, boolean _mainFilter, boolean _addEmptyEntry) {
-		movieList = _movieList;
+		movieListComponent = _movieList;
 		mainFilter = _mainFilter;
 		addEmptyEntry = _addEmptyEntry;
 	}
@@ -67,7 +69,8 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 		// If any notes have been changed, they will be saved before seaching
 		MovieManagerCommandSaveChangedNotes.execute();
 
-		DefaultListModel listModel;
+		//DefaultListModel listModel;
+		ArrayList<ModelMovie> movieList;
 		Database database = MovieManager.getIt().getDatabase();
 
 		if (database == null)
@@ -79,21 +82,23 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 		
 		if (mainFilter) {
 			ModelDatabaseSearch options = MovieManager.getIt().getFilterOptions();
-			listModel = database.getMoviesList(options);
-			movieList = MovieManager.getDialog().getMoviesList();
+			movieList = database.getMoviesList(options);
+			
+			movieListComponent = MovieManager.getDialog().getMoviesList();
 		}
 		else {
 			ModelDatabaseSearch options = MovieManager.getIt().getFilterOptions();
 
 			if (options.getCurrentListNames() != null && options.getCurrentListNames().size() > 0 || 
 					MovieManager.getConfig().getShowUnlistedEntries())
-				listModel = database.getMoviesList("Title", options.getCurrentListNames(),
+				movieList = database.getMoviesList("Title", options.getCurrentListNames(),
 						MovieManager.getConfig().getShowUnlistedEntries());
 			else
-				listModel = database.getMoviesList("Title");
+				movieList = database.getMoviesList();
+			
 		}
 
-		if (listModel.isEmpty()) {
+		if (movieList.isEmpty()) {
 			addEmptyEntry = true;
 			
 			if (database.getDatabaseSize() > 0) {
@@ -106,9 +111,9 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 			}
 		}
 
-		if (listModel.size() == 0 && addEmptyEntry) {
+		if (movieList.size() == 0 && addEmptyEntry) {
 
-			listModel.addElement(new ModelMovie(-1, "", "", "", noHitsMessage, "", "", "", "", "", "", "", false, "", "", "", "", "", "", "", "", ""));
+			movieList.add(new ModelMovie(-1, "", "", "", noHitsMessage, "", "", "", "", "", "", "", false, "", "", "", "", "", "", "", "", ""));
 
 			if (mainFilter) 
 				MovieManager.getDialog().setAndShowEntries(0);
@@ -116,23 +121,25 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 
 		else if (mainFilter) {
 			/*Uppdates the entries*/
-			MovieManager.getDialog().setAndShowEntries(listModel.size());
+			MovieManager.getDialog().setAndShowEntries(movieList.size());
 		}
 
 		/* Replaces the old model... */
 		if (mainFilter) {
-			ArrayList episodeListModel = database.getEpisodeList("movieID");
-			DefaultTreeModel treeModel = MovieManager.getDialog().createTreeModel(listModel, episodeListModel);
+			ArrayList<ModelEpisode> episodeListModel = database.getEpisodeList();
+			DefaultTreeModel treeModel = MovieManager.getDialog().createTreeModel(movieList, episodeListModel);
 			
-			MovieManager.getDialog().setTreeModel(treeModel, listModel, episodeListModel);
-			((ExtendedJTree) movieList).setSelectionInterval(0, 0);
+			MovieManager.getDialog().setTreeModel(treeModel, movieList, episodeListModel);
+			((ExtendedJTree) movieListComponent).setSelectionInterval(0, 0);
 
 			MovieManagerCommandSelect.execute();
 			
 		}	
 		else {
-			((JList) movieList).setModel(listModel);
-			((JList) movieList).setSelectedIndex(0);
+			DefaultListModel listModel = GUIUtil.toDefaultListModel(movieList);
+			
+			((JList) movieListComponent).setModel(listModel);
+			((JList) movieListComponent).setSelectedIndex(0);
 		}
 
 		log.debug("It took:" + (System.currentTimeMillis() - filterStart)+" ms to process the filter.");

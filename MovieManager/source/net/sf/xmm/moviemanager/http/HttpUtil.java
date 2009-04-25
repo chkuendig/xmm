@@ -21,17 +21,12 @@
 package net.sf.xmm.moviemanager.http;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
@@ -46,7 +41,6 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.log4j.Logger;
 
 public class HttpUtil {
@@ -306,7 +300,7 @@ public class HttpUtil {
 	 * Decodes a html string 
 	 **/
 	public static Object [] decodeHTMLtoArray(String toDecode) {
-		ArrayList decoded = new ArrayList();
+		ArrayList<String> decoded = new ArrayList<String>();
 		String tmp = "";
 
 		try {

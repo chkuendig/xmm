@@ -25,9 +25,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
-import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 
 import org.apache.log4j.Logger;
 
@@ -35,7 +33,7 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportHand
 
 	static Logger log = Logger.getLogger(MovieManagerCommandImportHandler.class);
 
-	ArrayList movieList = null;
+	ArrayList<String> movieList = null;
 	
 	MovieManagerCommandImportText(ModelImportExportSettings settings) {
 		super(settings);
@@ -92,7 +90,7 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportHand
 			throw new Exception("Text file does not exist.");
 		}
 
-		movieList = new ArrayList(10);
+		movieList = new ArrayList<String>(10);
 
 		try {
 

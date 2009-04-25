@@ -539,7 +539,7 @@ class FilePropertiesRIFF extends FileProperties {
 
 		String metaTagInfo = "";
 
-		ArrayList metaData = new ArrayList();
+		ArrayList<String> metaData = new ArrayList<String>();
 
 		int metaChunkType;
 		int metaChunkSize;
