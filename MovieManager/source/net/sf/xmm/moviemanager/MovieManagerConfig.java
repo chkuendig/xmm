@@ -3526,9 +3526,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 			 } else {
 				 if (SysUtil.isMac() || SysUtil.isWindowsVista() || SysUtil.isWindows7())
-					 url = new File(SysUtil.getConfigDir(), "Config.ini").toURL();
+					 url = new File(SysUtil.getConfigDir(), "Config.ini").toURI().toURL();
 				 else 
-					 url = new File(SysUtil.getUserDir(), "config/Config.ini").toURL();  
+					 url = new File(SysUtil.getUserDir(), "config/Config.ini").toURI().toURL();  
 			 }
  	
 			 File config = new File(url.getFile());

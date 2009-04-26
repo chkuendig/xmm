@@ -47,7 +47,7 @@ public boolean importData(JComponent c, Transferable t) {
                List<File> files = (List) t.getTransferData(DataFlavor.javaFileListFlavor);
                for (int i = 0; i < files.size(); i++) {
                    File file = (File) files.get(i);
-                   return importCover(file.toURL());
+                   return importCover(file.toURI().toURL());
                }
                return true;
            } else if (hasStringFlavor(t.getTransferDataFlavors())) {

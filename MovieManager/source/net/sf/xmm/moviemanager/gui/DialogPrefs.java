@@ -1776,7 +1776,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			Skin skin = null;
 
 			if (MovieManager.isApplet())
-				skin = SkinLookAndFeel.loadThemePack(FileUtil.getAppletFile(skinlfThemePackPath, DialogMovieManager.applet).toURL());
+				skin = SkinLookAndFeel.loadThemePack(FileUtil.getAppletFile(skinlfThemePackPath, DialogMovieManager.applet).toURI().toURL());
 			else {
 				skin = SkinLookAndFeel.loadThemePack(skinlfThemePackPath);
 			}

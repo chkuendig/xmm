@@ -267,7 +267,7 @@ public class FileUtil {
     				f = new File(SysUtil.getUserDir() + fileName);
     			}
 
-    			url = f.toURL();
+    			url = f.toURI().toURL();
 
     			/*
 		// If it exists inside the jar 

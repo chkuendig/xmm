@@ -120,7 +120,7 @@ public class SysUtil {
 				String conf = "Config.ini";
 
 				if (SysUtil.isMac())
-					url = new File(SysUtil.getConfigDir(), conf).toURL();
+					url = new File(SysUtil.getConfigDir(), conf).toURI().toURL();
 				else {
 
 					boolean checkOldInstallDir = true;
@@ -135,7 +135,7 @@ public class SysUtil {
 						File newConfig = new File(SysUtil.getConfigDir(), "Config.ini");
 
 						if (newConfig.isFile()) {
-							url = newConfig.toURL();
+							url = newConfig.toURI().toURL();
 							checkOldInstallDir = false;
 						}
 						else 
@@ -159,10 +159,10 @@ public class SysUtil {
 							File tmpConfig = new File(oldInstallDir, "config/Config.ini");
 
 							if (tmpConfig.isFile()) {
-								url = tmpConfig.toURL();
+								url = tmpConfig.toURI().toURL();
 							}
 							else if ((tmpConfig = new File(oldInstallDir, "Config.ini")).isFile()) {
-								url = tmpConfig.toURL();
+								url = tmpConfig.toURI().toURL();
 							}						
 						}
 					}
