@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -3510,29 +3511,29 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 try {
 
-			 URL url = null;
-
+			 File config = null;
 			 int appMode = MovieManager.getAppMode();
 
 			 // Applet
 			 if (appMode == 1)
-				 url = FileUtil.getFileURL("config/Config_Applet.ini", DialogMovieManager.applet);
+				 config = new File(new URI(FileUtil.getFileURL("config/Config_Applet.ini", DialogMovieManager.applet).toString()));
 			 else if (appMode == 2) { // Java Web Start
 
 				 MovieManagerConfigHandler configHandler = getConfigHandler();
 
 				 if (configHandler != null)
-					 url = configHandler.getConfigURL();
+					 config = new File(new URI(configHandler.getConfigURL().toString()));
 
 			 } else {
 				 if (SysUtil.isMac() || SysUtil.isWindowsVista() || SysUtil.isWindows7())
-					 url = new File(SysUtil.getConfigDir(), "Config.ini").toURI().toURL();
+					 config = new File(SysUtil.getConfigDir(), "Config.ini");
 				 else 
-					 url = new File(SysUtil.getUserDir(), "config/Config.ini").toURI().toURL();  
+					 config = new File(SysUtil.getUserDir(), "config/Config.ini");  
 			 }
- 	
-			 File config = new File(url.getFile());
-
+		
+			 if (config == null)
+				 throw new Exception("Failed to save config file:" + config);
+				 
 			 /* If it exists deletes... */
 			 if (config.exists() && !config.delete()) {
 				 throw new Exception("Cannot delete config file.");
