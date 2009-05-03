@@ -236,7 +236,7 @@ public class FileUtil {
     
     public static File getFile(String fileName) {
         try {
-            return new File(new URI(null, getFileURL(fileName).toString(), null));
+            return new File(new URI(getFileURL(fileName).toString()));
         } catch (URISyntaxException e) {
             log.error(e);
         }
