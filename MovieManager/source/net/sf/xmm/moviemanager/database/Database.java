@@ -2653,9 +2653,7 @@ abstract public class Database {
 
 		options.setOrderCategory(orderBy);
 		options.setListOption(0);
-
-		 if (isMySQL())
-			 options.getFullGeneralInfo = false;
+		options.getFullGeneralInfo = !isMySQL();
 		
 		return getMoviesList(options);
 	}
