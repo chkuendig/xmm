@@ -8,22 +8,25 @@
 
 	<target name="Welcome">
 <echo>
-	=======================================
-	==== MeD's Movie Manager build.xml ====
-	=======================================
+	===========================================
+	====   MeD's Movie Manager build.xml   ====
+	===========================================
+	 Targets:
+	===========================================
+	 clean     - clears all generated files
+	 compile   - compiles all java files
+	 run       - runs the moviemanager
 	
-	Targets:
-	=======================================
-	clean     - clears all generated files
-	compile   - compiles all java files
-	run       - runs the moviemanager
-	javadoc   - compiles the Javadoc
-	all       - builds everything
-	makejar   - creates the MovieManager.jar
-	archives  - creates the zip files
-	izpack    - creates the izpack java installer
-	build-mac - create Mac Application Bundle
-	dist-mac  - create Mac DMG file 
+	 makejar   - creates the MovieManager.jar
+	 build     - calls compile, makejar
+	 all       - calls clean, build, archives, izpack
+	 archives  - creates the zip distribution files
+	 izpack    - creates the izpack java installer
+	 build-mac - create Mac Application Bundle
+	 dist-mac  - create Mac DMG file
+	 javadoc   - compiles the Javadoc
+	 changelog - compiles the changelog to HTML
+	 readme    - compiles the readme to HTML
 	</echo>
 	</target>
 
@@ -601,6 +604,32 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 
 </target>
 
+	
+	
+<target name="compile-changelog">
+
+	  <exec executable="rst2html">
+	    <arg value="--stylesheet=xmm.css"/>
+	    <arg value="Changelog.txt"/>
+	    <arg value="Changelog.html"/>
+	  </exec>
+		
+	  <echo> Compiled html changelog to Changelog.html </echo>
+	
+</target>
+	
+<target name="compile-readme">
+
+      <exec executable="rst2html">
+        <arg value="--stylesheet=xmm.css"/>
+        <arg value="Readme.txt"/>
+        <arg value="Readme.html"/>
+      </exec>
+        
+     <echo> Compiled html readme to Readme.html </echo>
+</target>
+
+	
 <!-- not functioning yet -->
   <target name="doParams">
     <antcall target="tokenize">
@@ -699,18 +728,25 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
    <move file="${mac-dist}/${app-name}" tofile="/Applications/${app-name}"/>
  </target>
  
-  <!--
- <property name="app-name" value="MeD's MovieManager.app"/>
-  <property name="mac-dist" value="build/mac"/>
-  -->
 
+	
+ <condition property="isMac"><os name="mac"/> </condition>  
+	
+	<condition property="isNotMac">
+		 <not>
+		  <os family="mac"/>
+	     </not>
+	</condition>  
+		
+	<target name="isMacCheckAlert" if="isNotMac">
+		   <echo> This is not a Mac machine. Must be Mac to create dmg bundle </echo>
+	 </target>
+	
   <!-- DIST Mac  -->
- <target name="dist-mac" depends="build-mac">
+ <target name="dist-mac" depends="build-mac, isMacCheckAlert" if="isMac">
    
    <echo message="dist-mac: ${ant.file}"/>
    
-    	
- 	
  	<!-- Copy license files  -->
  	    <mkdir dir="${mac-dist}/License"/>
  	    <copy todir="${mac-dist}/License">
