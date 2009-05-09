@@ -97,14 +97,15 @@ public class FileTree extends JPanel {
 
 	MatchingOptions matchOptions = new MatchingOptions();
 	
-	private Color colorMatch = new Color(152, 225, 120);
-	private Color colorNoMatch = new Color(233, 180, 180);
-	private Color colorExists = new Color(0, 0, 0);
-
+	private Color colorMatch = new Color(152, 225, 120); // Green
+	private Color colorNoMatch = new Color(233, 180, 180); // Red
+	private Color colorExists = new Color(114, 116, 203); // Blue
+			
+	HashMap<String, ModelEntry> existingMediaFileNames = new HashMap<String, ModelEntry>();
+	HashMap<String, ModelEntry> existingMediaFiles = new HashMap<String, ModelEntry>();
 		
-	HashMap<String, ModelEntry> existingMediaFiles = null;
-	boolean filterOutDuplicateFiles = true;
-	
+	boolean filterOutDuplicateFiles = false;
+	boolean filterOutDuplicateByEntireFilePath = false;
 	
 	private boolean threadLock = false;
 	
@@ -112,6 +113,15 @@ public class FileTree extends JPanel {
 		return (DefaultTreeModel) fileTree.getModel();
 	}
 
+	public void addExistingMediaFileInDatabase(String path, ModelEntry model) {
+		
+		existingMediaFiles.put(path, model);
+		
+		File f = new File(path);
+		
+		existingMediaFileNames.put(f.getName(), model);
+	}
+	
 	/* 
 	 * Key = filepath, obj = IconData
 	 */
@@ -179,10 +189,16 @@ public class FileTree extends JPanel {
 		return validExtensions;
 	}
 	
-	public void setFilterOutDuplicates(boolean fuplicatesEnabled) {
-		filterOutDuplicateFiles = fuplicatesEnabled;
+	public void setFilterOutDuplicates(boolean duplicatesEnabled) {
+		filterOutDuplicateFiles = duplicatesEnabled;
 		updateCurrentCells();
 	}
+	
+	public void setFilterOutDuplicatesByEntireFilePath(boolean entireFilePath) {
+		filterOutDuplicateByEntireFilePath = entireFilePath;
+		updateCurrentCells();
+	}
+	
 	
 	public FileTree(HashMap<String, ModelEntry> existingMediaFiles) {
 		this();
@@ -584,7 +600,7 @@ public class FileTree extends JPanel {
 				if (path == null) {
 					//int rowForLocation = fileTree.getRowForLocation(x, y);
 					
-				//	System.err.println("rowForLocation:" + rowForLocation);
+				//	System.out.println("rowForLocation:" + rowForLocation);
 					//fileTree.setSelectionRow(rowForLocation);
 				}
 				
@@ -820,8 +836,16 @@ public class FileTree extends JPanel {
 		
 		if (filterOutDuplicateFiles) {
 			if (existingMediaFiles != null && !existingMediaFiles.isEmpty()) {
-				if (existingMediaFiles.containsKey(file.getAbsolutePath())) {
-					return FILE_EXISTS;
+				
+				if (filterOutDuplicateByEntireFilePath) {
+					if (existingMediaFiles.containsKey(file.getAbsolutePath())) {
+						return FILE_EXISTS;
+					}
+				}
+				else {
+					if (existingMediaFileNames.containsKey(file.getName())) {
+						return FILE_EXISTS;
+					}					
 				}
 			}
 		}
