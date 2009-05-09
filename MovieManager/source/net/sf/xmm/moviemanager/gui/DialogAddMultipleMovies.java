@@ -320,7 +320,6 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
 		fileTree = new FileTree(existingMediaFiles);
-		fileTree.setFilterOutDuplicates(true);
 		
 		fileTree.eventHandler.addAddSelectedFilesEventListener(new AddSelectedFilesEventListener() {
 			public void addSelectedFilesEventOccurred(AddSelectedFilesEvent evt) {
@@ -328,8 +327,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				addFilesToAddToList(files);
 			}
 		});
-			
 		
+				
 // -------Include/Exclude regular expression/string------------
 		 	
 		
@@ -456,29 +455,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 		filterOutDuplicates = new JCheckBox("Filter out media files already in database"); 
 		filterOutDuplicates.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
-
-				fileTree.setFilterOutDuplicates(filterOutDuplicates.isSelected());
-				
-				// Adding all the file paths of each media file from the database
-				if (filterOutDuplicates.isSelected() && !existingMediaFiles.isEmpty()) {
-
-					ArrayList<ModelMovie> list = MovieManager.getIt().getDatabase().getMoviesList("Title");
-					DefaultListModel movies = GUIUtil.toDefaultListModel(list);
-					
-					for (int i = 0; i < movies.size(); i++) {
-
-						ModelEntry model = (ModelEntry) movies.get(i);
-						String fileLocation = model.getAdditionalInfo().getFileLocation();
-
-						String [] files = fileLocation.split("*");
-
-						for (int u = 0; u < files.length; u++) {
-							existingMediaFiles.put(files[u], model);
-						}
-					}
-				}
+				setFilterOutDuplicates(filterOutDuplicates.isSelected());
 			}
 		});
 
@@ -541,9 +519,41 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
 
 		loadConfigSettings();
+
 	}
 
 	
+	void setFilterOutDuplicates(boolean value) {
+	
+		System.err.println("setFilterOutDuplicates:" + value);
+		
+		fileTree.setFilterOutDuplicates(value);
+		
+		System.err.println("existingMediaFiles.isEmpty():" + existingMediaFiles.isEmpty());
+		
+		// Adding all the file paths of each media file from the database
+		if (filterOutDuplicates.isSelected() && existingMediaFiles.isEmpty()) {
+
+			ArrayList<ModelMovie> list = MovieManager.getIt().getDatabase().getMoviesList("Title");
+			DefaultListModel movies = GUIUtil.toDefaultListModel(list);
+			
+			for (int i = 0; i < movies.size(); i++) {
+
+				ModelEntry model = (ModelEntry) movies.get(i);
+				String fileLocation = model.getAdditionalInfo().getFileLocation();
+
+				String [] files = fileLocation.split("\\*");
+
+				System.err.println("fileLocation:" + fileLocation);
+				System.err.println("files:" + files.length);
+				
+				for (int u = 0; u < files.length; u++) {
+					System.err.println("adding files[u]:" + files[u]);
+					existingMediaFiles.put(files[u], model);
+				}
+			}
+		}
+	}
 
 	
 	JPanel makeListPanel() {
@@ -663,6 +673,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		customExtension.setText(MovieManager.getConfig().getMultiAddCustomExtensions());
 		
 		updateExtensionoOnTree();
+
+		setFilterOutDuplicates(true);
 	}
 	
 	
