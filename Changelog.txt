@@ -3,11 +3,17 @@
    Changelog - MeD's Movie Manager
 ========================================
 
-Version 2.8.0.1 (12-apr-2009)
+Version 2.8.1 (09-may-2009)
+
+- General improvements:
+
+  - Better support for Windows 7. Config and log file is now written to writable user area.
 
 - Bug fixes:
 
-  - Search in the movie list did not work when all lists and unlisted entries were selected.
+  - Search in the movie list did not work when all lists and unlisted entries were selected (Bug introduced in 2.8.0).
+  - "Filter out media files already in database" using the "Add multiple movies" was broken.
+
 
 Version 2.8.0 (12-apr-2009)
 
