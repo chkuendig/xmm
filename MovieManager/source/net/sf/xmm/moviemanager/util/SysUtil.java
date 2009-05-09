@@ -150,7 +150,7 @@ public class SysUtil {
 					
 					// if config file isn't found, check old install dir
 					if (url == null) {
-						log.debug("Check old install dir");
+					
 					// changed default install directory in cross-platform installer from "MeD's Movie Manager" to "MeDs-Movie-Manager"
 						File userDir = new File(getUserDir());
 
