@@ -398,8 +398,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
        
     
     public void setListTitle() {
-
-    	System.err.println("setListTitle");
     	
     	ArrayList<String> lists = config.getCurrentLists();
         
@@ -415,8 +413,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         if (listsString.equals(""))
         	listsString = " - All";
-        	
-        System.err.println("MovieManager.getIt().getDatabase():" + MovieManager.getIt().getDatabase());
         
         if (MovieManager.getIt().getDatabase() != null) {
         	ArrayList<String> dbLists = MovieManager.getIt().getDatabase().getListsColumnNames();
@@ -780,7 +776,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         // When a new database is loaded, update list title
         MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(new NewDatabaseLoadedEventListener() {
         	public void newDatabaseLoaded(NewDatabaseLoadedEvent evt) {
-        		System.err.println("NewDatabaseLoadedEvent");
 				setListTitle();
 			}
         });
