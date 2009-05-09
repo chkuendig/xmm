@@ -24,6 +24,7 @@ import info.clearthought.layout.TableLayout;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -113,6 +114,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	JCheckBox regexNegate;
 	
 	JCheckBox filterOutDuplicates;
+	JCheckBox filterOutDuplicatesEntireFilePath;
 	
 	public JCheckBox enableAddMoviesToList;
 	public JComboBox listChooser;
@@ -127,10 +129,10 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	JPanel optionsPanel;
 	JPanel all;
 	
-	HashMap<String, ModelEntry> existingMediaFiles = new HashMap<String, ModelEntry>();
-	
 	private HashMap<FileNode, FileNode> nodesInFileLists = new HashMap<FileNode, FileNode>();
 		
+	boolean mediaFilesInDatabaseAdded = false;
+	
 	private boolean addListMustContainValidItemsAlert = false; // denotes if the list contains an alert
 	
 	/* The int stores the ints 0,1 or 2.
@@ -319,7 +321,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-		fileTree = new FileTree(existingMediaFiles);
+		fileTree = new FileTree();
 		
 		fileTree.eventHandler.addAddSelectedFilesEventListener(new AddSelectedFilesEventListener() {
 			public void addSelectedFilesEventOccurred(AddSelectedFilesEvent evt) {
@@ -443,7 +445,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		JPanel includeOrExcludeStringsAndRegex = new JPanel();
 		includeOrExcludeStringsAndRegex.setLayout(new TableLayout(size));
 		
-		includeOrExcludeStringsAndRegex.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "String Matching"), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		includeOrExcludeStringsAndRegex.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "String Matching on filename"), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 		
 		includeOrExcludeStringsAndRegex.add(enableIncludeOrExludeString, "0, 0");
 		includeOrExcludeStringsAndRegex.add(excludeStringTextField, 		"1, 0");
@@ -461,11 +463,23 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		});
 
 		
+		filterOutDuplicatesEntireFilePath = new JCheckBox("Use entire file path");
+		filterOutDuplicatesEntireFilePath.setEnabled(false);
+		filterOutDuplicatesEntireFilePath.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fileTree.setFilterOutDuplicatesByEntireFilePath(filterOutDuplicatesEntireFilePath.isSelected());
+			}
+		});
+		
+		JPanel duplicatesPanel = new JPanel();
+		duplicatesPanel.add(filterOutDuplicates);
+		duplicatesPanel.add(filterOutDuplicatesEntireFilePath);
+		
 		JPanel filterPanel = new JPanel();
 		filterPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Filter files"), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 				
 		filterPanel.setLayout(new BorderLayout());
-		filterPanel.add(filterOutDuplicates, BorderLayout.NORTH);
+		filterPanel.add(duplicatesPanel, BorderLayout.NORTH);
 		filterPanel.add(includeOrExcludeStringsAndRegex, BorderLayout.SOUTH);
 		
 		JPanel filetreeAndRegex = new JPanel();
@@ -515,6 +529,12 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		/* Packs and sets location... */
 		pack();
 
+		// Reduce height by 100
+		Dimension dim = getSize();
+		dim.height -= 100;
+		
+		setSize(dim);
+		
 		setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
 				(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
 
@@ -524,32 +544,35 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 	
 	void setFilterOutDuplicates(boolean value) {
-	
-		System.err.println("setFilterOutDuplicates:" + value);
+					
+		filterOutDuplicatesEntireFilePath.setEnabled(filterOutDuplicates.isSelected());
 		
 		fileTree.setFilterOutDuplicates(value);
 		
-		System.err.println("existingMediaFiles.isEmpty():" + existingMediaFiles.isEmpty());
-		
 		// Adding all the file paths of each media file from the database
-		if (filterOutDuplicates.isSelected() && existingMediaFiles.isEmpty()) {
+		if (filterOutDuplicates.isSelected() && !mediaFilesInDatabaseAdded) {
 
+			mediaFilesInDatabaseAdded = true;
+			
 			ArrayList<ModelMovie> list = MovieManager.getIt().getDatabase().getMoviesList("Title");
 			DefaultListModel movies = GUIUtil.toDefaultListModel(list);
 			
 			for (int i = 0; i < movies.size(); i++) {
 
 				ModelEntry model = (ModelEntry) movies.get(i);
+				
+				if (!model.getHasAdditionalInfoData())
+					model.updateAdditionalInfoData();
+				
 				String fileLocation = model.getAdditionalInfo().getFileLocation();
 
+				if (fileLocation.trim().equals(""))
+					continue;
+				
 				String [] files = fileLocation.split("\\*");
-
-				System.err.println("fileLocation:" + fileLocation);
-				System.err.println("files:" + files.length);
 				
 				for (int u = 0; u < files.length; u++) {
-					System.err.println("adding files[u]:" + files[u]);
-					existingMediaFiles.put(files[u], model);
+					fileTree.addExistingMediaFileInDatabase(files[u], model);
 				}
 			}
 		}
@@ -560,7 +583,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 		JPanel listPanel = new JPanel();
 		//listPanel.setLayout(new BorderLayout());
-		listPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogAddMultipleMovies.panel-add-to-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		listPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.getString("DialogAddMultipleMovies.panel-add-to-list.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
 		ArrayList<String> columnListNames = MovieManager.getIt().getDatabase().getListsColumnNames();
 		Object [] listNames = columnListNames.toArray();
@@ -672,9 +695,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		
 		customExtension.setText(MovieManager.getConfig().getMultiAddCustomExtensions());
 		
-		updateExtensionoOnTree();
-
-		setFilterOutDuplicates(true);
+		updateExtensionoOnTree();	
+		
 	}
 	
 	
@@ -862,7 +884,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 					alert = new DialogAlert(this, "No extensions selected", "<html>You must specify valid file extensions in the options menu.</html>", true);
 				}
 				else
-					alert = new DialogAlert(this, "No files marked", "<html>Right click the file tree and select an option<br> for the directories to be searched through.</html>", true);
+					alert = new DialogAlert(this, "No files match", "<html>Right click the file tree and select an option<br> for the directories to be searched through.</html>", true);
 				
 				GUIUtil.showAndWait(alert, true);
 			}
