@@ -549,35 +549,32 @@ public class DialogIMDB extends JDialog {
     /*Checks if the movie list should be retrived from IMDB or the local movie Database
      */
     void executeSearchMultipleMovies() {
-
+	
     	if (addInfoToExistingMovie)
     		executeEditExistingMovie(searchStringField.getText());
 
     	else {
     		DefaultListModel listModel = new DefaultListModel();
-
+	
     		try {
     			ArrayList<ModelIMDbSearchHit> hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchStringField.getText());
     			
-    			/*Number of movie hits*/
-    			int hitCount = hits.size();
+    			/* Number of movie hits */
+    			//int hitCount = hits.size();
+        		
+    			for (ModelIMDbSearchHit hit : hits)
+    				listModel.addElement(hit);
 
-    			if (hitCount < 0) {
-    				for (ModelIMDbSearchHit hit : hits)
-    					listModel.addElement(hit);
-    			}
-    			    			
     		} catch (Exception e) {
     			executeErrorMessage(e.getMessage());
 
     			e.printStackTrace();
     			dispose();
     		}
-    		
+    		    		
     		if (listModel.getSize() == 0)
-    		listModel.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
-    		
-    		
+    			listModel.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
+    		    		
     		getMoviesList().setModel(listModel);
     		getMoviesList().setSelectedIndex(0);
     	}
