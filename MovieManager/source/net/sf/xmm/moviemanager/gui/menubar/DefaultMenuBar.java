@@ -586,24 +586,20 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 				}
 			}
 			
-			boolean showAll = true;
-			boolean showNone = true;
+			boolean showNone = true; // None is if no lists or unlisted is chosen
 
 			if (showUnlisted.isSelected())
 				showNone = false;
-			else
-				showAll = false;
 			
 			for (int i = 0; i < menuItemsList.size(); i++) {
-				if (!((JCheckBoxMenuItem) menuItemsList.get(i)).isSelected())
-					showAll = false;
-				else
+				if (((JCheckBoxMenuItem) menuItemsList.get(i)).isSelected()) {
 					showNone = false;
+					break;
+				}
 			}
 			
-
+			// This is the same as showing all the lists and unlisted entries.
 			if (showNone) {
-				showAll = true;
 				
 				for (int i = 0; i < menuItemsList.size(); i++) {
 					setMenuItemEnabled((JCheckBoxMenuItem) menuItemsList.get(i), true);
@@ -613,10 +609,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 				showUnlisted.setSelected(true);
 			}
 			
-			if (showAll)
-				MovieManager.getDialog().setListTitle("List - All");
-			else
-				MovieManager.getDialog().setListTitle();
+			MovieManager.getDialog().setListTitle();
 				
 			new MovieManagerCommandFilter("", null, true, true).execute();
 		}

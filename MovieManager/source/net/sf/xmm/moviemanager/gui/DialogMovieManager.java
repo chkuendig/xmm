@@ -92,6 +92,8 @@ import net.sf.xmm.moviemanager.swing.extentions.ExtendedToolBar;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeNode;
 import net.sf.xmm.moviemanager.swing.extentions.JComboCheckBox;
+import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
+import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
@@ -397,6 +399,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     
     public void setListTitle() {
 
+    	System.err.println("setListTitle");
+    	
     	ArrayList<String> lists = config.getCurrentLists();
         
         String listsString = "";
@@ -412,19 +416,27 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         if (listsString.equals(""))
         	listsString = " - All";
         	
+        System.err.println("MovieManager.getIt().getDatabase():" + MovieManager.getIt().getDatabase());
+        
+        if (MovieManager.getIt().getDatabase() != null) {
+        	ArrayList<String> dbLists = MovieManager.getIt().getDatabase().getListsColumnNames();
+        	
+        	if (config.getShowUnlistedEntries() && dbLists.size() == lists.size())
+        		listsString = " - All";
+        }
+        
         setListTitle(Localizer.getString("moviemanager.listpanel-title") + listsString);
     }
     
     
     public void setListTitle(String title) {
-        
+            	
         movieListPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 " "+ title + " ", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION,
                 new Font(movieListPanel.getFont().getName(),Font.BOLD, fontSize)),
                 BorderFactory.createEmptyBorder(0,5,5,5)));
-            	
     }
     
         
@@ -763,8 +775,16 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         movieListPanel = new JPanel();
         movieListPanel.setLayout(new GridBagLayout());
         
-        setListTitle();
+        setListTitle("No database loaded");
         
+        // When a new database is loaded, update list title
+        MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(new NewDatabaseLoadedEventListener() {
+        	public void newDatabaseLoaded(NewDatabaseLoadedEvent evt) {
+        		System.err.println("NewDatabaseLoadedEvent");
+				setListTitle();
+			}
+        });
+                
         GridBagConstraints constraints;
         constraints = new GridBagConstraints();
         constraints.gridx = 0;

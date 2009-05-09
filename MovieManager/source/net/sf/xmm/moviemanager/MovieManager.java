@@ -436,8 +436,6 @@ public class MovieManager {
     				return false;
     			}
 
-    			newDbHandler.newDatabaseLoaded(this);
-
     			setActiveAdditionalInfoFields(_database.getActiveAdditionalInfoFields());
 
     			/* Error occured */
@@ -479,8 +477,6 @@ public class MovieManager {
     					if (changed) {
     						options = getFilterOptions(_database);
     					}
-    					
-    					dialogMovieManager.setListTitle();
     				}
     			}
     			else {
@@ -546,6 +542,8 @@ public class MovieManager {
                  If the database is set at the top and the  method returns because of an error after the database is set, 
                  a faulty database will then be stored and used */
     			database = _database;
+    			
+    			newDbHandler.newDatabaseLoaded(this);
     			
     			/* Loads the movies list. */
     			dialogMovieManager.setTreeModel(treeModel, moviesList, episodesList);
@@ -858,8 +856,9 @@ public class MovieManager {
         					return;
         				}
 
-        				if (setDatabase(db, this, false))
+        				if (setDatabase(db, this, false)) {
         					log.debug("Database loaded in:" + (System.currentTimeMillis() - time) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+        				} 
         				else
         					log.debug("Failed to load database"); //$NON-NLS-1$
         			}
