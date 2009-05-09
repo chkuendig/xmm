@@ -3,6 +3,11 @@
    Changelog - MeD's Movie Manager
 ========================================
 
+Version 2.8.0.1 (12-apr-2009)
+
+- Bug fixes:
+
+  - Search in the movie list did not work when all lists and unlisted entries were selected.
 
 Version 2.8.0 (12-apr-2009)
 

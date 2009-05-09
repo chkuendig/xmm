@@ -123,7 +123,6 @@ public class SysUtil {
 					url = new File(SysUtil.getConfigDir(), conf).toURI().toURL();
 				else {
 
-					boolean checkOldInstallDir = true;
 					long t = FileUtil.getFile(conf).lastModified();
 
 					// The newest config file will be used
@@ -136,23 +135,21 @@ public class SysUtil {
 
 						if (newConfig.isFile()) {
 							url = newConfig.toURI().toURL();
-							checkOldInstallDir = false;
 						}
 						else 
 							url = FileUtil.getFileURL(conf);
 					}
 					else {
 						url = FileUtil.getFileURL(conf);
-
-						if (new File(url.toString()).isFile())
-							checkOldInstallDir = false;
 					}
+					
+					// if config file isn't found, check old install dir
+					if (!new File(url.toString()).isFile()) {
+						
 					// changed default install directory in cross-platform installer from "MeD's Movie Manager" to "MeDs-Movie-Manager"
-					if (checkOldInstallDir) {
-
 						File userDir = new File(getUserDir());
 
-						if (userDir.getName().equals("MeDs-Movie-Manager")) {
+						if (!userDir.getName().equals("MeD's Movie Manager")) {
 
 							// Check old install dir
 							File oldInstallDir = new File(userDir.getParentFile(), "MeD's Movie Manager");
