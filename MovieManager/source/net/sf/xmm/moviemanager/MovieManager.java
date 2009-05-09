@@ -285,16 +285,18 @@ public class MovieManager {
     		ArrayList <String> dbLists = db.getListsColumnNames();
     		    		
     		// Verify all lists. When changing database, this might be a problem
-    		for (String list : currentLists) {
+    		for (int i = 0; i < currentLists.size(); i++) {
+    			String list = currentLists.get(i);
+    			
     			if (!dbLists.contains(list)) {
     				log.warn("Found list " + list + " in currentLists which does not exist in database.");
     				MovieManager.getConfig().getCurrentLists().remove(list);
-    				currentLists.remove(list);
+    				currentLists.remove(i);
+    				i--; // Just removed the entry, must use same index again
     			}
     		}
     		
-    		if (db.isMySQL())
-    			options.getFullGeneralInfo = false;
+    		options.getFullGeneralInfo = !db.isMySQL();
     	}
     	
     	options.setRatingOption(config.getRatingOption());
