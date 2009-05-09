@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URL;
 
 import javax.swing.filechooser.FileSystemView;
@@ -122,30 +123,34 @@ public class SysUtil {
 				if (SysUtil.isMac())
 					url = new File(SysUtil.getConfigDir(), conf).toURI().toURL();
 				else {
-
-					long t = FileUtil.getFile(conf).lastModified();
-
-					// The newest config file will be used
-					if (FileUtil.getFile("config/" + conf).lastModified() > t)
-						conf = "config/" + conf;
-
-					// Change default location on Vista from program directory to System.getenv("APPDATA")
-					if (SysUtil.isWindowsVista() || SysUtil.isWindows7()) {
-						File newConfig = new File(SysUtil.getConfigDir(), "Config.ini");
-
-						if (newConfig.isFile()) {
-							url = newConfig.toURI().toURL();
-						}
-						else 
-							url = FileUtil.getFileURL(conf);
+					
+					// First check if Vista of Win7
+					// Changed the default location on Vista from program directory to System.getenv("APPDATA")
+					
+					if (isWindowsVista() || isWindows7()) {
+						File config = new File(getConfigDir(), conf);
+						
+						if (config.isFile())
+							url = config.toURI().toURL();
 					}
-					else {
-						url = FileUtil.getFileURL(conf);
+					
+					if (url == null) {
+
+						long t = FileUtil.getFile(conf).lastModified();
+
+						// The newest config file will be used
+						if (FileUtil.getFile("config/" + conf).lastModified() > t)
+							conf = "config/" + conf;
+
+						URL urlTmp = FileUtil.getFileURL(conf);
+
+						if (!new File(urlTmp.toURI()).isFile())
+							url = urlTmp;
 					}
 					
 					// if config file isn't found, check old install dir
-					if (!new File(url.toString()).isFile()) {
-						
+					if (url == null) {
+						log.debug("Check old install dir");
 					// changed default install directory in cross-platform installer from "MeD's Movie Manager" to "MeDs-Movie-Manager"
 						File userDir = new File(getUserDir());
 
