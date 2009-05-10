@@ -438,6 +438,11 @@
 			<fileset dir="${dist}" includes="**/*" />
 		</delete>
 
+		<delete includeemptydirs="true">
+			<fileset dir="${build}/net" />
+		</delete>
+		
+
 		<delete file="${build}/MovieManager.jar" />
 	</target>
 
