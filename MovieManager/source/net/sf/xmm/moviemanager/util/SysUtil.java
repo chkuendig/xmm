@@ -224,15 +224,18 @@ public class SysUtil {
     
     /* Adds all the files ending in .jar to the classpath */
     public static void includeJarFilesInClasspath(String path) {
-        
+            	
         URL url = FileUtil.getFileURL(path);
-        
+                
         if (url.toExternalForm().startsWith("http://")) //$NON-NLS-1$
             return;
-        
-        File dir = new File(url.getPath());
-        
+                
         try {
+        	File dir = new File(url.toURI());
+        	
+        	if (!dir.isDirectory())
+        		return;
+        	
             File [] jarList = dir.listFiles();
             
             if (jarList != null) {
