@@ -422,68 +422,67 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 						}
 					}
 				}
-				
 				MovieManager.getDialog().toolBar.setEnablePlayButton(enable);
-				
-				// If no cover available, the "no cover iamge" is used
-				if (nocover) {
+			}
 
-					if (nocoverName == null || !nocoverName.equals(MovieManager.getConfig().getNoCoverSmall())) {
-						nocoverName = MovieManager.getConfig().getNoCoverSmall();
-						nocoverData = FileUtil.getResourceAsByteArray("/images/" + MovieManager.getConfig().getNoCoverSmall());
-					}
+			// If no cover available, the "no cover image" is used
+			if (nocover) {
 
-					coverData = nocoverData;
-
-					// Writes the no cover image to cover directory
-					if (MovieManager.getConfig().getHTMLViewDebugMode() && 
-							!(MovieManager.getIt().getDatabase().isMySQL() && !MovieManager.getConfig().getStoreCoversLocally())) {
-						
-						File cover = new File(MovieManager.getConfig().getCoversPath());
-						
-						// Valid cover dir
-						if (cover.isDirectory()) {
-							cover = new File(cover, MovieManager.getConfig().getNoCoverSmall());
-							
-							// Create nocover file on disk
-							if (!cover.isFile()) {
-								FileUtil.writeToFile(nocoverData, cover);
-							}
-							coverFile = cover;
-						}
-					}
+				if (nocoverName == null || !nocoverName.equals(MovieManager.getConfig().getNoCoverSmall())) {
+					nocoverName = MovieManager.getConfig().getNoCoverSmall();
+					nocoverData = FileUtil.getResourceAsByteArray("/images/" + MovieManager.getConfig().getNoCoverSmall());
 				}
 
-				// Gets the cover height, and creates the image object
-				try {
-					InputStream in = new ByteArrayInputStream(coverData);
-					
-					if (in != null) {
+				coverData = nocoverData;
 
-						coverDim = new Dimension(97, 145);
-						
-						image = javax.imageio.ImageIO.read(in);
-		
-						if (nocover){
-							coverDim.width = image.getWidth();
-							coverDim.height = image.getHeight();
+				// Writes the no cover image to cover directory
+				if (MovieManager.getConfig().getHTMLViewDebugMode() && 
+						!(MovieManager.getIt().getDatabase().isMySQL() && !MovieManager.getConfig().getStoreCoversLocally())) {
+
+					File cover = new File(MovieManager.getConfig().getCoversPath());
+
+					// Valid cover dir
+					if (cover.isDirectory()) {
+						cover = new File(cover, MovieManager.getConfig().getNoCoverSmall());
+
+						// Create nocover file on disk
+						if (!cover.isFile()) {
+							FileUtil.writeToFile(nocoverData, cover);
 						}
-						else if (MovieManager.getConfig().getPreserveCoverAspectRatio() != 0) {														
-
-							if (MovieManager.getConfig().getPreserveCoverAspectRatio() == 1 || model instanceof ModelEpisode || nocover)
-								coverDim.height = ((97*image.getHeight())/image.getWidth());
-						} 
-
-						if (coverDim.height > 145)
-							coverDim.height = 145;
-								
+						coverFile = cover;
 					}
-				} catch (Exception e) {
-					log.error("Exception: " + e.getMessage(), e); //$NON-NLS-1$
-				} 
+				}
 			}
+
+			// Gets the cover height, and creates the image object
+			try {
+				InputStream in = new ByteArrayInputStream(coverData);
+
+				if (in != null) {
+
+					coverDim = new Dimension(97, 145);
+
+					image = javax.imageio.ImageIO.read(in);
+
+					if (nocover){
+						coverDim.width = image.getWidth();
+						coverDim.height = image.getHeight();
+					}
+					else if (MovieManager.getConfig().getPreserveCoverAspectRatio() != 0) {														
+
+						if (MovieManager.getConfig().getPreserveCoverAspectRatio() == 1 || model instanceof ModelEpisode || nocover)
+							coverDim.height = ((97*image.getHeight())/image.getWidth());
+					} 
+
+					if (coverDim.height > 145)
+						coverDim.height = 145;
+
+				}
+			} catch (Exception e) {
+				log.error("Exception: " + e.getMessage(), e); //$NON-NLS-1$
+			} 
 		}
-	
+		
 		Image cover = null;
 
 		if (image != null)
@@ -492,7 +491,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		// Find cover dimension
 		if (nocover && image != null)
 			coverDim =  new Dimension(image.getWidth(), image.getHeight());
-
+		
 		if (MovieManager.getDialog().getCurrentMainTabIndex() == 0)
 			updateStandardPanel(model, cover);
 		else
@@ -833,7 +832,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	
 		if (coverPath == null)
 			coverPath = "$CoverSmall$";
-
 
 		//String cover = "style=\"width:" + coverDim.width + "px;height:" + coverDim.height + "px;\" src=\"" + coverPath + "\" alt=\"Cover\"";
 		String cover = "style=\"width:" + coverDim.width + "px;height:" + coverDim.height + "px;\" src=\""+coverPath+"\" alt=\"Cover\"";
