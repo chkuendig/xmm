@@ -134,24 +134,24 @@ public class SysUtil {
 							url = config.toURI().toURL();
 					}
 					
+					// Find config in install directory
 					if (url == null) {
 
-						long t = FileUtil.getFile(conf).lastModified();
-
-						// The newest config file will be used
-						if (FileUtil.getFile("config/" + conf).lastModified() > t)
-							conf = "config/" + conf;
-
-						URL urlTmp = FileUtil.getFileURL(conf);
-
-						if (!new File(urlTmp.toURI()).isFile())
-							url = urlTmp;
+						File conf1 = FileUtil.getFile("config/" + conf);
+						File conf2 = FileUtil.getFile(conf);
+												
+						if (conf1.isFile()) {
+							url = FileUtil.getFileURL("config/" + conf);
+						}
+						else if (conf2.isFile()) {
+							url = FileUtil.getFileURL(conf);
+						}
 					}
 					
 					// if config file isn't found, check old install dir
 					if (url == null) {
 					
-					// changed default install directory in cross-platform installer from "MeD's Movie Manager" to "MeDs-Movie-Manager"
+					// changed default install directory from "MeD's Movie Manager" to "MeDs-Movie-Manager"
 						File userDir = new File(getUserDir());
 
 						if (!userDir.getName().equals("MeD's Movie Manager")) {
