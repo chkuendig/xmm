@@ -30,6 +30,7 @@ public class OSXAdapter extends ApplicationAdapter {
 		menuBar.setDatabaseComponentsEnable(false);
 	}
 
+	
 	// The main entry-point for this functionality.  This is the only method
 	// that needs to be called at runtime, and it can easily be done using
 	// reflection (see MyApp.java) 
@@ -58,11 +59,9 @@ public class OSXAdapter extends ApplicationAdapter {
 
 			// Sets the image in the bottom menu bar in OS x (even though it's NOT run in an application bundle)
 			//defaultApplication.setApplicationIconImage(bufferedImage);
-
-			throw new RuntimeException();
 			
 		} catch (RuntimeException e) {
-			log.warn("Error occured while registering OS X Application:" + e.getMessage());
+			log.warn("Error occured while registering OS X Application:" + e.getMessage(), e);
 		}
 	}
 	// implemented handler methods.  These are basically hooks into existing 
