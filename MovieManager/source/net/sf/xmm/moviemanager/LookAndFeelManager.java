@@ -287,6 +287,8 @@ public class LookAndFeelManager {
         
         if (SysUtil.isMac()) {
          	
+        	log.debug("Setting up OS X L&F");
+        	
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("apple.awt.showGrowBox", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MeD's Movie Manager");
@@ -311,26 +313,30 @@ public class LookAndFeelManager {
     }
     
     public static void macOSXRegistration() {
+    	
         if (SysUtil.isMac()) {
-            try {
+        
+        	log.debug("Registering OS X application menu");
+        	
+        	try {
                 Class<?> osxAdapter = ClassLoader.getSystemClassLoader().loadClass("net.sf.xmm.moviemanager.util.mac.OSXAdapter");
-                
                 Class<?>[] defArgs = {DialogMovieManager.class};
-                Method registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication", defArgs);
                 
+                Method registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication", defArgs);
+                 
                 if (registerMethod != null) {
                     Object[] args = { MovieManager.getDialog() };
                     registerMethod.invoke(osxAdapter, args);
                 }
-                // This is slightly gross.  to reflectively access methods with boolean args, 
-                // use "boolean.class", then pass a Boolean object in as the arg, which apparently
-                // gets converted for you by the reflection system.
+             
                 defArgs[0] = boolean.class;
                 Method prefsEnableMethod =  osxAdapter.getDeclaredMethod("enablePrefs", defArgs);
+               
                 if (prefsEnableMethod != null) {
                     Object args[] = {Boolean.TRUE};
                     prefsEnableMethod.invoke(osxAdapter, args);
                 }
+                
             } catch (NoClassDefFoundError e) {
                 // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
                 // because OSXAdapter extends ApplicationAdapter in its def
@@ -340,11 +346,9 @@ public class LookAndFeelManager {
                 // above NoClassDefFoundError first.
                 log.error("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")", e);
             } catch (Exception e) {
-                log.error("Exception while loading the OSXAdapter:");
-                e.printStackTrace();
+                log.error("Exception while loading the OSXAdapter:", e);
             } catch (Error e) {
-            	log.error("Exception while loading the OSXAdapter:");
-                e.printStackTrace();
+            	log.error("Exception while loading the OSXAdapter:", e);
             }
         }
     }
