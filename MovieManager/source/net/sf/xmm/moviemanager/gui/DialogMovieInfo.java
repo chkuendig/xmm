@@ -1899,7 +1899,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			
 			fileChooser.setFileFilter(new CustomFileFilter(new String[] { "*.*" }, filterChoices[0])); //$NON-NLS-1$
 
-			if (SysUtil.isWindows())
+			//if (SysUtil.isWindows())
 				fileChooser.setFileFilter(new CustomFileFilter(new String[] { "*.*" }, filterChoices[1])); //$NON-NLS-1$
 
 			fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[] {
