@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager.fileproperties;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
@@ -483,8 +484,9 @@ abstract class FileProperties {
 
 	/**
 	 * Searchs in the inputStream stream the name following the string id (seperated by a \t).
+	 * @throws IOException 
 	 **/
-	protected String findName(InputStream stream, String id) throws Exception {
+	protected String findName(InputStream stream, String id) throws IOException {
 
 		if (stream == null || id == null)
 			return "";
