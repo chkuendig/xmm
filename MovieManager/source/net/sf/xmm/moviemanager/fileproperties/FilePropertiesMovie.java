@@ -27,6 +27,9 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.gui.DialogAlert;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
 import org.apache.log4j.Logger;
@@ -38,6 +41,8 @@ public class FilePropertiesMovie {
 
 	Logger log = Logger.getLogger(getClass());
 
+	private String mediaInfoUrl = "http://mediainfo.sourceforge.net/en/Download";
+	
 	/**
 	 * The filesize.
 	 **/
@@ -129,7 +134,7 @@ public class FilePropertiesMovie {
 	public FilePropertiesMovie(String filePath, int useMediaInfo) throws Exception {
 
 		FileProperties fileProperties = null;
-
+		
 		try {
 			/* The known magic header bytes... */
 			final int[][] MAGIC_BYTES = {
@@ -214,7 +219,7 @@ public class FilePropertiesMovie {
 
 					case 2: {
 
-						if (SysUtil.isWindows()) {
+						//if (SysUtil.isWindows()) {
 							try {
 								fileProperties = new FilePropertiesMediaInfo(filePath);
 								break;
@@ -222,7 +227,7 @@ public class FilePropertiesMovie {
 								fileProperties = null;
 								log.error("Exception: " + e.getMessage());
 							}
-						}
+						//	}
 
 						if (next == 1) {
 							next = 0;
@@ -278,6 +283,25 @@ public class FilePropertiesMovie {
 					/* Closes the input stream... */
 					dataStream.close();
 
+				} catch (UnsatisfiedLinkError err) {
+					
+					System.err.println("index:" + err.getMessage().indexOf("Unable to load library 'mediainfo"));
+					
+					// Unable to load library 'mediainfo'
+					if (err.getMessage().indexOf("Unable to load library 'mediainfo") != -1) {
+						log.debug("MediaInfo library is missing.");
+						
+						if (SysUtil.isWindows()) {
+							
+						} else if (SysUtil.isLinux()) {
+							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "MediaInfo library not found!", 
+									"<html>The MediaInfo library could not be found. <br>Please go to <a href=\""+ 
+									mediaInfoUrl + "\">"+ mediaInfoUrl +
+									"</a> and install the appropriate package for your GNU+Linux distribution.</html>", true);
+							GUIUtil.show(alert, true);
+						}
+					}
+					
 				} catch (Exception e) {
 					log.error("Exception: " + e.getMessage(), e);
 
