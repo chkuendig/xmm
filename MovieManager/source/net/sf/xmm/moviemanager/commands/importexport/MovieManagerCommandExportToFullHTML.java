@@ -220,7 +220,7 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 		String fileName = outputFile.getName();
 
 		if (fileName.endsWith(".htm") || fileName.endsWith(".html")) {
-			fileName = fileName.substring(0, fileName.indexOf("."));
+			fileName = fileName.substring(0, fileName.lastIndexOf("."));
 		}
 
 		StringBuffer template = null;
@@ -570,7 +570,7 @@ class HTMLMovieGroup {
 
 					coverHeight = 145;
 
-					/* Creates the output file... */
+					/* Creates the output cover file... */
 					coverOutputFile = new File(coversPath, coverFileName);
 	
 					boolean nocover = false;
@@ -582,7 +582,7 @@ class HTMLMovieGroup {
 						nocover = true;
 					}
 					
-					if (nocover) {
+					if (!nocover) {
 						if (MovieManager.getIt().getDatabase().isMySQL()) {
 
 							// Write cover file to disk
