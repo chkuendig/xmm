@@ -21,8 +21,11 @@
 package net.sf.xmm.moviemanager.commands.importexport;
 
 import java.awt.Dimension;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
@@ -191,10 +194,7 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 					
 					String fName = filepath + movieGroup.getFileName();
 
-					FileOutputStream writer = new FileOutputStream(fName);
-
-					writer.write(output.toString().getBytes());
-					writer.close();
+					FileUtil.writeToFile(fName, output, "UTF8");
 					
 					movieGroup = null;
 				}
