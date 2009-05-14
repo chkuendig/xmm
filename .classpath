@@ -31,5 +31,6 @@
 	<classpathentry kind="lib" path="MovieManager/lib/mac/AppleJavaExtensions.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="MovieManager/lib/skinlf.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/jna-3.0.9.jar"/>
 	<classpathentry kind="output" path="MovieManager"/>
 </classpath>
