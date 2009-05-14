@@ -81,6 +81,7 @@ public class ModelDatabaseSearch {
     private int dateOption = 0; 
     private String date = "";
     
+    public boolean duplicates = false;
     
     private HashMap<String, String> searchAlias;
     
