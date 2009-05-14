@@ -2585,20 +2585,12 @@ abstract public class Database {
 	}
 
 
-	
-	public synchronized String getSmallMoviesSelectStatement() {
-		return getMoviesSelectStatement(false);
-	}
-	
-	public synchronized String getMoviesSelectStatement() {
-		return getMoviesSelectStatement(true);
-	}
-	
-	public synchronized String getMoviesSelectStatement(boolean full) {
+		
+	public synchronized String getMoviesSelectStatement(ModelDatabaseSearch options) {
 
 		StringBuffer buf = new StringBuffer();
 		
-		if (full) {
+		if (options.getFullGeneralInfo) {
 			buf.append("SELECT " + quotedGeneralInfoString + ".\"ID\", " +
 					quotedGeneralInfoString + ".\"Imdb\", "+
 					quotedGeneralInfoString + ".\"Cover\", "+
@@ -2642,6 +2634,8 @@ abstract public class Database {
 
 		return buf.toString();
 	}
+	
+
 
 	public synchronized ArrayList<ModelMovie> getMoviesList() {
 		return getMoviesList("Title");
@@ -2880,14 +2874,14 @@ abstract public class Database {
 
 						if (value.equals("NOT")) {
 							if ((i > 0) && !(values[i-1].equals("AND") || values[i-1].equals("OR") || values[i-1].equals(")"))) {
-								queryTemp += " " + options.getDefaultOperator();
+								queryTemp += " " + options.getDefaultOperator(); // AND or OR
 							}
 						}
 						queryTemp += " " + value + " ";
 					}
 				}
 				else {
-					errorMessage = "Syntax error (parantheses)";
+					errorMessage = "Syntax error - parentheses mismatch";
 					return null;
 				}
 			}
@@ -3010,7 +3004,8 @@ abstract public class Database {
 				queryTemp += " ( " + filterValues + " ) ";
 			}
 			else {
-
+				// Value is not a parenthesis or keyword (AND, OR, NOT, XOR)
+				
 				log.debug("i:" + i);
 				if (i > 0)
 					log.debug("values[i-1]:" + values[i-1]);
@@ -3080,6 +3075,11 @@ abstract public class Database {
 
 		String filter = options.getFilterString();
 
+		if (filter.trim().startsWith("DUPLICATES")) {
+			options.duplicates = true;
+			return "";
+		}
+		
 		filter = filter.replaceAll("\\("," \\( ");
 		filter = filter.replaceAll("\\)"," \\) ");
 
@@ -3100,7 +3100,7 @@ abstract public class Database {
 			filter = filter.substring(0, filter.lastIndexOf(" "));
 
 
-		/* Check if number and placement of parantheses is correct */
+		/* Check if number and placement of parentheses is correct */
 
 		int par1 = 0; /* '(' */
 		int par2 = 0; /* ')' */
@@ -3114,14 +3114,14 @@ abstract public class Database {
 				if (par1 > par2)
 					par2++;
 				else {
-					errorMessage = "Syntax error (parantheses)";
+					errorMessage = "Syntax error - parantheses mismatch";
 					return null;
 				}
 			}
 		}
 
 		if (par1 > par2) {
-			errorMessage = "Syntax error (parantheses)";
+			errorMessage = "Syntax error - parantheses mismatch";
 			return null;
 		}
 
@@ -3162,11 +3162,14 @@ abstract public class Database {
 
 		String selectAndJoin;
 
+		/*
 		if (options.getFullGeneralInfo) {
 			selectAndJoin = getMoviesSelectStatement();
 		}
 		else
 			selectAndJoin = getSmallMoviesSelectStatement();
+		*/
+		selectAndJoin = getMoviesSelectStatement(options);
 		
 		String orderBy = options.getOrderCategory();
 		String joinTemp = "";
@@ -3389,6 +3392,23 @@ abstract public class Database {
 		
 		String sqlQuery = selectAndJoin + " " + sqlAdcancedOptions + " " + sqlFilter + " ";
 	
+		System.err.println("selectAndJoin:" + selectAndJoin);
+		System.err.println("sqlAdcancedOptions:" + sqlAdcancedOptions);
+		System.err.println("sqlFilter:" + sqlFilter);
+		System.err.println("sqlQuery:" + sqlQuery);
+		
+		if (options.duplicates) {
+			
+			String dupQuery = getDuplicateQueryString(options);
+			
+			System.err.println("dupQuery:" + dupQuery);
+			
+			if (!dupQuery.trim().equals("")) {
+				sqlQuery += (options.where ? " AND " : " WHERE ") + dupQuery;
+			}
+		}
+		
+		
 		String orderBy = options.getOrderCategory();
 
 		if (isMySQL())
@@ -3477,7 +3497,115 @@ abstract public class Database {
 		return list;
 	}
 
-	
+
+	private String getDuplicateQueryString(ModelDatabaseSearch options) {
+
+		String dupQuery = "";
+		
+		String dupString = options.getFilterString().trim();
+		dupString = dupString.substring("DUPLICATES".length());
+
+		String [] categories = dupString.split("\\s+");
+
+		String categoriesQuery = "";
+
+		String mainCategory = null;
+		
+		for (int i = 0; i < categories.length; i++) {
+
+			String tmp = null;
+
+			if (categories[i].equalsIgnoreCase("Title")) {
+				tmp = "Title";
+			}
+			else if (categories[i].equalsIgnoreCase("Date")) {
+				tmp = "Date";
+			}
+			else if (categories[i].equalsIgnoreCase("Imdb")) {
+				tmp = "Imdb";
+			}
+			else
+				continue;
+
+			if (categoriesQuery.length() > 0)
+				categoriesQuery += ", ";
+			else {
+				mainCategory = quote + tmp + quote;
+				
+				// change the main order category of the entire query
+				options.setOrderCategory(tmp);
+			}
+			categoriesQuery += quote + tmp + quote;
+		}
+		
+		System.err.println("categoriesQuery:" + categoriesQuery);
+		
+		// No extra arguments provided. Use default title and date
+		if (categoriesQuery.length() == 0) {
+			categoriesQuery = quote + "Title" + quote+", "+ quote + "Date" + quote;
+			mainCategory = quote + "Title" + quote;
+		}
+		
+
+		/*
+			dupQuery += "\"Imdb\" in (" +
+			   "select \"Imdb\" "+
+			   "FROM " + quotedGeneralInfoString +
+			   " GROUP BY \"Imdb\" "+
+			   "HAVING COUNT(\"Imdb\") > 1 " +
+	           ") ";
+		 */
+
+		/*
+			dupQuery += "\"Title\" in (" +
+					   " select \"Title\""+
+					   " FROM " + quotedGeneralInfoString +
+					   " GROUP BY \"Title\", \"Date\" "+
+					   "HAVING COUNT(\"Title\") > 1" +
+			           ") ";
+		 */
+/*
+		dupQuery += quote + "Imdb" + quote +" in (" +
+		" SELECT " +quote+ "Imdb" + quote +
+		" FROM " + quotedGeneralInfoString +
+		" GROUP BY " +quote+ "Imdb" + quote + 
+		" HAVING COUNT(" +quote+ "Imdb" +quote+ ") > 1" +
+		") ";
+*/
+/*
+		dupQuery += quote + "Title" + quote +" in (" +
+		" SELECT " +quote+ "Title" + quote +
+		" FROM " + quotedGeneralInfoString +
+		" GROUP BY " + categoriesQuery + 
+		" HAVING COUNT(" +quote+ "Title" +quote+ ") > 1" +
+		") ";
+	*/	
+		
+		dupQuery += mainCategory +" in (" +
+		" SELECT " + mainCategory +
+		" FROM " + quotedGeneralInfoString +
+		" WHERE " + mainCategory + " NOT LIKE \"\"" +
+		" GROUP BY " + categoriesQuery + 
+		" HAVING COUNT(" + mainCategory + ") > 1" +
+		") ";
+		
+		
+		return dupQuery;
+
+		/*
+		SELECT "Title"
+FROM "General Info"
+
+WHERE "Title" in (
+   select "Title"
+   from "General Info"
+   group by "Title"
+   having count("Title") > 1
+)
+order by "Title"
+		 */
+	}
+
 	public synchronized ArrayList<ModelEpisode> getEpisodeList() {
 		return getEpisodeList("movieID");
 	}
