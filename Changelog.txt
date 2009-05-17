@@ -10,6 +10,7 @@ Version 2.8.2 (-may-2009)
 - New 
 
   - Finding duplicate entries can now be done using the command "DUPLICATES" in the search filter.
+  - Added Splash Screen during loading of the movie manager for Java 1.6 and later.
 
 - General improvements:
 
