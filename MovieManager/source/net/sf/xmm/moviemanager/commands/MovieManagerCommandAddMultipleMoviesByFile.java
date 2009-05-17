@@ -30,6 +30,7 @@ import net.sf.xmm.moviemanager.gui.DialogAddMultipleMovies;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogIMDB;
 import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileNode;
 import net.sf.xmm.moviemanager.util.GUIUtil;
@@ -48,7 +49,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 
 	String excludeString;
 	boolean enableExludeString = false;
-	int multiAddSelectOption;
+	ImdbImportOption multiAddSelectOption;
 	boolean enableExludeParantheses = false;
 	boolean enableExludeCDNotations = false;
 	boolean enableExludeIntegers = false;
@@ -96,7 +97,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		enableExludeString = damm.getMultiAddExcludeStringEnabled();
 		excludeString = damm.getMultiAddExcludeString();
 
-		ArrayList <FileNode> fileList = damm.getMoviesToAdd();
+		ArrayList <DialogAddMultipleMovies.Files> fileList = damm.getMoviesToAdd();
 
 		if (fileList == null) {
 			return;
@@ -119,9 +120,9 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	}
 
 
-	protected void createMovies(ArrayList<FileNode> fileList) {
+	protected void createMovies(ArrayList<DialogAddMultipleMovies.Files> fileList) {
 
-		FileNode fileNode;
+		DialogAddMultipleMovies.Files fileNode;
 		File [] tempFile = new File[1];
 
 		String searchString = null; /*Used to search on imdb*/
@@ -129,8 +130,21 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 
 		while (!fileList.isEmpty()) {
 
-			fileNode = (FileNode) fileList.remove(0);
-			tempFile[0] =  fileNode.getFile();
+			fileNode = (DialogAddMultipleMovies.Files) fileList.remove(0);
+			
+			if (fileNode.getAddedFiles().length == 0)
+				tempFile = new File[]{fileNode.getFile()};
+			else {
+				tempFile = new File[fileNode.getAddedFiles().length + 1];
+				tempFile[0] = fileNode.getFile();
+				
+				DialogAddMultipleMovies.Files [] addedFiles = fileNode.getAddedFiles();
+				
+				for (int i = 0; i < addedFiles.length; i++) {
+					tempFile[i+1] = addedFiles[i].getFile();
+				}				
+			}
+						
 			String searchTitle = tempFile[0].getName();
 
 			log.debug("Processing:" + searchTitle);
@@ -192,6 +206,8 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 			/*removes dots, double spaces, underscore...*/
 			searchString = StringUtil.removeVarious(searchString);
 
+			System.err.println("multiAddSelectOption:" + multiAddSelectOption);
+			
 			executeCommandGetIMDBInfoMultiMovies(searchString, searchTitle, multiAddSelectOption, addToThisList);
 
 			if (dropImdbInfo)
@@ -250,12 +266,14 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	/**
 	 * Gets the IMDB info for movies (multiAdd)
 	 **/
-	public void executeCommandGetIMDBInfoMultiMovies(String searchString, String filename, int multiAddSelectOption, String addToThisList) {
+	public void executeCommandGetIMDBInfoMultiMovies(String searchString, String filename, 
+			ImdbImportOption multiAddSelectOption, String addToThisList) {
 
 		/* Checks the movie title... */
 		log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
 		if (!searchString.equals("")) { //$NON-NLS-1$
-			DialogIMDB dialogIMDB = new DialogIMDB(movieInfoModel.model, searchString, filename, movieInfoModel.getMultiAddFile(), multiAddSelectOption, addToThisList);
+			DialogIMDB dialogIMDB = new DialogIMDB(movieInfoModel.model, searchString, filename, movieInfoModel.getMultiAddFile(), 
+					multiAddSelectOption, addToThisList);
 			cancel = dialogIMDB.cancelSet;
 			cancelAll = dialogIMDB.cancelAllSet;
 			dropImdbInfo = dialogIMDB.dropImdbInfoSet;
