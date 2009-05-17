@@ -816,7 +816,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 			if (!nodesInFileLists.containsKey(files.get(i))) {
 				nodesInFileLists.put(files.get(i), files.get(i));
-				model.addElement(files.get(i));
+				model.addElement(new Files(files.get(i).getFile()));
 			}
 		}
 	}
@@ -1308,11 +1308,11 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			if (!isSelected)
 				return;
 			
-			makePopupMenu(event.getX(), event.getY(), event);
+			makeFilesToBeAddedPopupMenu(event.getX(), event.getY(), event);
 		}
 	}
 	
-	public void makePopupMenu(int x, int y, MouseEvent event) {
+	public void makeFilesToBeAddedPopupMenu(int x, int y, MouseEvent event) {
 
 		final int[] selectedIndexes = filesToAddList.getSelectedIndices();
 		
