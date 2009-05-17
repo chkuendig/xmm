@@ -30,6 +30,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogTableImport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import com.Ostermiller.util.CSVParse;
@@ -96,7 +97,7 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportHandl
 
 			/* First resetting the info already present */
 
-			if (settings.multiAddIMDbSelectOption != -1) {
+			if (settings.multiAddIMDbSelectOption != ImdbImportOption.off) {
 
 				executeCommandGetIMDBInfoMultiMovies(title, title, settings, (ModelMovie) movieList.get(i));
 			}
