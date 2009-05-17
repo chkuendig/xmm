@@ -3505,46 +3505,24 @@ abstract public class Database {
 		String dupString = options.getFilterString().trim();
 		dupString = dupString.substring("DUPLICATES".length());
 
-		String [] categories = dupString.split("\\s+");
+		String category = dupString.trim();
 
-		String categoriesQuery = "";
+		// Default values
+		String categoriesQuery = quote + "Title" + quote+", "+ quote + "Date" + quote;
+		String mainCategory = quote + "Title" + quote;
 
-		String mainCategory = null;
-		
-		for (int i = 0; i < categories.length; i++) {
-
-			String tmp = null;
-
-			if (categories[i].equalsIgnoreCase("Title")) {
-				tmp = "Title";
-			}
-			else if (categories[i].equalsIgnoreCase("Date")) {
-				tmp = "Date";
-			}
-			else if (categories[i].equalsIgnoreCase("Imdb")) {
-				tmp = "Imdb";
-			}
-			else
-				continue;
-
-			if (categoriesQuery.length() > 0)
-				categoriesQuery += ", ";
-			else {
-				mainCategory = quote + tmp + quote;
-				
-				// change the main order category of the entire query
-				options.setOrderCategory(tmp);
-			}
-			categoriesQuery += quote + tmp + quote;
+		if (category.equalsIgnoreCase("Title")) {
+			mainCategory = quote + "Title" + quote;
+			categoriesQuery = quote + "Title" + quote;
+		}
+		else if (category.equalsIgnoreCase("Imdb")) {
+			mainCategory = quote + "Imdb" + quote;
+			categoriesQuery = quote + "Imdb" + quote;
+			// change the main order category of the entire query
+			options.setOrderCategory("Imdb");
 		}
 		
 		System.err.println("categoriesQuery:" + categoriesQuery);
-		
-		// No extra arguments provided. Use default title and date
-		if (categoriesQuery.length() == 0) {
-			categoriesQuery = quote + "Title" + quote+", "+ quote + "Date" + quote;
-			mainCategory = quote + "Title" + quote;
-		}
 		
 
 		/*
@@ -3584,7 +3562,7 @@ abstract public class Database {
 		dupQuery += mainCategory +" in (" +
 		" SELECT " + mainCategory +
 		" FROM " + quotedGeneralInfoString +
-		" WHERE " + mainCategory + " NOT LIKE \"\"" +
+		" WHERE " + mainCategory + " NOT LIKE ''" +
 		" GROUP BY " + categoriesQuery + 
 		" HAVING COUNT(" + mainCategory + ") > 1" +
 		") ";
