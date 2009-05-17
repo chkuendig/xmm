@@ -372,13 +372,15 @@ public class StringUtil {
 	}
 	
 	
+	public enum FilenameCloseness {error, no, litte, some, much, almostidentical};
+	
 	/**
 	 * Computes the closeness between to file names 
 	 * @param file1
 	 * @param file2
-	 * @return 0 == no, 1 == a little, 2 == some similarities, 3 == much similarity, 4 == almost identical 
+	 * @return enum FilenameCloseness
 	 */
-	public static int compareFileNames(String fName1, String fName2) {
+	public static FilenameCloseness compareFileNames(String fName1, String fName2) {
 
 		try {
 			String output = "";
@@ -413,7 +415,7 @@ public class StringUtil {
 			
 			if (editRating < 0.1) {
 				output += "filene hører sammen";
-				return 4;
+				return FilenameCloseness.almostidentical;
 			} else if (editRating < 0.3) { 
 				
 				if (subRating < 0.20) {
@@ -422,27 +424,28 @@ public class StringUtil {
 				else
 					output += "filene hører godt sammen";
 				
-				return 3;
+				return FilenameCloseness.much;
 			}
 			else if (editRating < 0.50 || subRating > 0.30) {
 				output += "filene hører nesten sammen";
-				return 2;
+				return FilenameCloseness.some;
 			}	
 			else if (comonStartRating > 0.3) {
 				output += "felles start";
-				return 1;
+				return FilenameCloseness.litte;
 			}
 			else {
 				output += "filene hører IKKE sammen";
-				return 0;
+				return FilenameCloseness.no;
 			}
 
 		} catch (Exception e) {
-			log.error("Exception:" + e.getMessage(), e);
+			System.err.println("Exception:" + e.getMessage());
 		}
 		
-		return -1;
+		return FilenameCloseness.error;
 	}
+	
 	
 	/**
 	 * This method ensures that the output String has only valid XML unicode characters as specified by the
