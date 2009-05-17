@@ -39,6 +39,7 @@ import net.sf.xmm.moviemanager.http.HttpSettings;
 import net.sf.xmm.moviemanager.models.AdditionalInfoFieldDefaultValues;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
 import net.sf.xmm.moviemanager.util.FileUtil;
@@ -266,7 +267,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private ArrayList <String> multiAddValidExtensions = new ArrayList<String>();
 	private String multiAddCustomExtensions = "";
 	
-	private int multiAddSelectOption = 0;
+	private ImdbImportOption multiAddSelectOption = ImdbImportOption.displayList;
 	private boolean multiAddEnableExludeParantheses;
 	private boolean multiAddEnableExludeCDNotation;
 	private boolean multiAddEnableExludeIntegers;
@@ -285,7 +286,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String importCSVseparator = ",";
 	private String importExtremeFilePath = "";
 	
-	private int importIMDbSelectOption = 0;
+	private ImdbImportOption importIMDbSelectOption = ImdbImportOption.off;
 	private boolean importIMDbInfoEnabled = true;
 	
 	/* Export */
@@ -1241,11 +1242,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		importIMDbInfoEnabled = enabled;
 	}
 	
-	public int getImportIMDbSelectOption() {
+	public ImdbImportOption getImportIMDbSelectOption() {
 		return importIMDbSelectOption;
 	}
 	
-	public void setImportIMDbSelectOption(int option) {
+	public void setImportIMDbSelectOption(ImdbImportOption option) {
 		importIMDbSelectOption = option;
 	}
 	
@@ -1370,12 +1371,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 	
 
-	public int getMultiAddSelectOption() {
+	public ImdbImportOption getMultiAddSelectOption() {
 		return multiAddSelectOption;
 	}
 
-	public void setMultiAddSelectOption(int o) {
-		multiAddSelectOption = o >= 0 ? o : 0;
+	public void setMultiAddSelectOption(ImdbImportOption o) {
+		multiAddSelectOption = o;
 	}
 
 	
@@ -2356,9 +2357,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("multiAddSelectOption:");
 
 			if (value != null) {
-				setMultiAddSelectOption(Integer.parseInt(value));
+				try {
+					setMultiAddSelectOption(ImdbImportOption.valueOf(value));
+				} catch (Exception e) {
+					log.warn("Exception:" + e.getMessage());
+				}
 			}
-
 
 			value = (String) config.get("multiAddEnableExludeParantheses:");
 
@@ -2964,7 +2968,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			value = (String) config.get("importIMDbSelectOption:");
 
 			if (value != null) {
-				setImportIMDbSelectOption(Integer.parseInt(value));
+				try {
+					setImportIMDbSelectOption(ImdbImportOption.valueOf(value));
+				} catch (Exception e) {
+					log.warn("Exception:" + e.getMessage());
+				}
 			}
 
 			value = (String) config.get("exportTextfilePath:");
