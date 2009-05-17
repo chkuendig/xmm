@@ -269,9 +269,9 @@ public class MovieManager {
     	else
     		options.setCurrentListNames(new ArrayList<String>(config.getCurrentLists()));
     	
-    	options.setShowUnlistedEntries(config.getShowUnlistedEntries() && options.getCurrentListNames().size() > 0);
-    	    	
+    	options.setShowUnlistedEntries(config.getShowUnlistedEntries());
     	options.setListOption(0);
+    	
     	
     	if (db != null) {
 	
