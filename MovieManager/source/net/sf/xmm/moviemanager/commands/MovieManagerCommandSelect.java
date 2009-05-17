@@ -75,6 +75,7 @@ import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeNode;
 import net.sf.xmm.moviemanager.util.BrowserOpener;
 import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
@@ -927,7 +928,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	public void mouseClicked(MouseEvent event) {
 		
 		/* If Button1 and more than 1 click the node is expanded/collapsed */
-		if (SwingUtilities.isLeftMouseButton(event)) {
+		if (GUIUtil.isLeftMouseButton(event)) {
 			if (event.getClickCount() >= 2) {
 				ExtendedJTree movieList = MovieManager.getDialog().getMoviesList();
 				int rowForLocation = movieList.getRowForLocation(event.getX(), event.getY());
@@ -980,15 +981,14 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		TreePath selectionRow =  null;
 		
 		if (rowForLocation == -1 || ((selectionRow = movieList.getPathForRow(rowForLocation)) == null)) {
-			log.warn("selectionRow is null - rowForLocation: -1");
 			return;
 		}
 				
 		ModelEntry leadSelectionObject = (ModelEntry) ((DefaultMutableTreeNode) selectionRow.getLastPathComponent()).getUserObject();
 		int selectionCount = movieList.getSelectionCount();
-		
+				
 		/* Button 2 */
-		if (SwingUtilities.isRightMouseButton(event)) {
+		if (GUIUtil.isRightMouseButton(event)) {
 
 			if (!movieList.isRowSelected(rowForLocation)) {
 				movieList.setSelectionRow(rowForLocation);
@@ -998,8 +998,9 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			makeMovieListPopupMenu(event.getX(), event.getY(), event, leadSelectionObject, selectionCount);
 		}
 
+		
 		/* Button 1 */
-		else if (SwingUtilities.isLeftMouseButton(event)) {
+		else if (GUIUtil.isLeftMouseButton(event)) {
 			
 			if (MovieManager.getConfig().getEnableCtrlMouseRightClick() && SysUtil.isCtrlPressed(event)) {
 				makeMovieListPopupMenu(event.getX(), event.getY(), event, leadSelectionObject, selectionCount);
@@ -1228,7 +1229,10 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	}
 }
 
-
+/**
+ * This class is used to make loading cover image from memory instead of disk from HTML panel
+ * @author Bro
+ */
 class XMMUserAgentContext extends SimpleUserAgentContext {
 	
 	byte [] imageData;
@@ -1242,7 +1246,10 @@ class XMMUserAgentContext extends SimpleUserAgentContext {
 	}	
 }
 
-
+/**
+ * This class is used to make loading cover image from memory instead of disk from HTML panel
+ * @author Bro
+ */
 class XMMHttpRequest extends net.sf.xmm.moviemanager.swing.extentions.XMMSimpleHttpRequest {
 		
 	URL url;
