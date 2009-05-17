@@ -31,6 +31,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogTableImport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandImportExcel extends MovieManagerCommandImportHandler {
@@ -91,7 +92,7 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportHan
 
 		if (title != null && !title.equals("")) {
 	
-			if (settings.multiAddIMDbSelectOption != -1) {
+			if (settings.multiAddIMDbSelectOption != ImdbImportOption.off) {
 				executeCommandGetIMDBInfoMultiMovies(title, title, settings, (ModelMovie) movieList.get(i));
 			}
 			return (String) ((ModelMovie) movieList.get(i)).getTitle();
