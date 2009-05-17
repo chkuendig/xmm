@@ -37,6 +37,7 @@ import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.util.SimpleMailbox;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
+import net.sf.xmm.moviemanager.util.StringUtil.FilenameCloseness;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerStreamerHandler;
 
 import org.apache.log4j.Logger;
@@ -86,7 +87,14 @@ public class MovieManagerCommandPlay implements ActionListener {
 			public void run() {
 
 				try {
-					if (cwd != null) {
+							
+					if (args != null && cwd != null) {
+						log.debug("Execute command from cwd:" + cwd);
+						log.debug("command:" + getCombined(args));
+						
+						p = Runtime.getRuntime().exec(args, null, cwd);
+					}
+					else if (cwd != null) {
 						log.debug("Execute file:" + command);
 						p = Runtime.getRuntime().exec(command, null, cwd);
 					} else if (args == null) {
@@ -181,10 +189,10 @@ public class MovieManagerCommandPlay implements ActionListener {
 
 							if (dirFiles[i].getName().endsWith(".xmm.sh") || dirFiles[i].getName().endsWith(".xmm.bat")) {
 
-								int rating = StringUtil.compareFileNames(dirFiles[i].getName(), mediaFile.getName());
+								FilenameCloseness closeness = StringUtil.compareFileNames(dirFiles[i].getName(), mediaFile.getName());
 
 								// File names are similar
-								if (rating > 2) {
+								if (closeness == FilenameCloseness.much || closeness == FilenameCloseness.almostidentical) {
 									final File dirFile = dirFiles[i];
 									final LaunchPlayer player = new LaunchPlayer(null, dirFile.getAbsolutePath(), mediaFile.getParentFile());
 									player.start();
@@ -195,6 +203,8 @@ public class MovieManagerCommandPlay implements ActionListener {
 					}
 				}
 				
+				File cwd = null;
+				
 				if (SysUtil.isWindows() && mmc.getUseDefaultWindowsPlayer()) {
 					cmd = "cmd.exe /C  ";
 
@@ -204,7 +214,7 @@ public class MovieManagerCommandPlay implements ActionListener {
 					}
 				}
 				else {
-					// each file is enclosed by quotes.	
+					
 					ArrayList<String> commandList = new ArrayList<String>();
 					
 					cmd = mmc.getMediaPlayerPath();
@@ -235,7 +245,31 @@ public class MovieManagerCommandPlay implements ActionListener {
 										
 					
 					for (int i= 0; i < files.length; i++) {
-						commandList.add(files[i]);
+												
+						
+						String filePath = files[i];
+						String parentPath = new File(filePath).getParentFile().getAbsolutePath();
+						
+						// If the parent path contains spaces, use parent path as cwd (current working directory)
+						if (parentPath.indexOf(" ") != -1) {
+							
+							if (cwd == null)
+								cwd = new File(parentPath);
+							
+							commandList.add(new File(filePath).getName());
+						}
+						else
+							commandList.add(filePath);
+						
+						//System.err.println("old:" + path);
+						
+						//path = path.replaceAll("\\s", "\\\\ ");
+						
+						//path = "\"" + path + "\"";
+						
+						//System.err.println("new:" + path);
+						
+						
 					}
 					
 					command = new String[commandList.size()];
@@ -245,11 +279,21 @@ public class MovieManagerCommandPlay implements ActionListener {
 				final String windowsDefault = cmd;
 				
 				/* Creating a Object wrapped in a Thread */
-				Thread t = new Thread(new LaunchPlayer(command, windowsDefault, null));
+				Thread t = new Thread(new LaunchPlayer(command, windowsDefault, cwd));
 				t.start();
 			}
 		}
 	}
+	
+	public static String getCombined(String [] args) {
+		String str = args[0];
+		
+		for (int i = 1; i < args.length; i++)
+			str += " " + args[i];
+		
+		return str;
+	}
+	
 }
 
 
