@@ -407,10 +407,12 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 								break;
 							//}
 						}
-						else {
-							// This is used because File.exists might provoke a popup window on (some versions of) Windows.
+						else if (SysUtil.isWindows()){
+							
 							String drive = tmp.substring(0, tmp.indexOf(":") + 1);
 
+							System.err.println("drive:" + drive);
+							
 							if (drive.length() == 0)
 								continue;
 
