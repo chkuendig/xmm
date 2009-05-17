@@ -40,6 +40,7 @@ import javax.swing.*;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
@@ -64,7 +65,7 @@ public class DialogIMDB extends JDialog {
     JTextField searchStringField;
     boolean multiAdd = false;
     boolean addInfoToExistingMovie = false;
-    int multiAddSelectOption = 0;
+    ImdbImportOption multiAddSelectOption = ImdbImportOption.displayList;
     File multiAddFile;
     JPanel panelMoviesList;
 
@@ -144,7 +145,7 @@ public class DialogIMDB extends JDialog {
      **/
     public DialogIMDB(ModelEntry modelEntry, String searchString, String filename, 
     		File multiAddFile, 
-    		int multiAddSelectOption, String addToThisList) {
+    		ImdbImportOption multiAddSelectOption, String addToThisList) {
     	    	
         /* Dialog creation...*/
         super(MovieManager.getDialog());
@@ -451,7 +452,7 @@ public class DialogIMDB extends JDialog {
     	getContentPane().add(all,BorderLayout.CENTER);
     	getContentPane().add(panelButtons,BorderLayout.SOUTH);
     	
-    	pack();
+    	
     	getMoviesList().ensureIndexIsVisible(0);
     	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
     			(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
@@ -461,7 +462,7 @@ public class DialogIMDB extends JDialog {
     	model.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.search-in-progress"), null)); //$NON-NLS-1$
     	listMovies.setModel(model);
 	
-    	
+    	pack();
     	
     	if (isMultiAdd() && !getUrlKeyOnly) { 
     		
@@ -605,13 +606,13 @@ public class DialogIMDB extends JDialog {
         
         /* checks the property settings entered in the multi add movie preferences*/
       	
-        if (multiAddSelectOption > 0) {
+        if (multiAddSelectOption != ImdbImportOption.off) {
             
         	// No hits on IMDb
         	if (listSize == 0) {
         		
         		// Show search dialog 
-        		if (multiAddSelectOption == 1 || multiAddSelectOption == 3)
+        		if (multiAddSelectOption == ImdbImportOption.displayList || multiAddSelectOption == ImdbImportOption.selectIfOnlyOneHit)
         			return 1;
         		// Add to skipped-list
         		else {
@@ -619,15 +620,13 @@ public class DialogIMDB extends JDialog {
         			return 0;
         		}
         	}
-        	else
         	// If only one hit option
-        	if (listSize == 1 && multiAddSelectOption == 3 || multiAddSelectOption == 4) {
+        	else if (listSize == 1 && multiAddSelectOption == ImdbImportOption.selectIfOnlyOneHit) {
         		executeCommandSelect();
         		return 0;
         	}
-        	else
         	// Option 'select first hit' and there are more than 0 hits
-        	if (multiAddSelectOption == 2 || multiAddSelectOption == 3) {
+        	else if (multiAddSelectOption == ImdbImportOption.selectFirst) {
         		executeCommandSelect();
         		return 0;
         	}            
