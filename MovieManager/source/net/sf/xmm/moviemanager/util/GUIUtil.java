@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
@@ -154,5 +155,15 @@ public class GUIUtil {
 		}
 
 		return listModel;
+	}
+	
+	
+	public static boolean isRightMouseButton(MouseEvent event) {
+		return event.getButton() == MouseEvent.BUTTON3;
+	}
+	
+	// SwingUtilities.isLeftButton seemed to return true on right button on OS X.
+	public static boolean isLeftMouseButton(MouseEvent event) {
+		return event.getButton() == MouseEvent.BUTTON1;
 	}
 } 
