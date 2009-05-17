@@ -3,6 +3,24 @@
    Changelog - MeD's Movie Manager
 ========================================
 
+
+
+Version 2.8.2 (-may-2009)
+
+- New 
+
+  - Finding duplicate entries can now be done using the command "DUPLICATES" in the search filter.
+
+- General improvements:
+
+  - Playing media files with space in the name should work better on GNU/Linux.
+
+- Bug fixes:
+
+  - Covers were not saved on full HTML export.
+  - Showing unlisted entries *only* was not possible.
+
+
 Version 2.8.1 (09-may-2009)
 
 - General improvements:
