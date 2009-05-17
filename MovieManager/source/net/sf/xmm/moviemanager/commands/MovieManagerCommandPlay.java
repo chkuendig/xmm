@@ -178,7 +178,7 @@ public class MovieManagerCommandPlay implements ActionListener {
 				String cmd = null;
 	
 				String [] files = fileLocation.split("\\*");
-								
+				
 				if (MovieManager.getConfig().getExecuteExternalPlayCommand()) {
 					File mediaFile = new File(files[0]);
 					
@@ -190,14 +190,14 @@ public class MovieManagerCommandPlay implements ActionListener {
 							if (dirFiles[i].getName().endsWith(".xmm.sh") || dirFiles[i].getName().endsWith(".xmm.bat")) {
 
 								FilenameCloseness closeness = StringUtil.compareFileNames(dirFiles[i].getName(), mediaFile.getName());
-
+					
 								// File names are similar
-								if (closeness == FilenameCloseness.much || closeness == FilenameCloseness.almostidentical) {
+							//	if (closeness == FilenameCloseness.much || closeness == FilenameCloseness.almostidentical) {
 									final File dirFile = dirFiles[i];
 									final LaunchPlayer player = new LaunchPlayer(null, dirFile.getAbsolutePath(), mediaFile.getParentFile());
 									player.start();
 									return;
-								}
+								//}
 							}
 						}
 					}
