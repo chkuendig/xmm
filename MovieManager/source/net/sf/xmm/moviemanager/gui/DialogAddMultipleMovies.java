@@ -23,6 +23,8 @@ package net.sf.xmm.moviemanager.gui;
 import info.clearthought.layout.TableLayout;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -32,9 +34,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -43,30 +49,45 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.ListModel;
+import javax.swing.MenuElement;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
+import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAddEpisode;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovie;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.AddSelectedFilesEvent;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.AddSelectedFilesEventListener;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileNode;
@@ -74,6 +95,9 @@ import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTree;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
+import net.sf.xmm.moviemanager.util.StringUtil;
+import net.sf.xmm.moviemanager.util.SysUtil;
+import net.sf.xmm.moviemanager.util.StringUtil.FilenameCloseness;
 
 import org.apache.log4j.Logger;
 
@@ -134,12 +158,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	boolean mediaFilesInDatabaseAdded = false;
 	
 	private boolean addListMustContainValidItemsAlert = false; // denotes if the list contains an alert
-	
-	/* The int stores the ints 0,1 or 2.
-       0 for ask awlays, 1 for automatically select first hit, 
-       and 2 to automatically select if only one hit.
-	 */
-	private int multiAddSelectOption; /*From 0-2*/
+		
+	private ImdbImportOption multiAddSelectOption;
 
 	public DialogAddMultipleMovies() {
 		/* Dialog creation...*/
@@ -644,9 +664,11 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		multiAddSelectOption = MovieManager.getConfig().getMultiAddSelectOption();
 
 		switch (multiAddSelectOption) {
-		case 0 : askButton.setSelected(true); break;
-		case 1 : selectFirstHitButton.setSelected(true); break;
-		case 2 : selectIfOnlyOneHitButton.setSelected(true); break;
+		case displayList : askButton.setSelected(true); break;
+		case selectFirst : selectFirstHitButton.setSelected(true); break;
+		case selectFirstOrAddToSkippedList : selectFirstHitButton.setSelected(true); break;
+		case selectIfOnlyOneHit : selectIfOnlyOneHitButton.setSelected(true); break;
+		case selectIfOnlyOneHitOrAddToSkippedList : selectIfOnlyOneHitButton.setSelected(true); break;
 		}
 
 
@@ -808,10 +830,14 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			 
 			 if (!nodesInFileLists.containsKey(files.get(i))) {
 				 nodesInFileLists.put(files.get(i), files.get(i));
-				 model.addElement(files.get(i));
+				 
+				 File f = ((FileNode) files.get(i)).getFile();
+				 model.addElement(new Files(f));
 			 }
 		 }
 	}		
+	
+
 	
 	
 	/*Returns the user defined exlude string*/
@@ -842,7 +868,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	
 	
 	/*returns the value of the multiAddSelectOption variable.( values 0-2)*/
-	public int getMultiAddSelectOption() {
+	public ImdbImportOption getMultiAddSelectOption() {
 		return multiAddSelectOption;
 	}
 
@@ -927,17 +953,14 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		}
 
 		if (event.getSource().equals(askButton))
-			multiAddSelectOption = 0;
+			multiAddSelectOption = ImdbImportOption.displayList;
 
 		if (event.getSource().equals(selectFirstHitButton))
-			multiAddSelectOption = 1;
+			multiAddSelectOption = ImdbImportOption.selectFirst;
 
 		if (event.getSource().equals(selectIfOnlyOneHitButton))
-			multiAddSelectOption = 2;
-		
-		
-		
-	
+			multiAddSelectOption = ImdbImportOption.selectIfOnlyOneHit;
+			
 	}
 	
 	
@@ -952,15 +975,141 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			 fileToAddListModel.addElement(selectedValues[i]);
 			 mediaFilelistModel.removeElement(selectedValues[i]);
 		 }
+		 
+		 calculateSimilarity(fileToAddListModel);
+		 
 	}
 	
-	public ArrayList<FileNode> getMoviesToAdd() {
+	public class Files {
 		
-		ArrayList<FileNode> list = new ArrayList<FileNode>();
+		File file = null;
+		
+		ArrayList<Files> addedFiles = new ArrayList<Files>();
+		
+		public Color similarityColor = null;
+		
+		Files(File f) {
+			file = f;
+		}
+		
+		public String getName() {
+			if (addedFiles.size() == 0 )
+				return file.getName();
+			else 
+				return null;
+		}
+		
+		public void addFile(Files f) {
+			addedFiles.add(f);
+			
+			Files [] files = f.getAddedFiles();
+			
+			for (int i = 0; i < files.length; i++) {
+				addedFiles.add(files[i]);
+			}
+			
+			f.clearAddedFiles();
+		}
+		
+		public File getFile() {
+			return file;
+		}
+		
+		public Files [] getAddedFiles() {
+			return addedFiles.toArray(new Files[addedFiles.size()]);
+		}
+		
+		public void clearAddedFiles() {
+			addedFiles.clear();
+		}
+		
+		public String toString() {
+			
+			String str = file.getName();
+			
+			for (Files f : addedFiles)
+				str += " " + f.getName();
+			
+			return str; 
+		}
+		
+	}
+	
+	int colorIndex = 0;
+	
+	void calculateSimilarity(DefaultListModel fileToAddListModel) {
+		
+		ArrayList<Files> list = new ArrayList<Files>();
+		
+		for (int i = 0; i <fileToAddListModel.getSize(); i++) {
+			list.add((Files) fileToAddListModel.get(i));
+		}
+		
+		Color [] colours = new Color[] {Color.blue, Color.green, 
+				Color.magenta, Color.orange, Color.pink, Color.red, Color.yellow,
+				new Color(167, 80, 80), new Color(120, 145, 184), new Color(121, 227, 173), 
+				new Color(198, 163, 58), new Color(193, 163, 188), new Color(158, 203, 201), 
+				new Color(145, 50, 40), new Color(59, 185, 189), new Color(59, 81, 66),
+				new Color(91, 179, 240), new Color(23, 85, 69)
+		};
+		
+		boolean colorUsed = false;
+		
+		for (int i = 0; i < list.size(); i++) {
+			
+			Files f1 = list.get(i);
+			
+			if (f1.similarityColor != null)
+				continue;
+			
+			String f1Name = f1.getName();	
+			
+			if (f1Name == null)
+				continue;
+			
+			for (int j = i+1; j < list.size(); j++) {
+				
+				Files f2 = list.get(j);
+				String f2Name = f2.getName();
+								
+				if (f2Name == null)
+					continue;
+				
+				if (f2.similarityColor != null)
+					continue;
+				
+				FilenameCloseness closeness =  StringUtil.compareFileNames(f1Name, f2Name);
+				
+				System.err.println(closeness +":" + f1.getName() + " vs " + f2.getName());
+				
+				if (closeness == FilenameCloseness.almostidentical || closeness == FilenameCloseness.much) {
+					f1.similarityColor = colours[colorIndex];
+					f2.similarityColor = colours[colorIndex];
+				
+					colorUsed = true;
+				}
+			}
+			
+			if (colorUsed) {
+
+				colorIndex++;
+
+				if (colorIndex == colours.length)
+					colorIndex = 0;
+
+				colorUsed = false;
+			}
+		}
+		
+	}
+	
+	public ArrayList<Files> getMoviesToAdd() {
+		
+		ArrayList<Files> list = new ArrayList<Files>();
 		
 		DefaultListModel listModel = (DefaultListModel) filesToAddList.getModel();
 		
-		Enumeration<FileNode> enumeration = (Enumeration<FileNode>) listModel.elements();
+		Enumeration<Files> enumeration = (Enumeration<Files>) listModel.elements();
 		
 		while (enumeration.hasMoreElements()) {
 			list.add(enumeration.nextElement());
@@ -1059,13 +1208,69 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				BorderFactory.createEmptyBorder(1,5,3,5))));
 
 		filesToAddList = new JList(); //$NON-NLS-1$
+		filesToAddList.setCellRenderer(new DefaultListCellRenderer() {
+
+			public Component getListCellRendererComponent(JList list, 
+					Object value, 
+					int index, 
+					boolean isSelected, 
+					boolean cellHasFocus) 
+			{ 
+				
+			//	System.err.println(value);
+				
+				Component c = super.getListCellRendererComponent( 
+						list,value,index,isSelected,cellHasFocus); 
+				
+				if (value instanceof Files) {
+					
+					Files n = (Files) value;
+					
+					//System.err.println(n.getName());
+					
+					if (n.similarityColor != null)
+						c.setForeground(n.similarityColor); 
+					
+				}
+				
+				
+				//c.setForeground(index==0 ? Color.red : Color:black); 
+					
+				
+				return c;
+			} 
+		});
+	
+		filesToAddList.addMouseListener(new MouseListener() {
+
+			public void mouseReleased(MouseEvent e) {}	
+			public void mouseClicked(MouseEvent e) {}
+			public void mouseEntered(MouseEvent e) {}
+			public void mouseExited(MouseEvent e) {}
+
+			public void mousePressed(MouseEvent e) {
+				handleFilesToBeAddedPopup(e);				
+			}		
+		});
+		
 		filesToAddList.setModel(new DefaultListModel()); 
 
 		JScrollPane scrollPaneNotes = new JScrollPane(filesToAddList);
 		scrollPaneNotes.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
+		JPanel filesToAddButtonPanel = new JPanel();
+		JButton combineSimilarFiles = new JButton("Combine similar files");
+		combineSimilarFiles.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		
+		filesToAddButtonPanel.add(combineSimilarFiles);
+		
 		filesToAddListPanel.add(scrollPaneNotes, BorderLayout.CENTER);
-
+		filesToAddListPanel.add(filesToAddButtonPanel, BorderLayout.EAST);
+		
 		JSplitPane fileListsSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, mediaFilesListPanel, filesToAddListPanel);
 		fileListsSplitPane.setOneTouchExpandable(true);
 		fileListsSplitPane.setContinuousLayout(true);
@@ -1081,5 +1286,114 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	}
 
 	
+	public void handleFilesToBeAddedPopup(MouseEvent event) {
 
+		/* Button 2 */
+		if (SwingUtilities.isRightMouseButton(event)) {
+
+			int rowForLocation = filesToAddList.locationToIndex(event.getPoint());
+
+			int[] selectedIndexes = filesToAddList.getSelectedIndices();
+
+			if (selectedIndexes.length == 0)
+				return;
+
+			boolean isSelected = false;
+
+			for (int i = 0; i < selectedIndexes.length; i++) {
+				if (selectedIndexes[i] == rowForLocation)
+					isSelected = true;
+			}
+
+			if (!isSelected)
+				return;
+			
+			makePopupMenu(event.getX(), event.getY(), event);
+		}
+	}
+	
+	public void makePopupMenu(int x, int y, MouseEvent event) {
+
+		final int[] selectedIndexes = filesToAddList.getSelectedIndices();
+		
+		JMenuItem combineSelectedEntries = new JMenuItem("Combine Selected Entries");
+		JMenuItem expandSelectedEntries = new JMenuItem("Expand selected Entry");
+		JMenuItem removeSelectedEntries = new JMenuItem("Remove selected entries");
+		
+		JPopupMenu popupMenu = new JPopupMenu();
+		
+		
+		if (selectedIndexes.length == 1) {
+			DefaultListModel model = (DefaultListModel) filesToAddList.getModel();
+			Files f1 = (Files) model.getElementAt(selectedIndexes[0]);
+			
+			// If only one file, no need to show popup
+			if (f1.getAddedFiles().length > 0)
+				popupMenu.add(expandSelectedEntries);
+		}
+		else
+			popupMenu.add(combineSelectedEntries);
+		
+		
+		popupMenu.add(removeSelectedEntries);
+		
+		combineSelectedEntries.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				DefaultListModel model = (DefaultListModel) filesToAddList.getModel();
+				Files f1 = (Files) model.getElementAt(selectedIndexes[0]);
+				
+				ArrayList<Files> toRemove = new ArrayList<Files>();
+				
+				for (int i = 1; i < selectedIndexes.length; i++) {
+					Files f2 = (Files) model.getElementAt(selectedIndexes[i]);
+					f1.addFile(f2);
+					System.err.println("added file:" + f2);
+					toRemove.add((Files) model.getElementAt(selectedIndexes[i]));
+				}
+			
+				for (Files f : toRemove) {
+					System.err.println("remove:" + f);
+					model.removeElement(f);
+				}
+				
+			}
+		});
+
+		
+		expandSelectedEntries.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				DefaultListModel model = (DefaultListModel) filesToAddList.getModel();
+				Files f1 = (Files) model.getElementAt(selectedIndexes[0]);
+				
+				Files [] files = f1.getAddedFiles();
+				
+				for (int i = 0; i < files.length; i++) {
+					model.add(selectedIndexes[0]+ 1 + i, files[i]);
+				}
+				
+				f1.clearAddedFiles();
+			}
+		});
+		
+		
+		removeSelectedEntries.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				Object[] selectedValues = filesToAddList.getSelectedValues();
+				
+				DefaultListModel model = (DefaultListModel) filesToAddList.getModel();
+				
+				for (int i = 0; i < selectedValues.length; i++) {
+					model.removeElement(selectedValues[i]);
+				}
+			}
+		});
+		
+		//popupMenu.setInvoker(movieList);
+		popupMenu.setLocation(x, y);
+
+		popupMenu.show(filesToAddList, x, y);
+	}
 }
