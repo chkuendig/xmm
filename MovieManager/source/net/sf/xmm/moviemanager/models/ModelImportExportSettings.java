@@ -77,18 +77,23 @@ public class ModelImportExportSettings {
     }
     
         
-    public int multiAddIMDbSelectOption = -1;
+    public enum ImdbImportOption {off, displayList, selectFirst, selectFirstOrAddToSkippedList, 
+    	selectIfOnlyOneHit, selectIfOnlyOneHitOrAddToSkippedList}
+       
+    
+   // public int multiAddIMDbSelectOption = -1;
   
+    public ImdbImportOption multiAddIMDbSelectOption = ImdbImportOption.off;
+    
     public boolean isIMDbEnabled() {
-    	return multiAddIMDbSelectOption != -1;
+    	return multiAddIMDbSelectOption != ImdbImportOption.off;
     }
     
     public int mode = IMPORT_MODE_TEXT;
     public boolean overwriteWithImdbInfo = false;
     
     public String addToThisList = null;
-    
-  
+     
     
     public String skippedListName = "Importer-skipped";
     
