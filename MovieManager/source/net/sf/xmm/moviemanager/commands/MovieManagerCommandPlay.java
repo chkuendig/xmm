@@ -25,6 +25,9 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JFileChooser;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -90,7 +93,9 @@ public class MovieManagerCommandPlay implements ActionListener {
 							
 					if (args != null && cwd != null) {
 						log.debug("Execute command from cwd:" + cwd);
-						log.debug("command:" + getCombined(args));
+						//log.debug("command:" + getCombined(args));
+						System.err.println("Command:");
+						printCommand(args);
 						
 						p = Runtime.getRuntime().exec(args, null, cwd);
 					}
@@ -106,7 +111,8 @@ public class MovieManagerCommandPlay implements ActionListener {
 							str += args[i] + " ";
 						}
 						
-						log.debug("Execute default player:" + str);
+						log.debug("Execute default player:");
+						printCommand(args);
 						p = Runtime.getRuntime().exec(args);
 					}
 										
@@ -234,15 +240,20 @@ public class MovieManagerCommandPlay implements ActionListener {
 						commandList.add(cmd);
 					}
 					
+				
+					
 					String playArg = mmc.getMediaPlayerCmdArgument();
 					
 					if (playArg != null && !playArg.equals("")) {
-						String [] args = playArg.split(" ");
-						
-						for (int i = 0; i < args.length; i++)
-							commandList.add(args[i]);
+						List<String> args = getArguments(playArg);
+												
+						for (int i = 0; i < args.size(); i++)
+							commandList.add(args.get(i));
 					}
-										
+							
+					for (int i = 0; i < commandList.size(); i++) {
+						System.err.println("commandList("+i+"):" + commandList.get(i));
+					}
 					
 					for (int i= 0; i < files.length; i++) {
 												
@@ -285,6 +296,12 @@ public class MovieManagerCommandPlay implements ActionListener {
 		}
 	}
 	
+	public static void printCommand(String [] args) {
+				
+		for (int i = 0; i < args.length; i++)
+			System.err.println("args["+i+"]:" + args[i]);
+	}
+	
 	public static String getCombined(String [] args) {
 		String str = args[0];
 		
@@ -294,6 +311,33 @@ public class MovieManagerCommandPlay implements ActionListener {
 		return str;
 	}
 	
+	
+	/**
+	 * Splits the string on spaces, except when enclosed in single or double quotes
+	 * @param arg
+	 * @return
+	 */
+	public static List<String> getArguments(String arg) {
+		
+		List<String> matchList = new ArrayList<String>();
+		Pattern regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
+		Matcher regexMatcher = regex.matcher(arg);
+
+		while (regexMatcher.find()) {
+						
+			if (regexMatcher.group(1) != null) {
+				// Add double-quoted string without the quotes
+				matchList.add(regexMatcher.group(1));
+			} else if (regexMatcher.group(2) != null) {
+				// Add single-quoted string without the quotes
+				matchList.add(regexMatcher.group(2));
+			} else {
+				// Add unquoted word
+				matchList.add(regexMatcher.group(0));
+			}
+		}
+		return matchList;
+	}
 }
 
 
