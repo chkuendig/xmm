@@ -43,6 +43,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -996,6 +998,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 					try {
 						File[] file = executeGetFile();
 						if (file != null) {
+							updateModelFromGeneralInfo();
 							movieInfoModel.getFileInfo(file);
 						}
 					} catch (Exception e) {
@@ -1951,6 +1954,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		} catch (Exception e) {
 			log.error("" + e); //$NON-NLS-1$
 		}
+		
 		return file;
 	}
 
