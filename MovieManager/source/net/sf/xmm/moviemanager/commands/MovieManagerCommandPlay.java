@@ -250,11 +250,7 @@ public class MovieManagerCommandPlay implements ActionListener {
 						for (int i = 0; i < args.size(); i++)
 							commandList.add(args.get(i));
 					}
-							
-					for (int i = 0; i < commandList.size(); i++) {
-						System.err.println("commandList("+i+"):" + commandList.get(i));
-					}
-					
+										
 					for (int i= 0; i < files.length; i++) {
 												
 						
@@ -298,8 +294,13 @@ public class MovieManagerCommandPlay implements ActionListener {
 	
 	public static void printCommand(String [] args) {
 				
+		String str = "Command:";
+		
 		for (int i = 0; i < args.length; i++)
-			System.err.println("args["+i+"]:" + args[i]);
+			//System.err.println("args["+i+"]:" + args[i]);
+			str += SysUtil.getLineSeparator() + "args["+i+"]:" + args[i];
+			
+		log.debug(str);
 	}
 	
 	public static String getCombined(String [] args) {
