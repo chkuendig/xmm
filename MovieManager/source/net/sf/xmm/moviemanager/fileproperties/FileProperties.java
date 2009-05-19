@@ -487,11 +487,15 @@ abstract class FileProperties {
 	 * @throws IOException 
 	 **/
 	protected String findName(InputStream stream, String id) throws IOException {
-
+		return findName(new InputStreamReader(stream), id);
+	}
+	
+	protected String findName(InputStreamReader stream, String id) throws IOException {
+		
 		if (stream == null || id == null)
 			return "";
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+		BufferedReader reader = new BufferedReader(stream);
 		String line = null;
 
 		while ((line = reader.readLine()) != null) {

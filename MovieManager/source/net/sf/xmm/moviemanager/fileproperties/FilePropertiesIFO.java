@@ -20,6 +20,7 @@
 
 package net.sf.xmm.moviemanager.fileproperties;
 
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 
 import org.apache.log4j.Logger;
@@ -398,7 +399,7 @@ class FilePropertiesIFO extends FileProperties {
 					if (!subtitles.equals(""))
 						subtitles += ", ";
 
-					subtitles += findName(FileUtil.getResourceAsStream("/codecs/LanguageCodes.txt"),new String(languageCode));
+					subtitles += findName(new InputStreamReader(FileUtil.getResourceAsStream("/codecs/LanguageCodes.txt"), "UTF-8"), new String(languageCode));
 					offset += 4;
 				}
 				else {
