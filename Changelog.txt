@@ -16,7 +16,7 @@ Version 2.8.2 (-may-2009)
 
   - Playing media files with space in the name should work better on GNU/Linux. 
   - 'Add multiple movies' now has the option of grouping files together before searching IMDb by right clicking the list elements in list of files to add. Also, files with similar names are shown with the same color in the list of files to add.
-  - Support for using MediaInfo library on GNU/Linux.
+  - Support for using MediaInfo_ library on GNU/Linux.
   - Updated the MediaInfo library with better support for mp4 and mkv (Matoska) files.
 
 - Bug fixes:
@@ -814,3 +814,6 @@ Version 0.9 beta (16-Mar-2003)
 Version 0.8 beta (14-Mar-2003)
 
 Version 0.7 beta (13-Mar-2003)
+
+
+.. _MediaInfo: http://mediainfo.sourceforge.net
