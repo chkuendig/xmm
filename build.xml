@@ -611,7 +611,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 
 	
 	
-<target name="compile-changelog">
+<target name="changelog">
 
 	  <exec executable="rst2html">
 	    <arg value="--stylesheet=xmm.css"/>
@@ -623,7 +623,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 	
 </target>
 	
-<target name="compile-readme">
+<target name="readme">
 
       <exec executable="rst2html">
         <arg value="--stylesheet=xmm.css"/>
