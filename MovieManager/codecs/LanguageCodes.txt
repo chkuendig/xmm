@@ -14,7 +14,7 @@ bi	Bislama
 bn	Bengali;Bangla
 bo	Tibetan
 br	Breton
-ca	Catal‡ (Catalan)
+ca	Catal√† (Catalan)
 co	Corsican
 cs	Czech(Ceske)
 cy	Welsh
@@ -24,14 +24,14 @@ dz	Bhutani
 el	Greek
 en	English
 eo	Esperanto
-es	EspaÒol
+es	Espa√±ol
 et	Estonian
 eu	Basque
 fa	Persian
 fi	Finnish
 fj	Fiji
 fo	Faroese
-fr	FranÁais
+fr	Fran√ßais
 fy	Frisian
 ga	Irish
 gd	Scots Gaelic
