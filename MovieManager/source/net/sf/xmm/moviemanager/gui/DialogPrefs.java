@@ -735,7 +735,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			InputStream inputStream = FileUtil.getResourceAsStream("/codecs/LanguageCodes.txt");
 
 			BufferedInputStream stream = new BufferedInputStream(inputStream);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 
 			String currentLangCode = config.getTitleLanguageCode();
 
