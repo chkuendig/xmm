@@ -130,6 +130,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	private JCheckBox mpegExtension;
 	private JCheckBox ogmExtension;
 	private JCheckBox mkvExtension;
+	private JCheckBox mp4Extension;
 	
 	private JCheckBox enableIncludeOrExludeString;
 	JCheckBox enabledRegEx;
@@ -261,7 +262,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		mpegExtension = new JCheckBox("mpeg");
 		ogmExtension = new JCheckBox("ogm");
 		mkvExtension = new JCheckBox("mkv");
-		
+		mp4Extension = new JCheckBox("mp4");
+				
 		ActionListener extListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				updateExtensionoOnTree();
@@ -273,6 +275,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		mpegExtension.addActionListener(extListener);
 		ogmExtension.addActionListener(extListener);
 		mkvExtension.addActionListener(extListener);
+		mp4Extension.addActionListener(extListener);
 		
 		JPanel validExtension = new JPanel();
 		validExtension.add(aviExtension);
@@ -280,6 +283,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		validExtension.add(divxExtension);
 		validExtension.add(ogmExtension);
 		validExtension.add(mkvExtension);
+		validExtension.add(mp4Extension);
 		
 		customExtension = new JTextArea();
 		customExtension.setBorder(BorderFactory.createEtchedBorder()); 
@@ -714,11 +718,12 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			ogmExtension.setSelected(true);
 		if (ext.contains("mkv"))
 			mkvExtension.setSelected(true);
-		
+		if (ext.contains("mp4"))
+			mp4Extension.setSelected(true);
+				
 		customExtension.setText(MovieManager.getConfig().getMultiAddCustomExtensions());
 		
 		updateExtensionoOnTree();	
-		
 	}
 	
 	
@@ -743,6 +748,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		if (mkvExtension.isSelected())
 			validExtensions.add("mkv");
 		
+		if (mp4Extension.isSelected())
+			validExtensions.add("mp4");
+			
 		
 		String [] ext = customExtension.getText().split("\\s|,");
 		
@@ -801,6 +809,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			ext.add("ogm");
 		if (mkvExtension.isSelected())
 			ext.add("mkv");
+		if (mp4Extension.isSelected())
+			ext.add("mp4");
 					
 		MovieManager.getConfig().setMultiAddValidExtension(ext);
 		MovieManager.getConfig().setMultiAddCustomExtensions(customExtension.getText());
@@ -1259,6 +1269,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		scrollPaneNotes.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 		JPanel filesToAddButtonPanel = new JPanel();
+		
+		/*
 		JButton combineSimilarFiles = new JButton("Combine similar files");
 		combineSimilarFiles.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1267,6 +1279,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		});
 		
 		filesToAddButtonPanel.add(combineSimilarFiles);
+		*/
 		
 		filesToAddListPanel.add(scrollPaneNotes, BorderLayout.CENTER);
 		filesToAddListPanel.add(filesToAddButtonPanel, BorderLayout.EAST);
