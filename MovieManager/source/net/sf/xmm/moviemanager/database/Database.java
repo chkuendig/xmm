@@ -3075,7 +3075,7 @@ abstract public class Database {
 
 		String filter = options.getFilterString();
 
-		if (filter.trim().startsWith("DUPLICATES")) {
+		if (filter.trim().startsWith("DUPLICATES") && !isMSAccess()) {
 			options.duplicates = true;
 			return "";
 		}
