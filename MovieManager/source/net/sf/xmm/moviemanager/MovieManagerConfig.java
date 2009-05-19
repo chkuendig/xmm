@@ -99,7 +99,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	
 	public final SystemSettings sysSettings = new SystemSettings();
 	
+	private boolean localConfigMode = false;
 	
+	public boolean getLocalConfigMode() {
+		return localConfigMode;
+	}
 	
 	/**
 	 * Keeps track of the last directory open...(Moviefiles)
@@ -602,6 +606,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		//	additionalInfoAndNotes = val;
 		//}
 	}
+
 	
 	public MovieManagerConfig(boolean exampleConfig) {}
 	
@@ -636,6 +641,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				internalConfig.addPlugin(key, value);
 			}
 						
+			File localConfig = new File(SysUtil.getUserDir(), "config");
+			
+			if (new File(localConfig, "uselocalconfig").isFile()) {
+				localConfigMode = true;
+			}
+			
 		} catch (Exception e) {
 			log.warn("Exception: " + e.getMessage(), e);
 		}	
