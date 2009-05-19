@@ -9,7 +9,7 @@ Version 2.8.2 (-may-2009)
 
 - New 
 
-  - Finding duplicate entries can now be done using the command "DUPLICATES" in the search filter.
+  - Finding duplicate entries can now be done using the command "DUPLICATES" in the search filter (Not with MS Access database). Read more about duplicates_.
   - Added Splash Screen during loading of the movie manager for Java 1.6 and later.
 
 - General improvements:
@@ -817,3 +817,4 @@ Version 0.7 beta (13-Mar-2003)
 
 
 .. _MediaInfo: http://mediainfo.sourceforge.net
+.. _duplicates: http://xmm.sourceforge.net/index.php?menu=help#duplicates
