@@ -81,9 +81,19 @@ public class SysUtil {
 				dir = new File(path, "MovieManager");
 			}
 	
+			String userDir = getUserDir();
+			
+			log.debug("userDir:" + userDir);
+			log.debug("getLocalConfigMode:" + MovieManager.getConfig().getLocalConfigMode());
+			
+			// Resetting config to local mode unless running Mac application bundle
+			if (MovieManager.getConfig().getLocalConfigMode() && !(SysUtil.isMac() && userDir.endsWith(".app"))) {
+				dir = null;
+			}
+			
 			if (dir != null) {
 								
-				if(!dir.exists() && !dir.mkdir()) {
+				if (!dir.exists() && !dir.mkdir()) {
 					log.error("Could not create settings folder.");
 					throw new Exception("Could not create settings folder:" + dir);
 				}
@@ -124,7 +134,7 @@ public class SysUtil {
 					url = new File(SysUtil.getConfigDir(), conf).toURI().toURL();
 				else {
 					
-					// First check if Vista of Win7
+					// First check if Vista or Win7
 					// Changed the default location on Vista from program directory to System.getenv("APPDATA")
 					
 					if (isWindowsVista() || isWindows7()) {
