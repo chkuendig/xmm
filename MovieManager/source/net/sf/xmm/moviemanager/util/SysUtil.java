@@ -86,10 +86,12 @@ public class SysUtil {
 			log.debug("userDir:" + userDir);
 			log.debug("getLocalConfigMode:" + MovieManager.getConfig().getLocalConfigMode());
 			
-			// Resetting config to local mode unless running Mac application bundle
-			if (MovieManager.getConfig().getLocalConfigMode() && !(SysUtil.isMac() && userDir.endsWith(".app"))) {
+			// Resetting config to local mode
+			if (MovieManager.getConfig().getLocalConfigMode()) {
 				dir = null;
 			}
+			
+			log.debug("dir:" + dir);
 			
 			if (dir != null) {
 								

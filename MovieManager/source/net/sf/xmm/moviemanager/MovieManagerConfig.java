@@ -641,9 +641,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				internalConfig.addPlugin(key, value);
 			}
 						
-			File localConfig = new File(SysUtil.getUserDir(), "config");
+			File localConfig = new File(new File(SysUtil.getUserDir(), "config"), "uselocalconfig");
 			
-			if (new File(localConfig, "uselocalconfig").isFile()) {
+			System.err.println("localConfig:" + localConfig.getAbsolutePath());
+			
+			if (localConfig.isFile()) {
 				localConfigMode = true;
 			}
 			

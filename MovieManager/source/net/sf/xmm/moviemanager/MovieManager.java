@@ -1310,6 +1310,14 @@ public class MovieManager {
 			appndr.activateOptions();
 		}
 		    	
+		File localConfig = new File(new File(SysUtil.getUserDir(), "config"), "uselocalconfig");
+		
+		System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.err.println("localConfig:" + localConfig.getAbsolutePath());
+		System.err.println("isFile:" + localConfig.isFile());
+		
+		
+		
 		/* Writes the date. */
 		log.debug("================================================================================"); //$NON-NLS-1$
 		log.debug("Log Start: " + new Date(System.currentTimeMillis())); //$NON-NLS-1$
