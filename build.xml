@@ -438,7 +438,7 @@
 			<fileset dir="${dist}" includes="**/*" />
 		</delete>
 
-		<delete includeemptydirs="true">
+		<delete includeemptydirs="true" quiet="true">
 			<fileset dir="${build}/net" />
 		</delete>
 		
