@@ -205,9 +205,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 
 			/*removes dots, double spaces, underscore...*/
 			searchString = StringUtil.removeVarious(searchString);
-
-			System.err.println("multiAddSelectOption:" + multiAddSelectOption);
-			
+	
 			executeCommandGetIMDBInfoMultiMovies(searchString, searchTitle, multiAddSelectOption, addToThisList);
 
 			if (dropImdbInfo)
