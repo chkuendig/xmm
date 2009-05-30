@@ -411,12 +411,9 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 						else if (SysUtil.isWindows()){
 							
 							String drive = tmp.substring(0, tmp.indexOf(":") + 1);
-
-							System.err.println("drive:" + drive);
 							
 							if (drive.length() == 0)
 								continue;
-
 						}
 
 						if (new File(tmp).isFile()) {
