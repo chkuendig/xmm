@@ -83,16 +83,11 @@ public class SysUtil {
 	
 			String userDir = getUserDir();
 			
-			log.debug("userDir:" + userDir);
-			log.debug("getLocalConfigMode:" + MovieManager.getConfig().getLocalConfigMode());
-			
 			// Resetting config to local mode
 			if (MovieManager.getConfig().getLocalConfigMode()) {
 				dir = null;
 			}
-			
-			log.debug("dir:" + dir);
-			
+						
 			if (dir != null) {
 								
 				if (!dir.exists() && !dir.mkdir()) {
