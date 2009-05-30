@@ -440,7 +440,7 @@ public class StringUtil {
 			}
 
 		} catch (Exception e) {
-			System.err.println("Exception:" + e.getMessage());
+			log.warn("Exception:" + e.getMessage(), e);
 		}
 		
 		return FilenameCloseness.error;
