@@ -3392,16 +3392,18 @@ abstract public class Database {
 		
 		String sqlQuery = selectAndJoin + " " + sqlAdcancedOptions + " " + sqlFilter + " ";
 	
+		/*
 		System.err.println("selectAndJoin:" + selectAndJoin);
 		System.err.println("sqlAdcancedOptions:" + sqlAdcancedOptions);
 		System.err.println("sqlFilter:" + sqlFilter);
 		System.err.println("sqlQuery:" + sqlQuery);
+		*/
 		
 		if (options.duplicates) {
 			
 			String dupQuery = getDuplicateQueryString(options);
 			
-			System.err.println("dupQuery:" + dupQuery);
+			log.debug("DupQuery:" + dupQuery);
 			
 			if (!dupQuery.trim().equals("")) {
 				sqlQuery += (options.where ? " AND " : " WHERE ") + dupQuery;
