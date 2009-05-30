@@ -257,16 +257,6 @@ public class MovieManagerCommandPlay implements ActionListener {
 						}
 						else
 							commandList.add(filePath);
-						
-						//System.err.println("old:" + path);
-						
-						//path = path.replaceAll("\\s", "\\\\ ");
-						
-						//path = "\"" + path + "\"";
-						
-						//System.err.println("new:" + path);
-						
-						
 					}
 					
 					command = new String[commandList.size()];
@@ -287,7 +277,6 @@ public class MovieManagerCommandPlay implements ActionListener {
 		String str = intro;
 		
 		for (int i = 0; i < args.length; i++)
-			//System.err.println("args["+i+"]:" + args[i]);
 			str += SysUtil.getLineSeparator() + "args["+i+"]:" + args[i];
 			
 		log.debug(str);
