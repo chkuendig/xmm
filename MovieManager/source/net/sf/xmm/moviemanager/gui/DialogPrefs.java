@@ -967,7 +967,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		
 		/* Enable load last used list */
-		enableAddNewMoviesToCurrentLists = new JCheckBox("Add new movies to current lists"); 
+		enableAddNewMoviesToCurrentLists = new JCheckBox("Add new movies to the currently selected lists"); 
 		enableAddNewMoviesToCurrentLists.setActionCommand("Enable Add new movies to current lists"); //$NON-NLS-1$
 
 		if (config.getAddNewMoviesToCurrentLists())
