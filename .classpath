@@ -16,7 +16,6 @@
 	<classpathentry kind="lib" path="MovieManager/lib/gettext-commons-0.9.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/itext-1.4.5.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/jasperreports-3.0.0.jar"/>
-	<classpathentry kind="lib" path="MovieManager/lib/JNative.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/jxl.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/log4j-1.2.13.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/ostermillerutils_1_05_00_for_java_1_4.jar"/>
