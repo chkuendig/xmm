@@ -93,9 +93,7 @@ public class MovieManagerCommandPlay implements ActionListener {
 							
 					if (args != null && cwd != null) {
 						log.debug("Execute command from cwd:" + cwd);
-						//log.debug("command:" + getCombined(args));
-						System.err.println("Command:");
-						printCommand(args);
+						printCommand("Command executed:", args);
 						
 						p = Runtime.getRuntime().exec(args, null, cwd);
 					}
@@ -106,22 +104,14 @@ public class MovieManagerCommandPlay implements ActionListener {
 						log.debug("Execute command:" + command);
 						p = Runtime.getRuntime().exec(command);
 					} else {
-						String str = "";
-						for (int i = 0; i < args.length; i++) {
-							str += args[i] + " ";
-						}
-						
-						log.debug("Execute default player:");
-						printCommand(args);
+						printCommand("Execute default player:", args);
 						p = Runtime.getRuntime().exec(args);
 					}
 										
 				} catch (Exception e) {
 					log.error("Exception: " + e.getMessage(), e);
-					
 					log.debug("Cause:" + e.getCause());
-					
-					
+										
 					if (mailbox != null) {
 						if (e.getMessage().indexOf("not found") != -1) {
 							mailbox.setMessage("");
@@ -292,9 +282,9 @@ public class MovieManagerCommandPlay implements ActionListener {
 		}
 	}
 	
-	public static void printCommand(String [] args) {
+	public static void printCommand(String intro, String [] args) {
 				
-		String str = "Command:";
+		String str = intro;
 		
 		for (int i = 0; i < args.length; i++)
 			//System.err.println("args["+i+"]:" + args[i]);
