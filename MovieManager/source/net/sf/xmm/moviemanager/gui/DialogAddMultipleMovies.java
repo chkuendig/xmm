@@ -673,6 +673,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		case selectFirstOrAddToSkippedList : selectFirstHitButton.setSelected(true); break;
 		case selectIfOnlyOneHit : selectIfOnlyOneHitButton.setSelected(true); break;
 		case selectIfOnlyOneHitOrAddToSkippedList : selectIfOnlyOneHitButton.setSelected(true); break;
+		default: askButton.setSelected(true);
 		}
 
 
