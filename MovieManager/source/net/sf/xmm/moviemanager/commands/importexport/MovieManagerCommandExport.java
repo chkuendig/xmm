@@ -86,9 +86,19 @@ public class MovieManagerCommandExport implements ActionListener{
 				}
 
 				if (!exporter.isCancelled()) {
-					final JDialog dialogExorter = new DialogDatabaseImporterExporter(exporter, exportSettings);
-					dialogExorter.setTitle("Exporter");
-					GUIUtil.show(dialogExorter, true);
+					
+					final MovieManagerCommandImportExportHandler finalExporter = exporter;
+					
+					Runnable createAndShow = new Runnable() {
+						public void run() {
+							final JDialog dialogExorter = new DialogDatabaseImporterExporter(finalExporter, exportSettings);
+							dialogExorter.setTitle("Exporter");
+							GUIUtil.show(dialogExorter, true);
+						}
+					};
+					
+					SwingUtilities.invokeAndWait(createAndShow);
+					
 				}
 			}
 		} catch (Exception e) {
