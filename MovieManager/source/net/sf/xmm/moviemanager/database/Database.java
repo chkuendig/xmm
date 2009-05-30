@@ -3393,10 +3393,10 @@ abstract public class Database {
 		String sqlQuery = selectAndJoin + " " + sqlAdcancedOptions + " " + sqlFilter + " ";
 	
 		/*
-		System.err.println("selectAndJoin:" + selectAndJoin);
-		System.err.println("sqlAdcancedOptions:" + sqlAdcancedOptions);
-		System.err.println("sqlFilter:" + sqlFilter);
-		System.err.println("sqlQuery:" + sqlQuery);
+		log.debug("selectAndJoin:" + selectAndJoin);
+		log.debug("sqlAdcancedOptions:" + sqlAdcancedOptions);
+		log.debug("sqlFilter:" + sqlFilter);
+		log.debug("sqlQuery:" + sqlQuery);
 		*/
 		
 		if (options.duplicates) {
@@ -3524,9 +3524,6 @@ abstract public class Database {
 			options.setOrderCategory("Imdb");
 		}
 		
-		System.err.println("categoriesQuery:" + categoriesQuery);
-		
-
 		/*
 			dupQuery += "\"Imdb\" in (" +
 			   "select \"Imdb\" "+
