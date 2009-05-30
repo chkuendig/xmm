@@ -2,14 +2,13 @@ cd  MovieManager
 echo Deleting files...
 rm -rf net
 echo Compiling...
-javac -d . -classpath "%CLASSPATH%":.:\
-lib/LookAndFeels/skinlf.jar:\
-lib/LookAndFeels/oalnf.jar:\
+javac -d . -target 1.5 -source 1.5 -classpath "%CLASSPATH%":.:\
+lib/skinlf.jar:\
 lib/TableLayout.jar:\
 lib/useful.jar:\
 lib/BrowserLauncher2-10rc4.jar:\
 lib/jxl.jar:\
-lib/JNative.jar:\
+lib/jna-3.0.9.jar:\
 lib/retroweaver-all-2.0.jar:\
 lib/commons-httpclient-3.0.1.jar:\
 lib/log4j-1.2.13.jar:\
