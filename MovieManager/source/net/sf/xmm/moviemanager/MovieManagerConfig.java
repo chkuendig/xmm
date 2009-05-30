@@ -602,17 +602,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			sensitivePrintMode = true;
 		}
 		
-		//public void setShowAdditionalInfoAndNotes(boolean val) {
-		//	additionalInfoAndNotes = val;
-		//}
 	}
 
 	
 	public MovieManagerConfig(boolean exampleConfig) {}
 	
 	public MovieManagerConfig() {
-		
-		System.err.println("new MovieManagerConfig");
 		
 		MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(this);
 		
