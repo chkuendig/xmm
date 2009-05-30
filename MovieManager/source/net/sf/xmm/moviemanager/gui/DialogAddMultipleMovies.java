@@ -1091,8 +1091,6 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				
 				FilenameCloseness closeness =  StringUtil.compareFileNames(f1Name, f2Name);
 				
-				System.err.println(closeness +":" + f1.getName() + " vs " + f2.getName());
-				
 				if (closeness == FilenameCloseness.almostidentical || closeness == FilenameCloseness.much) {
 					f1.similarityColor = colours[colorIndex];
 					f2.similarityColor = colours[colorIndex];
@@ -1209,8 +1207,6 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		/* The files to add panel. */
 		JPanel filesToAddListPanel = new JPanel();
 		filesToAddListPanel.setLayout(new BorderLayout());
-		//filesToAddListPanel.addComponentListener(this);
-
 		filesToAddListPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,5,0,5), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
 				"Media files to be added", //$NON-NLS-1$
 				TitledBorder.DEFAULT_JUSTIFICATION,
@@ -1228,26 +1224,18 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 					boolean cellHasFocus) 
 			{ 
 				
-			//	System.err.println(value);
-				
 				Component c = super.getListCellRendererComponent( 
 						list,value,index,isSelected,cellHasFocus); 
 				
 				if (value instanceof Files) {
 					
 					Files n = (Files) value;
-					
-					//System.err.println(n.getName());
-					
+										
 					if (n.similarityColor != null)
 						c.setForeground(n.similarityColor); 
-					
 				}
 				
-				
 				//c.setForeground(index==0 ? Color.red : Color:black); 
-					
-				
 				return c;
 			} 
 		});
@@ -1362,15 +1350,12 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				for (int i = 1; i < selectedIndexes.length; i++) {
 					Files f2 = (Files) model.getElementAt(selectedIndexes[i]);
 					f1.addFile(f2);
-					System.err.println("added file:" + f2);
 					toRemove.add((Files) model.getElementAt(selectedIndexes[i]));
 				}
 			
 				for (Files f : toRemove) {
-					System.err.println("remove:" + f);
 					model.removeElement(f);
-				}
-				
+				}				
 			}
 		});
 
