@@ -1,3 +1,4 @@
+.. This document is written in reStructuredText format
 
 ========================================
    Changelog - MeD's Movie Manager
