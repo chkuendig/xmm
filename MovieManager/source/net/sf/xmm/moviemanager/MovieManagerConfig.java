@@ -55,7 +55,7 @@ import org.apache.log4j.Logger;
 
 public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
-	static Logger log = Logger.getRootLogger();
+	Logger log = Logger.getLogger(MovieManagerConfig.class);
 
 	public class SystemSettings {
 
@@ -65,7 +65,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		private static final String _version = " 2.8.2"; //$NON-NLS-1$
 
 
-		String appTitle = " MeD's Movie Manager v" + getVersion();
+		String appTitle = " MeD's Movie Manager v" + getVersion().trim();
 		String lookAndFeelTitle = "Look & Feel";
 
 		/**
@@ -611,40 +611,41 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public MovieManagerConfig(boolean exampleConfig) {}
 	
 	public MovieManagerConfig() {
+		
+		System.err.println("new MovieManagerConfig");
+		
 		MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(this);
 		
 		try {
 			InputStream inputStream = FileUtil.getResourceAsStream("/config/internalConfig.ini");
-			
-			if (inputStream == null)
-				return;
-			
-			ArrayList<String> lines = FileUtil.readArrayList(new InputStreamReader(inputStream));
-						
-			if (lines != null) {
-				internalConfig = new InternalConfig(lines);
-				log.debug("internalConfig.ini");
+
+			if (inputStream != null) {
+
+				ArrayList<String> lines = FileUtil.readArrayList(new InputStreamReader(inputStream));
+
+				if (lines != null) {
+					internalConfig = new InternalConfig(lines);
+					log.debug("internalConfig.ini");
+				}
+
+				inputStream = FileUtil.getResourceAsStream("/config/plugins.ini");
+
+				if (inputStream == null)
+					return;
+
+				lines = FileUtil.readArrayList(new InputStreamReader(inputStream));
+
+				for (int i = 0; i < lines.size(); i++) {
+
+					String line = (String) lines.get(i);
+					String key = line.substring(0, line.indexOf("="));
+					String value = line.substring(line.indexOf("=") + 1, line.length());
+					internalConfig.addPlugin(key, value);
+				}
 			}
 			
-			inputStream = FileUtil.getResourceAsStream("/config/plugins.ini");
-			
-			if (inputStream == null)
-				return;
-			
-			lines = FileUtil.readArrayList(new InputStreamReader(inputStream));
-			
-			for (int i = 0; i < lines.size(); i++) {
-				
-				String line = (String) lines.get(i);
-				String key = line.substring(0, line.indexOf("="));
-				String value = line.substring(line.indexOf("=") + 1, line.length());
-				internalConfig.addPlugin(key, value);
-			}
-						
 			File localConfig = new File(new File(SysUtil.getUserDir(), "config"), "uselocalconfig");
-			
-			System.err.println("localConfig:" + localConfig.getAbsolutePath());
-			
+						
 			if (localConfig.isFile()) {
 				localConfigMode = true;
 			}
