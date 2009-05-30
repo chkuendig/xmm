@@ -285,7 +285,7 @@ public class FilePropertiesMovie {
 
 				} catch (UnsatisfiedLinkError err) {
 					
-					System.err.println("index:" + err.getMessage().indexOf("Unable to load library 'mediainfo"));
+					log.error("UnsatisfiedLinkError: " + err.getMessage(), err);
 					
 					// Unable to load library 'mediainfo'
 					if (err.getMessage().indexOf("Unable to load library 'mediainfo") != -1) {
