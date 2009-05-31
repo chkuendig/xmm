@@ -498,7 +498,7 @@ public class DialogIMDB extends JDialog {
     				try {
     				
     					ArrayList<ModelIMDbSearchHit> hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(modelEntry.getTitle());
-    	    			DefaultListModel list = new DefaultListModel();
+    	    			final DefaultListModel list = new DefaultListModel();
     	    			
     					if (hits.size() == 0) {
     						list.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
@@ -508,10 +508,14 @@ public class DialogIMDB extends JDialog {
     	    					list.addElement(hit);
     					}
     					
-    					listMovies.setModel(list);
-    					listMovies.setSelectedIndex(0);
-
-    					getButtonSelect().setEnabled(true);
+    					// make changes on EDT
+    					SwingUtilities.invokeLater(new Runnable() {
+    						public void run() {
+								listMovies.setModel(list);
+		    					listMovies.setSelectedIndex(0);
+		    					getButtonSelect().setEnabled(true);
+							}
+    					});
     				}
     				catch (Exception e) {
     					log.error(e.getMessage(), e);
