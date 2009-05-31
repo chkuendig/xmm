@@ -220,21 +220,25 @@ public class JComboCheckBox extends JComboBox {
 		}
 	}
 
-
 	public void addItem(String str) {
 		
-		if (str != null && !"".equals(str))
+		if (str != null && !"".equals(str)) {
+		
+			
 			addItem(new JCheckBox(str));
+		}
 	}
 
-	public void addItem(Object anObject) {
-		String str = ((JCheckBox) anObject).getText();
+	public void addItem(JCheckBox checkBox) {
+		String str = checkBox.getText();
 
 		if (enteredValues.contains(str))
 			return;
 
+		checkBox.setToolTipText("Mark the checkbox to save this search");
+		
 		enteredValues.add(str);
-		super.addItem(anObject);
+		super.addItem(checkBox);
 	}
 
 
