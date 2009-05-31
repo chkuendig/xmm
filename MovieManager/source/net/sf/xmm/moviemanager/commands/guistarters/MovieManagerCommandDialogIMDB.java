@@ -1,28 +1,52 @@
 package net.sf.xmm.moviemanager.commands.guistarters;
 
+import java.lang.reflect.InvocationTargetException;
+
+import javax.swing.SwingUtilities;
+
+import org.apache.log4j.Logger;
+
+import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogIMDB;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
 public class MovieManagerCommandDialogIMDB {
 
+	Logger log = Logger.getLogger(this.getClass());
+	
 	public boolean cancel = false;
 	public boolean cancelAll = false;
 
-	public synchronized String getIMDBKey(String movieTitle) {
+	String tmpUrlKey;
+		
+	public synchronized String getIMDBKey(final String movieTitle) throws InterruptedException {
 
 		if (cancelAll)
 			return null;
 
-		ModelMovieInfo modelInfo = new ModelMovieInfo(false, true);
-		modelInfo.model.setTitle(movieTitle);
+		tmpUrlKey = null;
+		
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
 
-		DialogIMDB dialogImdb = new DialogIMDB(modelInfo.model, true, movieTitle);
-		GUIUtil.showAndWait(dialogImdb, true);
+				public void run() {
+					ModelMovieInfo modelInfo = new ModelMovieInfo(false, true);
+					modelInfo.model.setTitle(movieTitle);
 
-		cancel = dialogImdb.cancelSet;
-		cancelAll = dialogImdb.cancelAllSet;
+					DialogIMDB dialogImdb = new DialogIMDB(modelInfo.model, true, movieTitle);
+					GUIUtil.showAndWait(dialogImdb, true);
 
-		return modelInfo.model.getUrlKey();
+					tmpUrlKey = modelInfo.model.getUrlKey();
+					
+					cancel = dialogImdb.cancelSet;
+					cancelAll = dialogImdb.cancelAllSet;
+				}
+			});
+		} catch (InvocationTargetException e) {
+			log.error("Exception:" + e.getMessage(), e);
+		}
+		
+		return tmpUrlKey;
 	}
 }
