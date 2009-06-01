@@ -21,7 +21,6 @@
 	<classpathentry kind="lib" path="MovieManager/lib/ostermillerutils_1_05_00_for_java_1_4.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/poi-2.5.1-final-20040804.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/ProportionLayout.jar"/>
-	<classpathentry kind="lib" path="MovieManager/lib/retroweaver-all-2.0.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/TableLayout.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/useful.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/xercesImpl.jar"/>
