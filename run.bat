@@ -2,8 +2,7 @@
 java -Xmx256m -classpath "%CLASSPATH%";.;^
 lib\drivers\hsqldb-1.7.3.3.jar;^
 lib\drivers\mysql-connector-java-3.1.12-bin.jar;^
-lib\LookAndFeels\skinlf.jar;^
-lib\LookAndFeels\oalnf.jar;^
+lib\skinlf.jar;^
 lib\TableLayout.jar;^
 lib\useful.jar;^
 lib\BrowserLauncher2-10rc4.jar;^

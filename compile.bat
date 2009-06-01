@@ -3,8 +3,7 @@
 @del /Q/S net > nul
 @echo Compiling...
 javac -d . -target 1.5 -source 1.5 -classpath "%CLASSPATH%";.;^
-lib/LookAndFeels/skinlf.jar;^
-lib/LookAndFeels/oalnf.jar;^
+lib/skinlf.jar;^
 lib/TableLayout.jar;^
 lib/useful.jar;^
 lib/BrowserLauncher2-10rc4.jar;^
