@@ -44,13 +44,12 @@ class FilePropertiesMediaInfo extends FileProperties {
 		
 		if (SysUtil.isWindows()) {
 
-			String mediaInfoDll = "lib\\MediaInfo.dll";
+			String mediaInfoDll = "lib\\MediaInfo\\x86\\MediaInfo.dll";
 			
-			System.err.println("isAMD64():" + SysUtil.isAMD64());
-			
-			if (SysUtil.isAMD64())			
-				;//mediaInfoDll = "lib\\MediaInfo64bit.dll";
-			
+			if (SysUtil.isAMD64()) {
+				log.debug("Using MediaInfo library for amd64");
+				mediaInfoDll = "lib\\MediaInfo\\amd64\\MediaInfo.dll";
+			}
 			File mediaInfo = new File((FileUtil.getFile(mediaInfoDll)).getPath());
 
 			if (mediaInfo.exists()) {
