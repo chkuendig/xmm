@@ -7,7 +7,7 @@ lib\TableLayout.jar;^
 lib\useful.jar;^
 lib\BrowserLauncher2-10rc4.jar;^
 lib\jxl.jar;^
-lib\JNative.jar;^
+lib/jna-3.0.9.jar;^
 lib\retroweaver-all-2.0.jar;^
 lib\commons-httpclient-3.0.1.jar;^
 lib\commons-logging-1.1.jar;^
