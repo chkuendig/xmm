@@ -22,12 +22,15 @@ package net.sf.xmm.moviemanager.commands;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.Database;
+import net.sf.xmm.moviemanager.gui.DialogAlert;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
 public class MovieManagerCommandExit implements ActionListener {
@@ -50,9 +53,16 @@ public class MovieManagerCommandExit implements ActionListener {
 			MovieManager.getConfig().setDisplayPlayButton(MovieManager.getDialog().getPLayButtonVisible());
 			MovieManager.getConfig().setDisplayPrintButton(MovieManager.getDialog().getPrintButtonVisible());
 
-			// Saving config file
-			MovieManager.getConfig().saveConfig();
-
+			try {
+				// Saving config file
+				MovieManager.getConfig().saveConfig();
+			} catch (IOException io) {
+				DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Config error", "<html>Error occured when writing config file:<br>"+ io.getMessage() +" </html>");
+				GUIUtil.show(alert, true);	
+			} catch (Exception e) {
+				log.error("Exception:" + e.getMessage(), e);					
+			}
+			
 			/* Finalizes the main frame... */
 			try {
 				MovieManager.getDialog().finalize();
@@ -76,6 +86,10 @@ public class MovieManagerCommandExit implements ActionListener {
 
 			/* Writes the date. */
 			log.debug("Log End: "+new Date(System.currentTimeMillis()) + SysUtil.getLineSeparator());
+			
+		} catch (Exception e) {
+			log.debug("Exception:" + e.getMessage(), e);
+			
 			
 		} finally {
 			MovieManager.exit();

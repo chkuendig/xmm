@@ -3080,7 +3080,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 
 
-	public void saveConfig() {
+	public void saveConfig() throws Exception {
 
 		 StringBuffer settings = new StringBuffer(1500);
 		 String lineSeparator = SysUtil.getLineSeparator();
@@ -3545,48 +3545,43 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			 settings.append(lineSeparator);
 		 }
 
-		 try {
+		 
+		 File config = null;
+		 int appMode = MovieManager.getAppMode();
 
-			 File config = null;
-			 int appMode = MovieManager.getAppMode();
+		 // Applet
+		 if (appMode == 1)
+			 config = new File(new URI(FileUtil.getFileURL("config/Config_Applet.ini", DialogMovieManager.applet).toString()));
+		 else if (appMode == 2) { // Java Web Start
 
-			 // Applet
-			 if (appMode == 1)
-				 config = new File(new URI(FileUtil.getFileURL("config/Config_Applet.ini", DialogMovieManager.applet).toString()));
-			 else if (appMode == 2) { // Java Web Start
+			 MovieManagerConfigHandler configHandler = getConfigHandler();
 
-				 MovieManagerConfigHandler configHandler = getConfigHandler();
+			 if (configHandler != null)
+				 config = new File(new URI(configHandler.getConfigURL().toString()));
 
-				 if (configHandler != null)
-					 config = new File(new URI(configHandler.getConfigURL().toString()));
-
-			 } else {
-				 if (SysUtil.isMac() || SysUtil.isWindowsVista() || SysUtil.isWindows7())
-					 config = new File(SysUtil.getConfigDir(), "Config.ini");
-				 else 
-					 config = new File(SysUtil.getUserDir(), "config/Config.ini");  
-			 }
-		
-			 if (config == null)
-				 throw new Exception("Failed to save config file:" + config);
-				 
-			 /* If it exists deletes... */
-			 if (config.exists() && !config.delete()) {
-				 throw new Exception("Cannot delete config file.");
-			 }
-			  
-			 /* Recreates... */
-			 if (!config.createNewFile()) {
-				 throw new Exception("Cannot create config file.");
-			 }
-			 
-			 log.debug("Saving configuration data: " + config);
-			 
-			 FileUtil.writeToFile(config.getAbsolutePath(), settings);
-			 				 
-		 } catch (Exception e) {
-			 log.error("Exception:" + e.getMessage(), e);
+		 } else {
+			 if (SysUtil.isMac() || SysUtil.isWindowsVista() || SysUtil.isWindows7())
+				 config = new File(SysUtil.getConfigDir(), "Config.ini");
+			 else 
+				 config = new File(SysUtil.getUserDir(), "config/Config.ini");  
 		 }
+
+		 if (config == null)
+			 throw new Exception("Failed to save config file:" + config);
+
+		 /* If it exists deletes... */
+		 if (config.exists() && !config.delete()) {
+			 throw new Exception("Cannot delete config file.");
+		 }
+
+		 /* Recreates... */
+		 if (!config.createNewFile()) {
+			 throw new Exception("Cannot create config file.");
+		 }
+
+		 log.debug("Saving configuration data: " + config);
+
+		 FileUtil.writeToFile(config.getAbsolutePath(), settings);
 	 }
 	 
 	
