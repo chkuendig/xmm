@@ -5,6 +5,12 @@
 ========================================
 
 
+Version 2.8.3 (01-jun-2009)
+
+- Bug fixes:
+
+  - 'Update IMDb Info' would fail for entries with no IMDb id when using Substance L&F.
+
 
 Version 2.8.2 (31-may-2009)
 
