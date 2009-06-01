@@ -85,6 +85,7 @@ public class SysUtil {
 			
 			// Resetting config to local mode
 			if (MovieManager.getConfig().getLocalConfigMode()) {
+				log.debug("Using localconfigmode for config");
 				dir = null;
 			}
 						
