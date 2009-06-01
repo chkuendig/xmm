@@ -40,9 +40,18 @@ class FilePropertiesMediaInfo extends FileProperties {
 	FilePropertiesMediaInfo(String filePath) throws Exception {
 		this.filePath = filePath;
 	
+		System.err.println("FilePropertiesMediaInfo");
+		
 		if (SysUtil.isWindows()) {
 
-			File mediaInfo = new File((FileUtil.getFile("lib\\MediaInfo.dll")).getPath());
+			String mediaInfoDll = "lib\\MediaInfo.dll";
+			
+			System.err.println("isAMD64():" + SysUtil.isAMD64());
+			
+			if (SysUtil.isAMD64())			
+				;//mediaInfoDll = "lib\\MediaInfo64bit.dll";
+			
+			File mediaInfo = new File((FileUtil.getFile(mediaInfoDll)).getPath());
 
 			if (mediaInfo.exists()) {
 				LibPathHacker.addDir(FileUtil.getFile("lib").getAbsolutePath());

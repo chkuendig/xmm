@@ -183,9 +183,24 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private int lastMovieInfoTabIndex = 0;
 	private int lastPreferencesTabIndex = 0;
 
-	/* 0 = no, 1 = yes if no java parser avaliable, 2 = yes */
-	private int useMediaInfoDLL = 1;
+	public enum MediaInfoOption {MediaInfo_No, MediaInfo_yesifnojava, MediaInfo_Yes;
+	
+		public static MediaInfoOption getValue(int val) {
 
+		switch(val) {
+		case 0: return MediaInfoOption.MediaInfo_No;
+		case 1: return MediaInfoOption.MediaInfo_yesifnojava;
+		case 2: return MediaInfoOption.MediaInfo_Yes;
+		}
+		return MediaInfoOption.MediaInfo_No;
+	}
+
+	}
+	/* 0 = no, 1 = yes if no java parser avaliable, 2 = yes */
+	//private int useMediaInfoDLL = 1;
+	private MediaInfoOption useMediaInfoDLL = MediaInfoOption.MediaInfo_yesifnojava;
+
+	
 	/* Used only with MySQL database */
 	private boolean storeCoversLocally = false;
 
@@ -1041,11 +1056,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 
 
-	public int getUseMediaInfoDLL() {
+	public MediaInfoOption getUseMediaInfoDLL() {
 		return useMediaInfoDLL;
 	}
 
-	public void setUseMediaInfoDLL(int useMediaInfoDLL) {
+	public void setUseMediaInfoDLL(MediaInfoOption useMediaInfoDLL) {
 		this.useMediaInfoDLL = useMediaInfoDLL;
 	}
 
@@ -2826,7 +2841,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 			if (value != null) {
 				if (!value.equals("")) {
-					setUseMediaInfoDLL(Integer.parseInt(value));
+					
+					if (StringUtil.isInteger(value))
+						setUseMediaInfoDLL(MediaInfoOption.getValue(Integer.parseInt(value)));
+					else
+						setUseMediaInfoDLL(MediaInfoOption.valueOf(value));
 				}
 			}
 

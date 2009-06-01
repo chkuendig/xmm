@@ -98,6 +98,8 @@ import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
+import net.sf.xmm.moviemanager.MovieManagerConfig.MediaInfoOption;
+
 import org.apache.log4j.Logger;
 
 public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListener {
@@ -1938,14 +1940,14 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 				/* Use media info library */
 				if (lastFileFilter.equals(filterChoices[1]))
-					MovieManager.getConfig().setUseMediaInfoDLL(2);
+					MovieManager.getConfig().setUseMediaInfoDLL(MediaInfoOption.MediaInfo_Yes);
 				else if (SysUtil.isWindows()) /*
 												 * Use media info library only
 												 * if java parser not available
 												 */
-					MovieManager.getConfig().setUseMediaInfoDLL(1);
+					MovieManager.getConfig().setUseMediaInfoDLL(MediaInfoOption.MediaInfo_yesifnojava);
 				else
-					MovieManager.getConfig().setUseMediaInfoDLL(0);
+					MovieManager.getConfig().setUseMediaInfoDLL(MediaInfoOption.MediaInfo_No);
 
 				/* Sets the last path... */
 				MovieManager.getConfig().setLastFileDir(fileChooser.getCurrentDirectory());

@@ -394,6 +394,12 @@ public class SysUtil {
 	}
 	
 	
+	public static boolean isAMD64() {
+		String arch = System.getProperty("os.arch"); //$NON-NLS-1$
+		return arch != null  && arch.equals("amd64");
+	}
+	
+	
 	public static void openFileLocationOnWindows(File file) {
 		try {
 			//Desktop.getDesktop().browse(file.toURI());

@@ -32,6 +32,7 @@ import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
+import net.sf.xmm.moviemanager.MovieManagerConfig.MediaInfoOption;
 import org.apache.log4j.Logger;
 
 /**
@@ -120,8 +121,7 @@ public class FilePropertiesMovie {
 	private boolean infoAvailable = false;
 
 	private boolean supported = false;
-
-
+	
 	/**
 	 * Class 	gets all info available from the media file.
 	 * 
@@ -131,7 +131,7 @@ public class FilePropertiesMovie {
 	 * 						1 = yes if no java parser avaliable
 	 * 						2 = yes 
 	 **/
-	public FilePropertiesMovie(String filePath, int useMediaInfo) throws Exception {
+	public FilePropertiesMovie(String filePath, MediaInfoOption mediaInfoOption) throws Exception {
 
 		FileProperties fileProperties = null;
 		
@@ -186,19 +186,21 @@ public class FilePropertiesMovie {
 			}
 
 			boolean done = false;
-			int next = 1;
-
+			boolean tryMediaInfo = true;
+			
 			while (!done) {
 
 				try {
 
-					switch (useMediaInfo) {
-
-					case 0: {
-						next = 0;
+					switch (mediaInfoOption) {
+					
+					// No media info
+					case MediaInfo_No: {
+						tryMediaInfo = false;
 					}
 
-					case 1: {
+					// Java parsing, if fail, media info
+					case MediaInfo_yesifnojava: {
 						if (format < FORMATS.length) {
 
 							if (format < FORMATS.length) {
@@ -207,19 +209,19 @@ public class FilePropertiesMovie {
 							}
 						}
 
-						if (next == 1 && useMediaInfo == 1) {
-							next = 0;
-							useMediaInfo = 2;
+						if (tryMediaInfo) {
+							tryMediaInfo = false;
+							mediaInfoOption = MediaInfoOption.MediaInfo_Yes;
 						}
 						else
 							done = true;
 
 						break;
 					}
+					// Use media info
+					case MediaInfo_Yes: {
 
-					case 2: {
-
-						//if (SysUtil.isWindows()) {
+						if (!SysUtil.isMac()) {
 							try {
 								fileProperties = new FilePropertiesMediaInfo(filePath);
 								break;
@@ -227,11 +229,11 @@ public class FilePropertiesMovie {
 								fileProperties = null;
 								log.error("Exception: " + e.getMessage());
 							}
-						//	}
+						}
 
-						if (next == 1) {
-							next = 0;
-							useMediaInfo = 0;
+						if (tryMediaInfo) {
+							tryMediaInfo = false;
+							mediaInfoOption = MediaInfoOption.MediaInfo_No;
 						}
 						else
 							done = true;
@@ -302,16 +304,20 @@ public class FilePropertiesMovie {
 						}
 					}
 					
+					tryMediaInfo = false;
+					mediaInfoOption = MediaInfoOption.MediaInfo_No;
+					
 				} catch (Exception e) {
 					log.error("Exception: " + e.getMessage(), e);
 
-					if (next == 1) {
-						if (useMediaInfo == 2)
-							useMediaInfo = 0;
+					if (tryMediaInfo) {
+						
+						if (mediaInfoOption == MediaInfoOption.MediaInfo_Yes)
+							mediaInfoOption = MediaInfoOption.MediaInfo_No;
 						else
-							useMediaInfo = 2;
+							mediaInfoOption = MediaInfoOption.MediaInfo_Yes;
 
-						next = 0;
+						tryMediaInfo = false;
 					}
 					else {
 						/* The file is corrupted, tries to save the info that may have been found */

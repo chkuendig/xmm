@@ -499,4 +499,14 @@ public class StringUtil {
 		return out.toString();
 	} 
 	
+	public static boolean isInteger(String val) {
+		
+		try {
+			Integer.parseInt(val);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+		return true;
+	}
+	
 }
