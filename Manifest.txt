@@ -5,8 +5,7 @@ Class-Path: lib/drivers/hsqldb-1.7.3.3.jar
   lib/skinlf.jar
   lib/BrowserLauncher2-10rc4.jar
   lib/jxl.jar
-  lib/JNative.jar
-  lib/retroweaver-all-2.0.jar
+  lib/jna-3.0.9.jar
   lib/useful.jar
   lib/TableLayout.jar
   lib/log4j-1.2.13.jar
