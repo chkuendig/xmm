@@ -71,7 +71,8 @@
 		   jna-3.0.9.jar
 		   jxl.jar,
 		   log4j-1.2.13.jar,
-		   MediaInfo.dll,
+		   MediaInfo/x86/MediaInfo.dll,
+		   MediaInfo/amd64/MediaInfo.dll,
 		   ostermillerutils_1_05_00_for_java_1_4.jar,
 		   poi-2.5.1-final-20040804.jar,
 		   ProportionLayout.jar,
