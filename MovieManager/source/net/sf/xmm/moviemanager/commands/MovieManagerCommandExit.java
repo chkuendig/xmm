@@ -57,7 +57,6 @@ public class MovieManagerCommandExit implements ActionListener {
 				// Saving config file
 				MovieManager.getConfig().saveConfig();
 			} catch (IOException io) {
-				System.err.println("IOException");
 				DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Config error", "<html>Error occured when saving config file:<br>"+ io.getMessage() +" </html>", true);
 				GUIUtil.showAndWait(alert, true);	
 			} catch (Exception e) {
