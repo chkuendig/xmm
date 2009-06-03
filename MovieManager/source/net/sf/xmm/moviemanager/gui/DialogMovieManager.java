@@ -952,8 +952,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         		
         		final ExtendedJTree movieList = getMoviesList();
         		
-        		ModelEntry selected = (ModelEntry) ((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject();
-		                		
         		JPopupMenu popupMenu = new JPopupMenu();
         		        		
         		final JMenuItem addNewEntry = new JMenuItem("Add new entry");
@@ -961,10 +959,10 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         		
         		final JMenuItem addToCurrent = new JMenuItem("Add to selected entry");
         		
-        		if (selected != null)
-        			popupMenu.add(addToCurrent); //$NON-NLS-1$
-        		       		
-        		        		
+        		if (movieList.getLastSelectedPathComponent() != null &&
+        				((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject() != null)
+            		popupMenu.add(addToCurrent); //$NON-NLS-1$
+        		            		        		
         		ActionListener listener = new ActionListener() {
         			public void actionPerformed(ActionEvent event) {
         				        		
