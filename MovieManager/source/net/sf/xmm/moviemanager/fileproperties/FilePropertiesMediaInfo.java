@@ -37,11 +37,12 @@ class FilePropertiesMediaInfo extends FileProperties {
 
 	private String filePath;
 
+	MediaInfo mi = new MediaInfo();
+	
 	FilePropertiesMediaInfo(String filePath) throws Exception {
 		this.filePath = filePath;
-	
-		System.err.println("FilePropertiesMediaInfo");
-		
+			
+		// Load library on Windows only
 		if (SysUtil.isWindows()) {
 
 			String mediaInfoDll = "lib\\MediaInfo\\x86\\MediaInfo.dll";
@@ -68,13 +69,18 @@ class FilePropertiesMediaInfo extends FileProperties {
 				throw new Exception(error);
 			}
 		}
-	}
 	
+		mi = new MediaInfo();
+		
+		String version = MediaInfo.Option_Static("Info_Version");
+		log.debug("Using " + version);
+		
+	}
+		
 	protected void process(RandomAccessFile nodeUsed) {
 
 		try {
-			MediaInfo mi = new MediaInfo();
-
+			
 			int open = mi.Open(filePath);
 			String tmp;
 
