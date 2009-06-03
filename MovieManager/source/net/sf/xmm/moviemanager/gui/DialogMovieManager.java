@@ -958,9 +958,10 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         		popupMenu.add(addNewEntry); //$NON-NLS-1$
         		
         		final JMenuItem addToCurrent = new JMenuItem("Add to selected entry");
-        		
+        		        		
         		if (movieList.getLastSelectedPathComponent() != null &&
-        				((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject() != null)
+        				((DefaultMutableTreeNode) movieList.getLastSelectedPathComponent()).getUserObject() != null &&
+        				MovieManager.getIt().getDialog().getEntries() > 0)
             		popupMenu.add(addToCurrent); //$NON-NLS-1$
         		            		        		
         		ActionListener listener = new ActionListener() {
