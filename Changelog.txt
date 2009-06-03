@@ -5,7 +5,7 @@
 ========================================
 
 
-Version 2.8.4 (03-jun-2009)
+Version 2.8.4 (04-jun-2009)
 
 - General improvements:
 
