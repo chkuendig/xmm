@@ -37,11 +37,11 @@ class FilePropertiesMediaInfo extends FileProperties {
 
 	private String filePath;
 
-	MediaInfo mi = new MediaInfo();
+	MediaInfo mi;
 	
 	FilePropertiesMediaInfo(String filePath) throws Exception {
 		this.filePath = filePath;
-			
+				
 		// Load library on Windows only
 		if (SysUtil.isWindows()) {
 
@@ -51,6 +51,10 @@ class FilePropertiesMediaInfo extends FileProperties {
 				log.debug("Using MediaInfo library for amd64");
 				mediaInfoDll = "lib\\MediaInfo\\amd64\\MediaInfo.dll";
 			}
+			else {
+				log.debug("Using MediaInfo library for x86");
+			}
+			
 			File mediaInfo = new File((FileUtil.getFile(mediaInfoDll)).getPath());
 
 			if (mediaInfo.exists()) {
