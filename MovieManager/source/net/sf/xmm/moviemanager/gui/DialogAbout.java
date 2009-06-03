@@ -23,6 +23,7 @@ package net.sf.xmm.moviemanager.gui;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -94,11 +95,16 @@ public class DialogAbout extends JDialog {
 	panelCopyright.add(labelCopyright);
 	/* Developers panel... */
 	JPanel panelDevelopers = new JPanel();
+	panelDevelopers.setLayout(new GridLayout(0, 1));
 	panelDevelopers.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Developers "),
-								     BorderFactory.createEmptyBorder(5,5,5,5)));
-	JLabel labelDevelopers = new JLabel("<html>Mediterranean, Bro, olba2, Steven, kreegee <br> Matthias Ihmig, Johannes Adams </html>",JLabel.CENTER);
+								     BorderFactory.createEmptyBorder(0,5,5,5)));
+	JLabel labelDevelopers = new JLabel("<html>Mediterranean, Bro</html>",JLabel.CENTER);
 	labelDevelopers.setFont(new Font(labelDevelopers.getFont().getName(),Font.PLAIN,labelDevelopers.getFont().getSize()));
+	JLabel labelContributers = new JLabel("<html><center>Contributors:</center><br>olba2, Steven, kreegee Matthias Ihmig, Johannes Adams</html>",JLabel.CENTER);
+	labelContributers.setFont(new Font(labelContributers.getFont().getName(),Font.PLAIN, labelContributers.getFont().getSize()));
+		
 	panelDevelopers.add(labelDevelopers);
+	panelDevelopers.add(labelContributers);
 	
 	/* Licenses panel... */
 	JPanel panelLicenses = new JPanel();
