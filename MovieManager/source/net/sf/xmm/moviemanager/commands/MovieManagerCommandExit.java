@@ -55,7 +55,6 @@ public class MovieManagerCommandExit implements ActionListener {
 
 			try {
 				// Saving config file
-				System.err.println("Saveconfig");
 				MovieManager.getConfig().saveConfig();
 			} catch (IOException io) {
 				System.err.println("IOException");
