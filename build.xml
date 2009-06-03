@@ -105,13 +105,13 @@
 		   TableLayout.jar,
 		   useful.jar,
 		   xercesImpl.jar,
-		   xml-apis.jar,
+		   xml-apis.jar
 		   " />
 
     <property name="libraries_windows"
       value="
         MediaInfo/x86/MediaInfo.dll,
-        MediaInfo/amd64/MediaInfo.dll,
+        MediaInfo/amd64/MediaInfo.dll
     "/>
     	
 	<property name="library_file_list_all"
