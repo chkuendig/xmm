@@ -126,7 +126,7 @@
 	  <!-- libraries -->
 	  <fileset targetdir="$INSTALL_PATH/lib/" 
 			   dir="MovieManager/lib/" 
-			   includes="@{library_file_list}"
+			   includes="@{library_file_list_all}"
 			   />
 	  
 	  
