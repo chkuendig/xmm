@@ -5,6 +5,13 @@
 ========================================
 
 
+Version 2.8.4 (03-jun-2009)
+
+- General improvements:
+
+  - Support for MediaInfo_ on 64bit Windows. 
+  
+
 Version 2.8.3 (01-jun-2009)
 
 - Bug fixes:
