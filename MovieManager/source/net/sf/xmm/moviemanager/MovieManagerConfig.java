@@ -3571,12 +3571,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 /* If it exists deletes... */
 		 if (config.exists() && !config.delete()) {
-			 throw new Exception("Cannot delete config file.");
+			 throw new java.io.IOException("Failed to delete old config file.");
 		 }
 
 		 /* Recreates... */
 		 if (!config.createNewFile()) {
-			 throw new Exception("Cannot create config file.");
+			 throw new java.io.IOException("Cannot create config file.");
 		 }
 
 		 log.debug("Saving configuration data: " + config);
