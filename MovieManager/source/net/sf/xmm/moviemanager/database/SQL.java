@@ -102,6 +102,8 @@ class SQL {
 
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 
+				DriverManager.setLoginTimeout(5);
+				
 				_conn = DriverManager.getConnection(_url);
 
 				log.info("Connected to MySQL database");
