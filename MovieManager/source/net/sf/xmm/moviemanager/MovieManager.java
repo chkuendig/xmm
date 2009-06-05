@@ -26,6 +26,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.security.*;
 import java.text.SimpleDateFormat;
@@ -36,6 +37,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
 
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandExit;
@@ -397,7 +399,9 @@ public class MovieManager {
     		if (!_database.isSetUp()) {
     			if (!_database.setUp()) {
     				DialogDatabase.showDatabaseMessage(dialogMovieManager, _database, null);
-    				dialogMovieManager.resetTreeModel();
+    				
+    				if (!progressBean.getCancelled())
+    					dialogMovieManager.resetTreeModel();
     				return false;
     			}
     		}
@@ -440,19 +444,20 @@ public class MovieManager {
 
     			setActiveAdditionalInfoFields(_database.getActiveAdditionalInfoFields());
 
-    			/* Error occured */
+    			/* Error occurred */
     			if (_database.getFatalError()) {
 
     				if (!_database.getErrorMessage().equals("")) { //$NON-NLS-1$
     					DialogDatabase.showDatabaseMessage(dialogMovieManager, _database, null);
-    					dialogMovieManager.resetTreeModel();
+    					
+    					if (!progressBean.getCancelled())
+    						dialogMovieManager.resetTreeModel();
     				}
     				return false;
     			}
     		
     			log.info("Loads the movies list"); //$NON-NLS-1$
 
-    			//ModelDatabaseSearch options = new ModelDatabaseSearch();
     			ModelDatabaseSearch options = getFilterOptions(_database);
 
     			// Verifies that all the lists are available
@@ -482,7 +487,6 @@ public class MovieManager {
     				}
     			}
     			else {
-    				//setDefaultListsSetup(_database);
     				options.setListOption(0);
     				config.setCurrentLists(new ArrayList<String>());
     				config.setShowUnlistedEntries(false);
@@ -625,89 +629,124 @@ public class MovieManager {
     
     
     public void processDatabaseError(Database db) {
-         
-    	String error = db.getErrorMessage();
-    	
-    	log.error("Database error:" + error);
-    	
-        if (error.equals("Server shutdown in progress")) { //$NON-NLS-1$
-            
-            dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(false);
-            
-            DialogAlert alert = new DialogAlert(getDialog(), "Server shutdown in progress", "<html>MySQL server is shutting down.</html>"); //$NON-NLS-1$
-            GUIUtil.showAndWait(alert, true);
-            
-            database = null;
-        }
-        else if (error.equals("Connection reset")) { //$NON-NLS-1$
-        	
-            dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(false);
-            
-            if (database != null) {
-            	DialogQuestion question = new DialogQuestion(Localizer.getString("moviemanager.connection-reset"), "<html>The connection to the MySQL server has been reset.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$
-            	"Reconnect now?</html>"); //$NON-NLS-1$
-            	GUIUtil.showAndWait(question, true);
 
-            	if (question.getAnswer()) {
-            		setDatabase(new DatabaseMySQL(database.getPath()), false);
-            	}
-            }
-        }
-        else if (error.equals("Connection closed")) { //$NON-NLS-1$
-        	
-            dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(false);
-            
-            if (database != null) {
-            	DialogQuestion question = new DialogQuestion("Connection closed", "<html>The connection to the MySQL server has closed.<br>" +
-            	"Reconnect now?</html>");
-            	GUIUtil.showAndWait(question, true);
+    	try {
+    		String error = db.getErrorMessage();
 
-            	if (question.getAnswer()) {
-            		setDatabase(new DatabaseMySQL(database.getPath()), false);
-            	}
-            }
-        }	
-        else if (error.equals("Connection refused: connect")) {
-        	//Should be handled by DialogDatabase
-        }
-        else if (error.equals("Socket Write Error")) {
-        	
-        	dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(false);
-            
-        	if (database != null) {
-        		DialogQuestion question = new DialogQuestion("Socket Write Error", "<html>Software caused connection abort due to a Socket Write Error.<br>" +
-        		"Reconnect to server now?</html>");
-        		GUIUtil.showAndWait(question, true);
+    		log.error("Database error:" + error);
 
-        		if (question.getAnswer()) {
-        			setDatabase(new DatabaseMySQL(database.getPath()), false);
-        		}
-        	}
-        }                  
-        else if (error.equals("UnknownHostException")) {
-        	DialogAlert alert = new DialogAlert(dialogMovieManager, "Unknown Host", "<html>The host could not be found.</html>"); //$NON-NLS-1$ //$NON-NLS-2$
-            GUIUtil.showAndWait(alert, true);
-        }   
-        else if (error.equals("Communications link failure")) {
-        	
-        	dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(false);
+    		if (error.equals("Server shutdown in progress")) { //$NON-NLS-1$
 
-        	if (database != null) {
-        		DialogQuestion question = new DialogQuestion("Communications link failure", "<html>Client failed to connect to MySQL server.<br>" +
-        		"Reconnect to server now?</html>");
-        		GUIUtil.showAndWait(question, true);
+    			dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(false);
 
-        		if (question.getAnswer()) {
-        			setDatabase(new DatabaseMySQL(database.getPath()), false);
-        		}
-        	}
-        }        	
-        else if (error.equals("MySQL server is out of space")) { //$NON-NLS-1$
-            DialogAlert alert = new DialogAlert(dialogMovieManager, Localizer.getString("moviemanager.mysql-out-of-space"), Localizer.getString("moviemanager.mysql-out-of-space-message")); //$NON-NLS-1$ //$NON-NLS-2$
-            GUIUtil.showAndWait(alert, true);
-        }
-        else
-        	DialogDatabase.showDatabaseMessage(MovieManager.getDialog(), db, "");
+    			SwingUtilities.invokeAndWait(new Runnable() {
+    				public void run() {
+    					DialogAlert alert = new DialogAlert(getDialog(), "Server shutdown in progress", "<html>MySQL server is shutting down.</html>"); //$NON-NLS-1$
+    					GUIUtil.showAndWait(alert, true);
+    				}
+    			});
+    			database = null;
+    		}
+    		else if (error.equals("Connection reset")) { //$NON-NLS-1$
+
+    			dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(false);
+
+    			if (database != null) {
+    				SwingUtilities.invokeAndWait(new Runnable() {
+    					public void run() {
+    						DialogQuestion question = new DialogQuestion(Localizer.getString("moviemanager.connection-reset"), "<html>The connection to the MySQL server has been reset.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$
+    						"Reconnect now?</html>"); //$NON-NLS-1$
+    						GUIUtil.showAndWait(question, true);
+
+    						if (question.getAnswer()) {
+    							setDatabase(new DatabaseMySQL(database.getPath()), false);
+    						}
+    					}
+    				});
+    			}
+    		}
+    		else if (error.equals("Connection closed")) { //$NON-NLS-1$
+
+    			dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(false);
+
+    			if (database != null) {
+    				SwingUtilities.invokeAndWait(new Runnable() {
+    					public void run() {
+    						DialogQuestion question = new DialogQuestion("Connection closed", "<html>The connection to the MySQL server has closed.<br>" +
+    						"Reconnect now?</html>");
+    						GUIUtil.showAndWait(question, true);
+
+    						if (question.getAnswer()) {
+    							setDatabase(new DatabaseMySQL(database.getPath()), false);
+    						}
+    					}
+    				});
+    			}
+    		}	
+    		else if (error.equals("Connection refused: connect")) {
+    			//Should be handled by DialogDatabase
+    		}
+    		else if (error.equals("Socket Write Error")) {
+
+    			dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(false);
+
+    			if (database != null) {
+    				SwingUtilities.invokeAndWait(new Runnable() {
+    					public void run() {
+    						DialogQuestion question = new DialogQuestion("Socket Write Error", "<html>Software caused connection abort due to a Socket Write Error.<br>" +
+    						"Reconnect to server now?</html>");
+    						GUIUtil.showAndWait(question, true);
+
+    						if (question.getAnswer()) {
+    							setDatabase(new DatabaseMySQL(database.getPath()), false);
+    						}
+    					}
+    				});
+    			}
+    		}                  
+    		else if (error.equals("UnknownHostException")) {
+    			SwingUtilities.invokeAndWait(new Runnable() {
+    				public void run() {
+    					DialogAlert alert = new DialogAlert(dialogMovieManager, "Unknown Host", "<html>The host could not be found.</html>"); //$NON-NLS-1$ //$NON-NLS-2$
+    					GUIUtil.showAndWait(alert, true);
+    				}
+    			});
+    		}   
+    		else if (error.equals("Communications link failure")) {
+
+    			dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(false);
+
+    			if (database != null) {
+
+    				SwingUtilities.invokeAndWait(new Runnable() {
+    					public void run() {
+    						DialogQuestion question = new DialogQuestion("Communications link failure", "<html>Client failed to connect to MySQL server.<br>" +
+    						"Reconnect to server now?</html>");
+    						GUIUtil.showAndWait(question, true);
+
+    						if (question.getAnswer()) {
+    							setDatabase(new DatabaseMySQL(database.getPath()), false);
+    						}
+    					}        			
+    				});
+    			}
+    		}        	
+    		else if (error.equals("MySQL server is out of space")) { //$NON-NLS-1$
+    			SwingUtilities.invokeAndWait(new Runnable() {
+    				public void run() {
+    					DialogAlert alert = new DialogAlert(dialogMovieManager, Localizer.getString("moviemanager.mysql-out-of-space"), Localizer.getString("moviemanager.mysql-out-of-space-message")); //$NON-NLS-1$ //$NON-NLS-2$
+    					GUIUtil.showAndWait(alert, true);
+    				}
+    			});
+    		}
+    		else
+    			DialogDatabase.showDatabaseMessage(MovieManager.getDialog(), db, "");
+
+    	} catch (InterruptedException e) {
+    		log.error("Exception:" + e.getMessage(), e);
+    	} catch (InvocationTargetException e) {
+    		log.error("Exception:" + e.getMessage(), e);
+    	}
     }
     
    
