@@ -40,6 +40,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 import javax.swing.AbstractAction;
@@ -943,144 +944,171 @@ public class DialogDatabase extends JDialog implements ActionListener {
     	return mysqlPath;
     }
 
+    
+    public static void showDatabaseMessage(final Window parent, Database _database, String msg) {
 
-    public static void showDatabaseMessage(Window parent, Database _database, String msg) {
+    	try {
 
-    	String title = ""; //$NON-NLS-1$
+    		String title = ""; //$NON-NLS-1$
 
-    	String message = _database.getErrorMessage();
-    	Exception exception = _database.getException();
-    	
-    	_database.resetError();
+    		String message = _database.getErrorMessage();
+    		Exception exception = _database.getException();
 
-    	if (msg != null && !msg.equals("")) //$NON-NLS-1$
-    		message = msg;
+    		_database.resetError();
 
-    	if (message == null) {
-    		message = ""; //$NON-NLS-1$
-    	}
-    	
-    	if (message.indexOf("Failed to connect to database") != -1 && _database.isMySQL()) { //$NON-NLS-1$
-    		message = Localizer.getString("DialogDatabase.mysql.message.failed-to-connect"); //$NON-NLS-1$
+    		if (msg != null && !msg.equals("")) //$NON-NLS-1$
+    			message = msg;
 
-    		if (_database.getException() != null)
-    			message += SysUtil.getLineSeparator() + _database.getException().getMessage();
+    		if (message == null) {
+    			message = ""; //$NON-NLS-1$
+    		}
 
-    		title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
-    	}
-    	else if (message.indexOf("Connection refused") != -1 && _database.isMySQL()) { //$NON-NLS-1$
-    		message = Localizer.getString("DialogDatabase.mysql.message.could-not-connect-connection-refused"); //$NON-NLS-1$
-    		title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
-    	}
-    	else if (message.indexOf("access denied (java.net.SocketPermission") != -1 && _database.isMySQL() && MovieManager.isApplet()) { //$NON-NLS-1$
-    		message = Localizer.getString("DialogDatabase.applet.message.jar-must-be-signed"); //$NON-NLS-1$
-    		title = Localizer.getString("DialogDatabase.applet.title.code-execution-error"); //$NON-NLS-1$
-    	}
-    	else if (message.indexOf("java.net.UnknownHostException") != -1 && _database.isMySQL()) { //$NON-NLS-1$
-    		message = Localizer.getString("DialogDatabase.mysql.message.unknow-host"); //$NON-NLS-1$
-    		title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
-    	}
-    	else if (message.indexOf("Network is unreachable") != -1 && _database.isMySQL()) { //$NON-NLS-1$
-    		message = "Network is unreachable"; //$NON-NLS-1$
-    		title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
-    	}
-    	else if (message.indexOf("Connection timed out") != -1 || message.indexOf("Connection refused: connect") != -1 && _database.isMySQL()) { //$NON-NLS-1$
-    		message = "<html> Connection timed out...<br>Make sure you have network access and that the IP and port is correct.</html>"; //$NON-NLS-1$
-    		title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
-    	}
-    	else if (message.indexOf("CREATE command denied") != -1) { //$NON-NLS-1$
-    		String tmp = Localizer.getString("DialogDatabase.mysql.message.create-tables-denied"); //$NON-NLS-1$
-    		message = "<html>"+ message + "<br>"+ tmp +"</html>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    		title = Localizer.getString("DialogDatabase.mysql.title.database-creation.failed"); //$NON-NLS-1$
-    	}
-    	else if (message.indexOf("Access denied") != -1 && _database.isMySQL()) { //$NON-NLS-1$
-    		message = "<html>"+ message + "<br>Access was denied, permission not sufficient.</html>"; //$NON-NLS-1$ //$NON-NLS-2$
-    		title = Localizer.getString("DialogDatabase.mysql.title.access-denied"); //$NON-NLS-1$
-    	}
-    	else if (message.indexOf("Authentication failed") != -1 && _database.isMySQL()) { //$NON-NLS-1$
-    		message = "<html>"+ message + "<br>The authentication process failed.</html>"; //$NON-NLS-1$ //$NON-NLS-2$
-    		title = Localizer.getString("DialogDatabase.mysql.title.authentication-failed"); //$NON-NLS-1$
-    	}
-    	else if (message.indexOf("Unknown database") != -1 && _database.isMySQL()) { //$NON-NLS-1$
-    		message = "<html> Either the user doesn't have sufficient privileges <br> or the given Schema doesn't exist.</html>"; //$NON-NLS-1$
-    		title = Localizer.getString("DialogDatabase.mysql.title.connection-attempt-failed"); //$NON-NLS-1$
-    	}
-    	else if (message.equals("org.hsqldb.jdbcDriver")) { //$NON-NLS-1$
-    		title = Localizer.getString("DialogDatabase.mysql.title.failed-to-load-hsql-driver"); //$NON-NLS-1$
-    		message = "<html> The HSQL database driver should be placed in the \"lib/drivers\" directory.</html>"; //$NON-NLS-1$
-    	}
-    	else if (message.equals("The database is already in use by another process")) { //$NON-NLS-1$
-    		message = "<html>The database is already in use by another process.</html>"; //$NON-NLS-1$
-    		title = Localizer.getString("DialogDatabase.mysql.title.connection-attempt-failed"); //$NON-NLS-1$
-    	}
-    	else if (message.indexOf("settings' doesn't exist") != -1) { //$NON-NLS-1$
-    		title = Localizer.getString("DialogDatabase.alert.title.database-error"); //$NON-NLS-1$
-    		message = "<html>" + message + " <br> The database does not contain the necessary tables for MeD's Movie Manager to function properly." ; //$NON-NLS-1$ //$NON-NLS-2$
-    	}
-    	else if (message.indexOf("already exists") != -1) { //$NON-NLS-1$
-    		title = Localizer.getString("DialogDatabase.alert.title.database-error"); //$NON-NLS-1$
-    		message = "<html> Table creation was denied. <br>" + message; //$NON-NLS-1$
-    	}
+    		if (message.indexOf("Failed to connect to database") != -1 && _database.isMySQL()) { //$NON-NLS-1$
+    			message = Localizer.getString("DialogDatabase.mysql.message.failed-to-connect"); //$NON-NLS-1$
 
-    	else if (message.equals("Connection reset")) { //$NON-NLS-1$
+    			if (_database.getException() != null)
+    				message += SysUtil.getLineSeparator() + _database.getException().getMessage();
 
-    		MovieManager.getDialog().getAppMenuBar().setDatabaseComponentsEnable(false);
+    			title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
+    		}
+    		else if (message.indexOf("Connection refused") != -1 && _database.isMySQL()) { //$NON-NLS-1$
+    			message = Localizer.getString("DialogDatabase.mysql.message.could-not-connect-connection-refused"); //$NON-NLS-1$
+    			title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
+    		}
+    		else if (message.indexOf("access denied (java.net.SocketPermission") != -1 && _database.isMySQL() && MovieManager.isApplet()) { //$NON-NLS-1$
+    			message = Localizer.getString("DialogDatabase.applet.message.jar-must-be-signed"); //$NON-NLS-1$
+    			title = Localizer.getString("DialogDatabase.applet.title.code-execution-error"); //$NON-NLS-1$
+    		}
+    		else if (message.indexOf("java.net.UnknownHostException") != -1 && _database.isMySQL()) { //$NON-NLS-1$
+    			message = Localizer.getString("DialogDatabase.mysql.message.unknow-host"); //$NON-NLS-1$
+    			title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
+    		}
+    		else if (message.indexOf("Network is unreachable") != -1 && _database.isMySQL()) { //$NON-NLS-1$
+    			message = "Network is unreachable"; //$NON-NLS-1$
+    			title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
+    		}
+    		else if (message.indexOf("Connection timed out") != -1 || message.indexOf("Connection refused: connect") != -1 && _database.isMySQL()) { //$NON-NLS-1$
+    			message = "<html> Connection timed out...<br>Make sure you have network access and that the IP and port is correct.</html>"; //$NON-NLS-1$
+    			title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
+    		}
+    		else if (message.indexOf("CREATE command denied") != -1) { //$NON-NLS-1$
+    			String tmp = Localizer.getString("DialogDatabase.mysql.message.create-tables-denied"); //$NON-NLS-1$
+    			message = "<html>"+ message + "<br>"+ tmp +"</html>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    			title = Localizer.getString("DialogDatabase.mysql.title.database-creation.failed"); //$NON-NLS-1$
+    		}
+    		else if (message.indexOf("Access denied") != -1 && _database.isMySQL()) { //$NON-NLS-1$
+    			message = "<html>"+ message + "<br>Access was denied, permission not sufficient.</html>"; //$NON-NLS-1$ //$NON-NLS-2$
+    			title = Localizer.getString("DialogDatabase.mysql.title.access-denied"); //$NON-NLS-1$
+    		}
+    		else if (message.indexOf("Authentication failed") != -1 && _database.isMySQL()) { //$NON-NLS-1$
+    			message = "<html>"+ message + "<br>The authentication process failed.</html>"; //$NON-NLS-1$ //$NON-NLS-2$
+    			title = Localizer.getString("DialogDatabase.mysql.title.authentication-failed"); //$NON-NLS-1$
+    		}
+    		else if (message.indexOf("Unknown database") != -1 && _database.isMySQL()) { //$NON-NLS-1$
+    			message = "<html> Either the user doesn't have sufficient privileges <br> or the given Schema doesn't exist.</html>"; //$NON-NLS-1$
+    			title = Localizer.getString("DialogDatabase.mysql.title.connection-attempt-failed"); //$NON-NLS-1$
+    		}
+    		else if (message.equals("org.hsqldb.jdbcDriver")) { //$NON-NLS-1$
+    			title = Localizer.getString("DialogDatabase.mysql.title.failed-to-load-hsql-driver"); //$NON-NLS-1$
+    			message = "<html> The HSQL database driver should be placed in the \"lib/drivers\" directory.</html>"; //$NON-NLS-1$
+    		}
+    		else if (message.equals("The database is already in use by another process")) { //$NON-NLS-1$
+    			message = "<html>The database is already in use by another process.</html>"; //$NON-NLS-1$
+    			title = Localizer.getString("DialogDatabase.mysql.title.connection-attempt-failed"); //$NON-NLS-1$
+    		}
+    		else if (message.indexOf("settings' doesn't exist") != -1) { //$NON-NLS-1$
+    			title = Localizer.getString("DialogDatabase.alert.title.database-error"); //$NON-NLS-1$
+    			message = "<html>" + message + " <br> The database does not contain the necessary tables for MeD's Movie Manager to function properly." ; //$NON-NLS-1$ //$NON-NLS-2$
+    		}
+    		else if (message.indexOf("already exists") != -1) { //$NON-NLS-1$
+    			title = Localizer.getString("DialogDatabase.alert.title.database-error"); //$NON-NLS-1$
+    			message = "<html> Table creation was denied. <br>" + message; //$NON-NLS-1$
+    		}
 
-    		DialogQuestion question = new DialogQuestion(Localizer.getString("DialogDatabase.alert.title.connection-reset"), "<html>The connection to the MySQL server has been reset.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$
-    		"Reconnect now?</html>"); //$NON-NLS-1$
+    		else if (message.equals("Connection reset")) { //$NON-NLS-1$
 
-    		GUIUtil.showAndWait(question, true);
+    			MovieManager.getDialog().getAppMenuBar().setDatabaseComponentsEnable(false);
 
-    		if (question.getAnswer()) {
+    			DialogQuestion question = new DialogQuestion(Localizer.getString("DialogDatabase.alert.title.connection-reset"), "<html>The connection to the MySQL server has been reset.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$
+    			"Reconnect now?</html>"); //$NON-NLS-1$
 
-    			try {
-    				Database db = connectToDatabase(parent, _database.getPath());
+    			GUIUtil.showAndWait(question, true);
 
-    				if (db != null && _database.isSetUp()) {
-    					updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.retrieving-movie-list")); //$NON-NLS-1$
-    					MovieManager.getIt().setDatabase(_database, true);
-    					return;
+    			if (question.getAnswer()) {
+
+    				try {
+    					Database db = connectToDatabase(parent, _database.getPath());
+
+    					if (db != null && _database.isSetUp()) {
+    						updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.retrieving-movie-list")); //$NON-NLS-1$
+    						MovieManager.getIt().setDatabase(_database, true);
+    						return;
+    					}
+    					else {
+    						//swingWorker.interrupt();
+    						progressBar.close();
+    						showDatabaseMessage(parent, _database, null);
+    						return;
+    					}
+    				} catch (Exception e) {
+
+    					final String finalTitle = title;
+    					final String finalMessage = message;
+    					
+    					SwingUtilities.invokeAndWait(new Runnable() {
+
+    						public void run() {
+    							JDialog alert;
+
+    							if (parent instanceof Frame)
+    								alert = new DialogAlert((Frame) parent, finalTitle, finalMessage);
+    							else
+    								alert = new DialogAlert((Dialog) parent, finalTitle, finalMessage);
+
+    							GUIUtil.showAndWait(alert, true);
+    						}
+    					});
     				}
-    				else {
-    					//swingWorker.interrupt();
-    					progressBar.close();
-    					showDatabaseMessage(parent, _database, null);
-
-    					return;
-    				}
-    			} catch (Exception e) {
-    				JDialog alert;
-
-    				if (parent instanceof Frame)
-    					alert = new DialogAlert((Frame) parent, title, message);
-    				else
-    					alert = new DialogAlert((Dialog) parent, title, message);
-
-    				GUIUtil.showAndWait(alert, true);
     			}
     		}
-    	}
-    	else if (message.equals("MySQL server is out of space")) { //$NON-NLS-1$
-    		title = Localizer.getString("DialogDatabase.alert.mysql.title.server-out-of-space"); //$NON-NLS-1$
-    		message = Localizer.getString("DialogDatabase.alert.mysql.message.server-out-of-space"); //$NON-NLS-1$
-    	}
-    	
-    	if (!message.equals("")) { //$NON-NLS-1$
-
-    		String msg2 = ""; //$NON-NLS-1$
-
-    		if (exception != null) {
-    			msg2 = exception.getMessage();
+    		else if (message.equals("MySQL server is out of space")) { //$NON-NLS-1$
+    			title = Localizer.getString("DialogDatabase.alert.mysql.title.server-out-of-space"); //$NON-NLS-1$
+    			message = Localizer.getString("DialogDatabase.alert.mysql.message.server-out-of-space"); //$NON-NLS-1$
     		}
 
-    		JDialog alert;
+    		if (!message.equals("")) { //$NON-NLS-1$
 
-    		if (parent instanceof Frame)
-    			alert = new DialogAlert((Frame) parent, title, message, true);
-    		else
-    			alert = new DialogAlert((Dialog) parent, title, message, true);
+    			String msg2 = ""; //$NON-NLS-1$
 
-    		GUIUtil.showAndWait(alert, true);
-    	}
+    			if (exception != null) {
+    				msg2 = exception.getMessage();
+    			}
+
+    			final String finalTitle = title;
+    			final String finalMessage = message;
+
+    			SwingUtilities.invokeAndWait(new Runnable() {
+
+    				public void run() {
+    					JDialog alert;
+
+    					if (parent instanceof Frame)
+    						alert = new DialogAlert((Frame) parent, finalTitle, finalMessage, true);
+    					else
+    						alert = new DialogAlert((Dialog) parent, finalTitle, finalMessage, true);
+
+    					GUIUtil.showAndWait(alert, true);
+    				}
+    			});
+
+    		}
+
+    	} catch (InterruptedException err) {
+    		log.error("Exception:" + err.getMessage(), err);
+    	} catch (InvocationTargetException err) {
+    		log.error("Exception:" + err.getMessage(), err);
+    	} catch (Exception err) {
+    		log.error("Exception:" + err.getMessage(), err);
+    	}    	
     }
 }
