@@ -64,7 +64,7 @@ import net.sf.xmm.moviemanager.util.StringUtil;
 
 import org.apache.log4j.Logger;
 
-public class DialogTableData extends JDialog {
+public abstract class DialogTableData extends JDialog {
 
 	Logger log = Logger.getLogger(getClass());
 
