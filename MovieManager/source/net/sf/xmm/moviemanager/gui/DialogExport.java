@@ -485,10 +485,16 @@ public class DialogExport extends JDialog implements ActionListener {
             		tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_XML_DATABASE) {
             
             	boolean execute = true;
-            	
             	String filePath = getPath();
             	
-            	if (filePath.equals("")) {
+            	// Check separator for CSV
+            	if (tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_CSV && 
+            			csvSeparator.getText().trim().equals("")) {
+            		DialogAlert alert = new DialogAlert(this, "Separator missing","Please provide a separator.");
+            		GUIUtil.showAndWait(alert, true);
+            		execute = false;
+            	}
+            	else if (filePath.equals("")) {
         			DialogAlert alert = new DialogAlert(this, "Alert","Please specify a file path.");
         			GUIUtil.showAndWait(alert, true);
         			execute = false;
