@@ -653,6 +653,9 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		String currentTemplateName = MovieManager.getConfig().getHTMLTemplateName();
 		String currentTemplateStyleName = MovieManager.getConfig().getHTMLTemplateStyleName();
 
+		System.err.println("currentTemplateName:" + currentTemplateName);
+		System.err.println("currentTemplateStyleName:" + currentTemplateStyleName);
+		
 		try {
 			ButtonGroup buttonGroup = new ButtonGroup();
 
@@ -678,7 +681,11 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 				for (int u = 0; u < styles.size(); u++) {
 					ModelHTMLTemplateStyle style = (ModelHTMLTemplateStyle) styles.get(u);
 
-					boolean selected = style.getName().equals(currentTemplateStyleName);
+					boolean selected = style.getName().equals(currentTemplateStyleName) &&
+										template.getName().equals(currentTemplateName);
+					
+					System.err.println("style:" + style.getName() + "selected:" + selected);
+					
 					final JMenuItem m = new JRadioButtonMenuItem(style.getName(), selected)  {
 						public JToolTip createToolTip() {
 							JMultiLineToolTip tooltip = new JMultiLineToolTip();
@@ -712,6 +719,8 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 				else {
 
 					boolean selected = template.getName().equals(currentTemplateName);
+					System.err.println("style:" + template.getName() + "selected:" + selected);
+					
 					JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(template.getName(), selected) {
 						public JToolTip createToolTip() {
 							JMultiLineToolTip tooltip = new JMultiLineToolTip();
