@@ -239,8 +239,7 @@ public class DialogTableData extends JDialog {
 		popupMenu.add(new JPopupMenu.Separator());
 
 		JMenu extraInfo = new JMenu("Extra Fields");
-		popupMenu.add(extraInfo);
-
+		
 		for (int i = 0; i < extraInfoFieldNames.size(); i ++) {
 			temp = new TableStringCheckBoxMenuItem(new FieldModel("Extra Info", (String) extraInfoFieldNames.get(i), columnIndex));
 			temp.addMouseListener(headerPopupListener);
@@ -248,6 +247,9 @@ public class DialogTableData extends JDialog {
 			columnIndex++;
 		}
 
+		if (extraInfoFieldNames.size() > 0)
+			popupMenu.add(extraInfo);
+		
 		return popupMenu;
 	}
 	
@@ -571,62 +573,7 @@ public class DialogTableData extends JDialog {
 		}
 	};
 	
-	public Object [][] retrieveValuesFromTable1() {
-
-		Object [][] output = null;
-		
-		try {
-			
-			TableModel tableModel = table.getModel();
-			TableColumnModel columnModel = table.getColumnModel();
-			int columnCount = table.getModel().getColumnCount();
-
-			TableColumn tmpColumn;
-			FieldModel fieldModel;
-
-			// Finding columns with values
-			
-			ArrayList<Integer> columns = new ArrayList<Integer>();
-			
-			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-				tmpColumn = columnModel.getColumn(columnIndex);
-				
-				Object o = tmpColumn.getHeaderValue();
-				
-				if (o instanceof String) {
-					continue;
-				}
-					
-				fieldModel = (FieldModel) o;
-
-				// column has been assigned an info field 
-				if (!fieldModel.toString().trim().equals("")) {
-					columns.add(new Integer(columnIndex));
-					
-					if (fieldModel.toString().trim().equals("Title")) {
-						titleColumnIndex = columnIndex;
-					}
-				}
-			}
-			
-			output = new String[tableModel.getRowCount()][columns.size()];
-			
-			for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
-				for (int row = 0; row < tableModel.getRowCount(); row++) {
-					int colIndex = columns.get(columnIndex).intValue();
-					output[row][columnIndex] = (String) table.getModel().getValueAt(row, colIndex);
-				
-					if (colIndex == titleColumnIndex)
-						titleColumnIndex = columnIndex;
-				}
-			}
-		}
-		catch (Exception e) {
-			log.error("", e);
-		}	
-		
-		return output;
-	}
+	
 	
 	public Object [][] retrieveValuesFromTable() {
 
@@ -680,7 +627,7 @@ public class DialogTableData extends JDialog {
 			}
 		}
 		catch (Exception e) {
-			log.error("", e);
+			log.error("Exception:" + e.getMessage(), e);
 		}	
 		
 		return output;
