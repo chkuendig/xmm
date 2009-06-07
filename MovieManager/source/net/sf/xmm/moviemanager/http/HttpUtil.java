@@ -143,7 +143,7 @@ public class HttpUtil {
 		}
 	}
 
-	class HTTPResult {
+	public class HTTPResult {
 		
 		StringBuffer data = null;
 		StatusLine statusLine = null;
@@ -152,11 +152,14 @@ public class HttpUtil {
 			this.data = data;
 			this.statusLine = statusLine;
 		}
+		
+		public StringBuffer getData() {
+			return data;
+		}
 	}
 	
+	
 	public HTTPResult readData(URL url) throws Exception {
-
-		StringBuffer data = new StringBuffer();
 		
 		if (!isSetup())
 			setup();
@@ -170,48 +173,20 @@ public class HttpUtil {
 		
 		BufferedInputStream stream = new BufferedInputStream(method.getResponseBodyAsStream());
 
+		StringBuffer data = new StringBuffer();
+		
 		// Saves the page data in a string buffer... 
 		int buffer;
 
 		while ((buffer = stream.read()) != -1) {
 			data.append((char) buffer);
 		}
+		
 		stream.close();
 		
 		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
 	}
 	
-	
-	public StringBuffer readDataToStringBuffer(URL url) throws Exception {
-
-		StringBuffer data = null;
-		
-		if (!isSetup())
-			setup();
-		
-		GetMethod method = new GetMethod(url.toString());
-		int statusCode = client.executeMethod(method);
-		
-		if (statusCode != HttpStatus.SC_OK) {
-			log.debug("HTTP StatusCode not HttpStatus.SC_OK:(" + statusCode + "):" + method.getStatusLine());
-		//	log.debug("HTTP StatusCode not HttpStatus.SC_OK:" + statusCode);
-		}
-
-		data = new StringBuffer();
-		BufferedInputStream stream = new BufferedInputStream(method.getResponseBodyAsStream());
-
-		// Saves the page data in a string buffer... 
-		int buffer;
-
-		while ((buffer = stream.read()) != -1) {
-			data.append((char) buffer);
-		}
-		stream.close();
-
-		return statusCode == HttpStatus.SC_OK ? data : null;
-	}
-
-
 
 	public byte [] readDataToByteArray(URL url) throws Exception {
 	
@@ -230,10 +205,13 @@ public class HttpUtil {
 				BufferedInputStream  inputStream = new BufferedInputStream(method.getResponseBodyAsStream());
 				ByteArrayOutputStream byteStream = new ByteArrayOutputStream(inputStream.available());
 
-				int buffer;
-				while ((buffer = inputStream.read()) != -1)
-					byteStream.write(buffer);
-
+				byte [] tmpBuf = new byte[1000];
+				int bytesRead;
+				
+				while ((bytesRead = inputStream.read(tmpBuf, 0, tmpBuf.length)) != -1) {
+					byteStream.write(tmpBuf, 0, bytesRead);
+				}
+								
 				inputStream.close();
 				data = byteStream.toByteArray();
 			}
