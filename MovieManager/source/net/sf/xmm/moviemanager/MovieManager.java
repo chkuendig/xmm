@@ -1189,7 +1189,7 @@ public class MovieManager {
     						
     						if (lines == null) {
     							log.error("Failed to read file "  + template);
-    							throw new Exception();
+    							throw new Exception("Failed to read file "  + template);
     						}
     						
     						ModelHTMLTemplate newTemplate = new ModelHTMLTemplate(templateFiles[i].getName(), lines);
