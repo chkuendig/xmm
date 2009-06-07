@@ -94,7 +94,7 @@ public class DialogTableExport extends DialogTableData {
 					GroupableTableColumnModel columnModel = (GroupableTableColumnModel) tableHeader.getColumnModel();
 					int columnCount = table.getModel().getColumnCount();
 					
-					TableColumn newColumn = columnModel.getColumn(currentColumn);
+					TableColumn newColumn;
 					boolean columnDataSpecified = false;
 					
 					for (int i = 0; i < columnCount; i++ ) {
