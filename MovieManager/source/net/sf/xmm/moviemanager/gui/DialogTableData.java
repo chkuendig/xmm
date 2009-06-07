@@ -124,6 +124,9 @@ public abstract class DialogTableData extends JDialog {
 		additionalInfoFieldNames = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
 		extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 		
+		// Available for MySQL only
+		generalInfoFieldNames.remove("CoverData");
+		
 		headerPopupMenu = makeHeaderPopupMenu();
 		
 		JPanel content = new JPanel();
@@ -216,7 +219,7 @@ public abstract class DialogTableData extends JDialog {
 
 		JMenu movieInfoMenu = new JMenu("Movie Info");
 		popupMenu.add(movieInfoMenu);
-
+		
 		for (int i = 0; i < generalInfoFieldNames.size(); i ++) {
 			temp = new TableStringCheckBoxMenuItem(new FieldModel("General Info", (String) generalInfoFieldNames.get(i), columnIndex));
 			temp.addMouseListener(headerPopupListener);
