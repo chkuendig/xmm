@@ -21,6 +21,9 @@
 package net.sf.xmm.moviemanager.commands.importexport;
 
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+
+import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogTableExport;
@@ -62,9 +65,20 @@ public class MovieManagerCommandExportCSV extends MovieManagerCommandExportHandl
 	public void execute() {
 		
 		data = getDatabaseData();
-		dialogExportTable = new DialogTableExport(MovieManager.getDialog(), data, settings);
-		GUIUtil.showAndWait(dialogExportTable, true);
-
+		
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					dialogExportTable = new DialogTableExport(MovieManager.getDialog(), data, settings);
+					GUIUtil.showAndWait(dialogExportTable, true);
+				}
+			});
+		} catch (InterruptedException e) {
+			log.error("InterruptedException:" + e.getMessage(), e);
+		} catch (InvocationTargetException e) {
+			log.error("InvocationTargetException:" + e.getMessage(), e);
+		}
+		
 		if (dialogExportTable.cancelled)
 			setCancelled(true);
 		
