@@ -1091,8 +1091,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	movieInfo.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
     	movieInfo.add(MovieManager.getConfig().sysSettings.getLookAndFeelTitle(), createStandardMovieInfo()); //$NON-NLS-1$
 
-    	// HTML panel isn't supported on Java 1.4
-    	if (!SysUtil.isCurrentJRES14() && !MovieManager.isApplet() && !MovieManager.getConfig().getInternalConfig().getDisableHTMLView()) {
+    	if (!MovieManager.isApplet() && !MovieManager.getConfig().getInternalConfig().getDisableHTMLView()) {
     		htmlPanel = new HtmlPanel();
     		movieInfo.add(htmlPanel); //$NON-NLS-1$
     		setTabbedMovieInfoTitle();
