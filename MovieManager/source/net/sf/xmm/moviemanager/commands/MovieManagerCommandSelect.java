@@ -630,7 +630,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			MovieManager.getDialog().getCast().setText(model.getCast());
 			MovieManager.getDialog().getCast().setCaretPosition(0);
 
-			String additionalInfoString = ModelAdditionalInfo.getAdditionalInfoString(model.getAdditionalInfo());
+			String additionalInfoString = model.getAdditionalInfo().getAdditionalInfoString();
 
 			/* Stores the additional info scollBar position */
 			if (MovieManager.getDialog().getAdditionalInfoScrollPane() != null) {
@@ -917,7 +917,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		StringUtil.replaceAll(template , "$container$", model.getAdditionalInfo().getContainer());
 		StringUtil.replaceAll(template , "$mediaType$", model.getAdditionalInfo().getMediaType());
 		
-		StringUtil.replaceAll(template , "$AdditionalInfoString$", model.getAdditionalInfo().getAdditionalInfoString());
+		StringUtil.replaceAll(template , "$AdditionalInfoString$", model.getAdditionalInfo().getAdditionalInfoString("<br>"));
 		
 	}
 	
