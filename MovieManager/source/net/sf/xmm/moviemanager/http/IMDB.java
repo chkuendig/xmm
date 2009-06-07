@@ -117,7 +117,8 @@ public class IMDB /*extends IMDB_if */{
     	
     	if (urlID != null) {
     		URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/");
-    		data = httpUtil.readDataToStringBuffer(url);
+    		HTTPResult res = httpUtil.readData(url);
+    		data = res.data;
     	}
     	
     	if (data == null) {
@@ -443,7 +444,8 @@ public class IMDB /*extends IMDB_if */{
 			URL url = new URL(urlType);
 
 			try {
-				data = httpUtil.readDataToStringBuffer(url);
+				HTTPResult res = httpUtil.readData(url);
+	    		data = res.data;
 			} catch (SocketTimeoutException s) {
 				log.error("Exception: " + s.getMessage());
 				data = null;
@@ -515,7 +517,8 @@ public class IMDB /*extends IMDB_if */{
 		try {
 
 			URL url = new URL(urlString);
-			StringBuffer data = httpUtil.readDataToStringBuffer(url);
+			HTTPResult res = httpUtil.readData(url);
+			StringBuffer data = res.data;
 
 			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("seasonsOutput.html", data);
 
@@ -602,7 +605,8 @@ public class IMDB /*extends IMDB_if */{
 
     		log.debug("getMatches:" + url);
     		
-    		StringBuffer data = httpUtil.readDataToStringBuffer(url);
+    		HTTPResult res = httpUtil.readData(url);
+			StringBuffer data = res.data;
 
     		if (data == null) {
     			log.warn("Failed to retrieve data from :" + url);
@@ -623,8 +627,8 @@ public class IMDB /*extends IMDB_if */{
 
     	try {
 
-    		//new java.io.File("HTML-debug").mkdir();
-    		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
+    		new java.io.File("HTML-debug").mkdir();
+    		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
 
     		int start = 0;
 			String key = "";
