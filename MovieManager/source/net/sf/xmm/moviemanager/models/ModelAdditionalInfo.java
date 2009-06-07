@@ -511,14 +511,17 @@ public class ModelAdditionalInfo {
 	}
 
 	public String getAdditionalInfoString() {
-		return getAdditionalInfoString(this);
+		return getAdditionalInfoString(this, "\n");
 	}
 
+	public String getAdditionalInfoString(String newLine) {
+		return getAdditionalInfoString(this, newLine);
+	}
 
 	/**
 	 * Returns the additional_info string of this model
 	 **/
-	public static String getAdditionalInfoString(ModelAdditionalInfo model) {
+	public static String getAdditionalInfoString(ModelAdditionalInfo model, String newLine) {
 
 		if (model == null)
 			return "";
@@ -541,7 +544,7 @@ public class ModelAdditionalInfo {
 
 				case 0: {
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 					data.append("Subtitles: ");
 
 					data.append(model.getSubtitles());
@@ -550,7 +553,7 @@ public class ModelAdditionalInfo {
 
 				case 1: {
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 					data.append("Duration: ");
 
 					int duration = model.getDuration();
@@ -576,7 +579,7 @@ public class ModelAdditionalInfo {
 
 				case 2: {
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 					data.append("File Size: ");
 
 					if (model.getFileSize() > 0) {
@@ -588,7 +591,7 @@ public class ModelAdditionalInfo {
 
 				case 3: {
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 					data.append("CDs: ");
 
 					if (model.getCDs() > 0)
@@ -598,7 +601,7 @@ public class ModelAdditionalInfo {
 
 				case 4: {
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 					data.append("CD Cases: ");
 
 					if (model.getCDCases() > 0)
@@ -608,7 +611,7 @@ public class ModelAdditionalInfo {
 
 				case 5: {
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 					data.append("Resolution: ");
 
 					data.append(model.getResolution());
@@ -617,7 +620,7 @@ public class ModelAdditionalInfo {
 
 				case 6: {
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 					data.append("Video Codec: ");
 
 					data.append(model.getVideoCodec());
@@ -626,7 +629,7 @@ public class ModelAdditionalInfo {
 
 				case 7: {
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 					data.append("Video Rate: ");
 
 					if (model.getVideoRate() != null && !"".equals(model.getVideoRate())) {
@@ -638,7 +641,7 @@ public class ModelAdditionalInfo {
 
 				case 8: {
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 
 					data.append("Video Bit Rate: ");
 
@@ -651,7 +654,7 @@ public class ModelAdditionalInfo {
 
 				case 9: {
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 
 					data.append("Audio Codec: ");
 					data.append(model.getAudioCodec());
@@ -660,7 +663,7 @@ public class ModelAdditionalInfo {
 
 				case 10: {
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 
 					data.append("Audio Rate: ");
 
@@ -674,7 +677,7 @@ public class ModelAdditionalInfo {
 				case 11: {
 
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 
 					data.append("Audio Bit Rate: ");
 
@@ -688,7 +691,7 @@ public class ModelAdditionalInfo {
 				case 12: {
 
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 
 					data.append("Audio Channels: ");
 					data.append(model.getAudioChannels());
@@ -699,7 +702,7 @@ public class ModelAdditionalInfo {
 				case 13: {
 
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 
 					data.append("Location: ");
 					data.append(model.getFileLocation());
@@ -710,7 +713,7 @@ public class ModelAdditionalInfo {
 				case 14: {
 
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 
 					data.append("File Count: ");
 					if (model.getFileCount() > 0)
@@ -721,7 +724,7 @@ public class ModelAdditionalInfo {
 				case 15: {
 
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 
 					data.append("Container: ");
 					data.append(model.getContainer());
@@ -731,7 +734,7 @@ public class ModelAdditionalInfo {
 				case 16: {
 
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 
 					data.append("Media Type: ");
 					data.append(model.getMediaType());
@@ -743,7 +746,7 @@ public class ModelAdditionalInfo {
 					int columnIndex = activeAdditionalInfoFields[i]-17;
 
 					if (data.length() != 0)
-						data.append("\n");
+						data.append(newLine);
 
 					data.append(model.getExtraInfoFieldName(columnIndex) + ": ");
 					data.append(model.getExtraInfoFieldValue(columnIndex));
