@@ -3029,7 +3029,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			
 			value = (String) config.get("exportCSVseparator:");
 
-			if (value != null) {
+			if (value != null && !value.trim().equals("")) {
 				setExportCSVseparator(value);
 			}
 			
