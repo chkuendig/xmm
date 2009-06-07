@@ -73,7 +73,7 @@ public class ModelHTMLTemplateStyle {
 	}
 	
 	public String getInfo() {
-		String str = " Name:   " + name;
+		String str = " Name:  " + name;
 		
 		if (authorName != null)
 			str += "\r\n Author: " + authorName;
