@@ -257,7 +257,15 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 				for (int i = 0; i < movieList.size(); i++) {
 
 					model = movieList.get(i);
+					
+					if (!model.getHasGeneralInfoData()) {
+						model.updateGeneralInfoData();
+					}
 
+					if (!model.getHasAdditionalInfoData()) {
+						model.updateAdditionalInfoData();
+					}
+					
 					char c = Character.toLowerCase(model.getTitle().charAt(0));
 					int groupIndex = -1;
 
@@ -298,6 +306,15 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 
 				for (int i = 0; i < movieList.size(); i++) {
 					model = movieList.get(i);
+					
+					if (!model.getHasGeneralInfoData()) {
+						model.updateGeneralInfoData();
+					}
+
+					if (!model.getHasAdditionalInfoData()) {
+						model.updateAdditionalInfoData();
+					}
+					
 					tmpGroup.addModel(model);
 				}
 			}
