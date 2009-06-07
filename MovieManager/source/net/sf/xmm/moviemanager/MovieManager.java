@@ -954,7 +954,9 @@ public class MovieManager {
     			Thread.currentThread().setPriority(MIN_PRIORITY);
     			
     			try {
-    				String buf = new HttpUtil(getConfig().getHttpSettings()).readDataToStringBuffer(new URL("http://xmm.sourceforge.net/LatestVersion.txt")).toString();
+    				HttpUtil httpUtil = new HttpUtil(getConfig().getHttpSettings());
+    				
+    				String buf = httpUtil.readData(new URL("http://xmm.sourceforge.net/LatestVersion.txt")).getData().toString();
 
     				String [] lines = buf.split("\n|\r\n?");
 
