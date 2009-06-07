@@ -402,35 +402,35 @@ public class ModelAdditionalInfo {
 				setSubtitles(value);
 			else if (fieldName.equalsIgnoreCase("Duration"))
 				setDuration(Integer.parseInt(value));
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("File Size"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("File Size"))
 				setFileSize(Integer.parseInt(value));
 			else if (fieldName.equalsIgnoreCase("CDs"))
 				setCDs(Integer.parseInt(value));
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("CD Cases"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("CD Cases"))
 				setCDCases(Integer.parseInt(value));
 			else if (fieldName.equalsIgnoreCase("Resolution"))
 				setResolution(value);
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Video Codec"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Video Codec"))
 				setVideoCodec(value);
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Video Rate"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Video Rate"))
 				setVideoRate(value);
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Video Bit Rate"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Video Bit Rate"))
 				setVideoBitrate(value);
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Codec"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Audio Codec"))
 				setAudioCodec(value);
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Rate"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Audio Rate"))
 				setAudioRate(value);
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Bit Rate"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Audio Bit Rate"))
 				setAudioBitrate(value);
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Channels"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Audio Channels"))
 				setAudioChannels(value);
 			else if (fieldName.equalsIgnoreCase("Container"))
 				setContainer(value);
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("File Location"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("File Location"))
 				setFileLocation(value);
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("File Count"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("File Count"))
 				setFileCount(Integer.parseInt(value));
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Media Type"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Media Type"))
 				setMediaType(value);
 			else
 				return false;
@@ -455,44 +455,41 @@ public class ModelAdditionalInfo {
 	/* Convenience method for setting values */
 	public String getValue(String fieldName, String tableName) {
 
-		//String fieldName = fieldModel.getField();
-		//String value = fieldModel.getValue();
-
 		if (tableName.equals("Additional Info")) {
-
+			
 			if (fieldName.equalsIgnoreCase("SubTitles"))
 				return getSubtitles();
 			else if (fieldName.equalsIgnoreCase("Duration"))
 				return "" + getDuration();
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("File Size"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("File Size"))
 				return "" + getFileSize();
 			else if (fieldName.equalsIgnoreCase("CDs"))
 				return "" + getCDs();
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("CD Cases"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("CD Cases"))
 				return "" + getCDCases();
 			else if (fieldName.equalsIgnoreCase("Resolution"))
 				return getResolution();
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Video Codec"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Video Codec"))
 				return getVideoCodec();
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Video Rate"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Video Rate"))
 				return getVideoRate();
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Video Bit Rate"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Video Bit Rate")) 
 				return getVideoBitrate();
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Codec"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Audio Codec"))
 				return getAudioCodec();
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Rate"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Audio Rate"))
 				return getAudioRate();
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Bit Rate"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Audio Bit Rate"))
 				return getAudioBitrate();
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Audio Channels"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Audio Channels"))
 				return getAudioChannels();
 			else if (fieldName.equalsIgnoreCase("Container"))
 				return getContainer();
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("File Location"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("File Location"))
 				return getFileLocation();
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("File Count"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("File Count"))
 				return "" + getFileCount();
-			else if (fieldName.replaceFirst("_", " ").equalsIgnoreCase("Media Type"))
+			else if (fieldName.replaceAll("_", " ").equalsIgnoreCase("Media Type"))
 				return getMediaType();
 			
 			return "";
