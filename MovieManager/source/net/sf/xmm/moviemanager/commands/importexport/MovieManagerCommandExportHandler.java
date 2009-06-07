@@ -133,6 +133,9 @@ public abstract class MovieManagerCommandExportHandler implements MovieManagerCo
 		ArrayList<String> additionalInfoFieldNames = MovieManager.getIt().getDatabase().getAdditionalInfoFieldNames();
 		ArrayList<String> extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 
+		// Available for MySQL only
+		generalInfoFieldNames.remove("CoverData");
+		
 		int columnCount = generalInfoFieldNames.size() + additionalInfoFieldNames.size() + extraInfoFieldNames.size();
 
 		ArrayList<ModelMovie> movies = MovieManager.getDialog().getCurrentMoviesList();
@@ -142,6 +145,9 @@ public abstract class MovieManagerCommandExportHandler implements MovieManagerCo
 
 			int tableIndex = 0;
 						
+			if (!movies.get(i).getHasGeneralInfoData())
+				movies.get(i).updateGeneralInfoData();
+			
 			if (!movies.get(i).getHasAdditionalInfoData())
 				movies.get(i).updateAdditionalInfoData();
 				
