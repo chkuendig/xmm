@@ -43,6 +43,7 @@ import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
 import net.sf.xmm.moviemanager.util.BrowserOpener;
@@ -760,6 +761,9 @@ public class DialogIMDB extends JDialog {
     		log.error(e.getMessage(), e); //$NON-NLS-1$
     		return false;
     	}
+    	
+    	ModelIMDbEntry dataModel = imdb.getLastDataModel();
+    	   
 
     	if (key.equals(imdb.getUrlID())) {
 
@@ -794,6 +798,11 @@ public class DialogIMDB extends JDialog {
     		} else {
     			modelEntry.setCover(null);
     			modelEntry.setCoverData(null);
+    		}
+    		
+    		// Big cover available
+    		if (imdb.retrieveBiggerCover(dataModel)) {
+    			modelEntry.setBigCoverData(dataModel.getBigCoverData());
     		}
     	}
     	return true;
