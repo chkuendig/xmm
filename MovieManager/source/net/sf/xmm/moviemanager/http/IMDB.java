@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager.http;
 
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -204,9 +205,11 @@ public class IMDB /*extends IMDB_if */{
 			if ((start = data.indexOf("<div class=\"photo\">")) != -1 && 
 				(end = data.indexOf("</div>", start)) != -1) {
 	    	
-				if (data.substring(start, end).indexOf("Poster Not Submitted") == -1) {
+				String tmp = data.substring(start, end);
+				
+				if (tmp.indexOf("Poster Not Submitted") == -1) {
 	    	
-					if ((start = data.indexOf("src=\"",start) +5) !=4 &&
+					if ((start = data.indexOf("src=\"", start) +5) !=4 &&
 						(end = data.indexOf("\"", start)) != -1) {
 						coverURL = HttpUtil.decodeHTML(data.substring(start, end));
 						
@@ -220,6 +223,26 @@ public class IMDB /*extends IMDB_if */{
 							coverName = urlID + coverURL.substring(start, coverURL.length());
 							dataModel.setCoverName(coverName);
 						}
+						
+						// Get id of big cover
+												
+						Pattern p = Pattern.compile("href=\".*/media/(rm\\d+/tt\\d+)\"");
+						
+						System.err.println("tmp:" + tmp);
+						
+						Matcher m = p.matcher(tmp);
+						
+						if (m.find()) {
+						
+							String g = m.group();
+						
+							System.err.println("g:" + m.group(0));
+							System.err.println("g1:" + m.group(1));
+							
+							dataModel.bigCoverUrlId = m.group(1);
+							
+						}
+						//rm3535314176/tt0093773
 					}
 				}
 			}
@@ -431,7 +454,8 @@ public class IMDB /*extends IMDB_if */{
 		return null;
     }
 
-  
+
+   
     
     public StringBuffer getEpisodesStream(ModelIMDbSearchHit modelSeason) {
 	
@@ -1040,6 +1064,10 @@ public class IMDB /*extends IMDB_if */{
     
         
     
+    public ModelIMDbEntry getLastDataModel() {
+    	return lastDataModel;
+    }
+    	
     /**
      * Gets the key.
      **/
@@ -1206,6 +1234,10 @@ public class IMDB /*extends IMDB_if */{
     	return lastDataModel == null ? null : lastDataModel.getCoverData();
     }
     
+    public byte [] getBigCover() {
+    	return lastDataModel == null ? null : lastDataModel.getBigCoverData();
+    }
+    
     /**
      * Gets the cover.
      **/
@@ -1225,14 +1257,70 @@ public class IMDB /*extends IMDB_if */{
 		/* Returns the data... */
 		return coverData != null;
     }
-    
-    
+
+
+    public boolean retrieveBiggerCover(ModelIMDbEntry dataModel) {
+   	
+    	URL url;
+
+    	byte [] coverData = null;
+    	
+    	try {
+    		url = new URL("http://akas.imdb.com/media/" + dataModel.bigCoverUrlId);
+    		
+    		HTTPResult res = httpUtil.readData(url);
+    		StringBuffer data = res.data;
+
+    		int imgIndex = data.indexOf("<img oncontextmenu");
+
+    		if (imgIndex != -1) {
+
+    			String tmp = data.substring(imgIndex, data.indexOf(">", imgIndex));
+
+    			//src="http://ia.media-imdb.com/images/M/MV5BMTI4ODg5MjkwMl5BMl5BanBnXkFtZTcwNTkzMjYyMQ@@._V1._SX307_SY400_.jpg">
+
+    			Pattern p = Pattern.compile("src=\"(.+)\"");
+
+    			Matcher m = p.matcher(tmp);
+
+    			if (m.find()) {
+
+    				String g = m.group();
+
+    				System.err.println("g:" + m.group(0));
+    				System.err.println("g1:" + m.group(1));
+
+    				coverData = httpUtil.readDataToByteArray(new URL(m.group(1)));
+    				
+    				//dataModel.bigCoverUrlId = m.group(1);
+    			}
+
+    		}
+
+    	} catch (SocketTimeoutException s) {
+    		log.error("Exception: " + s.getMessage());
+    	} catch (Exception e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
+
+    	dataModel.setBigCoverData(coverData);
+    	
+    	//http://ia.media-imdb.com/images/M/MV5BMTI4ODg5MjkwMl5BMl5BanBnXkFtZTcwNTkzMjYyMQ@@._V1._SX307_SY400_.jpg
+
+    	return coverData != null;
+    }
+
     /**
      * Returns true if the last cover reading went ok..
      **/
     public boolean getCoverOK() {
-		return lastDataModel == null ? false : lastDataModel.hasCover();
+    	return lastDataModel == null ? false : lastDataModel.hasCover();
     }
-    
-    
+
+    public boolean getBigCoverOK() {
+    	return lastDataModel == null ? false : lastDataModel.hasBigCover();
+    }
+
+
 }
