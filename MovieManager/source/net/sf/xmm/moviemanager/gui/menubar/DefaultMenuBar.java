@@ -55,6 +55,8 @@ import net.sf.xmm.moviemanager.gui.DialogNewVersionInfo;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
 import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
+import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
+import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
@@ -346,12 +348,45 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuItemConvertDatabase.setActionCommand("Convert Database"); //$NON-NLS-1$
 		menuItemConvertDatabase.addActionListener(new MovieManagerCommandConvertDatabase());
 		
-		if (SysUtil.isWindows())
-			menuDatabase.add(menuItemConvertDatabase);
+		menuDatabase.add(menuItemConvertDatabase);
 
+		// When a new database is loaded, update list title
+        MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(new NewDatabaseLoadedEventListener() {
+        	public void newDatabaseLoaded(NewDatabaseLoadedEvent evt) {
+        		validateConvertDatabaseItem();
+			}
+        });
+		
 		/* All done. */
 		log.debug("Creation of the Database menu done."); //$NON-NLS-1$
 		return menuDatabase;
+	}
+	
+	/**
+	 * Validates if the convert item should be available
+	 */
+	public void validateConvertDatabaseItem() {
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+
+				boolean enabled = false;
+
+				// If Windows, always yes.
+				if (SysUtil.isWindows()) {
+					enabled = true;
+					// If Running Linux or Mac, must use MySQL to be able to convert to HSQL
+				} else if (MovieManager.getIt().getDatabase().isMySQL()) {
+					enabled = true;
+				}
+
+				System.err.println("setting " + enabled);
+
+				menuItemConvertDatabase.setEnabled(enabled);
+
+				System.err.println("isEnabled:" + menuItemConvertDatabase.isEnabled());
+			}
+		});		
 	}
 
 
