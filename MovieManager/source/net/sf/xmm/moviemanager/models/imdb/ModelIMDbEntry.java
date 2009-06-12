@@ -46,8 +46,12 @@ abstract public class ModelIMDbEntry {
 	private String awards = "";
 
 	private String coverURL = "";
-	
+		
 	private byte [] coverData = null;
+	
+	public String bigCoverUrlId = null;
+	
+	private byte [] bigCoverData = null;
 	
 	ModelIMDbEntry() {}
 	
@@ -122,6 +126,21 @@ abstract public class ModelIMDbEntry {
 	public boolean hasCover() {
 		return coverData != null;
 	}
+	
+	
+	public byte [] getBigCoverData() {
+		return bigCoverData;
+	}
+
+	
+	public void setBigCoverData(byte [] data) {
+		bigCoverData = data;
+	}
+	
+	public boolean hasBigCover() {
+		return bigCoverData != null;
+	}
+	
 	
 	public String getDate() {
 		if (date == null)
