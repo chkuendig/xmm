@@ -287,7 +287,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 		MovieManagerCommandSaveChangedNotes.execute();
 
 		if (!SysUtil.isWindows() && !MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL")) {
-			DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.alert.not-linux-hsql.title"), Localizer.getString("MovieManagerCommandConvertDatabase.alert.not-linux-hsql.title"));
+			DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.alert.not-linux-hsql.title"), Localizer.getString("MovieManagerCommandConvertDatabase.alert.not-linux-hsql.message"));
 			GUIUtil.showAndWait(alert, true);
 		}
 		else {
