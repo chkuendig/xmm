@@ -56,6 +56,8 @@ abstract public class ModelEntry {
 
 	private byte [] coverData = null;
 
+	private byte [] bigCoverData = null;
+	
 	protected boolean hasGeneralInfoData = false;
 	protected boolean hasAdditionalInfoData = false;
 
@@ -189,10 +191,17 @@ abstract public class ModelEntry {
 	public byte [] getCoverData() {
 		return coverData;
 	}
-
 	
 	public void setCoverData(byte [] data) {
 		coverData = data;
+	}
+	
+	public byte [] getBigCoverData() {
+		return bigCoverData;
+	}
+	
+	public void setBigCoverData(byte [] data) {
+		bigCoverData = data;
 	}
 
 	public String getDate() {
