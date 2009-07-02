@@ -228,7 +228,7 @@ public class IMDB /*extends IMDB_if */{
 												
 						Pattern p = Pattern.compile("href=\".*/media/(rm\\d+/tt\\d+)\"");
 						
-						System.err.println("tmp:" + tmp);
+						//System.err.println("tmp:" + tmp);
 						
 						Matcher m = p.matcher(tmp);
 						
@@ -236,8 +236,8 @@ public class IMDB /*extends IMDB_if */{
 						
 							String g = m.group();
 						
-							System.err.println("g:" + m.group(0));
-							System.err.println("g1:" + m.group(1));
+							//System.err.println("g:" + m.group(0));
+							//System.err.println("g1:" + m.group(1));
 							
 							dataModel.bigCoverUrlId = m.group(1);
 							
@@ -949,13 +949,15 @@ public class IMDB /*extends IMDB_if */{
      **/
     protected static String decodeCast(String toDecode) {
     	
+    	System.err.println("cast:" + toDecode);
+    	
     	StringBuffer decoded = new StringBuffer();
     	
     	try {
     		try {
     			String [] castSplit = toDecode.split("<td class=\"hs\">");
-    			Pattern p = Pattern.compile("<a\\shref=\"/name/nm\\d+/\">(.+?)</a>.+?<td\\sclass=\"char\">(?:<a\\shref=\"/character.+?>)?(.+?)<");
-    			
+    		 	Pattern p = Pattern.compile("<a\\shref=\"/name/nm\\d+/.+?castlist.+?>(.+?)</a>.+?\\.\\.\\..+?<td\\sclass=\"char\">(?:<a\\shref=\"/character/ch\\d+/\">)?(.+?)</td>");
+    			    			
     			for (int i = 0; i < castSplit.length; i++) {
     				
     				Matcher m = p.matcher(castSplit[i]);
@@ -1238,10 +1240,12 @@ public class IMDB /*extends IMDB_if */{
     	return lastDataModel == null ? null : lastDataModel.getBigCoverData();
     }
     
+    
+    
     /**
      * Gets the cover.
      **/
-    private boolean retrieveCover(ModelIMDbEntry dataModel) {
+    private boolean retrieveSmallCover(ModelIMDbEntry dataModel) {
       
 		byte[] coverData = null;
 		
@@ -1259,6 +1263,16 @@ public class IMDB /*extends IMDB_if */{
     }
 
 
+    private boolean retrieveCover(ModelIMDbEntry dataModel) {
+    	
+    	if (!retrieveBiggerCover(dataModel))
+    		retrieveSmallCover(dataModel);
+    	else {
+    		dataModel.setCoverData(dataModel.getBigCoverData());
+    	}
+    	return true;    	
+    }
+    
     public boolean retrieveBiggerCover(ModelIMDbEntry dataModel) {
    	
     	URL url;
@@ -1287,8 +1301,8 @@ public class IMDB /*extends IMDB_if */{
 
     				String g = m.group();
 
-    				System.err.println("g:" + m.group(0));
-    				System.err.println("g1:" + m.group(1));
+    				//System.err.println("g:" + m.group(0));
+    				//System.err.println("g1:" + m.group(1));
 
     				coverData = httpUtil.readDataToByteArray(new URL(m.group(1)));
     				
@@ -1300,8 +1314,7 @@ public class IMDB /*extends IMDB_if */{
     	} catch (SocketTimeoutException s) {
     		log.error("Exception: " + s.getMessage());
     	} catch (Exception e) {
-    		// TODO Auto-generated catch block
-    		e.printStackTrace();
+    		log.error("Exception:" + e.getMessage(), e);
     	}
 
     	dataModel.setBigCoverData(coverData);
