@@ -190,7 +190,7 @@ public class HttpUtil {
 
 	public byte [] readDataToByteArray(URL url) throws Exception {
 	
-		byte[] data = {-1};
+		byte[] data = null;
 
 		if (!isSetup())
 			setup();
