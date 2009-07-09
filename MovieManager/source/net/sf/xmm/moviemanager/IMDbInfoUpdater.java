@@ -156,8 +156,6 @@ public class IMDbInfoUpdater {
 
 						while (enumeration.hasMoreElements()) {
 							
-							System.err.println("threadHandler threads:" + threadHandler.getThreadCount());
-							
 							if (canceled)
 								break;
 
@@ -392,7 +390,7 @@ public class IMDbInfoUpdater {
 						if (changed)
 							modelInfo.saveToDatabase(model, true, null);
 						else
-							System.err.println("Not saving " + model.getTitle());
+							log.debug("Not saving " + model.getTitle());
 
 					} catch (Exception e) {
 						log.fatal("Exception:" + e.getMessage(), e);
