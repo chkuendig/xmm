@@ -209,7 +209,7 @@ public class ModelMovieInfo {
             
             // Set nocover image
             if (image == null) {
-                image = FileUtil.getImage("/images/" + MovieManager.getConfig().getNoCover()).getScaledInstance(97,145,Image.SCALE_SMOOTH); //$NON-NLS-1$
+                image = FileUtil.getImage("/images/" + MovieManager.getConfig().getNoCoverFilename()).getScaledInstance(97,145,Image.SCALE_SMOOTH); //$NON-NLS-1$
                 nocover = true;
             }
             else
