@@ -66,6 +66,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileSystemView;
@@ -144,6 +145,12 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	private JTextField textFieldMpaa;
 	private JTextField textFieldWebRuntime;
 
+	private JComboBox additionalInfoFields;
+	private JPanel additionalInfoValuePanel;
+	private JPanel panelAdditionalInfo;
+	private JLabel additionalInfoUnit;
+	private JTextArea textAreaNotes;
+	
 	/**
 	 * The Constructor - Add Movie.
 	 */
@@ -231,7 +238,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		/* Dialog properties... */
 		setTitle(dialogTitle);
 		setModal(true);
-		setResizable(false);
+		setResizable(true);
 
 		/* Enables dispose when pushing escape */
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
@@ -279,7 +286,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelGeneralInfo.add(date, constraints);
 
 		/* IMDb */
-		JLabel imdbID = new JLabel("IMDb" + ": "); //$NON-NLS-1$
+		JLabel imdbID = new JLabel("IMDb id: "); //$NON-NLS-1$
 		imdbID.setFont((new Font(imdbID.getFont().getName(), 1, fontSize)));
 
 		imdb = new JTextField(6);
@@ -786,7 +793,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelMovieInfo.add(allTabbedInfo, constraints);
 
 		/* Creates the Additional Info... */
-		JPanel panelAdditionalInfo = new JPanel();
+		panelAdditionalInfo = new JPanel();
 
 		new net.sf.xmm.moviemanager.util.FileDrop(panelAdditionalInfo, new net.sf.xmm.moviemanager.util.FileDrop.Listener() {   
         	public void filesDropped(final File[] files) {
@@ -838,13 +845,13 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelAdditionalInfo.add(fieldsID, constraints);
 
-		JComboBox fields = new JComboBox(new String[] { "", "" }); //$NON-NLS-1$ //$NON-NLS-2$
+		additionalInfoFields = new JComboBox(new String[] { "", "" }); //$NON-NLS-1$ //$NON-NLS-2$
 
-		fields.setFont(new Font(fields.getFont().getName(), Font.PLAIN,fontSize));
-		fields.setEditable(false);
-		fields.setMaximumRowCount(6);
-		fields.setActionCommand("MovieInfo - Additional Info"); //$NON-NLS-1$
-		fields.addActionListener(new ActionListener() {
+		additionalInfoFields.setFont(new Font(additionalInfoFields.getFont().getName(), Font.PLAIN,fontSize));
+		additionalInfoFields.setEditable(false);
+		additionalInfoFields.setMaximumRowCount(6);
+		additionalInfoFields.setActionCommand("MovieInfo - Additional Info"); //$NON-NLS-1$
+		additionalInfoFields.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 				executeCommandAdditionalInfo();
@@ -856,7 +863,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.gridwidth = 2;
 		constraints.insets = new Insets(1, 5, 7, 0);
 		constraints.anchor = GridBagConstraints.WEST;
-		panelAdditionalInfo.add(fields, constraints);
+		panelAdditionalInfo.add(additionalInfoFields, constraints);
 
 		JLabel valueID = new JLabel(Localizer.getString("DialogMovieInfo.panel-additional-info.value") + ": "); //$NON-NLS-1$
 		valueID.setFont(new Font(valueID.getFont().getName(), Font.PLAIN,fontSize));
@@ -867,9 +874,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelAdditionalInfo.add(valueID, constraints);
 
-		JPanel valuePanel = new JPanel();
-		valuePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		valuePanel.setLayout(new FlowLayout(0, 0, 0));
+		additionalInfoValuePanel = new JPanel();
+		additionalInfoValuePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		additionalInfoValuePanel.setLayout(new FlowLayout(0, 0, 0));
 
 		JTextField value = new JTextField(14);
 
@@ -879,25 +886,23 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		value.setFont(font);
 
-		valuePanel.add(value);
+		additionalInfoValuePanel.add(value);
 
 		constraints = new GridBagConstraints();
 		constraints.gridx = 1;
 		constraints.gridy = 1;
-		// constraints.gridwidth = 2;
 		constraints.insets = new Insets(7, 5, 1, 0);
 		constraints.anchor = GridBagConstraints.WEST;
-		panelAdditionalInfo.add(valuePanel, constraints);
+		panelAdditionalInfo.add(additionalInfoValuePanel, constraints);
 
-		JLabel unit = new JLabel(" units", JLabel.RIGHT); //$NON-NLS-1$
-		unit.setFont(new Font(unit.getFont().getName(), Font.PLAIN, fontSize));
+		additionalInfoUnit = new JLabel(" units", JLabel.RIGHT); //$NON-NLS-1$
+		additionalInfoUnit.setFont(new Font(additionalInfoUnit.getFont().getName(), Font.PLAIN, fontSize));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 2;
 		constraints.gridy = 1;
-		// constraints.gridwidth = 1;
 		constraints.insets = new Insets(7, 0, 1, 0);
 		constraints.anchor = GridBagConstraints.EAST;
-		panelAdditionalInfo.add(unit, constraints);
+		panelAdditionalInfo.add(additionalInfoUnit, constraints);
 
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -915,7 +920,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 												new Font(panelNotes.getFont()
 														.getName(), Font.PLAIN,fontSize)),
 								BorderFactory.createEmptyBorder(0, 5, 5, 5)));
-		JTextArea textAreaNotes = new JTextArea("", 4, 20); //$NON-NLS-1$
+		textAreaNotes = new JTextArea("", 4, 20); //$NON-NLS-1$
 		textAreaNotes.setLineWrap(true);
 		textAreaNotes.setWrapStyleWord(true);
 		JScrollPane scrollPaneNotes = new JScrollPane(textAreaNotes);
@@ -1044,7 +1049,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			}
 		});
 
-		/* Reduces the width of the button (less empty space between borders adn text) to avoid the window getting to wide */
+		/* Reduces the width of the button (less empty space between borders and text) to avoid the window getting to wide */
 		if (!SysUtil.isMac()) {
 			insets = buttonGetIMDBInfo.getMargin();
 			buttonGetIMDBInfo.setMargin(new Insets(insets.top, insets.left - insetsMargin, insets.bottom, insets.right - insetsMargin));
@@ -1064,16 +1069,35 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			buttonCancel.setMargin(new Insets(insets.top, insets.left - insetsMargin, insets.bottom, insets.right - insetsMargin));
 		}
 		
+		
+		
 		panelButtons.add(buttonCancel);
 
+		JScrollPane movieInfoScroll = new JScrollPane(panelMovieInfo);
+		movieInfoScroll.setBorder(null);
+		//JScrollPane movieInfoScroll = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		movieInfoScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		movieInfoScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		
+		
+		JPanel all = new JPanel();
+		all.setLayout(new BorderLayout());
+		all.add(movieInfoScroll, BorderLayout.CENTER);
+		all.add(panelButtons, BorderLayout.SOUTH);
+		
+		
 		/* Adds all and buttonsPanel... */
-		getContentPane().add(panelMovieInfo, BorderLayout.NORTH);
-		getContentPane().add(panelButtons, BorderLayout.SOUTH);
-
-		fields.setPreferredSize(new Dimension((int) fields.getPreferredSize().getWidth() + 60, (int) fields.getPreferredSize().getHeight() + 15));
+		//getContentPane().add(panelMovieInfo, BorderLayout.NORTH);
+		//getContentPane().add(movieInfoScroll, BorderLayout.NORTH);
+		//getContentPane().add(panelButtons, BorderLayout.CENTER);
+		getContentPane().add(all);
+		
+		additionalInfoFields.setPreferredSize(new Dimension((int) additionalInfoFields.getPreferredSize().getWidth() + 60, (int) additionalInfoFields.getPreferredSize().getHeight() + 15));
 		/* Packs and sets location... */
 		pack();
 
+		panelMovieInfo.setMinimumSize(panelMovieInfo.getSize());
+		
 		textFieldWebRuntime.setPreferredSize(new Dimension(panelMovieInfo.getWidth() - 150, 22));
 		textFieldSoundMix.setPreferredSize(new Dimension(panelMovieInfo.getWidth() - 150, 22));
 		textFieldAwards.setPreferredSize(new Dimension(panelMovieInfo.getWidth() - 150, 22));
@@ -1095,17 +1119,19 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 												  (int) panelAdditionalInfo.getPreferredSize().getHeight() + 1));
 
 		value.setPreferredSize(value.getSize());
-		unit.setPreferredSize(unit.getSize());
+		additionalInfoUnit.setPreferredSize(additionalInfoUnit.getSize());
 
 		/* Setting preferred size of the additional info dropdown menu */
 
-		fields.setPreferredSize(new Dimension((int) (panelAdditionalInfo.getPreferredSize().getWidth() - 
+		additionalInfoFields.setPreferredSize(new Dimension((int) (panelAdditionalInfo.getPreferredSize().getWidth() - 
 													 fieldsID.getPreferredSize().getWidth()) - 50, 
-											  (int) fields.getPreferredSize().getHeight()));
+											  (int) additionalInfoFields.getPreferredSize().getHeight()));
 		
-		valueComboBoxWidth = (int) fields.getPreferredSize().getWidth() - 33;
+		valueComboBoxWidth = (int) additionalInfoFields.getPreferredSize().getWidth() - 33;
 		valueComboBoxHeight = (int) value.getPreferredSize().getHeight();
 
+		pack();
+		
 		int x = (int) MovieManager.getIt().getLocation().getX() + (MovieManager.getIt().getWidth() - getWidth()) / 2;
 		int y = (int) MovieManager.getIt().getLocation().getY()	+ (MovieManager.getIt().getHeight() - getHeight()) / 2;
 
@@ -1265,45 +1291,35 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 * Gets the additional info fields JComboBox...
 	 */
 	protected JPanel getAdditionalInfoPanel() {
-		return (JPanel) 
-			((JPanel) getContentPane().getComponent(0)).getComponent(2);
+		return panelAdditionalInfo;
 	}
 
 	/**
 	 * Gets the additional info fields JComboBox...
 	 */
 	protected JComboBox getAdditionalInfoFields() {
-		return (JComboBox) 
-			((JPanel) 
-			 ((JPanel) getContentPane().getComponent(0)).getComponent(2)).getComponent(1);
+		return additionalInfoFields;
 	}
 
 	/**
 	 * Gets the additional info value JPanel...
 	 */
 	protected JPanel getAdditionalInfoValuePanel() {
-		return (JPanel) 
-			((JPanel) 
-			 ((JPanel) getContentPane().getComponent(0)).getComponent(2)).getComponent(3);
+		return additionalInfoValuePanel;
 	}
 
 	/**
 	 * Gets the additional info units JLabel...
 	 */
 	protected JLabel getAdditionalInfoUnits() {
-		return (JLabel) 
-			((JPanel) 
-			 ((JPanel) getContentPane().getComponent(0)).getComponent(2)).getComponent(4);
+		return additionalInfoUnit;
 	}
 
 	/**
 	 * Gets the notes JTextArea...
 	 */
 	public JTextArea getNotes() {
-		return (JTextArea) 
-			((JScrollPane) 
-			 ((JPanel) 
-			  ((JPanel) getContentPane().getComponent(0)).getComponent(3)).getComponent(0)).getViewport().getComponent(0);
+		return textAreaNotes;
 	}
 
 	/**
