@@ -309,7 +309,8 @@ public class FilePropertiesMovie {
 					
 				} catch (Exception e) {
 					log.error("Exception: " + e.getMessage(), e);
-
+					log.debug("Media file:" + filePath);
+					
 					if (tryMediaInfo) {
 						
 						if (mediaInfoOption == MediaInfoOption.MediaInfo_Yes)
