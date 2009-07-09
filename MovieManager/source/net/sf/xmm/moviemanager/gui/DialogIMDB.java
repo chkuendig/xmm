@@ -106,7 +106,7 @@ public class DialogIMDB extends JDialog {
     public DialogIMDB(ModelEntry modelEntry, boolean getUrlKeyOnly, String alternateTitle) {
         /* Dialog creation...*/
         super(MovieManager.getDialog());
-        this.modelEntry= modelEntry;
+        this.modelEntry = modelEntry;
         
         if (alternateTitle == null)
         	setTitle(Localizer.getString("DialogIMDB.title")); //$NON-NLS-1$
@@ -301,6 +301,7 @@ public class DialogIMDB extends JDialog {
     		searchStringField = new JTextField(27);
     		searchStringField.setActionCommand("Search String:"); //$NON-NLS-1$
     		searchStringField.setText(searchString);
+    		searchStringField.setCaretPosition(0);
     		searchStringField.addActionListener(new ActionListener() {
     			public void actionPerformed(ActionEvent event) {
     				log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
