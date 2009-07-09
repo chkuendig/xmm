@@ -580,6 +580,8 @@ class HTMLMovieGroup {
 			StringBuffer htmlData = new StringBuffer(templateBody.toString());
 			MovieManagerCommandSelect.processTemplateData(htmlData, movie);
 
+			boolean nocover = false;
+			
 			try {
 				coverFileName = movie.getCover();
 
@@ -590,8 +592,6 @@ class HTMLMovieGroup {
 					/* Creates the output cover file... */
 					coverOutputFile = new File(coversPath, coverFileName);
 	
-					boolean nocover = false;
-										
 					try {
 						coverOutputFile.createNewFile();
 					} catch (Exception e) {
@@ -640,7 +640,7 @@ class HTMLMovieGroup {
 			}
 
 			String coverName = new File(coversPath).getName() + "/" + coverFileName;
-			MovieManagerCommandSelect.processTemplateCover(htmlData, coverName, new Dimension(coverWidth, coverHeight));
+			MovieManagerCommandSelect.processTemplateCover(htmlData, coverName, new Dimension(coverWidth, coverHeight), nocover);
 
 			movieDataTmp.append(htmlData + "<br><br><br>");
 
