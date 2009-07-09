@@ -803,7 +803,7 @@ public class DialogIMDB extends JDialog {
     		
     		// Big cover available
     		if (imdb.retrieveBiggerCover(dataModel)) {
-    			modelEntry.setBigCoverData(dataModel.getBigCoverData());
+    			modelEntry.setCoverData(dataModel.getBigCoverData());
     		}
     	}
     	return true;
