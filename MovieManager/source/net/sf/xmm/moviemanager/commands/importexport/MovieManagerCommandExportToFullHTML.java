@@ -321,9 +321,10 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 
 			/* Creates the nocover file... */
 			try {
-				byte[] noCover = FileUtil.getResourceAsByteArray("/images/" + MovieManager.getConfig().getNoCoverSmall());
+				byte[] noCover = FileUtil.getResourceAsByteArray("/images/" + MovieManager.getConfig().getNoCoverFilename());
+				
 				if (noCover != null) {
-					FileUtil.writeToFile(noCover,  new File(coversPath, MovieManager.getConfig().getNoCoverSmall()));
+					FileUtil.writeToFile(noCover,  new File(coversPath, MovieManager.getConfig().getNoCoverFilename()));
 				}
 			} catch (Exception e) {
 				log.error("Exception: " + e.getMessage(), e);
@@ -511,7 +512,7 @@ class HTMLMovieGroup {
 
 	int coverWidth = 97;
 
-	String nocoverFileName = MovieManager.getConfig().getNoCoverSmall();
+	String nocoverFileName = MovieManager.getConfig().getNoCoverFilename();
 	String coversDBFolder = MovieManager.getConfig().getCoversPath();
 
 	HTMLMovieGroup(String groupTitle, String fileTitle, String coversPath, StringBuffer templateBody) {
