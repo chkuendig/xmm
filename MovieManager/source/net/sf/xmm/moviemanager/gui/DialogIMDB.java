@@ -273,7 +273,6 @@ public class DialogIMDB extends JDialog {
     	JScrollPane scrollPaneMovies = new JScrollPane(listMovies);
     	scrollPaneMovies.setAutoscrolls(true);
     	
-    	setPreferredSize(new Dimension(420, 440));
     	setMinimumSize(new Dimension(420, 440));
     	
     	panelMoviesList.setLayout(new BorderLayout());
@@ -338,7 +337,6 @@ public class DialogIMDB extends JDialog {
     				/*This button choses between IMDB and local movie database*/
     				final JButton chooseBetweenImdbAndLocalDatabase  = new JButton(Localizer.getString("DialogIMDB.button.add-to-existing-movie.text")); //$NON-NLS-1$
     				chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.getString("DialogIMDB.button.add-to-existing-movie.tooltip")); //$NON-NLS-1$
-    				chooseBetweenImdbAndLocalDatabase.setPreferredSize(new Dimension(155, 26));
     				chooseBetweenImdbAndLocalDatabase.setActionCommand("GetIMDBInfo - chooseBetweenImdbAndLocalDatabase"); //$NON-NLS-1$
     				chooseBetweenImdbAndLocalDatabase.addActionListener(new ActionListener() {
     					public void actionPerformed(ActionEvent event) {
