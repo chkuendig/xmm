@@ -262,7 +262,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         if (!MovieManager.isApplet())
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         
-        setTitle(MovieManager.getConfig().sysSettings.getAppTitle()); //$NON-NLS-1$
+        setTitle(config.sysSettings.getAppTitle()); //$NON-NLS-1$
         //setIconImage(FileUtil.getImageFromJar("/images/film.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH)); //$NON-NLS-1$
         setIconImage(FileUtil.getImage("/images/film.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH)); //$NON-NLS-1$
         
@@ -283,7 +283,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         pack();
         updateToolButtonBorder();
         
-        setSize(MovieManager.getConfig().mainSize);
+        setSize(config.mainSize);
         if (config.getMainMaximized())
             setExtendedState(JFrame.MAXIMIZED_BOTH);
         
@@ -528,7 +528,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     
     
     public void updateToolButtonBorder() {
-    	if (MovieManager.getConfig().isRegularToolButtonsUsed())
+    	if (config.isRegularToolButtonsUsed())
     		toolBar.updateToolButtonBorderToRegular();
     	else
     		toolBar.updateToolButtonBorderToCurrentLaf();
@@ -640,7 +640,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 	   
 	 ///String className = "net.sf.xmm.moviemanager.gui.menubar.PlanetaryMenuBar";
 	   
-	   InternalConfig internalConfig = MovieManager.getConfig().getInternalConfig();
+	   InternalConfig internalConfig = config.getInternalConfig();
 	   String className =  internalConfig.getPlugin("menuBar");
 	   	   
 	   if (className != null)
@@ -687,7 +687,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
    
     public void setTabbedMovieInfoTitle() {
     	String tabName;
-    	ModelHTMLTemplate template = MovieManager.getConfig().getHTMLTemplate();
+    	ModelHTMLTemplate template = config.getHTMLTemplate();
     	
     	if (template == null) {
     		movieInfo.setTitleAt(1, "No Templates available");
@@ -696,7 +696,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     
     	if (template.hasStyles()) {
 						
-			String styleName = MovieManager.getConfig().getHTMLTemplateStyleName();
+			String styleName = config.getHTMLTemplateStyleName();
 			tabName = template.getName() + " -> " + template.getStyle(styleName);
 		}
 		else
@@ -839,7 +839,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 
     	ExtendedToolBar toolBar = null;
 
-    	InternalConfig internalConfig = MovieManager.getConfig().getInternalConfig();
+    	InternalConfig internalConfig = config.getInternalConfig();
     	String className =  internalConfig.getPlugin("toolBar");
 
     	if (className != null) {
@@ -870,10 +870,10 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         toolBar.setSearchButtonLegal(!internalConfig.isSearchMenuDisabled());
         toolBar.setShowEntriesCount(!internalConfig.isEntriesCountDisabled()); 
         
-        if (MovieManager.getConfig().getDisplayPlayButton())
+        if (config.getDisplayPlayButton())
         	toolBar.showPlayButton(true);
         
-        if (MovieManager.getConfig().getDisplayPrintButton())
+        if (config.getDisplayPrintButton())
         	toolBar.showPrintButton(true);
         
         toolBar.setEnableButtonPopup(!internalConfig.isToolBarPopupDisabled());
@@ -1089,9 +1089,9 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 
     	movieInfo = new JTabbedPane();
     	movieInfo.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
-    	movieInfo.add(MovieManager.getConfig().sysSettings.getLookAndFeelTitle(), createStandardMovieInfo()); //$NON-NLS-1$
+    	movieInfo.add(config.sysSettings.getLookAndFeelTitle(), createStandardMovieInfo()); //$NON-NLS-1$
 
-    	if (!MovieManager.isApplet() && !MovieManager.getConfig().getInternalConfig().getDisableHTMLView()) {
+    	if (!MovieManager.isApplet() && !config.getInternalConfig().getDisableHTMLView()) {
     		htmlPanel = new HtmlPanel();
     		movieInfo.add(htmlPanel); //$NON-NLS-1$
     		setTabbedMovieInfoTitle();
@@ -1162,11 +1162,11 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 
     	tabbedPlotCastMiscellaneous.addChangeListener(new ChangeListener() {
     		public void stateChanged(ChangeEvent arg0) {
-    			MovieManager.getConfig().setPlotCastMiscellaneousIndex(tabbedPlotCastMiscellaneous.getSelectedIndex());
+    			config.setPlotCastMiscellaneousIndex(tabbedPlotCastMiscellaneous.getSelectedIndex());
 			}
     	});
     	
-    	int tabIndex = MovieManager.getConfig().getPlotCastMiscellaneousIndex();
+    	int tabIndex = config.getPlotCastMiscellaneousIndex();
     	
     	if (tabIndex >= 0 && tabIndex < tabbedPlotCastMiscellaneous.getTabCount())
     		tabbedPlotCastMiscellaneous.setSelectedIndex(tabIndex);
@@ -1443,7 +1443,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         	play.setPreferredSize(new Dimension(27, 27));
         	
         	// Uses plugin playhandler if it exists
-        	MovieManagerPlayHandler playHandler = MovieManager.getConfig().getPlayHandler();
+        	MovieManagerPlayHandler playHandler = config.getPlayHandler();
         	play.setActionCommand("Play"); //$NON-NLS-1$
         	
 			if (playHandler != null)
@@ -1508,14 +1508,14 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         /* Adds the cover. */
         JPanel panelCover = new JPanel();
         
-        coverLabel = new JLabel(new ImageIcon(FileUtil.getImage("/images/" + config.getNoCover()).getScaledInstance(97,145,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+        coverLabel = new JLabel(new ImageIcon(FileUtil.getImage("/images/" + config.getNoCoverFilename()).getScaledInstance(config.getCoverAreaSize().width, config.getCoverAreaSize().height,Image.SCALE_SMOOTH))); //$NON-NLS-1$
         coverLabel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,0), BorderFactory.createEtchedBorder()));
-        coverLabel.setPreferredSize(new Dimension(97,145));
-        coverLabel.setMinimumSize(new Dimension(97,145));
+        
+        coverLabel.setPreferredSize(config.getCoverAreaSize());
+        coverLabel.setMinimumSize(config.getCoverAreaSize());
         
         panelCover.add(coverLabel);
-        
-        
+                
         constraints = new GridBagConstraints();
         constraints.gridx = 4;
         constraints.gridy = 1;
@@ -1523,8 +1523,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         constraints.weighty = 1;
         constraints.gridheight = 6;
         constraints.anchor = GridBagConstraints.NORTHEAST;
-        
-        
+                
           
         JPanel panelInfo = new JPanel();
         panelInfo.setLayout(new GridBagLayout());
