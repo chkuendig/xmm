@@ -525,7 +525,7 @@ public class ExtendedFileChooser extends JFileChooser {
 		}
 
 		if (file == null) {
-			file = getSelectedFile2();
+
 		}
 		return file;
 	}
