@@ -651,8 +651,8 @@ public class IMDB /*extends IMDB_if */{
 
     	try {
 
-    		new java.io.File("HTML-debug").mkdir();
-    		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
+    		//new java.io.File("HTML-debug").mkdir();
+    		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
 
     		int start = 0;
 			String key = "";
