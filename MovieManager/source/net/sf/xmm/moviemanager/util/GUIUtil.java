@@ -26,6 +26,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
@@ -128,6 +129,15 @@ public class GUIUtil {
 			SwingUtilities.invokeLater(runnable);
 		else
 			runnable.run();
+	}
+	
+	public static void invokeAndWait(Runnable r) throws InterruptedException, InvocationTargetException {
+		
+		if (SwingUtilities.isEventDispatchThread())
+			SwingUtilities.invokeLater(r);
+		else
+			SwingUtilities.invokeAndWait(r);
+		
 	}
 
 	public static void isEDT() {
