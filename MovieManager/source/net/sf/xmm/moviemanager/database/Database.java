@@ -2513,7 +2513,7 @@ abstract public class Database {
 	/**
 	 * Sets the folders Covers and Queries for this database.
 	 **/
-	public synchronized int setFolders(String coversFolder, String queriesFolder) {
+	public synchronized int setFolders(String bewCoversFolder, String queriesFolder) {
 
 		int value = 0;
 		String folders = quote + "Folders" + quote;
@@ -2522,7 +2522,7 @@ abstract public class Database {
 
 		// Reset cached coversFolder
 		coversFolder = null;
-		
+				
 		try {
 			/* Tries to find if it's an insert or an update... */
 			ResultSet resultSet = _sql.executeQuery("SELECT " + folders + ".* "+
@@ -2535,7 +2535,7 @@ abstract public class Database {
 				PreparedStatement statement = _sql.prepareStatement("UPDATE " + folders +" "+
 						"SET " + folders + "." + covers + "=?, " + folders + "."+ queries + "=? "+
 						"WHERE " + folders + ".ID=1;");
-				statement.setString(1, coversFolder);
+				statement.setString(1, bewCoversFolder);
 				statement.setString(2, queriesFolder);
 				value = statement.executeUpdate();
 			} else {
@@ -2544,7 +2544,7 @@ abstract public class Database {
 				PreparedStatement statement = _sql.prepareStatement("INSERT INTO " + folders +" "+
 						"(ID,"+ covers +","+ queries +") "+
 				"VALUES(1,?,?)");
-				statement.setString(1, coversFolder);
+				statement.setString(1, bewCoversFolder);
 				statement.setString(2, queriesFolder);
 				value = statement.executeUpdate();
 			}
@@ -2570,8 +2570,9 @@ abstract public class Database {
 	public synchronized String getCoversFolder() {
 		
 		// Use cache instead.
-		if (coversFolder != null)
+		if (coversFolder != null) {
 			return coversFolder;
+		}
 			
 		String data = getString("SELECT " + quote + "Folders" + quote +"." + quote + "Covers" + quote + " "+
 				"FROM " + quote + "Folders" + quote + " "+
