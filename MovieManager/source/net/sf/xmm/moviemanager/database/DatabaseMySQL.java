@@ -36,13 +36,17 @@ public class DatabaseMySQL extends Database {
 	Logger log = Logger.getLogger(getClass());
 	
 	public DatabaseMySQL(String filePath) {
+		this(filePath, false);
+	}
+	
+	public DatabaseMySQL(String filePath, boolean enableSocketTimeout) {
 		super(filePath);
 		
 		if (!MovieManager.getConfig().getInternalConfig().getSensitivePrintMode())
 			log.debug("DatabaseMySQL - filePath:" + filePath);
 		
 		databaseType = "MySQL";
-		_sql = new SQL(filePath, "MySQL");
+		_sql = new SQL(filePath, "MySQL", enableSocketTimeout);
 		
 		
 		quote = "`";
