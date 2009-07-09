@@ -62,7 +62,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/**
 		 * The current version of the program.
 		 **/
-		private static final String _version = " 2.8.4"; //$NON-NLS-1$
+		private static final String _version = " 2.8.5"; //$NON-NLS-1$
 
 
 		String appTitle = " MeD's Movie Manager v" + getVersion().trim();
@@ -151,7 +151,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	final private int defaultFrameHeight = 635;
 	final private int defaultFrameWidth = 850;
 
-
+	final private int coverAreaWidth = 110;
+	final private int coverAreaHeight = 165;
+	//final private int coverAreaWidth = 97;
+	//final private int coverAreaHeight = 145;
+	
+	public Dimension getCoverAreaSize() {
+		return new Dimension(coverAreaWidth, coverAreaHeight);
+	}
+	
 	/* Main window size */
 	public Dimension mainSize = new Dimension(defaultFrameWidth, defaultFrameHeight);
 
@@ -326,9 +334,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	/*Export*/
 	private String exportType = "simple";
 
-	/*icons*/
-	private String nocover = "nocover_puma.png";
-
+	public enum NoCoverType {Puma, Jaguar, Tiger};
+	public NoCoverType noCoverType = NoCoverType.Puma;
+	
+	
 	/* Current list */
 	protected ArrayList <String> currentLists = new ArrayList<String>();
 	boolean showUnlistedEntries = true;
@@ -1851,22 +1860,33 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.exportType = exportType;
 	}
 
-	public String getNoCoverSmall() {
+	/*public String getNoCoverSmall1() {
 		
 		if (nocover.equals("nocover_puma.png"))
-			return "nocover_puma_97x97.png";
+			return nocover;
 		else
-			return "nocover_jaguar_97x97.png";
+			return "nocover_tiger.png";
+	}*/
+	
+	public String getNoCoverFilename() {
+
+		switch (noCoverType) {
+		case Puma: return "nocover_puma.png";
+		case Jaguar: return "nocover_jaguar.png";
+		case Tiger: return "nocover_tiger.png";
+		}		
+
+		return "nocover_puma.png";
+	}
+
+	public NoCoverType getNoCoverType() {
+		return noCoverType;
+	}
+
+	public void setNoCoverType(NoCoverType noCoverType) {
+		this.noCoverType = noCoverType;
 	}
 	
-	public String getNoCover() {
-		return nocover;
-	}
-
-	public void setNoCover(String nocover) {
-		this.nocover = nocover;
-	}
-
 	
 	public HashMap<String, String> getSearchAlias() {
 		return searchAlias;
@@ -2799,16 +2819,18 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 
 
-			value = (String) config.get("noCover:");
-
+			value = (String) config.get("noCoverType:");
+			
 			if (value != null) {
-				
-				if (value.equals("nocover_puma.png"))
-					setNoCover(value);
-				else
-					setNoCover("nocover_jaguar.png");
+				try {
+					setNoCoverType(NoCoverType.valueOf(value));
+				} catch (IllegalArgumentException i) {
+					if (value.equals("nocover_puma.png"))
+						setNoCoverType(NoCoverType.Puma);
+					else
+						setNoCoverType(NoCoverType.Jaguar);
+				}
 			}
-
 
 			value = (String) config.get("autoMoveThe:");
 
@@ -3410,7 +3432,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("preserveCoverAspectRatioSetting:"+ getPreserveCoverAspectRatio());
 
 		 settings.append(lineSeparator);
-		 settings.append("noCover:" + getNoCover());
+		 settings.append("noCoverTYpe:" + getNoCoverType().toString());
 
 		 settings.append(lineSeparator);
 		 settings.append("autoMoveThe:" + getAutoMoveThe());
