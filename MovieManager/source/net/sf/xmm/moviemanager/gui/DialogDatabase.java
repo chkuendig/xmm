@@ -711,7 +711,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     	else {
     		/* open Database */
     		if (databaseType.equals("MySQL")) { //$NON-NLS-1$
-    			database = new DatabaseMySQL(path);
+    			database = new DatabaseMySQL(path, MovieManager.getConfig().getMySQLSocketTimeoutEnabled());
     		}
     		else if (!new File(path).exists()) {
     			throw new Exception("File does not exist"); //$NON-NLS-1$
@@ -778,7 +778,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
     		boolean success = true;
 
-    		database = new DatabaseMySQL(path);
+    		database = new DatabaseMySQL(path, MovieManager.getConfig().getMySQLSocketTimeoutEnabled());
     		database.setUp();
 
     		/* Could not connect to the database */
@@ -813,12 +813,12 @@ public class DialogDatabase extends JDialog implements ActionListener {
     			if ((message.indexOf("denied") != -1) || (message.indexOf("Unknown") != -1)) { //$NON-NLS-1$ //$NON-NLS-2$
 
     				/* Default mysql database */
-    				database = new DatabaseMySQL(createMySQLPath("mysql")); //$NON-NLS-1$
+    				database = new DatabaseMySQL(createMySQLPath("mysql"), MovieManager.getConfig().getMySQLSocketTimeoutEnabled()); //$NON-NLS-1$
     				database.setUp();
 
     				if (!database.isSetUp()) {
     					/* Default mysql database */
-    					database = new DatabaseMySQL(createMySQLPath("information_schema")); //$NON-NLS-1$
+    					database = new DatabaseMySQL(createMySQLPath("information_schema"), MovieManager.getConfig().getMySQLSocketTimeoutEnabled()); //$NON-NLS-1$
     					database.setUp();
     				}
 
@@ -848,7 +848,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     				/* Creating the database */
     				if (((DatabaseMySQL) database).createDatabase(databaseNameField.getText()) == 1) {
     					database.finalizeDatabase();
-    					database = new DatabaseMySQL(getPath());
+    					database = new DatabaseMySQL(getPath(), MovieManager.getConfig().getMySQLSocketTimeoutEnabled());
     					database.setUp();
     				}
     				else {
