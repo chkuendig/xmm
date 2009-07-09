@@ -100,6 +100,8 @@ abstract public class Database {
 
 	ArrayList<String> extraInfoFieldNames = null;
 
+	String coversFolder = null;
+	
 	// Used when finding which lists a movie is memeber of.
 	public static final String listsAliasPrefix = "lists_";
 	
@@ -411,14 +413,15 @@ abstract public class Database {
 
 
 	/**
-	 * Returns the Resolution with index index named name...
-	 **/
+	 * Returns the String result of the query
+	 */
 	protected String getString(String query, String field) {
 
 		String data = "";
 		try {
+			
 			ResultSet resultSet = _sql.executeQuery(query);
-
+			
 			if (resultSet.next() && resultSet.getString(field) != null) {
 				data = resultSet.getString(field);
 			}
@@ -468,7 +471,7 @@ abstract public class Database {
 
 
 	/**
-	 * Returns the if the movie at the specific index is a member of the specified list with name name...
+	 * Get the boolean result of the query
 	 **/
 	protected boolean getBoolean(String query, String field) {
 
@@ -495,9 +498,7 @@ abstract public class Database {
 	}
 
 
-	/**
-	 * Returns the CD_Cases with index index named name...
-	 **/
+	
 /*	private double getDouble(String query, String field) {
 
 		double data = -1;
@@ -2519,6 +2520,9 @@ abstract public class Database {
 		String covers = quote + "Covers" + quote;
 		String queries = quote + "Queries" + quote;
 
+		// Reset cached coversFolder
+		coversFolder = null;
+		
 		try {
 			/* Tries to find if it's an insert or an update... */
 			ResultSet resultSet = _sql.executeQuery("SELECT " + folders + ".* "+
@@ -2564,11 +2568,17 @@ abstract public class Database {
 	 * Returns the Covers folder for this database.
 	 **/
 	public synchronized String getCoversFolder() {
-
+		
+		// Use cache instead.
+		if (coversFolder != null)
+			return coversFolder;
+			
 		String data = getString("SELECT " + quote + "Folders" + quote +"." + quote + "Covers" + quote + " "+
 				"FROM " + quote + "Folders" + quote + " "+
 				"WHERE " + quote + "Folders" + quote + ".ID=1;", "Covers");
-		/* Returns the data... */
+		
+		coversFolder = data;
+		
 		return data;
 	}
 
