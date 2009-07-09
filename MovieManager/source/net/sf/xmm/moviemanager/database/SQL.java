@@ -51,12 +51,14 @@ class SQL {
 	 **/
 	private boolean _connected = false;
 
-	/**
-	 * Construtor. Inicializes private vars.
-	 *
-	 * @param url The database url.
-	 **/
 	protected SQL(String path, String databaseType) {
+		this(path, databaseType, false);
+	}
+	
+	/**
+	 * Construtor. 
+	 */
+	protected SQL(String path, String databaseType, boolean enableSocketTimeout) {
 
 		this.databaseType = databaseType;
 
@@ -70,13 +72,17 @@ class SQL {
 		else if (databaseType.equals("MySQL")) {
 			_url = "jdbc:mysql://"+ path;
 			
-			if (!MovieManager.getConfig().getInternalConfig().getSensitivePrintMode())
-				log.debug("SQL:" + _url);
+			//_url += "&autoReconnect=true&inactivity-timeout=10&wait-timeout=10";
+			
+			// Add socket timeout of 15 minutes
+			if (enableSocketTimeout)
+				_url += "&socketTimeout=960";
 
 			//useUnicode=true&characterEncoding=UTF-8
 		}
 	}
 
+		
 	/**
 	 * Loads the driver and initiates a connection.
 	 **/
@@ -102,15 +108,16 @@ class SQL {
 
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 
-				DriverManager.setLoginTimeout(5);
+				if (!MovieManager.getConfig().getInternalConfig().getSensitivePrintMode())
+					log.debug("SQL:" + _url);
 				
+				//DriverManager.setLoginTimeout(5);
 				_conn = DriverManager.getConnection(_url);
 
 				log.info("Connected to MySQL database");
 				_connected = true;
 			}
 		}
-
 	}
 
 
