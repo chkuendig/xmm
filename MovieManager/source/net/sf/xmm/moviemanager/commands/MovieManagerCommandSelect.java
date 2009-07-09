@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -63,6 +65,7 @@ import javax.swing.tree.TreePath;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig.LookAndFeelType;
+import net.sf.xmm.moviemanager.MovieManagerConfig.NoCoverType;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAddEpisode;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandEdit;
 import net.sf.xmm.moviemanager.http.HttpUtil;
@@ -100,12 +103,15 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 	private static boolean ignoreValueChanged = false;
 
+	static Dimension coverAreaSize = MovieManager.getConfig().getCoverAreaSize();
+	
 	private static ModelEntry lastSelectedEntry = null;
 	
 	static File lastTemplateFile = null;
 	static StringBuffer lastTemplate = null;
 	
-	static String nocoverName = null;
+	//static String nocoverName = null;
+	static NoCoverType noCoverType = null;
 	static byte [] nocoverData = null;
 	
 	public static void reloadCurrentModel() {
@@ -257,8 +263,10 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	 * Fixes the cover data and makes sure the info panels are populated with the movie info.
 	 */
 	public static void execute() {
-
+		
+		
 		Dimension coverDim = null;
+		//Dimension bigCoverDim = null;
 		boolean nocover = true;
 		
 		byte [] coverData = null;
@@ -304,7 +312,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 					// If the coverData is not already present in the Model
 					if (model.getCoverData() == null) {
-						
+
 						// If the covers can be stored locally the path is checked
 						// If the cover exists there is no need to get it from the database
 						if (storeLocally && cover.isFile()) {
@@ -326,7 +334,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 						byte [] byteBuffer = FileUtil.getResourceAsByteArray(cover);
 						model.setCoverData(byteBuffer);
 					}
-					
+										
 					if (model.getCoverData() != null) {
 
 						coverData = model.getCoverData();
@@ -343,15 +351,17 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 					}
 				} // Not MySQL
 				else {
-
+					
 					if (!model.getHasGeneralInfoData()) {
 						model.updateGeneralInfoData();
 					}
 
 					//	if cover available
 					if (!model.getCover().equals("")) {
-						File cover = new File(MovieManager.getConfig().getCoversPath(), model.getCover());
-
+						//File cover = new File(MovieManager.getConfig().getCoversPath(), model.getCover());
+						File cover = new File(MovieManager.getConfig().getCoversPath(), model.getUrlKey());
+						cover = new File(cover, model.getCover());
+												
 						if (cover.isFile()) {
 
 							coverFile = cover;
@@ -362,8 +372,9 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 							}
 						}
 					}
-
+					
 					coverData = model.getCoverData();
+					//coverData = model.getBigCoverData();
 					nocover = (coverData == null);
 				}
 				
@@ -376,7 +387,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 				StringTokenizer tokenizer = new StringTokenizer(additionalInfo.getFileLocation(), "*");
 				boolean enable = true;
-					
+								
 				// Checks the media files and enables play button if files exist
 				if (!MovieManager.getConfig().getInternalConfig().getPlayButtonNeverDisabled()) {
 					
@@ -425,14 +436,15 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 				MovieManager.getDialog().toolBar.setEnablePlayButton(enable);
 			}
 
+			
 			// If no cover available, the "no cover image" is used
 			if (nocover) {
-
-				if (nocoverName == null || !nocoverName.equals(MovieManager.getConfig().getNoCoverSmall())) {
-					nocoverName = MovieManager.getConfig().getNoCoverSmall();
-					nocoverData = FileUtil.getResourceAsByteArray("/images/" + MovieManager.getConfig().getNoCoverSmall());
+				
+				if (nocoverData == null || noCoverType != MovieManager.getConfig().getNoCoverType()) {
+					String nocoverName = MovieManager.getConfig().getNoCoverFilename();
+					nocoverData = FileUtil.getResourceAsByteArray("/images/" + nocoverName);
 				}
-
+				
 				coverData = nocoverData;
 
 				// Writes the no cover image to cover directory
@@ -443,7 +455,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 					// Valid cover dir
 					if (cover.isDirectory()) {
-						cover = new File(cover, MovieManager.getConfig().getNoCoverSmall());
+						cover = new File(cover, MovieManager.getConfig().getNoCoverFilename());
 
 						// Create nocover file on disk
 						if (!cover.isFile()) {
@@ -459,23 +471,23 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 				InputStream in = new ByteArrayInputStream(coverData);
 
 				if (in != null) {
-
-					coverDim = new Dimension(97, 145);
-
+					
+					coverDim = coverAreaSize.getSize();
+					
 					image = javax.imageio.ImageIO.read(in);
-
+					
 					if (nocover){
 						coverDim.width = image.getWidth();
 						coverDim.height = image.getHeight();
 					}
 					else if (MovieManager.getConfig().getPreserveCoverAspectRatio() != 0) {														
 
-						if (MovieManager.getConfig().getPreserveCoverAspectRatio() == 1 || model instanceof ModelEpisode || nocover)
-							coverDim.height = ((97*image.getHeight())/image.getWidth());
+						if (MovieManager.getConfig().getPreserveCoverAspectRatio() == 1 || model.isEpisode() || nocover)
+							coverDim.height = ((coverAreaSize.width * image.getHeight())/image.getWidth());
 					} 
 
-					if (coverDim.height > 145)
-						coverDim.height = 145;
+					if (coverDim.height > coverAreaSize.height)
+						coverDim.height = coverAreaSize.height;
 
 				}
 			} catch (Exception e) {
@@ -486,17 +498,18 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		Image cover = null;
 
 		if (image != null)
-			cover = image.getScaledInstance(97, coverDim.height, Image.SCALE_SMOOTH);
+			cover = image.getScaledInstance(coverAreaSize.width, coverDim.height, Image.SCALE_SMOOTH);
 
 		// Find cover dimension
 		if (nocover && image != null)
 			coverDim =  new Dimension(image.getWidth(), image.getHeight());
-		
-		if (MovieManager.getDialog().getCurrentMainTabIndex() == 0)
+				
+		if (MovieManager.getDialog().getCurrentMainTabIndex() == 0) {
 			updateStandardPanel(model, cover);
-		else
+		}
+		else {
 			updateHTMLPanel(model, coverFile, coverData, coverDim, nocover);
-
+		}
 	}
 
 
@@ -512,7 +525,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		if (cover != null)
 			MovieManager.getDialog().getCover().setIcon(new ImageIcon(cover));
 		else {
-			MovieManager.getDialog().getCover().setIcon(new ImageIcon(FileUtil.getImage("/images/" + MovieManager.getConfig().getNoCover()).getScaledInstance(97,97, Image.SCALE_SMOOTH))); //$NON-NLS-1$
+			MovieManager.getDialog().getCover().setIcon(new ImageIcon(FileUtil.getImage("/images/" + MovieManager.getConfig().getNoCoverFilename()).getScaledInstance(coverAreaSize.width, coverAreaSize.height, Image.SCALE_SMOOTH))); //$NON-NLS-1$
 		}
 
 		/* Removes mouse listeners */
@@ -681,11 +694,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	 */
 	//public static void updateHTMLPanel(ModelEntry model, File coverFile, Dimension coverDim, boolean nocover) {
 	public static void updateHTMLPanel(ModelEntry model, File coverFile, byte [] coverData, Dimension coverDim, boolean nocover) {
-
-		// html panel does not support Java 1.4
-		if (SysUtil.isCurrentJRES14())
-			return;
-			
+		
 		// Disabled in internal config
 		if (MovieManager.getConfig().getInternalConfig().getDisableHTMLView())
 			return;
@@ -719,7 +728,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 				coverPath = coverFile.toURI().toString();
 			
 			// If coverPath is null, the cover will be set to $coverSmall$ and loaded from memory
-			processTemplateCover(template, coverPath, coverDim);
+			processTemplateCover(template, coverPath, coverDim, nocover);
+			//processTemplateBigCover(template, coverPath, coverDim);
 			
 			processTemplateCssStyle(template);
 							
@@ -727,11 +737,15 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			
 			if (MovieManager.getConfig().getHTMLViewDebugMode()) {
 				
-				File path = new File(templateFile.getParentFile(), "debug_template.html"); 
+				String debugName = "debug_template.html";
 				
+				File path;
+								
 				if (SysUtil.isMac() || SysUtil.isWindowsVista() || SysUtil.isWindows7())
-					path = SysUtil.getConfigDir();
-				
+					path = new File(SysUtil.getConfigDir(), debugName);
+				else
+					path = new File(templateFile.getParentFile(), debugName); 
+					
 				FileUtil.writeToFile(path, template.toString());
 			}
 			
@@ -758,90 +772,51 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		}
 	}
 	
-	/**
-	 * Makes sure a temporary copy of the cover is used instead of the original.
-	 * 
-	 * @param template
-	 * @param coverFile
-	 * @param coverDim
-	 */
-	/*
-	public static void processTemplateCover(StringBuffer template, File coverFile, Dimension coverDim, boolean nocover) {
-
-		if (!nocover)
-			coverFile = getTempCoverFile(coverFile);
-		
-		if (coverFile != null) {
-			String coverPath = coverFile.toURI().toString();
-			processTemplateCover(template, coverPath, coverDim);
-		}
-	}
-	*/
 	
-	/*	
-	public static File getTempCoverFile(File coverFile) {
-
-		File newCoverFile = null;
-		
-		try {
-
-			// Sets up the tempCover map
-			if (coverTemp == null) {
-				coverTemp = new HashMap();
-			
-				File tempDir = new File(coverFile.getParentFile(), "temp");
-				
-				File [] list = tempDir.listFiles();
-				
-				for (int i = 0; i < list.length; i++) {
-				
-					if (list[i].getName().endsWith(".temp"))
-						coverTemp.put(list[i].getName(), list[i]);
-				}
-			}
-			
-			Collection values = coverTemp.values();
-			Iterator it = values.iterator();
-			
-			while (it.hasNext()) {
-
-				File f = (File) it.next();
-
-				if (f.delete()) {
-					newCoverFile = f;
-					break;
-				}
-			}
-
-			if (newCoverFile == null) {
-				newCoverFile = FileUtil.createTempCopy(coverFile, new File(coverFile.getParentFile(), "temp"));
-				coverTemp.put(newCoverFile.getName(), newCoverFile);
-			}
-			else
-				FileUtil.writeToFile(new FileInputStream(coverFile), newCoverFile);
-
-		} catch (Exception e) {
-			log.error("Exception:"+ e.getMessage());
-		}
-
-		return newCoverFile;
-	}
-	*/
 	
-	public static void processTemplateCover(StringBuffer template, String coverPath, Dimension coverDim) {
-	
+	public static void processTemplateCover(StringBuffer template, String coverPath, Dimension coverDim, boolean preserveAspect) {
+			
 		if (coverPath == null)
 			coverPath = "$CoverSmall$";
 
-		//String cover = "style=\"width:" + coverDim.width + "px;height:" + coverDim.height + "px;\" src=\"" + coverPath + "\" alt=\"Cover\"";
-		String cover = "style=\"width:" + coverDim.width + "px;height:" + coverDim.height + "px;\" src=\""+coverPath+"\" alt=\"Cover\"";
+		if (template.indexOf("$Cover$") != -1) {
 
-		// ReplaceAll takes a regular expression.
-		// Therefore everey "\" must be duplicated
-		cover = cover.replaceAll("\\\\", "\\\\\\\\");
-		StringUtil.replaceAll(template, "$Cover$", cover);
+			String cover = "style=\"width:" + coverDim.width + "px;height:" + coverDim.height + "px;\" src=\""+coverPath+"\" alt=\"Cover\"";
+
+			// ReplaceAll takes a regular expression.
+			// Therefore every "\" must be duplicated
+			cover = cover.replaceAll("\\\\", "\\\\\\\\");
+			StringUtil.replaceAll(template, "$Cover$", cover);
+		}
+		
+
+		// <img $Cover-width:200-height:300$> 
+		
+		Pattern p = Pattern.compile("\\$Cover-width:(\\d+)-height:(\\d+)\\$");
+		Matcher m = p.matcher(template);
+
+		if (m.find()) {
+
+			String g = m.group();
+
+			//System.err.println("g:" + m.group(0));
+			//System.err.println("g1:" + m.group(1));
+			//System.err.println("g2:" + m.group(2));
+
+			//String coverAndLink = "<a href=\"$movie-episode-Url$\"> <img $Cover-width:"+m.group(1)+"-height:"+m.group(2)+"$> </a>";
+			//StringUtil.replaceAll(template , m.group(0), coverAndLink);
+			
+			preserveAspect = false;
+			
+			String cover = "style=\"width:" + (preserveAspect ? coverDim.width : m.group(1)) + "px;height:" + (preserveAspect ? coverDim.height : m.group(2)) + "px;\" src=\""+coverPath+"\" alt=\"Cover\"";
+
+			// ReplaceAll takes a regular expression.
+			// Therefore every "\" must be duplicated
+			cover = cover.replaceAll("\\\\", "\\\\\\\\");
+			StringUtil.replaceAll(template, m.group(0), cover);
+		}
 	}
-	
+		
 	
 	/**
 	 * 	@param 		html template
@@ -875,7 +850,11 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		StringUtil.replaceAll(template, "$Seen$", model.getSeen() ? "Yes" : "No");
 		StringUtil.replaceAll(template, "$Country$", model.getCountry());
 		StringUtil.replaceAll(template , "$Language$", model.getLanguage());
-		StringUtil.replaceAll(template , "$Aka$", model.getAka());
+		
+		String aka = model.getAka();
+		aka = aka.replaceAll("\\n", "<br>");
+		
+		StringUtil.replaceAll(template , "$Aka$", aka);
 		StringUtil.replaceAll(template , "$Plot$", model.getPlot());
 		StringUtil.replaceAll(template , "$Cast$", model.getCast());
 		StringUtil.replaceAll(template , "$Notes$", model.getNotes());
@@ -886,13 +865,41 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		StringUtil.replaceAll(template , "$Awards$", model.getAwards());
 		StringUtil.replaceAll(template , "$Colour$", model.getColour());
 		
-		StringUtil.replaceAll(template , "$UrlKey$", model.getUrlKey());
+		// $movie-episode-coverAndLink$$
 		
+		Pattern p = Pattern.compile("\\$movie-episode-coverAndLink-width:(\\d+)-height:(\\d+)\\$");
+
+		// $movie-episode-coverAndLink-width:300-height:200$
+		
+		Matcher m = p.matcher(template);
+
+		if (m.find()) {
+
+			String g = m.group();
+
+			//System.err.println("g:" + m.group(0));
+			//System.err.println("g1:" + m.group(1));
+			//System.err.println("g2:" + m.group(2));
+
+			String coverAndLink = "<a href=\"$movie-episode-Url$\"> <img $Cover-width:"+m.group(1)+"-height:"+m.group(2)+"$ class=\"center\" /> </a>";
+			StringUtil.replaceAll(template , m.group(0), coverAndLink);
+			
+		}
+		
+		if (!model.getUrlKey().equals("")) {
+			String coverAndLink = "<a href=\"$movie-episode-Url$\"> <img $Cover$>  </a>";
+			StringUtil.replaceAll(template , "$movie-episode-coverAndLink$", coverAndLink);
+		}
+		else {
+			String coverAndNoLink = "<img $Cover$>";
+			StringUtil.replaceAll(template , "$movie-episode-coverAndLink$", coverAndNoLink);
+		}
+		
+		StringUtil.replaceAll(template , "$UrlKey$", model.getUrlKey());
 		StringUtil.replaceAll(template , "$movie-episode-Url$", model.getCompleteUrl());
 				
 		StringUtil.replaceAll(template , "$subtitles$", model.getAdditionalInfo().getSubtitles());
-		
-		
+				
 		int duration = model.getAdditionalInfo().getDuration();
 		
 		int hours = (duration/3600);
@@ -918,7 +925,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		StringUtil.replaceAll(template , "$mediaType$", model.getAdditionalInfo().getMediaType());
 		
 		StringUtil.replaceAll(template , "$AdditionalInfoString$", model.getAdditionalInfo().getAdditionalInfoString("<br>"));
-		
 	}
 	
 	
