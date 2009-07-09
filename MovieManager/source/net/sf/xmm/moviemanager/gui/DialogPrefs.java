@@ -169,6 +169,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	private JCheckBox checkForProgramUpdates;
 	private JCheckBox enablePlayButton;	
 	private JCheckBox checkEnableHTMLViewDebugMode;
+	private JCheckBox checkEnableMySQLSocketTimeout;
 		
 	private JCheckBox enableSeenEditable;
 	private JCheckBox enableRightclickByCtrl;
@@ -874,6 +875,17 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			enablePlayButton.setSelected(true);
 
 		miscCheckBoxes.add(enablePlayButton);
+		
+		// Only if MySQL database
+		if (MovieManager.getIt().getDatabase() != null && MovieManager.getIt().getDatabase().isMySQL()) {
+			checkEnableMySQLSocketTimeout = new JCheckBox("<html>Enable MySQL Socket timeout after 15 minutes <br>(requires reconnect to database)</html>"); //$NON-NLS-1$
+			
+			if (config.getMySQLSocketTimeoutEnabled())
+				checkEnableMySQLSocketTimeout.setSelected(true);
+
+			miscCheckBoxes.add(checkEnableMySQLSocketTimeout);
+		}
+		
 		miscPanel.add(miscCheckBoxes, BorderLayout.WEST);
 
 		/* Cover settings */
@@ -1651,7 +1663,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		config.setHTMLViewDebugMode(checkEnableHTMLViewDebugMode.isSelected());
 		
-
+		if (checkEnableMySQLSocketTimeout != null)
+			config.setMySQLSocketTimeoutEnabled(checkEnableMySQLSocketTimeout.isSelected());
+		
 		/* rightclick by ctrl */
 		config.setEnableCtrlMouseRightClick(enableRightclickByCtrl.isSelected());
 
