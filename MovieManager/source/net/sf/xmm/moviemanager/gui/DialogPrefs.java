@@ -93,6 +93,7 @@ import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
 import static net.sf.xmm.moviemanager.MovieManagerConfig.LookAndFeelType;
+import static net.sf.xmm.moviemanager.MovieManagerConfig.NoCoverType;
 
 import org.apache.log4j.Logger;
 
@@ -184,6 +185,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	private JRadioButton pumaCover;
 	private JRadioButton jaguarCover;
+	private JRadioButton tigerCover;
 
 	private JCheckBox enableStoreCoversLocally;
 
@@ -921,17 +923,23 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		pumaCover = new JRadioButton(Localizer.getString("dialogprefs.panel.cover-settings.nocover.use-puma")); //$NON-NLS-1$
 		jaguarCover = new JRadioButton(Localizer.getString("dialogprefs.panel.cover-settings.nocover.use-jaguar")); //$NON-NLS-1$
-
-		if (config.getNoCover().equals("nocover_jaguar.png")) //$NON-NLS-1$
+		tigerCover = new JRadioButton("Use Tiger image"); 
+		
+		
+		if (config.getNoCoverType() == NoCoverType.Jaguar)
 			jaguarCover.setSelected(true);
+		else if (config.getNoCoverType() == NoCoverType.Tiger)
+			tigerCover.setSelected(true);
 		else
 			pumaCover.setSelected(true);
 
 		nocoverGroup.add(pumaCover);
 		nocoverGroup.add(jaguarCover);
+		nocoverGroup.add(tigerCover);
 
 		nocoverImagePanel.add(pumaCover);
 		nocoverImagePanel.add(jaguarCover);
+		nocoverImagePanel.add(tigerCover);
 
 		coverPanel.add(nocoverImagePanel);
 
@@ -1692,10 +1700,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			config.setPreserveCoverAspectRatio(0);
 
 		if (pumaCover.isSelected())
-			config.setNoCover("nocover_puma.png"); //$NON-NLS-1$
+			config.setNoCoverType(NoCoverType.Puma);
+		else if (tigerCover.isSelected())
+			config.setNoCoverType(NoCoverType.Tiger);
 		else
-			config.setNoCover("nocover_jaguar.png"); //$NON-NLS-1$
-
+			config.setNoCoverType(NoCoverType.Jaguar);
+		
 		if (enableStoreCoversLocally != null && enableStoreCoversLocally.isSelected()) {
 
 			if (!(new File(config.getCoversFolder()).isDirectory())) {
