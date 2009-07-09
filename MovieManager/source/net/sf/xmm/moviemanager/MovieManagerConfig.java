@@ -204,6 +204,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	/* Used only with MySQL database */
 	private boolean storeCoversLocally = false;
 
+	private boolean mySQLSocketTimeoutEnabled = false;
+	
 	/**
 	 * Desides what kind of filter the movie search will use.
 	 **/
@@ -847,20 +849,21 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public String getCoversFolder() {
 		return getCoversFolder(null);
 	}
-
-
+	
+	
 	/* Returns the value stored in the database */
 	public String getCoversFolder(Database database) {
-
+		
 		if (database != null) {
 			return database.getCoversFolder();
 		}
 
 		database = MovieManager.getIt().getDatabase();
-
+		
 		if (this.coversFolder.equals("") && database != null) {
 			this.coversFolder = database.getCoversFolder();
 		}
+		
 		return this.coversFolder;
 	}
 
@@ -875,11 +878,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	/* Returns the absolute cover path: NOT healthy*/
 	public String getCoversPath(Database database) {
-
 		/* Get covers folder from database*/
 		String coversFolder = getCoversFolder(database);
 		String coversPath = "";
-	
+			
 		/* Relative to user dir */
 		if (getUseRelativeCoversPath() == 2) {
 			coversPath = SysUtil.getUserDir() + File.separator;
@@ -893,7 +895,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 			coversPath = dbPath + File.separator;
 		}
-		
+				
 		if (new File(coversPath + coversFolder).isDirectory())
 			return new File(coversPath + coversFolder).getAbsolutePath();
 		else if (new File(coversFolder).isDirectory())
@@ -1072,6 +1074,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.storeCoversLocally = storeCoversLocally;
 	}
 
+	public boolean getMySQLSocketTimeoutEnabled() {
+		return mySQLSocketTimeoutEnabled;
+	}
+
+	public void setMySQLSocketTimeoutEnabled(boolean mySQLSocketTimeoutEnabled) {
+		this.mySQLSocketTimeoutEnabled = mySQLSocketTimeoutEnabled;
+	}
+		
 	public boolean getLoadDatabaseOnStartup() {
 		return loadDatabaseOnStartup;
 	}
@@ -2164,6 +2174,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setStoreCoversLocally(new Boolean(value).booleanValue());
 			}
 			
+			value = (String) config.get("mySQLSocketTimeoutEnabled:");
+
+			if (value != null) {
+				setMySQLSocketTimeoutEnabled(new Boolean(value).booleanValue());
+			}			
 			
 			value = (String) config.get("loadDatabaseOnStartup:");
 
@@ -3121,7 +3136,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 settings.append(lineSeparator);
 		 settings.append("storeCoversLocally:" + getStoreCoversLocally());
-	 
+		 
+		 settings.append(lineSeparator);
+		 settings.append("mySQLSocketTimeoutEnabled:" + getMySQLSocketTimeoutEnabled());
+		 		 
 		 settings.append(lineSeparator);
 		 settings.append("loadDatabaseOnStartup:" + getLoadDatabaseOnStartup());
 
