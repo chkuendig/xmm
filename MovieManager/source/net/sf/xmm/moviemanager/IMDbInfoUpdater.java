@@ -156,6 +156,8 @@ public class IMDbInfoUpdater {
 
 						while (enumeration.hasMoreElements()) {
 							
+							System.err.println("threadHandler threads:" + threadHandler.getThreadCount());
+							
 							if (canceled)
 								break;
 
@@ -214,13 +216,27 @@ public class IMDbInfoUpdater {
 		StringBuffer data = null;
 		int buffer;
 		boolean error = false;
-
+		boolean skipped = false;
+		
 		GetInfo(ModelMovieInfo modelInfo, ModelEntry model, IMDB imdb) {
 			this.modelInfo = modelInfo;
 			this.model = model;
 			this.imdb = imdb;
 		}
 
+		boolean changed = false;
+		ModelIMDbEntry movie = null;// = imdb.grabInfo(model.getUrlKey());
+		
+		public ModelIMDbEntry getIMDbModel(String urlKey) throws Exception {
+			
+			changed = true;
+			
+			if (movie == null)
+				movie =  imdb.grabInfo(urlKey);
+			
+			return movie;
+		}
+		
 		public void run() {
 
 			try {
@@ -253,92 +269,92 @@ public class IMDbInfoUpdater {
 					model.setUrlKey(urlKey);
 				}
 				else if (skipEntriesWithIMDbID) {
+					skipped = true;
 					return;
 				}
 
 				for (int i = 0; i < tryTimes; i++) {
 
 					error = false;
-					
+									
 					try {
-												
-						ModelIMDbEntry movie = imdb.grabInfo(model.getUrlKey());
-
+						
 						if (title == 1 || (title == 2 && model.getTitle().equals(""))) {
-							model.setTitle(imdb.getCorrectedTitle(movie.getTitle()));
+							model.setTitle(imdb.getCorrectedTitle(getIMDbModel(model.getUrlKey()).getTitle()));
 						}
 
 						if (date == 1 || (date == 2 && model.getDate().equals(""))) {
-							model.setDate(movie.getDate());
+							model.setDate(getIMDbModel(model.getUrlKey()).getDate());
 						}
 
 						if (colour == 1 || (colour == 2 && model.getColour().equals(""))) {
-							model.setColour(movie.getColour());
+							model.setColour(getIMDbModel(model.getUrlKey()).getColour());
 						}
 
 						if (directedBy == 1 || (directedBy == 2 && model.getDirectedBy().equals(""))) {
-							model.setDirectedBy(movie.getDirectedBy());
+							model.setDirectedBy(getIMDbModel(model.getUrlKey()).getDirectedBy());
 						}
 
 						if (writtenBy == 1 || (writtenBy == 2 && model.getWrittenBy().equals(""))) {
-							model.setWrittenBy(movie.getWrittenBy());
+							model.setWrittenBy(getIMDbModel(model.getUrlKey()).getWrittenBy());
 						}
 
 						if (genre == 1 || (genre == 2 && model.getGenre().equals(""))) {
-							model.setGenre(movie.getGenre());
+							model.setGenre(getIMDbModel(model.getUrlKey()).getGenre());
 						}
 
-						if (rating == 1 || (rating == 2 && model.getRating().equals(""))) {
-							model.setRating(movie.getRating());
+						if (rating == 1 || (rating == 2 && model.getRating().equals(""))) {							
+							model.setRating(getIMDbModel(model.getUrlKey()).getRating());
 						}
 
 						if (country == 1 || (country == 2 && model.getCountry().equals(""))) {
-							model.setCountry(movie.getCountry());
+							model.setCountry(getIMDbModel(model.getUrlKey()).getCountry());
 						}
 
 						if (language == 1 || (language == 2 && model.getLanguage().equals(""))) {
-							model.setLanguage(movie.getLanguage());
+							model.setLanguage(getIMDbModel(model.getUrlKey()).getLanguage());
 						}
 
 						if (plot == 1 || (plot == 2 && model.getPlot().equals(""))) {
-							model.setPlot(movie.getPlot());
+							model.setPlot(getIMDbModel(model.getUrlKey()).getPlot());
 						}
 
 						if (cast == 1 || (cast == 2 && model.getCast().equals(""))) {
-							model.setCast(movie.getCast());
+							model.setCast(getIMDbModel(model.getUrlKey()).getCast());
 						}
 
-						if (aka == 1 || (aka == 2 && model.getAka().equals(""))) {
-							model.setAka(movie.getAka());
-							model.setTitle(imdb.getCorrectedTitle(movie.getTitle()));
+						if (aka == 1 || (aka == 2 && model.getAka().equals(""))) {							
+							model.setAka(getIMDbModel(model.getUrlKey()).getAka());
+							model.setTitle(imdb.getCorrectedTitle(getIMDbModel(model.getUrlKey()).getTitle()));
 							ModelMovieInfo.executeTitleModification(model);
 						}
 
 						if (soundMix == 1 || (soundMix == 2 && model.getWebSoundMix().equals(""))) {
-							model.setWebSoundMix(movie.getWebSoundMix());
+							model.setWebSoundMix(getIMDbModel(model.getUrlKey()).getWebSoundMix());
 						}
 
 						if (runtime == 1 || (runtime == 2 && model.getWebRuntime().equals(""))) {
-							model.setWebRuntime(movie.getWebRuntime());
+							model.setWebRuntime(getIMDbModel(model.getUrlKey()).getWebRuntime());
 						}
 
 						if (awards == 1 || (awards == 2 && model.getAwards().equals(""))) {
-							model.setAwards(movie.getAwards());
+							model.setAwards(getIMDbModel(model.getUrlKey()).getAwards());
 						}
 
 						if (mpaa == 1 || (mpaa == 2 && model.getMpaa().equals(""))) {
-							model.setMpaa(movie.getMpaa());
+							model.setMpaa(getIMDbModel(model.getUrlKey()).getMpaa());
 						}
 
 						if (certification == 1 || (certification == 2 && model.getCertification().equals(""))) {
-							model.setCertification(movie.getCertification());
+							model.setCertification(getIMDbModel(model.getUrlKey()).getCertification());
 						}
 
-						if (cover == 1 || (cover == 2 && model.getCover().equals(""))) {
-
+						if (cover == 1 || (cover == 2 && (model.getCover().equals("") || 
+								(MovieManager.getIt().getDatabase().isMySQL() && model.getCoverData() == null)))) {
+														
 							try {
 	
-								byte [] coverData = movie.getCoverData();
+								byte [] coverData = getIMDbModel(model.getUrlKey()).getCoverData();
 
 								if (coverData != null) {
 									model.setCoverData(coverData);
@@ -348,27 +364,35 @@ public class IMDbInfoUpdater {
 											&& !MovieManager.getConfig().getStoreCoversLocally()) 
 											&& (imdb.getCoverURL().indexOf("/") != -1)) {
 
-										/* Creates the new file... */
-										File coverFile = new File(coversFolder, imdb.getCoverName());
+										if (new File(coversFolder).isDirectory()) {
 
-										if (coverFile.exists()) {
-											if (!coverFile.delete() && !coverFile.createNewFile()) {
-												throw new Exception("Cannot delete old cover file and create a new one.");
+											/* Creates the new file... */
+											File coverFile = new File(coversFolder, imdb.getCoverName());
+
+											if (coverFile.exists()) {
+												if (!coverFile.delete() && !coverFile.createNewFile()) {
+													throw new Exception("Cannot delete old cover file and create a new one.");
+												}
+											} else {
+												if (!coverFile.createNewFile()) {
+													throw new Exception("Cannot create cover file.");
+												}
 											}
-										} else {
-											if (!coverFile.createNewFile()) {
-												throw new Exception("Cannot create cover file.");
-											}
+											/* Copies the cover to the covers folder... */
+											FileUtil.writeToFile(coverData, coverFile);
 										}
-										/* Copies the cover to the covers folder... */
-										FileUtil.writeToFile(coverData, coverFile);
 									}
 								}
+								
 							} catch (Exception e) {
 								log.error("Exception:" + e.getMessage(), e);
 							}
 						}
-						modelInfo.saveToDatabase(model, true, null);					
+							
+						if (changed)
+							modelInfo.saveToDatabase(model, true, null);
+						else
+							System.err.println("Not saving " + model.getTitle());
 
 					} catch (Exception e) {
 						log.fatal("Exception:" + e.getMessage(), e);
@@ -396,7 +420,9 @@ public class IMDbInfoUpdater {
 				if (error) {
 					addTransferred("Failed to retrive info on " + model.getTitle());
 					log.warn("failed to retrieve info for entry " + model.getTitle());
-				} 
+				}
+				else if (skipped || !changed)
+					addTransferred("Skipping " + model.getTitle());
 				else
 					addTransferred(model.getTitle());	
 			}
