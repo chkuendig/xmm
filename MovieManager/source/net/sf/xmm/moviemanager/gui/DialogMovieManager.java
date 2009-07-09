@@ -1508,7 +1508,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         /* Adds the cover. */
         JPanel panelCover = new JPanel();
         
-        coverLabel = new JLabel(new ImageIcon(FileUtil.getImage("/images/" + config.getNoCover()).getScaledInstance(97,97,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+        coverLabel = new JLabel(new ImageIcon(FileUtil.getImage("/images/" + config.getNoCover()).getScaledInstance(97,145,Image.SCALE_SMOOTH))); //$NON-NLS-1$
         coverLabel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,0), BorderFactory.createEtchedBorder()));
         coverLabel.setPreferredSize(new Dimension(97,145));
         coverLabel.setMinimumSize(new Dimension(97,145));
