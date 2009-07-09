@@ -949,8 +949,6 @@ public class IMDB /*extends IMDB_if */{
      **/
     protected static String decodeCast(String toDecode) {
     	
-    	System.err.println("cast:" + toDecode);
-    	
     	StringBuffer decoded = new StringBuffer();
     	
     	try {
@@ -1282,6 +1280,8 @@ public class IMDB /*extends IMDB_if */{
     	try {
     		url = new URL("http://akas.imdb.com/media/" + dataModel.bigCoverUrlId);
     		
+    		//System.err.println("url:" + url);
+    		
     		HTTPResult res = httpUtil.readData(url);
     		StringBuffer data = res.data;
 
@@ -1291,6 +1291,8 @@ public class IMDB /*extends IMDB_if */{
 
     			String tmp = data.substring(imgIndex, data.indexOf(">", imgIndex));
 
+    			//System.err.println("tmp:" + tmp);
+    			
     			//src="http://ia.media-imdb.com/images/M/MV5BMTI4ODg5MjkwMl5BMl5BanBnXkFtZTcwNTkzMjYyMQ@@._V1._SX307_SY400_.jpg">
 
     			Pattern p = Pattern.compile("src=\"(.+)\"");
@@ -1299,10 +1301,10 @@ public class IMDB /*extends IMDB_if */{
 
     			if (m.find()) {
 
-    				String g = m.group();
+    				//String g = m.group();
 
-    				//System.err.println("g:" + m.group(0));
-    				//System.err.println("g1:" + m.group(1));
+    				//System.err.println("BC g:" + m.group(0));
+    				//System.err.println("BC g1:" + m.group(1));
 
     				coverData = httpUtil.readDataToByteArray(new URL(m.group(1)));
     				
