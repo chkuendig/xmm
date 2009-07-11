@@ -357,22 +357,35 @@ ul.auto-toc {
 <h1 class="title">Changelog - MeD's Movie Manager</h1>
 
 <!-- This document is written in reStructuredText format -->
-<p>Version 2.8.4 (04-jun-2009)</p>
+<p>Version 2.8.5 (11-July-2009)</p>
 <ul class="simple">
 <li>General improvements:<ul>
-<li>Support for <a class="reference external" href="http://mediainfo.sourceforge.net">MediaInfo</a> on 64bit Windows.</li>
+<li>Made the Add/Edit movie panel resizable for those with a row resolution screen.</li>
+</ul>
+</li>
+<li>Bug fixes:<ul>
+<li>Cast was not retrieved after some changes by IMDb.</li>
+<li>Update covers using &quot;Update IMDb Info&quot; with option &quot;If empty&quot; using MySQL wouldn't always update the cover in the database.</li>
+<li>IMDb dialog in &quot;Add Multiple Movies&quot; was hiding the &quot;Abort&quot; button.</li>
 </ul>
 </li>
 </ul>
-<p>Version 2.8.3 (01-jun-2009)</p>
+<p>Version 2.8.4 (04-June-2009)</p>
+<ul class="simple">
+<li>General improvements:<ul>
+<li>Support for <a class="reference external" href="http://mediainfo.sourceforge.net">MediaInfo</a> library on 64bit Windows.</li>
+</ul>
+</li>
+</ul>
+<p>Version 2.8.3 (01-June-2009)</p>
 <ul class="simple">
 <li>Bug fixes:<ul>
 <li>'Update IMDb Info' would fail for entries with no IMDb id when using Substance L&amp;F.</li>
-<li>Library was missing making <a class="reference external" href="http://mediainfo.sourceforge.net">MediaInfo</a> not working at all.</li>
+<li>Library was missing making <a class="reference external" href="http://mediainfo.sourceforge.net">MediaInfo</a> library not working at all.</li>
 </ul>
 </li>
 </ul>
-<p>Version 2.8.2 (31-may-2009)</p>
+<p>Version 2.8.2 (31-May-2009)</p>
 <ul class="simple">
 <li>New<ul>
 <li>Finding duplicate entries can now be done using the command &quot;DUPLICATES&quot; in the search filter (Not available for MS Access database). Read more about <a class="reference external" href="http://xmm.sourceforge.net/index.php?menu=help#duplicates">duplicates</a>.</li>
@@ -383,7 +396,7 @@ ul.auto-toc {
 <li>Playing media files with space in the name should work better on GNU/Linux.</li>
 <li>'Add multiple movies' now has the option of grouping files together before searching IMDb by right clicking the list elements in list of files to add. Also, files with similar names are shown with the same color in the list of files to add.</li>
 <li>Support for using <a class="reference external" href="http://mediainfo.sourceforge.net">MediaInfo</a> library on GNU/Linux.</li>
-<li>Updated the MediaInfo library with better support for mp4 and mkv (Matoska) files.</li>
+<li>Updated the MediaInfo library with better support for mp4 and mkv (Matroska) files.</li>
 </ul>
 </li>
 <li>Bug fixes:<ul>
@@ -392,7 +405,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.8.1 (09-may-2009)</p>
+<p>Version 2.8.1 (09-May-2009)</p>
 <ul class="simple">
 <li>General improvements:<ul>
 <li>Better support for Windows 7. Config and log file is now written to writable user area.</li>
@@ -404,7 +417,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.8.0 (12-apr-2009)</p>
+<p>Version 2.8.0 (12-April-2009)</p>
 <ul class="simple">
 <li>Note<ul>
 <li>From this version on, Java 5 (1.5) or higher is required. To be able to use all the Look &amp; Feels (themes), Java 1.6 is required.</li>
@@ -428,7 +441,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.7.7 (22-mar-2009)</p>
+<p>Version 2.7.7 (22-March-2009)</p>
 <ul class="simple">
 <li>General improvements:<ul>
 <li>HTML export now opens a dialog showing the progress.</li>
@@ -440,7 +453,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.7.6 (14-mar-2009)</p>
+<p>Version 2.7.6 (14-March-2009)</p>
 <ul class="simple">
 <li>General improvements:<ul>
 <li>Grabs Cast info better with more actors. Non-ASCII characters are now also converted.</li>
@@ -451,7 +464,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.7.5 (13-mar-2009)</p>
+<p>Version 2.7.5 (13-March-2009)</p>
 <ul class="simple">
 <li>General improvements:<ul>
 <li>Right-clicking an entry in the list of movies/series/episodes search hits will now open the IMDb page.</li>
@@ -469,7 +482,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.7.4 (20-jan-2009)</p>
+<p>Version 2.7.4 (20-January-2009)</p>
 <ul class="simple">
 <li>Bug fixes:<ul>
 <li>Version check is fixed.</li>
@@ -477,7 +490,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.7.3 (16-jan-2009)</p>
+<p>Version 2.7.3 (16-January-2009)</p>
 <ul class="simple">
 <li>Bug fixes:<ul>
 <li>Fixed IMDb, now all hits are shown.</li>
@@ -485,7 +498,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.7.2 (10-jan-2009)</p>
+<p>Version 2.7.2 (10-January-2009)</p>
 <ul class="simple">
 <li>General improvements:<ul>
 <li>Added a new theme 'A Touch of Green' for the HTML panel.</li>
@@ -507,7 +520,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.7.1 (20-des-2008)</p>
+<p>Version 2.7.1 (20-December-2008)</p>
 <ul class="simple">
 <li>Bug fixes:<ul>
 <li>Old episodes will now look like they used to without &quot;SnullEnull&quot; in the movie list.</li>
@@ -515,7 +528,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.7 (18-des-2008)</p>
+<p>Version 2.7 (18-December-2008)</p>
 <ul class="simple">
 <li>General improvements:<ul>
 <li>TV.COM support has been replaced by IMDb. There should be no big changes except that grabbing the info will take a bit longer as more URLs must be downloaded and parsed.</li>
@@ -527,7 +540,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.7 beta 1 (16-jul-2008)</p>
+<p>Version 2.7 beta 1 (16-July-2008)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>&quot;Add multiple movies&quot; function has been rewritten and contains some new features.</li>
@@ -563,7 +576,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.6.1 (19-feb-2008)</p>
+<p>Version 2.6.1 (19-February-2008)</p>
 <ul class="simple">
 <li>Bug fixes:<ul>
 <li>Fixed some bugs in cover and queries paths settings in Folders menu.</li>
@@ -574,7 +587,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.6 (18-feb-2008)</p>
+<p>Version 2.6 (18-February-2008)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>HTML view of movie info using templates.</li>
@@ -589,7 +602,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.5.5 (26-dec-2007)</p>
+<p>Version 2.5.5 (26-December-2007)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>Database backup function for HSQL and MS Access database.</li>
@@ -607,7 +620,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.5.4.2 (05-dec-2007)</p>
+<p>Version 2.5.4.2 (05-December-2007)</p>
 <ul class="simple">
 <li>Bug fixes:<ul>
 <li>IMDb parser gave strange results</li>
@@ -615,7 +628,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.5.4.1 (12-jul-2007)</p>
+<p>Version 2.5.4.1 (12-July-2007)</p>
 <ul class="simple">
 <li>General improvements:<ul>
 <li>IMDb parser slightly modified to show more hits</li>
@@ -628,7 +641,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.5.4 (10-jul-2007)</p>
+<p>Version 2.5.4 (10-July-2007)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>CSV import</li>
@@ -652,35 +665,35 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.5.3.5 (27-jun-2007)</p>
+<p>Version 2.5.3.5 (27-June-2007)</p>
 <ul class="simple">
 <li>Bug fixes:<ul>
 <li>IMDb changed their html.</li>
 </ul>
 </li>
 </ul>
-<p>Version 2.5.3.4 (26-jun-2007)</p>
+<p>Version 2.5.3.4 (26-June-2007)</p>
 <ul class="simple">
 <li>Bug fixes:<ul>
 <li>MeD's Movie Manager can now be closed on Windows Vista.</li>
 </ul>
 </li>
 </ul>
-<p>Version 2.5.3.3 (03-may-2007)</p>
+<p>Version 2.5.3.3 (03-May-2007)</p>
 <ul class="simple">
 <li>Bug fixes:<ul>
 <li>Fixed a serious bug with the additional info fields.</li>
 </ul>
 </li>
 </ul>
-<p>Version 2.5.3.2 (03-may-2007)</p>
+<p>Version 2.5.3.2 (03-May-2007)</p>
 <ul class="simple">
 <li>Bug fixes:<ul>
 <li>Binaries were missing some important files.</li>
 </ul>
 </li>
 </ul>
-<p>Version 2.5.3 (02-may-2007)</p>
+<p>Version 2.5.3 (02-May-2007)</p>
 <ul class="simple">
 <li>Note:<ul>
 <li>This is a major bug fix release. Thanks a lot to Matthias for thorough testing and bug-seeking.</li>
@@ -701,7 +714,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.5.2 (29-april-2007)</p>
+<p>Version 2.5.2 (29-April-2007)</p>
 <ul class="simple">
 <li>General improvements:<ul>
 <li>No longer necessary to save changed notes manually.</li>
@@ -712,14 +725,14 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.5.1 (18-april-2007)</p>
+<p>Version 2.5.1 (18-April-2007)</p>
 <ul class="simple">
 <li>Bug fixes:<ul>
 <li>The movie list was not sorted.</li>
 </ul>
 </li>
 </ul>
-<p>Version 2.5 (18-april-2007)</p>
+<p>Version 2.5 (18-April-2007)</p>
 <ul class="simple">
 <li>General improvements:<ul>
 <li>Included a lot more Look &amp; Feels.</li>
@@ -727,16 +740,16 @@ ul.auto-toc {
 </li>
 <li>Bug fixes:<ul>
 <li>Bug fixed where info in add/edit was zeroed out when changing seen/unseen or cover. (Thanks to kreegee).</li>
-<li>Bugfixes for the Mac GUI. (Thanks to kreegee).</li>
+<li>Bug fixes for the Mac GUI. (Thanks to kreegee).</li>
 <li>Fixed IMDb html parsing. Now retrieves 'directed by' and 'written by'</li>
 </ul>
 </li>
 </ul>
-<p>Version 2.5 beta 4 (07-mar-2007)</p>
+<p>Version 2.5 beta 4 (07-March-2007)</p>
 <ul class="simple">
 <li>General improvements:<ul>
 <li>Importing excel spreadsheet should now actually work.</li>
-<li>IMDb Updater now alows skipping of entries that already contains an IMDb ID.</li>
+<li>IMDb Updater now allows skipping of entries that already contains an IMDb ID.</li>
 <li>Non ASCII characters in 'directed by' and 'written by' are now converted again.</li>
 </ul>
 </li>
@@ -746,10 +759,10 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.5 beta 3 (24-feb-2007)</p>
+<p>Version 2.5 beta 3 (24-February-2007)</p>
 <ul class="simple">
 <li>General improvements:<ul>
-<li>Added new field in the edit window shwowing the IMDb ID.</li>
+<li>Added new field in the edit window showing the IMDb ID.</li>
 <li>Excel import is improved.</li>
 </ul>
 </li>
@@ -758,7 +771,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.5 beta 2 (21-jan-2007)</p>
+<p>Version 2.5 beta 2 (21-January-2007)</p>
 <ul class="simple">
 <li>General improvements:<ul>
 <li>Many small improvements and fixes on the new features added in beta 1.</li>
@@ -769,7 +782,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.5 beta 1 (09-jan-2007)</p>
+<p>Version 2.5 beta 1 (09-January-2007)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>XML export/import of the movie list.</li>
@@ -791,7 +804,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.41 (20-oct-2006)</p>
+<p>Version 2.41 (20-October-2006)</p>
 <ul class="simple">
 <li>Bug fixes:<ul>
 <li>Subtitles field could be displayed multiple times if some additional info fields were hidden (ID: 1581374).</li>
@@ -800,7 +813,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.40 (05-oct-2006)</p>
+<p>Version 2.40 (05-October-2006)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>Threads with Progress Bar has been introduced to make the app more responsive during database loading and imdb/tv.com searching.</li>
@@ -828,7 +841,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.4 Beta 4.1 (18-aug-2006)</p>
+<p>Version 2.4 Beta 4.1 (18-August-2006)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>Movie Info update function (ID: 1488702)</li>
@@ -841,7 +854,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.4 Beta 3 (21-jul-2006)</p>
+<p>Version 2.4 Beta 3 (21-July-2006)</p>
 <ul class="simple">
 <li>General improvements:<ul>
 <li>SplitPane added between Plot/Cast/Miscellaneous and Additional Info/Notes.</li>
@@ -854,7 +867,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.4 Beta 2 (27-jun-2006)</p>
+<p>Version 2.4 Beta 2 (27-June-2006)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>The Notes can be edited in the main window and saved with button in Database menu. The info must be saved beofore the list is changed (new searches, different list).</li>
@@ -867,7 +880,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.4 Beta (24-jun-2006)</p>
+<p>Version 2.4 Beta (24-June-2006)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>Queries can be displayed in a tree. (Thanks to Keith)</li>
@@ -892,7 +905,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.32 (22-apr-2006)</p>
+<p>Version 2.32 (22-April-2006)</p>
 <ul class="simple">
 <li>General improvements/Bug fixes:<ul>
 <li>Fixed Bug: TV.COM not functioning (BugID: 1472873)</li>
@@ -904,7 +917,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.31 (31-jan-2006)</p>
+<p>Version 2.31 (31-January-2006)</p>
 <ul class="simple">
 <li>General improvements/Bug fixes:<ul>
 <li>Fixed Bug: An error occured when trying to sort by duration when using a user-defined list.</li>
@@ -914,7 +927,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.3 (29-jan-2006)</p>
+<p>Version 2.3 (29-January-2006)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>Support for MySQL database.</li>
@@ -937,7 +950,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.22 (04-Nov-2005)</p>
+<p>Version 2.22 (04-November-2005)</p>
 <ul class="simple">
 <li>General improvements/Bug fixes:<ul>
 <li>Queries function has been optimized and will no longer be slow if there are many hits.</li>
@@ -946,7 +959,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.21 (20-Oct-2005)</p>
+<p>Version 2.21 (20-October-2005)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>Macintosh support (tested on Mac OS X 10.3.9</li>
@@ -961,11 +974,11 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.2 (26-Sep-2005)</p>
+<p>Version 2.2 (26-September-2005)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>Episode functionality for series, with automatic download of episode info from tv.com</li>
-<li>Import function (3 modes � Simple text, excel and extreme movie manager (v4.5)</li>
+<li>Import function (3 modes - Simple text, excel and extreme movie manager (v4.5)</li>
 <li>List functionality</li>
 </ul>
 </li>
@@ -976,7 +989,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.11 (27-Jun-2005)</p>
+<p>Version 2.11 (27-June-2005)</p>
 <ul class="simple">
 <li>General improvements/fixes:<ul>
 <li>AVI bug fixed where the entire file would be parsed if no DivX5/Xvid bitstream version existed.</li>
@@ -987,7 +1000,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.1 (08-Jun-2005)</p>
+<p>Version 2.1 (08-June-2005)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>Main window is resizable</li>
@@ -997,7 +1010,7 @@ ul.auto-toc {
 <li>General improvements/fixes:<ul>
 <li>AVI video bitrate is correct.</li>
 <li>Multiple files can now be selected when getting file info.</li>
-<li>It should be alot safer to change Look and Feels.</li>
+<li>It should be a lot safer to change Look and Feels.</li>
 <li>Additional info fields can now be hidden and rearranged.</li>
 </ul>
 </li>
@@ -1006,7 +1019,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.02 (23-Apr-2005)</p>
+<p>Version 2.02 (23-April-2005)</p>
 <ul class="simple">
 <li>General improvements/fixes:<ul>
 <li>It's possible to select multiple entries from the movie list to make removing multiple movies easier.</li>
@@ -1015,14 +1028,14 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 2.01 (20-Apr-2005)</p>
+<p>Version 2.01 (20-April-2005)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>Export function is slightly changed. It's now possible to divide full export list alphabetically.</li>
 </ul>
 </li>
 </ul>
-<p>Version 2.0 (14-Apr-2005)</p>
+<p>Version 2.0 (14-April-2005)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>HSQL database support which runs on Unix/Linux as well as Windows.</li>
@@ -1038,7 +1051,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 1.81 (27-Feb-2005)</p>
+<p>Version 1.81 (27-February-2005)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>Proxy support (HTTP).</li>
@@ -1050,7 +1063,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 1.80 (14-Feb-2005)</p>
+<p>Version 1.80 (14-February-2005)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>Multi-add feature.</li>
@@ -1065,7 +1078,7 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 1.70 (17-Jan-2005)</p>
+<p>Version 1.70 (17-January-2005)</p>
 <ul class="simple">
 <li>New:<ul>
 <li>Advanced Search:<ul>
@@ -1088,31 +1101,31 @@ ul.auto-toc {
 </ul>
 </li>
 </ul>
-<p>Version 1.67 beta (10-Jan-2005)</p>
+<p>Version 1.67 beta (10-January-2005)</p>
 <blockquote>
 <ul class="simple">
 <li>IMDB changed some of the html structure leaving the movie manager unable to download info on most movies</li>
 </ul>
 </blockquote>
-<p>Version 1.66 beta (10-Feb-2004)</p>
+<p>Version 1.66 beta (10-February-2004)</p>
 <blockquote>
 <ul class="simple">
 <li>Added remove confirmation dialog to prevent catastrophes for those of you still using this prototype...</li>
 </ul>
 </blockquote>
-<p>Version 1.65 beta (07-Feb-2004)</p>
+<p>Version 1.65 beta (07-February-2004)</p>
 <blockquote>
 <ul class="simple">
 <li>IMDB links structure have changed again (thanks Kica, for noticing me)</li>
 </ul>
 </blockquote>
-<p>Version 1.64 beta (03-Sep-2003)</p>
+<p>Version 1.64 beta (03-September-2003)</p>
 <blockquote>
 <ul class="simple">
 <li>IMDB links structure have changed - www.imdb.com/Title?0000000 can now also be www.imdb.com/title/tt000000</li>
 </ul>
 </blockquote>
-<p>Version 1.63 beta (21-Jul-2003)</p>
+<p>Version 1.63 beta (21-July-2003)</p>
 <blockquote>
 <ul class="simple">
 <li>Help URLs changed. All pages are now &#64; SourceForge.net</li>
@@ -1121,13 +1134,13 @@ ul.auto-toc {
 <li>The new version will still be GPL, but maybe it will be written in C#... Furthermore the databases will be compatible, I expect...</li>
 </ul>
 </blockquote>
-<p>Version 1.62 beta (29-Jun-2003)</p>
+<p>Version 1.62 beta (29-June-2003)</p>
 <blockquote>
 <ul class="simple">
 <li>Bug fix: imdb ID was being lost after editing an existing movie</li>
 </ul>
 </blockquote>
-<p>Version 1.6 beta (17-Jun-2003)</p>
+<p>Version 1.6 beta (17-June-2003)</p>
 <blockquote>
 <ul class="simple">
 <li>Source code is now available under the GPL license</li>
@@ -1140,7 +1153,7 @@ ul.auto-toc {
 <li>Added IMDB rating to Full HTML Export</li>
 </ul>
 </blockquote>
-<p>Version 1.4 beta (28-Mar-2003)</p>
+<p>Version 1.4 beta (28-March-2003)</p>
 <blockquote>
 <ul class="simple">
 <li>The Queries list is now sorted by name</li>
@@ -1157,7 +1170,7 @@ ul.auto-toc {
 <li>Unseen Movies With SubTitles.qry</li>
 </ul>
 </blockquote>
-<p>Version 1.3 beta (25-Mar-2003)</p>
+<p>Version 1.3 beta (25-March-2003)</p>
 <blockquote>
 <ul class="simple">
 <li>Added 42 new RIFF audio tags support</li>
@@ -1165,7 +1178,7 @@ ul.auto-toc {
 <li>&quot;Sum MB&quot; query is now &quot;Sum GB&quot;</li>
 </ul>
 </blockquote>
-<p>Version 1.2 beta (24-Mar-2003)</p>
+<p>Version 1.2 beta (24-March-2003)</p>
 <blockquote>
 <ul class="simple">
 <li>Fixed exit bug after database creation failed</li>
@@ -1173,11 +1186,11 @@ ul.auto-toc {
 <li>Some other minor and user-invisible code changes</li>
 </ul>
 </blockquote>
-<p>Version 1.1 beta (22-Mar-2003)</p>
+<p>Version 1.1 beta (22-March-2003)</p>
 <blockquote>
 <ul class="simple">
 <li>Added log file</li>
-<li>Version 1.0 beta (18-Mar-2003) - Non Install ZIP File or MSI Install File</li>
+<li>Version 1.0 beta (18-March-2003) - Non Install ZIP File or MSI Install File</li>
 <li>You have now an install file for directory and shortcuts creation</li>
 <li>The non install zip version will still be available for those of you who don't like install programs ;-)</li>
 <li>Added alert dialog if database creation fails</li>
@@ -1185,7 +1198,7 @@ ul.auto-toc {
 <li>Some other minor changes...</li>
 </ul>
 </blockquote>
-<p>Version 0.9 beta (16-Mar-2003)</p>
+<p>Version 0.9 beta (16-March-2003)</p>
 <blockquote>
 <ul class="simple">
 <li>0x2000 RIFF tag is now &quot;AC3 Dolby Digital&quot; and not &quot;DVM&quot;</li>
@@ -1193,8 +1206,8 @@ ul.auto-toc {
 <li>Fixed close connection to database bug</li>
 </ul>
 </blockquote>
-<p>Version 0.8 beta (14-Mar-2003)</p>
-<p>Version 0.7 beta (13-Mar-2003)</p>
+<p>Version 0.8 beta (14-March-2003)</p>
+<p>Version 0.7 beta (13-March-2003)</p>
 </div>
 </body>
 </html>
