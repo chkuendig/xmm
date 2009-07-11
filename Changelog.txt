@@ -5,11 +5,11 @@
 ========================================
 
 
-Version 2.8.5 ()
+Version 2.8.5 (11-July-2009)
 
 - General improvements:
 
-  - Made the Add/Edit movie panel resizeable for those with a row resolution screen.
+  - Made the Add/Edit movie panel resizable for those with a row resolution screen.
 
 - Bug fixes:
 
@@ -18,14 +18,14 @@ Version 2.8.5 ()
   - IMDb dialog in "Add Multiple Movies" was hiding the abort button.
 
 
-Version 2.8.4 (04-jun-2009)
+Version 2.8.4 (04-June-2009)
 
 - General improvements:
 
   - Support for MediaInfo_ library on 64bit Windows.
   
 
-Version 2.8.3 (01-jun-2009)
+Version 2.8.3 (01-June-2009)
 
 - Bug fixes:
 
@@ -33,7 +33,7 @@ Version 2.8.3 (01-jun-2009)
   - Library was missing making MediaInfo_ library not working at all.
 
 
-Version 2.8.2 (31-may-2009)
+Version 2.8.2 (31-May-2009)
 
 - New 
 
@@ -53,7 +53,7 @@ Version 2.8.2 (31-may-2009)
   - Showing unlisted entries *only* was not possible.
 
 
-Version 2.8.1 (09-may-2009)
+Version 2.8.1 (09-May-2009)
 
 - General improvements:
 
@@ -65,7 +65,7 @@ Version 2.8.1 (09-may-2009)
   - "Filter out media files already in database" using the "Add multiple movies" was broken.
 
 
-Version 2.8.0 (12-apr-2009)
+Version 2.8.0 (12-April-2009)
 
 - Note
 
@@ -89,7 +89,7 @@ Version 2.8.0 (12-apr-2009)
   - Ancient bug in "Add Multiple Movies" function causing the "Add Movies" button not to react if it had already been pressed with no valid media files in the "Media files" list.
   	
 
-Version 2.7.7 (22-mar-2009)
+Version 2.7.7 (22-March-2009)
 
 - General improvements:
 
@@ -101,7 +101,7 @@ Version 2.7.7 (22-mar-2009)
   - On OS X, the quit button in system menu and the shortcut is fixed.
   
 
-Version 2.7.6 (14-mar-2009)
+Version 2.7.6 (14-March-2009)
 
 - General improvements:
 
@@ -112,7 +112,7 @@ Version 2.7.6 (14-mar-2009)
   - OS X with Java 1.6 would not work because of library link error.
 
 
-Version 2.7.5 (13-mar-2009)
+Version 2.7.5 (13-March-2009)
 
 - General improvements:
 
@@ -130,7 +130,7 @@ Version 2.7.5 (13-mar-2009)
   - When importing movies, the covers are now saved when retrieving info from IMDb.
    
    
-Version 2.7.4 (20-jan-2009)
+Version 2.7.4 (20-January-2009)
 
 - Bug fixes:
 
@@ -138,7 +138,7 @@ Version 2.7.4 (20-jan-2009)
   - Database backup function fixed.
 
 
-Version 2.7.3 (16-jan-2009)
+Version 2.7.3 (16-January-2009)
 
 - Bug fixes:
 
@@ -146,7 +146,7 @@ Version 2.7.3 (16-jan-2009)
   - Using IMDb username and password for login.
 
 
-Version 2.7.2 (10-jan-2009)
+Version 2.7.2 (10-January-2009)
 
 - General improvements:
 
@@ -166,7 +166,7 @@ Version 2.7.2 (10-jan-2009)
   - Fixed som stuff when adding episode entries from IMDb.
   - Saving movie titles from IMDb of specific language set in settings now works.
 
-Version 2.7.1 (20-des-2008)
+Version 2.7.1 (20-December-2008)
  
 - Bug fixes:
 
@@ -174,7 +174,7 @@ Version 2.7.1 (20-des-2008)
   - Hopefully fixed some issues causing crashes.
 
 
-Version 2.7 (18-des-2008)
+Version 2.7 (18-December-2008)
 
 - General improvements:
 
@@ -186,7 +186,7 @@ Version 2.7 (18-des-2008)
   - IMDb changed the HTML code again.
 
 
-Version 2.7 beta 1 (16-jul-2008)
+Version 2.7 beta 1 (16-July-2008)
 
 - New:
 
@@ -222,7 +222,7 @@ Version 2.7 beta 1 (16-jul-2008)
   - Incorrect directory was used when exporting database to HTML.
 
 
-Version 2.6.1 (19-feb-2008)
+Version 2.6.1 (19-February-2008)
 
 - Bug fixes:
 
@@ -233,7 +233,7 @@ Version 2.6.1 (19-feb-2008)
   - This is most importantly a repack of 2.6 as some important files were missing.
 
 
-Version 2.6 (18-feb-2008)
+Version 2.6 (18-February-2008)
 
 - New:
    
@@ -248,7 +248,7 @@ Version 2.6 (18-feb-2008)
   - Fixed an issue with cover path relative to database/program install directory.
 
 
-Version 2.5.5 (26-dec-2007)
+Version 2.5.5 (26-December-2007)
 
 - New:
  
@@ -266,7 +266,7 @@ Version 2.5.5 (26-dec-2007)
   - IMDb info is now saved when using the import funtion.
 
 
-Version 2.5.4.2 (05-dec-2007)
+Version 2.5.4.2 (05-December-2007)
 
 - Bug fixes:
  
@@ -274,7 +274,7 @@ Version 2.5.4.2 (05-dec-2007)
   - Connecting to the same MySQL database from both Windows and Linux didn't always work.
 
 
-Version 2.5.4.1 (12-jul-2007)
+Version 2.5.4.1 (12-July-2007)
 
 - General improvements:
  
@@ -287,7 +287,7 @@ Version 2.5.4.1 (12-jul-2007)
   - Covers were not saved when adding movies with the 'Add Multiple Movies' function.
 
 
-Version 2.5.4 (10-jul-2007)
+Version 2.5.4 (10-July-2007)
 
 - New:
  
@@ -311,35 +311,35 @@ Version 2.5.4 (10-jul-2007)
   - Plenty of other minor bugs and issues have been fixed
 
 
-Version 2.5.3.5 (27-jun-2007)
+Version 2.5.3.5 (27-June-2007)
 
 - Bug fixes:
  
   - IMDb changed their html.
 
 
-Version 2.5.3.4 (26-jun-2007)
+Version 2.5.3.4 (26-June-2007)
 
 - Bug fixes:
  
   - MeD's Movie Manager can now be closed on Windows Vista.
 
 
-Version 2.5.3.3 (03-may-2007)
+Version 2.5.3.3 (03-May-2007)
 
 - Bug fixes:
  
   - Fixed a serious bug with the additional info fields.
 
 
-Version 2.5.3.2 (03-may-2007)
+Version 2.5.3.2 (03-May-2007)
 
 - Bug fixes:
  
   - Binaries were missing some important files.
 
 
-Version 2.5.3 (02-may-2007)
+Version 2.5.3 (02-May-2007)
 
 - Note:
    
@@ -360,7 +360,7 @@ Version 2.5.3 (02-may-2007)
   - A lot of smaller fixes and improvements.
 
 
-Version 2.5.2 (29-april-2007)
+Version 2.5.2 (29-April-2007)
 
 - General improvements:
  
@@ -371,14 +371,14 @@ Version 2.5.2 (29-april-2007)
   - A bunch of smaller issues.
 
 
-Version 2.5.1 (18-april-2007)
+Version 2.5.1 (18-April-2007)
 
 - Bug fixes:
 
   - The movie list was not sorted.
  
 
-Version 2.5 (18-april-2007)
+Version 2.5 (18-April-2007)
 
 - General improvements:
   
@@ -387,16 +387,16 @@ Version 2.5 (18-april-2007)
 - Bug fixes:
 
   - Bug fixed where info in add/edit was zeroed out when changing seen/unseen or cover. (Thanks to kreegee).
-  - Bugfixes for the Mac GUI. (Thanks to kreegee).
+  - Bug fixes for the Mac GUI. (Thanks to kreegee).
   - Fixed IMDb html parsing. Now retrieves 'directed by' and 'written by'
 
 
-Version 2.5 beta 4 (07-mar-2007)
+Version 2.5 beta 4 (07-March-2007)
 
 - General improvements:
  
   - Importing excel spreadsheet should now actually work. 
-  - IMDb Updater now alows skipping of entries that already contains an IMDb ID.
+  - IMDb Updater now allows skipping of entries that already contains an IMDb ID.
   - Non ASCII characters in 'directed by' and 'written by' are now converted again.
 
 - Bug fixes:
@@ -405,11 +405,11 @@ Version 2.5 beta 4 (07-mar-2007)
   - Database converter should now work when saving to MS Access.
 
 
-Version 2.5 beta 3 (24-feb-2007)
+Version 2.5 beta 3 (24-February-2007)
 
 - General improvements:
  
-  - Added new field in the edit window shwowing the IMDb ID.
+  - Added new field in the edit window showing the IMDb ID.
   - Excel import is improved.
 
 - Bug fixes:
@@ -417,7 +417,7 @@ Version 2.5 beta 3 (24-feb-2007)
   - Fixed the IMDb parsing issue. 
 
 
-Version 2.5 beta 2 (21-jan-2007)
+Version 2.5 beta 2 (21-January-2007)
 
 - General improvements:
  
@@ -428,7 +428,7 @@ Version 2.5 beta 2 (21-jan-2007)
   - Now saves episodes correctly.
 
 
-Version 2.5 beta 1 (09-jan-2007)
+Version 2.5 beta 1 (09-January-2007)
 
 - New:
    
@@ -450,7 +450,7 @@ Version 2.5 beta 1 (09-jan-2007)
   - Database error - additional info fields - add/delete (ID: 1595092).
 
 
-Version 2.41 (20-oct-2006)
+Version 2.41 (20-October-2006)
 
 - Bug fixes:
  
@@ -459,7 +459,7 @@ Version 2.41 (20-oct-2006)
   - Report function can now be closed without having the process keep running.
 
 
-Version 2.40 (05-oct-2006)
+Version 2.40 (05-October-2006)
 
 - New:
  
@@ -487,7 +487,7 @@ Version 2.40 (05-oct-2006)
   - Application could hang when opening new windows (e.g. Preferences or Queries). (Hopefully fixed)
 
 
-Version 2.4 Beta 4.1 (18-aug-2006)
+Version 2.4 Beta 4.1 (18-August-2006)
 
 - New:
  
@@ -500,7 +500,7 @@ Version 2.4 Beta 4.1 (18-aug-2006)
   - Fixed: Error occured when trying to modify an episode twice.
 
 
-Version 2.4 Beta 3 (21-jul-2006)
+Version 2.4 Beta 3 (21-July-2006)
 
 - General improvements:
  
@@ -513,7 +513,7 @@ Version 2.4 Beta 3 (21-jul-2006)
   - Fixed: Searching on TV.COM gives zero hits. (ID: 1520387).
 
 
-Version 2.4 Beta 2 (27-jun-2006)
+Version 2.4 Beta 2 (27-June-2006)
 
 - New:
   
@@ -526,7 +526,7 @@ Version 2.4 Beta 2 (27-jun-2006)
   - The compile/run scripts have been updated to include current directory in the classpath. Basically that means it's no longer dependant on a system CLASSPATH variable containing the '.'.
 
 
-Version 2.4 Beta (24-jun-2006)
+Version 2.4 Beta (24-June-2006)
 
 - New:
   
@@ -551,7 +551,7 @@ Version 2.4 Beta (24-jun-2006)
   - Fixed: RIFF parser could produce OutOfMemoryError (ID: 1511820)
 
 
-Version 2.32 (22-apr-2006)
+Version 2.32 (22-April-2006)
 
 - General improvements/Bug fixes:
   
@@ -563,7 +563,7 @@ Version 2.32 (22-apr-2006)
   - Number of record hits in the Queries is now displayed in the title of the panel. (Thanks to Keith)
 
 
-Version 2.31 (31-jan-2006)
+Version 2.31 (31-January-2006)
 
 - General improvements/Bug fixes:
   
@@ -573,7 +573,7 @@ Version 2.31 (31-jan-2006)
   - an error occured when trying to add/edit movies).
 
 
-Version 2.3 (29-jan-2006)
+Version 2.3 (29-January-2006)
 
 - New:
   
@@ -595,7 +595,7 @@ Version 2.3 (29-jan-2006)
   - Hopefully fixed Bug: Infinite loop could occur when obtaining the episodes from tv.com.
 
 
-Version 2.22 (04-Nov-2005)
+Version 2.22 (04-November-2005)
 
 - General improvements/Bug fixes:
   
@@ -604,7 +604,7 @@ Version 2.22 (04-Nov-2005)
   - Delete function has been optimized, and will be a lot faster when deleting more than 10 entries in one go.
 
 
-Version 2.21 (20-Oct-2005)
+Version 2.21 (20-October-2005)
 
 - New: 
   
@@ -619,12 +619,12 @@ Version 2.21 (20-Oct-2005)
   - Cover settings added to Preferences
 
 
-Version 2.2 (26-Sep-2005)
+Version 2.2 (26-September-2005)
  
 - New: 
 
   - Episode functionality for series, with automatic download of episode info from tv.com
-  - Import function (3 modes � Simple text, excel and extreme movie manager (v4.5)
+  - Import function (3 modes - Simple text, excel and extreme movie manager (v4.5)
   - List functionality
 
 - General improvements/fixes:
@@ -634,7 +634,7 @@ Version 2.2 (26-Sep-2005)
   - Set multiple entries to seen/unseen
 
 
-Version 2.11 (27-Jun-2005)
+Version 2.11 (27-June-2005)
 
 - General improvements/fixes:
   
@@ -645,7 +645,7 @@ Version 2.11 (27-Jun-2005)
   - Add/Edit functions is optimized to go a little faster. 
 
 
-Version 2.1 (08-Jun-2005)
+Version 2.1 (08-June-2005)
 
 - New: 
   
@@ -656,7 +656,7 @@ Version 2.1 (08-Jun-2005)
   
   - AVI video bitrate is correct. 
   - Multiple files can now be selected when getting file info. 
-  - It should be alot safer to change Look and Feels. 
+  - It should be a lot safer to change Look and Feels. 
   - Additional info fields can now be hidden and rearranged. 
 
 - Note:
@@ -664,7 +664,7 @@ Version 2.1 (08-Jun-2005)
   - Old databases needs to be updated and will not be compatible with older versions 
 
 
-Version 2.02 (23-Apr-2005)
+Version 2.02 (23-April-2005)
 
 - General improvements/fixes: 
   
@@ -673,14 +673,14 @@ Version 2.02 (23-Apr-2005)
   - It's possible to use relative paths for database, queries and covers. (If you need to move the movie manager around). 
 
 
-Version 2.01 (20-Apr-2005)
+Version 2.01 (20-April-2005)
 
 - New: 
   
   - Export function is slightly changed. It's now possible to divide full export list alphabetically. 
 
 
-Version 2.0 (14-Apr-2005)
+Version 2.0 (14-April-2005)
 
 - New: 
    
@@ -696,7 +696,7 @@ Version 2.0 (14-Apr-2005)
   - Fixed yet another bug with the entries. 
 
 
-Version 1.81 (27-Feb-2005)
+Version 1.81 (27-February-2005)
 
 - New: 
   
@@ -708,7 +708,7 @@ Version 1.81 (27-Feb-2005)
   - Fixed a bug with the entries. Should now show correct number after deleting and adding movies. 
 
 
-Version 1.80 (14-Feb-2005)
+Version 1.80 (14-February-2005)
 
 - New: 
   
@@ -723,7 +723,7 @@ Version 1.80 (14-Feb-2005)
   - Fixed a bug with the entries. 
 
 
-Version 1.70 (17-Jan-2005)
+Version 1.70 (17-January-2005)
 
 - New: 
   
@@ -747,27 +747,27 @@ Version 1.70 (17-Jan-2005)
   - Title field is focused by default when adding and editing movies. 
 
 
-Version 1.67 beta (10-Jan-2005)
+Version 1.67 beta (10-January-2005)
 
  - IMDB changed some of the html structure leaving the movie manager unable to download info on most movies 
 
 
-Version 1.66 beta (10-Feb-2004)
+Version 1.66 beta (10-February-2004)
 
  - Added remove confirmation dialog to prevent catastrophes for those of you still using this prototype... 
 
 
-Version 1.65 beta (07-Feb-2004)
+Version 1.65 beta (07-February-2004)
 
  - IMDB links structure have changed again (thanks Kica, for noticing me) 
 
 
-Version 1.64 beta (03-Sep-2003)
+Version 1.64 beta (03-September-2003)
 
  - IMDB links structure have changed - www.imdb.com/Title?0000000 can now also be www.imdb.com/title/tt000000 
 
 
-Version 1.63 beta (21-Jul-2003)
+Version 1.63 beta (21-July-2003)
 
  - Help URLs changed. All pages are now @ SourceForge.net 
  - This program has been discontinued and it will be redesigned, now that I known how to design UIs... It was written has a prototype only. 
@@ -775,12 +775,12 @@ Version 1.63 beta (21-Jul-2003)
  - The new version will still be GPL, but maybe it will be written in C#... Furthermore the databases will be compatible, I expect... 
 
 
-Version 1.62 beta (29-Jun-2003)
+Version 1.62 beta (29-June-2003)
 
  - Bug fix: imdb ID was being lost after editing an existing movie 
 
 
-Version 1.6 beta (17-Jun-2003)
+Version 1.6 beta (17-June-2003)
 
  - Source code is now available under the GPL license 
  - Install and source files from this version up are now hosted @ SourceForge.net 
@@ -791,7 +791,7 @@ Version 1.5 beta (25-May-2003)
  - Added IMDB rating to Full HTML Export 
 
 
-Version 1.4 beta (28-Mar-2003)
+Version 1.4 beta (28-March-2003)
 
  - The Queries list is now sorted by name 
  - The default queries aren't extracted to the Queries folder anymore, they now stay inside the .jar 
@@ -807,24 +807,24 @@ Version 1.4 beta (28-Mar-2003)
  - Unseen Movies With SubTitles.qry 
 
 
-Version 1.3 beta (25-Mar-2003)
+Version 1.3 beta (25-March-2003)
 
  - Added 42 new RIFF audio tags support 
  - Added 33 new RIFF audio tags support 
  - "Sum MB" query is now "Sum GB" 
 
 
-Version 1.2 beta (24-Mar-2003)
+Version 1.2 beta (24-March-2003)
 
  - Fixed exit bug after database creation failed 
  - Fixed path resolution bug on database creation 
  - Some other minor and user-invisible code changes 
 
 
-Version 1.1 beta (22-Mar-2003)
+Version 1.1 beta (22-March-2003)
 
  - Added log file 
- - Version 1.0 beta (18-Mar-2003) - Non Install ZIP File or MSI Install File 
+ - Version 1.0 beta (18-March-2003) - Non Install ZIP File or MSI Install File 
  - You have now an install file for directory and shortcuts creation 
  - The non install zip version will still be available for those of you who don't like install programs ;-) 
  - Added alert dialog if database creation fails 
@@ -832,16 +832,16 @@ Version 1.1 beta (22-Mar-2003)
  - Some other minor changes... 
 
 
-Version 0.9 beta (16-Mar-2003) 
+Version 0.9 beta (16-March-2003) 
 
  - 0x2000 RIFF tag is now "AC3 Dolby Digital" and not "DVM" 
  - Fixed start connection to database bug on some systems 
  - Fixed close connection to database bug 
 
 
-Version 0.8 beta (14-Mar-2003)
+Version 0.8 beta (14-March-2003)
 
-Version 0.7 beta (13-Mar-2003)
+Version 0.7 beta (13-March-2003)
 
 
 .. _MediaInfo: http://mediainfo.sourceforge.net
