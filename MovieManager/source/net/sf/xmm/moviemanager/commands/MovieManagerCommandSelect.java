@@ -355,15 +355,12 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 					if (!model.getHasGeneralInfoData()) {
 						model.updateGeneralInfoData();
 					}
-
+					
 					//	if cover available
 					if (!model.getCover().equals("")) {
-						//File cover = new File(MovieManager.getConfig().getCoversPath(), model.getCover());
-						File cover = new File(MovieManager.getConfig().getCoversPath(), model.getUrlKey());
-						cover = new File(cover, model.getCover());
-												
+						File cover = new File(MovieManager.getConfig().getCoversPath(), model.getCover());
+						
 						if (cover.isFile()) {
-
 							coverFile = cover;
 
 							if (model.getCoverData() == null) {
@@ -372,9 +369,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 							}
 						}
 					}
-					
+										
 					coverData = model.getCoverData();
-					//coverData = model.getBigCoverData();
 					nocover = (coverData == null);
 				}
 				
@@ -789,19 +785,12 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			StringUtil.replaceAll(template, "$Cover$", cover);
 		}
 		
-
 		// <img $Cover-width:200-height:300$> 
 		
 		Pattern p = Pattern.compile("\\$Cover-width:(\\d+)-height:(\\d+)\\$");
 		Matcher m = p.matcher(template);
 
 		if (m.find()) {
-
-			String g = m.group();
-
-			//System.err.println("g:" + m.group(0));
-			//System.err.println("g1:" + m.group(1));
-			//System.err.println("g2:" + m.group(2));
 
 			//String coverAndLink = "<a href=\"$movie-episode-Url$\"> <img $Cover-width:"+m.group(1)+"-height:"+m.group(2)+"$> </a>";
 			//StringUtil.replaceAll(template , m.group(0), coverAndLink);
@@ -865,25 +854,14 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		StringUtil.replaceAll(template , "$Awards$", model.getAwards());
 		StringUtil.replaceAll(template , "$Colour$", model.getColour());
 		
-		// $movie-episode-coverAndLink$$
-		
-		Pattern p = Pattern.compile("\\$movie-episode-coverAndLink-width:(\\d+)-height:(\\d+)\\$");
-
 		// $movie-episode-coverAndLink-width:300-height:200$
+		Pattern p = Pattern.compile("\\$movie-episode-coverAndLink-width:(\\d+)-height:(\\d+)\\$");
 		
 		Matcher m = p.matcher(template);
 
 		if (m.find()) {
-
-			String g = m.group();
-
-			//System.err.println("g:" + m.group(0));
-			//System.err.println("g1:" + m.group(1));
-			//System.err.println("g2:" + m.group(2));
-
-			String coverAndLink = "<a href=\"$movie-episode-Url$\"> <img $Cover-width:"+m.group(1)+"-height:"+m.group(2)+"$ class=\"center\" /> </a>";
+			String coverAndLink = "<a href=\"$movie-episode-Url$\"> <img $Cover-width:"+ m.group(1) +"-height:"+ m.group(2) +"$ class=\"center\" /> </a>";
 			StringUtil.replaceAll(template , m.group(0), coverAndLink);
-			
 		}
 		
 		if (!model.getUrlKey().equals("")) {
