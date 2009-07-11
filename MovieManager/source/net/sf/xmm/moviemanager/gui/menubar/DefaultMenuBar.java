@@ -380,11 +380,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 					enabled = true;
 				}
 
-				System.err.println("setting " + enabled);
-
 				menuItemConvertDatabase.setEnabled(enabled);
-
-				System.err.println("isEnabled:" + menuItemConvertDatabase.isEnabled());
 			}
 		});		
 	}

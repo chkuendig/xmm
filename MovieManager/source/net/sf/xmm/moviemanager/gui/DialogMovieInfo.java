@@ -1145,9 +1145,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		
 		// Set size if valid
 		int storedHeight = MovieManager.getConfig().getAddMovieWindowHeight();
-		
-		System.err.println("storedheigth:" + storedHeight);
-		
+				
 		if (storedHeight > -1) {
 			
 			if (storedHeight > size.height)
