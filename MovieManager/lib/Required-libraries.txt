@@ -20,11 +20,9 @@ skinlf.jar						- Skin L&F
 TableLayout.jar					- Free layout manager
 useful.jar						- Java library with Swing Tree classes extension
 
-JNative.jar						- Simple JNI library
-JNative.dll						- Requiered windows libarary for JNative
+jna-3.0.9.jar					- Simple JNI library for loading MediaInfoDLL
 MediaInfo.dll					- Windows library for reading technical info from media files.
 
-retroweaver-all-2.0.jar			- Java bytecode weaver (Used on JNative.jar)
 
 ostermillerutils_1_05_00_for_java_1_4.jar - CSV library
 
