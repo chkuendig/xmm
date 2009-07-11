@@ -155,7 +155,7 @@ public class DialogLists extends JDialog {
 				 BorderFactory.createEmptyBorder(5,5,5,5)));
 		 panelAddNewField.setLayout(new GridBagLayout());
 		 JTextField textFieldAdd = new JTextField(22);
-		 textFieldAdd.setDocument(new DocumentRegExp("[\\p{Alnum}_]*")); //$NON-NLS-1$
+		 textFieldAdd.setDocument(new DocumentRegExp("[\\p{Alnum}_\\s]*")); //$NON-NLS-1$
 		 constraints = new GridBagConstraints();
 		 constraints.gridx = 0;
 		 constraints.gridy = 0;
