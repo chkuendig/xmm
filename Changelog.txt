@@ -15,7 +15,7 @@ Version 2.8.5 (11-July-2009)
 
   - Cast was not retrieved after some changes by IMDb.
   - Update covers using "Update IMDb Info" with option "If empty" using MySQL wouldn't always update the cover in the database.
-  - IMDb dialog in "Add Multiple Movies" was hiding the abort button.
+  - IMDb dialog in "Add Multiple Movies" was hiding the "Abort" button.
 
 
 Version 2.8.4 (04-June-2009)
