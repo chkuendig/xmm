@@ -880,7 +880,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		
 		// Only if MySQL database
 		if (MovieManager.getIt().getDatabase() != null && MovieManager.getIt().getDatabase().isMySQL()) {
-			checkEnableMySQLSocketTimeout = new JCheckBox("<html>Enable MySQL Socket timeout after 15 minutes <br>(requires reconnect to database)</html>"); //$NON-NLS-1$
+			checkEnableMySQLSocketTimeout = new JCheckBox("<html>Enable MySQL Socket timeout after 15 minutes <br>(requires reconnect to database to take effect)</html>"); //$NON-NLS-1$
 			
 			if (config.getMySQLSocketTimeoutEnabled())
 				checkEnableMySQLSocketTimeout.setSelected(true);
