@@ -163,6 +163,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	/* Main window size */
 	public Dimension mainSize = new Dimension(defaultFrameWidth, defaultFrameHeight);
 
+	int addMovieWindowHeight = -1;
+		
 	private Point screenLocation;
 
 	private boolean mainMaximized = false;
@@ -1702,6 +1704,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.mainMaximized = mainMaximized;
 	}
 
+	public int getAddMovieWindowHeight() {
+		return addMovieWindowHeight;
+	}
+	
+	public void setAddMovieWindowHeight(int height) {
+		addMovieWindowHeight = height;
+	}
 		
 	public HttpSettings getHttpSettings() {
 		return httpSettings;	
@@ -2664,6 +2673,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setMainMaximized(new Boolean(value).booleanValue());
 			}
 
+			value = (String) config.get("addMovieWindowHeight:");
+
+			if (value != null) {
+				setAddMovieWindowHeight(new Integer(value));
+			}
+						
 			value = (String) config.get("showUnlistedEntries:");
 
 			if (value != null) {
@@ -3379,6 +3394,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append(lineSeparator);
 		 settings.append("mainMaximized:" + getMainMaximized());
 
+		 settings.append(lineSeparator);
+		 settings.append("addMovieWindowHeight:" + getAddMovieWindowHeight());
+		 		 
 		 if (getLoadLastUsedListAtStartup()) {
 
 			 String strTmp = "";
