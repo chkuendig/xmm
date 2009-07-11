@@ -5,6 +5,19 @@
 ========================================
 
 
+Version 2.8.5 ()
+
+- General improvements:
+
+  - Made the Add/Edit movie panel resizeable for those with a row resolution screen.
+
+- Bug fixes:
+
+  - Cast was not retrieved after some changes by IMDb.
+  - Update covers using "Update IMDb Info" with option "If empty" using MySQL wouldn't always update the cover in the database.
+  - IMDb dialog in "Add Multiple Movies" was hiding the abort button.
+
+
 Version 2.8.4 (04-jun-2009)
 
 - General improvements:
