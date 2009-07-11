@@ -74,7 +74,6 @@ import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandIMDBSearch;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.fileproperties.FilePropertiesMovie;
@@ -160,6 +159,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		/* Close dialog... */
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				saveWindowSize();
 				dispose();
 			}
 		});
@@ -181,6 +181,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		/* Close dialog... */
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				saveWindowSize();
 				dispose();
 			}
 		});
@@ -207,6 +208,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		/* Close dialog... */
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				saveWindowSize();
 				dispose();
 			}
 		});
@@ -244,6 +246,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		Action escapeAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
+				saveWindowSize();
 				dispose();
 			}
 		};
@@ -1061,8 +1064,14 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		buttonCancel.setMnemonic(KeyEvent.VK_C);
 		buttonCancel.setToolTipText(Localizer.getString("DialogMovieInfo.button-cancel.tooltip")); //$NON-NLS-1$
 		buttonCancel.setActionCommand("MovieInfo - Cancel"); //$NON-NLS-1$
-		buttonCancel.addActionListener(new CommandDialogDispose(this));
-
+		//buttonCancel.addActionListener(new CommandDialogDispose(this));
+		buttonCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				saveWindowSize();
+				dispose();
+			}
+		});
+		
 		/* Reduces the width of the button (less empty space between borders adn text) to avoid the window getting to wide */
 		if (!SysUtil.isMac()) {
 			insets = buttonCancel.getMargin();
@@ -1132,11 +1141,26 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		pack();
 		
+		Dimension size = getSize();
+		
+		// Set size if valid
+		int storedHeight = MovieManager.getConfig().getAddMovieWindowHeight();
+		
+		System.err.println("storedheigth:" + storedHeight);
+		
+		if (storedHeight > -1) {
+			
+			if (storedHeight > size.height)
+				storedHeight = size.height;
+			
+			setSize(size.width, storedHeight);
+		}
+		
 		int x = (int) MovieManager.getIt().getLocation().getX() + (MovieManager.getIt().getWidth() - getWidth()) / 2;
 		int y = (int) MovieManager.getIt().getLocation().getY()	+ (MovieManager.getIt().getHeight() - getHeight()) / 2;
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension size = getSize();
+		size = getSize();
 
 		if (x + size.width > screenSize.width)
 			x = screenSize.width - size.width;
@@ -1775,6 +1799,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 */
 	public ModelEntry executeCommandSave() {
 		
+		saveWindowSize();
+		
 		ArrayList <String> listNames = null;
 				
 		if (MovieManager.getConfig().getAddNewMoviesToCurrentLists()) {
@@ -1782,6 +1808,10 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		}
 				
 		return executeCommandSave(listNames);
+	}
+	
+	public void saveWindowSize() {
+		MovieManager.getConfig().setAddMovieWindowHeight(getSize().height);
 	}
 	
 	/**
@@ -1894,10 +1924,11 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	public void reloadMovieListAndClose(ModelEntry reloadEntry) {
 		
 		if (reloadEntry != null && reloadEntry.getKey() != -1) {
-
+			
 			// long time = System.currentTimeMillis();
 			MovieManagerCommandSelect.executeAndReload(reloadEntry, movieInfoModel.isEditMode(), movieInfoModel.isEpisode, true);
 
+			saveWindowSize();
 			/* Exits... */
 			dispose();
 		}
