@@ -36,7 +36,7 @@
 	<property name="dist" location="dist" />
 	<property name="izpack.dir" location="packaging/izpack" />
 
-	<property name="version" value="2.8.4" />
+	<property name="version" value="2.8.5" />
 	<property name="versionName" value="${version}" />
 
 	<property name="base" value="MovieManager/" />
@@ -79,7 +79,7 @@
 		value="cobra/cobra-0.98.2.jar,
 		   cobra/js.jar,
 		   drivers/hsqldb-1.7.3.3.jar,
-		   drivers/mysql-connector-java-3.1.12-bin.jar,
+		   drivers/mysql-connector-java-5.1.7-bin.jar,
 		   mac/AppleJavaExtensions.jar,
 		   mac/quaqua.jar,
 		   mac/libquaqua.jnilib,
