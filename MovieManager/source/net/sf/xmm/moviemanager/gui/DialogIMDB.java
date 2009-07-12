@@ -273,7 +273,7 @@ public class DialogIMDB extends JDialog {
     	JScrollPane scrollPaneMovies = new JScrollPane(listMovies);
     	scrollPaneMovies.setAutoscrolls(true);
     	
-    	setMinimumSize(new Dimension(420, 440));
+    	
     	
     	panelMoviesList.setLayout(new BorderLayout());
     	panelMoviesList.add(scrollPaneMovies, BorderLayout.CENTER);
@@ -454,6 +454,12 @@ public class DialogIMDB extends JDialog {
     	
     	
     	getMoviesList().ensureIndexIsVisible(0);
+    	
+    	setPreferredSize(new Dimension(420, 440));
+    	setMinimumSize(new Dimension(420, 440));
+    	
+    	pack();
+    	    	
     	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
     			(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
 
@@ -462,7 +468,7 @@ public class DialogIMDB extends JDialog {
     	model.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.search-in-progress"), null)); //$NON-NLS-1$
     	listMovies.setModel(model);
 	
-    	pack();
+    	
     	
     	if (isMultiAdd() && !getUrlKeyOnly) { 
     		
