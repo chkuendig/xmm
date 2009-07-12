@@ -5,12 +5,13 @@
 ========================================
 
 
-Version 2.8.5 (11-July-2009)
+Version 2.8.5 (13-July-2009)
 
 - General improvements:
 
   - Made the Add/Edit movie panel resizable for those with a row resolution screen.
   - Allow list names containing white space.
+  - Added option to skip entries without IMDb id in the "Update IMDb Info" function.
 
 - Bug fixes:
 
