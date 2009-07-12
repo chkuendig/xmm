@@ -54,6 +54,7 @@ public class IMDbInfoUpdater {
 	Database database = MovieManager.getIt().getDatabase();
 
 	public boolean skipEntriesWithIMDbID = false;
+	public boolean skipEntriesWithoutIMDbID = false;
 	final MovieManagerCommandDialogIMDB commandIMDB = new MovieManagerCommandDialogIMDB();
 	
 	String coversFolder = MovieManager.getConfig().getCoversPath();
@@ -249,8 +250,13 @@ public class IMDbInfoUpdater {
 
 								
 				if (model.getUrlKey().equals("")) {
-					log.info("UrlKey is empty");
+					log.debug("Empty UrlKey for " + model.getTitle());
 
+					if (skipEntriesWithoutIMDbID) {
+						skipped = true;
+						return;
+					}
+											
 					String urlKey = commandIMDB.getIMDBKey(model.getTitle());
 
 					if (commandIMDB.cancelAll) {
