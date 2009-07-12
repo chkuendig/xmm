@@ -24,6 +24,7 @@ import info.clearthought.layout.TableLayout;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -78,6 +80,7 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
     MovieManagerCommandUpdateIMDBInfo parent;
     
     JCheckBox skipEntriesWithIMDbID;
+    JCheckBox skipEntriesWithoutIMDbID;
     
     /* update settings buttons */
     JCheckBox titleUpdate;
@@ -174,9 +177,26 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 	updateSettingsPanel.setLayout(new BoxLayout(updateSettingsPanel, BoxLayout.Y_AXIS));
 	
 	JPanel settings = new JPanel();
+	settings.setBorder(BorderFactory.createEmptyBorder(0,0,6,0));
+	settings.setLayout(new BorderLayout());
+	
 	
 	skipEntriesWithIMDbID = new JCheckBox("Skip entries with IMDb ID");
-	settings.add(skipEntriesWithIMDbID);
+	skipEntriesWithoutIMDbID = new JCheckBox("Skip entries without IMDb ID");
+	settings.add(skipEntriesWithIMDbID, BorderLayout.NORTH);
+	settings.add(skipEntriesWithoutIMDbID, BorderLayout.SOUTH);
+	
+	// Regular ButtonGroup doesn't allow for both to be unselected.
+	ActionListener skipButtonsListener = new ActionListener() {
+		public void actionPerformed(ActionEvent arg0) {
+			if (arg0.getSource() == skipEntriesWithIMDbID)
+				skipEntriesWithoutIMDbID.setSelected(false);
+			else
+				skipEntriesWithIMDbID.setSelected(false);
+		}
+	};
+	skipEntriesWithIMDbID.addActionListener(skipButtonsListener);
+	skipEntriesWithoutIMDbID.addActionListener(skipButtonsListener);
 	
 	JPanel infoOptions = new JPanel();
 	
@@ -640,7 +660,9 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 	    
 	    if (skipEntriesWithIMDbID.isSelected())
 	    	imdbInfoUpdater.skipEntriesWithIMDbID = true;
-	    
+	    else if (skipEntriesWithoutIMDbID.isSelected())
+	    	imdbInfoUpdater.skipEntriesWithoutIMDbID = true;
+	    	
 	    if (titleUpdate.isSelected()) {
 		imdbInfoUpdater.title = 1;
 		anySelectedButton = true;
