@@ -690,16 +690,58 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 </target>
 
 	
+	<!-- a lot of crap just to find the rst2html, 
+	(if this is the way it's supposed to be done, ant sucks)
+	-->
+ <target name="find-rst2html">
+ 	
+ 	 <exec executable="which" outputproperty="rst2html-path">
+ 	  	 <arg value="rst2html"/>
+ 	  </exec>
+ 	
+ 	<condition property="rst2html">
+ 		<not>
+ 		    <equals arg1="${rst2html-path}" arg2="" trim="true"/>
+ 		</not>
+ 	  </condition>
+ 	
+ 	 <exec executable="which" outputproperty="rst2html.py-path">
+ 	  	 <arg value="rst2html.py"/>
+ 	  </exec>
+ 		 	
+ 	<condition property="rst2html.py">
+ 		<not>
+ 			<equals arg1="${rst2html.py-path}" arg2="" trim="true"/>
+ 		</not>
+ 	</condition>
+ 	
+  </target>
+		
+	<target name="set-rst2html-path" depends="find-rst2html" if="rst2html" >
+	    <property name="rst2html-pathToUse" value="${rst2html-path}" />
+	</target>
 	
-<target name="changelog">
-
-	  <exec executable="rst2html">
+  <target name="set-rst2html.py-path" depends="find-rst2html" if="rst2html.py" >
+		    <property name="rst2html-pathToUse" value="${rst2html.py-path}" />
+	</target>
+	
+  <target name="set-rst2html-pathToUse" depends="set-rst2html-path,set-rst2html.py-path"/>
+	
+<target name="changelog" depends="set-rst2html-pathToUse">
+	
+	 <echo> path to rst2html-path:${rst2html-path} </echo>
+	 <echo> path to rst2html.py-path:${rst2html.py-path} </echo>
+	
+	<echo> rst2html:${rst2html} </echo>
+	<echo> rst2html.py:${rst2html.py} </echo>
+		
+	 <echo> Compiled html changelog to Changelog.html </echo>
+	
+	  <exec executable="${rst2html-pathToUse}">
 	    <arg value="--stylesheet=xmm.css"/>
 	    <arg value="Changelog.txt"/>
 	    <arg value="Changelog.html"/>
 	  </exec>
-		
-	  <echo> Compiled html changelog to Changelog.html </echo>
 	
 </target>
 	
