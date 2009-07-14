@@ -892,7 +892,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/* Get covers folder from database*/
 		String coversFolder = getCoversFolder(database);
 		String coversPath = "";
-			
+		
+		
 		/* Relative to user dir */
 		if (getUseRelativeCoversPath() == 2) {
 			coversPath = SysUtil.getUserDir() + File.separator;
@@ -918,6 +919,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		return new File(coversPath + coversFolder).getAbsolutePath();
 	}
 	
+	public String getQueriesPath() {
+		return getQueriesPath(true);
+	}
+	
+	public String getQueriesPath(boolean usedatabase) {
+		return getQueriesPath(usedatabase ? MovieManager.getIt().getDatabase() : null);
+	}
+	
 	/* Returns the relative queries path */
 	public String getQueriesPath(Database database) {
 
@@ -933,7 +942,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/* Relative to database location - incompatible with MySQL */
 		else if (getUseRelativeQueriesPath() == 1 && database != null && !database.isMySQL()) {
 			String dbPath = database.getPath();
-			
+						
 			if (dbPath != null && dbPath.indexOf(SysUtil.getDirSeparator()) != -1) {
 				dbPath = dbPath.substring(0, dbPath.lastIndexOf(SysUtil.getDirSeparator()));
 			}
@@ -967,9 +976,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		return this.queriesFolder;
 	}
 
-	public String getQueriesPath() {
-		return getQueriesPath(null);
-	}
+	
 
 	
 	public String getQueriesFolder() {
