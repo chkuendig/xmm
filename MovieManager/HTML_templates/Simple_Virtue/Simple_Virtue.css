@@ -14,6 +14,11 @@
     border: 0px;
 }
 
+
+.cover img {
+    border: none;
+}
+
 .movieinfo { 
     float:left;
     margin-left: 10px;
