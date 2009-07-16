@@ -2640,9 +2640,7 @@ abstract public class Database {
 			for (int i = 0; i < lists.size(); i++)
 				buf.append(", " + quotedListsString + "." +quote+ lists.get(i) + quote+ " AS " +quote+ listsAliasPrefix + lists.get(i) + quote + " ");
 		}	
-	
-		buf.append("FROM " + quotedGeneralInfoString + " ");
-
+			
 		return buf.toString();
 	}
 	
@@ -2682,123 +2680,6 @@ abstract public class Database {
 		
 		return getMoviesList(options);
 	}
-
-	
-	/**
-	 * Returns a List of MovieModels that contains all the movies in the
-	 * current database sorted by the orderBy string.
-	 **/
-	/*
-	public synchronized DefaultListModel getMoviesList1(String orderBy) {
-
-		DefaultListModel listModel = new DefaultListModel();
-
-		String sqlQuery = getMoviesSelectStatement();
-
-		if (orderBy.equals("Duration")) {
-			sqlQuery +=
-				"INNER JOIN \"Additional Info\" ON \"General Info\".\"ID\" = \"Additional Info\".\"ID\" "+
-				"ORDER BY \"Additional Info\".\"Duration\", \"General Info\".\"Title\";";
-		}
-		else {
-			sqlQuery +=
-				"ORDER BY \"General Info\".\""+ orderBy +"\", \"General Info\".\"Title\";";
-		}
-
-		try {
-			ResultSet resultSet = _sql.executeQuery(sqlQuery);
-
-			while (resultSet.next()) {
-				listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), 
-						resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"),
-						resultSet.getString("Directed By"), resultSet.getString("Written By"), 
-						resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"),
-						resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), 
-						resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), 
-						resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"),
-						resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
-			}
-		} catch (Exception e) {
-			log.error("Exception: ", e);
-			checkErrorMessage(e);
-		} finally {
-			try {
-				_sql.clear();
-			} catch (Exception e) {
-				log.error("Exception: " + e.getMessage());
-			}
-		}
-		return listModel;
-	}
-*/
-
-
-	/**
-	 * Returns a List of MovieModels that contains all the movies in the
-	 * current database sorted by the orderBy string.
-	 **/
-	/*
-	public synchronized DefaultListModel getMoviesList1(String orderBy, String listsColumn) {
-
-		DefaultListModel listModel = new DefaultListModel();
-
-		String sqlQuery = getMoviesSelectStatement();
-
-		if (orderBy.equals("Duration")) {
-
-			if (databaseType.equals("MSAccess")) {
-
-				sqlQuery +=
-					"INNER JOIN (\"Additional Info\" INNER JOIN \"Lists\" ON \"Additional Info\".ID=\"Lists\".ID) "+
-					"ON \"General Info\".ID=\"Additional Info\".ID ";
-			}
-			else {
-				sqlQuery +=
-					"INNER JOIN \"Additional Info\" ON \"General Info\".ID = \"Additional Info\".ID "+
-					"INNER JOIN \"Lists\" ON \"Additional Info\".ID = \"Lists\".ID ";
-			}
-
-			sqlQuery +=
-				"WHERE \"Lists\".\""+ listsColumn +"\"=1 "+
-				"ORDER BY \"Additional Info\".\"Duration\", \"General Info\".\"Title\""+
-				";";
-		}
-		else {
-			sqlQuery +=
-				"INNER JOIN \"Lists\" ON \"General Info\".\"ID\" = \"Lists\".\"ID\" "+
-				"WHERE \"Lists\".\""+ listsColumn +"\"=True "+
-				"ORDER BY \"General Info\".\""+ orderBy +"\", \"General Info\".\"Title\""+
-				";";
-		}
-
-
-		try {
-
-			ResultSet resultSet = _sql.executeQuery(sqlQuery);
-
-			while (resultSet.next()) {
-				listModel.addElement(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), 
-						resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), 
-						resultSet.getString("Directed By"), resultSet.getString("Written By"), 
-						resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), 
-						resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), 
-						resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), 
-						resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"),
-						resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards")));
-			}
-		} catch (Exception e) {
-			log.error("Exception: ", e);
-			checkErrorMessage(e);
-		} finally {
-			try {
-				_sql.clear();
-			} catch (Exception e) {
-				log.error("Exception: " + e.getMessage());
-			}
-		}
-		return listModel;
-	}
-*/
 
 
 	/**
@@ -3173,13 +3054,6 @@ abstract public class Database {
 
 		String selectAndJoin;
 
-		/*
-		if (options.getFullGeneralInfo) {
-			selectAndJoin = getMoviesSelectStatement();
-		}
-		else
-			selectAndJoin = getSmallMoviesSelectStatement();
-		*/
 		selectAndJoin = getMoviesSelectStatement(options);
 		
 		String orderBy = options.getOrderCategory();
@@ -3190,19 +3064,22 @@ abstract public class Database {
 						(filter.indexOf(additionalInfoString) != -1) || (filter.indexOf(extraInfoString) != -1))) {
 			
 			joinTemp = "\"General Info\" INNER JOIN \"Lists\" ON \"General Info\".ID=\"Lists\".ID ";
-						
-			if (orderBy.equals("Duration") || filter.indexOf(additionalInfoString) != -1)
-				joinTemp += "INNER JOIN ("+ joinTemp +") ON \"Additional Info\".ID=\"General Info\".ID ";
-						
-			if (filter.indexOf(extraInfoString) != -1) {
-				joinTemp += "INNER JOIN ("+ joinTemp +") ON \"General Info\".ID=\"Extra Info\".ID ";
+							
+			if (orderBy.equals("Duration") || filter.indexOf(additionalInfoString) != -1) {
+				joinTemp = "(" + joinTemp + ") INNER JOIN \"Additional Info\" ON \"Additional Info\".ID=\"General Info\".ID";
 			}
 			
-			selectAndJoin += joinTemp;
+			if (filter.indexOf(extraInfoString) != -1) {
+				joinTemp = "(" + joinTemp + ") INNER JOIN \"Extra Info\" ON \"Extra Info\".ID=\"General Info\".ID";
+			}
+						
+			selectAndJoin += "FROM " + joinTemp;
 		}
 		else {
 
-			selectAndJoin += "INNER JOIN "+ quote+ "Lists"+ quote+ " ON "+ quotedGeneralInfoString + ".ID = " + quote + "Lists" + quote + ".ID ";
+			selectAndJoin += "FROM " + quotedGeneralInfoString;
+			
+			selectAndJoin += " INNER JOIN "+ quote+ "Lists"+ quote+ " ON "+ quotedGeneralInfoString + ".ID = " + quote + "Lists" + quote + ".ID ";
 			
 			if (orderBy.equals("Duration") || filter.indexOf(additionalInfoString) != -1) {
 				orderBy = quotedAdditionalInfoString + "." + quote + "Duration" + quote;
@@ -3403,12 +3280,12 @@ abstract public class Database {
 		
 		String sqlQuery = selectAndJoin + " " + sqlAdcancedOptions + " " + sqlFilter + " ";
 	
-		/*
+		
 		log.debug("selectAndJoin:" + selectAndJoin);
 		log.debug("sqlAdcancedOptions:" + sqlAdcancedOptions);
 		log.debug("sqlFilter:" + sqlFilter);
 		log.debug("sqlQuery:" + sqlQuery);
-		*/
+		
 		
 		if (options.duplicates) {
 			
