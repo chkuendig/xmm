@@ -5,6 +5,18 @@
 ========================================
 
 
+Version 2.8.6 (16-July-2009)
+
+- General improvements:
+
+  - No longer have blue border around covers (with some web browsers) when exporting to full HTML.
+
+- Bug fixes:
+
+  - Advanced search was broken with MS Access database.
+  - Does not load custom queries when using relative path.
+
+
 Version 2.8.5 (13-July-2009)
 
 - General improvements:
