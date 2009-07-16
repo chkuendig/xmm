@@ -220,7 +220,8 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 
 						int fontSize = 3 + h / 40;
 
-						coverTitleBuf.setLength(0);
+						//coverTitleBuf.setLength(0);
+						coverTitleBuf = new StringBuffer();
 						coverTitleBuf.append("<html><font size='");
 						coverTitleBuf.append(fontSize);
 						coverTitleBuf.append("'><b>");
