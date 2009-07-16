@@ -855,7 +855,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		StringUtil.replaceAll(template , "$Colour$", model.getColour());
 		
 		// $movie-episode-coverAndLink-width:300-height:200$
-		Pattern p = Pattern.compile("\\$movie-episode-coverAndLink-width:(\\d+)-height:(\\d+)\\$");
+		Pattern p = Pattern.compile("\\$coverAndLink-width:(\\d+)-height:(\\d+)\\$");
 		
 		Matcher m = p.matcher(template);
 
@@ -866,11 +866,11 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		
 		if (!model.getUrlKey().equals("")) {
 			String coverAndLink = "<a href=\"$movie-episode-Url$\"> <img $Cover$>  </a>";
-			StringUtil.replaceAll(template , "$movie-episode-coverAndLink$", coverAndLink);
+			StringUtil.replaceAll(template , "$coverAndLink$", coverAndLink);
 		}
 		else {
 			String coverAndNoLink = "<img $Cover$>";
-			StringUtil.replaceAll(template , "$movie-episode-coverAndLink$", coverAndNoLink);
+			StringUtil.replaceAll(template , "$coverAndLink$", coverAndNoLink);
 		}
 		
 		StringUtil.replaceAll(template , "$UrlKey$", model.getUrlKey());
