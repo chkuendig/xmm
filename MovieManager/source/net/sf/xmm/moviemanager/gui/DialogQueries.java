@@ -473,18 +473,10 @@ public class DialogQueries extends JDialog {
 		getResult().setText(MovieManager.getIt().getDatabase().getQueryResult(query));
 		getResult().setCaretPosition(0);
 
-		if (MovieManager.getIt().getDatabase().getRecordCount() != 1) {
-			panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-					Localizer.getString("DialogQueries.panel-result.title") +  //$NON-NLS-1$
-					MovieManager.getIt().getDatabase().getRecordCount() + 
-					Localizer.getString("DialogQueries.panel-result.records-returned")), //$NON-NLS-1$
-					BorderFactory.createEmptyBorder(5,5,5,5)));
-		} else {
-			panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " " +
-					Localizer.getString("DialogQueries.panel-result.title") +  //$NON-NLS-1$
-					MovieManager.getIt().getDatabase().getRecordCount() + " " +
-					Localizer.getString("DialogQueries.panel-result.record-returned")), //$NON-NLS-1$
-					BorderFactory.createEmptyBorder(5,5,5,5)));
-		}
+		panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+				Localizer.getString("DialogQueries.panel-result.title") +  //$NON-NLS-1$
+				": "   + MovieManager.getIt().getDatabase().getRecordCount() +  " " +
+				Localizer.getString("DialogQueries.panel-result.records-returned")), //$NON-NLS-1$
+				BorderFactory.createEmptyBorder(5,5,5,5)));
 	}
 }
