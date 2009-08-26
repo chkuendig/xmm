@@ -5,6 +5,17 @@
 ========================================
 
 
+Version 2.X (16-July-2009)
+
+- General improvements:
+
+  - 
+
+- Bug fixes:
+
+  - Fixed bug in IMDb parser making episode number and series wrong in some situations.
+  
+
 Version 2.8.6 (16-July-2009)
 
 - General improvements:
