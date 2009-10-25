@@ -87,13 +87,13 @@ public class MovieManagerCommandImport implements ActionListener{
 				importer = new MovieManagerCommandImportXMLDatabase(importSettings);
 				importer.execute();
 			}
-			else if (importSettings.mode == ModelImportExportSettings.IMPORT_MODE_EXTREME) {
+			/*else if (importSettings.mode == ModelImportExportSettings.IMPORT_MODE_EXTREME) {
 
-			/*	if (importMovie.enableOverwriteImportedInfoWithImdbInfo.isSelected())
+				if (importMovie.enableOverwriteImportedInfoWithImdbInfo.isSelected())
 					importSettings.overwriteWithImdbInfo = true;
 
 				if (importMovie.useMediaLanguage.isSelected())
-					importSettings.extremeOriginalLanguage = false;*/
+					importSettings.extremeOriginalLanguage = false;
 
 				File tempFile = new File(importSettings.filePath);
 
@@ -105,7 +105,7 @@ public class MovieManagerCommandImport implements ActionListener{
 						importSettings.coverPath = path + File.separator;
 				}
 			}
-
+		*/
 			if (importer != null && !importer.isCancelled()) {
 				final JDialog dialogExorter = new DialogDatabaseImporterExporter(importer, importSettings);
 				GUIUtil.show(dialogExorter, true);
