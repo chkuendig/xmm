@@ -576,6 +576,45 @@ public abstract class DialogTableData extends JDialog {
 		}
 	};
 	
+	public String [] getHeaderTitles() {
+
+		String [] titles = null;
+		
+		try {
+			
+			//TableModel tableModel = table.getModel();
+			TableColumnModel columnModel = table.getColumnModel();
+			int columnCount = table.getModel().getColumnCount();
+
+			TableColumn tmpColumn;
+			FieldModel fieldModel;
+			
+			// Finding columns with values
+			
+			ArrayList<String> columnTitles = new ArrayList<String>();
+			
+			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+				tmpColumn = columnModel.getColumn(columnIndex);
+				
+				Object o = tmpColumn.getHeaderValue();
+				
+				if (o instanceof String) {
+					continue;
+				}
+					
+				fieldModel = (FieldModel) o;
+				String title = fieldModel.getField();					
+				columnTitles.add(title);
+			}
+			
+			titles = columnTitles.toArray(new String[columnTitles.size()]);
+		}
+		catch (Exception e) {
+			log.error("", e);
+		}	
+		
+		return titles;
+	}
 	
 	
 	public Object [][] retrieveValuesFromTable() {
