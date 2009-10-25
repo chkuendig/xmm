@@ -33,17 +33,16 @@ public class ModelImportExportSettings {
 	public final static int IMPORT_MODE_TEXT = 0;
 	public final static int IMPORT_MODE_CSV = 1;
     public final static int IMPORT_MODE_EXCEL = 2;
-	//public final static int IMPORT_MODE_XML = 3;
 	public final static int IMPORT_MODE_XML_DATABASE = 3;
-    public final static int IMPORT_MODE_EXTREME = 4;
+	public final static int IMPORT_MODE_XML = 4;
 
-    public final static int EXPORT_MODE_COUNT = 4;
+    public final static int EXPORT_MODE_COUNT = 5;
 	
 	public final static int EXPORT_MODE_CSV = 0;
     public final static int EXPORT_MODE_EXCEL = 1;
-	//public final static int EXPORT_MODE_XML = 2;
 	public final static int EXPORT_MODE_XML_DATABASE = 2;
-    public final static int EXPORT_MODE_HTML = 3;
+	public final static int EXPORT_MODE_XML = 3;
+    public final static int EXPORT_MODE_HTML = 4;
 	
     public static String [] encodings = new String[] {"US-ASCII", "ISO-8859-1", "UTF-8", "UTF-16BE", "UTF-16LE", "UTF-16"};
     
@@ -55,16 +54,15 @@ public class ModelImportExportSettings {
     	importTypes[ModelImportExportSettings.IMPORT_MODE_TEXT] = "Text File";
     	importTypes[ModelImportExportSettings.IMPORT_MODE_CSV] = "CSV File";
     	importTypes[ModelImportExportSettings.IMPORT_MODE_EXCEL] = "Excel Spreadsheet";
-    	//importTypes[ModelImportExportSettings.IMPORT_MODE_XML] = "XML File";
+    	importTypes[ModelImportExportSettings.IMPORT_MODE_XML] = "XML File";
     	importTypes[ModelImportExportSettings.IMPORT_MODE_XML_DATABASE] = "XML Database";
-    	importTypes[ModelImportExportSettings.IMPORT_MODE_EXTREME] = "Extreme Movie Manager";
     } 
     
     
     void setExportTypeValues() {
     	exportTypes[ModelImportExportSettings.EXPORT_MODE_CSV] = "CSV File";
     	exportTypes[ModelImportExportSettings.EXPORT_MODE_EXCEL] = "Excel Spreadsheet";
-    	//exportTypes[ModelImportExportSettings.EXPORT_MODE_XML] = Localizer.getString("DialogExport.panel-xml-export.title");
+    	exportTypes[ModelImportExportSettings.EXPORT_MODE_XML] = Localizer.getString("DialogExport.panel-xml-export.title");
     	exportTypes[ModelImportExportSettings.EXPORT_MODE_XML_DATABASE] = "XML Database";
     	exportTypes[ModelImportExportSettings.EXPORT_MODE_HTML] = Localizer.getString("DialogExport.panel-html-export.title");
     } 
