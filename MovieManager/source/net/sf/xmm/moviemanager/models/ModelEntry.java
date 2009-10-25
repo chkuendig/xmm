@@ -216,6 +216,12 @@ abstract public class ModelEntry {
 	}
 
 	public void setTitle(String title) {
+		// Remove unwanted ""
+		if (title.startsWith("\""))
+			title = title.substring(1);
+		if (title.endsWith("\""))
+			title = title.substring(0, title.length()-1);
+		
 		this.title = title;
 	}
 

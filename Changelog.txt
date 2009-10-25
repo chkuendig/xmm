@@ -4,12 +4,57 @@
    Changelog - MeD's Movie Manager
 ========================================
 
-
-Version 2.X (16-July-2009)
-
+Version 2.X (18-Oct-2009) by Rainer
 - General improvements:
 
-  - 
+  - Changed some texts in the language file to be more meaningful.
+  - Removed a few unnecessary else statements in the sourcecode.
+  - If the title got "" around its name they are removed.
+
+- New features:
+
+  - Hardcoded Strings to remove from folder/filename are now in "options->add multiple files" as user editable textfield.
+
+  - This feature is activated by the new checkbox "Scan folder for nfo or txt files" in the "add multiple files" menu.
+    If activated the directory in which the files resist is scanned for txt or nfo files. If such a file exists it is
+    scanned for an imdb url of the type "imdb.com/title/tt...".
+    This feature is most usefull if automatic import with "Select First Hit" is used. Because if this url is found than
+    there will be no title search on imdb but directly this url will be used. This will speed the scanning up a bit
+    because only one imdb query is done for each movie. And also the imdb info is correctly selected and no maybe
+    similiar imdb title is imported. If no file is found than everything goes the normal way.
+
+  - This feature is activated by the new checkbox "Remove userdefined info (delete...)" in the "add multiple files" menu.
+    New Method which removes everything behind user selected Strings from folder/filenames. This method
+    is more aggresive than the default method.
+
+  - This feature is activated by the new checkbox "Use parent folder name if last folder name starts with CD*" in the
+    "add multiple files" menu.
+    If this feature is selected and it contains a subfolder like CD* than the parent folder name is used and not CD*
+    for searching in imdb.
+
+  - This feature is activated by the new checkbox "Prefix movie title if..." in the "add multiple files" menu.
+    If multiple files were to be added with option "Select First Hit" than the prefix "_verify_" is added
+    if more than one hit in imdb were found. Because the first hit could be the wrong one this prefix
+    allows to find these possible wrong candidates very fast and review them. This also happens if no match
+    in imdb is found and the filename is used as title.
+
+  - This feature is activated by the new checkbox "automatic combine" in the "add multiple files" menu.
+    If this feature is activated than all selected files will be combined automatically when pressing "Add selected".
+    It uses the build in enginge which uses the same color for similiar files. You can still expand combined
+    files as before with rightclick in the "Media files to be added" list. This feature can be a real timesaver
+    when adding a lot of files at once.
+
+  - The colouring of the files in the "Media files to be added" list in the "add multiple files" menu shows now
+    a bit better information about the files. Files which are not identical are shown in black. Files which are quite
+    similiar are now shown in red. Files which are very similiar and would be auto-combined (if selected) are shown
+    in green.
+
+- Bug fixes:
+
+  - Changed directory separator from '\\' to File.separator in a few places (not all) which works in Windows AND Linux. :)
+  - Added check in approveSelection() to prevent an exception if selectedFile = null.
+
+Version 2.X (16-July-2009)
 
 - Bug fixes:
 

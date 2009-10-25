@@ -99,7 +99,7 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
         log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
         
         if (!searchString.equals("")) { //$NON-NLS-1$
-            DialogIMDB dialogIMDB = new DialogIMDB(model, searchString, filename, null, settings.multiAddIMDbSelectOption, null);
+            DialogIMDB dialogIMDB = new DialogIMDB(null, model, searchString, filename, null, settings.multiAddIMDbSelectOption, null);
              
             if (dialogIMDB.cancelSet)
             	setCancelled(true);

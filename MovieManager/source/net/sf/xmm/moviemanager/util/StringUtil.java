@@ -182,6 +182,25 @@ public class StringUtil {
 		return searchString;
 	}
 
+	/**
+	 * Deletes everything which occurs behind any of the found Strings
+	 * @param searchString
+	 * @param excludeStrings
+	 * @return
+	 */
+	public static String performExcludeUserdefinedInfo(String searchString, String [] excludeStrings) {
+		
+		searchString = searchString.toLowerCase();
+		
+		int pos;
+		for (int u = 0; u < excludeStrings.length; u++) {
+			pos = searchString.indexOf(excludeStrings[u]);
+			if (pos != -1)
+				searchString = searchString.substring(0, pos);
+		}
+		return searchString;
+	}
+	
 
 
 	/*Removes cd notations from the search string*/

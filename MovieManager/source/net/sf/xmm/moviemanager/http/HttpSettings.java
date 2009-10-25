@@ -19,6 +19,7 @@ public class HttpSettings {
 	String  IMDbAuthenticationUser = "";
 	String IMDbAuthenticationPassword = "";
 	
+	String ExcludeString = "";
 	
 	boolean autoMoveThe = false;
 	
@@ -124,8 +125,15 @@ public class HttpSettings {
 		return autoMoveAnAndA;
 	}
 
+	public void setExcludeString(String exclude) {
+		this.ExcludeString = exclude;
+	}
+	
+	public String getExcludeString() {
+		return ExcludeString;
+	}
+	
 	public void setAutoMoveAnAndA(boolean autoMoveAnAndA) {
 		this.autoMoveAnAndA = autoMoveAnAndA;
 	}
-	
 }

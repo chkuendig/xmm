@@ -305,6 +305,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean multiAddEnableExludeCodecInfo;
 	private boolean multiAddEnableSearchInSubdirectories;
 	private boolean multiAddTitleOption;
+	private boolean multiAddEnableExludeUserdefinedInfo;
+	private boolean multiAddTitleOptionNoCd;
+	private boolean multiAddAddSearchNfoForImdb;
+	private boolean multiAddSelectFirstHitMark;
+	private boolean multiAddEnableAutomaticCombine;
 	
 		
 	/* Import */
@@ -438,6 +443,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		private boolean preferencesLookAndFeel = true;
 		private boolean preferencesProxySettings = true;
 		private boolean preferencesMiscellaneous = true;
+		private boolean preferencesAddMultipleFiles = true;
 		private boolean preferencesCoverSettings = true;
 		private boolean movieSeenReplaceWithPlay = false;
 		private boolean additionalInfoAndNotesReplacedByHTMLAdd = false;
@@ -499,6 +505,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					preferencesProxySettings = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
 				else if (line.startsWith("preferencesMiscellaneous:")) 
 					preferencesMiscellaneous = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
+				else if (line.startsWith("preferencesAddMultipleFiles:")) 
+					preferencesAddMultipleFiles = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
 				else if (line.startsWith("preferencesCoverSettings:")) 
 					preferencesCoverSettings = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
 				else if (line.startsWith("movieSeenReplaceWithPlay:")) 
@@ -589,6 +597,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			return !preferencesMiscellaneous;
 		}
 
+		public boolean isPreferencesAddMultipleFilesDisabled() {
+			return !preferencesAddMultipleFiles;
+		}
+		
 		public boolean isPreferencesMovieListDisabled() {
 			return !preferencesMovieList;
 		}
@@ -788,8 +800,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 			if (!displayName.equals(""))
 				return lastDVDDir;
-			else
-				new File("");
+
+			new File("");
 		}
 		return lastDVDDir;
 	}
@@ -986,12 +998,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public String getDatabasePath(boolean getPathFromDatabase) {
 
 		/* When loading the database from the config file the path is stored in this.databasePath */
-		if (!getPathFromDatabase || MovieManager.getIt().getDatabase() == null) {
+		if (!getPathFromDatabase || MovieManager.getIt().getDatabase() == null)
 			return this.databasePath;
-		}
-		else {
-			return MovieManager.getIt().getDatabase().getPath();
-		}
+
+		return MovieManager.getIt().getDatabase().getPath();
 	}
 
 	public void setDatabasePath(String dbPath) {
@@ -1484,6 +1494,51 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setMultiAddTitleOption(boolean val) {
 		multiAddTitleOption = val;
 	}
+
+
+	public boolean getMultiAddEnableExludeUserdefinedInfo() {
+		return multiAddEnableExludeUserdefinedInfo;
+	}
+	
+	public void setMultiAddEnableExludeUserdefinedInfo(boolean val) {
+		multiAddEnableExludeUserdefinedInfo = val;
+	}
+	
+	
+	public boolean getMultiAddTitleOptionNoCd() {
+		return multiAddTitleOptionNoCd;
+	}
+	
+	public void setMultiAddTitleOptionNoCd(boolean val) {
+		multiAddTitleOptionNoCd = val;
+	}
+	
+	
+	public boolean getMultiAddSearchNfoForImdb() {
+		return multiAddAddSearchNfoForImdb;
+	}
+	
+	public void setMultiAddSearchNfoForImdb(boolean val) {
+		multiAddAddSearchNfoForImdb = val;
+	}
+	
+	
+	public boolean getMultiAddSelectFirstHitMark() {
+		return multiAddSelectFirstHitMark;
+	}
+	
+	public void setMultiAddSelectFirstHitMark(boolean val) {
+		multiAddSelectFirstHitMark = val;
+	}
+	
+	
+	public boolean getMultiAddEnableAutomaticCombine() {
+		return multiAddEnableAutomaticCombine;
+	}
+	
+	public void setMultiAddEnableAutomaticCombine(boolean val) {
+		multiAddEnableAutomaticCombine = val;
+	}
 	
 	
 	public ModelHTMLTemplate getHTMLTemplate() {
@@ -1524,8 +1579,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		
 		if (getHTMLTemplate() != null)
 			return FileUtil.getFile("HTML_templates/" + getHTMLTemplate().getDirName());
-		else
-			return null;
+
+		return null;
 	}
 	
 //	 Returns the template name, e.g. "Simple Virtue" 
@@ -1543,15 +1598,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public File getHTMLTemplateFile() {
 		if (getHTMLTemplate() != null)
 			return new File(getHTMLTemplateDir(), getHTMLTemplate().getHTMLTemplateFileName());
-		else
-			return null;
+
+		return null;
 	}
 
 	public File getHTMLTemplateCssFile() {
 		if (getHTMLTemplate() != null)
 			return new File(getHTMLTemplateDir(), getHTMLTemplate().getHTMLTemplateCssFileName());  
-		else
-			return null;
+
+		return null;
 	}
 	
 	public ModelHTMLTemplateStyle getHTMLTemplateStyle() {
@@ -1810,6 +1865,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		httpSettings.setIMDbAuthenticationPassword(IMDbAuthenticationPassword);
 	}
 		
+	public String getExcludeString() {
+		return httpSettings.getExcludeString();
+	}
+	
+	public void setExcludeString(String ExcludeString) {
+		httpSettings.setExcludeString(ExcludeString);
+	}
+	
 	public boolean getAutoMoveThe() {
 		return httpSettings.getAutoMoveThe();
 	}
@@ -1825,8 +1888,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setAutoMoveAnAndA(boolean autoMoveAnAndA) {
 		httpSettings.setAutoMoveAnAndA(autoMoveAnAndA);
 	}
-	
-	
 	
 	public void setUseRelativeDatabasePath(int useRelativeDatabasePath) {
 		this.useRelativeDatabasePath = useRelativeDatabasePath;
@@ -2536,8 +2597,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				httpSettings.setIMDbAuthenticationEnabled(new Boolean(value).booleanValue());
 			}
 			
-			value = (String) config.get("IMDbAuthenticationUser:");
 
+			value = (String) config.get("IMDbAuthenticationUser:");
 			
 			if (value != null) {
 				httpSettings.setIMDbAuthenticationUser(value);
@@ -2551,6 +2612,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 			
 
+			value = (String) config.get("ExcludeString:");
+			
+			if (value != null) {
+				setExcludeString(value);
+			}
+			
+			
 			value = (String) config.get("lastFileDir:");
 
 			if (value != null) {
@@ -3333,6 +3401,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append(lineSeparator);
 		 settings.append("IMDbAuthenticationPassword:" + httpSettings.getIMDbAuthenticationPassword());
 
+		 settings.append(lineSeparator);
+		 settings.append("ExcludeString:" + httpSettings.getExcludeString());
 		 
 		 settings.append(lineSeparator);
 		 settings.append("lastFileDir:");

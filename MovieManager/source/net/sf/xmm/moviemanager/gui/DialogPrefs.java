@@ -151,6 +151,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	private JTextField IMDbUserNameTextField;
 	private JTextField IMDbPasswordTextField;
 
+	private JTextField ExcludeTextField;
+
+	private JLabel ExcludeLabel;
 	private JLabel IMDbUserNameLabel;
 	private JLabel IMDbPasswordLabel;
 
@@ -811,7 +814,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		/* Miscellaneous panel */
 		JPanel miscPanel = new JPanel();
 		miscPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("dialogprefs.panel.miscellaneous.title")), BorderFactory.createEmptyBorder(12,1,16,1))); //$NON-NLS-1$
-		//miscPanel.setLayout(new BoxLayout(miscPanel, BoxLayout.PAGE_AXIS));
 		miscPanel.setLayout(new BorderLayout());
 
 		//miscPanel.setBackground(Color.black);
@@ -890,6 +892,39 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		
 		miscPanel.add(miscCheckBoxes, BorderLayout.WEST);
 
+		
+		// Add multiple files
+		JPanel addMultipleFilesPanel = new JPanel(new GridLayout(0, 1));
+		addMultipleFilesPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("dialogprefs.panel.addmultiplefiles.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+
+		JPanel excludePanel = new JPanel(new GridBagLayout());
+
+		ExcludeLabel = new JLabel("Exclude" + ": "); //$NON-NLS-1$
+		ExcludeLabel.setEnabled(true);
+		ExcludeLabel.setToolTipText(Localizer.getString("dialogprefs.panel.addmultiplefiles.excludestring.tooltip"));
+		ExcludeTextField = new JTextField(40);
+		ExcludeTextField.setEnabled(true);
+		ExcludeTextField.setToolTipText(Localizer.getString("dialogprefs.panel.addmultiplefiles.excludestring.tooltip"));
+
+		JPanel excludePanelInt = new JPanel();
+
+		excludePanelInt.add(ExcludeLabel, constraints);
+		excludePanelInt.add(ExcludeTextField, constraints);
+
+		excludePanel.add(excludePanelInt);
+
+		temp = config.getExcludeString();
+		if (temp != null && !temp.equals("")) //$NON-NLS-1$
+			ExcludeTextField.setText(temp);
+		else
+			// Default exclude Strings
+			ExcludeTextField.setText("divx,xvid,dvdrip,ac3,mp3,bluray,x264,720p,1080p");
+
+		addMultipleFilesPanel.add(excludePanel);
+
+		
+		
+		
 		/* Cover settings */
 		JPanel coverPanel = new JPanel();
 		coverPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("dialogprefs.panel.cover-settings.title")), BorderFactory.createEmptyBorder(12,30,16,0))); //$NON-NLS-1$
@@ -1476,6 +1511,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		if (!disabledFeatures.isPreferencesMiscellaneousDisabled())
 			all.add(Localizer.getString("dialogprefs.panel.miscellaneous.title"), miscPanel); //$NON-NLS-1$
 
+		if (!disabledFeatures.isPreferencesAddMultipleFilesDisabled())
+			all.add(Localizer.getString("dialogprefs.panel.addmultiplefiles.title"), addMultipleFilesPanel); //$NON-NLS-1$
+		
 		if (!disabledFeatures.isPreferencesCoverSettingsDisabled())
 			all.add(Localizer.getString("dialogprefs.panel.cover-settings.title"), coverPanel); //$NON-NLS-1$
 
@@ -1579,6 +1617,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		config.setIMDbAuthenticationEnabled(enableIMDbAuthenticationButton.isSelected());
 		config.setIMDbAuthenticationUser(IMDbUserNameTextField.getText());
 		config.setIMDbAuthenticationPassword(IMDbPasswordTextField.getText());
+		
+		config.setExcludeString(ExcludeTextField.getText());
 
 		config.setMediaPlayerPath(mediaPlayerPathField.getText());
 		config.setMediaPlayerCmdArgument(mediaPlayerCmdArgument.getText());

@@ -46,6 +46,7 @@ import java.net.URLDecoder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -59,7 +60,55 @@ import org.apache.log4j.Logger;
 public class FileUtil {
     
 	static Logger log = Logger.getLogger(FileUtil.class); 
-    
+ 
+	public static String searchNfoForImdb(String _path) {
+		try {
+			if (_path != null && !_path.equals("")) {
+				String zeile;
+				BufferedReader br;
+				File path = new File(_path);
+				File files[] = path.listFiles();
+				
+				for (int i = 0; i < files.length; i++) {
+					// Cycle through all entries in the directory
+					String filename = files[i].toString();
+					if (files[i].isFile() && files[i].length() < 40000 && (filename.endsWith(".txt") || filename.endsWith(".nfo"))) {
+						// Only process files < 40000 Bytes with with .txt or .nfo suffix and no directories
+						br = new BufferedReader(new FileReader(files[i]));
+						zeile = br.readLine();
+						while (zeile != null) {
+							if (zeile.contains("imdb.com/title/tt") || zeile.contains("imdb.de/title/tt")) {
+								// If File contains an imdb url than get it out
+								br.close();
+								if (zeile.contains("imdb.com/title/tt"))
+									zeile = zeile.substring(zeile.indexOf("imdb.com/title/tt") + 17);
+								else
+									zeile = zeile.substring(zeile.indexOf("imdb.de/title/tt") + 16);
+
+								// Search for a 6 to 8 digits long number (normally 7 digits is used in the url)
+								Pattern p = Pattern.compile("[\\d]{6,8}");
+								Matcher m = p.matcher(zeile);
+
+								if (m.find())
+									return m.group();
+							}
+							zeile = br.readLine();
+						}
+						br.close();
+					}
+				}
+			}
+		}
+		catch (FileNotFoundException e) {
+			log.debug("No nfo/txt file found for parsing");
+		}
+		catch (IOException e) {
+			log.debug("I/O error while processing nfo/txt files");
+		}
+
+		return null;
+	}
+	
     public static StringBuffer readFileToStringBuffer(String filePath) throws FileNotFoundException, IOException {
 
     	File file = new File(filePath);
@@ -67,8 +116,8 @@ public class FileUtil {
     	if (!file.isFile()) {
     		if (!FileUtil.getFile(filePath).isFile()) 
     			throw new FileNotFoundException("File does not exist:" + filePath);
-    		else
-    			file = FileUtil.getFile(filePath);
+
+   			file = FileUtil.getFile(filePath);
     	}
 
     	StringBuffer buf = new StringBuffer();
@@ -91,8 +140,8 @@ public class FileUtil {
     	if (!file.isFile()) {
     		if (!FileUtil.getFile(file.toString()).isFile()) 
     			throw new FileNotFoundException("File does not exist:" + file);
-    		else
-    			file = FileUtil.getFile(file.toString());
+ 
+   			file = FileUtil.getFile(file.toString());
     	}
 
     	StringBuffer buf = new StringBuffer();
@@ -115,8 +164,8 @@ public class FileUtil {
     	if (!file.isFile()) {
     		if (!FileUtil.getFile(file.toString()).isFile()) 
     			throw new FileNotFoundException("File does not exist:" + file);
-    		else
-    			file = FileUtil.getFile(file.toString());
+ 
+    		file = FileUtil.getFile(file.toString());
     	}
     	
     	if (file.isFile())
@@ -148,6 +197,7 @@ public class FileUtil {
     public static InputStream getResourceAsStream(String name) {
     	return getResourceAsStream(name, null);
     }
+
     /**
      * Returns a resource as a Stream or null if not found.
      *
@@ -162,8 +212,8 @@ public class FileUtil {
                     
                 return applet.getClass().getResourceAsStream(name);
             }
-            else
-                return FileUtil.class.getResourceAsStream(name);
+
+            return FileUtil.class.getResourceAsStream(name);
             
         } catch (Exception e) {
             log.error("Exception: " + e.getMessage());
@@ -523,9 +573,8 @@ public class FileUtil {
     				new File(dir, entry.getName()).mkdirs();
     				continue;
     			}
-    			else {
-    				writeToFile(zip.getInputStream(entry), new File(dir, entry.getName()));
-    			}
+
+   				writeToFile(zip.getInputStream(entry), new File(dir, entry.getName()));
     		}
 
     		zip.close();

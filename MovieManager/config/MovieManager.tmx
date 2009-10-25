@@ -347,36 +347,34 @@
                     )&quot; , &quot;[ ]&quot; , &quot;{ }&quot; )</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-predefined-codec-info-tooltip">
-            <prop type="x-Group">DialogAddMultipleMovies</prop>
-            <tuv changedate="20070121T130738Z" changeid=""
-                creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Removes: divx, dvdivx, xvidvd, xvid, dvdrip, ac3,
-                    bivx, mp3</seg>
-            </tuv>
-            <tuv changedate="20070121T130738Z" changeid=""
-                creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Removes: divx, dvdivx, xvidvd, xvid, dvdrip, ac3,
-                    bivx, mp3</seg>
-            </tuv>
-        </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-predefined-codec-info.text">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Remove predefined codec info</seg>
+                <seg>Remove userdefined info</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Remove predefined codec info</seg>
+                <seg>Remove userdefined info</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-userdefined-info.text">
+            <prop type="x-Group">DialogAddMultipleMovies</prop>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Remove userdefined info (delete all behind userdefined Strings)</seg>
+            </tuv>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Remove userdefined info (delete all behind userdefined Strings)</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.title">
@@ -7350,6 +7348,159 @@
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
                 <seg>IMDb Info Updater</seg>
+            </tuv>
+        </tu>
+
+        <!-- ###############################################################################-->
+
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-options.enable-Folder-Naming-nocd.text">
+            <prop type="x-Group">DialogAddMultipleMovies</prop>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Use parent folder name if last folder name starts with CD*</seg>
+            </tuv>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Use parent folder name if last folder name starts with CD*</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-options.enable-Folder-Naming-nocd-tooltip">
+		    <prop type="x-Group">DialogAddMultipleMovies</prop>
+		    <tuv changedate="20070121T130738Z" changeid=""
+				creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
+				<prop type="x-Comment"/>
+				<prop type="x-Translated">false</prop>
+				<seg>Use parent folder name instead of last folder name if last folder name starts with CD* when searching IMDB</seg>
+		    </tuv>
+		    <tuv changedate="20070121T130738Z" changeid=""
+				creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
+				<prop type="x-Comment"/>
+				<prop type="x-Translated">false</prop>
+				<seg>Use parent folder name instead of last folder name if last folder name starts with CD* when searching IMDB</seg>
+		    </tuv>
+        </tu>
+        <tu datatype="Text" tuid="dialogprefs.panel.addmultiplefiles.title">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Add multiple files</seg>
+            </tuv>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Add multiple files</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="dialogprefs.panel.addmultiplefiles.excludestring.tooltip">
+            <prop type="x-Group">MovieManagerCommand</prop>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Insert lower case comma seperated list of words which should be removed from folders/filenames when getting the movie name</seg>
+            </tuv>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Insert lower case comma seperated list of words which should be removed from folders/filenames when getting the movie name</seg>
+            </tuv>
+        </tu>
+          <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-options.enable-Folder-Nfo-scanning.text">
+            <prop type="x-Group">DialogAddMultipleMovies</prop>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Scan folder for nfo or txt files</seg>
+            </tuv>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Scan folder for nfo or txt files</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-options.enable-Folder-Nfo-scanning-tooltip">
+		    <prop type="x-Group">DialogAddMultipleMovies</prop>
+		    <tuv changedate="20070121T130738Z" changeid=""
+				creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
+				<prop type="x-Comment"/>
+				<prop type="x-Translated">false</prop>
+				<seg>Scan folder for nfo or txt files with an embedded IMDB url</seg>
+		    </tuv>
+		    <tuv changedate="20070121T130738Z" changeid=""
+				creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
+				<prop type="x-Comment"/>
+				<prop type="x-Translated">false</prop>
+				<seg>Scan folder for nfo or txt files with an embedded IMDB url</seg>
+		    </tuv>
+        </tu>
+         <tu datatype="Text" tuid="DialogAddMultipleMovies.files-options.enable-automatic-combine.text">
+            <prop type="x-Group">DialogAddMultipleMovies</prop>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>automatic combine</seg>
+            </tuv>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>automatic combine</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.files-options.enable-automatic-combine-tooltip">
+		    <prop type="x-Group">DialogAddMultipleMovies</prop>
+		    <tuv changedate="20070121T130738Z" changeid=""
+				creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
+				<prop type="x-Comment"/>
+				<prop type="x-Translated">false</prop>
+				<seg>Automatically combine similiar files</seg>
+		    </tuv>
+		    <tuv changedate="20070121T130738Z" changeid=""
+				creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
+				<prop type="x-Comment"/>
+				<prop type="x-Translated">false</prop>
+				<seg>Automatically combine similiar files</seg>
+		    </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-hits.option-select-first-hit-mark.text">
+            <prop type="x-Group">DialogAddMultipleMovies</prop>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Prefix movie title if "Select First Hit" is selected</seg>
+            </tuv>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Prefix movie title if "Select First Hit" is selected</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-hits.option-select-first-hit-mark-tooltip">
+            <prop type="x-Group">DialogAddMultipleMovies</prop>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>If more than one entry is found for a movie the title is prefixed with "_verify_" to identify these movies.</seg>
+            </tuv>
+            <tuv changedate="20070121T130738Z" changeid=""
+                creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>If more than one entry is found for a movie the title is prefixed with "_verify_" to identify these movies.</seg>
             </tuv>
         </tu>
     </body>

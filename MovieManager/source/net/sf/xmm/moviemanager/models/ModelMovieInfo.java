@@ -648,12 +648,16 @@ public class ModelMovieInfo {
 
     		/* Sets title if title field is empty... */
     		if (model.getTitle().equals("")) { //$NON-NLS-1$
+    			String title = "";
+				if (MovieManager.getConfig().getMultiAddSelectFirstHitMark())
+	    			// Insert prefix in Title to show that these movies maybe got wrong imdb infos
+					title = "_verify_";
 
     			if (properties.getMetaDataTagInfo("INAM") != null && !properties.getMetaDataTagInfo("INAM").equals("")) //$NON-NLS-1$ //$NON-NLS-2$
-    				setTitle(properties.getMetaDataTagInfo("INAM")); //$NON-NLS-1$
+    				setTitle(title + properties.getMetaDataTagInfo("INAM")); //$NON-NLS-1$
 
     			else {
-    				String title = properties.getFileName();
+    				title = title + properties.getFileName();
 
     				if (title.lastIndexOf(".") != -1) //$NON-NLS-1$
     					title = title.substring(0, title.lastIndexOf('.'));

@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogAddMultipleMovies;
@@ -32,7 +33,7 @@ import net.sf.xmm.moviemanager.gui.DialogIMDB;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
-import net.sf.xmm.moviemanager.swing.extentions.filetree.FileNode;
+import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.StringUtil;
@@ -54,9 +55,13 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	boolean enableExludeCDNotations = false;
 	boolean enableExludeIntegers = false;
 	boolean enableExludeCodecInfo = false;
+	boolean enableSearchNfoForImdb = false;
 	boolean searchInSubdirectories = false;
 	boolean addMovieToList = false;
 	boolean titleOption = false;
+	boolean enableExludeUserdefinedInfo = false;
+	boolean enableTitleOptionNoCd = false;
+
 	String addToThisList = null;
 
 	ArrayList<String> moviesToAdd;
@@ -108,6 +113,9 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		enableExludeIntegers = damm.enableExludeIntegers.isSelected();
 		enableExludeCodecInfo = damm.enableExludeCodecInfo.isSelected();
 		titleOption = damm.titleOption.isSelected();
+		enableSearchNfoForImdb = damm.enableSearchNfoForImdb.isSelected();
+		enableExludeUserdefinedInfo = damm.enableExludeUserdefinedInfo.isSelected();
+		enableTitleOptionNoCd = damm.enableTitleOptionNoCd.isSelected();
 			
 		if (damm.enableAddMoviesToList != null && damm.enableAddMoviesToList.isSelected()) {
 			addMovieToList = true;
@@ -125,10 +133,11 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		DialogAddMultipleMovies.Files fileNode;
 		File [] tempFile = new File[1];
 
-		String searchString = null; /*Used to search on imdb*/
+		String searchString = null; /* Used to search on imdb */
 		String path = null; /* Path of the file */
 
 		while (!fileList.isEmpty()) {
+			String imdbId = null;
 
 			fileNode = (DialogAddMultipleMovies.Files) fileList.remove(0);
 			
@@ -163,24 +172,29 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 
 			/*Used to set the title of the DialogIMDB window*/
 			searchString = searchTitle;/*Used to search on imdb*/
+
 			/* Sets up search string as Folder name or file name */
 			if (titleOption) {
-
-
 				path = tempFile[0].getPath();
-				int slash = path.lastIndexOf('\\');
+				int slash = path.lastIndexOf(File.separator);
 
 				if (slash == -1) {
 					searchString = path;
 				}
 				else {
 					path = path.substring(0, slash);
-					slash = path.lastIndexOf('\\');
+					slash = path.lastIndexOf(File.separator);
 
 					if (slash == -1) {
 						searchString = path;
 					}
 					else {
+						String temp = path.substring(slash+1);
+						if (enableTitleOptionNoCd && temp.toLowerCase().startsWith("cd")) {
+							// IF last directory is CD* than the name is in the directory above.
+							path = path.substring(0, slash);
+							slash = path.lastIndexOf(File.separator);
+						}
 						searchString = path.substring(slash+1);
 					}
 				}
@@ -193,9 +207,22 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 			if (enableExludeParantheses)
 				searchString = StringUtil.performExcludeParantheses(searchString, true);
 
-			if (enableExludeCodecInfo) {
-				String [] excludeStrings = new String[] {"divx", "dvdivx", "xvidvd", "xvid", "dvdrip", "ac3", "bivx", "mp3"};
-				searchString = StringUtil.performExcludeCodecInfo(searchString, excludeStrings);
+			if (enableExludeUserdefinedInfo) {
+				String zeile = MovieManager.getConfig().getExcludeString();
+				if (!zeile.equals("")) {
+					Pattern p = Pattern.compile("[,]");
+					String[] excludeStrings = p.split(zeile);
+					searchString = StringUtil.performExcludeUserdefinedInfo(searchString, excludeStrings);
+				}
+			}
+			else if (enableExludeCodecInfo) {
+				// If the first option is selected this second option is no more needed
+				String zeile = MovieManager.getConfig().getExcludeString();
+				if (!zeile.equals("")) {
+					Pattern p = Pattern.compile("[,]");
+					String[] excludeStrings = p.split(zeile);
+					searchString = StringUtil.performExcludeCodecInfo(searchString, excludeStrings);
+				}
 			}
 			if (enableExludeCDNotations)
 				searchString = StringUtil.performExcludeCDNotations(searchString);
@@ -203,10 +230,13 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 			if (enableExludeIntegers)
 				searchString = StringUtil.performExcludeIntegers(searchString);
 
+			if (enableSearchNfoForImdb)
+				imdbId = FileUtil.searchNfoForImdb(path);
+			
 			/*removes dots, double spaces, underscore...*/
 			searchString = StringUtil.removeVarious(searchString);
 	
-			executeCommandGetIMDBInfoMultiMovies(searchString, searchTitle, multiAddSelectOption, addToThisList);
+			executeCommandGetIMDBInfoMultiMovies(imdbId, searchString, searchTitle, multiAddSelectOption, addToThisList);
 
 			if (dropImdbInfo)
 				movieInfoModel.setGeneralInfoFieldsEmpty();
@@ -264,20 +294,18 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	/**
 	 * Gets the IMDB info for movies (multiAdd)
 	 **/
-	public void executeCommandGetIMDBInfoMultiMovies(String searchString, String filename, 
-			ImdbImportOption multiAddSelectOption, String addToThisList) {
+	public void executeCommandGetIMDBInfoMultiMovies(String imdbId, String searchString, String filename, ImdbImportOption multiAddSelectOption, String addToThisList) {
 
 		/* Checks the movie title... */
 		log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
 		if (!searchString.equals("")) { //$NON-NLS-1$
-			DialogIMDB dialogIMDB = new DialogIMDB(movieInfoModel.model, searchString, filename, movieInfoModel.getMultiAddFile(), 
-					multiAddSelectOption, addToThisList);
+			DialogIMDB dialogIMDB = new DialogIMDB(imdbId, movieInfoModel.model, searchString, filename, movieInfoModel.getMultiAddFile(), multiAddSelectOption, addToThisList);
 			cancel = dialogIMDB.cancelSet;
 			cancelAll = dialogIMDB.cancelAllSet;
 			dropImdbInfo = dialogIMDB.dropImdbInfoSet;
 
 		} else {
-			DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.alert"),Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
+			DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.alert"), Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
 			GUIUtil.showAndWait(alert, true);
 		}
 	}

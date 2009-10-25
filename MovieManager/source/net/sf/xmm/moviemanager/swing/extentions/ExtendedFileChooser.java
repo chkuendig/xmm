@@ -171,27 +171,29 @@ public class ExtendedFileChooser extends JFileChooser {
 			boolean exists = false;
 			File file = null;
 
-			/*Goes through the extensions array and checks if each of the files exist*/ 
-			for (int i = 0; i < extenstions.length && !exists; i++) {
-				if (selectedFile.getName().endsWith("." + extenstions[i])) {
-
-					String filePath = selectedFile.getAbsolutePath();
-					filePath = filePath.substring(0, filePath.lastIndexOf(".")+1);
-
-					for (int u = 0; u < extenstions.length; u++) {
-						file = new File(filePath+extenstions[u]);
-
+			/*Goes through the extensions array and checks if each of the files exist*/
+			if (selectedFile != null) {
+				for (int i = 0; i < extenstions.length && !exists; i++) {
+					if (selectedFile.getName().endsWith("." + extenstions[i])) {
+	
+						String filePath = selectedFile.getAbsolutePath();
+						filePath = filePath.substring(0, filePath.lastIndexOf(".")+1);
+	
+						for (int u = 0; u < extenstions.length; u++) {
+							file = new File(filePath+extenstions[u]);
+	
+							if (file.exists()) {
+								exists = true;
+								break;
+							}
+						}
+					}
+					else {
+						file = new File(selectedFile.getAbsolutePath() + "." + extenstions[i]);
 						if (file.exists()) {
 							exists = true;
 							break;
 						}
-					}
-				}
-				else {
-					file = new File(selectedFile.getAbsolutePath() + "." + extenstions[i]);
-					if (file.exists()) {
-						exists = true;
-						break;
 					}
 				}
 			}

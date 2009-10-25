@@ -57,6 +57,8 @@ import org.apache.log4j.Logger;
 public class DialogIMDB extends JDialog {
     
 	static Logger log = Logger.getLogger(DialogIMDB.class);
+	
+	int hitCount;
     
     IMDB imdb = null;
     
@@ -71,6 +73,8 @@ public class DialogIMDB extends JDialog {
     JPanel panelMoviesList;
 
     String filename = null;
+    
+    String imdbId = null;
     
     boolean getUrlKeyOnly = false;
 
@@ -144,14 +148,13 @@ public class DialogIMDB extends JDialog {
     /**
      * Constructor - When adding multiple movies by file.
      **/
-    public DialogIMDB(ModelEntry modelEntry, String searchString, String filename, 
-    		File multiAddFile, 
-    		ImdbImportOption multiAddSelectOption, String addToThisList) {
+    public DialogIMDB(String _imdbId, ModelEntry modelEntry, String searchString, String filename, File multiAddFile, ImdbImportOption multiAddSelectOption, String addToThisList) {
     	    	
         /* Dialog creation...*/
         super(MovieManager.getDialog());
         setTitle(Localizer.getString("DialogIMDB.title")); //$NON-NLS-1$
         
+        imdbId = _imdbId;
         this.modelEntry = modelEntry;
         this.multiAddFile = multiAddFile;
         this.addToThisList = addToThisList;
@@ -189,6 +192,10 @@ public class DialogIMDB extends JDialog {
         getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
         
         createListDialog(searchString, filename);
+        
+        // Insert prefix in Title to show that these movies maybe got wrong imdb infos
+		if (MovieManager.getConfig().getMultiAddSelectFirstHitMark() && hitCount > 1 && multiAddSelectOption == ImdbImportOption.selectFirst && (_imdbId == null || _imdbId.equals("")))
+			modelEntry.setTitle("_verify_" + modelEntry.getTitle());
     }
 
 
@@ -471,28 +478,40 @@ public class DialogIMDB extends JDialog {
     	
     	
     	if (isMultiAdd() && !getUrlKeyOnly) { 
-    		
     		try {
-    			ArrayList<ModelIMDbSearchHit> hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchString);
+    			int pos = 0;
     			DefaultListModel list = new DefaultListModel();
-    			
-    			/*Number of movie hits*/
-    			int hitCount = hits.size();
 
-    			if (hitCount == 0) {
-    				list.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
+    			if (multiAddSelectOption == ImdbImportOption.selectFirst && imdbId != null && !imdbId.equals("")) {
+    				ModelIMDbSearchHit hit = new ModelIMDbSearchHit(imdbId, searchString, null, "Titles (Approx Matches)");
+    				
+    				list.addElement(hit);
+    				hitCount = 1;
     			}
     			else {
-    				for (ModelIMDbSearchHit hit : hits)
-    					list.addElement(hit);
+	    			// Olny pull list from imdb if not "Select FirstHit" is selected and no IMDB Id was found in an nfo/txt file
+	    			ArrayList<ModelIMDbSearchHit> hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchString);
+	    			
+	    			/*Number of movie hits*/
+	    			hitCount = hits.size();
+	    			
+	    			if (hitCount == 0)
+	    				list.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
+	    			else {
+	    				for (int i = 0; i < hitCount; i++) {
+	    					ModelIMDbSearchHit hit = hits.get(i);
+	    					list.addElement(hit);
+	    					if (imdbId != null && hit.getUrlID().equals(imdbId))
+	    						// If current movie equals the one in the nfo than preselect this in the list
+	    						pos = i;
+	    				}
+	    			}
     			}
-    			
     			listMovies.setModel(list);
-    			listMovies.setSelectedIndex(0);
-
-    			if (executeCommandMultipleMoviesSelectCheck(hitCount) == 1) {
+    			listMovies.setSelectedIndex(pos);
+ 	
+    			if (executeCommandMultipleMoviesSelectCheck(hitCount) == 1)
     				GUIUtil.showAndWait(this, true);
-    			}
 
     		} catch (Exception e) {
     			executeErrorMessage(e.getMessage());
@@ -625,11 +644,9 @@ public class DialogIMDB extends JDialog {
         		if (multiAddSelectOption == ImdbImportOption.displayList || multiAddSelectOption == ImdbImportOption.selectIfOnlyOneHit)
         			return 1;
         		// Add to skipped-list
-        		else {
-        			dropImdbInfoSet = true;
-        			return 0;
-        		}
-        	}
+    			dropImdbInfoSet = true;
+    			return 0;
+    		}
         	// If only one hit option
         	else if (listSize == 1 && multiAddSelectOption == ImdbImportOption.selectIfOnlyOneHit) {
         		executeCommandSelect();
@@ -740,14 +757,18 @@ public class DialogIMDB extends JDialog {
     			dispose();
     			return;
     		}
-    		else {
-    			time = System.currentTimeMillis();
 
-    			getIMDbInfo(modelEntry, model.getUrlID());
-    			ModelMovieInfo.executeTitleModification(modelEntry);
-    			
-    			dispose();
-    		}
+			time = System.currentTimeMillis();
+
+			if (multiAddSelectOption == ImdbImportOption.selectFirst && imdbId != null && !imdbId.equals(""))
+				// Use previously fetched imdb id
+				getIMDbInfo(modelEntry, imdbId);
+			else
+				getIMDbInfo(modelEntry, model.getUrlID());
+
+			ModelMovieInfo.executeTitleModification(modelEntry);
+			
+			dispose();
     	}
     }
 
