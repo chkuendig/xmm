@@ -1276,7 +1276,16 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.exportCSVseparator = exportCSVseparator;
 	}
 		
-	// XML
+	// XML database 
+	public String getExportXMLDbFilePath() {
+		return exportXMLFilePath;
+	}
+	
+	public void setExportXMLDbFilePath(String value) {
+		exportXMLFilePath = value;
+	}
+	
+	// XML 
 	public String getExportXMLFilePath() {
 		return exportXMLFilePath;
 	}
@@ -3142,6 +3151,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setExportExcelFilePath(value);
 			}
 			
+			value = (String) config.get("exportXMLDbfilePath:");
+
+			if (value != null) {
+				setExportXMLDbFilePath(value);
+			}
+			
 			value = (String) config.get("exportXMLfilePath:");
 
 			if (value != null) {
@@ -3603,6 +3618,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 
 		 settings.append(lineSeparator);
 		 settings.append("exportExcelfilePath:" + getExportExcelFilePath());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("exportXMLDbfilePath:" + getExportXMLDbFilePath());
 		 
 		 settings.append(lineSeparator);
 		 settings.append("exportXMLfilePath:" + getExportXMLFilePath());
