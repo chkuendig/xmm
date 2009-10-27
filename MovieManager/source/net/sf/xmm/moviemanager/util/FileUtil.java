@@ -71,7 +71,7 @@ public class FileUtil {
 				
 				for (int i = 0; i < files.length; i++) {
 					// Cycle through all entries in the directory
-					String filename = files[i].toString();
+					String filename = files[i].getName().toLowerCase();
 					if (files[i].isFile() && files[i].length() < 40000 && (filename.endsWith(".txt") || filename.endsWith(".nfo"))) {
 						// Only process files < 40000 Bytes with with .txt or .nfo suffix and no directories
 						br = new BufferedReader(new FileReader(files[i]));
@@ -79,7 +79,6 @@ public class FileUtil {
 						while (zeile != null) {
 							if (zeile.contains("imdb.com/title/tt") || zeile.contains("imdb.de/title/tt")) {
 								// If File contains an imdb url than get it out
-								br.close();
 								if (zeile.contains("imdb.com/title/tt"))
 									zeile = zeile.substring(zeile.indexOf("imdb.com/title/tt") + 17);
 								else
@@ -89,8 +88,10 @@ public class FileUtil {
 								Pattern p = Pattern.compile("[\\d]{6,8}");
 								Matcher m = p.matcher(zeile);
 
-								if (m.find())
+								if (m.find()) {
+									br.close();
 									return m.group();
+								}
 							}
 							zeile = br.readLine();
 						}
