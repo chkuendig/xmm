@@ -16,7 +16,7 @@ Version 2.X (18-Oct-2009) by Rainer
   - Hardcoded Strings to remove from folder/filename are now in "options->add multiple files" as user editable textfield.
 
   - This feature is activated by the new checkbox "Scan folder for nfo or txt files" in the "add multiple files" menu.
-    If activated the directory in which the files resist is scanned for txt or nfo files. If such a file exists it is
+    If activated the directory in which the files resist is scanned for txt,nfo or url files. If such a file exists it is
     scanned for an imdb url of the type "imdb.com/title/tt...".
     This feature is most usefull if automatic import with "Select First Hit" is used. Because if this url is found than
     there will be no title search on imdb but directly this url will be used. This will speed the scanning up a bit
