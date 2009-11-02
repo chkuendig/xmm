@@ -72,7 +72,7 @@ public class FileUtil {
 				for (int i = 0; i < files.length; i++) {
 					// Cycle through all entries in the directory
 					String filename = files[i].getName().toLowerCase();
-					if (files[i].isFile() && files[i].length() < 40000 && (filename.endsWith(".txt") || filename.endsWith(".nfo"))) {
+					if (files[i].isFile() && files[i].length() < 40000 && (filename.endsWith(".txt") || filename.endsWith(".nfo") || filename.endsWith(".url"))) {
 						// Only process files < 40000 Bytes with with .txt or .nfo suffix and no directories
 						br = new BufferedReader(new FileReader(files[i]));
 						zeile = br.readLine();
