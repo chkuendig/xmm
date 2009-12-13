@@ -109,6 +109,16 @@ public class IMDB /*extends IMDB_if */{
     	return grabInfo(urlID, null);	
     }
     
+    public StringBuffer getURLData(String urlID) throws Exception {
+    	
+    	if (urlID == null)
+    		throw new Exception("Movie ID is empty");
+    
+    	URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/");
+		HTTPResult res = httpUtil.readData(url);
+		return res.data;
+    }
+    
     public ModelIMDbEntry grabInfo(String urlID, StringBuffer data) throws Exception {
     	
     	//long time = System.currentTimeMillis();
@@ -117,9 +127,7 @@ public class IMDB /*extends IMDB_if */{
     		throw new Exception("Input data is null.");
     	
     	if (urlID != null) {
-    		URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/");
-    		HTTPResult res = httpUtil.readData(url);
-    		data = res.data;
+    		data = getURLData(urlID);
     	}
     	
     	if (data == null) {
@@ -128,8 +136,10 @@ public class IMDB /*extends IMDB_if */{
     	
     	return parseData(urlID, data);
     }
-        
     
+    /*
+     * If urlID is null, no extra plot will be retrieved
+     */
     private ModelIMDbEntry parseData(String urlID, StringBuffer data) throws Exception {
 		
         String date = "", title = "", directedBy = "", writtenBy = "", genre = "", rating = "", colour = "", aka = "", 
@@ -146,7 +156,7 @@ public class IMDB /*extends IMDB_if */{
 		boolean isEpisode = false;
 		boolean isSeries = false;
 		
-		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
+		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
 			
 		try {
 			/* Processes the data... */
@@ -437,7 +447,6 @@ public class IMDB /*extends IMDB_if */{
 			if (plot != null) {
 				plot = plot.trim();
 				plot = plot.replaceAll("(more)$", "");
-
 				dataModel.setPlot(plot);
 			}
 			
@@ -818,7 +827,7 @@ public class IMDB /*extends IMDB_if */{
     	int start = 0;
     	int end = 0;
 
-    	while ((start = data.indexOf("<div class=\"info\">", end)) != -1 && 
+    	while ((start = data.indexOf("<div class=\"info", end)) != -1 && 
     			(end = data.indexOf("</div>", start)) != -1) {
 
     		tmp = data.substring(start, end);	
@@ -1336,6 +1345,5 @@ public class IMDB /*extends IMDB_if */{
     public boolean getBigCoverOK() {
     	return lastDataModel == null ? false : lastDataModel.hasBigCover();
     }
-
 
 }
