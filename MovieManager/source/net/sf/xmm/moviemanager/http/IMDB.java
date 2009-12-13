@@ -156,7 +156,7 @@ public class IMDB /*extends IMDB_if */{
 		boolean isEpisode = false;
 		boolean isSeries = false;
 		
-		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
+		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
 			
 		try {
 			/* Processes the data... */
@@ -396,13 +396,13 @@ public class IMDB /*extends IMDB_if */{
 			String airdateContent = null;
 			
 			if (classInfo.containsKey("Original Air Date:"))
-				airdateContent =getDecodedClassInfo("Original Air Date:", (String) classInfo.get("Original Air Date:"));
+				airdateContent = getDecodedClassInfo("Original Air Date:", (String) classInfo.get("Original Air Date:"));
 						
 			// Ex   29 April 2002 (Season 3, Episode 19)
 			// Ex: 5 October 1999 (Season 1, Episode 1)
 			if (airdateContent != null) {
 				Pattern p = Pattern.compile("(.+)?\\s\\(.+?(\\d+?),\\s?.+?(\\d+?)\\)");
-				Matcher m = p.matcher(data);
+				Matcher m = p.matcher(airdateContent);
 								
 				if (m.find()) {
 
