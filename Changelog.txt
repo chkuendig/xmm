@@ -5,6 +5,7 @@
 ========================================
 
 Version 2.X (18-Oct-2009) by Rainer
+
 - General improvements:
 
   - Changed some texts in the language file to be more meaningful.
@@ -51,14 +52,17 @@ Version 2.X (18-Oct-2009) by Rainer
 
 - Bug fixes:
 
-  - Changed directory separator from '\\' to File.separator in a few places (not all) which works in Windows AND Linux. :)
+  - Changed directory separator from '\\' to system file separator in a few places in add multiple movies function.
   - Added check in approveSelection() to prevent an exception if selectedFile = null.
+  - Fixed bug in IMDb parser making episode number and series wrong in some situations.
 
-Version 2.X (16-July-2009)
+
+Version 2.8.7 (13-December-2009)
 
 - Bug fixes:
 
-  - Fixed bug in IMDb parser making episode number and series wrong in some situations.
+  - Cast was no longer retrieved due to changes in HTML on IMDb.
+  - Notes were not saved when editing in main window.
   
 
 Version 2.8.6 (16-July-2009)
