@@ -6,6 +6,8 @@
 		MeDs Movie Manager build file
   </description>
 
+
+
 	<target name="Welcome">
 <echo>
 	===========================================
@@ -36,11 +38,13 @@
 	<property name="dist" location="dist" />
 	<property name="izpack.dir" location="packaging/izpack" />
 
-	<property name="version" value="2.8.6" />
+	<property name="version" value="2.8.7" />
 	<property name="versionName" value="${version}" />
 
 	<property name="base" value="MovieManager/" />
 
+	<property name="ant-contrib-path" value="MovieManager/lib/ant-contrib-0.6.jar" />
+	
 	<property name="jasperFiles" value="*.jasper, *.png, *.jrxml" />
 
 	<property name="mainFiles"
@@ -105,7 +109,8 @@
 		   TableLayout.jar,
 		   useful.jar,
 		   xercesImpl.jar,
-		   xml-apis.jar
+		   xml-apis.jar,
+		   ant-contrib-0.6.jar
 		   " />
 
     <property name="libraries_windows"
@@ -287,6 +292,7 @@
 				<include name="images/" />
 				<include name="queries/" />
 				<include name="source/" />
+				<include name="test/" />
 
 			</zipfileset>
 
@@ -690,70 +696,101 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 </target>
 
 	
-	<!-- a lot of crap just to find the rst2html, 
-	(if this is the way it's supposed to be done, ant sucks)
-	-->
- <target name="find-rst2html">
- 	
- 	 <exec executable="which" outputproperty="rst2html-path">
- 	  	 <arg value="rst2html"/>
- 	  </exec>
- 	
- 	<condition property="rst2html">
- 		<not>
- 		    <equals arg1="${rst2html-path}" arg2="" trim="true"/>
- 		</not>
- 	  </condition>
- 	
- 	 <exec executable="which" outputproperty="rst2html.py-path">
- 	  	 <arg value="rst2html.py"/>
- 	  </exec>
- 		 	
- 	<condition property="rst2html.py">
- 		<not>
- 			<equals arg1="${rst2html.py-path}" arg2="" trim="true"/>
- 		</not>
- 	</condition>
- 	
-  </target>
-		
-	<target name="set-rst2html-path" depends="find-rst2html" if="rst2html" >
-	    <property name="rst2html-pathToUse" value="${rst2html-path}" />
-	</target>
+<!-- Finds the path to rst2html which generates te restructed text version of changelog and readme  -->
+<target name="find-rst2html">
+  
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	<classpath><pathelement location="${ant-contrib-path}"/></classpath>
+  </taskdef>
+
+  <!-- docutils can be installed both with and without py extension  -->
+  <exec executable="which" outputproperty="rst2html-path">
+ 	<arg value="rst2html"/>
+  </exec>
+  
+  <exec executable="which" outputproperty="rst2html.py-path">
+ 	<arg value="rst2html.py"/>
+  </exec>
+  
+  <if>
+	<not>
+	  <equals arg1="${rst2html-path}" arg2="" />
+	</not>
 	
-  <target name="set-rst2html.py-path" depends="find-rst2html" if="rst2html.py" >
-		    <property name="rst2html-pathToUse" value="${rst2html.py-path}" />
-	</target>
+	<then>
+	  <property name="rst2html-pathToUse" value="${rst2html-path}"/>
+	</then>
 	
-  <target name="set-rst2html-pathToUse" depends="set-rst2html-path,set-rst2html.py-path"/>
+	<elseif>
+	  <not>
+		<equals arg1="${rst2html.py-path}" arg2="" />
+	  </not>
+	  
+	  <then>
+		<property name="rst2html-pathToUse" value="${rst2html.py-path}"/>
+	  </then>
+	</elseif>
 	
-<target name="changelog" depends="set-rst2html-pathToUse">
+	<else>
+	  <echo message="rst2html could not be found" />
+	</else>
+  </if>
+</target>
+
+
+
+<target name="changelog" depends="find-rst2html">
+  
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	<classpath>
+      <pathelement location="${ant-contrib-path}"/>
+	</classpath>
+  </taskdef>
+  
+  
+  <fail message="rst2html was not found, changelog can not be generated.">
+	<condition>
+      <not>
+		<isset property="rst2html-pathToUse"/>
+      </not>
+	</condition>
+  </fail>
+  
 	
-	 <echo> path to rst2html-path:${rst2html-path} </echo>
-	 <echo> path to rst2html.py-path:${rst2html.py-path} </echo>
-	
-	<echo> rst2html:${rst2html} </echo>
-	<echo> rst2html.py:${rst2html.py} </echo>
-		
-	 <echo> Compiled html changelog to Changelog.html </echo>
-	
-	  <exec executable="${rst2html-pathToUse}">
-	    <arg value="--stylesheet=xmm.css"/>
-	    <arg value="Changelog.txt"/>
-	    <arg value="Changelog.html"/>
-	  </exec>
-	
+  <exec executable="${rst2html-pathToUse}">
+	<arg value="--stylesheet=xmm.css"/>
+	<arg value="Changelog.txt"/>
+	<arg value="Changelog.html"/>
+  </exec>
+  
+  <echo> Compiled html changelog to Changelog.html </echo>
+	 
 </target>
 	
-<target name="readme">
+<target name="readme" depends="find-rst2html">
 
-      <exec executable="rst2html">
-        <arg value="--stylesheet=xmm.css"/>
-        <arg value="Readme.txt"/>
-        <arg value="Readme.html"/>
-      </exec>
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	<classpath>
+      <pathelement location="${ant-contrib-path}"/>
+	</classpath>
+  </taskdef>
+  
+  
+  <fail message="rst2html was not found, readme can not be generated.">
+	<condition>
+      <not>
+		<isset property="rst2html-pathToUse"/>
+      </not>
+	</condition>
+  </fail>
+  
+  <exec executable="rst2html">
+    <arg value="--stylesheet=xmm.css"/>
+    <arg value="Readme.txt"/>
+    <arg value="Readme.html"/>
+  </exec>
         
-     <echo> Compiled html readme to Readme.html </echo>
+  <echo> Compiled html readme to Readme.html </echo>
 </target>
 
 	
