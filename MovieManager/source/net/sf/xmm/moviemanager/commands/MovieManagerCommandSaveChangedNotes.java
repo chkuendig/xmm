@@ -42,9 +42,6 @@ public class MovieManagerCommandSaveChangedNotes implements ActionListener {
 	 * Executes the command.
 	 **/
 	public static void execute() {
-
-		if (1 == 1)
-			return;
 		
 		/* Saving the current selected node's changed notes value */
 		if (MovieManager.getDialog().getMoviesList().getLeadSelectionRow() != -1) {
