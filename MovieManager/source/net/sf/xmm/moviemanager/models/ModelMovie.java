@@ -20,6 +20,8 @@
 
 package net.sf.xmm.moviemanager.models;
 
+import java.util.ArrayList;
+
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 
@@ -95,6 +97,14 @@ public class ModelMovie extends ModelEntry {
 		return false;
 	}
 	
+	public void copyData(ModelEntry model) {
+		
+		super.copyData(model);
+		
+		// Copy the lists this movie is a member of. Only movies are members of lists
+		ArrayList<String> lists = model.getMemberLists();
+		setMemberOfLists(lists);
+	}
 		
 	public void updateGeneralInfoData() {
 		
