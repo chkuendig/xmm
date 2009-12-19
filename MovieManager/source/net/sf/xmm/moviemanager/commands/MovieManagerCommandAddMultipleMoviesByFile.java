@@ -294,7 +294,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	public String searchNfoForImdb(String _path) {
 		try {
 			if (_path != null && !_path.equals("")) {
-				String zeile;
+				String tmp;
 				BufferedReader br;
 				File path = new File(_path);
 				File files[] = path.listFiles();
@@ -306,25 +306,25 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 						// Only process files < 40000 Bytes with with .txt or .nfo suffix and no directories
 												
 						br = new BufferedReader(new FileReader(files[i]));
-						zeile = br.readLine();
-						while (zeile != null) {
-							if (zeile.contains("imdb.com/title/tt") || zeile.contains("imdb.de/title/tt")) {
+						tmp = br.readLine();
+						while (tmp != null) {
+							if (tmp.contains("imdb.com/title/tt") || tmp.contains("imdb.de/title/tt")) {
 								// If File contains an imdb url than get it out
-								if (zeile.contains("imdb.com/title/tt"))
-									zeile = zeile.substring(zeile.indexOf("imdb.com/title/tt") + 17);
+								if (tmp.contains("imdb.com/title/tt"))
+									tmp = tmp.substring(tmp.indexOf("imdb.com/title/tt") + 17);
 								else
-									zeile = zeile.substring(zeile.indexOf("imdb.de/title/tt") + 16);
+									tmp = tmp.substring(tmp.indexOf("imdb.de/title/tt") + 16);
 
 								// Search for a 6 to 8 digits long number (normally 7 digits is used in the url)
 								Pattern p = Pattern.compile("[\\d]{6,8}");
-								Matcher m = p.matcher(zeile);
+								Matcher m = p.matcher(tmp);
 
 								if (m.find()) {
 									br.close();
 									return m.group();
 								}
 							}
-							zeile = br.readLine();
+							tmp = br.readLine();
 						}
 						br.close();
 					}
