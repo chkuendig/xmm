@@ -61,54 +61,7 @@ public class FileUtil {
     
 	static Logger log = Logger.getLogger(FileUtil.class); 
  
-	public static String searchNfoForImdb(String _path) {
-		try {
-			if (_path != null && !_path.equals("")) {
-				String zeile;
-				BufferedReader br;
-				File path = new File(_path);
-				File files[] = path.listFiles();
-				
-				for (int i = 0; i < files.length; i++) {
-					// Cycle through all entries in the directory
-					String filename = files[i].getName().toLowerCase();
-					if (files[i].isFile() && files[i].length() < 40000 && (filename.endsWith(".txt") || filename.endsWith(".nfo") || filename.endsWith(".url"))) {
-						// Only process files < 40000 Bytes with with .txt or .nfo suffix and no directories
-						br = new BufferedReader(new FileReader(files[i]));
-						zeile = br.readLine();
-						while (zeile != null) {
-							if (zeile.contains("imdb.com/title/tt") || zeile.contains("imdb.de/title/tt")) {
-								// If File contains an imdb url than get it out
-								if (zeile.contains("imdb.com/title/tt"))
-									zeile = zeile.substring(zeile.indexOf("imdb.com/title/tt") + 17);
-								else
-									zeile = zeile.substring(zeile.indexOf("imdb.de/title/tt") + 16);
-
-								// Search for a 6 to 8 digits long number (normally 7 digits is used in the url)
-								Pattern p = Pattern.compile("[\\d]{6,8}");
-								Matcher m = p.matcher(zeile);
-
-								if (m.find()) {
-									br.close();
-									return m.group();
-								}
-							}
-							zeile = br.readLine();
-						}
-						br.close();
-					}
-				}
-			}
-		}
-		catch (FileNotFoundException e) {
-			log.debug("No nfo/txt file found for parsing");
-		}
-		catch (IOException e) {
-			log.debug("I/O error while processing nfo/txt files");
-		}
-
-		return null;
-	}
+	
 	
     public static StringBuffer readFileToStringBuffer(String filePath) throws FileNotFoundException, IOException {
 

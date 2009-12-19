@@ -22,8 +22,13 @@ package net.sf.xmm.moviemanager.commands;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sf.xmm.moviemanager.MovieManager;
@@ -208,22 +213,18 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 				searchString = StringUtil.performExcludeParantheses(searchString, true);
 
 			if (enableExludeUserdefinedInfo) {
-				String zeile = MovieManager.getConfig().getExcludeString();
-				if (!zeile.equals("")) {
+				String info = MovieManager.getConfig().getMultiAddExcludeUserDefinedString();
+				if (!info.equals("")) {
 					Pattern p = Pattern.compile("[,]");
-					String[] excludeStrings = p.split(zeile);
+					String[] excludeStrings = p.split(info);
 					searchString = StringUtil.performExcludeUserdefinedInfo(searchString, excludeStrings);
 				}
 			}
 			else if (enableExludeCodecInfo) {
-				// If the first option is selected this second option is no more needed
-				String zeile = MovieManager.getConfig().getExcludeString();
-				if (!zeile.equals("")) {
-					Pattern p = Pattern.compile("[,]");
-					String[] excludeStrings = p.split(zeile);
-					searchString = StringUtil.performExcludeCodecInfo(searchString, excludeStrings);
-				}
+				String [] excludeStrings = new String[] {"divx", "dvdivx", "xvidvd", "xvid", "dvdrip", "ac3", "bivx", "mp3"};
+				searchString = StringUtil.performExcludeCodecInfo(searchString, excludeStrings);
 			}
+			
 			if (enableExludeCDNotations)
 				searchString = StringUtil.performExcludeCDNotations(searchString);
 
@@ -231,7 +232,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 				searchString = StringUtil.performExcludeIntegers(searchString);
 
 			if (enableSearchNfoForImdb)
-				imdbId = FileUtil.searchNfoForImdb(path);
+				imdbId = searchNfoForImdb(path);
 			
 			/*removes dots, double spaces, underscore...*/
 			searchString = StringUtil.removeVarious(searchString);
@@ -290,7 +291,56 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		cancel = value;
 	}
 
+	public String searchNfoForImdb(String _path) {
+		try {
+			if (_path != null && !_path.equals("")) {
+				String zeile;
+				BufferedReader br;
+				File path = new File(_path);
+				File files[] = path.listFiles();
+				
+				for (int i = 0; i < files.length; i++) {
+					// Cycle through all entries in the directory
+					String filename = files[i].getName().toLowerCase();
+					if (files[i].isFile() && files[i].length() < 40000 && (filename.endsWith(".txt") || filename.endsWith(".nfo") || filename.endsWith(".url"))) {
+						// Only process files < 40000 Bytes with with .txt or .nfo suffix and no directories
+												
+						br = new BufferedReader(new FileReader(files[i]));
+						zeile = br.readLine();
+						while (zeile != null) {
+							if (zeile.contains("imdb.com/title/tt") || zeile.contains("imdb.de/title/tt")) {
+								// If File contains an imdb url than get it out
+								if (zeile.contains("imdb.com/title/tt"))
+									zeile = zeile.substring(zeile.indexOf("imdb.com/title/tt") + 17);
+								else
+									zeile = zeile.substring(zeile.indexOf("imdb.de/title/tt") + 16);
 
+								// Search for a 6 to 8 digits long number (normally 7 digits is used in the url)
+								Pattern p = Pattern.compile("[\\d]{6,8}");
+								Matcher m = p.matcher(zeile);
+
+								if (m.find()) {
+									br.close();
+									return m.group();
+								}
+							}
+							zeile = br.readLine();
+						}
+						br.close();
+					}
+				}
+			}
+		}
+		catch (FileNotFoundException e) {
+			log.debug("No nfo/txt file found for parsing");
+		}
+		catch (IOException e) {
+			log.debug("I/O error while processing nfo/txt files");
+		}
+
+		return null;
+	}
+	
 	/**
 	 * Gets the IMDB info for movies (multiAdd)
 	 **/
