@@ -433,28 +433,28 @@ public class StringUtil {
 			output += "comonStartRating:" + comonStartRating + "\n";
 			
 			if (editRating < 0.1) {
-				output += "filene hører sammen";
+				output += "files do not pair";
 				return FilenameCloseness.almostidentical;
 			} else if (editRating < 0.3) { 
 				
 				if (subRating < 0.20) {
-					output += "filene har liten felles substring";
+					output += "names have small comon substring";
 				}
 				else
-					output += "filene hører godt sammen";
+					output += "files pair together quite good";
 				
 				return FilenameCloseness.much;
 			}
 			else if (editRating < 0.50 || subRating > 0.30) {
-				output += "filene hører nesten sammen";
+				output += "names almost pair together";
 				return FilenameCloseness.some;
 			}	
 			else if (comonStartRating > 0.3) {
-				output += "felles start";
+				output += "common start";
 				return FilenameCloseness.litte;
 			}
 			else {
-				output += "filene hører IKKE sammen";
+				output += "names do not pair together";
 				return FilenameCloseness.no;
 			}
 
