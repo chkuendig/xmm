@@ -1099,7 +1099,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 				change.addActionListener(this);
 			}
 		}
-
 		else {
 			popupMenu = new JPopupMenu();
 
@@ -1116,9 +1115,10 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			popupMenu.add(new JPopupMenu.Separator());
 
 		ArrayList<String> listcolumns = MovieManager.getIt().getDatabase().getListsColumnNames();
-
-		if (listcolumns.size() > 0 && !(movieList.getSelectionCount() == 1 && selected instanceof ModelEpisode)) {
-
+	
+		
+		if (listcolumns.size() > 0 && !selected.isEpisode()) {
+			
 			menuApplyToLists = new JMenu(Localizer.getString("MovieManagerCommandSelect.movie-list-popup.apply-to-list")); //$NON-NLS-1$
 			menuRemoveFromLists = new JMenu(Localizer.getString("MovieManagerCommandSelect.movie-list-popup.remove-from-list")); //$NON-NLS-1$
 			JMenuItem temp, temp2;
