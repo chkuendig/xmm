@@ -35,8 +35,10 @@ import javax.swing.tree.TreeModel;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
+import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
 import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SimpleMailbox;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
@@ -53,8 +55,25 @@ public class MovieManagerCommandPlay implements ActionListener {
 
 		log.debug("ActionPerformed: " + e.getActionCommand());
 		
+		SimpleMailbox mailbox = new SimpleMailbox();
+		
 		try {
-			execute();
+			execute(mailbox);
+			mailbox.wait_for_message();
+			
+			String msg = mailbox.getMessage();
+			
+			// Not successfull
+			if (!msg.equals("exec done")) {
+				
+				if (msg.equals("Permission denied")) {
+					
+					DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Permission denied", "Insufficient privileges to execute command");
+					GUIUtil.show(alert, true);
+				}
+				
+			}
+			
 		} catch (IOException e1) {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -113,14 +132,25 @@ public class MovieManagerCommandPlay implements ActionListener {
 					log.debug("Cause:" + e.getCause());
 										
 					if (mailbox != null) {
-						if (e.getMessage().indexOf("not found") != -1) {
-							mailbox.setMessage("");
+						try {
+							if (e.getMessage().indexOf("not found") != -1) {
+								mailbox.setMessage("not found");
+							}
+							else if (e.getMessage().indexOf("Permission denied") != -1) {
+								mailbox.setMessage("Permission denied");
+							}
+						} catch (InterruptedException e1) {
+							log.error("Exception: " + e1.getMessage(), e1);
 						}
 					}
 				}
 				finally {
 					if (mailbox != null)
-						mailbox.setMessage("exec done");
+						try {
+							mailbox.setMessage("exec done");
+						} catch (InterruptedException e) {
+							log.error("Exception: " + e.getMessage(), e);
+						}
 				}
 
 				if (p == null)
@@ -175,25 +205,31 @@ public class MovieManagerCommandPlay implements ActionListener {
 	
 				String [] files = fileLocation.split("\\*");
 				
+				FilenameCloseness [] closeness = {FilenameCloseness.almostidentical, FilenameCloseness.much, FilenameCloseness.some, FilenameCloseness.litte};
+				
 				if (MovieManager.getConfig().getExecuteExternalPlayCommand()) {
 					File mediaFile = new File(files[0]);
 					
 					File [] dirFiles = mediaFile.getParentFile().listFiles();
 					
 					if (dirFiles != null) {
-						for (int i = 0; i < dirFiles.length; i++) {
+						for (int u = 0; u < closeness.length; u++) {
 
-							if (dirFiles[i].getName().endsWith(".xmm.sh") || dirFiles[i].getName().endsWith(".xmm.bat")) {
+							for (int i = 0; i < dirFiles.length; i++) {
 
-								FilenameCloseness closeness = StringUtil.compareFileNames(dirFiles[i].getName(), mediaFile.getName());
-					
-								// File names are similar
-							//	if (closeness == FilenameCloseness.much || closeness == FilenameCloseness.almostidentical) {
-									final File dirFile = dirFiles[i];
-									final LaunchPlayer player = new LaunchPlayer(null, dirFile.getAbsolutePath(), mediaFile.getParentFile());
-									player.start();
-									return;
-								//}
+								if ((!SysUtil.isWindows() && dirFiles[i].getName().endsWith(".xmm.sh")) || 
+										(SysUtil.isWindows() && dirFiles[i].getName().endsWith(".xmm.bat"))) {
+
+									FilenameCloseness closeness_result = StringUtil.compareFileNames(dirFiles[i].getName(), mediaFile.getName());
+
+									// File names are similar
+									if (closeness_result == closeness[u]) {
+										final File dirFile = dirFiles[i];
+										final LaunchPlayer player = new LaunchPlayer(null, dirFile.getAbsolutePath(), mediaFile.getParentFile());
+										player.start();
+										return;
+									}
+								}
 							}
 						}
 					}
