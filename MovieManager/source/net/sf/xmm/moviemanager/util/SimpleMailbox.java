@@ -27,6 +27,10 @@ public class SimpleMailbox {
 
 	ArrayList<String> msgs = new ArrayList<String>();
 	
+	synchronized public int getMessageCount()  {
+		return msgs.size();
+	}
+	
 	synchronized public String getMessage() {
 		
 		if (msgs.size() == 0)
@@ -35,7 +39,17 @@ public class SimpleMailbox {
 		return (String) msgs.remove(0);
 	}
 	
-	synchronized public void setMessage(String msg) {
+	synchronized public void setMessage(String msg) throws InterruptedException {
 		msgs.add(msg);
+		notify_message();
 	}
+	
+	synchronized public void wait_for_message() throws InterruptedException {
+		wait();
+	}
+	
+	public void notify_message() throws InterruptedException {
+		notify();
+	}
+	
 }
