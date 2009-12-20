@@ -32,6 +32,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -63,6 +65,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -77,8 +80,8 @@ import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
-import net.sf.xmm.moviemanager.swing.extentions.filetree.AddSelectedFilesEvent;
-import net.sf.xmm.moviemanager.swing.extentions.filetree.AddSelectedFilesEventListener;
+import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTreeEvent;
+import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTreeEventListener;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileNode;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTree;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
@@ -109,14 +112,15 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	public JCheckBox enableExludeParantheses;
 	public JCheckBox enableExludeCDNotation;
 	public JCheckBox enableExludeIntegers;
-	public JCheckBox enableExludeCodecInfo;
+	public JCheckBox enableExludeAllAfterMatchOnUserDefinedInfo;
 	public JCheckBox enableSearchNfoForImdb;
-	public JCheckBox titleOption;
+	public JCheckBox enableUseFolderName;
 	public JCheckBox enableSelectFirstHitMark;
 	public JCheckBox enableExludeUserdefinedInfo;
 	public JCheckBox enableAutomaticCombine;
-	public JCheckBox enableTitleOptionNoCd;
+	public JCheckBox enableUseParentFolderIfCD;
 
+	private JTextArea userDefinedInfo;
 	private JTextArea customExtension;
 	private JCheckBox aviExtension;
 	private JCheckBox divxExtension;
@@ -141,13 +145,15 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	JList filesToAddList;
 	
 	JPanel listPanel;
+	JPanel regularOptionsPanel;
 	
 	FileTree fileTree;
 	
+	JPanel imdbOptionsPanel;
 	JPanel optionsPanel;
 	JPanel all;
 	
-	private HashMap<FileNode, FileNode> nodesInFileLists = new HashMap<FileNode, FileNode>();
+	private HashMap<String, Files> nodesInFileLists = new HashMap<String, Files>();
 		
 	boolean mediaFilesInDatabaseAdded = false;
 	
@@ -207,14 +213,15 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		radioButtonGroup.add(selectIfOnlyOneHitButton);
 
 		
-		JPanel radioButtonPanel = new JPanel(new GridLayout(0, 1));
-		radioButtonPanel.add(askButton);
-		radioButtonPanel.add(selectFirstHitButton);
-		radioButtonPanel.add(selectIfOnlyOneHitButton);
-		radioButtonPanel.add(enableSelectFirstHitMark);
+		JPanel imdbRadioButtonPanel = new JPanel(new GridLayout(0, 1));
+		imdbRadioButtonPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogAddMultipleMovies.panel-hits.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
-		radioButtonPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogAddMultipleMovies.panel-hits.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		imdbRadioButtonPanel.add(askButton);
+		imdbRadioButtonPanel.add(selectFirstHitButton);
+		imdbRadioButtonPanel.add(selectIfOnlyOneHitButton);
+		imdbRadioButtonPanel.add(enableSelectFirstHitMark);
 
+		
 		/*
 		 * Predefined remove values. 
 	  	 * The actual removal of the strings goes on in MovieManagerCommandAddMultipleMovies.java
@@ -231,46 +238,74 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		enableExludeIntegers.setActionCommand("enableExludeInteger"); //$NON-NLS-1$
 		enableExludeIntegers.addActionListener(this);
 		
-		enableExludeCodecInfo = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-predefined-codec-info.text")); //$NON-NLS-1$
-		enableExludeCodecInfo.setActionCommand("enableExludeCodecInfo"); //$NON-NLS-1$
-		enableExludeCodecInfo.setToolTipText(MovieManager.getConfig().getExcludeString()); //$NON-NLS-1$
-		enableExludeCodecInfo.addActionListener(this);
-		
-		enableExludeUserdefinedInfo = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-userdefined-info.text")); //$NON-NLS-1$
+		enableExludeUserdefinedInfo = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-user-defined-info.text")); //$NON-NLS-1$
 		enableExludeUserdefinedInfo.setActionCommand("enableExludeUserdefinedInfo"); //$NON-NLS-1$
-		enableExludeUserdefinedInfo.setToolTipText(MovieManager.getConfig().getExcludeString()); //$NON-NLS-1$
-		enableExludeUserdefinedInfo.addActionListener(this);
+		enableExludeUserdefinedInfo.setToolTipText(MovieManager.getConfig().getMultiAddExcludeUserDefinedString());
+		enableExludeUserdefinedInfo.addItemListener(new ItemListener() {
 		
-		JPanel removeCheckBoxPanel = new JPanel(new GridLayout(0, 1));
-		removeCheckBoxPanel.add(enableExludeParantheses);
-		removeCheckBoxPanel.add(enableExludeCDNotation);
-		removeCheckBoxPanel.add(enableExludeIntegers);
-		removeCheckBoxPanel.add(enableExludeCodecInfo);
-		removeCheckBoxPanel.add(enableExludeUserdefinedInfo);
-
-		removeCheckBoxPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogAddMultipleMovies.panel-clean-string.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
-
+			public void itemStateChanged(ItemEvent e) {
+				enableExludeAllAfterMatchOnUserDefinedInfo.setEnabled(enableExludeUserdefinedInfo.isSelected());
+				userDefinedInfo.setEnabled(enableExludeUserdefinedInfo.isSelected());
+			}
+		});
 		
-		titleOption = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming.text")); //$NON-NLS-1$
-		titleOption.setActionCommand("enableFolderTitle"); //$NON-NLS-1$
-		titleOption.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-tooltip")); //$NON-NLS-1$
-		titleOption.addActionListener(this);
+		// yes that is a ridiculously long variable name
+		enableExludeAllAfterMatchOnUserDefinedInfo = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-everything-after-match-on-user-defined-info.text")); //$NON-NLS-1$
+		enableExludeAllAfterMatchOnUserDefinedInfo.setActionCommand("enableExludeUserdefinedInfo"); //$NON-NLS-1$
+		enableExludeAllAfterMatchOnUserDefinedInfo.setToolTipText(MovieManager.getConfig().getMultiAddExcludeUserDefinedString()); //$NON-NLS-1$
+		enableExludeAllAfterMatchOnUserDefinedInfo.setEnabled(false);
+		enableExludeAllAfterMatchOnUserDefinedInfo.addItemListener(new ItemListener() {
 	
-		enableTitleOptionNoCd = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-nocd.text")); //$NON-NLS-1$
-		enableTitleOptionNoCd.setActionCommand("enableTitleOptionNoCd"); //$NON-NLS-1$
-		enableTitleOptionNoCd.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-nocd-tooltip")); //$NON-NLS-1$
-		enableTitleOptionNoCd.addActionListener(this);
+			public void itemStateChanged(ItemEvent e) {
+				if (enableExludeAllAfterMatchOnUserDefinedInfo.isSelected())
+					enableExludeUserdefinedInfo.setSelected(true);
+			}
+		});
+		
+		userDefinedInfo = new JTextArea();
+		userDefinedInfo.setBorder(BorderFactory.createEtchedBorder());
+		userDefinedInfo.setEnabled(false);
+		
+		if (MovieManager.getConfig().getMultiAddExcludeUserDefinedString().equals(""))
+			userDefinedInfo.setText("divx,xvid,dvdrip,ac3,mp3,uncut,recut,dl,bluray,x264,720p,1080p");
+		else
+			userDefinedInfo.setText(MovieManager.getConfig().getMultiAddExcludeUserDefinedString());
+		
+		
+		JPanel cleanStringPanel = new JPanel(new GridLayout(0, 1));
+		cleanStringPanel.add(enableExludeParantheses);
+		cleanStringPanel.add(enableExludeCDNotation);
+		cleanStringPanel.add(enableExludeIntegers);
+		cleanStringPanel.add(enableExludeUserdefinedInfo);
+		cleanStringPanel.add(enableExludeAllAfterMatchOnUserDefinedInfo);
+		cleanStringPanel.add(userDefinedInfo);
+				
+		cleanStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogAddMultipleMovies.panel-clean-string.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+
+		
+		enableUseFolderName = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming.text")); //$NON-NLS-1$
+		enableUseFolderName.setActionCommand("enableFolderTitle"); //$NON-NLS-1$
+		enableUseFolderName.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-tooltip")); //$NON-NLS-1$
+		enableUseFolderName.addItemListener(new ItemListener() {
+			
+			public void itemStateChanged(ItemEvent e) {
+				enableUseParentFolderIfCD.setEnabled(enableUseParentFolderIfCD.isSelected());
+			}
+		});
+	
+		enableUseParentFolderIfCD = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-nocd.text")); //$NON-NLS-1$
+		enableUseParentFolderIfCD.setActionCommand("enableTitleOptionNoCd"); //$NON-NLS-1$
+		enableUseParentFolderIfCD.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-nocd-tooltip")); //$NON-NLS-1$
 		
 		enableSearchNfoForImdb = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Nfo-scanning.text")); //$NON-NLS-1$
-		enableSearchNfoForImdb.setActionCommand("enableTitleOptionNoCd"); //$NON-NLS-1$
+		enableSearchNfoForImdb.setActionCommand("enableSearchNfoForImdb"); //$NON-NLS-1$
 		enableSearchNfoForImdb.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Nfo-scanning-tooltip")); //$NON-NLS-1$
-		enableSearchNfoForImdb.addActionListener(this);
 		
 		JPanel titleOptionPanel = new JPanel(new GridLayout(0, 1));
 		titleOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Title Options")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
-		titleOptionPanel.add(titleOption);
-		titleOptionPanel.add(enableTitleOptionNoCd);
+		titleOptionPanel.add(enableUseFolderName);
+		titleOptionPanel.add(enableUseParentFolderIfCD);
 		titleOptionPanel.add(enableSearchNfoForImdb);
 			
 		
@@ -303,23 +338,19 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		validExtension.add(mp4Extension);
 		
 		customExtension = new JTextArea();
-		customExtension.setBorder(BorderFactory.createEtchedBorder()); 
+		customExtension.setBorder(BorderFactory.createEtchedBorder());
 
 		customExtension.addCaretListener(new CaretListener() {
 			public void caretUpdate(CaretEvent e) {
 				updateExtensionoOnTree();
 			}
 		});
-		
-		
-		
+				
 		Font font = customExtension.getFont();
 		customExtension.setFont(new Font(font.getFontName(), font.getStyle(), 15));
 		
 		JPanel extensionPanel = new JPanel(new BorderLayout());
-		extensionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Valid extensions")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
-
-		
+		extensionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "File extensions")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 		extensionPanel.add(validExtension, BorderLayout.NORTH);
 		extensionPanel.add(customExtension, BorderLayout.CENTER);
 		
@@ -329,8 +360,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 		listPanel = makeListPanel();
 		
-		buttonUpdateFileList = new JButton("Update file list"); //$NON-NLS-1$
-		//buttonUpdateFileList.setToolTipText(Localizer.getString("DialogAddMultipleMovies.button-ok.tooltip")); //$NON-NLS-1$
+		buttonUpdateFileList = new JButton("Find matching files"); //$NON-NLS-1$
 		buttonUpdateFileList.setActionCommand("DialogAddMultipleMovies - Update file list"); //$NON-NLS-1$
 		buttonUpdateFileList.addActionListener(this);
 
@@ -350,28 +380,67 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		buttonPanel.add(buttonAddMovies);
 		buttonPanel.add(buttonCancel);
 
-		optionsPanel = new JPanel();
-		optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
-		optionsPanel.add(radioButtonPanel);
-		optionsPanel.add(removeCheckBoxPanel);
-		optionsPanel.add(titleOptionPanel);
+		JTabbedPane tabbedPane = new JTabbedPane();
 		
-		optionsPanel.add(extensionPanel);
-		optionsPanel.add(listPanel);
-		optionsPanel.add(buttonPanel);
-
+		imdbOptionsPanel = new JPanel();
+		imdbOptionsPanel.setLayout(new BoxLayout(imdbOptionsPanel, BoxLayout.Y_AXIS));
+		imdbOptionsPanel.add(imdbRadioButtonPanel);
+		imdbOptionsPanel.add(cleanStringPanel);
+		
+		regularOptionsPanel = new JPanel();
+		regularOptionsPanel.setLayout(new BoxLayout(regularOptionsPanel, BoxLayout.Y_AXIS));
+		regularOptionsPanel.add(titleOptionPanel);
+		regularOptionsPanel.add(extensionPanel);
+		regularOptionsPanel.add(listPanel);
+		
+		tabbedPane.add("IMDb settings", imdbOptionsPanel);
+		tabbedPane.add("Options", regularOptionsPanel);
+		
+		optionsPanel = new JPanel();
+		optionsPanel.setLayout(new BorderLayout());
+		optionsPanel.add(tabbedPane, BorderLayout.CENTER);
+		optionsPanel.add(buttonPanel, BorderLayout.SOUTH);
+		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
 		fileTree = new FileTree();
 		
-		fileTree.eventHandler.addAddSelectedFilesEventListener(new AddSelectedFilesEventListener() {
-			public void addSelectedFilesEventOccurred(AddSelectedFilesEvent evt) {
+		fileTree.eventHandler.addFileTreeEventListener(new FileTreeEventListener() {
+			
+			/**
+			 * Removes any directories in the list, and calls addFilesToAddToList
+			 */
+			public void addSelectedFilesEventOccurred(FileTreeEvent evt) {
 				ArrayList<FileNode> files =  fileTree.getSelectedFiles();
+				
+				// Remove directories
+				for (int i = 0; i < files.size(); i++) {
+					if (files.get(i).isDirectory()) {
+						files.remove(files.get(i));
+						i--;
+					}
+				}
 				addFilesToAddToList(files);
+			}
+
+			public void rootDeviceAddedEventOccurred(FileTreeEvent evt) {
+				File f = evt.getFile();
+				MovieManager.getConfig().addMultiAddRootDevice(f.getAbsolutePath());
+			}
+
+			public void rootDeviceRemovedEventOccurred(FileTreeEvent evt) {
+				File f = evt.getFile();
+				MovieManager.getConfig().removeMultiAddRootDevice(f.getAbsolutePath());
 			}
 		});
 		
-				
+		// Adding previously defined root devices
+		String [] rootDevices = MovieManager.getConfig().getMultiAddRootDevices();
+		for (String device : rootDevices) {
+			fileTree.addRootDevice(new File(device));		
+		}
+		
+		
 // -------Include/Exclude regular expression/string------------
 		 	
 		
@@ -398,7 +467,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		});
 			
 		excludeStringTextField = new JTextField(27);
-		// DocumentRegExp makes sure illigal characters can't be entered.
+		// DocumentRegExp makes sure illegal characters can't be entered.
 		excludeStringTextField.setDocument(new DocumentRegExp("[^(){}.,=+$\\x5B\\x5D]*", 200)); //$NON-NLS-1$
 		
 		excludeStringTextField.addKeyListener(new KeyListener() {
@@ -414,7 +483,6 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				else
 					fileTree.setStringPattern(null);
 			}
-
 		});
 
 		
@@ -440,7 +508,6 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 						fileTree.setRegexPattern(regexTextField.getText());
 					else
 						fileTree.setRegexPattern(null);
-					
 				}
 				else {
 					regexTextField.setEnabled(false);
@@ -448,9 +515,6 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				}
 			}
 		});
-		
-		
-		
 		
 		regexNegate = new JCheckBox("Negate");
 		regexNegate.addActionListener(new ActionListener() {
@@ -486,7 +550,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		JPanel includeOrExcludeStringsAndRegex = new JPanel();
 		includeOrExcludeStringsAndRegex.setLayout(new TableLayout(size));
 		
-		includeOrExcludeStringsAndRegex.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "String Matching on filename"), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		includeOrExcludeStringsAndRegex.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "String matching on filename"), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 		
 		includeOrExcludeStringsAndRegex.add(enableIncludeOrExludeString, "0, 0");
 		includeOrExcludeStringsAndRegex.add(excludeStringTextField, 		"1, 0");
@@ -496,7 +560,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		includeOrExcludeStringsAndRegex.add(regexTextField,   "1, 1");
 		includeOrExcludeStringsAndRegex.add(regexNegate,  "2, 1");
 
-		filterOutDuplicates = new JCheckBox("Filter out media files already in database"); 
+		filterOutDuplicates = new JCheckBox("Ignore media files already in database"); 
 		filterOutDuplicates.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setFilterOutDuplicates(filterOutDuplicates.isSelected());
@@ -517,7 +581,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		duplicatesPanel.add(filterOutDuplicatesEntireFilePath);
 		
 		JPanel filterPanel = new JPanel();
-		filterPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Filter files"), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		filterPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(4,4,4,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Filter files"), BorderFactory.createEmptyBorder(4,4,4,4)))); //$NON-NLS-1$
 				
 		filterPanel.setLayout(new BorderLayout());
 		filterPanel.add(duplicatesPanel, BorderLayout.NORTH);
@@ -558,11 +622,10 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		mediaFilesToAddPanel.add(new JLabel("media files to add list"));
 		
 		JSplitPane addMultipleMoviesSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, mainTop, createMediaFilesListPanel());
-		
+				
 		all = new JPanel();
 		all.setLayout(new BorderLayout());
 		
-		//all.add(optionsPanel, BorderLayout.WEST);
 		all.add(addMultipleMoviesSplitPane, BorderLayout.CENTER);
 		
 		
@@ -572,8 +635,10 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 		// Reduce height by 100
 		Dimension dim = getSize();
-		
+		dim.height = dim.height - 100;
 		setSize(dim);
+		
+		addMultipleMoviesSplitPane.setDividerLocation(0.60);
 		
 		setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
 				(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
@@ -622,7 +687,6 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	JPanel makeListPanel() {
 
 		JPanel listPanel = new JPanel();
-		//listPanel.setLayout(new BorderLayout());
 		listPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.getString("DialogAddMultipleMovies.panel-add-to-list.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
 		ArrayList<String> columnListNames = MovieManager.getIt().getDatabase().getListsColumnNames();
@@ -693,12 +757,12 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		}
 
 
-		titleOption.setSelected(config.getMultiAddTitleOption());
-		enableExludeCodecInfo.setSelected(config.getMultiAddEnableExludeCodecInfo());
+		enableUseFolderName.setSelected(config.getMultiAddTitleOption());
+		enableExludeAllAfterMatchOnUserDefinedInfo.setSelected(config.getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo());
 		enableExludeIntegers.setSelected(config.getMultiAddEnableExludeIntegers());
 		enableExludeCDNotation.setSelected(config.getMultiAddEnableExludeCDNotation());
 		enableExludeParantheses.setSelected(config.getMultiAddEnableExludeParantheses());
-		enableTitleOptionNoCd.setSelected(config.getMultiAddTitleOptionNoCd());
+		enableUseParentFolderIfCD.setSelected(config.getMultiAddTitleOptionNoCd());
 		enableSearchNfoForImdb.setSelected(config.getMultiAddSearchNfoForImdb());
 		enableSelectFirstHitMark.setSelected(config.getMultiAddSelectFirstHitMark());
 		enableExludeUserdefinedInfo.setSelected(config.getMultiAddEnableExludeUserdefinedInfo());
@@ -804,13 +868,15 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		config.setMultiAddEnableExludeParantheses(enableExludeParantheses.isSelected());
 		config.setMultiAddEnableExludeCDNotation(enableExludeCDNotation.isSelected());
 		config.setMultiAddEnableExludeIntegers(enableExludeIntegers.isSelected());
-		config.setMultiAddEnableExludeCodecInfo(enableExludeCodecInfo.isSelected());
-		config.setMultiAddTitleOption(titleOption.isSelected());
-		config.setMultiAddTitleOptionNoCd(enableTitleOptionNoCd.isSelected());
+		config.setMultiAddTitleOption(enableUseFolderName.isSelected());
+		config.setMultiAddTitleOptionNoCd(enableUseParentFolderIfCD.isSelected());
 		config.setMultiAddSearchNfoForImdb(enableSearchNfoForImdb.isSelected());
 		config.setMultiAddSelectFirstHitMark(enableSelectFirstHitMark.isSelected());
 		config.setMultiAddEnableExludeUserdefinedInfo(enableExludeUserdefinedInfo.isSelected());
-	
+		config.setMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo(enableExludeAllAfterMatchOnUserDefinedInfo.isSelected());
+		
+		config.setMultiAddExcludeUserDefinedString(userDefinedInfo.getText());
+		
 		// Regex string
 		config.setMultiAddRegexStringEnabled(enabledRegEx.isSelected());
 		config.setMultiAddRegexString(regexTextField.getText());
@@ -850,33 +916,51 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 		for (int i = 0; i < files.size(); i++) {
 
-			if (!nodesInFileLists.containsKey(files.get(i))) {
-				nodesInFileLists.put(files.get(i), files.get(i));
-				model.addElement(new Files(files.get(i).getFile()));
+			System.err.println("containsKey:" + files.get(i).getFile().getAbsolutePath());
+			if (!nodesInFileLists.containsKey(files.get(i).getFile().getAbsolutePath())) {
+				Files newFile = new Files(files.get(i).getFile());
+				nodesInFileLists.put(files.get(i).getFile().getAbsolutePath(), newFile);
+				model.addElement(newFile);
 			}
 		}
 	}
 	
-	
+	/**
+	 * Adds the files in the arraylist to the list of matching media files
+	 * @param files
+	 */
 	void addFilesToFileList(ArrayList<FileNode> files) {
 		
 		DefaultListModel model = (DefaultListModel) mediaFileList.getModel();
 		
+		model.clear();
+		
 		 for (int i = 0; i < files.size(); i++) {
-			 
-			 if (!nodesInFileLists.containsKey(files.get(i))) {
-				 nodesInFileLists.put(files.get(i), files.get(i));
-				 
-				 File f = ((FileNode) files.get(i)).getFile();
-				 model.addElement(new Files(f));
-			 }
+			 File f = ((FileNode) files.get(i)).getFile();
+			 model.addElement(new Files(f));
 		 }
 	}		
 	
-
+	void addSelectedMediaFilesToAddList() {
+		
+		DefaultListModel mediaFilelistModel = (DefaultListModel) mediaFileList.getModel();
+		DefaultListModel fileToAddListModel = (DefaultListModel) filesToAddList.getModel();
+				
+		Object[] selectedValues = mediaFileList.getSelectedValues(); 
+		
+		 for (int i = 0; i < selectedValues.length; i++) {
+			 mediaFilelistModel.removeElement(selectedValues[i]);
+		 
+			 if (!nodesInFileLists.containsKey(((Files) selectedValues[i]).getFile().getAbsolutePath())) {
+				 fileToAddListModel.addElement(selectedValues[i]);
+				 nodesInFileLists.put(((Files) selectedValues[i]).getFile().getAbsolutePath(), (Files) selectedValues[i]);
+			 }
+		 }
+		 
+		 calculateSimilarity(fileToAddListModel);
+	}
 	
-	
-	/*Returns the user defined exlude string*/
+	/* Returns the user defined exclude string */
 	public String getMultiAddExcludeString() {
 		return excludeStringTextField.getText();
 	}
@@ -889,7 +973,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		return regularStringNegate.isSelected();
 	}
 	
-	/*Returns the user defined exlude string*/
+	/* Returns the user defined exclude regex */
 	public String getMultiAddRegexString() {
 		return regexTextField.getText();
 	}
@@ -902,8 +986,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		return regexNegate.isSelected();
 	}
 	
-	
-	/*returns the value of the multiAddSelectOption variable.( values 0-2)*/
+
+	/* returns the value of the multiAddSelectOption variable.( values 0-2) */
 	public ImdbImportOption getMultiAddSelectOption() {
 		return multiAddSelectOption;
 	}
@@ -919,10 +1003,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				listModel.addElement("List must contain movies to add");
 				addListMustContainValidItemsAlert = true;
 			}
-			
 			return false;
 		}
-		
 		return true;
 	}
 	
@@ -944,11 +1026,13 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				DialogAlert alert;
 				if (fileTree.getValidExtension().size() == 0) {
 					alert = new DialogAlert(this, "No extensions selected", "<html>You must specify valid file extensions in the options menu.</html>", true);
+					GUIUtil.showAndWait(alert, true);
 				}
-				else
+				else if (fileTree.getChosenFoldersCount() == 0) {
 					alert = new DialogAlert(this, "No files match", "<html>Right click the file tree and select an option<br> for the directories to be searched through.</html>", true);
+					GUIUtil.showAndWait(alert, true);
+				}
 				
-				GUIUtil.showAndWait(alert, true);
 			}
 			else
 				addFilesToFileList(files);
@@ -960,24 +1044,17 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			dispose();
 		}
 
-		if (event.getSource().equals(buttonAddMovies)) {
-			log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-		//	executeSave();
-			// Another listener on this button handles the rest
-		}
-
 		if (event.getSource().equals(buttonAddList)) {
 			
 			MovieManagerCommandLists.execute(this);
-
-			//optionsPanel.remove(5);
-			
-			optionsPanel.remove(listPanel);
-			listPanel = makeListPanel();
-			optionsPanel.add(listPanel, 4);
-			
-			pack();
-			GUIUtil.show(this, true);
+			SwingUtilities.invokeLater(new Runnable() {
+				/* Must do changed on EDT to be safe */
+				public void run() {
+					regularOptionsPanel.remove(listPanel);
+					listPanel = makeListPanel();
+					regularOptionsPanel.add(listPanel);
+				}
+			});
 		}
 			
 		if (event.getSource().equals(enableAddMoviesToList)) {
@@ -1000,22 +1077,10 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	}
 	
 	
-	void addSelectedMediaFilesToAddList() {
-		
-		DefaultListModel mediaFilelistModel = (DefaultListModel) mediaFileList.getModel();
-		DefaultListModel fileToAddListModel = (DefaultListModel) filesToAddList.getModel();
-				
-		Object[] selectedValues = mediaFileList.getSelectedValues(); 
-		
-		 for (int i = 0; i < selectedValues.length; i++) {
-			 fileToAddListModel.addElement(selectedValues[i]);
-			 mediaFilelistModel.removeElement(selectedValues[i]);
-		 }
-		 
-		 calculateSimilarity(fileToAddListModel);
-		 
-	}
-	
+	/**
+	 * Used in the list of media files to add. 
+	 * Files can contain multiple filenames when two or more files are combined in the list
+	 */
 	public class Files {
 		
 		File file = null;
@@ -1069,6 +1134,16 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			return str; 
 		}
 		
+		public String toToolTipText() {
+			
+			String str = "<html> Files:<br>" + file.getName();
+			
+			for (Files f : addedFiles) {
+				str += "<br>" + f.getName();
+			}
+			str += "</html>";
+			return str; 
+		}
 	}
 	
 	int colorIndex = 0;
@@ -1159,9 +1234,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		JPanel mediaFilesListPanel = new JPanel();
 		mediaFilesListPanel.setLayout(new BorderLayout());
 	
-		//mediaFileList.addComponentListener(this);
 		mediaFilesListPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,5,0,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-				"Media files", //$NON-NLS-1$
+				"Matching media files", //$NON-NLS-1$
 				TitledBorder.DEFAULT_JUSTIFICATION,
 				TitledBorder.DEFAULT_POSITION,
 				new Font(mediaFilesListPanel.getFont().getName(),Font.PLAIN, 12)),
@@ -1183,11 +1257,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		clearFileList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DefaultListModel model = (DefaultListModel) mediaFileList.getModel();
-				Object [] elems = model.toArray();
+				//Object [] elems = model.toArray();
 				model.removeAllElements();
-				
-				for (int i = 0; i < elems.length; i++)
-					nodesInFileLists.remove(elems[i]);
 			}
 		});
 
@@ -1198,7 +1269,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				model.removeAllElements();
 				
 				for (int i = 0; i < elems.length; i++)
-					nodesInFileLists.remove(elems[i]);
+					nodesInFileLists.remove(((Files)elems[i]).getFile().getAbsolutePath());
 			}
 		});
 
@@ -1236,13 +1307,32 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		JPanel filesToAddListPanel = new JPanel();
 		filesToAddListPanel.setLayout(new BorderLayout());
 		filesToAddListPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,5,0,5), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-				"Media files to be added", //$NON-NLS-1$
+				"Media files to be added to database", //$NON-NLS-1$
 				TitledBorder.DEFAULT_JUSTIFICATION,
 				TitledBorder.DEFAULT_POSITION,
 				new Font(filesToAddListPanel.getFont().getName(),Font.PLAIN, 12)),
 				BorderFactory.createEmptyBorder(1,5,3,5))));
 
-		filesToAddList = new JList(); //$NON-NLS-1$
+		filesToAddList = new JList() {
+			
+			public String getToolTipText(MouseEvent evt) {
+				int index = locationToIndex(evt.getPoint());
+				
+				if (index == -1)
+					return null;
+				
+				Object item = getModel().getElementAt(index);
+
+				if (item instanceof Files) {
+					System.err.println("item:" + item);
+					return ((Files) item).toToolTipText();
+				}
+				
+				// Return the tool tip text
+				return null;
+			}
+		};
+        
 		filesToAddList.setCellRenderer(new DefaultListCellRenderer() {
 
 			public Component getListCellRendererComponent(JList list, 
