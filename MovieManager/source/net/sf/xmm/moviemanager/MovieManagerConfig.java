@@ -1582,15 +1582,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	
 		
 	public void addMultiAddRootDevice(String filePath) {
-		
-		System.err.println("addMultiAddRootDevice:" + filePath);
-		
+				
 		if (!multiaddRootDevices.contains(filePath))
 			multiaddRootDevices.add(filePath);
 	}
 	
 	public boolean removeMultiAddRootDevice(String filePath) {
-		System.err.println("removeMultiAddRootDevice:" + filePath);
 		return multiaddRootDevices.remove(filePath);
 	}
 	
@@ -1614,12 +1611,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void parseMultiAddRootDevices(String str) {
 		
 		String [] split = str.split("\\|");
-		
-		System.err.println("devices:" + str);
-		
-		for (String elem : split) {
-			System.err.println("elem:" + elem);
 				
+		for (String elem : split) {				
 			if (!elem.equals(""))
 				addMultiAddRootDevice(elem);
 		}		
