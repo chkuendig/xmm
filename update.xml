@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updatelist application="MeD's Movie Manager" baseurl="http://xmm.sf.net/updates/" icon="../icon.png">
+
+    <architect tag="any" os="" arch="">
+        <launcher exec="${JAVABIN}">
+            <argument value="-jar"/>
+            <argument value="${APPHOME}/Jubler.jar"/>
+        </launcher>
+    </architect>
+    
+    <architect tag="win32" os="Windows" arch="x86">
+        <launcher exec="${APPHOME}\MovieManager.exe"/>
+    </architect>
+
+    <architect tag="linux" os="Linux" arch="x86">
+        <launcher exec="${JAVABIN}">
+            <argument value="-jar"/>
+            <argument value="${APPHOME}/MovieManager.jar"/>
+        </launcher>
+    </architect>
+
+    <version release="15" version="2.8.9">
+        <description>Some more updates</description>
+        <arch name="all" gui="true">
+            <file name="IMDb.jar" sourcedir="imdb/1.0.1/" destdir="${APPHOME}/lib/" size="4298" compress="none" />
+        </arch>
+    </version>
+
+    <version release="1" version="2.8.8">
+        <description>Initial release using jupidator update library</description>
+    </version>
+    
+</updatelist>
