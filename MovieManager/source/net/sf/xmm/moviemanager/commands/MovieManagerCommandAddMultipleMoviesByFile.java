@@ -59,13 +59,13 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	boolean enableExludeParantheses = false;
 	boolean enableExludeCDNotations = false;
 	boolean enableExludeIntegers = false;
-	boolean enableExludeCodecInfo = false;
+	boolean enableExludeAllAfterMatchOnUserDefinedInfo = false;
 	boolean enableSearchNfoForImdb = false;
 	boolean searchInSubdirectories = false;
 	boolean addMovieToList = false;
-	boolean titleOption = false;
+	boolean enableUseFolderName = false;
 	boolean enableExludeUserdefinedInfo = false;
-	boolean enableTitleOptionNoCd = false;
+	boolean enableUseParentFolderIfCD = false;
 
 	String addToThisList = null;
 
@@ -116,11 +116,11 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		enableExludeParantheses = damm.enableExludeParantheses.isSelected();
 		enableExludeCDNotations = damm.enableExludeCDNotation.isSelected();
 		enableExludeIntegers = damm.enableExludeIntegers.isSelected();
-		enableExludeCodecInfo = damm.enableExludeCodecInfo.isSelected();
-		titleOption = damm.titleOption.isSelected();
+		enableUseFolderName = damm.enableUseFolderName.isSelected();
 		enableSearchNfoForImdb = damm.enableSearchNfoForImdb.isSelected();
 		enableExludeUserdefinedInfo = damm.enableExludeUserdefinedInfo.isSelected();
-		enableTitleOptionNoCd = damm.enableTitleOptionNoCd.isSelected();
+		enableExludeAllAfterMatchOnUserDefinedInfo = damm.enableExludeAllAfterMatchOnUserDefinedInfo.isSelected();
+		enableUseParentFolderIfCD = damm.enableUseParentFolderIfCD.isSelected();
 			
 		if (damm.enableAddMoviesToList != null && damm.enableAddMoviesToList.isSelected()) {
 			addMovieToList = true;
@@ -179,7 +179,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 			searchString = searchTitle;/*Used to search on imdb*/
 
 			/* Sets up search string as Folder name or file name */
-			if (titleOption) {
+			if (enableUseFolderName) {
 				path = tempFile[0].getPath();
 				int slash = path.lastIndexOf(File.separator);
 
@@ -195,7 +195,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 					}
 					else {
 						String temp = path.substring(slash+1);
-						if (enableTitleOptionNoCd && temp.toLowerCase().startsWith("cd")) {
+						if (enableUseParentFolderIfCD && temp.toLowerCase().startsWith("cd")) {
 							// IF last directory is CD* than the name is in the directory above.
 							path = path.substring(0, slash);
 							slash = path.lastIndexOf(File.separator);
@@ -212,17 +212,23 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 			if (enableExludeParantheses)
 				searchString = StringUtil.performExcludeParantheses(searchString, true);
 
-			if (enableExludeUserdefinedInfo) {
+			if (enableExludeAllAfterMatchOnUserDefinedInfo) {
 				String info = MovieManager.getConfig().getMultiAddExcludeUserDefinedString();
+				
 				if (!info.equals("")) {
 					Pattern p = Pattern.compile("[,]");
 					String[] excludeStrings = p.split(info);
 					searchString = StringUtil.performExcludeUserdefinedInfo(searchString, excludeStrings);
 				}
 			}
-			else if (enableExludeCodecInfo) {
-				String [] excludeStrings = new String[] {"divx", "dvdivx", "xvidvd", "xvid", "dvdrip", "ac3", "bivx", "mp3"};
-				searchString = StringUtil.performExcludeCodecInfo(searchString, excludeStrings);
+			else if (enableExludeUserdefinedInfo) {
+				String info = MovieManager.getConfig().getMultiAddExcludeUserDefinedString();
+				
+				if (!info.equals("")) {
+					Pattern p = Pattern.compile("[,]");
+					String[] excludeStrings = p.split(info);
+					searchString = StringUtil.performExcludeCodecInfo(searchString, excludeStrings);
+				}
 			}
 			
 			if (enableExludeCDNotations)
