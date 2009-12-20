@@ -877,6 +877,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		config.setMultiAddEnableExludeIntegers(enableExludeIntegers.isSelected());
 		config.setMultiAddTitleOption(enableUseFolderName.isSelected());
 		config.setMultiAddTitleOptionNoCd(enableUseParentFolderIfCD.isSelected());
+		config.setMultiAddEnableAutomaticCombine(enableAutomaticCombine.isSelected());
 		config.setMultiAddSearchNfoForImdb(enableSearchNfoForImdb.isSelected());
 		config.setMultiAddSelectFirstHitMark(enableSelectFirstHitMark.isSelected());
 		config.setMultiAddEnableExludeUserdefinedInfo(enableExludeUserdefinedInfo.isSelected());

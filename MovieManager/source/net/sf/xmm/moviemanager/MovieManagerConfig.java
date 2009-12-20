@@ -2609,6 +2609,34 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 			
 			
+			value = (String) config.get("multiAddSelectFirstHitMark:");
+			
+			if (value != null) {
+				setMultiAddSelectFirstHitMark(new Boolean(value).booleanValue());
+			}
+			
+			
+			value = (String) config.get("multiAddEnableAutomaticCombine:");
+			
+			if (value != null) {
+				setMultiAddEnableAutomaticCombine(new Boolean(value).booleanValue());
+			}
+			
+			
+			value = (String) config.get("multiAddTitleOptionNoCd:");
+			
+			if (value != null) {
+				setMultiAddTitleOptionNoCd(new Boolean(value).booleanValue());
+			}
+			
+			
+			value = (String) config.get("multiAddSearchNfoForImdb:");
+			
+			if (value != null) {
+				setMultiAddSearchNfoForImdb(new Boolean(value).booleanValue());
+			}
+			
+			
 			value = (String) config.get("multiAddEnableExludeAllAfterMatchOnUserDefinedInfo:");
 
 			if (value != null) {
@@ -3467,13 +3495,25 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("multiAddEnableExludeUserdefinedInfo:" + getMultiAddEnableExludeUserdefinedInfo());
 		 
 		 settings.append(lineSeparator);
+		 settings.append("multiAddSelectFirstHitMark:" + getMultiAddSelectFirstHitMark());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddEnableAutomaticCombine:" + getMultiAddEnableAutomaticCombine());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddTitleOption:" + getMultiAddTitleOption());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddTitleOptionNoCd:" + getMultiAddTitleOptionNoCd());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddSearchNfoForImdb:" + getMultiAddSearchNfoForImdb());
+		 
+		 settings.append(lineSeparator);
 		 settings.append("multiAddEnableExludeAllAfterMatchOnUserDefinedInfo:" + getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo());
 		 
 		 settings.append(lineSeparator);
 		 settings.append("multiAddEnableSearchInSubdirectories:" + getMultiAddEnableSearchInSubdirectories());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddTitleOption:" + getMultiAddEnableSearchInSubdirectories());
 		 
 		 settings.append(lineSeparator);
 		 settings.append("multiAddExcludeUserDefinedString:" + getMultiAddExcludeUserDefinedString());
