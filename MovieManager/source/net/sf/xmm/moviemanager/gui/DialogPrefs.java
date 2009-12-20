@@ -205,6 +205,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	private JRadioButton browserOptionFirefox;
 	private JRadioButton browserOptionNetscape;
 	private JRadioButton browserOptionSafari;
+	//private JRadioButton browserOptionGoogleChrome;
 	private JRadioButton browserOptionIE;
 
 
@@ -882,6 +883,36 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		miscCheckBoxes.add(enablePlayButton);
 		
+		// Lists
+		JPanel listsPanel = new JPanel();
+		listsPanel.setLayout(new BoxLayout(listsPanel, BoxLayout.Y_AXIS));
+		listsPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,0,3,0), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Lists"), BorderFactory.createEmptyBorder(5,5,5,5)))); //$NON-NLS-1$
+		
+		
+		/* Enable load last used list */
+		enableLoadLastUsedList = new JCheckBox(Localizer.getString("dialogprefs.panel.movie-list.load-last-used-list")); //$NON-NLS-1$
+		enableLoadLastUsedList.setActionCommand("Enable lastLoadedList"); //$NON-NLS-1$
+
+		if (config.getLoadLastUsedListAtStartup())
+			enableLoadLastUsedList.setSelected(true);
+
+		
+		if (!MovieManager.getConfig().getInternalConfig().getDisableLoadLastUsedList())
+			listsPanel.add(enableLoadLastUsedList);
+		//	movieListPanel.add(enableLoadLastUsedList);
+
+		
+		/* Enable load last used list */
+		enableAddNewMoviesToCurrentLists = new JCheckBox("Add new movies to the currently selected lists"); 
+		enableAddNewMoviesToCurrentLists.setActionCommand("Enable Add new movies to current lists"); //$NON-NLS-1$
+
+		if (config.getAddNewMoviesToCurrentLists())
+			enableAddNewMoviesToCurrentLists.setSelected(true);
+		
+		listsPanel.add(enableAddNewMoviesToCurrentLists);
+		//movieListPanel.add(enableAddNewMoviesToCurrentLists);
+		miscCheckBoxes.add(listsPanel);
+		
 		// Only if MySQL database
 		if (MovieManager.getIt().getDatabase() != null && MovieManager.getIt().getDatabase().isMySQL()) {
 			checkEnableMySQLSocketTimeout = new JCheckBox("<html>Enable MySQL Socket timeout after 15 minutes <br>(requires reconnect to database to take effect)</html>"); //$NON-NLS-1$
@@ -979,26 +1010,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		movieListPanel.add(enableRightclickByCtrl);
 
-		/* Enable load last used list */
-		enableLoadLastUsedList = new JCheckBox(Localizer.getString("dialogprefs.panel.movie-list.load-last-used-list")); //$NON-NLS-1$
-		enableLoadLastUsedList.setActionCommand("Enable lastLoadedList"); //$NON-NLS-1$
-
-		if (config.getLoadLastUsedListAtStartup())
-			enableLoadLastUsedList.setSelected(true);
-
-		
-		if (!MovieManager.getConfig().getInternalConfig().getDisableLoadLastUsedList())
-			movieListPanel.add(enableLoadLastUsedList);
-
-		
-		/* Enable load last used list */
-		enableAddNewMoviesToCurrentLists = new JCheckBox("Add new movies to the currently selected lists"); 
-		enableAddNewMoviesToCurrentLists.setActionCommand("Enable Add new movies to current lists"); //$NON-NLS-1$
-
-		if (config.getAddNewMoviesToCurrentLists())
-			enableAddNewMoviesToCurrentLists.setSelected(true);
-		
-		movieListPanel.add(enableAddNewMoviesToCurrentLists);
 		
 		/* Enable Use JTree Icons */
 		enableUseJTreeIcons = new JCheckBox(Localizer.getString("dialogprefs.panel.movie-list.enable-icons-in-movie-list")); //$NON-NLS-1$
@@ -1238,6 +1249,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			browserOptionMozilla.setSelected(true);
 		else if (browser.equals("Safari"))
 			browserOptionSafari.setSelected(true);
+		else if (browser.equals("Google Chrome"))
+			browserOptionSafari.setSelected(true);
 		else if (browser.equals("Netscape"))
 			browserOptionNetscape.setSelected(true);
 		else if (browser.equals("IE"))
@@ -1250,30 +1263,31 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		browserOptionGroup.add(browserOptionFirefox);
 		browserOptionGroup.add(browserOptionNetscape);
 		browserOptionGroup.add(browserOptionSafari);
-		browserOptionGroup.add(browserOptionIE);
+		//browserOptionGroup.add(browserOptionGoogleChrome);
 		browserOptionGroup.add(enableCustomBrowser);
 		browserOptionGroup.add(enableUseDefaultWindowsBrowser);
-
+		browserOptionGroup.add(browserOptionIE);
+		
 		browserOptionPanel.add(browserOptionOpera);
 		browserOptionPanel.add(browserOptionMozilla);
 		browserOptionPanel.add(browserOptionFirefox);
 		browserOptionPanel.add(browserOptionNetscape);
 		browserOptionPanel.add(browserOptionSafari);
-		browserOptionPanel.add(browserOptionIE);
+		//browserOptionPanel.add(browserOptionGoogleChrome);
 		browserOptionPanel.add(enableCustomBrowser);
 		browserOptionPanel.add(enableUseDefaultWindowsBrowser);
-
-
-
+		browserOptionPanel.add(browserOptionIE);
+		
 		browserOptionOpera.addItemListener(this);
 		browserOptionMozilla.addItemListener(this);
 		browserOptionFirefox.addItemListener(this);
 		browserOptionNetscape.addItemListener(this);
 		browserOptionSafari.addItemListener(this);
-		browserOptionIE.addItemListener(this);
+		//browserOptionGoogleChrome.addItemListener(this);
 		enableCustomBrowser.addItemListener(this);
 		enableUseDefaultWindowsBrowser.addItemListener(this);
-
+		browserOptionIE.addItemListener(this);
+		
 		c.gridx = 0;
 		c.gridy = 0;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
