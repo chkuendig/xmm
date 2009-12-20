@@ -3,7 +3,7 @@ SplashScreen-Image: images/film.png
 Class-Path: lib/drivers/hsqldb-1.7.3.3.jar
   lib/drivers/mysql-connector-java-3.1.12-bin.jar
   lib/skinlf.jar
-  lib/BrowserLauncher2-10rc4.jar
+  lib/BrowserLauncher2-1_3.jar
   lib/jxl.jar
   lib/jna-3.2.4.jar
   lib/useful.jar
