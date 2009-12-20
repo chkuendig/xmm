@@ -2602,6 +2602,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 			
 			
+			value = (String) config.get("multiAddEnableExludeUserdefinedInfo:");
+			
+			if (value != null) {
+				setMultiAddEnableExludeUserdefinedInfo(new Boolean(value).booleanValue());
+			}
+			
+			
 			value = (String) config.get("multiAddEnableExludeAllAfterMatchOnUserDefinedInfo:");
 
 			if (value != null) {
@@ -3455,6 +3462,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 
 		 settings.append(lineSeparator);
 		 settings.append("multiAddEnableExludeIntegers:" + getMultiAddEnableExludeIntegers());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddEnableExludeUserdefinedInfo:" + getMultiAddEnableExludeUserdefinedInfo());
 		 
 		 settings.append(lineSeparator);
 		 settings.append("multiAddEnableExludeAllAfterMatchOnUserDefinedInfo:" + getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo());
