@@ -254,13 +254,13 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Add to list</seg>
+                <seg>Add movies to list</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Add to list</seg>
+                <seg>Add movies to list</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-cd-notation.text">
@@ -337,17 +337,17 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Remove parantheses and it&apos;s content ( &quot;()&quot; , &quot;[]&quot; , &quot;{}&quot; )</seg>
+                <seg>Remove parantheses and their content ( &quot;()&quot; , &quot;[]&quot; , &quot;{}&quot; )</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Remove parantheses and it&apos;s content ( &quot;(
+                <seg>Remove parantheses and their content ( &quot;(
                     )&quot; , &quot;[ ]&quot; , &quot;{ }&quot; )</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-predefined-codec-info.text">
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-user-defined-info.text">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
@@ -362,22 +362,22 @@
                 <seg>Remove userdefined info</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-userdefined-info.text">
-            <prop type="x-Group">DialogAddMultipleMovies</prop>
-            <tuv changedate="20070121T130738Z" changeid=""
-                creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Remove userdefined info (delete all behind userdefined Strings)</seg>
-            </tuv>
-            <tuv changedate="20070121T130738Z" changeid=""
-                creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Remove userdefined info (delete all behind userdefined Strings)</seg>
-            </tuv>
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-everything-after-match-on-user-defined-info.text">
+          <prop type="x-Group">DialogAddMultipleMovies</prop>
+          <tuv changedate="20070121T130738Z" changeid=""
+               creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
+            <prop type="x-Comment"/>
+            <prop type="x-Translated">false</prop>
+            <seg>Remove everything after a match on the user defined info.</seg>
+          </tuv>
+          <tuv changedate="20070121T130738Z" changeid=""
+               creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
+            <prop type="x-Comment"/>
+            <prop type="x-Translated">false</prop>
+            <seg>Remove everything after a match on the user defined info.</seg>
+          </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.title">
+		<tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.title">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
