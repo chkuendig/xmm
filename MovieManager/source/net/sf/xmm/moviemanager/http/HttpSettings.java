@@ -18,17 +18,11 @@ public class HttpSettings {
 	boolean IMDbAuthenticationEnabled = false;
 	String  IMDbAuthenticationUser = "";
 	String IMDbAuthenticationPassword = "";
-	
-	String ExcludeString = "";
-	
+		
 	boolean autoMoveThe = false;
-	
 	boolean autoMoveAnAndA = false;
 	
-	public boolean getAutoMoveAnAndA() {
-		return autoMoveAnAndA;
-	}
-		
+	boolean removeQuotesOnSeriesTitles = false;
 	
 	public String getProxyType() {
 		return proxyType;
@@ -121,18 +115,10 @@ public class HttpSettings {
 		this.autoMoveThe = autoMoveThe;
 	}
 
-	public boolean getAutoMoveAnAndA1() {
+	public boolean getAutoMoveAnAndA() {
 		return autoMoveAnAndA;
 	}
 
-	public void setExcludeString(String exclude) {
-		this.ExcludeString = exclude;
-	}
-	
-	public String getExcludeString() {
-		return ExcludeString;
-	}
-	
 	public void setAutoMoveAnAndA(boolean autoMoveAnAndA) {
 		this.autoMoveAnAndA = autoMoveAnAndA;
 	}
