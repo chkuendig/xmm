@@ -5,10 +5,10 @@ Class-Path: lib/drivers/hsqldb-1.7.3.3.jar
   lib/skinlf.jar
   lib/BrowserLauncher2-10rc4.jar
   lib/jxl.jar
-  lib/jna-3.0.9.jar
+  lib/jna-3.2.4.jar
   lib/useful.jar
   lib/TableLayout.jar
-  lib/log4j-1.2.13.jar
+  lib/log4j-1.2.15.jar
   lib/castor-1.2.jar
   lib/ProportionLayout.jar
   lib/jasperreports-3.0.0.jar
@@ -28,4 +28,4 @@ Class-Path: lib/drivers/hsqldb-1.7.3.3.jar
   lib/mac/quaqua.jar
   lib/cobra/cobra-0.98.2.jar
   lib/cobra/js.jar
-
+  lib/IMDb.jar
