@@ -39,8 +39,11 @@ import org.apache.log4j.Logger;
 
 public class IMDB /*extends IMDB_if */{
   
-	static Logger log = Logger.getLogger(HttpUtil.class);
+	static Logger log = Logger.getLogger(IMDB.class);
     
+	public final static String version = "1.0.0";
+	public final static String numveric_version = "100";
+	
     private HttpUtil httpUtil = new HttpUtil();
     
     private HttpSettings settings = null;
@@ -317,21 +320,30 @@ public class IMDB /*extends IMDB_if */{
 				
 			dataModel.setDirectedBy(directedBy);
 			
+			tmp = null;
+			
 			// Gets the written by... 
-			tmp = getClassInfo(data, "Writer");
-			tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
-			
-			list = getLinkContentName(tmp);
-	    		
-			while (!list.isEmpty()) {
-				if (!writtenBy.equals(""))
-					writtenBy += ", ";
-	    			
-				writtenBy += list.remove(0);
+			if (classInfo.containsKey("Writer:")) {
+				tmp = getClassInfo(data, "Writer:");
 			}
-	    				
-			dataModel.setWrittenBy(writtenBy);
+			else if (classInfo.containsKey("Creator:")) {
+				tmp = getClassInfo(data, "Creator:");
+			}
 			
+			if (tmp != null) {
+				tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
+
+				list = getLinkContentName(tmp);
+
+				while (!list.isEmpty()) {
+					if (!writtenBy.equals(""))
+						writtenBy += ", ";
+
+					writtenBy += list.remove(0);
+				}
+
+				dataModel.setWrittenBy(writtenBy);
+			}
 			
 			if (classInfo.containsKey("Genre:")) {
 				genre = getDecodedClassInfo("Genre:", (String) classInfo.get("Genre:"));
