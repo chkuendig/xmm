@@ -120,7 +120,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	public JCheckBox enableAutomaticCombine;
 	public JCheckBox enableUseParentFolderIfCD;
 
-	private JTextArea userDefinedInfo;
+	private JTextField userDefinedInfo;
 	private JTextArea customExtension;
 	private JCheckBox aviExtension;
 	private JCheckBox divxExtension;
@@ -244,8 +244,11 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		enableExludeUserdefinedInfo.addItemListener(new ItemListener() {
 		
 			public void itemStateChanged(ItemEvent e) {
-				enableExludeAllAfterMatchOnUserDefinedInfo.setEnabled(enableExludeUserdefinedInfo.isSelected());
-				userDefinedInfo.setEnabled(enableExludeUserdefinedInfo.isSelected());
+				boolean selected = enableExludeUserdefinedInfo.isSelected();
+				enableExludeAllAfterMatchOnUserDefinedInfo.setEnabled(selected);
+				userDefinedInfo.setEnabled(selected);
+				if (!selected)
+					enableExludeAllAfterMatchOnUserDefinedInfo.setSelected(false);
 			}
 		});
 		
@@ -254,15 +257,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		enableExludeAllAfterMatchOnUserDefinedInfo.setActionCommand("enableExludeUserdefinedInfo"); //$NON-NLS-1$
 		enableExludeAllAfterMatchOnUserDefinedInfo.setToolTipText(MovieManager.getConfig().getMultiAddExcludeUserDefinedString()); //$NON-NLS-1$
 		enableExludeAllAfterMatchOnUserDefinedInfo.setEnabled(false);
-		enableExludeAllAfterMatchOnUserDefinedInfo.addItemListener(new ItemListener() {
-	
-			public void itemStateChanged(ItemEvent e) {
-				if (enableExludeAllAfterMatchOnUserDefinedInfo.isSelected())
-					enableExludeUserdefinedInfo.setSelected(true);
-			}
-		});
 		
-		userDefinedInfo = new JTextArea();
+		// JTextField is not as nice displayed as JTextArea but it has a fixed width and a larger string is scrolled within instead of growing in width with JTextArea.
+		userDefinedInfo = new JTextField(40);
 		userDefinedInfo.setBorder(BorderFactory.createEtchedBorder());
 		userDefinedInfo.setEnabled(false);
 		
@@ -289,13 +286,23 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		enableUseFolderName.addItemListener(new ItemListener() {
 			
 			public void itemStateChanged(ItemEvent e) {
-				enableUseParentFolderIfCD.setEnabled(enableUseParentFolderIfCD.isSelected());
+				boolean selected = enableUseFolderName.isSelected();
+				enableUseParentFolderIfCD.setEnabled(selected);
+				if (!selected)
+					enableUseParentFolderIfCD.setSelected(false);
 			}
 		});
 	
 		enableUseParentFolderIfCD = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-nocd.text")); //$NON-NLS-1$
 		enableUseParentFolderIfCD.setActionCommand("enableTitleOptionNoCd"); //$NON-NLS-1$
 		enableUseParentFolderIfCD.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-nocd-tooltip")); //$NON-NLS-1$
+		enableUseParentFolderIfCD.setEnabled(false);
+//		enableUseParentFolderIfCD.addItemListener(new ItemListener() {
+//			
+//			public void itemStateChanged(ItemEvent e) {
+//				enableUseFolderName.setEnabled(!enableUseParentFolderIfCD.isSelected());
+//			}
+//		});
 		
 		enableSearchNfoForImdb = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Nfo-scanning.text")); //$NON-NLS-1$
 		enableSearchNfoForImdb.setActionCommand("enableSearchNfoForImdb"); //$NON-NLS-1$
