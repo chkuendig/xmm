@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerConfig.java 1.0 21.12.07 (dd.mm.yy)
+ * @(#)MovieManagerConfig.java
  *
  * Copyright (2003) Bro3
  *
@@ -62,8 +62,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/**
 		 * The current version of the program.
 		 **/
-		private static final String _version = " 2.8.7"; //$NON-NLS-1$
-
+		private static final String _version = " 2.8.8"; //$NON-NLS-1$
+		
+		// Increase with one for each release. Used for jupidator update library
+		private static final String numerical_version = "1";
 
 		String appTitle = " MeD's Movie Manager v" + getVersion().trim();
 		String lookAndFeelTitle = "Look & Feel";
@@ -77,7 +79,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			return _version;
 		}
 
-
+		public String getNumericalVersion() {
+			return numerical_version;
+		}
+				
 		public String getLookAndFeelTitle() {
 	    	return lookAndFeelTitle;
 	    }
@@ -281,10 +286,17 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private String titleLanguageCode = "";
 
+	private boolean removeQuotesOnSeriesTitle = false;
 	private boolean storeAllAkaTitles = false;
 	private boolean includeAkaLanguageCodes = false;
 	private boolean useLanguageSpecificTitle = false;
 
+	/*********************
+	  Multiadd options
+	 *********************/
+	
+	ArrayList<String> multiaddRootDevices = new ArrayList<String>();
+	
 	private String multiAddDirectoryPath = "";
 	
 	private String multiAddExcludeString = "";
@@ -302,7 +314,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean multiAddEnableExludeParantheses;
 	private boolean multiAddEnableExludeCDNotation;
 	private boolean multiAddEnableExludeIntegers;
-	private boolean multiAddEnableExludeCodecInfo;
+	private boolean getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo;
 	private boolean multiAddEnableSearchInSubdirectories;
 	private boolean multiAddTitleOption;
 	private boolean multiAddEnableExludeUserdefinedInfo;
@@ -311,7 +323,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean multiAddSelectFirstHitMark;
 	private boolean multiAddEnableAutomaticCombine;
 	
+	private String multiAddExcludeUserDefined = "";
 		
+	
 	/* Import */
 	private int lastDialogImportType = 0;
 	
@@ -443,13 +457,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		private boolean preferencesLookAndFeel = true;
 		private boolean preferencesProxySettings = true;
 		private boolean preferencesMiscellaneous = true;
-		private boolean preferencesAddMultipleFiles = true;
 		private boolean preferencesCoverSettings = true;
 		private boolean movieSeenReplaceWithPlay = false;
 		private boolean additionalInfoAndNotesReplacedByHTMLAdd = false;
 		private boolean playButtonNeverDisabled = false;
 		private boolean disableHTMLView = false;
-		boolean loadLastUsedListEnabled = true;
+		private boolean loadLastUsedListEnabled = true;
 		private boolean movieListPopupEnabled = true;
 		private boolean searchAliasEnabled = true;
 		private boolean sensitivePrintMode = false;
@@ -505,8 +518,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					preferencesProxySettings = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
 				else if (line.startsWith("preferencesMiscellaneous:")) 
 					preferencesMiscellaneous = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
-				else if (line.startsWith("preferencesAddMultipleFiles:")) 
-					preferencesAddMultipleFiles = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
 				else if (line.startsWith("preferencesCoverSettings:")) 
 					preferencesCoverSettings = new Boolean(line.substring(line.indexOf(":") +1, line.length())).booleanValue();
 				else if (line.startsWith("movieSeenReplaceWithPlay:")) 
@@ -596,10 +607,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		public boolean isPreferencesMiscellaneousDisabled() {
 			return !preferencesMiscellaneous;
 		}
-
-		public boolean isPreferencesAddMultipleFilesDisabled() {
-			return !preferencesAddMultipleFiles;
-		}
 		
 		public boolean isPreferencesMovieListDisabled() {
 			return !preferencesMovieList;
@@ -637,11 +644,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			return sensitivePrintMode;
 		}
 		
-		
+		/*
+		 * Sensitive info like username and password for server shouldn't be printed.
+		 */
 		public void enableSensitivePrint() {
 			sensitivePrintMode = true;
 		}
-		
 	}
 
 	
@@ -1118,6 +1126,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.loadDatabaseOnStartup = loadDatabaseOnStartup;
 	}
 
+	
+
+	public boolean getRemoveQuotesOnSeriesTitle() {
+		return removeQuotesOnSeriesTitle;
+	}
+
+	public void setRemoveQuotesOnSeriesTitle(boolean removeQuotesOnSeriesTitle) {
+		this.removeQuotesOnSeriesTitle = removeQuotesOnSeriesTitle;
+	}
 
 	public boolean getStoreAllAkaTitles() {
 		return storeAllAkaTitles;
@@ -1321,6 +1338,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		importIMDbSelectOption = option;
 	}
 	
+	
+	/********************************
+	        Mulitadd options
+	 ********************************/
+	
 	public boolean getMultiAddListEnabled() {
 		return multiAddListEnabled;
 	}
@@ -1478,12 +1500,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 	
 	
-	public boolean getMultiAddEnableExludeCodecInfo() {
-		return multiAddEnableExludeCodecInfo;
+	public boolean getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo() {
+		return getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo;
 	}
 
-	public void setMultiAddEnableExludeCodecInfo(boolean val) {
-		multiAddEnableExludeCodecInfo = val;
+	public void setMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo(boolean val) {
+		getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo = val;
 	}
 	
 	
@@ -1523,6 +1545,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 	
 	
+	public String getMultiAddExcludeUserDefinedString() {
+		return multiAddExcludeUserDefined;
+	}
+	
+	public void setMultiAddExcludeUserDefinedString(String excludeString) {
+		multiAddExcludeUserDefined = excludeString;
+	}
+	
+	
 	public boolean getMultiAddSearchNfoForImdb() {
 		return multiAddAddSearchNfoForImdb;
 	}
@@ -1549,6 +1580,55 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		multiAddEnableAutomaticCombine = val;
 	}
 	
+		
+	public void addMultiAddRootDevice(String filePath) {
+		
+		System.err.println("addMultiAddRootDevice:" + filePath);
+		
+		if (!multiaddRootDevices.contains(filePath))
+			multiaddRootDevices.add(filePath);
+	}
+	
+	public boolean removeMultiAddRootDevice(String filePath) {
+		System.err.println("removeMultiAddRootDevice:" + filePath);
+		return multiaddRootDevices.remove(filePath);
+	}
+	
+	public String [] getMultiAddRootDevices() {
+		return multiaddRootDevices.toArray(new String[multiaddRootDevices.size()]);
+	}
+	
+	public String getMultiAddRootDevicesAsString() {
+
+		String devices = "";
+		for (String device : multiaddRootDevices) {
+
+			if (devices.length() > 0)
+				devices += "|";
+
+			devices += device;
+		}
+		return devices;
+	}
+	
+	public void parseMultiAddRootDevices(String str) {
+		
+		String [] split = str.split("\\|");
+		
+		System.err.println("devices:" + str);
+		
+		for (String elem : split) {
+			System.err.println("elem:" + elem);
+				
+			if (!elem.equals(""))
+				addMultiAddRootDevice(elem);
+		}		
+	}
+	
+	
+	/********************************
+	 * HTML templates
+	 ********************************/
 	
 	public ModelHTMLTemplate getHTMLTemplate() {
 		
@@ -1872,14 +1952,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	public void setIMDbAuthenticationPassword(String IMDbAuthenticationPassword) {
 		httpSettings.setIMDbAuthenticationPassword(IMDbAuthenticationPassword);
-	}
-		
-	public String getExcludeString() {
-		return httpSettings.getExcludeString();
-	}
-	
-	public void setExcludeString(String ExcludeString) {
-		httpSettings.setExcludeString(ExcludeString);
 	}
 	
 	public boolean getAutoMoveThe() {
@@ -2530,10 +2602,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 			
 			
-			value = (String) config.get("multiAddEnableExludeCodecInfo:");
+			value = (String) config.get("multiAddEnableExludeAllAfterMatchOnUserDefinedInfo:");
 
 			if (value != null) {
-				setMultiAddEnableExludeCodecInfo(new Boolean(value).booleanValue());
+				setMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo(new Boolean(value).booleanValue());
 			}
 			
 			
@@ -2549,7 +2621,19 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			if (value != null) {
 				setMultiAddTitleOption(new Boolean(value).booleanValue());
 			}
-								
+			
+			value = (String) config.get("multiAddExcludeUserDefinedString:");
+			
+			if (value != null) {
+				setMultiAddExcludeUserDefinedString(value);
+			}
+			
+			value = (String) config.get("multiaddRootDevices:");
+			
+			if (value != null) {
+				parseMultiAddRootDevices(value);
+			}
+			
 			
 			value = (String) config.get("proxyEnabled:");
 
@@ -2621,13 +2705,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 			
 
-			value = (String) config.get("ExcludeString:");
-			
-			if (value != null) {
-				setExcludeString(value);
-			}
-			
-			
 			value = (String) config.get("lastFileDir:");
 
 			if (value != null) {
@@ -2958,20 +3035,23 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				setIncludeAkaLanguageCodes(new Boolean(value).booleanValue());
 			}
 
-
 			value = (String) config.get("useLanguageSpecificTitle:");
 
 			if (value != null) {
 				setUseLanguageSpecificTitle(new Boolean(value).booleanValue());
 			}
 
+			value = (String) config.get("removeQuotesOnSeriesTitle:");
+
+			if (value != null) {
+				setRemoveQuotesOnSeriesTitle(new Boolean(value).booleanValue());
+			}
 
 			value = (String) config.get("titleLanguageCode:");
 
 			if (value != null) {
 				setTitleLanguageCode(value);
 			}
-
 
 			value = (String) config.get("useMediaInfoDLL:");
 
@@ -3377,7 +3457,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append("multiAddEnableExludeIntegers:" + getMultiAddEnableExludeIntegers());
 		 
 		 settings.append(lineSeparator);
-		 settings.append("multiAddEnableExludeCodecInfo:" + getMultiAddEnableExludeCodecInfo());
+		 settings.append("multiAddEnableExludeAllAfterMatchOnUserDefinedInfo:" + getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo());
 		 
 		 settings.append(lineSeparator);
 		 settings.append("multiAddEnableSearchInSubdirectories:" + getMultiAddEnableSearchInSubdirectories());
@@ -3385,7 +3465,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append(lineSeparator);
 		 settings.append("multiAddTitleOption:" + getMultiAddEnableSearchInSubdirectories());
 		 
-				 
+		 settings.append(lineSeparator);
+		 settings.append("multiAddExcludeUserDefinedString:" + getMultiAddExcludeUserDefinedString());
+		 
+		 settings.append(lineSeparator);
+		 settings.append("multiaddRootDevices:" + getMultiAddRootDevicesAsString());
+		 		 
 		 settings.append(lineSeparator);
 		 settings.append("proxyEnabled:" + httpSettings.getProxyEnabled());
 
@@ -3416,9 +3501,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append(lineSeparator);
 		 settings.append("IMDbAuthenticationPassword:" + httpSettings.getIMDbAuthenticationPassword());
 
-		 settings.append(lineSeparator);
-		 settings.append("ExcludeString:" + httpSettings.getExcludeString());
-		 
 		 settings.append(lineSeparator);
 		 settings.append("lastFileDir:");
 		 if (getLastFileDir() != null)
@@ -3562,6 +3644,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 settings.append(lineSeparator);
 		 settings.append("useLanguageSpecificTitle:" + getUseLanguageSpecificTitle());
 
+		 settings.append(lineSeparator);
+		 settings.append("removeQuotesOnSeriesTitle:" + getRemoveQuotesOnSeriesTitle());
+		 
 		 settings.append(lineSeparator);
 		 settings.append("useMediaInfoDLL:" + getUseMediaInfoDLL());
 
