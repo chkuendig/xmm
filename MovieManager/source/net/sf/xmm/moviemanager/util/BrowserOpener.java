@@ -60,19 +60,20 @@ public class BrowserOpener {
                 if (browserLauncherFailed || customBrowser) {
                     
                     try {
-                        
+                        Process p = null;
+                    	
                         if (customBrowser && browserPath.isFile()) {
                             String cmd = browserPath + " " + url;
                             
                             //System.out.println("url 2:" + url);
-                            Process p = Runtime.getRuntime().exec(cmd);
+                            p = Runtime.getRuntime().exec(cmd);
                         }
                         else {
                         	 
                         	 
                             if (browser.equals("Default") && SysUtil.isWindows()) {
                             	//System.out.println("rundll32:" + url);
-                                Process p = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+                                p = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
                             }
                             else if (browser.equals("Default") && SysUtil.isMac()) {
                             	//System.out.println("macUtils:" + url);
@@ -83,9 +84,7 @@ public class BrowserOpener {
                             }
                             else {
                                 
-                                String cmd;
-                                Process p;
-                                
+                                String cmd;                                
                                 String remoteOpenURL = " -remote openURL" + "(" + url + ")";
                                 
                                 for (int i = 0; i < 5; i++) {
@@ -118,6 +117,8 @@ public class BrowserOpener {
                                     }
                                 }
                             }
+                         // Clear input/error streams to avoid dead lock in subprocess
+            				SysUtil.cleaStreams(p);
                         }
                     } catch (Exception e) {
                     	System.out.println("Exception: "+  e.getMessage());
