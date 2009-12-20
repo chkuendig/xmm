@@ -47,6 +47,10 @@ public class FileNode implements Comparable<FileNode> {
 		return m_file.getName();
 	}
 	
+	public String getPath() {
+		return m_file.getPath();
+	}
+	
 	// If file name is empty, the path is returned
 	public String toString() {
 		return m_file.getName().length() > 0 ? m_file.getName() : m_file.getPath();
@@ -87,11 +91,11 @@ public class FileNode implements Comparable<FileNode> {
 			FileNode nd = (FileNode) currentChildrenFiles[i];
 				
 			if (nd.getFile().isDirectory()) {
-				idata = fileTree.getNewIconData(FileTree.IconData.REGULAR_FOLDER, nd);
+				idata = fileTree.getNewIconData(FileTree.IconType.REGULAR_FOLDER, nd);
 				idata.setFolder(true);
 			}
 			else 
-				idata = fileTree.getNewIconData(FileTree.IconData.REGULAR_FILE, nd);
+				idata = fileTree.getNewIconData(FileTree.IconType.REGULAR_FILE, nd);
 			
 			DefaultMutableTreeNode node = new DefaultMutableTreeNode(idata);
 				
@@ -147,7 +151,7 @@ public class FileNode implements Comparable<FileNode> {
 			FileNode f = currentChildrenFiles[i];
 			
 			if (fileIndex == -1 || (treeNode.getChildCount() - fileIndex) <= i) {
-				FileTree.IconData idata = fileTree.getNewIconData(FileTree.IconData.REGULAR_FILE, f);
+				FileTree.IconData idata = fileTree.getNewIconData(FileTree.IconType.REGULAR_FILE, f);
 				
 				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(idata);
 				fileTree.addVisibleNode(newNode);
@@ -164,7 +168,7 @@ public class FileNode implements Comparable<FileNode> {
 			
 //			 Node missing, will add
 			if (cmp < 0) {
-				FileTree.IconData idata = fileTree.getNewIconData(FileTree.IconData.REGULAR_FILE, f);
+				FileTree.IconData idata = fileTree.getNewIconData(FileTree.IconType.REGULAR_FILE, f);
 				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(idata);
 				
 				fileTree.getTreeModel().insertNodeInto(newNode, treeNode, i + fileIndex);
@@ -213,9 +217,6 @@ public class FileNode implements Comparable<FileNode> {
 		return allFiles;
 	}
 
-	
-
-	
 	
 	public boolean hasFiles() {
 		File[] files = listFiles();
