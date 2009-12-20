@@ -5,7 +5,7 @@
 	<key>CFBundleName</key>
 	<string>MeD's MovieManager</string>
 	<key>CFBundleVersion</key>
-	<string>2.7.6</string>
+	<string>2.8.8</string>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<string>true</string>
 	<key>CFBundleExecutable</key>
@@ -25,7 +25,7 @@
 		<key>MainClass</key>
 		<string>net.sf.xmm.moviemanager.MovieManager</string>
 		<key>JVMVersion</key>
-		<string>1.4+</string>
+		<string>1.5+</string>
 		<key>ClassPath</key>
 		<string>$JAVAROOT/MovieManager.jar</string>
 		<key>WorkingDirectory</key>
