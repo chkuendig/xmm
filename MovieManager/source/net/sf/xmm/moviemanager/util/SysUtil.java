@@ -268,6 +268,9 @@ public class SysUtil {
     
     public static void cleaStreams(Process p) {
     	
+    	if (p == null)
+    		return;
+    	
     	/**
 		 * Clears the streams to avoid having the subprocess hang
 		 * @author Bro
