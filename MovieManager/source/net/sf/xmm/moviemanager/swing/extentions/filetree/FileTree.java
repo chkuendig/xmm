@@ -77,7 +77,7 @@ public class FileTree extends JPanel {
 
 	static Logger log = Logger.getLogger(FileTree.class);
 
-	public AddSelectedFilesEventHandler eventHandler = new AddSelectedFilesEventHandler();
+	public FileTreeEventsHandler eventHandler = new FileTreeEventsHandler();
 
 	public static final ImageIcon ICON_DISK = getImageIcon("Disk.png");
 	public static final ImageIcon ICON_DISK_INCLUDE_CONTENT = getImageIcon("Disk_include_content.png");
@@ -109,10 +109,17 @@ public class FileTree extends JPanel {
 	
 	private boolean threadLock = false;
 	
+	int numberOfFoldersChosen = 0;
+	
 	public DefaultTreeModel getTreeModel() {
 		return (DefaultTreeModel) fileTree.getModel();
 	}
 
+	/**
+	 * Add a new file path to the collection of already existing files.
+	 * @param path
+	 * @param model
+	 */
 	public void addExistingMediaFileInDatabase(String path, ModelEntry model) {
 		
 		existingMediaFiles.put(path, model);
@@ -142,7 +149,7 @@ public class FileTree extends JPanel {
 		expandedNodes.put(node, node);
 	}
 		
-	protected JPopupMenu dir_popup;
+	protected JPopupMenu dir_popup, dir_popup_with_one_selected, root_device_directory_popup;
 	protected JPopupMenu file_popup;
 	protected Action dir_action;
 	protected Action file_action;
@@ -150,8 +157,14 @@ public class FileTree extends JPanel {
 	protected JMenuItem fileItem;
 
 	JMenuItem excludeAll, includeAll, folder, includeContent, addFiles = null;
-		
+	JMenuItem addDirAsRootDevice, removeDirAsRootDevice;
+	
 	ArrayList<String> validExtensions = new ArrayList<String>();
+	
+	// Contains all the custom root devices
+	ArrayList<String> rootDevices = new ArrayList<String>();
+	
+	DefaultMutableTreeNode top;
 	
 	public void setValidExtension(ArrayList<String> validExtensions) {
 		this.validExtensions = validExtensions;
@@ -205,15 +218,15 @@ public class FileTree extends JPanel {
 		this.existingMediaFiles = existingMediaFiles;
 	}
 
+	
 	public FileTree() {
 		
 		setSize(600, 1000);
 
-		DefaultMutableTreeNode node;
-		DefaultMutableTreeNode top = new DefaultMutableTreeNode(new IconData(0, -1, new FileNode(new File("Computer"), this)));
+		top = new DefaultMutableTreeNode(new IconData(new FileNode(new File("Computer"), this)));
 		
 		// If windows, all the hard drives are listed.
-		// On Linux, only the home directory
+		// On Linux, only the home directory and root
 		
 		File[] roots = File.listRoots();
 		
@@ -221,16 +234,15 @@ public class FileTree extends JPanel {
 		if (!SysUtil.isWindows()) {
 			String home = System.getProperty("user.home");
 			roots = new File[2];
-			roots[0] = new File(home);
-			roots[1] = new File("/");
+			roots[1] = new File(home);
+			roots[0] = new File("/");
 		}
-
 
 		for (int k = 0; k < roots.length; k++) {
 
-			IconData tmp = new IconData(0, -1, new FileNode(roots[k], this));
+			IconData tmp = new IconData(new FileNode(roots[k], this));
 			tmp.setDisk(true);
-			node = new DefaultMutableTreeNode(tmp);
+			DefaultMutableTreeNode node = new DefaultMutableTreeNode(tmp);
 
 			top.add(node);
 			node.add(new DefaultMutableTreeNode(new Boolean(true)));
@@ -238,7 +250,6 @@ public class FileTree extends JPanel {
 
 		modelTree = new DefaultTreeModel(top);
 		fileTree = new JTree(modelTree);
-
 
 		fileTree.putClientProperty("JTree.lineStyle", "Angled");
 		fileTree.setCellRenderer(new IconCellRenderer(colorMatch, colorNoMatch, colorExists));
@@ -258,72 +269,125 @@ public class FileTree extends JPanel {
 		treeScroll.getViewport().add(fileTree);
 		add(treeScroll, BorderLayout.CENTER);
 			
-		// add file popup
-		file_popup = new JPopupMenu();
+		fileTree.addMouseListener(new PopupTrigger());
 
+		createPopupMenus();
+	}
+	
+	
+	void createPopupMenus() {
+		createPopupItems();
+		
+		// Popup for file
+		file_popup = new JPopupMenu();
+		file_popup.add(fileItem);
+				
+		// Popup
+		JPopupMenu popup;
+		popup = new JPopupMenu();
+		popup.add(folder);
+		popup.add(includeContent);
+		popup.add(includeAll);
+		popup.add(excludeAll);
+		
+		dir_popup = popup;
+	}
+	
+	void createPopupItems() {
+		
+		// file popup
 		fileItem = new JMenuItem();
 		fileItem.setIcon(getImageIcon("add.png", 20));
-		file_popup.add(fileItem);
-
 		fileItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				eventHandler.fireAddSelectedFilesEvent(new AddSelectedFilesEvent((Object) fileItem));
+				eventHandler.fireAddSelectedFilesEvent(new FileTreeEvent((Object) fileItem));
 			}
 		});
 		
-		
-		dir_popup = new JPopupMenu();
-		
-		folder = new JMenuItem("Folder");
-		folder.setIcon(getImageIcon("Folder.png", 20));
+		folder = new JMenuItem("Folder (no action)");
 		folder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				fileTree.repaint();
-				setFolderIcon(IconData.REGULAR_FOLDER);
+				setFolderIcon(IconType.REGULAR_FOLDER);
 			}
 		});
 				
-		dir_popup.add(folder);
-
-		
 		includeContent = new JMenuItem("Include only folder content");
-		includeContent.setIcon(getImageIcon("Folder_include_content.png", 20));
 		includeContent.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e)	{
+			public void actionPerformed(ActionEvent e) {
 				fileTree.repaint();
-				setFolderIcon(IconData.INCLUDE_CONTENT);
+				setFolderIcon(IconType.INCLUDE_CONTENT);
 			}
 		});
-		dir_popup.add(includeContent);
 		
 		includeAll = new JMenuItem("Include folder content and subdirectories");
-		includeAll.setIcon(getImageIcon("Folder_include_all.png", 20));
 		includeAll.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)	{
 				fileTree.repaint();
-				setFolderIcon(IconData.INCLUDE_ALL);		
+				setFolderIcon(IconType.INCLUDE_ALL);		
 			}
 		});
 		
-		dir_popup.add(includeAll);
-
-		
-
 		excludeAll = new JMenuItem("Exclude folder content and subdirectories");
-		excludeAll.setIcon(getImageIcon("Folder_exclude_all.png", 20));
 		excludeAll.addActionListener(new ActionListener() { 
-			public void actionPerformed(ActionEvent e)		{
+			public void actionPerformed(ActionEvent e) {
 				fileTree.repaint();
-				setFolderIcon(IconData.EXCLUDE_ALL);					
+				setFolderIcon(IconType.EXCLUDE_ALL);					
 			}
 		});
 		
-		dir_popup.add(excludeAll);
-
-		fileTree.add(dir_popup);
-		fileTree.addMouseListener(new PopupTrigger());
+		addDirAsRootDevice = new JMenuItem("Add directory as root device to tree");
+		addDirAsRootDevice.addActionListener(new ActionListener() { 
+			public void actionPerformed(ActionEvent e) {
+				addSelectedFolderAsRootDevice();
+			}
+		});
+		
+		removeDirAsRootDevice = new JMenuItem("Remove as root device");
+		removeDirAsRootDevice.addActionListener(new ActionListener() { 
+			public void actionPerformed(ActionEvent e) {
+				removeSelectedFolderAsRootDevice();
+			}
+		});
 	}
 
+
+	public boolean addRootDevice(File file) {
+		
+		// Don't make duplicates
+		if (rootDevices.contains(file.getAbsolutePath()))
+			return false;
+				
+		rootDevices.add(file.getAbsolutePath());
+		
+		IconData tmp = new IconData(new FileNode(file, this));
+		tmp.setRootElement(true);
+		tmp.setFolder(true);
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(tmp);
+
+		// Update tree
+		top.add(node);
+		node.add(new DefaultMutableTreeNode(new Boolean(true)));
+		((DefaultTreeModel) fileTree.getModel()).nodeStructureChanged(top);
+		
+		return true;
+	}
+	
+	public void removeCurrentAsRootDevice(TreePath path) {
+				
+		Object o = path.getLastPathComponent();
+				
+		if (o instanceof DefaultMutableTreeNode) {				
+			IconData icon = (IconData) ((DefaultMutableTreeNode)o).getUserObject();
+			
+			// Remove from list of root devices
+			rootDevices.remove(icon.getFile().getAbsolutePath());
+			
+			// Update tree
+			top.remove((DefaultMutableTreeNode) o);
+			((DefaultTreeModel) fileTree.getModel()).nodeStructureChanged(top);
+		}
+	}
 	
 
 	void updateCurrentCells() {
@@ -404,7 +468,10 @@ public class FileTree extends JPanel {
 		return selectedFiles;
 	}
 
-
+	public int getChosenFoldersCount() {
+		return changedNodes.size();
+	}
+	
 	/*
 	 * Searches the entire directory tree and returns the files according to the users selections.
 	 */
@@ -437,7 +504,7 @@ public class FileTree extends JPanel {
 
 	void addFiles(Object dir, ArrayList<FileNode> files, Object [] keys, boolean includeAll) {
 
-		int iconType = IconData.REGULAR_FOLDER;
+		IconType iconType = IconType.REGULAR_FOLDER;
 		File directory;
 
 		if (dir instanceof IconData) {
@@ -448,10 +515,10 @@ public class FileTree extends JPanel {
 			directory = (File) dir;
 
 		// Include all media files in the directory only
-		if (iconType == IconData.INCLUDE_CONTENT) {
+		if (iconType == IconType.INCLUDE_CONTENT) {
 			addValidMediaFiles(directory, files);
 		} // Include media files in directory and all subdirectories
-		else if (iconType == IconData.INCLUDE_ALL || (iconType == IconData.REGULAR_FOLDER && includeAll)) {
+		else if (iconType == IconType.INCLUDE_ALL || (iconType == IconType.REGULAR_FOLDER && includeAll)) {
 
 			File [] fileList = directory.listFiles();
 
@@ -477,7 +544,7 @@ public class FileTree extends JPanel {
 				}
 			}
 		} // Will not proceed.
-		else if (iconType == IconData.EXCLUDE_ALL) {
+		else if (iconType == IconType.EXCLUDE_ALL) {
 
 		}
 	}
@@ -517,7 +584,7 @@ public class FileTree extends JPanel {
 		}
 	}
 
-	public void setFolderIcon(int iconType) {
+	public void setFolderIcon(IconType iconType) {
 
 		TreePath[] paths = fileTree.getSelectionPaths();
 
@@ -534,7 +601,7 @@ public class FileTree extends JPanel {
 
 				File file = icon.getFile();
 
-				if (iconType == IconData.REGULAR_FOLDER) {
+				if (iconType == IconType.REGULAR_FOLDER) {
 					if (changedNodes.containsKey(file.getAbsolutePath()))
 						changedNodes.remove(file.getAbsolutePath());
 				}
@@ -546,6 +613,29 @@ public class FileTree extends JPanel {
 		}
 	}
 
+	public void addSelectedFolderAsRootDevice() {
+
+		TreePath[] paths = fileTree.getSelectionPaths();
+
+		if (paths != null) {
+			IconData node = getIconData(paths[0]);
+			
+			if (addRootDevice(node.getFile()))
+				eventHandler.fireRootDeviceAddedEvent(new FileTreeEvent(node.getFile()));
+		}
+	}
+
+	public void removeSelectedFolderAsRootDevice() {
+
+		TreePath[] paths = fileTree.getSelectionPaths();
+
+		if (paths != null) {
+			IconData node = getIconData(paths[0]);
+			
+			removeCurrentAsRootDevice(paths[0]);
+			eventHandler.fireRootDeviceRemovedEvent(new FileTreeEvent(node.getFile()));
+		}
+	}
 
 	IconData getIconData(TreePath path) {
 
@@ -594,19 +684,20 @@ public class FileTree extends JPanel {
 				int x = event.getX();
 				int y = event.getY();
 
+				TreePath[] selectedPaths = fileTree.getSelectionPaths();
 				TreePath path = fileTree.getPathForLocation(x, y);
 					
 				// Sets the row selected
-				if (path == null) {
-					//int rowForLocation = fileTree.getRowForLocation(x, y);
+				if (selectedPaths == null) {
+					int rowForLocation = fileTree.getRowForLocation(x, y);
 					
-				//	System.out.println("rowForLocation:" + rowForLocation);
-					//fileTree.setSelectionRow(rowForLocation);
+					fileTree.setSelectionRow(rowForLocation);
+					selectedPaths = fileTree.getSelectionPaths();
 				}
 				
 				if (path != null)	{
 					IconData icon = getIconData(path);
-	
+						
 					if (icon.isFolder()) {
 						
 						if (icon.isDisk()) {
@@ -621,32 +712,26 @@ public class FileTree extends JPanel {
 							folder.setIcon(ICON_FOLDER);
 							includeContent.setIcon(ICON_FOLDER_INCLUDE_CONTENT);	
 						}
-							
-						int iconType = icon.getIconType();
+												
+						dir_popup.remove(addDirAsRootDevice);
+						dir_popup.remove(removeDirAsRootDevice);
 						
-						/*
-						if (iconType != IconData.REGULAR_FOLDER)
-							addFiles.setVisible(true);
-						else
-							addFiles.setVisible(false);
-						*/
-					/*
-						if (iconType != IconData.REGULAR_FOLDER) {
-							dir_popup.add(addFiles, 0);
+						if (selectedPaths != null && selectedPaths.length == 1 && !icon.isDisk()) {
+							if (icon.isRootElement()) {
+								dir_popup.add(removeDirAsRootDevice);
+							}
+							else
+								dir_popup.add(addDirAsRootDevice);
 						}
-						else {
-							dir_popup.remove(0);
-						}		
-						*/
+						
 						dir_popup.show(fileTree, x, y);
 					}
 					else {
-						TreePath[] paths = fileTree.getSelectionPaths();
 
-						if (paths == null)
+						if (selectedPaths == null)
 							return;
 
-						String txt = paths.length > 1 ? "Add files" : "Add file";
+						String txt = selectedPaths.length > 1 ? "Add files" : "Add file";
 
 						fileItem.setText(txt);
 						file_popup.show(fileTree, x, y);
@@ -698,7 +783,7 @@ public class FileTree extends JPanel {
 		}
 	}
 
-	public IconData getNewIconData(int icon, FileNode f) {
+	public IconData getNewIconData(IconType icon, FileNode f) {
 		return new IconData(icon, f);
 	}
 
@@ -899,39 +984,31 @@ public class FileTree extends JPanel {
 			 return regularStringResult;
 	}
 	
-	
+	public enum IconType {REGULAR_FOLDER, INCLUDE_CONTENT, INCLUDE_ALL, EXCLUDE_ALL, REGULAR_FILE};
+		
 	public class IconData {
-
-		public static final int REGULAR_FOLDER = 0;
-		public static final int INCLUDE_CONTENT = 1;
-		public static final int INCLUDE_ALL = 2;
-		public static final int EXCLUDE_ALL = 3;
-
-		public static final int REGULAR_FILE = 4;
-
-		public Icon   m_icon;
-		public Icon   m_expandedIcon;
+		
+		public Icon m_icon;
+		public Icon m_expandedIcon;
 
 		protected FileNode m_data;
 
-		// 0 = folder/disk, 1 = includeFolderContent, 2 = INCLUDE_ALL, 3 = EXCLUDE_ALL
-		private int iconType = 0;
+		private IconType iconType = IconType.REGULAR_FOLDER;
 		private boolean isDisk = false;
+		private boolean isRootElement = false;
 		private boolean isFolder = false;
 
-		public IconData(int icon, FileNode data)	{
+		public IconData(FileNode data)	{
+			m_data = data;
+		}
+		
+		public IconData(IconType icon, FileNode data)	{
 			iconType = icon;
 			m_data = data;
 		}
 
-		public IconData(int icon, int expandedIconNotUsed, FileNode data)	{
-			iconType = icon;
-			m_data = data;
-		}
-
-
-		public void setIconType(int i) {
-			iconType = i;
+		public void setIconType(IconType t) {
+			iconType = t;
 		}
 
 		public boolean isFolder() {
@@ -949,34 +1026,42 @@ public class FileTree extends JPanel {
 		public void setDisk(boolean isDisk) {
 			this.isDisk = isDisk;
 			isFolder = isDisk;
+			isRootElement = isDisk;
+		}
+		
+		public boolean isRootElement() {
+			return isRootElement;
+		}
+
+		public void setRootElement(boolean isRootElement) {
+			this.isRootElement = isRootElement;
 		}
 
 		public Icon getIcon() {
-
 			Icon tmpIcon = null;
-
+			
 			switch (iconType) {
-
-			case 0 : 
+			
+			case REGULAR_FOLDER : 
 				tmpIcon = isDisk ? FileTree.ICON_DISK : FileTree.ICON_FOLDER;
 				break;
-			case 1 :
+			case INCLUDE_CONTENT :
 				tmpIcon = isDisk ? FileTree.ICON_DISK_INCLUDE_CONTENT : FileTree.ICON_FOLDER_INCLUDE_CONTENT;
 				break;
-			case 2 :
+			case INCLUDE_ALL :
 				tmpIcon = isDisk ? FileTree.ICON_DISK_INCLUDE_ALL : FileTree.ICON_FOLDER_INCLUDE_ALL;
 				break;
-			case 3 :
+			case EXCLUDE_ALL :
 				tmpIcon = isDisk ? FileTree.ICON_DISK_EXCLUDE_ALL : FileTree.ICON_FOLDER_EXCLUDE_ALL;
 				break;
-			case 4 :
+			case REGULAR_FILE :
 				tmpIcon = FileTree.ICON_MEDIA_FILE;
 			}
 
 			return tmpIcon;
 		}
 
-		public int getIconType() {
+		public IconType getIconType() {
 			return iconType;
 		}
 
@@ -997,7 +1082,11 @@ public class FileTree extends JPanel {
 		}
 
 		public String toString() 	{ 
-			return m_data.toString();
+			
+			if (isRootElement)
+				return m_data.getPath();
+			else
+				return m_data.toString();
 		}
 		
 		String getFilePath() { 
