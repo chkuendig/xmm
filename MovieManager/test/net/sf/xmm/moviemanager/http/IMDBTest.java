@@ -1,19 +1,73 @@
+/**
+ * @(#)IMDBTest.java 1.0 23.03.05 (dd.mm.yy)
+ *
+ * Copyright (2003) Bro3
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with 
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Boston, MA 02111.
+ * 
+ * Contact: bro3@users.sourceforge.net
+ **/
+
 package net.sf.xmm.moviemanager.http;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
-
+import net.sf.xmm.moviemanager.util.FileUtil;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.PropertyConfigurator;
+import org.junit.Before;
 import org.junit.Test;
 
 
-public class IMDBTest {
+public class IMDBTest  {
 
+	boolean setup = false;
+	
+	@Before
+	public void setUp() throws Exception
+	{
+		if (setup)
+			return;
+		
+		setup =  true;
+		
+		File log4jConfigFile = FileUtil.getFile("config/log4j.properties"); //$NON-NLS-1$
 
+		System.err.println("log4jConfigFile:" + log4jConfigFile.isFile());
+		
+		if (log4jConfigFile.isFile()) {
+			PropertyConfigurator.configure(log4jConfigFile.getAbsolutePath());
+		} else {
+			BasicConfigurator.configure();
+		}
+		
+		try {
+    		/* Disable HTTPClient logging output */
+    		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog"); //$NON-NLS-1$ //$NON-NLS-2$
+    				
+    	} catch (java.security.AccessControlException s) {    
+    		s.printStackTrace();
+    	}
+	}
+
+	
+	//@Test
 	public void getSimpleMatchesTest() {
 
 		IMDB imdb = null;
@@ -53,7 +107,7 @@ public class IMDBTest {
 
 
 
-	@Test
+	//@Test
 	public void getMatchesTest() {
 
 		/*
@@ -112,5 +166,163 @@ public class IMDBTest {
 		for (int i = 0; i < matches.size(); i++)
 			System.out.println("matches.get("+i+"):" + matches.get(i));
 
+	}
+	
+	//@Test
+	public void dataRetrievalTest() throws Exception {
+		
+		IMDB imdb = null;
+		try {
+			imdb = new IMDB();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+		
+		// Terminator 2
+		StringBuffer data = imdb.getURLData("0103064");
+		
+		ModelIMDbEntry movie = imdb.grabInfo("0103064", data);
+		
+		String expectedTitle = "Terminator 2: Judgment Day";
+		String expectedDate = "1991";
+		String expectedDirector = "James Cameron";
+		String expectedWriter = "James Cameron, William Wisher Jr.";
+		String expectedGenre = "Action, Sci-Fi, Thriller";
+		String expectedCountry = "USA, France";
+		String expectedLanguage = "English, Spanish";
+		String expectedPlot = "Nearly 10 years have passed since Sarah Connor was targeted for termination by a cyborg from the future. Now her son, John, the future leader of the resistance, is the target for a newer, more deadly terminator. Once again, the resistance has managed to send a protector back to attempt to save John and his mother Sarah.";
+		String expectedCast = "Arnold Schwarzenegger (The Terminator), Linda Hamilton (Sarah Connor), Edward Furlong (John Connor), Robert Patrick (T-1000), Earl Boen (Dr. Silberman), Joe Morton (Miles Dyson), S. Epatha Merkerson (Tarissa Dyson), Castulo Guerra (Enrique Salceda), Danny Cooksey (Tim), Jenette Goldstein (Janelle Voight), Xander Berkeley (Todd Voight), Leslie Hamilton Gearren (Twin Sarah), Ken Gibbel (Douglas), Robert Winley (Cigar-Smoking Biker), Peter Schrum (Lloyd (as Pete Schrum)).";
+		String expectedWebRuntime = "137 min, USA:152 min (special edition), USA:154 min (extended special edition)";
+		String expectedWebSoundMix = "70 mm 6-Track (analog 70 mm prints), CDS (digital 35 mm and 70 mm prints), Dolby SR (analog 35 mm prints)";
+		String expectedAwards = "Won 4 Oscars. Another 19 wins & 18 nominations";
+		String expectedMpaa = "Rated R for strong sci-fi action and violence, and for language.";
+		String expectedAka = 
+" El Exterminator 2 (USA: Spanish title)\n" +
+"T2 (USA) (promotional abbreviation)\n" +
+"T2 - Terminator 2: Judgment Day\n" +
+"T2: Extreme Edition (USA) (video box title)\n" +
+"T2: Ultimate Edition (USA) (video box title)\n" +
+"Terminator 2 - Le jugement dernier (France)\n" +
+"Terminator 2: el juicio final (Argentina) (Peru) (Spain) [es]\n" +
+"Терминатор 2: Судный день (Russia) [ru]\n" +
+"Exterminador Implacável 2: O Dia do Julgamento (Portugal) [pt]\n" +
+"O Exterminador do Futuro 2: O Julgamento Final (Brazil) [pt]\n" +
+"Terminátor 2. - Az ítélet napja (Hungary) [hu]\n" +
+"Terminátor 2: Den zúctování (Czechoslovakia: Czech title) [cs]\n" +
+"Terminátor 2: Den zúctovania (Czechoslovakia: Slovak title) [sk]\n" +
+"Terminateur 2: Le jugement dernier (Canada: French title) [fr]\n" +
+"Terminator 2 (Poland) (TV title) [pl]\n" +
+"Terminator 2 - Mahser günü (Turkey: Turkish title) [tr]\n" +
+"Terminator 2 - Sodni dan (Slovenia) [sl]\n" +
+"Terminator 2 - Sudnji dan (Serbia) [sr]\n" +
+"Terminator 2 - Tag der Abrechnung (Germany) [de]\n" +
+"Terminator 2 - domedagen (Sweden) [sv]\n" +
+"Terminator 2 - domens dag (Finland: Swedish title) [sv]\n" +
+"Terminator 2 - il giorno del giudizio (Italy) [it]\n" +
+"Terminator 2 - tuomion päivä (Finland) [fi]\n" +
+"Terminator 2: Dommedag (Denmark) [da]\n" +
+"Terminator 2: Dzien sadu (Poland) [pl]\n" +
+"Terminator 2: Sudnji dan (Croatia) [hr]\n" +
+"Terminator 2: Sudnyi den' (Soviet Union: Russian title) [ru]\n";
+		
+	
+		String expectedCertification = "Canada:18 (Nova Scotia) (DVD rating), Canada:A (Nova Scotia) (original cut), Canada:AA (Ontario) (original cut), Canada:PA (Manitoba) (original cut), Finland:K-18 (original rating) (1991), Italy:T, USA:R (certificate #31159), Iceland:16, South Korea:15, Brazil:12, Malaysia:18SG, New Zealand:M, Netherlands:12 (edited TV version), Portugal:M/12, Argentina:16, Australia:M, Canada:13+ (Quebec), Canada:18A (Alberta) (re-rating) (1999), Canada:18A (Manitoba/Ontario) (DVD rating), Chile:14, Finland:K-16 (re-rating) (1991), France:-12, Germany:16, Ireland:15, Israel:PG, Japan:R-15, Netherlands:16, Norway:15 (video rating) (director's cut), Norway:18 (original rating), Peru:14, Singapore:NC-16, Singapore:PG (cut), Spain:18, Sweden:15, UK:15 (original rating) (cut), UK:15 (video rating) (1992) (cut), UK:15 (video re-rating) (2001) (uncut), UK:18 (laserdisc rating) (1992) (uncut), Iran:18+";
+		String expectedColor = "Color";
+		
+		assertTrue(Double.parseDouble(movie.getRating()) > 5);
+		
+		assertEquals(expectedTitle, movie.getTitle());
+		assertEquals(expectedDate, movie.getDate());
+		assertEquals(expectedDirector, movie.getDirectedBy());
+		assertEquals(expectedWriter, movie.getWrittenBy());
+		assertEquals(expectedGenre, movie.getGenre());
+		assertEquals(expectedCountry, movie.getCountry());
+		assertEquals(expectedLanguage, movie.getLanguage());
+		assertEquals(expectedPlot, movie.getPlot());
+		assertEquals(expectedCast, movie.getCast());
+		assertEquals(expectedWebRuntime, movie.getWebRuntime());
+		assertEquals(expectedWebSoundMix, movie.getWebSoundMix());
+		assertEquals(expectedAwards, movie.getAwards());
+		assertEquals(expectedMpaa, movie.getMpaa());
+		assertEquals(expectedAka, movie.getAka());
+		assertEquals(expectedCertification, movie.getCertification());
+		assertEquals(expectedColor, movie.getColour());		
+	}
+	
+	@Test
+	public void dataRetrievalSeriesTest() throws Exception {
+		
+		IMDB imdb = null;
+		try {
+			imdb = new IMDB();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+		
+		// Buffy
+		StringBuffer data = imdb.getURLData("0118276");
+		
+		ModelIMDbEntry movie = imdb.grabInfo("0118276", data);
+		
+		String expectedTitle = "\"Buffy the Vampire Slayer\"";
+		String expectedDate = "1997";
+		String expectedDirector = "";
+		String expectedWriter = "Joss Whedon";
+		String expectedGenre = "Action, Drama, Fantasy";
+		String expectedCountry = "USA";
+		String expectedLanguage = "English";
+		String expectedPlot = "At the young age of 16, Buffy was chosen to hunt vampires, demons, and the forces of darkness. After the ordeal at Hemery High Buffy Summers wound up at Sunnydale High. Joined with Willow Rosenberg and Alexander \"Xander\" Harris, and her watcher Giles, Buffy fights the challenges of High School and saves the world...a lot.";
+		String expectedCast = "";
+		String expectedWebRuntime = "44 min (144 episodes)";
+		String expectedWebSoundMix = "Dolby";
+		String expectedAwards = "Nominated for Golden Globe. Another 34 wins & 99 nominations";
+		String expectedMpaa = "";
+		String expectedAka = 
+" BtVS (USA) (promotional abbreviation)\n" +
+"Buffy (USA) (short title)\n" +
+"Buffy, the Vampire Slayer: The Series (USA) (long title)\n" +
+"Buffy, la cazavampiros (Argentina) (Spain) (Venezuela) [es]\n" +
+"Бъфи - убийцата на вампири (Bulgaria: Bulgarian title) [bg]\n" +
+"Bafi, ubica vampira (Serbia) [sr]\n" +
+"Buffy - Im Bann der Dämonen (Germany) [de]\n" +
+"Buffy - Vampyrdræberen (Denmark) [da]\n" +
+"Buffy - Vampyrenes skrekk (Norway) [no]\n" +
+"Buffy - Vampyrernes skræk (Denmark) [da]\n" +
+"Buffy contre les vampires (France) (dubbed version) [fr]\n" +
+"Buffy i vampirofonissa (Greece) [el]\n" +
+"Buffy och vampyrerna (Sweden) (cable TV title) [sv]\n" +
+"Buffy vampyrdödaren (Sweden) [sv]\n" +
+"Buffy, Caçadora de Vampiros (Portugal) [pt]\n" +
+"Buffy, a vámpírok réme (Hungary) [hu]\n" +
+"Buffy, l'ammazzavampiri (Italy) [it]\n" +
+"Buffy, vampyyrintappaja (Finland) [fi]\n" +
+"Nightfall (Japan: English title) [en]\n";
+	
+	
+		String expectedCertification = "UK:12 (some episodes), UK:15 (some episodes), Australia:PG (some episodes), Portugal:M/12, New Zealand:M, USA:TV-14, Australia:M, Israel:PG, Singapore:M18 (DVD rating) (season 7), Singapore:PG, USA:TV-14 (some episodes), USA:TV-PG (some episodes)";
+		String expectedColor = "Color";
+		
+		assertTrue(Double.parseDouble(movie.getRating()) > 5);
+		
+		assertEquals(expectedTitle, movie.getTitle());
+		assertEquals(expectedDate, movie.getDate());
+		assertEquals(expectedDirector, movie.getDirectedBy());
+		assertEquals(expectedWriter, movie.getWrittenBy());
+		assertEquals(expectedGenre, movie.getGenre());
+		assertEquals(expectedCountry, movie.getCountry());
+		assertEquals(expectedLanguage, movie.getLanguage());
+		assertEquals(expectedPlot, movie.getPlot());
+		assertEquals(expectedCast, movie.getCast());
+		assertEquals(expectedWebRuntime, movie.getWebRuntime());
+		assertEquals(expectedWebSoundMix, movie.getWebSoundMix());
+		assertEquals(expectedAwards, movie.getAwards());
+		assertEquals(expectedMpaa, movie.getMpaa());
+		assertEquals(expectedAka, movie.getAka());
+		assertEquals(expectedCertification, movie.getCertification());
+		assertEquals(expectedColor, movie.getColour());		
 	}
 }
