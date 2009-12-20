@@ -30,29 +30,28 @@ public class BrowserOpener {
             
             public void run() {
             	
-                boolean browserLauncherFailed = false;
+            	boolean browserLauncherFailed = false;
                 boolean customBrowser = false;
-                                 
+                
                 if (browser.equals("Custom"))
-                    customBrowser = true;
-                
-                
+                	customBrowser = true;
+                                
                 if (!customBrowser) {
                     
                     try {
                         BrowserLauncher launcher = new BrowserLauncher(null);
-                        
-                        //System.out.println("url:" + url);
-                        
-                        if (browser.equals("Default"))
-                            launcher.openURLinBrowser(url);
+                                    	                        
+                        if (browser.equals("Default")) {
+                        	log.debug("Launching BrowserLauncher(default):" + url);
+                        	launcher.openURLinBrowser(url);
+                        }
                         else {
-                            launcher.openURLinBrowser(browser, url);
-                            //System.out.println("browser:" + browser);
+                        	log.debug("Launching BrowserLauncher:" + browser);
+                        	launcher.openURLinBrowser(browser, url);
                         } 
                     }  
                     catch (Exception e) {
-                    	log.debug("BrowserLauncher2 failed");
+                    	log.debug("BrowserLauncher2 failed:" + e.getMessage());
                         browserLauncherFailed = true;
                     }
                 }
@@ -65,18 +64,17 @@ public class BrowserOpener {
                         if (customBrowser && browserPath.isFile()) {
                             String cmd = browserPath + " " + url;
                             
-                            //System.out.println("url 2:" + url);
+                            log.debug("Manually launch:" + cmd);
                             p = Runtime.getRuntime().exec(cmd);
                         }
                         else {
-                        	 
-                        	 
+                        	                         	 
                             if (browser.equals("Default") && SysUtil.isWindows()) {
-                            	//System.out.println("rundll32:" + url);
+                            	log.debug("Manually launch default Windows browser");
                                 p = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
                             }
                             else if (browser.equals("Default") && SysUtil.isMac()) {
-                            	//System.out.println("macUtils:" + url);
+                            	log.debug("Manually launch default OSX browser");
                             	
                                 Class<?> macUtils = Class.forName("com.apple.mrj.MRJFileUtils");
                                 Method openURL = macUtils.getDeclaredMethod("openURL", new Class[] {String.class});
@@ -100,6 +98,7 @@ public class BrowserOpener {
                                     else 
                                         cmd = "netscape" + remoteOpenURL;
                                                                          
+                                    log.debug("Manually launch browser:" + cmd);
                                     p = Runtime.getRuntime().exec(cmd);
                                      
                                     try {
