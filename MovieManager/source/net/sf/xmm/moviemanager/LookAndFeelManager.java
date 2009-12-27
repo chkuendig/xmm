@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import net.sf.xmm.moviemanager.MovieManagerConfig.LookAndFeelType;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
@@ -53,7 +54,7 @@ public class LookAndFeelManager {
         
         MovieManagerConfig config = MovieManager.getConfig();
         
-        UIManager.LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+        final UIManager.LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
         
         if (config.getCustomLookAndFeel().equals("")) {
             LookAndFeel currentLAF = UIManager.getLookAndFeel();
@@ -78,13 +79,12 @@ public class LookAndFeelManager {
 
             	for (int i = 0; i < installedLookAndFeels.length; i++) {
             		if (installedLookAndFeels[i].getName().equals(config.getCustomLookAndFeel())) {
-            			UIManager.setLookAndFeel(installedLookAndFeels[i].getClassName());
+            			setLookAndFeel(installedLookAndFeels[i].getClassName());
             			laFSet = true;
             			break;
             		}
             	}
-            }
-        
+            }        
 
             if (config.getLookAndFeelType() == LookAndFeelType.SkinlfLaF &&
             		getSkinlfThemepackList() != null) {
@@ -106,7 +106,7 @@ public class LookAndFeelManager {
             		Skin skin = SkinLookAndFeel.loadThemePack(theme.getAbsolutePath());
             		SkinLookAndFeel.setSkin(skin);
             		LookAndFeel laf = new SkinLookAndFeel();
-            		UIManager.setLookAndFeel(laf);
+            		setLookAndFeel(laf);
             		laFSet = true;
             	}
             	else {
@@ -298,7 +298,7 @@ public class LookAndFeelManager {
                 LookAndFeel quaquqLAF = (LookAndFeel) quaquaClass.newInstance();
                 UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(quaquqLAF.getName(), "ch.randelshofer.quaqua.QuaquaLookAndFeel"));
                 // Override system look and feel
-                UIManager.setLookAndFeel(quaquqLAF);
+                setLookAndFeel(quaquqLAF);
                 System.load(FileUtil.getFile("lib/mac/libquaqua.jnilib").getPath());
                 
                 System.setProperty("Quaqua.JNI.isPreloaded","true");
@@ -311,6 +311,40 @@ public class LookAndFeelManager {
             }
         }
     }
+    
+    private static void setLookAndFeel(final String className) {
+    	SwingUtilities.invokeLater(new Runnable() {
+    		public void run() {
+    			try {
+    				UIManager.setLookAndFeel(className);
+				} catch (UnsupportedLookAndFeelException e) {
+					log.warn("Exception:" + e.getMessage(), e);
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}
+    	});
+    }
+    
+    private static void setLookAndFeel(final LookAndFeel lookAndFeel) {
+    	SwingUtilities.invokeLater(new Runnable() {
+    		public void run() {
+    			try {
+    				UIManager.setLookAndFeel(lookAndFeel);
+				} catch (UnsupportedLookAndFeelException e) {
+					log.warn("Exception:" + e.getMessage(), e);
+				}
+    		}
+    	});
+    }
+    
     
     public static void macOSXRegistration() {
     	
