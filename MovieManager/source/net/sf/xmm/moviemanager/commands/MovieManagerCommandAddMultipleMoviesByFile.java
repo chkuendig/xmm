@@ -104,9 +104,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	void startAddMovies() {
 
 		multiAddSelectOption = damm.getMultiAddSelectOption();
-		enableExludeString = damm.getMultiAddExcludeStringEnabled();
-		excludeString = damm.getMultiAddExcludeString();
-
+		
 		ArrayList <DialogAddMultipleMovies.Files> fileList = damm.getMoviesToAdd();
 
 		if (fileList == null) {
@@ -118,7 +116,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		enableExludeIntegers = damm.enableExludeIntegers.isSelected();
 		enableUseFolderName = damm.enableUseFolderName.isSelected();
 		enableSearchNfoForImdb = damm.enableSearchNfoForImdb.isSelected();
-		enableExludeUserdefinedInfo = damm.enableExludeUserdefinedInfo.isSelected();
+		enableExludeUserdefinedInfo = damm.getEnableExludeUserdefinedInfo();
 		enableExludeAllAfterMatchOnUserDefinedInfo = damm.enableExludeAllAfterMatchOnUserDefinedInfo.isSelected();
 		enableUseParentFolderIfCD = damm.enableUseParentFolderIfCD.isSelected();
 			
@@ -205,9 +203,6 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 				}
 				searchTitle = searchString;
 			}
-
-			if (enableExludeString)
-				searchString = StringUtil.performExcludeString(searchString, excludeString);
 
 			if (enableExludeParantheses)
 				searchString = StringUtil.performExcludeParantheses(searchString, true);
