@@ -188,6 +188,34 @@ public class HttpUtil {
 	}
 	
 
+	public HTTPResult readData2(URL url) throws Exception {
+
+		if (!isSetup())
+			setup();
+
+		GetMethod method = new GetMethod(url.toString());
+		int statusCode = client.executeMethod(method);
+
+		if (statusCode != HttpStatus.SC_OK) {
+			log.debug("HTTP StatusCode not HttpStatus.SC_OK:(" + statusCode + "):" + method.getStatusLine());
+		}
+
+		java.io.BufferedReader stream = new java.io.BufferedReader(new java.io.InputStreamReader(method.getResponseBodyAsStream(), "ISO-8859-1"));
+
+		StringBuffer data = new StringBuffer();
+
+		// Saves the page data in a string buffer... 
+		int buffer;
+
+		while ((buffer = stream.read()) != -1) {
+			data.append((char) buffer);
+		}
+
+		stream.close();
+
+		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
+	}
+
 	public byte [] readDataToByteArray(URL url) throws Exception {
 	
 		byte[] data = null;

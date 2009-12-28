@@ -20,22 +20,38 @@
 
 package net.sf.xmm.moviemanager.http;
 
+import java.io.InputStream;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.models.imdb.*;
 
 import org.apache.log4j.Logger;
+import org.lobobrowser.html.UserAgentContext;
+import org.lobobrowser.html.parser.DocumentBuilderImpl;
+import org.lobobrowser.html.parser.InputSourceImpl;
+import org.lobobrowser.html.test.SimpleUserAgentContext;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class IMDB /*extends IMDB_if */{
   
@@ -159,7 +175,7 @@ public class IMDB /*extends IMDB_if */{
 		boolean isEpisode = false;
 		boolean isSeries = false;
 		
-		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
+		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
 			
 		try {
 			/* Processes the data... */
@@ -240,9 +256,7 @@ public class IMDB /*extends IMDB_if */{
 						// Get id of big cover
 												
 						Pattern p = Pattern.compile("href=\".*/media/(rm\\d+/tt\\d+)\"");
-						
-						//System.err.println("tmp:" + tmp);
-						
+												
 						Matcher m = p.matcher(tmp);
 						
 						if (m.find()) {
@@ -303,7 +317,7 @@ public class IMDB /*extends IMDB_if */{
 			ArrayList <String> list;
 			
 			if (classInfo.containsKey("Director:")) {
-				directedBy = getDecodedClassInfo("Director:", (String) classInfo.get("Director:"));
+				directedBy = getDecodedClassInfo("Director", (String) classInfo.get("Director:"));
 			}
 			else if (classInfo.containsKey("Directors:")) {
 				
@@ -322,17 +336,27 @@ public class IMDB /*extends IMDB_if */{
 			
 			tmp = null;
 			
-			// Gets the written by... 
+			//Set<String> keys = classInfo.keySet();
+			//for (String key : keys)
+			//	System.err.println("key:" + key);
+			
+			// Gets the Writer or Writers (Writer matches both Writer: and Writers:)
 			if (classInfo.containsKey("Writer:")) {
-				tmp = getClassInfo(data, "Writer:");
+				//tmp = getClassInfo(data, "Writer:");
+				tmp = classInfo.get("Writer:");
+			}
+			if (classInfo.containsKey("Writers:")) {
+				//tmp = getClassInfo(data, "Writers:");
+				tmp = classInfo.get("Writers:");
 			}
 			else if (classInfo.containsKey("Creator:")) {
-				tmp = getClassInfo(data, "Creator:");
+				tmp = classInfo.get("Creator:");
+				//tmp = getClassInfo(data, "Creator:");
 			}
 			
 			if (tmp != null) {
-				tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
-
+				//tmp = tmp.substring(tmp.indexOf(":")+1, tmp.length());
+				
 				list = getLinkContentName(tmp);
 
 				while (!list.isEmpty()) {
@@ -353,7 +377,7 @@ public class IMDB /*extends IMDB_if */{
 			
 			if (classInfo.containsKey("Plot:"))
 				plot = getDecodedClassInfo("Plot:", (String) classInfo.get("Plot:"));
-			
+			          
 			
 			cast = getDecodedClassInfo("class=\"cast\">", data);
 			cast = cast.replaceAll(" \\.\\.\\.", ",");
@@ -363,6 +387,7 @@ public class IMDB /*extends IMDB_if */{
 			
 			if (classInfo.containsKey("Also Known As:")) {
 				aka = getDecodedClassInfo("Also Known As:", (String) classInfo.get("Also Known As:"));
+				aka = aka.trim();
 				dataModel.setAka(aka);
 			}
 			
@@ -475,7 +500,488 @@ public class IMDB /*extends IMDB_if */{
 		return null;
     }
 
+    
+    
+    private ModelIMDbEntry parseData2(String urlID, StringBuffer data) throws Exception {
+		
+        String date = "", title = "", plot = "", coverURL = "", coverName = "";
+    	  
+    	//long time = System.currentTimeMillis();
+    	
+		int start = 0;
+		int end = 0;
+	
+		Object [] tmpArray;
+	
+		boolean isEpisode = false;
+		boolean isSeries = false;
+		
+		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
+			
+		try {
+			/* Processes the data... */
 
+			if (data.indexOf("Full Episode List") != -1)
+				isEpisode = true;
+			
+			/* Gets the title... */
+			if ((start = data.indexOf("<div id=\"tn15title\">", start)) != -1 &&
+					(end = data.indexOf("</div>", start)) != -1) {
+
+				tmpArray = HttpUtil.decodeHTMLtoArray(data.substring(start, end));
+
+				if (isEpisode) {
+					title = (String) tmpArray[1];
+					date = (String) tmpArray[2];
+					
+					if (date.startsWith("(") && date.endsWith(")"))
+						date = date.substring(1, date.length() -1);
+					
+				}
+				else { 
+					title = (String) tmpArray[0];
+					date = (String) tmpArray[2];
+				}
+				
+				if (!isEpisode && title.startsWith("\""))
+					isSeries = true;
+			}	
+			else
+				throw new Exception("Title could not be found");
+	    
+			ModelIMDbEntry tmpModel = null;
+			
+			if (isSeries)
+				tmpModel = new ModelIMDbSeries();
+			
+			else if (isEpisode)
+				tmpModel = new ModelIMDbEpisode();
+			
+			else
+				tmpModel = new ModelIMDbMovie();
+			
+			// Must be accessible from within inner class
+			final ModelIMDbEntry dataModel = tmpModel;
+			
+			dataModel.setTitle(title);
+			dataModel.setDate(date);
+			dataModel.setUrlID(urlID);
+			
+			coverURL = null;
+						
+			boolean getCover = false;
+			
+			/* Gets the cover url... */
+			if ((start = data.indexOf("<div class=\"photo\">")) != -1 && 
+				(end = data.indexOf("</div>", start)) != -1) {
+	    	
+				String tmp = data.substring(start, end);
+				
+				if (tmp.indexOf("Poster Not Submitted") == -1) {
+	    	
+					if ((start = data.indexOf("src=\"", start) +5) !=4 &&
+						(end = data.indexOf("\"", start)) != -1) {
+						coverURL = HttpUtil.decodeHTML(data.substring(start, end));
+						
+						getCover = true;
+						
+						dataModel.setCoverURL(coverURL);
+						
+						start = coverURL.lastIndexOf(".");
+
+						if (start != 0 && start != -1) {
+							coverName = urlID + coverURL.substring(start, coverURL.length());
+							dataModel.setCoverName(coverName);
+						}
+						
+						// Get id of big cover
+												
+						Pattern p = Pattern.compile("href=\".*/media/(rm\\d+/tt\\d+)\"");
+						
+						Matcher m = p.matcher(tmp);
+						
+						if (m.find()) {
+						
+							String g = m.group();
+						
+							//System.err.println("g:" + m.group(0));
+							//System.err.println("g1:" + m.group(1));
+							
+							dataModel.bigCoverUrlId = m.group(1);
+							
+						}
+						//rm3535314176/tt0093773
+					}
+				}
+			}
+	    				
+			final ReentrantLock lock = new ReentrantLock();
+			
+			if (getCover) {
+								
+				Thread t = new Thread(new Runnable() {
+					public void run() {
+						try {
+							//long coverTime = System.currentTimeMillis();
+							lock.lock();
+							retrieveCover(dataModel);
+						} finally {
+							lock.unlock();
+						}
+					}
+				});
+				t.start();
+			}
+			
+			
+			parseDataUsingXPath(dataModel, data, urlID);
+			
+			
+			start = 0;
+			end = 0;
+			
+			/*
+			
+			
+			if (classInfo.containsKey("Original Air Date:"))
+				airdateContent = getDecodedClassInfo("Original Air Date:", (String) classInfo.get("Original Air Date:"));
+						
+			// Ex   29 April 2002 (Season 3, Episode 19)
+			// Ex: 5 October 1999 (Season 1, Episode 1)
+			if (airdateContent != null) {
+				Pattern p = Pattern.compile("(.+)?\\s\\(.+?(\\d+?),\\s?.+?(\\d+?)\\)");
+				Matcher m = p.matcher(airdateContent);
+								
+				if (m.find()) {
+
+					int gCount = m.groupCount();
+
+					if (gCount == 3) {
+							
+						//String airdat = m.group(1);
+						String season = m.group(2);
+						String episode = m.group(3);
+	
+						seasonNumber = season;
+					    episodeNumber = episode;
+					    
+					    ((ModelIMDbEpisode) dataModel).setSeasonNumber(seasonNumber);
+					    ((ModelIMDbEpisode) dataModel).setEpisodeNumber(episodeNumber);
+					}
+				}
+			}
+			*/	
+			
+			/* Gets a bigger plot (if it exists...) */
+			URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/plotsummary");
+	    
+			HTTPResult result = httpUtil.readData(url);
+			data = result.data;
+			
+			/* Processes the data... */
+			start = 0;
+			end = 0;
+	    					
+			if (data != null) {
+					
+				if ((start = data.indexOf("class=\"plotpar\">",start)+16) != 15 &&
+						(end=data.indexOf("</p>",start)) != -1) {
+					plot = HttpUtil.decodeHTML(data.substring(start, end));
+
+					if (plot.indexOf("Written by") != -1)
+						plot = plot.substring(0, plot.indexOf("Written by"));
+				}
+			}
+			
+			if (plot != null && !plot.equals("")) {
+				plot = plot.trim();
+				plot = plot.replaceAll("(more)$", "");
+				dataModel.setPlot(plot);
+			}
+			
+			lock.tryLock((long) 10, TimeUnit.SECONDS);
+			
+			lastDataModel = dataModel;
+			
+			return dataModel;
+			
+		} catch (Exception e) {
+			log.error("Exception:" + e.getMessage(), e);
+		}
+		
+		return null;
+    }
+    
+
+    void parseDataUsingXPath(ModelIMDbEntry dataModel, StringBuffer data, String uri) {
+
+    	try {
+    		SimpleUserAgentContext context = new SimpleUserAgentContext();
+    		context.setScriptingEnabled(false);
+    		context.setExternalCSSEnabled(false);
+    		
+			DocumentBuilderImpl dbi = new DocumentBuilderImpl(context);
+    		//Document document = dbi.parse(new StringReader(data.toString()));
+    		
+    		//Document document = dbi.parse(new InputSourceImpl(in, url, "ISO-8859-1")) ;
+    		Document document = dbi.parse(new InputSourceImpl(new StringReader(data.toString()), "http://akas.imdb.com/title/tt" + uri)) ;
+    		
+    		if (true) {
+    			XPath xpath = XPathFactory.newInstance().newXPath();
+    			String eval;
+    			
+    			//eval = "html//div[@class='info-offset']/table[@class='cast']";
+    			//eval = "html//table[@class='cast']";
+
+    			eval = "html//div[@class='info']|html//div[@class='info-offset']";
+    			ArrayList<Element> res = getElements(xpath, document, eval);
+
+    			for (Element e : res) {
+    				parseXPathResult(dataModel, e);
+    			}
+    		}
+    	}
+    	catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+  
+    
+    
+    String parseXPathResult(ModelIMDbEntry dataModel, Element e) {
+
+ 	   Pattern p = Pattern.compile("\\s*(.+?):\\s*(.+)");
+ 	   Matcher m = p.matcher(e.getTextContent());
+
+ 	   if (m.find()) {
+
+ 		   int gCount = m.groupCount();
+ 		  
+ 		   if (gCount == 2) {
+
+ 			   String name = m.group(1);
+ 			   String info = m.group(2).trim();
+
+ 			   if (name.equals("Also Known As")) {
+ 				   NodeList children = e.getChildNodes();
+ 				   children = children.item(2).getChildNodes();
+ 				   
+ 				   String aka = "";
+ 				   
+ 				   for (int i = 0; i < children.getLength(); i++) {
+ 					   Node n = children.item(i);
+ 					   //System.err.println(n.getLocalName() + ":" + n.getTextContent());
+ 					   String tmp = n.getTextContent();
+ 					   
+ 					   if (!tmp.trim().equals("") && !tmp.trim().equals("more")) {
+ 						   aka += tmp.trim() + "\n";
+ 					   }
+ 				   }
+ 				   aka = StringUtil.removeDoubleSpace(aka);
+ 				  //System.err.println("Also Known As:" + aka);
+ 				   dataModel.setAka(aka);
+ 			   }
+ 			   else if (name.equals("Sound Mix")) {
+ 				   NodeList children = e.getChildNodes();
+ 				   children = children.item(3).getChildNodes();
+ 				   
+ 				   String sound = getNodesContent(children);
+ 				   sound = sound.replaceAll("\\(", " (");
+ 				   //sound = sound.replaceAll("\\|", ", ");
+ 				   
+ 				  //System.err.println("sound:" + sound);
+ 				   dataModel.setWebSoundMix(sound);
+ 			   }
+ 			   else if (name.equals("Plot")) {
+ 				  
+ 				   int index = info.indexOf("full summary");
+ 				   if (index != -1) {
+ 					   info = info.substring(0, index);
+ 				   }
+ 				  dataModel.setPlot(info);
+ 			   }
+ 			   else if (name.equals("Certification")) {
+ 				   NodeList children = e.getChildNodes();
+ 				   children = children.item(3).getChildNodes();
+ 				   String certification = getNodesContent(children);
+ 				   certification = certification.replaceAll("\\(", " (");
+ 				   certification = StringUtil.removeDoubleSpace(certification);
+ 				   //System.err.println("Certification:" + certification);
+ 				   dataModel.setCertification(certification);
+ 			   }
+ 			   else if (name.equals("Language")) {
+ 				   NodeList children = e.getChildNodes();
+ 				   children = children.item(3).getChildNodes();
+ 				   
+ 				   String language = getNodesContent(children);
+ 				   //language = language.replaceAll("\\|", ", ");
+ 				  //System.err.println("Language:" + language);
+ 				   dataModel.setLanguage(language);
+ 			   }
+ 			   else if (name.startsWith("Country")) {
+ 				   NodeList children = e.getChildNodes();
+ 				   children = children.item(3).getChildNodes();
+
+ 				   String country = getNodesContent(children);
+ 				   //country = country.replaceAll("\\|", ", ");
+ 				  //System.err.println("Country:" + country);
+ 				   dataModel.setCountry(country);
+ 			   }
+ 			   else if (name.startsWith("User Rating")) {
+ 				  //System.err.println("Rating:" + info);
+ 				   // On the format 8.5/10
+ 				   info = info.substring(0, info.indexOf("/"));
+ 				   dataModel.setRating(info);
+ 			   }
+ 			   else if (name.startsWith("Writer") || name.startsWith("Creator") || name.startsWith("Director")) {
+
+ 				   NodeList children = e.getChildNodes();
+ 				   children = children.item(3).getChildNodes();
+
+ 				   String writer = "";
+ 				   //String writer = getNodesContent(children);
+
+ 				   for (int i = 0; i < children.getLength(); i++) {
+ 					   Node n = children.item(i);
+ 					   String tmp = n.getTextContent().trim();
+
+ 					   if (!tmp.equals("") && !tmp.equals("more") && !tmp.startsWith("(written by)") && !tmp.startsWith("(co-creator)")) {
+ 						   
+ 						   if (writer.length() > 0)
+ 							  writer += ", ";
+ 							   
+ 						   writer += removeNewLines(tmp);
+ 					   }
+ 				   }
+ 				   writer = writer.replaceAll("\\|", ", ");
+
+ 				  if (name.startsWith("Director"))
+ 					 dataModel.setDirectedBy(info);
+ 				  else
+ 					 dataModel.setWrittenBy(writer);
+ 				   
+ 			   }
+ 			   else if (name.startsWith("Creator")) {
+ 				   //System.err.println("Director:" + info);
+ 				   dataModel.setWrittenBy(info);
+ 			   }
+ 			   else if (name.startsWith("Director")) {
+ 				   //System.err.println("Director:" + info);
+ 				   dataModel.setDirectedBy(info);
+ 			   }
+			   else if (name.startsWith("Runtime")) {
+ 				   info = StringUtil.removeDoubleSpace(info);
+ 				   String runtime =  info.replaceAll("\\s\\|", ",");
+ 				   //System.err.println("Runtime:" + runtime);
+ 				   dataModel.setWebRuntime(runtime);
+ 			   }
+ 			   else if (name.startsWith("Genre")) {
+ 				   String genre =  info.replaceAll("\\s\\|", ",");
+
+ 				   genre = StringUtil.removeAtEnd(genre, "more");
+ 				   //System.err.println("Genre:" + genre);
+ 				   genre = genre.trim();
+ 				   dataModel.setGenre(genre);
+ 			   }
+ 			   else if (name.startsWith("MPAA")) {
+ 				  //System.err.println("MPAA:" + info);
+ 				   dataModel.setMpaa(info);
+ 			   }
+ 			   else if (name.startsWith("Awards")) {
+ 				   NodeList children = e.getChildNodes();
+ 				   children = children.item(3).getChildNodes();
+
+ 				   String awards = getNodesContent(children);
+ 				   awards = awards.replaceAll("&", " & ");
+ 				   
+ 				   awards = StringUtil.removeAtEnd(awards, "more");
+ 				   //System.err.println("Awards:" + info);
+ 				   dataModel.setAwards(awards);
+ 			   }
+ 			   else if (name.startsWith("Color")) {
+ 				  //System.err.println("Color:" + info);
+ 				   dataModel.setColour(info);
+ 			   }
+ 			   else {
+ 				  // System.err.println("name:" + name);
+ 				   //System.err.println("info:" + info);
+ 			   }
+ 		   }
+ 	   }
+ 	   // Cast
+ 	   else {
+ 		   		   
+ 		   NodeList children = e.getChildNodes();
+ 		   children = children.item(1).getChildNodes();
+ 		   
+ 		   String cast = "";
+ 		   
+ 		   for (int i = 0; i < children.getLength(); i++) {
+ 			   Node n = children.item(i);
+ 			   String tmp = n.getTextContent();
+ 			   			   
+ 			   if (!tmp.trim().equals("")) {
+ 				
+ 				   String [] split = tmp.split("\\.\\.\\.");
+ 				   
+ 				   if (split.length != 2)
+ 					   continue;
+ 				   
+ 				   if (cast.length() > 0)
+ 					   cast += ", ";
+ 				   
+ 				   cast += split[0].trim() + " (" + split[1].trim() + ")";
+ 			   }
+ 		   }
+ 		   cast = cast.replaceAll("\\s\\|", ",");
+ 		   
+ 		  //System.err.println("Cast:" + cast);
+ 		   dataModel.setCast(cast);
+ 	   }
+ 	   return null;
+    }
+    
+    
+    ArrayList<Element> getElements(XPath xpath, Document document, String path) throws XPathExpressionException {
+
+    	long time = System.currentTimeMillis();
+    	NodeList nodeList = (NodeList) xpath.evaluate(path, document, XPathConstants.NODESET);
+    	time = System.currentTimeMillis() - time;
+    	//System.err.println("time:" + time);
+
+    	ArrayList<Element> result = new ArrayList<Element>();
+
+    	int length = nodeList.getLength();
+    	for(int i = 0; i < length; i++) {
+    		Element element = (Element) nodeList.item(i);
+    		result.add(element);
+    	}
+    	return result;
+    }
+
+
+    String getNodesContent(NodeList nodes) {
+
+    	String result = "";
+
+    	for (int i = 0; i < nodes.getLength(); i++) {
+    		Node n = nodes.item(i);
+    		String tmp = n.getTextContent();
+
+    		if (!tmp.trim().equals("")) {
+    			result += removeNewLines(tmp.trim());
+    		}
+    	}
+    	result = result.replaceAll("\\|", ", ");
+
+    	return result;
+    }
+    
+    String removeNewLines(String input) {
+ 	   return input.replaceAll("\\n", "");
+    }
+  
+    
    
     
     public StringBuffer getEpisodesStream(ModelIMDbSearchHit modelSeason) {
@@ -517,7 +1023,7 @@ public class IMDB /*extends IMDB_if */{
 		
 		try {
 
-			String classContent = getClass("season-filter-all filter-season-" + modelSeason.getSeasonNumber(), stream);
+			String classContent = getDivClass("season-filter-all filter-season-" + modelSeason.getSeasonNumber(), stream);
 			
 			StringBuffer data = new StringBuffer(classContent);
 			
@@ -807,12 +1313,14 @@ public class IMDB /*extends IMDB_if */{
 		return aka;
     }
   
- 
+   // <div.*?class=\"info.+?<.+?>(.*?)(\(?:.*?\))?<.+?>(.+?)</div>
+   // <div.*?class="info">.*?<.+?>(.+?)</.+?>.*?<
     protected HashMap<String, String> decodeClassInfo(StringBuffer data) {
     		
     	HashMap<String, String> classInfo = new HashMap<String, String>();
     	
-    	Pattern p = Pattern.compile("<div.*?class=\"info\">.+?<.+?>(.*?)<.+?>(.+?)</div>", Pattern.DOTALL);
+    	//Pattern p = Pattern.compile("<div.*?class=\"info\">.*?<.+?>(.+?)</.+?>.*?<div\\sclass=\"info-content\">(.+?)</div>", Pattern.DOTALL);
+    	Pattern p = Pattern.compile("<div.*?class=\"info\">.*?<.+?>(.+?)(?:\\(.*?)?</.+?>.*?<div\\sclass=\"info-content\">(.+?)</div>", Pattern.DOTALL);
 		Matcher m = p.matcher(data);
 		 		
 		while (m.find()) {
@@ -821,7 +1329,22 @@ public class IMDB /*extends IMDB_if */{
 			
 			String className = m.group(1);
 			String info = m.group(2);
-			classInfo.put(className, info);
+			
+			//System.err.println("className:" + className + "|");
+			//System.err.println("info:" + info);
+			
+			if (className != null && info != null) {
+				className = className.trim();
+				if (!className.endsWith(":"))
+					className += ":";
+				
+				//System.err.println("put=" + className + "|");
+				
+				if (className.equals("Writers:")) {
+					//System.err.println("Writers put info:" + info);
+				}
+				classInfo.put(className, info);
+			}
 		}
 		
 		return classInfo;
@@ -856,7 +1379,7 @@ public class IMDB /*extends IMDB_if */{
     }
     
     
-    protected static String getDecodedClassInfo(String className, StringBuffer data) {
+    protected static String getDecodedClassInfo(String className, StringBuffer data) throws Exception {
     	String tmp = getClassInfo(data, className);
     	return getDecodedClassInfo(className, tmp);
     }
@@ -864,11 +1387,15 @@ public class IMDB /*extends IMDB_if */{
     /**
      * Grabs the content of a class info containing the classname
      * and cleans it up by removing html and paranthesis.
+     * @throws Exception 
      **/
-    protected static String getDecodedClassInfo(String className, String classInfo) {
+    protected static String getDecodedClassInfo(String className, String classInfo) throws Exception {
     	String decoded = "";
     	String tmp = classInfo;
 
+    	if (tmp == null)
+    		throw new Exception("classInfo cannot be null!");
+    	
     	if (className == null)
     		className = "";
     	
@@ -979,6 +1506,27 @@ public class IMDB /*extends IMDB_if */{
     			    			
     			for (int i = 0; i < castSplit.length; i++) {
     				
+    				//System.err.println("castSplit[i]:" + castSplit[i]);
+    				
+    				String nmClass = getCustomElementClass("td", "nm", new StringBuffer(castSplit[i]));
+    				String charClass = getCustomElementClass("td", "char", new StringBuffer(castSplit[i]));
+    				
+    				if (nmClass == null || charClass == null)
+    					continue;
+    					
+    				ArrayList<String> nm = getLinkContentName(nmClass);
+    				ArrayList<String> charResult = getLinkContentName(charClass);
+    				
+    				if (nm.size() != 1 || charResult.size() != 1) {
+    					continue;
+    				}
+    				
+    				String name = nm.get(0);
+					String character = charResult.get(0);
+					decoded.append(name);
+					decoded.append(" (" + character + "), ");
+					
+    				/*
     				Matcher m = p.matcher(castSplit[i]);
     								
     				if (m.find()) {
@@ -989,11 +1537,12 @@ public class IMDB /*extends IMDB_if */{
     							
     						String name = m.group(1);
     						String character = m.group(2);
-    							    					
+    						System.err.println("name:" + name);
     						decoded.append(name);
         					decoded.append(" (" + character + "), ");
     					}
     				}
+    				*/
     			}
     			
     			// Removes spaces at end
@@ -1002,7 +1551,7 @@ public class IMDB /*extends IMDB_if */{
 
     			// Replace comma at the end
     			if (decoded.length() > 0 && decoded.charAt(decoded.length() - 1) == ',') 
-    				decoded = decoded.replace(decoded.length() - 1, decoded.length(), ".");
+    				decoded = decoded.replace(decoded.length() - 1, decoded.length(), "");
 
     		} catch (Exception e) {
     			log.error("Exception:" + e.getMessage(), e);
@@ -1039,8 +1588,13 @@ public class IMDB /*extends IMDB_if */{
 		return result;
     }
     
-        
-    public static String getClass(String classname, StringBuffer buffer) {
+    /**
+     * Get the content of the <div class="XX">
+     * @param classname
+     * @param buffer
+     * @return
+     */
+    public static String getDivClass(String classname, StringBuffer buffer) {
     
     	int safety = 10000;
     	
@@ -1084,6 +1638,29 @@ public class IMDB /*extends IMDB_if */{
     }
     
         
+    
+  
+    public static String getCustomElementClass(String element, String classname, StringBuffer buffer) {
+        	
+    	String searchStr = "<" +element+ " class=\""+ classname + "\">";
+    	String elementEnd = "</" +element+ ">";
+    	
+    	int start = buffer.indexOf(searchStr);
+    	
+    	if (start == -1)
+    		return null;
+    	
+    	int end = buffer.indexOf(elementEnd, start);
+     	
+    	if (end == -1)
+    		return null;
+    	
+    	if (start > 0 && end < buffer.length() && start < end)
+    		return buffer.substring(start, end);
+    	else
+    		return null;
+    }
+    
     
     public ModelIMDbEntry getLastDataModel() {
     	return lastDataModel;
