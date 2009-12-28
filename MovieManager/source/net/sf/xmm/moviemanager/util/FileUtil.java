@@ -451,8 +451,17 @@ public class FileUtil {
     
     public static void writeToFile(String fileName, StringBuffer data, String encoding) {
         try {
+        	File outputFile = new File(fileName);
+        	
+        	if (!outputFile.getParentFile().isDirectory()) {
+        		if (!outputFile.getParentFile().mkdirs()) {
+        			log.warn("Failed to create new file: " + outputFile);
+        			return;
+        		}
+        	}
+        	
         	Writer out; 
-            FileOutputStream fileStream = new FileOutputStream(new File(fileName));
+            FileOutputStream fileStream = new FileOutputStream(outputFile);
             
             if (encoding == null || encoding.equals("")) 
             	out = new BufferedWriter(new OutputStreamWriter(fileStream));
