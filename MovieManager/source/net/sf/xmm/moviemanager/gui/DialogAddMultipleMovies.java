@@ -327,7 +327,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		
 		miscOptionsPanel.add(enableSkipHiddenDirectories);
 				
-		anyExtension = new JCheckBox("*(any)");
+		anyExtension = new JCheckBox("* (any)");
 		aviExtension = new JCheckBox("avi");
 		divxExtension = new JCheckBox("divx");
 		mpegExtension = new JCheckBox("mpeg");
@@ -457,12 +457,20 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				MovieManager.getConfig().removeMultiAddRootDevice(f.getAbsolutePath());
 			}
 
-			public void fileTreeIsWorkingEvent(FileTreeEvent evt) {
+			public void fileTreeIsWorkingEvent(final FileTreeEvent evt) {
 
 				fileTreeThreadsWorking++;
 				
-				fileTree.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						
+						if (evt.isSearching())
+							setCursor(new Cursor(Cursor.WAIT_CURSOR));
+						else
+							fileTree.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+					}
+				});
+				
 				if (evt.isSearching()) {
 
 					// Shows the progress bar after some time has passed
@@ -482,13 +490,21 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				}
 			}
 
-			public void fileTreeIsReadyEvent(FileTreeEvent evt) {
+			public void fileTreeIsReadyEvent(final FileTreeEvent evt) {
 				
 				fileTreeThreadsWorking--;
 								
-				if (fileTreeThreadsWorking == 0)
-					fileTree.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-				
+				if (fileTreeThreadsWorking == 0) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							
+							if (evt.isSearching())
+								setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+							else
+								fileTree.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+						}
+					});					
+				}
 				if (evt.isSearching()) {
 					GUIUtil.show(progressBar, false);
 				}
