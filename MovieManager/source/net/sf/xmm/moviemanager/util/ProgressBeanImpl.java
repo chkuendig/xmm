@@ -87,5 +87,9 @@ public class ProgressBeanImpl implements ProgressBean, Runnable {
 	public synchronized boolean getCancelled() {
 		return cancelled;
 	}
+
+	public boolean isReady() {
+		return true;
+	}
 }
 

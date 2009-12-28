@@ -44,6 +44,8 @@ public interface ProgressBean {
 
   public boolean getCancelled();
   
+  public boolean isReady();
+  
   /**
    * Add a listener top property changes.
    *
