@@ -97,7 +97,6 @@ public class ModelImportExportSettings {
     
     public String filePath = "";
     private File file = null;
-    public boolean extremeOriginalLanguage = true;
     public String coverPath = "";
     
     public char csvSeparator = ',';

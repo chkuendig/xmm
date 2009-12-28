@@ -68,7 +68,6 @@ public class DialogImport extends JDialog implements ActionListener {
 	
 	private JTextField textFilePath;
 	private JTextField excelFilePath;
-	private JTextField extremeFilePath;
 	private JTextField xmlDatabaseFilePath;
 	private JTextField xmlFilePath;
 	private JTextField csvFilePath;
@@ -77,7 +76,6 @@ public class DialogImport extends JDialog implements ActionListener {
 	
 	private JButton browseForTextFile;
 	private JButton browseForExcelFile;
-	private JButton browseForExtremeFile;
 	private JButton browseForXMLDatabaseFile;
 	private JButton browseForXMLFile;
 	private JButton browseForCSVFile;
@@ -94,9 +92,6 @@ public class DialogImport extends JDialog implements ActionListener {
 	
 	protected JCheckBox enableSearchForImdbInfo;
 	public JCheckBox enableOverwriteImportedInfoWithImdbInfo;
-
-	private JRadioButton useOriginalLanguage;
-	public JRadioButton useMediaLanguage;
 
 	public JCheckBox enableAddMoviesToList;
 	public JComboBox listChooser;
@@ -269,58 +264,6 @@ public class DialogImport extends JDialog implements ActionListener {
 		excelFilePanel.add(excelPathPanel, BorderLayout.SOUTH);
 
 
-		/* Extreme movie manager database */
-		JLabel extremeLabel = new JLabel("Import movies from an extreme Movie Manager database");
-		JPanel extremeLabelPanel = new JPanel();
-		extremeLabelPanel.add(extremeLabel);
-
-		enableOverwriteImportedInfoWithImdbInfo = new JCheckBox("Overwrite imported info with imdb info");
-		enableOverwriteImportedInfoWithImdbInfo.setEnabled(false);
-
-		useOriginalLanguage = new JRadioButton("Import Original Language");
-		useOriginalLanguage.addActionListener(this);
-		useOriginalLanguage.setSelected(true);
-
-		useMediaLanguage = new JRadioButton("Import Media Language");
-		useMediaLanguage.addActionListener(this);
-
-		ButtonGroup languageButtonGroup = new ButtonGroup();
-		languageButtonGroup.add(useOriginalLanguage);
-		languageButtonGroup.add(useMediaLanguage);
-
-
-		/* Extreme option panel */
-		JPanel extremeOptionPanel1 = new JPanel();
-		extremeOptionPanel1.setLayout(new BoxLayout(extremeOptionPanel1, BoxLayout.Y_AXIS));
-		extremeOptionPanel1.add(enableOverwriteImportedInfoWithImdbInfo);
-		extremeOptionPanel1.add(useOriginalLanguage);
-		extremeOptionPanel1.add(useMediaLanguage);
-
-		JPanel extremeOptionPanel2 = new JPanel();
-		extremeOptionPanel2.add(extremeOptionPanel1);
-
-
-		extremeFilePath = new JTextField(27);
-		extremeFilePath.setText(MovieManager.getConfig().getImportExtremeFilePath());
-
-		browseForExtremeFile = new JButton("Browse");
-		browseForExtremeFile.setToolTipText("Browse for a extreme file");
-		browseForExtremeFile.setActionCommand("Browse extreme File");
-		browseForExtremeFile.addActionListener(this);
-
-		JPanel extremePathPanel = new JPanel();
-		extremePathPanel.setLayout(new FlowLayout());
-		extremePathPanel.add(extremeFilePath);
-		extremePathPanel.add(browseForExtremeFile);
-
-		extremePathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),"  File to Import "), BorderFactory.createEmptyBorder(0,5,0,5))));
-
-		JPanel extremePanel = new JPanel(new BorderLayout());
-		extremePanel.add(extremeLabelPanel, BorderLayout.NORTH);
-		extremePanel.add(extremeOptionPanel2, BorderLayout.CENTER);
-		extremePanel.add(extremePathPanel, BorderLayout.SOUTH);
-
-
 		/* XML file path */
 		xmlDatabaseFilePath = new JTextField(27);
 		xmlDatabaseFilePath.setText(MovieManager.getConfig().getImportXMLFilePath());
@@ -344,7 +287,6 @@ public class DialogImport extends JDialog implements ActionListener {
 		JPanel xmlDatabaseFilePanel = new JPanel(new BorderLayout());
 		xmlDatabaseFilePanel.add(xmlDatabaseLabelPanel, BorderLayout.NORTH);
 		xmlDatabaseFilePanel.add(xmlDatabasePathPanel, BorderLayout.SOUTH);
-
 
 		
 		JLabel csvLabel = new JLabel("Import movies from a CSV file");
@@ -398,10 +340,6 @@ public class DialogImport extends JDialog implements ActionListener {
 		tabbedPane.add(excelFilePanel, ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_EXCEL]);
 		tabbedPane.add(xmlDatabaseFilePanel, ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_XML_DATABASE]);
 		tabbedPane.add(csvFilePanel, ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_CSV]);
-
-		// Extreme movie manager uses MS Access, so it's only supported on Windows.
-		//if (SysUtil.isWindows())
-			//tabbedPane.add(extremePanel, ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_EXTREME]);
 
 		if (MovieManager.getConfig().getLastDialogImportType() < ModelImportExportSettings.IMPORT_MODE_COUNT) {
 			int index = tabbedPane.indexOfTab(ModelImportExportSettings.importTypes[MovieManager.getConfig().getLastDialogImportType()]);
@@ -551,11 +489,7 @@ public class DialogImport extends JDialog implements ActionListener {
 						"csv"
 				}, new String("Exported CSV file (*.csv)")));
 			}
-			/*else if (importMode == ModelImportExportSettings.IMPORT_MODE_EXTREME) {
-				title = "Select eXtreme movie manager database";
-				fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"mdb", "accdb"},new String("MS Access Database File (*.mdb, *.accdb)")));
-			}*/
-
+			
 			fileChooser.setDialogTitle(title);
 			fileChooser.setApproveButtonText("Select");
 			fileChooser.setApproveButtonToolTipText("Select file");
@@ -596,8 +530,6 @@ public class DialogImport extends JDialog implements ActionListener {
 		MovieManager.getConfig().setImportXMLFilePath(xmlDatabaseFilePath.getText());
 		MovieManager.getConfig().setImportCSVFilePath(csvFilePath.getText());
 		MovieManager.getConfig().setImportCSVseparator(csvSeparator.getText());
-		MovieManager.getConfig().setImportExtremeFilePath(extremeFilePath.getText());
-
 
 		if (listChooser != null) {
 			MovieManager.getConfig().setMultiAddList((String) listChooser.getSelectedItem());
@@ -628,14 +560,6 @@ public class DialogImport extends JDialog implements ActionListener {
 		if (enableAddMoviesToList != null && enableAddMoviesToList.isSelected()) {
 			settings.addToThisList = (String) listChooser.getSelectedItem();
 		}
-
-		// Extreme movie mananger
-		if (enableOverwriteImportedInfoWithImdbInfo.isSelected())
-			settings.overwriteWithImdbInfo = true;
-
-		if (useMediaLanguage.isSelected())
-			settings.extremeOriginalLanguage = false;
-
 	}
 
 	public ModelImportExportSettings getSettings() {
@@ -659,9 +583,7 @@ public class DialogImport extends JDialog implements ActionListener {
 			return ModelImportExportSettings.IMPORT_MODE_XML;
 		else if (title.equals(ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_CSV]))
 			return ModelImportExportSettings.IMPORT_MODE_CSV;
-		/*else if (title.equals(ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_EXTREME]))
-			return ModelImportExportSettings.IMPORT_MODE_EXTREME;
-*/
+	
 		return -1;
 	}
 
