@@ -849,7 +849,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		displayQueriesInTree = new JCheckBox(Localizer.getString("dialogprefs.panel.miscellaneous.use-directory-structure-to-group-queries")); //$NON-NLS-1$
 
-		if (config.getDisplayQueriesInTree())
+		if (config.getUseDisplayQueriesInTree())
 			displayQueriesInTree.setSelected(true);
 
 		miscCheckBoxes.add(displayQueriesInTree);

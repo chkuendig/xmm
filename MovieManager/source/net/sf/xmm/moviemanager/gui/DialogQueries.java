@@ -108,7 +108,7 @@ public class DialogQueries extends JDialog {
 		panelExecute.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogQueries.panel-execute.title")), //$NON-NLS-1$
 				BorderFactory.createEmptyBorder(5,5,5,5)));
 
-		if (MovieManager.getConfig().getDisplayQueriesInTree()) {
+		if (MovieManager.getConfig().getUseDisplayQueriesInTree()) {
 			createExecuteAsTree(panelExecute);
 		}
 		else {
