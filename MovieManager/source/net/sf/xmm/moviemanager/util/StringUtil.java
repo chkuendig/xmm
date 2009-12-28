@@ -88,7 +88,13 @@ public class StringUtil {
 		return searchString;
 	}
 	
-
+	public static String removeAtEnd(String input, String remove) {
+		
+		if (input.trim().endsWith(remove))
+			input = input.substring(0, input.indexOf(remove)).trim();
+		
+		return input;
+	}
 	
 
 	
