@@ -158,8 +158,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	final private int coverAreaWidth = 110;
 	final private int coverAreaHeight = 165;
-	//final private int coverAreaWidth = 97;
-	//final private int coverAreaHeight = 145;
 	
 	public Dimension getCoverAreaSize() {
 		return new Dimension(coverAreaWidth, coverAreaHeight);
@@ -222,7 +220,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean mySQLSocketTimeoutEnabled = false;
 	
 	/**
-	 * Desides what kind of filter the movie search will use.
+	 * Decides what kind of filter the movie search will use.
 	 **/
 	private String filterCategory = "Movie Title";
 
@@ -230,7 +228,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean includeAkaTitlesInFilter = true;
 
 	/**
-	 * Desides what kind of filter the movie search will use.
+	 * Decides what kind of filter the movie search will use.
 	 **/
 	private String sortOption = "Title";
 
@@ -303,6 +301,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean multiAddExcludeStringEnabled = false;
 	private boolean multiAddExcludeStringNegated = false;
 	
+	private boolean multiAddRegexCaseSensitive = false;
+	
 	private String multiAddRegexString = "";
 	private boolean multiAddRegexStringEnabled = false;
 	private boolean multiAddRegexStringNegated = false;
@@ -320,6 +320,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean multiAddEnableExludeUserdefinedInfo;
 	private boolean multiAddTitleOptionNoCd;
 	private boolean multiAddAddSearchNfoForImdb;
+	private boolean multiAddSkipHiddenDirectories;
 	private boolean multiAddSelectFirstHitMark;
 	private boolean multiAddEnableAutomaticCombine;
 	
@@ -334,7 +335,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String importXMLFilePath = "";
 	private String importCSVFilePath = "";
 	private String importCSVseparator = ",";
-	private String importExtremeFilePath = "";
 	
 	private ImdbImportOption importIMDbSelectOption = ImdbImportOption.off;
 	private boolean importIMDbInfoEnabled = true;
@@ -1238,14 +1238,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.importExcelFilePath = importExcelFilePath;
 	}
 
-	// Extreme
-	public String getImportExtremeFilePath() {
-		return importExtremeFilePath;
-	}
-
-	public void setImportExtremeFilePath(String importExtremeFilePath) {
-		this.importExtremeFilePath = importExtremeFilePath;
-	}
 	
 	// CSV
 	public String getImportCSVFilePath() {
@@ -1359,8 +1351,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.multipleAddList = multipleAddList;
 	}
 
-	
-
 	public String getMultiAddDirectoryPath() {
 		return multiAddDirectoryPath;
 	}
@@ -1369,26 +1359,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		multiAddDirectoryPath = p;
 	}
 
-	
-	
-	public boolean getMultiAddExcludeStringEnabled() {
-		return multiAddExcludeStringEnabled;
-	}
-
-	public void setMultiAddExcludeStringEnabled(boolean b) {
-		multiAddExcludeStringEnabled = b;
-	}
-	
-	
-	public String getMultiAddExcludeString() {
-		return multiAddExcludeString;
-	}
-
-	public void setMultiAddExcludeString(String e) {
-		multiAddExcludeString = e;
-	}
-	
-	
 	public String getMultiAddRegexString() {
 		return multiAddRegexString;
 	}
@@ -1396,14 +1366,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setMultiAddRegexString(String e) {
 		multiAddRegexString = e;
 	}
-	
-	
-	public boolean getMultiAddExcludeStringNegated() {
-		return multiAddExcludeStringNegated;
+		
+	public boolean getMultiAddRegexCaseSensitive() {
+		return multiAddRegexCaseSensitive;
 	}
 
-	public void setMultiAddExcludeStringNegated(boolean b) {
-		multiAddExcludeStringNegated = b;
+	public void setMultiAddRegexCaseSensitive(boolean b) {
+		multiAddRegexCaseSensitive = b;
 	}
 	
 	public boolean getMultiAddRegexStringNegated() {
@@ -1422,7 +1391,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		multiAddRegexStringEnabled = b;
 	}
 
-	
 	public ArrayList<String> getMultiAddValidExtensions() {
 		return multiAddValidExtensions;
 	}
@@ -1552,8 +1520,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setMultiAddExcludeUserDefinedString(String excludeString) {
 		multiAddExcludeUserDefined = excludeString;
 	}
-	
-	
+		
 	public boolean getMultiAddSearchNfoForImdb() {
 		return multiAddAddSearchNfoForImdb;
 	}
@@ -1562,6 +1529,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		multiAddAddSearchNfoForImdb = val;
 	}
 	
+	public boolean getMultiAddSkipHiddenDirectories() {
+		return multiAddSkipHiddenDirectories;
+	}
+	
+	public void setMultiAddSkipHiddenDirectories(boolean val) {
+		multiAddSkipHiddenDirectories = val;
+	}
 	
 	public boolean getMultiAddSelectFirstHitMark() {
 		return multiAddSelectFirstHitMark;
@@ -1999,7 +1973,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.useDisplayQueriesInTree = useDisplayQueriesInTree;
 	}
 
-	public boolean getDisplayQueriesInTree() {
+	public boolean getUseDisplayQueriesInTree() {
 		return useDisplayQueriesInTree;
 	}
 
@@ -2011,14 +1985,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.exportType = exportType;
 	}
 
-	/*public String getNoCoverSmall1() {
-		
-		if (nocover.equals("nocover_puma.png"))
-			return nocover;
-		else
-			return "nocover_tiger.png";
-	}*/
-	
 	public String getNoCoverFilename() {
 
 		switch (noCoverType) {
@@ -2067,10 +2033,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 
 	public boolean addToCurrentLists(String listName) {
-		/*
-		if (currentLists == null)
-			currentLists = new ArrayList();
-		*/
+		
 		if (listName == null || listName.trim().equals("") ||
 				currentLists.contains(listName))
 			return false;
@@ -2167,8 +2130,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setMediaPlayerCmdArgument(String cmdArg){
 		mediaPlayerCmdArgument = cmdArg;
 	}
-
-	
 	
 	public String getBrowserPath() {
 		return browserPath;
@@ -2177,10 +2138,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setBrowserPath(String browserPath){
 		this.browserPath = browserPath;
 	}
-
-
 	
-
 	public boolean getUseDefaultWindowsPlayer() {
 		return useDefaultWindowsPlayer;
 	}
@@ -2244,6 +2202,138 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
     
 	
 	
+	public int getMainWindowSliderPosition() {
+		return mainWindowSliderPosition;
+	}
+	
+	public void setMainWindowSliderPosition(int value) {
+		mainWindowSliderPosition = value;
+	}
+	
+	public int getMainWindowLastSliderPosition() {
+		return mainWindowLastSliderPosition;
+	}
+	
+	public void setMainWindowLastSliderPosition(int value) {
+		mainWindowLastSliderPosition = value;
+	}
+	
+	public int getMovieInfoSliderPosition() {
+		return movieInfoSliderPosition;
+	}
+	
+	public void setMovieInfoSliderPosition(int value) {
+		movieInfoSliderPosition = value;
+	}
+	
+	public int getMovieInfoLastSliderPosition() {
+		return movieInfoLastSliderPosition;
+	}
+	
+	public void setMovieInfoLastSliderPosition(int value) {
+		movieInfoLastSliderPosition = value;
+	}
+	
+	public int getAdditionalInfoNotesSliderPosition() {
+		return additionalInfoNotesSliderPosition;
+	}
+	
+	public void setAdditionalInfoNotesSliderPosition(int value) {
+		additionalInfoNotesSliderPosition = value;
+	}
+	
+	public int getAdditionalInfoNotesLastSliderPosition() {
+		return additionalInfoNotesLastSliderPosition;
+	}
+	
+	public void setAdditionalInfoNotesLastSliderPosition(int value) {
+		additionalInfoNotesLastSliderPosition = value;
+	}
+	
+	
+	boolean getBooleanValue(String key, HashMap<String, String> config) {
+		return getBooleanValue(key, config, false);
+	}
+	
+	boolean getBooleanValue(String key, HashMap<String, String> config, boolean defaultValue) {
+		
+		String value = (String) config.get(key);
+		
+		try {
+			
+			if (value != null) {
+				return new Boolean(value).booleanValue();
+			}
+		} catch (Exception e) {
+			log.warn("Invalid boolean value:" + value);
+			e.printStackTrace();
+		}
+		return defaultValue;
+	}
+			
+	
+	String getStringValue(String key, HashMap<String, String> config) {
+		return getStringValue(key, config, null);
+	}
+	
+	String getStringValue(String key, HashMap<String, String> config, String defaultValue) {
+		
+		String value = (String) config.get(key);
+		
+		try {
+			
+			if (value != null) {
+				return value;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return defaultValue;
+	}
+	
+	
+	int getIntValue(String key, HashMap<String, String> config) {
+		return getIntValue(key, config, 0);
+	}
+	
+	int getIntValue(String key, HashMap<String, String> config, int defaultValue) {
+		
+		String value = (String) config.get(key);
+		
+		try {
+			
+			if (value != null) {
+				return Integer.parseInt(value);
+			}
+		} catch (Exception e) {
+			log.warn("Invalid int value:" + value);
+			e.printStackTrace();
+		}
+		return defaultValue;
+	}
+	
+	double getDoubleValue(String key, HashMap<String, String> config) {
+		return getDoubleValue(key, config, 0);
+	}
+	
+	double getDoubleValue(String key, HashMap<String, String> config, double defaultValue) {
+		
+		String value = (String) config.get(key);
+		
+		try {
+			
+			if (value != null) {
+				return new Double(value);
+			}
+		} catch (Exception e) {
+			log.warn("Invalid int value:" + value);
+			e.printStackTrace();
+		}
+		return defaultValue;
+	}
+	
+	
+	
 	/**
 	 * Loads info from the config file...
 	 **/
@@ -2293,12 +2383,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 
 
-			value = (String) config.get("Database:");
-			
-			if (value != null) {
-				setDatabasePath(value);
-			}
-
+			setDatabasePath(getStringValue("Database:", config));
 			
 			value = (String) config.get("useRelativeDatabasePath:");
 
@@ -2339,195 +2424,59 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 
 			
-			value = (String) config.get("storeCoversLocally:");
+			setStoreCoversLocally(getBooleanValue("storeCoversLocally:", config, getStoreCoversLocally()));
+			setMySQLSocketTimeoutEnabled(getBooleanValue("mySQLSocketTimeoutEnabled:", config, getMySQLSocketTimeoutEnabled()));
+			setLoadDatabaseOnStartup(getBooleanValue("loadDatabaseOnStartup:", config, getLoadDatabaseOnStartup()));
+			setDatabasePathPermanent(getBooleanValue("databasePathPermanent:", config, getDatabasePathPermanent()));
+			setUseDisplayQueriesInTree(getBooleanValue("useDisplayQueriesInTree:", config, getUseDisplayQueriesInTree()));
 
-			if (value != null) {
-				setStoreCoversLocally(new Boolean(value).booleanValue());
-			}
-			
-			value = (String) config.get("mySQLSocketTimeoutEnabled:");
-
-			if (value != null) {
-				setMySQLSocketTimeoutEnabled(new Boolean(value).booleanValue());
-			}			
-			
-			value = (String) config.get("loadDatabaseOnStartup:");
-
-			if (value != null) {
-				setLoadDatabaseOnStartup(new Boolean(value).booleanValue());
-			}
-
-
-			value = (String) config.get("databasePathPermanent:");
-
-			if (value != null) {
-				setDatabasePathPermanent(new Boolean(value).booleanValue());
-			}
-
-
-			value = (String) config.get("useDisplayQueriesInTree:");
-
-			if (value != null) {
-				setUseDisplayQueriesInTree(new Boolean(value).booleanValue());
-			}
-
-
-			value = (String) config.get("lookAndFeel:");
-
-			if (value != null) {
-				setCustomLookAndFeel(value);
-			}
-
-
-			value = (String) config.get("skinlfTheme:");
-
-			if (value != null) {
-				setSkinlfThemePack(value);
-			}
-
+			setCustomLookAndFeel(getStringValue("lookAndFeel:", config, getCustomLookAndFeel()));
+			setSkinlfThemePack(getStringValue("skinlfTheme:", config, getSkinlfThemePack()));
 
 			value = (String) config.get("lookAndFeelType:");
 
 			if (value != null) {
-				
+
 				LookAndFeelType laf = null;
-				
+
 				try {
 					int val = Integer.parseInt(value);
 					laf = val == 1 ? LookAndFeelType.SkinlfLaF : LookAndFeelType.CustomLaF;
 				} catch (Exception e) {
 				}
-				
+
 				try {
 					laf  = LookAndFeelType.valueOf(value);
 				} catch (Exception e) {
 				}
-				
+
 				if (laf != null)
 					setLookAndFeelType(laf);
 			}
 
-			value = (String) config.get("regularToolButtonsUsed:");
-
-			if (value != null) {
-				setRegularToolButtonsUsed(new Boolean(value).booleanValue());
-			}
-
-
-			value = (String) config.get("useRegularSeenIcon:");
-
-			if (value != null) {
-				setUseRegularSeenIcon(new Boolean(value).booleanValue());
-			}
-
-
-			value = (String) config.get("defaultLookAndFeelDecorated:");
-
-			if (value != null) {
-				setDefaultLookAndFeelDecorated(new Boolean(value).booleanValue());
-			}
+			setRegularToolButtonsUsed(getBooleanValue("regularToolButtonsUsed:", config, isRegularToolButtonsUsed()));
+			setUseRegularSeenIcon(getBooleanValue("useRegularSeenIcon:", config, getUseRegularSeenIcon()));
+			setDefaultLookAndFeelDecorated(getBooleanValue("defaultLookAndFeelDecorated:", config, getDefaultLookAndFeelDecorated()));
+			setPlotCastMiscellaneousIndex(getIntValue("plotCastMiscellaneousIndex:", config, getPlotCastMiscellaneousIndex()));
+									
+			setHTMLTemplateName(getStringValue("HTMLTemplateName:", config));
+			setHTMLTemplateStyleName(getStringValue("HTMLTemplateStyleName:", config));
 			
-			value = (String) config.get("plotCastMiscellaneousIndex:");
+			setFilterCategory(getStringValue("filterOption:", config, getFilterCategory()));
+			setSortOption(getStringValue("sortOption:", config, getSortOption()));
+			setFilterSeen(getIntValue("filterSeen:", config, getFilterSeen()));
+			setRatingOption(getIntValue("ratingOption:", config, getRatingOption()));
+			setRatingValue(getDoubleValue("ratingValue:", config, getRatingValue()));
+			setDateOption(getIntValue("dateOption:", config, getDateOption()));
+			setDateValue(getStringValue("dateValue:", config));
 			
-			if (value != null) {
-				setPlotCastMiscellaneousIndex(Integer.parseInt(value));
-			}
-						
-			value = (String) config.get("HTMLTemplateName:");
-			
-			if (value != null) {
-				setHTMLTemplateName(value);
-			}
-						
-			value = (String) config.get("HTMLTemplateStyleName:");
-			
-			if (value != null) {
-				setHTMLTemplateStyleName(value);
-			}
-			
-			value = (String) config.get("filterOption:");
-
-			if (value != null) {
-				setFilterCategory(value);
-			}
-
-
-			value = (String) config.get("sortOption:");
-
-			if (value != null) {
-				setSortOption(value);
-			}
-
-
-			value = (String) config.get("filterSeen:");
-
-			if (value != null) {
-				setFilterSeen(Integer.parseInt(value));
-			}
-
-
-			value = (String) config.get("ratingOption:");
-
-			if (value != null) {
-				setRatingOption(Integer.parseInt(value));
-			}
-
-
-			value = (String) config.get("ratingValue:");
-
-			if (value != null) {
-				setRatingValue(Double.parseDouble(value));
-			}
-
-
-			value = (String) config.get("dateOption:");
-
-			if (value != null) {
-				setDateOption(Integer.parseInt(value));
-			}
-
-
-			value = (String) config.get("dateValue:");
-
-			if (value != null) {
-				setDateValue(value);
-			}
-
-
-			value = (String) config.get("seenEditableInMainWindow:");
-
-			if (value != null) {
-				setSeenEditable(new Boolean(value).booleanValue());
-			}
-
+			setSeenEditable(getBooleanValue("seenEditableInMainWindow:", config));
 
 			value = (String) config.get("multiAddDirectoryPath:");
 
 			if (value != null) {
 				if (!value.equals("null"))
 					setMultiAddDirectoryPath(value);
-			}
-
-
-			value = (String) config.get("multiAddExcludeString:");
-
-			if (value != null) {
-				if (!value.equals("null"))
-					setMultiAddExcludeString(value);
-			}
-
-
-			value = (String) config.get("multiAddExcludeStringEnabled:");
-
-			if (value != null) {
-				setMultiAddExcludeStringEnabled(new Boolean(value).booleanValue());
-			}
-
-			
-			value = (String) config.get("multiAddExcludeStringNegated:");
-
-			if (value != null) {
-				setMultiAddExcludeStringNegated(new Boolean(value).booleanValue());
 			}
 
 
@@ -2538,32 +2487,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					setMultiAddRegexString(value);
 			}
 
-
-			value = (String) config.get("multiAddRegexStringEnabled:");
-
-			if (value != null) {
-				setMultiAddRegexStringEnabled(new Boolean(value).booleanValue());
-			}
-
-			
-			value = (String) config.get("multiAddRegexStringNegated:");
-
-			if (value != null) {
-				setMultiAddRegexStringNegated(new Boolean(value).booleanValue());
-			}
-
-			value = (String) config.get("multiAddValidExtensions:");
-
-			if (value != null) {
-				addMultiAddValidExtensions(value);
-			}
-			
-			value = (String) config.get("multiAddCustomExtensions:");
-
-			if (value != null) {
-				setMultiAddCustomExtensions(value);
-			}
+			setMultiAddRegexStringEnabled(getBooleanValue("multiAddRegexStringEnabled:", config));
+			setMultiAddRegexStringNegated(getBooleanValue("multiAddRegexStringNegated:", config));
+			setMultiAddRegexCaseSensitive(getBooleanValue("multiAddRegexCaseSensitive:", config));
 						
+			addMultiAddValidExtensions(getStringValue("multiAddValidExtensions:", config));
+			setMultiAddCustomExtensions(getStringValue("multiAddCustomExtensions:", config));
+			
 			value = (String) config.get("multiAddSelectOption:");
 
 			if (value != null) {
@@ -2574,172 +2504,42 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				}
 			}
 
-			value = (String) config.get("multiAddEnableExludeParantheses:");
-
-			if (value != null) {
-				setMultiAddEnableExludeParantheses(new Boolean(value).booleanValue());
-			}
 			
+			setMultiAddEnableExludeParantheses(getBooleanValue("multiAddEnableExludeParantheses:", config, getMultiAddEnableExludeParantheses()));
+			setMultiAddEnableExludeCDNotation(getBooleanValue("multiAddEnableExludeCDNotation:", config, getMultiAddEnableExludeCDNotation()));
+			setMultiAddEnableExludeIntegers(getBooleanValue("multiAddEnableExludeIntegers:", config, getMultiAddEnableExludeIntegers()));
+			setMultiAddEnableExludeUserdefinedInfo(getBooleanValue("multiAddEnableExludeUserdefinedInfo:", config, getMultiAddEnableExludeUserdefinedInfo()));
+			setMultiAddSelectFirstHitMark(getBooleanValue("multiAddSelectFirstHitMark:", config, getMultiAddSelectFirstHitMark()));
+			setMultiAddEnableAutomaticCombine(getBooleanValue("multiAddEnableAutomaticCombine:", config, getMultiAddEnableAutomaticCombine()));
+			setMultiAddTitleOptionNoCd(getBooleanValue("multiAddTitleOptionNoCd:", config, getMultiAddTitleOptionNoCd()));
+			setMultiAddSearchNfoForImdb(getBooleanValue("multiAddSearchNfoForImdb:", config, getMultiAddSearchNfoForImdb()));
+			setMultiAddSkipHiddenDirectories(getBooleanValue("multiAddSkipHiddenDirectories:", config, getMultiAddSkipHiddenDirectories()));
+			setMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo(getBooleanValue("multiAddEnableExludeAllAfterMatchOnUserDefinedInfo:", config, getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo()));
+			setMultiAddEnableSearchInSubdirectories(getBooleanValue("multiAddEnableSearchInSubdirectories:", config, getMultiAddEnableSearchInSubdirectories()));
+			setMultiAddTitleOption(getBooleanValue("multiAddTitleOption:", config, getMultiAddTitleOption()));
 			
-			value = (String) config.get("multiAddEnableExludeCDNotation:");
-
-			if (value != null) {
-				setMultiAddEnableExludeCDNotation(new Boolean(value).booleanValue());
-			}
+			setMultiAddExcludeUserDefinedString(getStringValue("multiAddExcludeUserDefinedString:", config, getMultiAddExcludeUserDefinedString()));
 			
+			parseMultiAddRootDevices(getStringValue("multiaddRootDevices:", config));
 			
-			value = (String) config.get("multiAddEnableExludeIntegers:");
-
-			if (value != null) {
-				setMultiAddEnableExludeIntegers(new Boolean(value).booleanValue());
-			}
-			
-			
-			value = (String) config.get("multiAddEnableExludeUserdefinedInfo:");
-			
-			if (value != null) {
-				setMultiAddEnableExludeUserdefinedInfo(new Boolean(value).booleanValue());
-			}
-			
-			
-			value = (String) config.get("multiAddSelectFirstHitMark:");
-			
-			if (value != null) {
-				setMultiAddSelectFirstHitMark(new Boolean(value).booleanValue());
-			}
-			
-			
-			value = (String) config.get("multiAddEnableAutomaticCombine:");
-			
-			if (value != null) {
-				setMultiAddEnableAutomaticCombine(new Boolean(value).booleanValue());
-			}
-			
-			
-			value = (String) config.get("multiAddTitleOptionNoCd:");
-			
-			if (value != null) {
-				setMultiAddTitleOptionNoCd(new Boolean(value).booleanValue());
-			}
-			
-			
-			value = (String) config.get("multiAddSearchNfoForImdb:");
-			
-			if (value != null) {
-				setMultiAddSearchNfoForImdb(new Boolean(value).booleanValue());
-			}
-			
-			
-			value = (String) config.get("multiAddEnableExludeAllAfterMatchOnUserDefinedInfo:");
-
-			if (value != null) {
-				setMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo(new Boolean(value).booleanValue());
-			}
-			
-			
-			value = (String) config.get("multiAddEnableSearchInSubdirectories:");
-
-			if (value != null) {
-				setMultiAddEnableSearchInSubdirectories(new Boolean(value).booleanValue());
-			}
-			
-			
-			value = (String) config.get("multiAddTitleOption:");
-
-			if (value != null) {
-				setMultiAddTitleOption(new Boolean(value).booleanValue());
-			}
-			
-			value = (String) config.get("multiAddExcludeUserDefinedString:");
-			
-			if (value != null) {
-				setMultiAddExcludeUserDefinedString(value);
-			}
-			
-			value = (String) config.get("multiaddRootDevices:");
-			
-			if (value != null) {
-				parseMultiAddRootDevices(value);
-			}
-			
-			
-			value = (String) config.get("proxyEnabled:");
-
-			if (value != null) {
-				httpSettings.setProxyEnabled(new Boolean(value).booleanValue());
-			}
-
-
-			value = (String) config.get("proxyType:");
-
-			if (value != null) {
-				httpSettings.setProxyType(value);
-			}
-
-
-			value = (String) config.get("authenticationEnabled:");
-
-			if (value != null) {
-				httpSettings.setProxyAuthenticationEnabled(new Boolean(value).booleanValue());
-			}
-
-
-			value = (String) config.get("proxyHost:");
-
-			if (value != null) {
-				httpSettings.setProxyHost(value);
-			}
-
-
-			value = (String) config.get("proxyPort:");
-
-			if (value != null) {
-				httpSettings.setProxyPort(value);
-			}
-
-
-			value = (String) config.get("proxyUser:");
-
-			if (value != null) {
-				httpSettings.setProxyUser(value);
-			}
-
-
-			value = (String) config.get("proxyPassword:");
-
-			if (value != null) {
-				httpSettings.setProxyPassword(value);
-			}
-
-			
-			value = (String) config.get("IMDbAuthenticationEnabled:");
-
-			if (value != null) {
-				httpSettings.setIMDbAuthenticationEnabled(new Boolean(value).booleanValue());
-			}
-			
-
-			value = (String) config.get("IMDbAuthenticationUser:");
-			
-			if (value != null) {
-				httpSettings.setIMDbAuthenticationUser(value);
-			}
-			
-			
-			value = (String) config.get("IMDbAuthenticationPassword:");
-
-			if (value != null) {
-				setIMDbAuthenticationPassword(value);
-			}
-			
-
+			setProxyEnabled(getBooleanValue("proxyEnabled:", config, getProxyEnabled()));
+			setProxyType(getStringValue("proxyType:", config, getProxyType()));
+			setProxyAuthenticationEnabled(getBooleanValue("authenticationEnabled:", config, getProxyAuthenticationEnabled()));
+			setProxyHost(getStringValue("proxyHost:", config));
+			setProxyPort(getStringValue("proxyPort:", config));
+			setProxyUser(getStringValue("proxyUser:", config));
+			setProxyPassword(getStringValue("proxyPassword:", config));
+						
+			setIMDbAuthenticationEnabled(getBooleanValue("IMDbAuthenticationEnabled:", config, getIMDbAuthenticationEnabled()));
+			setIMDbAuthenticationUser(getStringValue("IMDbAuthenticationUser:", config));
+			setIMDbAuthenticationPassword(getStringValue("IMDbAuthenticationPassword:", config));
+							
 			value = (String) config.get("lastFileDir:");
 
 			if (value != null) {
 				File lastFileDirctory = new File(value);
 				setLastFileDir(lastFileDirctory);
 			}
-
 
 			value = (String) config.get("lastDVDDir:");
 
@@ -2767,65 +2567,23 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 
 
-			value = (String) config.get("lastFileFilterMovieInfoUsed:");
+			setLastFileFilterUsed(getStringValue("lastFileFilterMovieInfoUsed:", config, getLastFileFilterUsed()));
+			setExportType(getStringValue("exportType:", config, getExportType()));
 
-			if (value != null) {
-				setLastFileFilterUsed(value);
-			}
-
-
-			value = (String) config.get("exportType:");
-
-			if (value != null) {
-				setExportType(value);
-			}
-
-			value = (String) config.get("mainWindowSliderPosition:");
-
-			if (value != null) {
-				mainWindowSliderPosition = Integer.parseInt(value);
-			}
+			setMainWindowSliderPosition(getIntValue("mainWindowSliderPosition:", config, getMainWindowSliderPosition()));
+			setMainWindowLastSliderPosition(getIntValue("mainWindowLastSliderPosition:", config, getMainWindowLastSliderPosition()));
+			setMovieInfoSliderPosition(getIntValue("movieInfoSliderPosition:", config, getMovieInfoSliderPosition()));
 			
-			value = (String) config.get("mainWindowLastSliderPosition:");
-
-			if (value != null) {
-				mainWindowLastSliderPosition = Integer.parseInt(value);
-			}
-			
-			value = (String) config.get("movieInfoSliderPosition:");
-
-			if (value != null) {
-				movieInfoSliderPosition = Integer.parseInt(value);
-			}
-
-			value = (String) config.get("movieInfoLastSliderPosition:");
-
-			if (value != null) {
-				movieInfoLastSliderPosition = Integer.parseInt(value);
-			}
-
-
-			value = (String) config.get("addionalInfoNotesSliderPosition:");
-
-			if (value != null) {
-				additionalInfoNotesSliderPosition = Integer.parseInt(value);
-			}
-
-
-			value = (String) config.get("addionalInfoNotesLastSliderPosition:");
-
-			if (value != null) {
-				additionalInfoNotesLastSliderPosition = Integer.parseInt(value);
-			}
-
-
+			setMovieInfoLastSliderPosition(getIntValue("movieInfoLastSliderPosition:", config, getMovieInfoLastSliderPosition()));
+			setAdditionalInfoNotesSliderPosition(getIntValue("addionalInfoNotesSliderPosition:", config, getAdditionalInfoNotesSliderPosition()));
+			setAdditionalInfoNotesLastSliderPosition(getIntValue("addionalInfoNotesLastSliderPosition:", config, getAdditionalInfoNotesLastSliderPosition()));
+				
 			value = (String) config.get("mainWidth:");
 			int mainWidth = 0;
 
 			if (value != null) {
 				mainWidth = Integer.parseInt(value);
 			}
-
 
 			value = (String) config.get("mainHeight:");
 			int mainHeight = 0;
@@ -2856,37 +2614,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				screenLocation = new Point(screenLocationX, screenLocationY);
 
 
-			value = (String) config.get("mainMaximized:");
-
-			if (value != null) {
-				setMainMaximized(new Boolean(value).booleanValue());
-			}
-
-			value = (String) config.get("addMovieWindowHeight:");
-
-			if (value != null) {
-				setAddMovieWindowHeight(new Integer(value));
-			}
+			setMainMaximized(getBooleanValue("mainMaximized:", config, getMainMaximized()));
+		
+			setAddMovieWindowHeight(getIntValue("addMovieWindowHeight:", config, getAddMovieWindowHeight()));
+			setShowUnlistedEntries(getBooleanValue("showUnlistedEntries:", config, getShowUnlistedEntries()));
+			setLoadLastUsedListAtStartup(getBooleanValue("loadCurrentListAtStartup:", config, getLoadLastUsedListAtStartup()));
+			setAddNewMoviesToCurrentLists(getBooleanValue("addNewMoviesToCurrentLists:", config, getAddNewMoviesToCurrentLists()));
 						
-			value = (String) config.get("showUnlistedEntries:");
-
-			if (value != null) {
-				setShowUnlistedEntries(new Boolean(value).booleanValue());
-			}
-			
-			value = (String) config.get("loadCurrentListAtStartup:");
-
-			if (value != null) {
-				setLoadLastUsedListAtStartup(new Boolean(value).booleanValue());
-			}
-
-			value = (String) config.get("addNewMoviesToCurrentLists:");
-
-			if (value != null) {
-				setAddNewMoviesToCurrentLists(new Boolean(value).booleanValue());
-			}
-			
-			
 			value = (String) config.get("currentLists:");
 
 			if (value == null) {
@@ -2909,80 +2643,19 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 			
 
-			value = (String) config.get("multiAddList:");
-
-			if (value != null) {
-				setMultiAddList(value);
-			}
-
-
-			value = (String) config.get("multiAddListEnabled:");
-
-			if (value != null) {
-				setMultiAddListEnabled(new Boolean(value).booleanValue());
-			}
-
+			setMultiAddList(getStringValue("multiAddList:", config, getMultiAddList()));
+			setMultiAddListEnabled(getBooleanValue("multiAddListEnabled:", config, getMultiAddListEnabled()));
+			setLastDialogImportType(getIntValue("lastDialogImportType:", config, getLastDialogImportType()));
 			
-			value = (String) config.get("lastDialogImportType:");
-
-			if (value != null) {
-				setLastDialogImportType(Integer.parseInt(value));
-			}
-
+			setImportTextFilePath(getStringValue("importTextfilePath:", config, getImportTextFilePath()));
+			setImportExcelFilePath(getStringValue("importExcelfilePath:", config, getImportExcelFilePath()));
+			setImportXMLFilePath(getStringValue("importXMLfilePath:", config, getImportXMLFilePath()));
+			setImportCSVFilePath(getStringValue("importCSVfilePath:", config, getImportCSVFilePath()));
+			setImportCSVseparator(getStringValue("importCSVseparator:", config, getImportCSVseparator()));
 			
-			value = (String) config.get("importTextfilePath:");
-
-			if (value != null) {
-				setImportTextFilePath(value);
-			}
-
-
-			value = (String) config.get("importExcelfilePath:");
-
-			if (value != null) {
-				setImportExcelFilePath(value);
-			}
-
-			value = (String) config.get("importXMLfilePath:");
-
-			if (value != null) {
-				setImportXMLFilePath(value);
-			}
-
-			
-			value = (String) config.get("importCSVfilePath:");
-
-			if (value != null) {
-				setImportCSVFilePath(value);
-			}
-
-			value = (String) config.get("importCSVseparator:");
-
-			if (value != null) {
-				setImportCSVseparator(value);
-			}
-			
-			value = (String) config.get("importExtremefilePath:");
-
-			if (value != null) {
-				setImportExtremeFilePath(value);
-			}
-
-
-			value = (String) config.get("useJTreeIcons:");
-
-			if (value != null) {
-				setUseJTreeIcons(new Boolean(value).booleanValue());
-			}
-
-
-			value = (String) config.get("useJTreeCovers:");
-
-			if (value != null) {
-				setUseJTreeCovers(new Boolean(value).booleanValue());
-			}
-
-
+			setUseJTreeIcons(getBooleanValue("useJTreeIcons:", config, getUseJTreeIcons()));
+			setUseJTreeCovers(getBooleanValue("useJTreeCovers:", config, getUseJTreeCovers()));
+		
 			value = (String) config.get("lastPreferencesTabIndex:");
 
 			if (value != null) {
@@ -2997,18 +2670,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					setLastMovieInfoTabIndex(Character.digit(value.charAt(0), 10));
 			}
 			
-			value = (String) config.get("movieListRowHeight:");
-
-			if (value != null) {
-				setMovieListRowHeight(Integer.parseInt(value));
-			}
-			
-			value = (String) config.get("enableCtrlMouseRightClick:");
-
-			if (value != null) {
-				enableCtrlMouseRightClick = new Boolean(value).booleanValue();
-			}
-
+			setMovieListRowHeight(getIntValue("movieListRowHeight:", config, getMovieListRowHeight()));
+			setEnableCtrlMouseRightClick(getBooleanValue("enableCtrlMouseRightClick:", config));
 
 			value = (String) config.get("preserveCoverAspectRatioSetting:");
 
@@ -3036,51 +2699,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				}
 			}
 
-			value = (String) config.get("autoMoveThe:");
-
-			if (value != null) {
-				setAutoMoveThe(new Boolean(value).booleanValue());
-			}
-
-
-			value = (String) config.get("autoMoveAnAndA:");
-
-			if (value != null) {
-				setAutoMoveAnAndA(new Boolean(value).booleanValue());
-			}
-
-
-			value = (String) config.get("storeAllAkaTitles:");
-
-			if (value != null) {
-				setStoreAllAkaTitles(new Boolean(value).booleanValue());
-			}
-
+			setAutoMoveThe(getBooleanValue("autoMoveThe:", config));
+			setAutoMoveAnAndA(getBooleanValue("autoMoveAnAndA:", config));
+			setStoreAllAkaTitles(getBooleanValue("storeAllAkaTitles:", config));
+			setIncludeAkaLanguageCodes(getBooleanValue("includeAkaLanguageCodes:", config));
+			setUseLanguageSpecificTitle(getBooleanValue("useLanguageSpecificTitle:", config));
+			setRemoveQuotesOnSeriesTitle(getBooleanValue("removeQuotesOnSeriesTitle:", config));
 			
-			value = (String) config.get("includeAkaLanguageCodes:");
-
-			if (value != null) {
-				setIncludeAkaLanguageCodes(new Boolean(value).booleanValue());
-			}
-
-			value = (String) config.get("useLanguageSpecificTitle:");
-
-			if (value != null) {
-				setUseLanguageSpecificTitle(new Boolean(value).booleanValue());
-			}
-
-			value = (String) config.get("removeQuotesOnSeriesTitle:");
-
-			if (value != null) {
-				setRemoveQuotesOnSeriesTitle(new Boolean(value).booleanValue());
-			}
-
-			value = (String) config.get("titleLanguageCode:");
-
-			if (value != null) {
-				setTitleLanguageCode(value);
-			}
-
+			setTitleLanguageCode(getStringValue("titleLanguageCode:", config, getTitleLanguageCode()));
+			
 			value = (String) config.get("useMediaInfoDLL:");
 
 			if (value != null) {
@@ -3093,149 +2720,33 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				}
 			}
 
-
-			value = (String) config.get("playerPath:");
-
-			if (value != null) {
-				setMediaPlayerPath(value);
-			}
-
-			value = (String) config.get("mediaPlayerCmdArgument:");
-
-			if (value != null) {
-				setMediaPlayerCmdArgument(value);
-			}
-
+			setMediaPlayerPath(getStringValue("playerPath:", config, getMediaPlayerPath()));
+			setMediaPlayerCmdArgument(getStringValue("mediaPlayerCmdArgument:", config, getMediaPlayerCmdArgument()));
+			setBrowserPath(getStringValue("browserPath:", config, getBrowserPath()));
 			
-			value = (String) config.get("browserPath:");
-
-			if (value != null) {
-				setBrowserPath(value);
-			}
-
-
-			value = (String) config.get("useDefaultWindowsPlayer:");
-
-			if (value != null) {
-				setUseDefaultWindowsPlayer(new Boolean(value).booleanValue());
-			}
-
+			setUseDefaultWindowsPlayer(getBooleanValue("useDefaultWindowsPlayer:", config));
+			setExecuteExternalPlayCommand(getBooleanValue("executeExternalPlayCommand:", config));
 			
-			value = (String) config.get("executeExternalPlayCommand:");
-
-			if (value != null) {
-				setExecuteExternalPlayCommand(new Boolean(value).booleanValue());
-			}
-
-			value = (String) config.get("systemWebBrowser:");
-
-			if (value != null) {
-				setSystemWebBrowser(value);
-			}
-
-
-			value = (String) config.get("databaseBackupEveryLaunch:");
-
-			if (value != null) {
-				setDatabaseBackupEveryLaunch(value);
-			}
-			
-			value = (String) config.get("databaseBackupDeleteOldest:");
-
-			if (value != null) {
-				setDatabaseBackupDeleteOldest(value);
-			}
-						
-			value = (String) config.get("databaseBackupLaunchCount:");
-
-			if (value != null) {
-				setDatabaseBackupLaunchCount(value);
-			}
-			
-			value = (String) config.get("databaseBackupDirectory:");
-
-			if (value != null) {
-				setDatabaseBackupDirectory(value);
-			}
+			setSystemWebBrowser(getStringValue("systemWebBrowser:", config, getSystemWebBrowser()));
+			setDatabaseBackupEveryLaunch(getStringValue("databaseBackupEveryLaunch:", config, getDatabaseBackupEveryLaunch()));
+			setDatabaseBackupDeleteOldest(getStringValue("databaseBackupDeleteOldest:", config, getDatabaseBackupDeleteOldest()));
+			setDatabaseBackupLaunchCount(getStringValue("databaseBackupLaunchCount:", config, getDatabaseBackupLaunchCount()));
+			setDatabaseBackupDirectory(getStringValue("databaseBackupDirectory:", config, getDatabaseBackupDirectory()));
+												
+			setDisplayPlayButton(getBooleanValue("displayPlayButton:", config, getDisplayPlayButton()));
+			setDisplayPrintButton(getBooleanValue("displayPrintButton:", config));
+			setCheckForProgramUpdates(getBooleanValue("checkForProgramUpdates:", config));
+			setHTMLViewDebugMode(getBooleanValue("htmlViewDebugMode:", config));
 									
-			value = (String) config.get("displayPlayButton:");
-
-			if (value != null) {
-				setDisplayPlayButton(new Boolean(value).booleanValue());
-			}
-
-
-			value = (String) config.get("displayPrintButton:");
-
-			if (value != null) {
-				setDisplayPrintButton(new Boolean(value).booleanValue());
-			}
-
-			value = (String) config.get("checkForProgramUpdates:");
-
-			if (value != null) {
-				setCheckForProgramUpdates(new Boolean(value).booleanValue());
-			}
+			setLastDialogExportType(getIntValue("lastDialogExportType:", config, getLastDialogExportType()));
+			setLastDialogImportType(getIntValue("lastDialogImportType:", config, getLastDialogImportType()));
 			
-			value = (String) config.get("htmlViewDebugMode:");
-
-			if (value != null) {
-				setHTMLViewDebugMode(new Boolean(value).booleanValue());
-			}
-						
-			value = (String) config.get("lastDialogExportType:");
-
-			if (value != null) {
-				setLastDialogExportType(Integer.parseInt(value));
-			}
-			
-			value = (String) config.get("lastDialogImportType:");
-
-			if (value != null) {
-				setLastDialogImportType(Integer.parseInt(value));
-			}
-			
-			value = (String) config.get("importTextfilePath:");
-
-			if (value != null) {
-				setImportTextFilePath(value);
-			}
-			
-			value = (String) config.get("importExcelfilePath:");
-
-			if (value != null) {
-				setImportExcelFilePath(value);
-			}
-			
-			value = (String) config.get("importXMLfilePath:");
-
-			if (value != null) {
-				setImportXMLFilePath(value);
-			}
-			
-			value = (String) config.get("importCSVfilePath:");
-
-			if (value != null) {
-				setImportCSVFilePath(value);
-			}
-			
-			value = (String) config.get("importCSVseparator:");
-
-			if (value != null) {
-				setImportCSVseparator(value);
-			}
-			
-			value = (String) config.get("importExtremefilePath:");
-
-			if (value != null) {
-				setImportExtremeFilePath(value);
-			}
-			
-			value = (String) config.get("importIMDbInfoEnabled:");
-
-			if (value != null) {
-				setImportIMDbInfoEnabled(new Boolean(value).booleanValue());
-			}
+			setImportTextFilePath(getStringValue("importTextfilePath:", config, getImportTextFilePath()));
+			setImportExcelFilePath(getStringValue("importExcelfilePath:", config, getImportExcelFilePath()));
+			setImportXMLFilePath(getStringValue("importXMLfilePath:", config, getImportXMLFilePath()));
+			setImportCSVFilePath(getStringValue("importCSVfilePath:", config, getImportCSVFilePath()));
+			setImportCSVseparator(getStringValue("importCSVseparator:", config, getImportCSVseparator()));
+			setImportIMDbInfoEnabled(getBooleanValue("importIMDbInfoEnabled:", config));
 			
 			value = (String) config.get("importIMDbSelectOption:");
 
@@ -3247,35 +2758,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				}
 			}
 
-			value = (String) config.get("exportTextfilePath:");
-
-			if (value != null) {
-				setExportTextFilePath(value);
-			}
-			
-			value = (String) config.get("exportExcelfilePath:");
-
-			if (value != null) {
-				setExportExcelFilePath(value);
-			}
-			
-			value = (String) config.get("exportXMLDbfilePath:");
-
-			if (value != null) {
-				setExportXMLDbFilePath(value);
-			}
-			
-			value = (String) config.get("exportXMLfilePath:");
-
-			if (value != null) {
-				setExportXMLFilePath(value);
-			}
-			
-			value = (String) config.get("exportCSVfilePath:");
-
-			if (value != null) {
-				setExportCSVFilePath(value);
-			}
+			setExportTextFilePath(getStringValue("exportTextfilePath:", config, getExportTextFilePath()));
+			setExportExcelFilePath(getStringValue("exportExcelfilePath:", config, getExportExcelFilePath()));
+			setExportXMLDbFilePath(getStringValue("exportXMLDbfilePath:", config, getExportXMLDbFilePath()));
+			setExportXMLFilePath(getStringValue("exportXMLfilePath:", config, getExportXMLFilePath()));
+			setExportCSVFilePath(getStringValue("exportCSVfilePath:", config, getExportCSVFilePath()));
 			
 			value = (String) config.get("exportCSVseparator:");
 
@@ -3284,6 +2771,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			}
 			
 			
+			// Default values stored for the additional info fields
 			
 			AdditionalInfoFieldDefaultValues defaultValue;
 			StringTokenizer tokenizer;
@@ -3304,7 +2792,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					defaultValue.addValue(token);					
 				}
 				additionalInfoDefaultValues.put(name, defaultValue);
-
 			}
 
 			String tableAndColumn;
@@ -3325,11 +2812,33 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			
 		} catch (Exception e) {
 			log.warn("Cannot find config file. " + e.getMessage());
+			e.printStackTrace();
 		}
 	 }
 
+	
+	 public void appendToConfig(String key, int value, StringBuffer settings) {
+		 appendToConfig(key, new Integer(value).toString(), settings);
+	 }
 
+	 public void appendToConfig(String key, double value, StringBuffer settings) {
+		 appendToConfig(key, new Double(value).toString(), settings);
+	 }
 
+	 public void appendToConfig(String key, boolean value, StringBuffer settings) {
+		 appendToConfig(key, new Boolean(value).toString(), settings);
+	 }
+
+	 public void appendToConfig(String key, String value, StringBuffer settings) {
+
+		 if (value != null) {
+			 settings.append(key);
+			 settings.append(value);
+			 settings.append(SysUtil.getLineSeparator());
+		 }
+	 }
+	
+	
 	public void saveConfig() throws Exception {
 
 		 StringBuffer settings = new StringBuffer(1500);
@@ -3362,257 +2871,143 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 }
 
 		 if (dbPath != null && !dbPath.equals("")) {
-			 settings.append("Database:" + dbPath);
-
+			 appendToConfig("Database:", dbPath, settings);
 		 }
 
-		 settings.append(lineSeparator);
-		 settings.append("useRelativeDatabasePath:" + getUseRelativeDatabasePath());
-
-		 settings.append(lineSeparator);
-		 settings.append("storeCoversLocally:" + getStoreCoversLocally());
+		 appendToConfig("useRelativeDatabasePath:", getUseRelativeDatabasePath(), settings);
+		 appendToConfig("storeCoversLocally:", getStoreCoversLocally(), settings);
+		 appendToConfig("mySQLSocketTimeoutEnabled:", getMySQLSocketTimeoutEnabled(), settings);
+		 appendToConfig("databasePathPermanent:", getDatabasePathPermanent(), settings);
 		 
-		 settings.append(lineSeparator);
-		 settings.append("mySQLSocketTimeoutEnabled:" + getMySQLSocketTimeoutEnabled());
-		 		 
-		 settings.append(lineSeparator);
-		 settings.append("loadDatabaseOnStartup:" + getLoadDatabaseOnStartup());
-
-		 settings.append(lineSeparator);
-		 settings.append("useRelativeCoverPath:" + getUseRelativeCoversPath());
-
-		 settings.append(lineSeparator);
-		 settings.append("useRelativeQueriesPath:" + getUseRelativeQueriesPath());
-
-		 settings.append(lineSeparator);
-		 settings.append("useDisplayQueriesInTree:" + getDisplayQueriesInTree());
-
-		 settings.append(lineSeparator);
-		 settings.append("databasePathPermanent:" + getDatabasePathPermanent());
-
-		 settings.append(lineSeparator);
-		 settings.append("lookAndFeel:" + getCustomLookAndFeel());
-
-		 settings.append(lineSeparator);
-		 settings.append("skinlfTheme:" + getSkinlfThemePack());
-
-		 settings.append(lineSeparator);
-		 settings.append("lookAndFeelType:" + getLookAndFeelType());
-
-		 settings.append(lineSeparator);
-		 settings.append("regularToolButtonsUsed:" + isRegularToolButtonsUsed());
-
-		 settings.append(lineSeparator);
-		 settings.append("useRegularSeenIcon:" + getUseRegularSeenIcon());
-
-		 settings.append(lineSeparator);
-		 settings.append("defaultLookAndFeelDecorated:" + getDefaultLookAndFeelDecorated());
-
-		 settings.append(lineSeparator);
-		 settings.append("plotCastMiscellaneousIndex:" + getPlotCastMiscellaneousIndex());
+		 appendToConfig("loadDatabaseOnStartup:", getLoadDatabaseOnStartup(), settings);
+		 appendToConfig("useRelativeCoverPath:", getUseRelativeCoversPath(), settings);
+		 appendToConfig("useRelativeQueriesPath:", getUseRelativeQueriesPath(), settings);
 		 
-		 settings.append(lineSeparator);
-		 settings.append("HTMLTemplateName:" + getHTMLTemplateName());
-		 		 
-		 if (getHTMLTemplateStyleName() != null) {
-			 settings.append(lineSeparator);
-			 settings.append("HTMLTemplateStyleName:" + getHTMLTemplateStyleName());
-		 }
+		 appendToConfig("useDisplayQueriesInTree:", getUseDisplayQueriesInTree(), settings);
 		 
-		 settings.append(lineSeparator);
-		 settings.append("filterOption:" + getFilterCategory());
-
-		 settings.append(lineSeparator);
-		 settings.append("sortOption:" + getSortOption());
-
-		 settings.append(lineSeparator);
-		 settings.append("filterSeen:" + getFilterSeen());
-
-		 settings.append(lineSeparator);
-		 settings.append("ratingOption:" + getRatingOption());
-
-		 settings.append(lineSeparator);
-		 settings.append("ratingValue:" + Double.toString(getRatingValue()));
-
-		 settings.append(lineSeparator);
-		 settings.append("dateOption:" + Integer.toString(getDateOption()));
-
-		 settings.append(lineSeparator);
-		 settings.append("dateValue:" + getDateValue());
-
-		 settings.append(lineSeparator);
-		 settings.append("seenEditableInMainWindow:" + getSeenEditable());
-
-		 settings.append(lineSeparator);
-		 settings.append("multiAddDirectoryPath:" + getMultiAddDirectoryPath());
-
+		 // GUI/L&F settings
+		 appendToConfig("lookAndFeel:", getCustomLookAndFeel(), settings);
+		 appendToConfig("skinlfTheme:", getSkinlfThemePack(), settings);
+		 appendToConfig("getSkinlfThemePack:", getLookAndFeelType().toString(), settings);
+		 appendToConfig("regularToolButtonsUsed:", isRegularToolButtonsUsed(), settings);
+		 appendToConfig("useRegularSeenIcon:", getUseRegularSeenIcon(), settings);
+		 appendToConfig("getUseRegularSeenIcon:", getDefaultLookAndFeelDecorated(), settings);
+		 appendToConfig("plotCastMiscellaneousIndex:", getPlotCastMiscellaneousIndex(), settings);
+		 appendToConfig("seenEditableInMainWindow:", getSeenEditable(), settings);
+		 appendToConfig("displayPlayButton:", getDisplayPlayButton(), settings);
+		 appendToConfig("displayPrintButton:", getDisplayPrintButton(), settings);
+		 appendToConfig("preserveCoverAspectRatioSetting:", getPreserveCoverAspectRatio(), settings);
+		 appendToConfig("useJTreeIcons:", getUseJTreeIcons(), settings);
+		 appendToConfig("useJTreeCovers:", getUseJTreeCovers(), settings);
+		 appendToConfig("lastPreferencesTabIndex:", getLastPreferencesTabIndex(), settings);
 		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddExcludeString:" + getMultiAddExcludeString());
-
-		 settings.append(lineSeparator);
-		 settings.append("multiAddExcludeStringEnabled:" + getMultiAddExcludeStringEnabled());
-
-		 settings.append(lineSeparator);
-		 settings.append("multiAddExcludeStringNegated:" + getMultiAddExcludeStringNegated());
+		 appendToConfig("lastMovieInfoTabIndex:", getLastMovieInfoTabIndex(), settings);
+		 appendToConfig("movieListRowHeight:", getMovieListRowHeight(), settings);
+		 appendToConfig("enableCtrlMouseRightClick:", getEnableCtrlMouseRightClick(), settings);
 		 
 		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddRegexString:" + getMultiAddRegexString());
-
-		 settings.append(lineSeparator);
-		 settings.append("multiAddRegexStringEnabled:" + getMultiAddRegexStringEnabled());
-
-		 settings.append(lineSeparator);
-		 settings.append("multiAddRegexStringNegated:" + getMultiAddRegexStringNegated());
-		 		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddValidExtensions:" + getMultiAddValidExtensionsString());
+		 // Slider positions
+		 appendToConfig("mainWindowSliderPosition:", MovieManager.getDialog().getMainWindowSplitPane().getDividerLocation(), settings);
+		 appendToConfig("mainWindowLastSliderPosition:", MovieManager.getDialog().getMainWindowSplitPane().getLastDividerLocation(), settings);
 		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddCustomExtensions:" + getMultiAddCustomExtensions());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddSelectOption:" + getMultiAddSelectOption());
-
-		 settings.append(lineSeparator);
-		 settings.append("multiAddEnableExludeParantheses:" + getMultiAddEnableExludeParantheses());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddEnableExludeCDNotation:" + getMultiAddEnableExludeCDNotation());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddEnableExludeIntegers:" + getMultiAddEnableExludeIntegers());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddEnableExludeUserdefinedInfo:" + getMultiAddEnableExludeUserdefinedInfo());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddSelectFirstHitMark:" + getMultiAddSelectFirstHitMark());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddEnableAutomaticCombine:" + getMultiAddEnableAutomaticCombine());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddTitleOption:" + getMultiAddTitleOption());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddTitleOptionNoCd:" + getMultiAddTitleOptionNoCd());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddSearchNfoForImdb:" + getMultiAddSearchNfoForImdb());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddEnableExludeAllAfterMatchOnUserDefinedInfo:" + getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddEnableSearchInSubdirectories:" + getMultiAddEnableSearchInSubdirectories());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddExcludeUserDefinedString:" + getMultiAddExcludeUserDefinedString());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("multiaddRootDevices:" + getMultiAddRootDevicesAsString());
-		 		 
-		 settings.append(lineSeparator);
-		 settings.append("proxyEnabled:" + httpSettings.getProxyEnabled());
-
-		 settings.append(lineSeparator);
-		 settings.append("proxyType:" + httpSettings.getProxyType());
-
-		 settings.append(lineSeparator);
-		 settings.append("authenticationEnabled:" + httpSettings.getProxyAuthenticationEnabled());
-
-		 settings.append(lineSeparator);
-		 settings.append("proxyHost:" + httpSettings.getProxyHost());
-
-		 settings.append(lineSeparator);
-		 settings.append("proxyPort:" + httpSettings.getProxyPort());
-
-		 settings.append(lineSeparator);
-		 settings.append("proxyUser:" + httpSettings.getProxyUser());
-
-		 settings.append(lineSeparator);
-		 settings.append("proxyPassword:" + httpSettings.getProxyPassword());
-
-		 settings.append(lineSeparator);
-		 settings.append("IMDbAuthenticationEnabled:" + httpSettings.getIMDbAuthenticationEnabled());
-
-		 settings.append(lineSeparator);
-		 settings.append("IMDbAuthenticationUser:" + httpSettings.getIMDbAuthenticationUser());
-
-		 settings.append(lineSeparator);
-		 settings.append("IMDbAuthenticationPassword:" + httpSettings.getIMDbAuthenticationPassword());
-
-		 settings.append(lineSeparator);
-		 settings.append("lastFileDir:");
-		 if (getLastFileDir() != null)
-			 settings.append(getLastFileDir().getPath());
-
-		 settings.append(lineSeparator);
-		 settings.append("lastDVDDir:");
-		 if (getLastFileDir() != null)
-			 settings.append(getLastFileDir().getPath());
-
-
-		 settings.append(lineSeparator);
-		 settings.append("lastDatabaseDir:");
-		 if (getLastDatabaseDir() != null)
-			 settings.append(getLastDatabaseDir().getPath());
-
-		 settings.append(lineSeparator);
-		 settings.append("lastMiscDir:");
-		 if (getLastMiscDir() != null)
-			 settings.append(getLastMiscDir().getPath());
-
-
-		 settings.append(lineSeparator);
-		 settings.append("lastFileFilterMovieInfoUsed:" + getLastFileFilterUsed());
-
-		 settings.append(lineSeparator);
-		 settings.append("exportType:" + getExportType());
-		 		 
-		 settings.append(lineSeparator);
-		 settings.append("mainWindowSliderPosition:" + MovieManager.getDialog().getMainWindowSplitPane().getDividerLocation());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("mainWindowLastSliderPosition:" + MovieManager.getDialog().getMainWindowSplitPane().getLastDividerLocation());
-
 		 if (MovieManager.getDialog().getMovieInfoSplitPane() != null) {
-			 settings.append(lineSeparator);
-			 settings.append("movieInfoSliderPosition:" + MovieManager.getDialog().getMovieInfoSplitPane().getDividerLocation());
-		 
-			 settings.append(lineSeparator);
-			 settings.append("movieInfoLastSliderPosition:" + MovieManager.getDialog().getMovieInfoSplitPane().getLastDividerLocation());
-
+			 appendToConfig("movieInfoSliderPosition:", MovieManager.getDialog().getMovieInfoSplitPane().getDividerLocation(), settings);
+			 appendToConfig("movieInfoLastSliderPosition:", MovieManager.getDialog().getMovieInfoSplitPane().getLastDividerLocation(), settings);
 		 }
-		 
-		 
+		 		 
 		 if (MovieManager.getDialog().getAdditionalInfoNotesSplitPane() != null) {
-			 settings.append(lineSeparator);
-			 settings.append("addionalInfoNotesSliderPosition:" + MovieManager.getDialog().getAdditionalInfoNotesSplitPane().getDividerLocation());
-			 
-			 settings.append(lineSeparator);
-			 settings.append("addionalInfoNotesLastSliderPosition:" + MovieManager.getDialog().getAdditionalInfoNotesSplitPane().getLastDividerLocation());
+			 appendToConfig("addionalInfoNotesSliderPosition:", MovieManager.getDialog().getAdditionalInfoNotesSplitPane().getDividerLocation(), settings);
+			 appendToConfig("addionalInfoNotesLastSliderPosition:", MovieManager.getDialog().getAdditionalInfoNotesSplitPane().getLastDividerLocation(), settings);
 		 }
 		 
-		 settings.append(lineSeparator);
-		 settings.append("mainWidth:" + ((int) mainSize.getWidth()));
+		 // Size of Movie Manager window
+		 appendToConfig("mainWidth:", (int) mainSize.getWidth(), settings);
+		 appendToConfig("mainHeight:", (int) mainSize.getHeight(), settings);
+		
+		 // Main dialog location
+		 appendToConfig("screenLocationX:", (int) getScreenLocation().getX(), settings);
+		 appendToConfig("screenLocationY:", (int) getScreenLocation().getY(), settings);
+		 
+		 // Window mode
+		 appendToConfig("mainMaximized:", getMainMaximized(), settings);
+		 appendToConfig("addMovieWindowHeight:", getAddMovieWindowHeight(), settings);
+		 
+		 
+		 // The current template
+		 appendToConfig("HTMLTemplateName:", getHTMLTemplateName(), settings);
+		 appendToConfig("HTMLTemplateStyleName:", getHTMLTemplateStyleName(), settings);
+		 
+		 // Search options
+		 appendToConfig("filterOption:", getFilterCategory(), settings);
+		 appendToConfig("sortOption:", getSortOption(), settings);
+		 appendToConfig("filterSeen:", getFilterSeen(), settings);
+		 appendToConfig("ratingOption:", getRatingOption(), settings);
+		 appendToConfig("ratingValue:", getRatingValue(), settings);
+		 appendToConfig("dateOption:", getDateOption(), settings);
+		 appendToConfig("dateValue:", getDateValue(), settings);
+		 
+		 
+		 // Multi-add settings
+		 appendToConfig("multiAddDirectoryPath:", getMultiAddDirectoryPath(), settings);
+		 appendToConfig("multiAddRegexString:", getMultiAddRegexString(), settings);
+		 appendToConfig("multiAddRegexStringEnabled:", getMultiAddRegexStringEnabled(), settings);
+		 appendToConfig("multiAddRegexStringNegated:", getMultiAddRegexStringNegated(), settings);
+		 appendToConfig("multiAddRegexCaseSensitive:", getMultiAddRegexCaseSensitive(), settings);
+		 appendToConfig("multiAddValidExtensions:", getMultiAddValidExtensionsString(), settings);
+		 appendToConfig("multiAddCustomExtensions:", getMultiAddCustomExtensions(), settings);
+		 appendToConfig("multiAddSelectOption:", getMultiAddSelectOption().toString(), settings);
+		 appendToConfig("multiAddEnableExludeParantheses:", getMultiAddEnableExludeParantheses(), settings);
+		 appendToConfig("multiAddEnableExludeCDNotation:", getMultiAddEnableExludeCDNotation(), settings);
+		 appendToConfig("multiAddEnableExludeIntegers:", getMultiAddEnableExludeIntegers(), settings);
+		 appendToConfig("multiAddEnableExludeUserdefinedInfo:", getMultiAddEnableExludeUserdefinedInfo(), settings);
+		 appendToConfig("multiAddSelectFirstHitMark:", getMultiAddSelectFirstHitMark(), settings);
+		 appendToConfig("multiAddEnableAutomaticCombine:", getMultiAddEnableAutomaticCombine(), settings);
+		 appendToConfig("multiAddTitleOption:", getMultiAddTitleOption(), settings);
+		 appendToConfig("multiAddTitleOptionNoCd:", getMultiAddTitleOptionNoCd(), settings);
+		 appendToConfig("multiAddSearchNfoForImdb:", getMultiAddSearchNfoForImdb(), settings);
+		 appendToConfig("multiAddSkipHiddenDirectories:", getMultiAddSkipHiddenDirectories(), settings);
+		 appendToConfig("multiAddEnableExludeAllAfterMatchOnUserDefinedInfo:", getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo(), settings);
+		 appendToConfig("multiAddEnableSearchInSubdirectories:", getMultiAddEnableSearchInSubdirectories(), settings);
+		 appendToConfig("multiAddExcludeUserDefinedString:", getMultiAddExcludeUserDefinedString(), settings);
+		 appendToConfig("multiaddRootDevices:", getMultiAddRootDevicesAsString(), settings);
+		 appendToConfig("multiAddList:", getMultiAddList(), settings);
+		 appendToConfig("multiAddListEnabled:", getMultiAddListEnabled(), settings);
+		 
+		 // Proxy settings
+		 appendToConfig("proxyEnabled:", getProxyEnabled(), settings);
+		 appendToConfig("proxyType:", getProxyType(), settings);
+		 appendToConfig("authenticationEnabled:", getProxyAuthenticationEnabled(), settings);
+		 appendToConfig("proxyHost:", getProxyHost(), settings);
+		 appendToConfig("proxyPort:", getProxyPort(), settings);
+		 appendToConfig("proxyUser:", getProxyUser(), settings);
+		 appendToConfig("proxyPassword:", getProxyPassword(), settings);
+		 
+		 // IMDb settings
+		 appendToConfig("IMDbAuthenticationEnabled:", getIMDbAuthenticationEnabled(), settings);
+		 appendToConfig("IMDbAuthenticationUser:", getIMDbAuthenticationUser(), settings);
+		 appendToConfig("IMDbAuthenticationPassword:", getIMDbAuthenticationPassword(), settings);
+		 
+		 // Saved directories for file choosers
+		 if (getLastFileDir() != null)
+			 appendToConfig("lastFileDir:", getLastFileDir().getPath(), settings);
 
-		 settings.append(lineSeparator);
-		 settings.append("mainHeight:" + ((int) mainSize.getHeight()));
+		 if (getLastFileDir() != null)
+			 appendToConfig("lastDVDDir:", getLastFileDir().getPath(), settings);
 
-		 settings.append(lineSeparator);
-		 settings.append("screenLocationX:" + ((int) getScreenLocation().getX()));
+		 if (getLastDatabaseDir() != null)
+			 appendToConfig("lastDatabaseDir:", getLastDatabaseDir().getPath(), settings);
+		
+		 if (getLastMiscDir() != null)
+			 appendToConfig("lastMiscDir:", getLastMiscDir().getPath(), settings);
+			 
 
-		 settings.append(lineSeparator);
-		 settings.append("screenLocationY:" + ((int) getScreenLocation().getY()));
-
-		 settings.append(lineSeparator);
-		 settings.append("mainMaximized:" + getMainMaximized());
-
-		 settings.append(lineSeparator);
-		 settings.append("addMovieWindowHeight:" + getAddMovieWindowHeight());
+		 // Miscellaneous
+		 appendToConfig("checkForProgramUpdates:", getCheckForProgramUpdates(), settings);
+		 appendToConfig("htmlViewDebugMode:", getHTMLViewDebugMode(), settings);
+		 appendToConfig("lastFileFilterMovieInfoUsed:", getLastFileFilterUsed(), settings);
+		 appendToConfig("showUnlistedEntries:", getShowUnlistedEntries(), settings);
+		 appendToConfig("addNewMoviesToCurrentLists:", getAddNewMoviesToCurrentLists(), settings);
+		 appendToConfig("loadCurrentListAtStartup:", getLoadLastUsedListAtStartup(), settings);
 		 		 
 		 if (getLoadLastUsedListAtStartup()) {
 
@@ -3622,167 +3017,56 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				 strTmp += ";" + currentLists.get(i);
 	 
 			 if (strTmp.length() > 0) {
-				 settings.append(lineSeparator);
-				 settings.append("currentLists:"+ strTmp);
+				 appendToConfig("currentLists:", strTmp, settings);
 			 }
 		 }
-		 		 
-		 settings.append(lineSeparator);
-		 settings.append("showUnlistedEntries:" + getShowUnlistedEntries());
-		 		 
-		 settings.append(lineSeparator);
-		 settings.append("loadCurrentListAtStartup:" + getLoadLastUsedListAtStartup());
-		
-		 settings.append(lineSeparator);
-		 settings.append("addNewMoviesToCurrentLists:" + getAddNewMoviesToCurrentLists());
+		 		
 		 
-		 settings.append(lineSeparator);
-		 settings.append("multiAddList:" + getMultiAddList());
-
-		 settings.append(lineSeparator);
-		 settings.append("multiAddListEnabled:"+ getMultiAddListEnabled());
-
-		 settings.append(lineSeparator);
-		 settings.append("lastDialogImportType:" + getLastDialogImportType());
+		 // IMDb parser
+		 appendToConfig("autoMoveAnAndA:", getAutoMoveAnAndA(), settings);
+		 appendToConfig("storeAllAkaTitles:", getStoreAllAkaTitles(), settings);
+		 appendToConfig("includeAkaLanguageCodes:", getIncludeAkaLanguageCodes(), settings);
+		 appendToConfig("noCoverTYpe:", getNoCoverType().toString(), settings);
+		 appendToConfig("autoMoveThe:", getAutoMoveThe(), settings);
+		 appendToConfig("titleLanguageCode:", getTitleLanguageCode(), settings);
+		 appendToConfig("useLanguageSpecificTitle:", getUseLanguageSpecificTitle(), settings);
+		 appendToConfig("removeQuotesOnSeriesTitle:", getRemoveQuotesOnSeriesTitle(), settings);
 		 
-		 settings.append(lineSeparator);
-		 settings.append("useJTreeIcons:" + getUseJTreeIcons());
-
-		 settings.append(lineSeparator);
-		 settings.append("useJTreeCovers:" + getUseJTreeCovers());
-
-		 settings.append(lineSeparator);
-		 settings.append("lastPreferencesTabIndex:"+ Integer.toString(getLastPreferencesTabIndex()));
-
-		 settings.append(lineSeparator);
-		 settings.append("lastMovieInfoTabIndex:"+ Integer.toString(getLastMovieInfoTabIndex()));
-
-		 settings.append(lineSeparator);
-		 settings.append("movieListRowHeight:"+ Integer.toString(getMovieListRowHeight()));
+		 // External programs
+		 appendToConfig("useMediaInfoDLL:", getUseMediaInfoDLL().toString(), settings);
+		 appendToConfig("playerPath:", getMediaPlayerPath(), settings);
+		 appendToConfig("mediaPlayerCmdArgument:", getMediaPlayerCmdArgument(), settings);
+		 appendToConfig("browserPath:", getBrowserPath(), settings);
+		 appendToConfig("useDefaultWindowsPlayer:", getUseDefaultWindowsPlayer(), settings);
+		 appendToConfig("executeExternalPlayCommand:", getExecuteExternalPlayCommand(), settings);
+		 appendToConfig("systemWebBrowser:", getSystemWebBrowser(), settings);
 		 
-		 settings.append(lineSeparator);
-		 settings.append("enableCtrlMouseRightClick:" + getEnableCtrlMouseRightClick());
-
-		 settings.append(lineSeparator);
-		 settings.append("preserveCoverAspectRatioSetting:"+ getPreserveCoverAspectRatio());
-
-		 settings.append(lineSeparator);
-		 settings.append("noCoverTYpe:" + getNoCoverType().toString());
-
-		 settings.append(lineSeparator);
-		 settings.append("autoMoveThe:" + getAutoMoveThe());
-
-		 settings.append(lineSeparator);
-		 settings.append("autoMoveAnAndA:" + getAutoMoveAnAndA());
-
-		 settings.append(lineSeparator);
-		 settings.append("storeAllAkaTitles:" + getStoreAllAkaTitles());
-
-		 settings.append(lineSeparator);
-		 settings.append("includeAkaLanguageCodes:" + getIncludeAkaLanguageCodes());
-
-		 settings.append(lineSeparator);
-		 settings.append("titleLanguageCode:" + getTitleLanguageCode());
-
-		 settings.append(lineSeparator);
-		 settings.append("useLanguageSpecificTitle:" + getUseLanguageSpecificTitle());
-
-		 settings.append(lineSeparator);
-		 settings.append("removeQuotesOnSeriesTitle:" + getRemoveQuotesOnSeriesTitle());
+		 // Backup options
+		 appendToConfig("databaseBackupEveryLaunch:", getDatabaseBackupEveryLaunch(), settings);
+		 appendToConfig("databaseBackupDeleteOldest:", getDatabaseBackupDeleteOldest(), settings);
+		 appendToConfig("databaseBackupLaunchCount:", getDatabaseBackupLaunchCount(), settings);
+		 appendToConfig("databaseBackupDirectory:", getDatabaseBackupDirectory(), settings);
 		 
-		 settings.append(lineSeparator);
-		 settings.append("useMediaInfoDLL:" + getUseMediaInfoDLL());
-
-		 settings.append(lineSeparator);
-		 settings.append("playerPath:" + getMediaPlayerPath());
-
-		 settings.append(lineSeparator);
-		 settings.append("mediaPlayerCmdArgument:" + getMediaPlayerCmdArgument());
+		 // Import/Export settings
+		 appendToConfig("exportType:", getExportType(), settings);
+		 appendToConfig("lastDialogExportType:", getLastDialogExportType(), settings);
+		 appendToConfig("lastDialogImportType:", getLastDialogImportType(), settings);
+		 appendToConfig("exportTextfilePath:", getExportTextFilePath(), settings);
+		 appendToConfig("exportExcelfilePath:", getExportExcelFilePath(), settings);
+		 appendToConfig("exportXMLDbfilePath:", getExportXMLDbFilePath(), settings);
+		 appendToConfig("exportXMLfilePath:", getExportXMLFilePath(), settings);
+		 appendToConfig("exportCSVfilePath:", getExportCSVFilePath(), settings);
+		 appendToConfig("exportCSVseparator:", getExportCSVseparator(), settings);
 		 
-		 settings.append(lineSeparator);
-		 settings.append("browserPath:" + getBrowserPath());
-
-		 settings.append(lineSeparator);
-		 settings.append("useDefaultWindowsPlayer:" + getUseDefaultWindowsPlayer());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("executeExternalPlayCommand:" + getExecuteExternalPlayCommand());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("systemWebBrowser:" + getSystemWebBrowser());
-
-		 settings.append(lineSeparator);
-		 settings.append("databaseBackupEveryLaunch:" + getDatabaseBackupEveryLaunch());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("databaseBackupDeleteOldest:" + getDatabaseBackupDeleteOldest());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("databaseBackupLaunchCount:" + getDatabaseBackupLaunchCount());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("databaseBackupDirectory:" + getDatabaseBackupDirectory());
-		 		 
-		 settings.append(lineSeparator);
-		 settings.append("displayPlayButton:" + getDisplayPlayButton());
-
-		 settings.append(lineSeparator);
-		 settings.append("displayPrintButton:" + getDisplayPrintButton());
-
-		 settings.append(lineSeparator);
-		 settings.append("checkForProgramUpdates:" + getCheckForProgramUpdates());
-
-		 settings.append(lineSeparator);
-		 settings.append("htmlViewDebugMode:" + getHTMLViewDebugMode());
-
-		 settings.append(lineSeparator);
-		 settings.append("lastDialogExportType:" + getLastDialogExportType());
-
-		 settings.append(lineSeparator);
-		 settings.append("lastDialogImportType:" + getLastDialogImportType());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("exportTextfilePath:" + getExportTextFilePath());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("exportExcelfilePath:" + getExportExcelFilePath());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("exportXMLDbfilePath:" + getExportXMLDbFilePath());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("exportXMLfilePath:" + getExportXMLFilePath());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("exportCSVfilePath:" + getExportCSVFilePath());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("exportCSVseparator:" + getExportCSVseparator());
-		 		 
-		 settings.append(lineSeparator);
-		 settings.append("importTextfilePath:" + getImportTextFilePath());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("importExcelfilePath:" + getImportExcelFilePath());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("importXMLfilePath:" + getImportXMLFilePath());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("importCSVfilePath:" + getImportCSVFilePath());
-				
-		 settings.append(lineSeparator);
-		 settings.append("importCSVseparator:" + getImportCSVseparator());
-
-		 settings.append(lineSeparator);
-		 settings.append("importExtremefilePath:" + getImportExtremeFilePath());
-		 
-		 settings.append(lineSeparator);
-		 settings.append("importIMDbInfoEnabled:" + getImportIMDbInfoEnabled());
-
-		 settings.append(lineSeparator);
-		 settings.append("importIMDbSelectOption:" + getImportIMDbSelectOption());
-		 		 
+		 appendToConfig("importTextfilePath:", getImportTextFilePath(), settings);
+		 appendToConfig("importExcelfilePath:", getImportExcelFilePath(), settings);
+		 appendToConfig("importXMLfilePath:", getImportXMLFilePath(), settings);
+		 appendToConfig("importCSVfilePath:", getImportCSVFilePath(), settings);
+		 appendToConfig("importCSVseparator:", getImportCSVseparator(), settings);
+		 appendToConfig("importIMDbInfoEnabled:", getImportIMDbInfoEnabled(), settings);
+		 appendToConfig("importIMDbSelectOption:", getImportIMDbSelectOption().toString(), settings);
+		 appendToConfig("lastDialogImportType:", getLastDialogImportType(), settings);
+		  		 
 		 
 		 // Default values in the additional info fields in DialogMovieInfo
 
@@ -3795,15 +3079,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			 value = (AdditionalInfoFieldDefaultValues) defaultValues.get(keys[i]);
 
 			 if (value != null) {
-				 settings.append(lineSeparator);
-				 settings.append("AdditionalInfoDefaultValues:" +value.getFieldName()+":");
-				 settings.append(value.getDefaultValuesString("|"));
+				 appendToConfig("AdditionalInfoDefaultValues:" +value.getFieldName()+":", value.getDefaultValuesString("|"), settings);
 			 }
 		 }
 
-		 settings.append(lineSeparator);
-
-		 
 		 // Search aliases
 		 
 		 HashMap<String, String> searchAlias = getSearchAlias();
@@ -3814,16 +3093,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			 key = (String) i.next();
 			 val = (String) searchAlias.get(key);
 
-			 settings.append("Search Alias:" + key + "=" + val);
-			 settings.append(lineSeparator);
+			 appendToConfig("Search Alias:", key + "=" + val, settings);
 		 }
 		 
 		 
 		 ArrayList<String> filterValues = getMainFilterSearchValues();
 		 
 		 for (int i = 0; i < filterValues.size(); i++) {
-			 settings.append("mainFilterSearchValues:" + (String) filterValues.get(i));
-			 settings.append(lineSeparator);
+			 appendToConfig("mainFilterSearchValues:", filterValues.get(i), settings);
 		 }
 
 		 
