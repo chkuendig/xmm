@@ -513,7 +513,7 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 	 */
 	public ArrayList<FileNode> getFilesFromDirectoryTree(boolean includeMatchesOnly) {
 
-		eventHandler.fireFileTreeWorkingEvent(new FileTreeEvent("getFilesFromDirectoryTree"));
+		eventHandler.fireFileTreeWorkingEvent(new FileTreeEvent(true));
 		ready = false;
 		
 		ArrayList<FileNode> files = new ArrayList<FileNode>();
@@ -537,7 +537,7 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 			addFiles(r, files, keys, false);
 		}
 
-		eventHandler.fireFileTreeReadyEvent(new FileTreeEvent("getFilesFromDirectoryTree"));
+		eventHandler.fireFileTreeReadyEvent(new FileTreeEvent(true));
 		
 		cancelledJob = false;
 		ready = true;
