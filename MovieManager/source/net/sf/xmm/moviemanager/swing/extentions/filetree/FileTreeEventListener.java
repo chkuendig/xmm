@@ -7,4 +7,6 @@ public interface FileTreeEventListener extends EventListener {
 	public void addSelectedFilesEventOccurred(FileTreeEvent evt);
 	public void rootDeviceAddedEventOccurred(FileTreeEvent evt);
 	public void rootDeviceRemovedEventOccurred(FileTreeEvent evt);
+	public void fileTreeIsWorkingEvent(FileTreeEvent evt);
+	public void fileTreeIsReadyEvent(FileTreeEvent evt);
 }

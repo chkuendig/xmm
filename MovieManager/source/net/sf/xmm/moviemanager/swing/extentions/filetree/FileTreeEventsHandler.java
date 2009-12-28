@@ -17,7 +17,6 @@ public class FileTreeEventsHandler {
         listenerList.remove(FileTreeEventListener.class, listener);
     }
   
-    // This private class is used to fire AddSelectedFilesEvents
     void fireAddSelectedFilesEvent(FileTreeEvent evt) {
         Object[] listeners = listenerList.getListenerList();
         // Each listener occupies two elements - the first is the listener class
@@ -29,8 +28,7 @@ public class FileTreeEventsHandler {
             }
         }
     }
-    
- // This private class is used to fire AddSelectedFilesEvents
+  
     void fireRootDeviceAddedEvent(FileTreeEvent evt) {
         Object[] listeners = listenerList.getListenerList();
         // Each listener occupies two elements - the first is the listener class
@@ -42,8 +40,7 @@ public class FileTreeEventsHandler {
             }
         }
     }
-    
- // This private class is used to fire AddSelectedFilesEvents
+   
     void fireRootDeviceRemovedEvent(FileTreeEvent evt) {
         Object[] listeners = listenerList.getListenerList();
         // Each listener occupies two elements - the first is the listener class
@@ -52,6 +49,30 @@ public class FileTreeEventsHandler {
         for (int i=0; i<listeners.length; i+=2) {
             if (listeners[i] == FileTreeEventListener.class) {
                 ((FileTreeEventListener)listeners[i+1]).rootDeviceRemovedEventOccurred(evt);
+            }
+        }
+    }
+    
+    void fireFileTreeWorkingEvent(FileTreeEvent evt) {
+        Object[] listeners = listenerList.getListenerList();
+        // Each listener occupies two elements - the first is the listener class
+        // and the second is the listener instance
+         
+        for (int i=0; i<listeners.length; i+=2) {
+            if (listeners[i] == FileTreeEventListener.class) {
+                ((FileTreeEventListener)listeners[i+1]).fileTreeIsWorkingEvent(evt);
+            }
+        }
+    }
+    
+    void fireFileTreeReadyEvent(FileTreeEvent evt) {
+        Object[] listeners = listenerList.getListenerList();
+        // Each listener occupies two elements - the first is the listener class
+        // and the second is the listener instance
+         
+        for (int i=0; i<listeners.length; i+=2) {
+            if (listeners[i] == FileTreeEventListener.class) {
+                ((FileTreeEventListener)listeners[i+1]).fileTreeIsReadyEvent(evt);
             }
         }
     }

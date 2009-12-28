@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import net.sf.xmm.moviemanager.util.FileUtil;
 
@@ -114,13 +116,45 @@ public class FileNode implements Comparable<FileNode> {
 		return true;
 	}
 
+	/**
+	 * Goes through all children and sub-children and updates all the expanded nodes
+	 * @param fnode
+	 */
+	public DefaultMutableTreeNode updateNodesAndExpandedChildren(ArrayList<String> validExtensions) {
+				
+		// Not yet expanded
+		if (treeNode == null)
+			return null;
+		
+		DefaultMutableTreeNode node = updateNodes(validExtensions);
+				
+		for (int i = 0; i < treeNode.getChildCount(); i++) {
+			FileNode fNode = ((FileTree.IconData) ((DefaultMutableTreeNode) treeNode.getChildAt(i)).getUserObject()).getFileNode();
+			
+			if (fNode.isDirectory()) {
+				TreePath path = new TreePath(getNode().getPath());
+				
+				// if it's not collapsed
+				if (!fileTree.fileTree.isCollapsed(path)) {
+					fNode.updateNodesAndExpandedChildren(validExtensions);
+				}
+			}
+			else {
+				// Only files are left
+				break;
+			}
+		}
+		
+		return node;
+	}
+	
 	public DefaultMutableTreeNode updateNodes(ArrayList<String> validExtensions) {
-
+		
 		boolean changed = false;
 		
 		currentChildrenFiles = getValidChildren(validExtensions, false);
 		
-		// Compare current children with new children
+		// Find the index of the first file, to skip directories
 		int fileIndex = -1;
 			
 		for (int i = 0; i < treeNode.getChildCount(); i++) {
@@ -135,11 +169,9 @@ public class FileNode implements Comparable<FileNode> {
 		// Removing all regular files
 		if (currentChildrenFiles.length == 0 && fileIndex != -1) {
 						
-			while (treeNode.getChildCount() != fileIndex) 
+			while (treeNode.getChildCount() != fileIndex) {
 				fileTree.getTreeModel().removeNodeFromParent((DefaultMutableTreeNode) treeNode.getChildAt(fileIndex));
-			
-				//treeNode.remove(fileIndex);
-			
+			}
 			return treeNode;
 		}
 			
@@ -195,7 +227,9 @@ public class FileNode implements Comparable<FileNode> {
 		return changed ? treeNode : null;
 	}
 
-	
+	/*
+	 * If validExtensions is null, any extension is allowed
+	 */
 	FileNode [] getValidChildren(ArrayList<String> validExtensions, boolean includeDirectories) {
 		File[] files = listFiles();
 
@@ -205,7 +239,10 @@ public class FileNode implements Comparable<FileNode> {
 		ArrayList<FileNode> validFiles = new ArrayList<FileNode>();
 
 		for (int i = 0; i < files.length; i++)	{
-			if (files[i].isFile() && validExtensions.contains(FileUtil.getExtension(files[i].getName())) || (includeDirectories && files[i].isDirectory())) {
+			
+			if ((files[i].isFile() && 
+					!(validExtensions != null && !validExtensions.contains(FileUtil.getExtension(files[i].getName()))))
+					|| (includeDirectories && files[i].isDirectory())) {
 				validFiles.add(new FileNode(files[i], fileTree));
 			}
 		}

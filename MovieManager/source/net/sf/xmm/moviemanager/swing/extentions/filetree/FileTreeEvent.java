@@ -7,7 +7,13 @@ import java.util.EventObject;
 public class FileTreeEvent extends EventObject {
 	
 	File file = null;
-		
+	boolean searching = false;	
+	
+	public FileTreeEvent(boolean searching) {
+		super(searching);
+		this.searching = searching;
+	}
+	
 	public FileTreeEvent(File f) {
 		super(f);
 		file = f;
@@ -19,5 +25,9 @@ public class FileTreeEvent extends EventObject {
     
     public File getFile() {
     	return file;
+    }
+    
+    public boolean isSearching() {
+    	return searching;
     }
 }

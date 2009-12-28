@@ -35,9 +35,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -45,6 +47,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.Action;
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -67,13 +70,16 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.ProgressBean;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
 import org.apache.log4j.Logger;
 
-public class FileTree extends JPanel {
+public class FileTree extends JPanel implements ProgressBean, Runnable {
 
 	static Logger log = Logger.getLogger(FileTree.class);
 
@@ -107,9 +113,15 @@ public class FileTree extends JPanel {
 	boolean filterOutDuplicateFiles = false;
 	boolean filterOutDuplicateByEntireFilePath = false;
 	
+	boolean skipHiddenDirectories = false;
+	boolean allowAnyExtension = false;
+	
 	private boolean threadLock = false;
 	
 	int numberOfFoldersChosen = 0;
+	
+	private boolean cancelledJob = false;
+	private boolean ready = true;	
 	
 	public DefaultTreeModel getTreeModel() {
 		return (DefaultTreeModel) fileTree.getModel();
@@ -183,19 +195,35 @@ public class FileTree extends JPanel {
 	}
 	
 	public void updateNodes() {
-			
-		Iterator<FileNode> it = expandedNodes.keySet().iterator();
 		
-		while (it.hasNext()) {
-			
-			FileNode fileNode = it.next();
-			// If children were changed
-			DefaultMutableTreeNode node = fileNode.updateNodes(validExtensions);
-			
-			if (node != null) {
-				((DefaultTreeModel) fileTree.getModel()).nodeChanged(node);
+		Thread t = new Thread(new Runnable() {
+
+			public void run() {
+				eventHandler.fireFileTreeWorkingEvent(new FileTreeEvent(false));
+				
+				Iterator<FileNode> it = expandedNodes.keySet().iterator();
+				
+				while (it.hasNext()) {
+					
+					FileNode fileNode = it.next();
+					TreePath path = new TreePath(fileNode.getNode().getPath());
+
+					// if it's not collapsed
+					if (!fileTree.isCollapsed(path)) {
+					
+						// If children were changed
+						//DefaultMutableTreeNode node = fileNode.updateNodes(allowAnyExtension ? null : validExtensions);
+						DefaultMutableTreeNode node = fileNode.updateNodesAndExpandedChildren(allowAnyExtension ? null : validExtensions);
+
+						if (node != null) {
+							((DefaultTreeModel) fileTree.getModel()).nodeChanged(node);
+						}
+					}
+				}
+				eventHandler.fireFileTreeReadyEvent(new FileTreeEvent(false));
 			}
-		}
+		});
+		t.start();
 	}
 	
 	public ArrayList<String> getValidExtension() {
@@ -212,6 +240,14 @@ public class FileTree extends JPanel {
 		updateCurrentCells();
 	}
 	
+	public void setSkipHiddenDirectories(boolean skip) {
+		skipHiddenDirectories = skip;
+	}
+	
+	public void setAllowAnyExtension(boolean any) {
+		allowAnyExtension = any;
+	}
+		
 	
 	public FileTree(HashMap<String, ModelEntry> existingMediaFiles) {
 		this();
@@ -477,6 +513,9 @@ public class FileTree extends JPanel {
 	 */
 	public ArrayList<FileNode> getFilesFromDirectoryTree(boolean includeMatchesOnly) {
 
+		eventHandler.fireFileTreeWorkingEvent(new FileTreeEvent("getFilesFromDirectoryTree"));
+		ready = false;
+		
 		ArrayList<FileNode> files = new ArrayList<FileNode>();
 		Set<String> keySet = changedNodes.keySet();
 		String [] keys = keySet.toArray(new String[keySet.size()]);
@@ -498,12 +537,23 @@ public class FileTree extends JPanel {
 			addFiles(r, files, keys, false);
 		}
 
+		eventHandler.fireFileTreeReadyEvent(new FileTreeEvent("getFilesFromDirectoryTree"));
+		
+		cancelledJob = false;
+		ready = true;
+		
 		return files;
 	}
 
 
+	//void addFiles(Object dir, ArrayList<FileNode> files, Object [] keys, boolean includeAll) {
 	void addFiles(Object dir, ArrayList<FileNode> files, Object [] keys, boolean includeAll) {
-
+		
+		if (cancelledJob) {
+			files.clear();
+			return;
+		}
+		
 		IconType iconType = IconType.REGULAR_FOLDER;
 		File directory;
 
@@ -511,9 +561,14 @@ public class FileTree extends JPanel {
 			iconType = ((IconData) dir).getIconType();
 			directory = ((IconData) dir).getFile();
 		}
-		else
+		else {
 			directory = (File) dir;
-
+		}
+		
+		if (skipHiddenDirectories && directory.isHidden()) {
+			return;
+		}
+		
 		// Include all media files in the directory only
 		if (iconType == IconType.INCLUDE_CONTENT) {
 			addValidMediaFiles(directory, files);
@@ -537,9 +592,14 @@ public class FileTree extends JPanel {
 					//Check to see if it's already marked
 					IconData subIconData = (IconData) changedNodes.get(fileList[i].getAbsolutePath());
 
-					// It's NOT saved as marked, i.e. it's a regular driectory
+					// It's NOT saved as marked, i.e. it's a regular directory
 					if (subIconData == null) {
 						addFiles(fileList[i], files, keys, true);
+						
+						if (cancelledJob) {
+							files.clear();
+							return;
+						}
 					}
 				}
 			}
@@ -568,16 +628,16 @@ public class FileTree extends JPanel {
 			tmp = dirFiles[i].getName();
 
 			// Files doesn't have a file extension
-			if (tmp.indexOf(".") == -1)
+			if (!allowAnyExtension && tmp.indexOf(".") == -1)
 				continue;
 
 			String ext = tmp.substring(tmp.lastIndexOf(".") +1, tmp.length());
 
-			if (validExtensions.contains(ext.toLowerCase())) {
+			if (allowAnyExtension || validExtensions.contains(ext.toLowerCase())) {
 				
-				int res = checkFileMatch(dirFiles[i]);
+				FileMatch res = checkFileMatch(dirFiles[i]);
 				
-				if (res == FILE_REGULAR || res == FILE_MATCH) {	
+				if (res == FileMatch.REGULAR || res ==FileMatch.MATCH) {	
 					files.add(new FileNode(dirFiles[i], this));	
 				}
 			}
@@ -745,6 +805,8 @@ public class FileTree extends JPanel {
 			}
 		}
 	}
+	
+	
 
 	// Make sure expansion is threaded and updating the tree model
 	// only occurs within the event dispatching thread.
@@ -752,13 +814,17 @@ public class FileTree extends JPanel {
 
 		public void treeExpanded(TreeExpansionEvent event) {
 
+			// Fire busy event
+			eventHandler.fireFileTreeWorkingEvent(new FileTreeEvent(false));
+			
 			final DefaultMutableTreeNode node = getTreeNode(event.getPath());
 			final FileNode fnode = getFileNode(node);
 
 			Thread runner = new Thread()	{
 				public void run() {
-					
-					if (fnode != null && fnode.expand(node, validExtensions)) 	{
+										
+					if (fnode != null && fnode.expand(node, allowAnyExtension ? null : validExtensions)) {
+												
 						addExpandedNode(fnode);
 						
 						Runnable runnable = new Runnable() 	{
@@ -768,12 +834,21 @@ public class FileTree extends JPanel {
 						};
 						SwingUtilities.invokeLater(runnable);
 					}
+					else {
+						fnode.updateNodesAndExpandedChildren(allowAnyExtension ? null : validExtensions);
+					}
+					// Fire ready event
+					eventHandler.fireFileTreeReadyEvent(new FileTreeEvent(false));
 				}
 			};
 			runner.start();
 		}
 
-		public void treeCollapsed(TreeExpansionEvent event) {}
+		public void treeCollapsed(TreeExpansionEvent event) {
+			//final DefaultMutableTreeNode node = getTreeNode(event.getPath());
+			//final FileNode fnode = getFileNode(node);
+			//System.out.println("collapsed:" + fnode.getPath());
+		}
 	}
 
 	class DirSelectionListener 	implements TreeSelectionListener 	{
@@ -804,11 +879,11 @@ public class FileTree extends JPanel {
 		
 		public IconCellRenderer(Color match, Color noMatch, Color colorExists)	{
 			super();
-			m_textSelectionColor = UIManager.getColor( "Tree.selectionForeground");
-			m_textNonSelectionColor = UIManager.getColor( "Tree.textForeground");
-			m_bkSelectionColor = UIManager.getColor(	"Tree.selectionBackground");
-			m_bkNonSelectionColor = UIManager.getColor(  "Tree.textBackground");
-			m_borderSelectionColor = UIManager.getColor(	"Tree.selectionBorderColor");
+			m_textSelectionColor = UIManager.getColor   ("Tree.selectionForeground");
+			m_textNonSelectionColor = UIManager.getColor("Tree.textForeground");
+			m_bkSelectionColor = UIManager.getColor     ("Tree.selectionBackground");
+			m_bkNonSelectionColor = UIManager.getColor  ("Tree.textBackground");
+			m_borderSelectionColor = UIManager.getColor ("Tree.selectionBorderColor");
 			setOpaque(false);
 
 			this.matchColor = match;
@@ -854,14 +929,13 @@ public class FileTree extends JPanel {
 
 				if (regularFile) {
 					
-					int match = checkFileMatch((IconData) obj);
+					FileMatch match = checkFileMatch((IconData) obj);
 
 					switch (match) {
-					case FILE_REGULAR: {
-						setBackground(sel ? m_bkSelectionColor : m_bkNonSelectionColor); break;}
-					case FILE_MATCH: {setBackground(matchColor); break;}	
-					case FILE_NO_MATCH: {setBackground(noMatchColor); break;}	
-					case FILE_EXISTS: {setBackground(colorExists); break;}	
+					case REGULAR: {setBackground(sel ? m_bkSelectionColor : m_bkNonSelectionColor); break;}
+					case MATCH: {setBackground(matchColor); break;}	
+					case NO_MATCH: {setBackground(noMatchColor); break;}	
+					case EXISTS_IN_DB: {setBackground(colorExists); break;}	
 					}
 
 				}
@@ -898,13 +972,14 @@ public class FileTree extends JPanel {
 
 	}
 
-	public static final int FILE_REGULAR    = 1;
-	public static final int FILE_MATCH 		= 2;
-	public static final int FILE_NO_MATCH 	= 3;
-	public static final int FILE_EXISTS 	= 4;
+	public enum FileMatch {ERROR, REGULAR, MATCH, NO_MATCH, EXISTS_IN_DB};
+	//public static final int FILE_REGULAR    = 1;
+	//public static final int FILE_MATCH 		= 2;
+	//public static final int FILE_NO_MATCH 	= 3;
+	//public static final int FILE_EXISTS 	= 4;
 
 	
-	public int checkFileMatch(Object fileObj) {
+	public FileMatch checkFileMatch(Object fileObj) {
 
 		File file = null;
 		
@@ -916,7 +991,7 @@ public class FileTree extends JPanel {
 		} else if (fileObj instanceof IconData) {
 			file = ((IconData) fileObj).getFile();
 		} else {
-			return 0;
+			return FileMatch.ERROR;
 		}
 		
 		if (filterOutDuplicateFiles) {
@@ -924,64 +999,34 @@ public class FileTree extends JPanel {
 				
 				if (filterOutDuplicateByEntireFilePath) {
 					if (existingMediaFiles.containsKey(file.getAbsolutePath())) {
-						return FILE_EXISTS;
+						return FileMatch.EXISTS_IN_DB;
 					}
 				}
 				else {
 					if (existingMediaFileNames.containsKey(file.getName())) {
-						return FILE_EXISTS;
+						return FileMatch.EXISTS_IN_DB;
 					}					
 				}
 			}
 		}
+				
 		
-		boolean match;
-		
-		int regexResult = FILE_REGULAR;
+		FileMatch regexResult = FileMatch.REGULAR;
 
 		// Check regex
 		if (matchOptions.regexPattern != null) {
 			
 			Matcher m = matchOptions.regexPattern.matcher(file.getName());
 
-			match = m.matches();
+			boolean match = m.find();
 			
 			if (matchOptions.regexNegate)
 				match = !match;
 				
-			regexResult = match ? FILE_MATCH : FILE_NO_MATCH;
+			regexResult = match ? FileMatch.MATCH : FileMatch.NO_MATCH;
 		}
-
-		// Check regular string match
-		int regularStringResult = FILE_REGULAR;
-	
-		if (matchOptions.stringMatch != null) {
-			
-			// Divides the string.  one|two -> [one, two]
-			String [] split = matchOptions.stringMatch.toLowerCase().split("\\|");
-			String fileName = file.getName().toLowerCase();
-			match = false;
 				
-			// Checking each string 
-			for (int i = 0; i < split.length; i++) {
-				if (fileName.indexOf(split[i]) != -1) {
-					match = true;
-					break;
-				}
-			}
-			
-			if (matchOptions.stringNegate)
-				match = !match;
-			
-			regularStringResult = match ? FILE_MATCH : FILE_NO_MATCH;
-		}
-		
-		if (regexResult == regularStringResult)
-			return regexResult;
-		else if (regexResult > regularStringResult)	
-			return regexResult;
-		else
-			 return regularStringResult;
+		return regexResult;
 	}
 	
 	public enum IconType {REGULAR_FOLDER, INCLUDE_CONTENT, INCLUDE_ALL, EXCLUDE_ALL, REGULAR_FILE};
@@ -1095,12 +1140,18 @@ public class FileTree extends JPanel {
 	}
 
 		
-	public void setRegexPattern(String expression) {
+	public void setRegexPattern(String expression, boolean caseSensitive) {
 		
 		try {
 			
 			if (expression != null) {
-				Pattern compiledRegex = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+				Pattern compiledRegex;
+				
+				if (caseSensitive)
+					compiledRegex = Pattern.compile(expression);
+				else
+					compiledRegex = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+				
 				matchOptions.regexPattern = compiledRegex;
 			}
 			else
@@ -1116,29 +1167,35 @@ public class FileTree extends JPanel {
 		matchOptions.regexNegate = regexNegate;
 		updateCurrentCells();
 	}
-	
-	public void setStringPattern(String stringMatch) {
-		
-		if (stringMatch != null && stringMatch.trim().equals(""))
-			matchOptions.stringMatch = null;
-		else {
-			matchOptions.stringMatch = stringMatch;
-			updateCurrentCells();
-		}
-	}
-	
-	public void setStringNegate(boolean stringNegate) {
-		matchOptions.stringNegate = stringNegate;
-		updateCurrentCells();
-	}
-	
+			
 	private class MatchingOptions {
 		
 		Pattern regexPattern = null;
-		boolean regexNegate = false;
-		
-		String stringMatch = null;
-		boolean stringNegate = false;
-				
+		boolean regexNegate = false;			
+	}
+
+	public synchronized void cancel() {
+		cancelledJob = true;
+	}
+
+	public boolean getCancelled() {
+		return cancelledJob;
+	}
+
+	// Not used, but required by ProgressBean
+	public double getStatus() {
+		return 0;
+	}
+
+	// Not used, but required by ProgressBean
+	public void start() {
+	}
+
+	// Not used, but required by ProgressBean
+	public void run() {
+	}
+	
+	public boolean isReady() {
+		return ready;
 	}
 }
