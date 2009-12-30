@@ -1,3 +1,23 @@
+ /**
+ * @(#)SysUtil.java
+ * 
+ * Copyright (2003) Bro3
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2, or any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Boston, MA 02111.
+ *
+ * Contact: bro3@users.sourceforge.net
+ **/
+
 package net.sf.xmm.moviemanager.util;
 
 import java.awt.event.InputEvent;
@@ -9,6 +29,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import javax.swing.filechooser.FileSystemView;
 
@@ -54,7 +76,38 @@ public class SysUtil {
 		
 		return path;
 	}
+
+	public static String getUserHome() {
+		String userHome = (String) AccessController.doPrivileged(
+				new PrivilegedAction<Object>() {
+					public Object run() {
+						return System.getProperty("user.home");
+					}
+				}
+		);
+		return userHome;
+	}
 	
+	  
+    public static boolean isRestrictedSandbox() {
+    	
+    	SecurityManager securityManager = System.getSecurityManager();
+    	
+    	if (securityManager == null) {
+    		return false;
+    	}
+    	
+    	try {
+    		securityManager.checkPropertiesAccess();
+    	} catch (Exception e) {
+    		log.debug("Exception:" + e.getMessage());
+    		return true;
+    	} 
+    	
+    	return false;
+    }
+    
+ 
 	
 	/**
 	 * 
