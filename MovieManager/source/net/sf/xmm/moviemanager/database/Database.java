@@ -1,5 +1,5 @@
 /**
- * @(#)Database.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)Database.java
  *
  * Copyright (2003) Mediterranean
  *
@@ -352,7 +352,7 @@ abstract public class Database {
 
 		if (message.indexOf("Access denied") != -1) {
 			errorMessage = message;
-			MovieManager.getIt().processDatabaseError(this);
+			MovieManager.getDatabaseHandler().processDatabaseError(this);
 		} 
 		else if (message.indexOf("Connection refused: connect") != -1) {
 			errorMessage = "Connection refused: connect";
@@ -361,37 +361,37 @@ abstract public class Database {
 		}
 		else if (message.indexOf("Connection reset") != -1) {
 			errorMessage = "Connection reset";
-			MovieManager.getIt().processDatabaseError(this);
+			MovieManager.getDatabaseHandler().processDatabaseError(this);
 		}
 		//    	Software caused connection abort: recv failed
 		else if (message.indexOf("recv failed") != -1) {
 			errorMessage = "Connection closed";
-			MovieManager.getIt().processDatabaseError(this);
+			MovieManager.getDatabaseHandler().processDatabaseError(this);
 		}
 		//    	Software caused connection abort: socket write error
 		else if (message.indexOf("socket write error") != -1) {
 			errorMessage = "Socket Write Error";
-			MovieManager.getIt().processDatabaseError(this);
+			MovieManager.getDatabaseHandler().processDatabaseError(this);
 		}
 		else if (message.indexOf("Server shutdown in progress") != -1) {
 			errorMessage = "Server shutdown in progress";
-			MovieManager.getIt().processDatabaseError(this);
+			MovieManager.getDatabaseHandler().processDatabaseError(this);
 		}
 		else if (message.indexOf("Connection timed out: connect") != -1) {
 			errorMessage = "Connection timed out: connect";
-			MovieManager.getIt().processDatabaseError(this);
+			MovieManager.getDatabaseHandler().processDatabaseError(this);
 		}
 		else if (message.indexOf("UnknownHostException") != -1) {
 			errorMessage = "UnknownHostException";
-			MovieManager.getIt().processDatabaseError(this);
+			MovieManager.getDatabaseHandler().processDatabaseError(this);
 		}
 		else if (message.indexOf("Communications link failure") != -1) {
 			errorMessage = "Communications link failure";
-			MovieManager.getIt().processDatabaseError(this);
+			MovieManager.getDatabaseHandler().processDatabaseError(this);
 		}
 		else if ((message.indexOf("is full") != -1) || (message.indexOf("Error writing file") != -1)) {
 			errorMessage = "MySQL server is out of space";
-			MovieManager.getIt().processDatabaseError(this);
+			MovieManager.getDatabaseHandler().processDatabaseError(this);
 		}
 		else if ((message.indexOf("Data truncation: Data too long for column 'CoverData'") != -1)) {
 			errorMessage = "Data truncation cover";
@@ -407,7 +407,7 @@ abstract public class Database {
 			message = "";
 		}
 		else if (!message.equals(""))
-			MovieManager.getIt().processDatabaseError(this);
+			MovieManager.getDatabaseHandler().processDatabaseError(this);
 		
 	}
 
