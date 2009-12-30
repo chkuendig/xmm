@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandCloseDatabase.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)MovieManagerCommandCloseDatabase.java
  *
  * Copyright (2003) Bro3
  * 
@@ -47,7 +47,11 @@ public class MovieManagerCommandCloseDatabase implements ActionListener {
 			MovieManager.getDialog().resetTreeModel();
 			MovieManager.getDialog().getAppMenuBar().setDatabaseComponentsEnable(false);
 			MovieManager.getDialog().setAndShowEntries(-1);
-			MovieManager.getIt().setDatabase(null, false);
+			try {
+				MovieManager.getDatabaseHandler().setDatabase(null, false);
+			} catch (Exception e) {
+				log.error("Exception:" + e.getMessage(), e);
+			}
 
 			MovieManagerCommandSelect.execute();
 

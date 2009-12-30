@@ -279,12 +279,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		
 	private boolean seenEditableInMainWindow = true;
 
-	//private boolean autoMoveThe = false;
-	//private boolean autoMoveAnAndA = false;
-
 	private String titleLanguageCode = "";
 
-	private boolean removeQuotesOnSeriesTitle = false;
 	private boolean storeAllAkaTitles = false;
 	private boolean includeAkaLanguageCodes = false;
 	private boolean useLanguageSpecificTitle = false;
@@ -296,13 +292,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	ArrayList<String> multiaddRootDevices = new ArrayList<String>();
 	
 	private String multiAddDirectoryPath = "";
-	
-	private String multiAddExcludeString = "";
-	private boolean multiAddExcludeStringEnabled = false;
-	private boolean multiAddExcludeStringNegated = false;
-	
+		
 	private boolean multiAddRegexCaseSensitive = false;
-	
 	private String multiAddRegexString = "";
 	private boolean multiAddRegexStringEnabled = false;
 	private boolean multiAddRegexStringNegated = false;
@@ -657,7 +648,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	
 	public MovieManagerConfig() {
 		
-		MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(this);
+		MovieManager.getDatabaseHandler().getNewDatabaseLoadedHandler().addNewDatabaseLoadedEventListener(this);
 		
 		try {
 			InputStream inputStream = FileUtil.getResourceAsStream("/config/internalConfig.ini");
@@ -1125,17 +1116,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setLoadDatabaseOnStartup(boolean loadDatabaseOnStartup) {
 		this.loadDatabaseOnStartup = loadDatabaseOnStartup;
 	}
-
 	
-
-	public boolean getRemoveQuotesOnSeriesTitle() {
-		return removeQuotesOnSeriesTitle;
-	}
-
-	public void setRemoveQuotesOnSeriesTitle(boolean removeQuotesOnSeriesTitle) {
-		this.removeQuotesOnSeriesTitle = removeQuotesOnSeriesTitle;
-	}
-
 	public boolean getStoreAllAkaTitles() {
 		return storeAllAkaTitles;
 	}
@@ -1935,6 +1916,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	public void setAutoMoveAnAndA(boolean autoMoveAnAndA) {
 		httpSettings.setAutoMoveAnAndA(autoMoveAnAndA);
+	}
+	
+	public boolean getRemoveQuotesOnSeriesTitle() {
+		return httpSettings.getRemoveQuotesOnSeriesTitles();
+	}
+
+	public void setRemoveQuotesOnSeriesTitle(boolean removeQuotesOnSeriesTitle) {
+		httpSettings.setRemoveQuotesOnSeriesTitles(removeQuotesOnSeriesTitle);
 	}
 	
 	public void setUseRelativeDatabasePath(int useRelativeDatabasePath) {

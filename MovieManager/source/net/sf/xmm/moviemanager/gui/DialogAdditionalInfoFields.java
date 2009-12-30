@@ -1,5 +1,5 @@
 /**
- * @(#)DialogAdditionalInfoFields.java 1.0 26.09.06 (dd.mm.yy) 
+ * @(#)DialogAdditionalInfoFields.java
  *
  * Copyright (2003) Mediterranean
  * 
@@ -109,7 +109,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 	_originalExtraList = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 	
 	/* Contains the number of each of the active fields */
-	int [] activeFields = MovieManager.getIt().getActiveAdditionalInfoFields();
+	int [] activeFields = MovieManager.getDatabaseHandler().getActiveAdditionalInfoFields();
 		
 	/* adds all the extra info fields to fieldsList */
 	for (int i = 0; i < _originalExtraList.size(); i++) {
@@ -567,8 +567,8 @@ public class DialogAdditionalInfoFields extends JDialog {
     	for (int i = 0; i < listActive.size(); i++)
     		activeAdditionalInfoFields[i] = fieldsList.indexOf(listActive.get(i));
 
-    	MovieManager.getIt().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
-    	MovieManager.getIt().getDatabase().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
+    	MovieManager.getDatabaseHandler().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
+    	MovieManager.getDatabaseHandler().getDatabase().setActiveAdditionalInfoFields(activeAdditionalInfoFields);
 
     	/* Means the fields in the ModelAdditionalInfo must be updated */
     /*

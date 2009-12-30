@@ -1,6 +1,6 @@
  /**
- * @(#)DialogMovieManager.java 1.0 10.10.06 (dd.mm.yy)
- *
+ * @(#)DialogMovieManager.java
+ * 
  * Copyright (2003) Bro3
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -393,7 +393,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     public void setTreeModel(DefaultTreeModel model, ArrayList<ModelMovie> movieList, ArrayList<ModelEpisode> episodeList) {
     	moviesList.setModel(model);
     	setCurrentLists(movieList, episodeList);
-    	MovieManager.newMovieListLoadedHandler.newMovieListLoaded(this);
+    	MovieManager.getDatabaseHandler().getNewMovieListLoadedHandler().newMovieListLoaded(this);
     }
        
     
@@ -774,7 +774,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         setListTitle("No database loaded");
         
         // When a new database is loaded, update list title
-        MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(new NewDatabaseLoadedEventListener() {
+        MovieManager.getDatabaseHandler().getNewDatabaseLoadedHandler().addNewDatabaseLoadedEventListener(new NewDatabaseLoadedEventListener() {
         	public void newDatabaseLoaded(NewDatabaseLoadedEvent evt) {
 				setListTitle();
 			}
@@ -943,7 +943,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         extendedTreeCellRenderer = treeCellRenderer;
         
         moviesList.setCellRenderer(treeCellRenderer);
-        MovieManager.newDbHandler.addNewDatabaseLoadedEventListener(treeCellRenderer);
+        MovieManager.getDatabaseHandler().getNewDatabaseLoadedHandler().addNewDatabaseLoadedEventListener(treeCellRenderer);
        
         new FileDrop(moviesList, new FileDrop.Listener() {
         	public void filesDropped(final java.io.File[] files ) {   

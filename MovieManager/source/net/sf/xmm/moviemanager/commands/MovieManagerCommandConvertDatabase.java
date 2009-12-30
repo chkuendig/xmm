@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandConvertDatabase.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)MovieManagerCommandConvertDatabase.java
  *
  * Copyright (2003) Bro3
  * 
@@ -209,8 +209,8 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 		newDatabase.deleteDatabase();
 	}
 
-	public void loadDatabase() {
-		MovieManager.getIt().setDatabase(newDatabase, true);
+	public void loadDatabase() throws Exception {
+		MovieManager.getDatabaseHandler().setDatabase(newDatabase, true);
 	}
 
 	public void setCanceled(boolean canceled) {

@@ -1,5 +1,5 @@
 /**
- * @(#)DialogMovieInfo.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)DialogMovieInfo.java
  *
  * Copyright (2003) Mediterranean
  * 
@@ -1443,7 +1443,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
 		int[] activeAdditionalInfoFields;
 
-		activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
+		activeAdditionalInfoFields = MovieManager.getDatabaseHandler().getActiveAdditionalInfoFields();
 
 		String name;
 
@@ -1566,7 +1566,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		
 		int [] activeAdditionalInfoFields;
 
-		activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
+		activeAdditionalInfoFields = MovieManager.getDatabaseHandler().getActiveAdditionalInfoFields();
 		
 		if (movieInfoModel.getLastFieldIndex() != -1) {
 	
@@ -1644,7 +1644,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 	public void updateCurrentAdditionalInfoFieldFromModel() {
 
-		int [] activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
+		int [] activeAdditionalInfoFields = MovieManager.getDatabaseHandler().getActiveAdditionalInfoFields();
 
 		int currentFieldIndex = getAdditionalInfoFields().getSelectedIndex();
 

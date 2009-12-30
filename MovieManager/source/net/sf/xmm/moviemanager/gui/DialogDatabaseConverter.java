@@ -1,5 +1,5 @@
 /**
- * @(#)DialogDatabaseConverter.java 1.0 04.11.05 (dd.mm.yy)
+ * @(#)DialogDatabaseConverter.java
  *
  * Copyright (2003) Bro3
  * 
@@ -233,7 +233,11 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 	if (evt.getActionCommand().equals("Open")) { //$NON-NLS-1$
 	    openDbButton.setEnabled(false);
 	    parent.setDbOpened(true);
-	    parent.loadDatabase();
+	    try {
+			parent.loadDatabase();
+		} catch (Exception e) {
+			log.error("Exception:" + e.getMessage(), e);
+		}
 	    parent.dispose();
 	}
     }

@@ -1,5 +1,5 @@
 /**
- * @(#)ModelAdditionalInfo.java 00.09.06 (dd.mm.yy)
+ * @(#)ModelAdditionalInfo.java
  *
  * Copyright (2003) Bro3
  * 
@@ -201,14 +201,13 @@ public class ModelAdditionalInfo {
 				else {
 					log.info("New extra info field added:" + extraInfoFieldName);
 
-					int [] activeFields = MovieManager.getIt().getActiveAdditionalInfoFields();
+					int [] activeFields = MovieManager.getDatabaseHandler().getActiveAdditionalInfoFields();
 					int [] newActiveFields = new int[activeFields.length + 1];
 
 					System.arraycopy(activeFields, 0, newActiveFields, 0, activeFields.length);
 					newActiveFields[newActiveFields.length-1] = additionalInfoFieldCount + extraInfoFieldNames.size();
 
-					MovieManager.getIt().getDatabase().setActiveAdditionalInfoFields(newActiveFields);
-					MovieManager.getIt().setActiveAdditionalInfoFields(newActiveFields);
+					MovieManager.getDatabaseHandler().saveActiveAdditionalInfoFields(newActiveFields);
 				}
 			}
 		} catch (Exception e) {
@@ -530,7 +529,7 @@ public class ModelAdditionalInfo {
 		try {
 			/* Gets the fixed additional info... */
 
-			int [] activeAdditionalInfoFields = MovieManager.getIt().getActiveAdditionalInfoFields();
+			int [] activeAdditionalInfoFields = MovieManager.getDatabaseHandler().getActiveAdditionalInfoFields();
 
 			if (activeAdditionalInfoFields == null)
 				return null;

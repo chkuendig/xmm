@@ -1,5 +1,5 @@
 /**
- * @(#)IMDbInfoUpdater.java 1.0 26.01.06 (dd.mm.yy)
+ * @(#)IMDbInfoUpdater.java
  *
  * Copyright (2003) Bro3
  * 
@@ -284,7 +284,7 @@ public class IMDbInfoUpdater {
 					try {
 						
 						if (title == 1 || (title == 2 && model.getTitle().equals(""))) {
-							model.setTitle(imdb.getCorrectedTitle(getIMDbModel(model.getUrlKey()).getTitle()));
+							model.setTitle(getIMDbModel(model.getUrlKey()).getTitle());
 						}
 
 						if (date == 1 || (date == 2 && model.getDate().equals(""))) {
@@ -329,7 +329,7 @@ public class IMDbInfoUpdater {
 
 						if (aka == 1 || (aka == 2 && model.getAka().equals(""))) {							
 							model.setAka(getIMDbModel(model.getUrlKey()).getAka());
-							model.setTitle(imdb.getCorrectedTitle(getIMDbModel(model.getUrlKey()).getTitle()));
+							//model.setTitle(imdb.getModifiedTitle(getIMDbModel(model.getUrlKey()).getTitle()));
 							ModelMovieInfo.executeTitleModification(model);
 						}
 

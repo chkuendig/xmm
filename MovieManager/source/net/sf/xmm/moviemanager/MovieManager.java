@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManager.java 1.0 21.12.07 (dd.mm.yy)
+ * @(#)MovieManager.java
  *
  * Copyright (2003) Bro3
  *
@@ -77,9 +77,8 @@ public class MovieManager {
 
 	static Logger log = Logger.getLogger(MovieManager.class);
     
-    public static NewDatabaseLoadedHandler newDbHandler = new NewDatabaseLoadedHandler();
-    public static NewMovieListLoadedHandler newMovieListLoadedHandler = new NewMovieListLoadedHandler();
-    
+	
+	static DatabaseHandler databaseHandler = new DatabaseHandler();
     /**
      * Reference to the only instance of MovieManagerConfig.
      **/
@@ -88,23 +87,18 @@ public class MovieManager {
     /**
      * Reference to the only instance of MovieManager.
      **/
-    public static MovieManager movieManager;
+    static MovieManager movieManager;
     
     /**
      * Reference to the only instance of DialogMovieManager.
      **/
-    public static DialogMovieManager dialogMovieManager;
-    
-   
-    
-    /**
-     * The current database object.
-     **/
-    private Database database;
+    static DialogMovieManager dialogMovieManager;
       
     
-    /* Stores the active additional fields */
-    private int [] activeAdditionalInfoFields;
+    
+    
+    
+   
     
     /* While multi-deleting, this is set to true */
     private boolean deleting = false;
@@ -181,7 +175,7 @@ public class MovieManager {
                 MovieManager.getDialog().setUp();
                 
                 /* Loads the database. */
-                movieManager.loadDatabase();
+                databaseHandler.loadDatabase();
             }
         });
     }
@@ -215,6 +209,9 @@ public class MovieManager {
         return config;
     }
     
+    public static DatabaseHandler getDatabaseHandler() {
+        return databaseHandler;
+    }
     
     /**
      * Returns the current database.
@@ -222,9 +219,11 @@ public class MovieManager {
      * @return The current database.
      **/
     synchronized public Database getDatabase() {
-        return database;
+        return databaseHandler.getDatabase();
     }
-            
+    
+   
+      
     public int getHeight() {
         return dialogMovieManager.getHeight();
     }
@@ -250,6 +249,7 @@ public class MovieManager {
     public ModelDatabaseSearch getFilterOptions() {
     	return getFilterOptions(getDatabase());
     }
+    
     
     public ModelDatabaseSearch getFilterOptions(Database db) {
 
@@ -311,24 +311,17 @@ public class MovieManager {
     }
 
     
-    public void addDatabaseList(String listName) {
+  public void addDatabaseList(String listName) {
     	
 		log.info("Ceating list " + listName);
 		
-		MovieManager.getIt().getDatabase().addListsColumn(listName);
+		databaseHandler.getDatabase().addListsColumn(listName);
 		MovieManager.getConfig().addToCurrentLists(listName);
 		
 		getDialog().loadMenuLists();
     }
 
-    public int [] getActiveAdditionalInfoFields() {
-    	return activeAdditionalInfoFields;
-    }
-
-    public void setActiveAdditionalInfoFields(int [] activeAdditionalInfoFields) {
-    	this.activeAdditionalInfoFields = activeAdditionalInfoFields;
-    }
-
+  
 
 
     public void setDeleting(boolean deleting) {
@@ -345,16 +338,17 @@ public class MovieManager {
     }
 
 
-
+/*
     public boolean setDatabase(Database _database, boolean cancelRelativePaths) {
     	return setDatabase(_database, null, cancelRelativePaths);
     }
-
+*/
+    
     /**
      * * Sets the current database.
      *
      * @param The current database.
-     **/
+     **//*
     public boolean setDatabase(Database _database, ProgressBean progressBean, boolean cancelRelativePaths) {
 
     	if (_database != null) {
@@ -369,7 +363,7 @@ public class MovieManager {
     			return false;
     		}
 
-    		/* Check if script file needs update (v2.1) */
+    		// Check if script file needs update (v2.1) 
     		if (_database instanceof DatabaseHSQL) {
     			if (((DatabaseHSQL) _database).isScriptOutOfDate()) {
 
@@ -382,7 +376,7 @@ public class MovieManager {
     					return false;
     				}
 
-    				/* updates the script if audio channel type is INTEGER (HSQLDB)*/
+    				// updates the script if audio channel type is INTEGER (HSQLDB)
     				if (!((DatabaseHSQL) _database).updateScriptFile()) {
     					showDatabaseUpdateMessage("Script update error"); //$NON-NLS-1$
     					return false;
@@ -411,10 +405,10 @@ public class MovieManager {
     			return false;
     		}
 
-    		/* If it went ok. */
+    		// If it went ok. 
     		if (_database.isInitialized()) {
     			
-    			/* If database is old, it's updated */
+    			// If database is old, it's updated 
     			if (_database.isDatabaseOld()) {
 
     				if (!databaseUpdateAllowed) {
@@ -444,7 +438,7 @@ public class MovieManager {
 
     			setActiveAdditionalInfoFields(_database.getActiveAdditionalInfoFields());
 
-    			/* Error occurred */
+    			// Error occurred 
     			if (_database.getFatalError()) {
 
     				if (!_database.getErrorMessage().equals("")) { //$NON-NLS-1$
@@ -544,26 +538,26 @@ public class MovieManager {
     				return false;
     			}
 
-    			/* Must be set here and not earlier. 
-                 If the database is set at the top and the  method returns because of an error after the database is set, 
-                 a faulty database will then be stored and used */
+    			// Must be set here and not earlier. 
+                // If the database is set at the top and the  method returns because of an error after the database is set, 
+                // a faulty database will then be stored and used 
     			database = _database;
     			
     			newDbHandler.newDatabaseLoaded(this);
     			
-    			/* Loads the movies list. */
+    			// Loads the movies list.
     			dialogMovieManager.setTreeModel(treeModel, moviesList, episodesList);
     			
-    			/* Updates the entries Label */
+    			// Updates the entries Label
     			dialogMovieManager.setAndShowEntries();
     			
     			dialogMovieManager.loadMenuLists(database);
     			
-    			/* Makes database components visible. */
+    			// Makes database components visible.
     			dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(true);
     			
     		} else {
-    			/* Makes database components invisible. */
+    			// Makes database components invisible.
     			dialogMovieManager.getAppMenuBar().setDatabaseComponentsEnable(false);
     			DialogDatabase.showDatabaseMessage(dialogMovieManager, _database, null);
     		}
@@ -576,7 +570,7 @@ public class MovieManager {
     		Runnable selectMovie = new Runnable() {
     			public void run() {
 
-    				/* Selects the first movie in the list and loads its info. */
+    				// Selects the first movie in the list and loads its info.
     				if (dialogMovieManager.getMoviesList().getModel().getChildCount(dialogMovieManager.getMoviesList().getModel().getRoot()) > 0)
     					dialogMovieManager.getMoviesList().setSelectionRow(0); 
 
@@ -587,22 +581,35 @@ public class MovieManager {
     	
     	return _database != null;
     }
-
+    */
+/*
     protected boolean allowDatabaseUpdate(String databasePath) {
-        DialogQuestion question = new DialogQuestion("Old Database", "<html>This version of MeD's Movie Manager requires your old database:<br> ("+databasePath+") to be updated.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        "Perform update now? (A backup will be made)</html>"); //$NON-NLS-1$
-        GUIUtil.showAndWait(question, true);
-        
-        if (question.getAnswer()) {
-            return true;
-        }
-        else {
-            DialogAlert alert = new DialogAlert(dialogMovieManager, Localizer.getString("moviemanager.update-necessary"), Localizer.getString("moviemanager.update-necessary-message")); //$NON-NLS-1$ //$NON-NLS-2$
-            GUIUtil.showAndWait(alert, true);
-        }
-        return false;
+    	
+    	boolean ret = false;
+    	    	
+    	SwingUtilities.invokeAndWait(new Runnable() {
+			
+    		public void run() {
+				 DialogQuestion question = new DialogQuestion("Old Database", "<html>This version of MeD's Movie Manager requires your old database:<br> ("+databasePath+") to be updated.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			        "Perform update now? (A backup will be made)</html>"); //$NON-NLS-1$
+			        GUIUtil.showAndWait(question, true);
+			        
+			        if (question.getAnswer()) {
+			        	ret = true;
+			        }
+			        else {
+			            DialogAlert alert = new DialogAlert(dialogMovieManager, Localizer.getString("moviemanager.update-necessary"), Localizer.getString("moviemanager.update-necessary-message")); //$NON-NLS-1$ //$NON-NLS-2$
+			            GUIUtil.showAndWait(alert, true);
+			        }
+				
+			}
+		});
+       
+        return ret;
     }
+    */
     
+    /*
     protected void showDatabaseUpdateMessage(String result) {
         if (result.equals("Success")) { //$NON-NLS-1$
             DialogAlert alert = new DialogAlert(dialogMovieManager, Localizer.getString("moviemanager.operation-successfull"), Localizer.getString("moviemanager.operation-successfullMessage")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -625,9 +632,9 @@ public class MovieManager {
             GUIUtil.showAndWait(alert, true);
         }
     }
+    */
     
-    
-    
+    /*
     public void processDatabaseError(Database db) {
 
     	try {
@@ -756,17 +763,19 @@ public class MovieManager {
     	} catch (InvocationTargetException e) {
     		log.error("Exception:" + e.getMessage(), e);
     	}
-    }
+    }*/
     
    
-       
+       /*
     protected void loadDatabase() {
     	loadDatabase(false);
     }
+    */
     
     /**
      * Loads the database with the path read from config.ini file
      **/
+    /*
     protected void loadDatabase(final boolean perfromBackup) {
         
         if (!config.getLoadDatabaseOnStartup())
@@ -815,7 +824,7 @@ public class MovieManager {
 
         			if (!databasePath.equals("")) { //$NON-NLS-1$
 
-        				/* If not, no database type specified */
+        				// If not, no database type specified 
         				if (databasePath.indexOf(">") != -1) { //$NON-NLS-1$
         					type = databasePath.substring(0, databasePath.indexOf(">")); //$NON-NLS-1$
         					databasePath = databasePath.substring(databasePath.indexOf(">")+1, databasePath.length()); //$NON-NLS-1$
@@ -847,7 +856,7 @@ public class MovieManager {
         			if (!MovieManager.getConfig().getInternalConfig().getSensitivePrintMode())
         				log.info("Loading " +type+ ":" + databasePath); //$NON-NLS-1$ //$NON-NLS-2$
 
-        			/* Database path relative to program location */
+        			// Database path relative to program location 
         			if (config.getUseRelativeDatabasePath() == 2)
         				databasePath = SysUtil.getUserDir() + databasePath;
 
@@ -947,7 +956,7 @@ public class MovieManager {
 		};
 		swingWorker.start();
     }
-    
+    */
     
     
     
@@ -1020,147 +1029,7 @@ public class MovieManager {
     }
 
     
-    /*
-     * Creating backup of the datdabase.
-     */
-    public boolean makeDatabaseBackup() {
-      	
-    	try {
-    		String backupFolder = config.getDatabaseBackupDirectory(); 
-    		
-    		if (backupFolder.equals("")) {
-    			String tmp = config.getDatabasePath(true);
-
-    			if (tmp != null && !tmp.equals("")) {
-    				File f = new File(tmp);
-    				backupFolder = f.getAbsolutePath();
-    				f = f.getParentFile();
-    				
-    				if (f.isDirectory()) {
-    					f = new File(f, "backup");
-    					f.mkdir();
-    					config.setDatabaseBackupDirectory(f.getAbsolutePath());
-    					backupFolder = f.getAbsolutePath();
-    				}
-    			}
-    			else
-    				return false;
-    		}
-    		
-    		if (!new File(backupFolder).isDirectory()) {
-    			throw new Exception("Invalid backup directory:" + backupFolder);
-    		}
-    		    		
-    		int sizeLimit = Integer.parseInt(config.getDatabaseBackupDeleteOldest());
-    		
-    		if (sizeLimit > 0) {
-    		
-    			sizeLimit = sizeLimit * 1000 * 1000;
-    			
-    			// Getting the size of the database backup files
-    			int sizeOfBackupDir = 0;
-    			File [] f3 = new File(backupFolder).listFiles();
-    			
-    			for (int i = 0; i < f3.length; i++) {
-    				if (f3[i].isDirectory()) {
-    					File [] f4 = f3[i].listFiles();
-
-    					for (int u = 0; u < f4.length; u++) {
-    						if (f4[u].isDirectory()) {
-    							File [] f5 = f4[u].listFiles();
-
-    							for (int y = 0; y < f5.length; y++) {
-    								if (f5[y].isFile()) {
-    									sizeOfBackupDir += f5[y].length();
-    								}
-    							}
-    						}
-    					}
-    				}
-    			}
-    				
-    			// Delete oldest backup(s)
-    			if (sizeOfBackupDir > sizeLimit) {
-    				
-    				String[] files = new File(backupFolder).list();
-    				Arrays.sort(files);
-    				
-    				for (int u = 0; u < files.length; u++) {
-    					
-    					File f1 = new File(backupFolder + "/" + files[u]);
-    					    					
-    					if (!f1.isDirectory() || !Pattern.matches("\\d+\\.\\d+\\.\\d+", files[u]))
-    						continue;
-    					
-    					String [] files2 = f1.list();
-        				Arrays.sort(files2);
-    					int i;
-    					
-    					for (i = 0; i < files2.length && sizeOfBackupDir > sizeLimit; i++) {
-    						File f2 = new File(backupFolder + "/" + files[u] + "/" + files2[i]);
-    						
-    						long s = FileUtil.getDirectorySize(f2, null);
-    						
-    						FileUtil.deleteDirectoryStructure(f2);
-    						
-    						if (f2.getParentFile().list().length == 0)
-    							f2.getParentFile().delete();
-    						
-    						sizeOfBackupDir -= s;
-    					}
-    					
-    					if (i == files2.length-1) {
-    						f1.delete();
-    					}
-    				}
-    			}
-    		}
-    		
-//    		creating the new backup
-    		String dbPath = config.getDatabasePath(true);
-	
-    		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-    		SimpleDateFormat timeFormat = new SimpleDateFormat("HH.mm.ss");
-    		
-    		Calendar c = Calendar.getInstance();
-
-    		String date = dateFormat.format(c.getTime());
-    		String time = timeFormat.format(c.getTime());
-    		
-    		backupFolder += "/" + date + "/" + time;
-    		    		
-    		File dbBackup = new File(backupFolder);
-    		dbBackup.mkdirs();
-	
-    		if (database.isHSQL()) {
-    			File tmp = new File(dbPath + ".script");
-
-    			if (!tmp.isFile())
-    				throw new Exception("HSQLDB script file does not exist.");
-    			else
-    				FileUtil.copyToDir(tmp, dbBackup);
-
-    			tmp = new File(dbPath + ".properties");
-    			
-    			if (!tmp.isFile())
-    				throw new Exception("HSQLDB properties file does not exist.");
-    			else
-    				FileUtil.copyToDir(tmp, dbBackup);
-    		}
-    		else if (database.isMSAccess()) {
-    			File tmp;
-
-    			if ((tmp = new File(dbPath)).isFile()) {
-    				FileUtil.copyToDir(tmp, dbBackup);
-    			}
-    			else
-    				throw new Exception("MS Access database file does not exist:" + dbPath);
-    		}
-    	} catch (Exception e) {
-    		log.warn("Error occured in backup procedure:" + e.getMessage());
-    	}
-    	return true;
-    }
+  
 
     public HashMap<String, ModelHTMLTemplate> getHTMLTemplates() {
     	return htmlTemplates;
@@ -1277,40 +1146,12 @@ public class MovieManager {
     	return mode;
     }
 
-    
-    public static boolean isRestrictedSandbox() {
-    	
-    	SecurityManager securityManager = System.getSecurityManager();
-    	
-    	if (securityManager == null) {
-    		return false;
-    	}
-    	
-    	try {
-    		securityManager.checkPropertiesAccess();
-    	} catch (Exception e) {
-    		log.debug("Exception:" + e.getMessage());
-    		return true;
-    	} 
-    	
-    	return false;
-    }
-    
-    public static String getUserHome() {
-    	String userHome = (String) AccessController.doPrivileged(
-    			new PrivilegedAction<Object>() {
-    				public Object run() {
-    					return System.getProperty("user.home");
-    				}
-    			}
-    	);
-    	return userHome;
-    }
+  
     
     
     public static void main(String args[]) {
      
-    	boolean sandbox = isRestrictedSandbox();
+    	boolean sandbox = SysUtil.isRestrictedSandbox();
     	
     	// Uses this to check if the app is running in a sandbox with limited privileges
     	try {
@@ -1434,7 +1275,7 @@ public class MovieManager {
             		
             		
             		/* Loads the database. */
-            		MovieManager.getIt().loadDatabase(true);
+            		databaseHandler.loadDatabase(true);
 
             		log.debug("Database loaded.");
             		
