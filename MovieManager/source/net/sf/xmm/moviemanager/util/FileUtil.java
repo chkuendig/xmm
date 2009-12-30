@@ -1,5 +1,5 @@
 /**
- * @(#)FileUtil.java 1.0 23.03.05 (dd.mm.yy)
+ * @(#)FileUtil.java
  *
  * Copyright (2003) Bro3
  * 
@@ -636,10 +636,10 @@ public class FileUtil {
     public static void copyToDir(File file, File dir, String fileName) throws Exception {
     	
     	if (!file.isFile())
-    		throw new Exception("Source file is not a file!");
+    		throw new Exception("Source file is not a file!:" + file);
     	
     	if (!dir.isDirectory() && !dir.mkdirs())
-    		throw new Exception("Output directory dos not exist. Failed to create directores.");
+    		throw new Exception("Failed to create directores:" + dir);
     	
     	if (fileName == null || "".equals(fileName))
     		fileName = file.getName();
