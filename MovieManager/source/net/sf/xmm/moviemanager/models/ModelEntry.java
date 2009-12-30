@@ -1,5 +1,5 @@
 /**
- * @(#)ModelEntry.java 29.01.06 (dd.mm.yy)
+ * @(#)ModelEntry.java
  *
  * Copyright (2003) Bro3
  * 
@@ -215,13 +215,7 @@ abstract public class ModelEntry {
 		return title;
 	}
 
-	public void setTitle(String title) {
-		// Remove unwanted ""
-		if (title.startsWith("\""))
-			title = title.substring(1);
-		if (title.endsWith("\""))
-			title = title.substring(0, title.length()-1);
-		
+	public void setTitle(String title) {		
 		this.title = title;
 	}
 
