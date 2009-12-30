@@ -1,5 +1,5 @@
 /**
- * @(#)DialogFolders.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)DialogFolders.java
  *
  * Copyright (2003) Mediterranean
  * 
@@ -675,7 +675,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 
     	// Covers must be reloaded in movie list
     	if (originalCover != null && !originalCover.equals(coversPath)) {
-    		MovieManager.newDbHandler.newDatabaseLoaded(this);
+    		MovieManager.getDatabaseHandler().getNewDatabaseLoadedHandler().newDatabaseLoaded(this);
     	}
     	
     	MovieManagerCommandSelect.execute();
