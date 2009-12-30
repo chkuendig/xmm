@@ -1,5 +1,5 @@
 /**
- * @(#)ModeIMDblEntry.java 26.10.08 (dd.mm.yy)
+ * @(#)ModeIMDblEntry.java 
  *
  * Copyright (2003) Bro3
  * 
@@ -25,6 +25,7 @@ abstract public class ModelIMDbEntry {
 	private String urlID = ""; 
 	private String coverName = "";
 	private String title = "";
+	private String imdbTitle = ""; // original title on IMDb with no changes 
 	private String date = "";
 	private String directedBy = "";
 	private String writtenBy = "";
@@ -166,6 +167,15 @@ abstract public class ModelIMDbEntry {
 		this.title = title;
 	}
 
+	public String getIMDbTitle() {
+		return imdbTitle;
+	}
+
+	public void setIMDbTitle(String title) {
+		this.imdbTitle = title;
+	}
+
+	
 	public String getDirectedBy() {
 		if (directedBy == null)
 			return "";
