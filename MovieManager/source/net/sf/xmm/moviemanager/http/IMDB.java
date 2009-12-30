@@ -1,7 +1,7 @@
 /**
- * @(#)IMDB.java 1.0 29.01.06 (dd.mm.yy)
+ * @(#)IMDB.java
  *
- * Copyright (2003) Bro
+ * Copyright (2003) Bro3
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -222,7 +222,11 @@ public class IMDB /*extends IMDB_if */{
 			// Must be accessible from within inner class
 			final ModelIMDbEntry dataModel = tmpModel;
 			
-			dataModel.setTitle(title);
+			// Original title from IMDb
+			dataModel.setIMDbTitle(title);
+			
+			dataModel.setTitle(getModifiedTitle(title));
+			
 			dataModel.setDate(date);
 			dataModel.setUrlID(urlID);
 			
@@ -1686,17 +1690,27 @@ public class IMDB /*extends IMDB_if */{
      * Gets the title.
      **/
     public String getIMDbTitle() {
-		return lastDataModel == null ? null : lastDataModel.getTitle();
+		return lastDataModel == null ? null : lastDataModel.getIMDbTitle();
     }
   
- 
+    public String getTitle() {
+		return lastDataModel == null ? null : lastDataModel.getTitle();
+    }
+    
+    
     /**
      * Returns the title where 'The', 'A' and 'An' are moved to the end of the title, If the settings are set.
      * @return
      */
-    public String getCorrectedTitle(String title) {
-    	
+    public String getModifiedTitle(String title) {
+    	    	
     	if (settings != null) {
+    		
+    		if (settings.getRemoveQuotesOnSeriesTitles()) {
+    			if (title.startsWith("\"") && title.endsWith("\"")) {
+    				title = title.substring(1, title.length()-1);
+    			}
+    		}
     		
     		if (settings.getAutoMoveThe() && title.startsWith("The ")) {
     			title = title.substring(title.indexOf(" ")+1, title.length())+ ", The";
@@ -1871,6 +1885,19 @@ public class IMDB /*extends IMDB_if */{
     
     public boolean retrieveBiggerCover(ModelIMDbEntry dataModel) {
    	
+    	// Disable method for now
+    	if (true)
+    		return false;
+    	
+    	try {
+			throw new Exception();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	
+    	System.err.println("retrieveBiggerCover");
+    	
     	URL url;
 
     	byte [] coverData = null;
@@ -1878,7 +1905,7 @@ public class IMDB /*extends IMDB_if */{
     	try {
     		url = new URL("http://akas.imdb.com/media/" + dataModel.bigCoverUrlId);
     		
-    		//System.err.println("url:" + url);
+    		System.err.println("url:" + url);
     		
     		HTTPResult res = httpUtil.readData(url);
     		StringBuffer data = res.data;
@@ -1924,6 +1951,30 @@ public class IMDB /*extends IMDB_if */{
     	return coverData != null;
     }
 
+    /*
+    if (coverData == null)      // previous routine failed. Now try changing resolution in cover image URL
+    	+           {
+    	+   
+    	+               if (dataModel.getCoverURL() != null && !dataModel.getCoverURL().equals(""))
+    	+               {
+    	+                   String tmp = dataModel.getCoverURL();
+    	+
+    	+                   Pattern p = Pattern.compile("(.*)(._SX)(\\d+)(_SY)(\\d+)(.*)");
+    	+               
+    	+                   Matcher m = p.matcher(tmp);
+    	+               
+    	+                   if (m.find() && m.groupCount() == 6)
+    	+                   {
+    	+                       url = new URL(m.group(1) + m.group(2) + m.group(3)+"0" + m.group(4) + m.group(5)+"0" +m.group(6));
+    	+                           // try 10 times the resolution. imdb will return the maximum resolution possible
+    	+               
+    	+                       //System.err.println("retrBiggerCover url:" + url);
+    	+                       coverData = httpUtil.readDataToByteArray( url );
+    	+                   }
+    	+               }
+    	+           }
+*/
+    
     /**
      * Returns true if the last cover reading went ok..
      **/
