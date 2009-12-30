@@ -615,7 +615,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		executeSave();
 
 		final ProgressBean worker = new ProgressBeanImpl() {
-		
+
 			public void run() {
 
 				try {
@@ -624,25 +624,17 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
 					if (database != null) {
 
-						if (!database.setUp()) {
-							listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
-							showDatabaseMessage(dialogDatabase, database, null);
+						/* Loads the database... */
+						updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.connecting-to-database")); //$NON-NLS-1$
+						MovieManager.getDatabaseHandler().setDatabase(database, true);
+
+						if (database.isSetUp()) {
+							GUIUtil.invokeLater(new Runnable() {public void run() {
+								listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
+							}});
+							dispose();
 						}
 
-						if (database.isInitialized()) {
-
-							/* Loads the database... */
-							updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.retrieving-movie-list")); //$NON-NLS-1$
-							MovieManager.getIt().setDatabase(database, true);
-
-							if (database.isSetUp()) {
-								GUIUtil.invokeLater(new Runnable() {public void run() {
-									listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
-								}});
-								dispose();
-							}
-						}
-						
 						/* Sets the last path... */
 						if ((!MovieManager.isApplet()) && new File(getPath()).exists())
 							MovieManager.getConfig().setLastDatabaseDir(new File(getPath()).getParentFile());
@@ -659,12 +651,12 @@ public class DialogDatabase extends JDialog implements ActionListener {
 				}});
 			}
 		};
-				
+
 		SimpleProgressBar progressBar = new SimpleProgressBar(MovieManager.getDialog(), "Loading Database", true, worker);
 		DialogDatabase.progressBar = progressBar;
 		GUIUtil.show(progressBar, true);        
-		
-		
+
+
 		final SwingWorker swingWorker = new SwingWorker() {
 			public Object construct() {
 				worker.start();
@@ -672,10 +664,12 @@ public class DialogDatabase extends JDialog implements ActionListener {
 			}
 		};
 		swingWorker.start();
-		
+
 	}
 
 
+	
+	
     static synchronized void updateProgress(final SimpleProgressBar progressBar, final String str) {
 
     	Runnable updateProgress = new Runnable() {
@@ -1041,7 +1035,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
     					if (db != null && _database.isSetUp()) {
     						updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.retrieving-movie-list")); //$NON-NLS-1$
-    						MovieManager.getIt().setDatabase(_database, true);
+    						MovieManager.getDatabaseHandler().setDatabase(_database, true);
     						return;
     					}
     					else {
