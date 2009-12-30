@@ -1,5 +1,5 @@
 /**
- * @(#)DialogIMDB.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)DialogIMDB.java
  *
  * Copyright (2003) Mediterranean
  * 
@@ -793,7 +793,7 @@ public class DialogIMDB extends JDialog {
 
     	if (key.equals(imdb.getUrlID())) {
 
-    		modelEntry.setTitle(imdb.getCorrectedTitle(imdb.getIMDbTitle()));
+    		modelEntry.setTitle(imdb.getTitle());
     		modelEntry.setDate(imdb.getDate());
     		modelEntry.setColour(imdb.getColour());
     		modelEntry.setDirectedBy(imdb.getDirectedBy());
