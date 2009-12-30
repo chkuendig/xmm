@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
+import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.util.FileUtil;
 
 
@@ -1017,320 +1018,259 @@ public class DatabaseHSQL extends Database {
      * Checks if the container field which is added in v2.1 exists.
      **/
     private boolean isDatabaseOldVersion21() {
-	boolean old = false;
-	
-	ArrayList<String> fieldNames = getAdditionalInfoFieldNames();
-	
-	if (!fieldNames.contains("Container"))
-	    old = true;
-	
-	return old;
+    	boolean old = false;
+
+    	ArrayList<String> fieldNames = getAdditionalInfoFieldNames();
+
+    	if (!fieldNames.contains("Container")) {
+    		old = true;
+    		log.debug("isDatabaseOldVersion21:" + old);
+    	}
+
+    	return old;
     }
     
      /**
      * Checks if the container field which is added in v2.1 exists.
      **/
     private boolean isDatabaseOldVersion22() {
-	boolean old = false;
-	
-	ArrayList<String> tableNames = getTableNames();
-	
-	if (!tableNames.contains("General Info Episodes"))
-	    old = true;
-	
-	return old;
+    	boolean old = false;
+
+    	ArrayList<String> tableNames = getTableNames();
+
+    	if (!tableNames.contains("General Info Episodes")) {
+    		old = true;
+    		log.debug("isDatabaseOldVersion22:" + old);
+    	}
+
+    	return old;
     }
     
     /**
      * Checks if the container field which is added in v2.1 exists.
      **/
     private boolean isDatabaseOldVersion23() {
-	boolean old = false;
-	
-	ArrayList<String> fieldNames = getGeneralInfoMovieFieldNames();
-	
-	if (!fieldNames.contains("Awards"))
-	    old = true;
-	
-	return old;
+    	boolean old = false;
+
+    	ArrayList<String> fieldNames = getGeneralInfoMovieFieldNames();
+
+    	if (!fieldNames.contains("Awards")) {
+    		old = true;
+    		log.debug("isDatabaseOldVersion23:" + old);
+    	}
+
+    	return old;
     }
     
     /** 
      * Checks if the database needs an update
      **/
     public boolean isDatabaseOld() {
-	
-	if (isDatabaseOldVersion23() || isDatabaseOldVersion22() || isDatabaseOldVersion21())
-	    return true;
-	
-	return false;
+
+    	if (isDatabaseOldVersion23() || isDatabaseOldVersion22() || isDatabaseOldVersion21())
+    		return true;
+
+    	return false;
     }
     
     public int makeDatabaseUpToDate() {
-	
-	int ret = 0;
-	
-	if (isDatabaseOldVersion21()) {
-	    log.info("Updating database to be v2.1 compatible");
-	    
-	    if ((ret = updateDatabaseVersion21()) != 1) {
-		errorMessage = "<html>An error occured while updating database to be v2.1 compatible.<br>Errorcode:"+ ret+ "<html>";
-		log.error(errorMessage);
-		return ret;
-	    }
-	}
-	
-	if (isDatabaseOldVersion22()) {
-	    log.info("Updating database to be v2.2 compatible");
-	    
-	    if ((ret = updateDatabaseVersion22()) != 1) {
-		errorMessage = "<html>An error occured while updating database to be v2.2 compatible.<br>Errorcode:"+ ret+ "<html>";
-		log.error(errorMessage);
-		return ret;
-	    }
-	}
-	
-	if (isDatabaseOldVersion23()) {
-	    log.info("Updating database to be v2.3 compatible");
-	    
-	    if ((ret = updateDatabaseVersion23()) != 1) {
-		errorMessage = "<html>An error occured while updating database to be v2.3 compatible.<br>Errorcode:"+ ret+ "<html>";
-		log.error(errorMessage);
-		return ret;
-	    }
-	}
-	return 1;
+
+    	int ret = 0;
+
+    	if (isDatabaseOldVersion21()) {
+    		log.info("Updating database to be v2.1 compatible");
+
+    		if ((ret = updateDatabaseVersion21()) != 1) {
+    			errorMessage = "<html>An error occured while updating database to be v2.1 compatible.<br>Errorcode:"+ ret+ "<html>";
+    			log.error(errorMessage);
+    			return ret;
+    		}
+    	}
+
+    	if (isDatabaseOldVersion22()) {
+    		log.info("Updating database to be v2.2 compatible");
+
+    		if ((ret = updateDatabaseVersion22()) != 1) {
+    			errorMessage = "<html>An error occured while updating database to be v2.2 compatible.<br>Errorcode:"+ ret+ "<html>";
+    			log.error(errorMessage);
+    			return ret;
+    		}
+    	}
+
+    	if (isDatabaseOldVersion23()) {
+    		log.info("Updating database to be v2.3 compatible");
+
+    		if ((ret = updateDatabaseVersion23()) != 1) {
+    			errorMessage = "<html>An error occured while updating database to be v2.3 compatible.<br>Errorcode:"+ ret+ "<html>";
+    			log.error(errorMessage);
+    			return ret;
+    		}
+    	}
+    	return 1;
     }
     
     public boolean updateScriptFile() {
-	
-	String filePath = getPath();
-	
-	try {
-	    File dbPropertiesFile = new File(filePath + ".properties");
-	    File dbScriptFile = new File(filePath + ".script");
-	    
-	    if (!dbPropertiesFile.exists() || !dbScriptFile.exists())
-		throw new Exception("Database files do not exist.");
-	    
-	    FileInputStream stream = new FileInputStream(dbScriptFile);
-	    StringBuffer stringBuffer = new StringBuffer();
-	    int buffer;
-	    
-	    while ((buffer = stream.read()) != -1)
-		stringBuffer.append((char)buffer);
-	    stream.close();
-	    
-	    String [] columName = new String[] {"CAST LONGVARCHAR", "\"Audio Channels\" INTEGER"};
-	    String [] columReplacementName = new String[] {"\"Cast\" LONGVARCHAR", "\"Audio Channels\" VARCHAR"};
-	    
-	    int index = -1;
-	    boolean updated = false;
-	    
-	    for (int i = 0; i < columName.length; i++) {
-		index = stringBuffer.indexOf(columName[i]);
-		
-		if (index != -1) {
-		    stringBuffer.replace(index, index+columName[i].length(), columReplacementName[i]);
-		    updated = true;
-		}
-	    }
-	    
-	    /* If no update it will return instead of overwriting the old file with the same data */
-	    if (!updated)
-		return true;
-	    
-	    if (!dbScriptFile.delete())
-		throw new Exception("Cannot delete script file.");
-	    
-	    /* Recreates file... */
-	    if (!dbScriptFile.createNewFile())
-		throw new Exception("Cannot create script file.");
-	    
-	    /* Writes to the new script... */
-	    FileOutputStream outputStream = new FileOutputStream(dbScriptFile);
-	    
-	    for (int i = 0; i < stringBuffer.length(); i++)
-		outputStream.write(stringBuffer.charAt(i));
-	    outputStream.close();
-	    
-	} catch (Exception e) {
-	    log.error("Exception:" + e.getMessage());
-	    return false;
-	}
-	return true;
+
+    	String filePath = getPath();
+
+    	try {
+    		File dbPropertiesFile = new File(filePath + ".properties");
+    		File dbScriptFile = new File(filePath + ".script");
+
+    		if (!dbPropertiesFile.exists() || !dbScriptFile.exists())
+    			throw new Exception("Database files do not exist.");
+
+    		FileInputStream stream = new FileInputStream(dbScriptFile);
+    		StringBuffer stringBuffer = new StringBuffer();
+    		int buffer;
+
+    		while ((buffer = stream.read()) != -1)
+    			stringBuffer.append((char)buffer);
+    		stream.close();
+
+    		String [] columName = new String[] {"CAST LONGVARCHAR", "\"Audio Channels\" INTEGER"};
+    		String [] columReplacementName = new String[] {"\"Cast\" LONGVARCHAR", "\"Audio Channels\" VARCHAR"};
+
+    		int index = -1;
+    		boolean updated = false;
+
+    		for (int i = 0; i < columName.length; i++) {
+    			index = stringBuffer.indexOf(columName[i]);
+
+    			if (index != -1) {
+    				stringBuffer.replace(index, index+columName[i].length(), columReplacementName[i]);
+    				updated = true;
+    			}
+    		}
+
+    		/* If no update it will return instead of overwriting the old file with the same data */
+    		if (!updated)
+    			return true;
+
+    		if (!dbScriptFile.delete())
+    			throw new Exception("Cannot delete script file.");
+
+    		/* Recreates file... */
+    		if (!dbScriptFile.createNewFile())
+    			throw new Exception("Cannot create script file.");
+
+    		/* Writes to the new script... */
+    		FileOutputStream outputStream = new FileOutputStream(dbScriptFile);
+
+    		for (int i = 0; i < stringBuffer.length(); i++)
+    			outputStream.write(stringBuffer.charAt(i));
+    		outputStream.close();
+
+    	} catch (Exception e) {
+    		log.error("Exception:" + e.getMessage());
+    		return false;
+    	}
+    	return true;
     }
     
     
     /* Have to update the script manually since hsqldb driver v1.7.3 doesn't support changing the datatype */
     public boolean isScriptOutOfDate() {
-	
-	String filePath = getPath();
-	
-	try {
-	    File dbPropertiesFile = new File(filePath + ".properties");
-	    File dbScriptFile = new File(filePath + ".script");
-	    
- 	    if (!dbPropertiesFile.exists())
- 	    	throw new Exception("properies file does not exist.");
-		else if (!dbScriptFile.exists())
-			throw new Exception("script file does not exist.");
-			 	    
- 	    StringBuffer properties = FileUtil.readFileToStringBuffer(dbPropertiesFile);
- 	    
- 	    	    
- 	    // Updating from hsql v1.7 to 1.8
- 	   // if (properties.indexOf("compatible_version=1.7") != -1)
- 	    //	MovieManager.getIt().makeDatabaseBackup();
- 	     	    
-	    FileInputStream stream = new FileInputStream(dbScriptFile);
-	    StringBuffer stringBuffer = new StringBuffer();
-	    int buffer;
-	    
-	    boolean check = true;
-	    
-	    while ((buffer = stream.read()) != -1) {
-		stringBuffer.append((char)buffer);
-		
-		if (check && stringBuffer.indexOf("INSERT INTO") != -1) {
-		    
-		    if ((stringBuffer.indexOf("CAST LONGVARCHAR") != -1) || 
-			(stringBuffer.indexOf("\"Audio Channels\" INTEGER") != -1)) {
-			stream.close();
-			return true;
-		    }
-		    else
-		    	return false;
-		}
-	    }
-	    stream.close();
-	    
-	} catch (Exception e) {
-	    log.warn("Exception:" + e.getMessage());
-	}
-	return false;
+
+    	String filePath = getPath();
+
+    	try {
+    		File dbPropertiesFile = new File(filePath + ".properties");
+    		File dbScriptFile = new File(filePath + ".script");
+
+    		if (!dbPropertiesFile.exists())
+    			throw new Exception("properies file does not exist.");
+    		else if (!dbScriptFile.exists())
+    			throw new Exception("script file does not exist.");
+
+    		StringBuffer properties = FileUtil.readFileToStringBuffer(dbPropertiesFile);
+
+    		// Updating from hsql v1.7 to 1.8
+    		if (properties.indexOf("compatible_version=1.7") != -1)
+    			MovieManager.getDatabaseHandler().makeDatabaseBackup(this, "Update_from_HSQL_1.7_to_1.8");
+
+    		FileInputStream stream = new FileInputStream(dbScriptFile);
+    		StringBuffer stringBuffer = new StringBuffer();
+    		int buffer;
+
+    		boolean check = true;
+    		int counter = 0;
+    		while ((buffer = stream.read()) != -1 && counter < 1000) {
+    			stringBuffer.append((char)buffer);
+    		}
+    		stream.close();
+
+    		if (check && stringBuffer.indexOf("INSERT INTO") != -1) {
+				
+    			if ((stringBuffer.indexOf(",CAST LONGVARCHAR,") != -1) || 
+    					(stringBuffer.indexOf("\"Audio Channels\" INTEGER") != -1)) {
+    				return true;
+    			}
+    			else
+    				return false;
+    		}
+    			
+    	} catch (Exception e) {
+    		log.warn("Exception:" + e.getMessage());
+    	}
+    	return false;
     }
     
-    
-    /**
-     * Makes update of the database
-     **/
-    /*
-    public int makeDatabaseBackup() {
-	
-	try {
-	    String databasePath = getPath();
-	    	    
-	    GregorianCalendar cal = new GregorianCalendar();
-	    
-	    String date = cal.get(Calendar.DAY_OF_MONTH)+"."+ cal.get(Calendar.MONTH)+"."+ cal.get(Calendar.YEAR);
-	    
-	    File currentPropertiesFile = new File(databasePath + ".properties");
-	    File currentScriptFile = new File(databasePath + ".script");
-	    
-	    String path = currentPropertiesFile.getParent()+File.separator;
-	    
-	    
-		
-	    int number = 1;
-	    File newPropertiesFile;
-	    File newScriptFile;
-	    
-	    
-	    while ((newPropertiesFile = new File(path + "backupBackup" + number + " ("+ date+ ") of "+ currentPropertiesFile.getName())).exists() || 
-	    		(newScriptFile = new File(path + "Backup" + number + " ("+ date+ ") of "+ currentScriptFile.getName())).exists())
-	    	number++;
-	    
-	    
-	    OutputStream outputStream;
-	    byte[] data;
-	    InputStream inputStream;
-	    
-	    for (int i = 0; i < 2; i++) {
-		
-		if (i == 0) {
-		    inputStream = new FileInputStream(databasePath + ".properties");
-		    outputStream = new FileOutputStream(newPropertiesFile);
-		}
-		else {
-		    inputStream = new FileInputStream(databasePath + ".script");
-		    outputStream = new FileOutputStream(newScriptFile);
-		}
-		
-		data = new byte[inputStream.available()];
-		
-		while (inputStream.read(data) != -1)
-		    outputStream.write(data);
-		
-		outputStream.close();
-		inputStream.close();
-	    }
-	    
-	    throw new Exception();
-	    
-	} catch (Exception e) {
-	    log.error("", e);
-	    return 0;
-	}
-	//return 1;
-    }
-    */
     
     /**
      * Deletes the database files
      **/
     public void deleteDatabase() {
-	
-	try {
-	    /*Avoids possible exceptions when trying to delete the canceled database files*/
-	    Thread.sleep(200);
-	} catch (Exception e) {
-	    log.error("", e);
-	}
-	
-	/*Shutting down the HSQL database to be able to delete the files*/
-	shutDownDatabase("SHUTDOWN IMMEDIATELY;");
-	
-	super.finalizeDatabase();
-	
-	try {
-	    File f = new File(getPath()+".lck");
-	    f.delete();
-	    f = new File(getPath()+".properties");
-	    f.delete();
-	    f = new File(getPath()+".script");
-	    f.delete();
-	    f = new File(getPath()+".log");
-	    f.delete();
-	    
-	} catch (Exception e) {
-	    log.error("", e);
-	}
+
+    	try {
+    		/*Avoids possible exceptions when trying to delete the canceled database files*/
+    		Thread.sleep(200);
+    	} catch (Exception e) {
+    		log.error("", e);
+    	}
+
+    	/*Shutting down the HSQL database to be able to delete the files*/
+    	shutDownDatabase("SHUTDOWN IMMEDIATELY;");
+
+    	super.finalizeDatabase();
+
+    	try {
+    		File f = new File(getPath()+".lck");
+    		f.delete();
+    		f = new File(getPath()+".properties");
+    		f.delete();
+    		f = new File(getPath()+".script");
+    		f.delete();
+    		f = new File(getPath()+".log");
+    		f.delete();
+
+    	} catch (Exception e) {
+    		log.error("", e);
+    	}
     }
-    
+
     /* Called with query = "SHUTDOWN;" or "SHUTDOWN COMPACT; "*/
     public void shutDownDatabase(String query) {
-	
-	try {
-	    _sql.executeQuery(query);
-	} catch (Exception e) {
-	    log.error("", e);
-	} finally {
-	    /* Clears the Statement in the dataBase... */
-	    try {
-		_sql.clear();
-	    } catch (Exception e) {
-		log.error("", e);
-	    }
-	}
+
+    	try {
+    		_sql.executeQuery(query);
+    	} catch (Exception e) {
+    		log.error("", e);
+    	} finally {
+    		/* Clears the Statement in the dataBase... */
+    		try {
+    			_sql.clear();
+    		} catch (Exception e) {
+    			log.error("", e);
+    		}
+    	}
     }
     
     /**
      * Finalize...
      **/
     public void finalizeDatabase() {
-	
-	shutDownDatabase("SHUTDOWN COMPACT;");
-	super.finalizeDatabase();
+    	shutDownDatabase("SHUTDOWN COMPACT;");
+    	super.finalizeDatabase();
     }
 }
