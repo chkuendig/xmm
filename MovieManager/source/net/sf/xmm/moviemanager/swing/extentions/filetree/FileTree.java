@@ -1,5 +1,5 @@
 /**
- * @(#)FileTree.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)FileTree.java
  *
  * Copyright (2003) Bro3
  * 
@@ -202,10 +202,15 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 				eventHandler.fireFileTreeWorkingEvent(new FileTreeEvent(false));
 				
 				Iterator<FileNode> it = expandedNodes.keySet().iterator();
+				ArrayList<FileNode> list = new ArrayList<FileNode>();
 				
 				while (it.hasNext()) {
+					list.add(it.next());
+				}
+				
+				for (int i = 0; i < list.size(); i++) {
 					
-					FileNode fileNode = it.next();
+					FileNode fileNode = list.get(i);
 					TreePath path = new TreePath(fileNode.getNode().getPath());
 
 					// if it's not collapsed
