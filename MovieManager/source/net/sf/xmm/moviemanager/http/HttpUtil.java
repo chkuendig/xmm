@@ -22,6 +22,7 @@ package net.sf.xmm.moviemanager.http;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -159,7 +160,7 @@ public class HttpUtil {
 	}
 	
 	
-	public HTTPResult readData(URL url) throws Exception {
+	public HTTPResult readData1(URL url) throws Exception {
 		
 		if (!isSetup())
 			setup();
@@ -216,6 +217,42 @@ public class HttpUtil {
 		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
 	}
 
+	
+	public HTTPResult readData(URL url) throws Exception {
+
+		if (!isSetup())
+			setup();
+
+		GetMethod method = new GetMethod(url.toString());
+		int statusCode = client.executeMethod(method);
+
+		if (statusCode != HttpStatus.SC_OK) {
+			log.debug("HTTP StatusCode not HttpStatus.SC_OK:(" + statusCode + "):" + method.getStatusLine());
+		}
+
+		//java.io.BufferedReader stream = new java.io.BufferedReader(new java.io.InputStreamReader(method.getResponseBodyAsStream(), "ISO-8859-1"));
+
+		StringBuffer data = new StringBuffer();
+
+		// Saves the page data in a string buffer... 
+		String chrSet = method.getResponseCharSet();
+		InputStream input = method.getResponseBodyAsStream();
+		ByteArrayOutputStream temp = new ByteArrayOutputStream();
+		byte [] buff = new byte [1500];
+		int read;
+		while ( (read = input.read(buff)) >=0) {
+			temp.write(buff, 0, read);
+		}
+		input.close();
+		temp.flush();
+		buff = temp.toByteArray();
+		temp.close();
+		data.append(new String(buff, chrSet));
+
+		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
+	}
+	
+	
 	public byte [] readDataToByteArray(URL url) throws Exception {
 	
 		byte[] data = null;
