@@ -53,6 +53,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.util.BrowserOpener;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
@@ -82,15 +83,7 @@ public class DialogTVSeries extends JDialog {
             }
         });
         
-        /*Enables dispose when pushing escape*/
-        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-        Action escapeAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        };
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-        getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
+        GUIUtil.enableDisposeOnEscapeKey(this);
         
         createListDialog(null);
     }
@@ -132,6 +125,15 @@ public class DialogTVSeries extends JDialog {
     		}
     	});
         
+        // Add listener on Enter key
+        KeyStroke enterKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0, true);
+    	ActionListener listKeyBoardActionListener = new ActionListener() {
+    		public void actionPerformed(ActionEvent ae) {
+    			buttonSelect.doClick();
+    		}
+    	};
+    	listMovies.registerKeyboardAction(listKeyBoardActionListener, enterKeyStroke, JComponent.WHEN_FOCUSED);
+                
         JScrollPane scrollPaneMovies = new JScrollPane(listMovies);
         scrollPaneMovies.setPreferredSize(new Dimension(300,255));
         panelMoviesList.add(scrollPaneMovies, BorderLayout.CENTER);
