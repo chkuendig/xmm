@@ -76,7 +76,6 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 	int lengthOfTask = 0;
 	long conversionStart = 0;
 	boolean canceled;
-	//ArrayList transferred;
 	
 	public MovieManagerCommandImportExportHandler handler;
 	
@@ -187,18 +186,6 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 	class TimerListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 
-			try {
-				/*First run the array of processed movies may be null*/
-			/*	while (transferred == null) {
-					Thread.sleep(20);
-					transferred = databaseImporter.getTransferred();
-				}
-*/
-				
-			} catch (Exception e) {
-				log.warn("Exception:"+ e); //$NON-NLS-1$
-			}
-
 			if (lengthOfTask == 0) {
 				lengthOfTask = databaseImporter.getLengthOfTask();
 
@@ -207,8 +194,6 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 					progressBar.setMaximum(lengthOfTask);
 				}
 			}
-
-			//while (transferred != null && transferred.size() > 0 && transferred.get(0) != null) {
 
 			while (databaseImporter.hasMoreTransferred()) {
 				
@@ -309,17 +294,16 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 		int milliseconds = (int)(time % 1000);
 		int seconds = (int)((time/1000) % 60);
 		int minutes = (int)((time/60000) % 60);
-		//int hours = (int)((time/3600000) % 24);
+		
 		String millisecondsStr = (milliseconds<10 ? "00" : (milliseconds<100 ? "0" : ""))+milliseconds; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		String secondsStr = (seconds<10 ? "0" : "")+seconds; //$NON-NLS-1$ //$NON-NLS-2$
 		String minutesStr = (minutes<10 ? "0" : "")+minutes; //$NON-NLS-1$ //$NON-NLS-2$
-		//String hoursStr = (hours<10 ? "0" : "")+hours;
-
+		
 		String finalString = ""; //$NON-NLS-1$
 
 		if (!minutesStr.equals("00")) //$NON-NLS-1$
-			finalString += minutesStr+Localizer.getString("DialogDatabaseImporter.message.minutes"); //$NON-NLS-1$
-		finalString += secondsStr+"."+millisecondsStr + Localizer.getString("DialogDatabaseImporter.message.seconds"); //$NON-NLS-1$ //$NON-NLS-2$
+			finalString += minutesStr + Localizer.getString("DialogDatabaseImporter.message.minutes"); //$NON-NLS-1$
+		finalString += secondsStr + "." + millisecondsStr + Localizer.getString("DialogDatabaseImporter.message.seconds"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		return new String(finalString);
 	}
