@@ -215,7 +215,6 @@ public class DialogIMDB extends JDialog {
     	KeyStroke enterKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0, true);
     	ActionListener listKeyBoardActionListener = new ActionListener() {
     		public void actionPerformed(ActionEvent ae) {
-    			System.err.println("actionPerformed");
     			buttonSelect.doClick();
     		}
     	};
