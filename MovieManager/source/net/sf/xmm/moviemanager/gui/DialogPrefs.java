@@ -63,6 +63,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -135,7 +136,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	private JTextField portTextField;
 	private JTextField userNameTextField;
-	private JTextField passwordTextField;
+	private JPasswordField passwordTextField;
 	private JTextField hostTextField;
 
 	private JLabel proxyTypeLabel;
@@ -149,7 +150,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	private JCheckBox enableIMDbAuthenticationButton;
 
 	private JTextField IMDbUserNameTextField;
-	private JTextField IMDbPasswordTextField;
+	private JPasswordField IMDbPasswordTextField;
 	
 	private JLabel IMDbUserNameLabel;
 	private JLabel IMDbPasswordLabel;
@@ -226,23 +227,14 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		super(MovieManager.getDialog());
 
 		/* Close dialog... */
-		addWindowListener(new WindowAdapter() {
+		/*addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				dispose();
 			}
-		});
+		});*/
 
-		/*Enables dispose when pushing escape*/
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		};
-
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-		getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
-
+		GUIUtil.enableDisposeOnEscapeKey(this);		
+		
 		setTitle(Localizer.getString("dialogprefs.title")); //$NON-NLS-1$
 		setModal(true);
 		setResizable(false);
@@ -543,7 +535,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		passwordLabel = new JLabel(Localizer.getString("dialogprefs.panel.proxy.password") + ": "); //$NON-NLS-1$
 		passwordLabel.setEnabled(false);
-		passwordTextField = new JTextField(7);
+		passwordTextField = new JPasswordField(7);
 		passwordTextField.setText(""); //$NON-NLS-1$
 		passwordTextField.setEnabled(false);
 
@@ -630,7 +622,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		IMDbPasswordLabel = new JLabel("Password" + ": "); //$NON-NLS-1$
 		IMDbPasswordLabel.setEnabled(false);
-		IMDbPasswordTextField = new JTextField(7);
+		IMDbPasswordTextField = new JPasswordField(7);
 		IMDbPasswordTextField.setEnabled(false);
 
 		JPanel IMDbPasswordPanel = new JPanel() ;
