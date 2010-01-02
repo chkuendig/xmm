@@ -153,7 +153,7 @@ public class DialogImport extends JDialog implements ActionListener {
 		selectIfOnlyOneHitButton.addActionListener(this);
 
 		imdbSearchAddToSkippedList = new JCheckBox("If no hits, add to skipped-list instead");
-		imdbSearchAddToSkippedList.setToolTipText("The movie will be added to a list named 'skipped'");
+		imdbSearchAddToSkippedList.setToolTipText("The movie will be added to a list named 'Importer-skipped'");
 	
 		imdbSearchAddToSkippedList.addActionListener(this);
 		
