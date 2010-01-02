@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogIMDB;
+import net.sf.xmm.moviemanager.gui.DialogIMDbMultiAdd;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
@@ -59,6 +60,13 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
 			modelMovieInfo.setSaveCover(false);
 	}
 	
+	public boolean isImporter() {
+		return true;
+	}
+	
+	public boolean isExporter() {
+		return false;
+	}
 	
 	public void setCancelled(boolean cancel) {
 		cancelled = cancel;
@@ -81,7 +89,7 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
 	
 	public void done() throws Exception {};
 		
-	public abstract int addMovie(int i) throws Exception;
+	public abstract ImportExportReturn addMovie(int i) throws Exception;
 	
 	public abstract void retrieveMovieList() throws Exception;
 	
@@ -93,23 +101,29 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
 	/**
      * Gets the IMDB info for movies (multiAdd)
      **/
-    public void executeCommandGetIMDBInfoMultiMovies(String searchString, String filename, ModelImportExportSettings settings, ModelMovie model) {
+    public ImportExportReturn executeCommandGetIMDBInfoMultiMovies(String searchString, ModelImportExportSettings settings, ModelMovie model) {
       	
+    	ImportExportReturn ret = ImportExportReturn.success;
+    	
         /* Checks the movie title... */
         log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
         
         if (!searchString.equals("")) { //$NON-NLS-1$
-            DialogIMDB dialogIMDB = new DialogIMDB(null, model, searchString, filename, null, settings.multiAddIMDbSelectOption, null);
+        	DialogIMDbMultiAdd dialogIMDB = new DialogIMDbMultiAdd(model, searchString, settings.multiAddIMDbSelectOption, null);
              
-            if (dialogIMDB.cancelSet)
+            if (dialogIMDB.getCanceled()) {
             	setCancelled(true);
+            	ret = ImportExportReturn.cancelled;
+            }
             
-            if (dialogIMDB.cancelAllSet)
+            if (dialogIMDB.getAborted()) {
             	setAborted(true);
+            	ret = ImportExportReturn.aborted;
+            }
             
             addToThisList.clear();
             
-            if (dialogIMDB.dropImdbInfoSet)
+            if (dialogIMDB.getDropIMDbInfo())
             	addToThisList.add(settings.skippedListName);
             else
             	addToThisList.add(settings.addToThisList);
@@ -118,5 +132,6 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
             DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.alert"), Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
             GUIUtil.showAndWait(alert, true);
         }
+        return ret;
     }
 }

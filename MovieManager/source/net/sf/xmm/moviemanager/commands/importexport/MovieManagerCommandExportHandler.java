@@ -110,17 +110,21 @@ public abstract class MovieManagerCommandExportHandler implements MovieManagerCo
 	/* (non-Javadoc)
 	 * @see net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler#addMovie(int)
 	 */
-	public abstract int addMovie(int i) throws Exception;
+	public abstract ImportExportReturn addMovie(int i) throws Exception;
 	
 	/* (non-Javadoc)
 	 * @see net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler#done()
 	 */
 	public void done() throws Exception {};
 	
-	 // ArrayList<ModelMovie> list = database.getMoviesList(options);
-	//listModel = GUIUtil.toDefaultListModel(list);
-
 	
+	public boolean isImporter() {
+		return false;
+	}
+	
+	public boolean isExporter() {
+		return true;
+	}
 	
     /**
 	 * Gets the database data.

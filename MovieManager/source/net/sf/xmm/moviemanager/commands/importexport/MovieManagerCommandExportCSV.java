@@ -26,6 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.gui.DialogTableExport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
@@ -67,21 +68,16 @@ public class MovieManagerCommandExportCSV extends MovieManagerCommandExportHandl
 		data = getDatabaseData();
 		
 		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-				public void run() {
-					dialogExportTable = new DialogTableExport(MovieManager.getDialog(), data, settings);
-					GUIUtil.showAndWait(dialogExportTable, true);
-				}
-			});
-		} catch (InterruptedException e) {
-			log.error("InterruptedException:" + e.getMessage(), e);
-		} catch (InvocationTargetException e) {
+
+			dialogExportTable = new DialogTableExport(MovieManager.getDialog(), data, settings);
+			GUIUtil.showAndWait(dialogExportTable, true);
+
+			if (dialogExportTable.cancelled)
+				setCancelled(true);
+		
+		} catch (Exception e) {
 			log.error("InvocationTargetException:" + e.getMessage(), e);
 		}
-		
-		if (dialogExportTable.cancelled)
-			setCancelled(true);
-		
 	}
 	
 		
@@ -138,7 +134,7 @@ public class MovieManagerCommandExportCSV extends MovieManagerCommandExportHandl
 		FileUtil.writeToFile(settings.getFile().getAbsolutePath(), new StringBuffer(output), settings.textEncoding);
 	}
 		
-	public int addMovie(int i) {
+	public ImportExportReturn addMovie(int i) {
 		
 		try {
 			String [] data = new String[tableData[0].length];
@@ -152,8 +148,9 @@ public class MovieManagerCommandExportCSV extends MovieManagerCommandExportHandl
 
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
-			return -1;
+			 return ImportExportReturn.error;
 		}
-		return 0;
+		         
+		return ImportExportReturn.success;
 	}
 }

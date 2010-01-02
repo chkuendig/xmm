@@ -27,6 +27,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelExportXML;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
@@ -88,8 +89,8 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
     	return title;
 	}
 	
-
-	public int addMovie(int i) {
+	
+	public ImportExportReturn addMovie(int i) {
 
 		int key = -1;
 		Object model = movieList.get(i);
@@ -101,7 +102,7 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 		}
 		else if (!(model instanceof ModelMovie)) {
 			log.warn("Invalid model "+ model +". Must be either ModelMovie or ModelSeries");
-			return -1;
+			return ImportExportReturn.error;
 		}
 		
 		// Creates a list of the database lists this movie is member of.
@@ -123,10 +124,7 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 		for (int j = 0; j < memberLists.size(); j++) {
 			if (!databaseLists.contains(memberLists.get(j))) {
 				log.info("List " + memberLists.get(j) + " not found in database.");
-				
 				MovieManager.getIt().addDatabaseList(memberLists.get(j));
-				
-				//MovieManager.getIt().getDatabase().addListsColumn(memberLists.get(j));
 			}
 		}
 		
@@ -136,8 +134,13 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 
 			try {
 				key = (modelMovieInfo.saveToDatabase(addToTheseLists)).getKey();
+				
+				if (key == -1)
+					return ImportExportReturn.error;
+				
 			} catch (Exception e) {
 				log.error("Saving to database failed.", e);
+				return ImportExportReturn.error;
 			}
 		}
 		else if (model instanceof ModelSeries) {
@@ -149,8 +152,13 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 						
 			try {
 				key = (modelMovieInfo.saveToDatabase(addToTheseLists)).getKey();
+				
+				if (key == -1)
+					return ImportExportReturn.error;
+				
 			} catch (Exception e) {
 				log.error("Saving to database failed.", e);
+				return ImportExportReturn.error;
 			}
 
 			int movieKey = modelMovieInfo.model.getKey();
@@ -162,16 +170,22 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 				modelMovieInfo.setModel(episodeTmp, false, false);
 
 				try {
-					(modelMovieInfo.saveToDatabase(null)).getKey();
+					key = (modelMovieInfo.saveToDatabase(null)).getKey();
+					
+					if (key == -1)
+						return ImportExportReturn.error;
+					
 				} catch (Exception e) {
 					log.error("Saving to database failed.", e);
+					return ImportExportReturn.error;
 				}
 			}
 		}
 
-		return key;
+		return ImportExportReturn.success;
 	}
 
+	
 	public void retrieveMovieList() throws Exception {
 
 

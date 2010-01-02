@@ -32,6 +32,7 @@ import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
+import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogQuestion;
 import net.sf.xmm.moviemanager.models.ModelEntry;
@@ -139,7 +140,7 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 	
 	int movieGroupNumber = 0;
 	
-	public int addMovie(int notUsed) {
+	public ImportExportReturn addMovie(int notUsed) {
 		
 		try {
 
@@ -202,10 +203,10 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
-			return -1;
+			 return ImportExportReturn.error;
 		}
-		
-		return 0;
+		         
+		return ImportExportReturn.success;
 	}
 	
 	

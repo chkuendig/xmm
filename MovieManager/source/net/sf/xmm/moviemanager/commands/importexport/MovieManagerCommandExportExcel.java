@@ -28,6 +28,7 @@ import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.gui.DialogTableExport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
@@ -132,7 +133,7 @@ public class MovieManagerCommandExportExcel extends MovieManagerCommandExportHan
 		log.debug("Excel export finished.");
 	}
 		
-	public int addMovie(int i) {
+	public ImportExportReturn addMovie(int i) {
 		
 		try {
 			for (int u = 0; u < tableData[0].length; u++) {
@@ -141,9 +142,9 @@ public class MovieManagerCommandExportExcel extends MovieManagerCommandExportHan
 			}
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
-			return -1;
+			 return ImportExportReturn.error;
 		}
-		
-		return 0;
+		         
+		return ImportExportReturn.success;
 	}	
 }

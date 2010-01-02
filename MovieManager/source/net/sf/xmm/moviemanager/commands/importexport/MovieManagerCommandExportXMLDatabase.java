@@ -29,6 +29,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelExportXML;
@@ -74,7 +75,7 @@ public class MovieManagerCommandExportXMLDatabase extends MovieManagerCommandExp
 		return title;
 	}
 
-	public int addMovie(int index) {
+	public ImportExportReturn addMovie(int index) {
 
 		DefaultMutableTreeNode node = ((DefaultMutableTreeNode) movieList.getChildAt(index));
 		ModelEntry model = (ModelEntry) node.getUserObject();
@@ -102,7 +103,8 @@ public class MovieManagerCommandExportXMLDatabase extends MovieManagerCommandExp
 
 			exportXMLDatabase.addModelSerie(serie);
 		}
-		return 1;
+
+		return ImportExportReturn.success;
 	}
 
 	

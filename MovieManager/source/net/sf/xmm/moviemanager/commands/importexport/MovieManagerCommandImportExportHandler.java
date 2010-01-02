@@ -2,6 +2,8 @@ package net.sf.xmm.moviemanager.commands.importexport;
 
 public interface MovieManagerCommandImportExportHandler {
 
+	public enum ImportExportReturn {success, error, cancelled, aborted};
+	
 	public void setCancelled(boolean cancel);
 		
 	public void setAborted(boolean abort);
@@ -25,9 +27,9 @@ public interface MovieManagerCommandImportExportHandler {
 	/**
 	 * Will be called for each entry.
 	 * @argument int i - the index in the arraylist movieList.
-	 * @Return -1 if failure, else not -1
+	 * @Return ImportReturnVal
 	 */
-	public int addMovie(int i) throws Exception;
+	public ImportExportReturn addMovie(int i) throws Exception;
 	
 	/**
 	 * Will be called at the beginning of the import sesion.
@@ -45,4 +47,17 @@ public interface MovieManagerCommandImportExportHandler {
 	 */
 	public String getTitle(int i) throws Exception;
 		
+	/**
+	 * Returns true if this is an import handler
+	 * @return
+	 */
+	public boolean isImporter();
+	
+	/**
+	 * Returns true if this is an export handler
+	 * @return
+	 */
+	public boolean isExporter();
+	
+	
 }

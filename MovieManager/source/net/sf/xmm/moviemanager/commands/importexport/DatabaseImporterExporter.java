@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import javax.swing.JDialog;
 
+import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.util.GUIUtil;
@@ -41,7 +42,7 @@ public class DatabaseImporterExporter {
 	private int lengthOfTask = 0;
 	private int current = -1;
 	private boolean done = false;
-	private boolean canceled = false;
+	private boolean stopped = false;
 	private ArrayList<String> transferred = new ArrayList<String>();
 	private ModelImportExportSettings importSettings;
 	private Dialog parent;
@@ -59,12 +60,12 @@ public class DatabaseImporterExporter {
 			public Object construct() {
 				current = -1;
 				done = false;
-				canceled = false;
+				stopped = false;
 
-				Importer importer = null;
+				ImportExportTask importer = null;
 
 				try {
-					importer =  new Importer(importSettings);
+					importer =  new ImportExportTask(importSettings);
 				}
 				catch (Exception e) {
 					log.warn("Exception:" + e.getMessage(), e);   
@@ -86,9 +87,13 @@ public class DatabaseImporterExporter {
 
 	/* Stops the importing process */
 	public void stop() {
-		canceled = true;
+		stopped = true;
 	}
 
+	public boolean isStopped() {
+		return stopped;
+	}
+	
 	public boolean isDone() {
 		return done;
 	}
@@ -97,7 +102,7 @@ public class DatabaseImporterExporter {
 		return transferred.size() > 0;
 	}
 	
-	public synchronized Object getNextTransferred() {
+	public synchronized String getNextTransferred() {
 		return transferred.remove(0);
 	}
 	
@@ -110,11 +115,11 @@ public class DatabaseImporterExporter {
 	 * The actual database import task.
 	 * This runs in a SwingWorker thread.
 	 */
-	class Importer {
+	class ImportExportTask {
 
 		int extraInfoFieldsCount;
 
-		Importer(ModelImportExportSettings importSettings) {
+		ImportExportTask(ModelImportExportSettings importExportSettings) {
 
 			try {
 
@@ -140,25 +145,26 @@ public class DatabaseImporterExporter {
 					
 					if (title != null && !title.equals("")) {
 					
-						if (handler.isAborted() || canceled)
+						if (isStopped()) {
+							addNewTransferred((handler.isImporter() ? "Import " : "Export ") + "process stopped");
 							break;
-
-						if (!handler.isCancelled()) {
-
-							int ret = -1; 
-
-							ret = handler.addMovie(i);
-
-							if (ret == -1)
-								addNewTransferred("Failed to import: " + title);
-							else if (!title.equals(""))
-								addNewTransferred(title);
-
-							current++;
 						}
-						else {// Reset settings
-							handler.setCancelled(false);
+						
+						if (handler.isAborted()) {
+							addNewTransferred((handler.isImporter() ? "Import " : "Export ") + "process aborted");
+							break;
 						}
+
+						ImportExportReturn ret = handler.addMovie(i);
+
+						if (ret == ImportExportReturn.error)
+							addNewTransferred("Failed to " + (handler.isImporter() ? "import " : "export ") + title);
+						else if (ret == ImportExportReturn.cancelled)
+							addNewTransferred(title + " (skipped)");
+						else if (!title.equals(""))
+							addNewTransferred(title);
+
+						current++;
 					}
 					else {
 						addNewTransferred("Empty entry");

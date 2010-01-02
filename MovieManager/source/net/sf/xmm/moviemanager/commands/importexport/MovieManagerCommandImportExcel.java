@@ -28,6 +28,7 @@ import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.gui.DialogTableImport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
@@ -90,40 +91,52 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportHan
 
 		String title = ((ModelMovie) movieList.get(i)).getTitle();
 
+		return title;
+	}
+
+
+
+	public ImportExportReturn addMovie(int i) {
+
+		int key = -1;
+		ModelMovie movie = movieList.get(i);
+
+		String title = movie.getTitle();
+
 		if (title != null && !title.equals("")) {
 	
 			if (settings.multiAddIMDbSelectOption != ImdbImportOption.off) {
-				executeCommandGetIMDBInfoMultiMovies(title, title, settings, (ModelMovie) movieList.get(i));
+								
+				ImportExportReturn ret = executeCommandGetIMDBInfoMultiMovies(title, settings, movie);
+
+				if (ret == ImportExportReturn.cancelled || ret == ImportExportReturn.aborted) {
+					return ret;
+				}
 			}
-			return (String) ((ModelMovie) movieList.get(i)).getTitle();
 		}
-
-		return null;
-	}
-
-
-
-	public int addMovie(int i) {
-
-		int ret = -1;
-		Object tmp = movieList.get(i);
-
-		modelMovieInfo.setModel((ModelMovie) tmp, false, false);
+		
+		modelMovieInfo.setModel(movie, false, false);
 
 		try {
-			ret = modelMovieInfo.saveToDatabase(addToThisList).getKey();
+			key = modelMovieInfo.saveToDatabase(addToThisList).getKey();
 			modelMovieInfo.saveCoverToFile();
 		} catch (Exception e) {
 			log.error("Saving to database failed.", e);
+			return ImportExportReturn.error;
 		}
-
-		return ret;
+		
+		if (key == -1)
+			return ImportExportReturn.error;
+		         
+		return ImportExportReturn.success;
 	}
+	
 	
 	public void done() throws Exception {
 		log.debug("EXCEL import completetd");
 	}
 
+	
 	//  Retrieved the data from the table and stores it in movieList in super class.
 	public void retrieveMovieList() {
 		tableData = dialogImportTable.retrieveValuesFromTable();

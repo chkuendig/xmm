@@ -25,7 +25,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
+import net.sf.xmm.moviemanager.models.ModelMovie;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 
 import org.apache.log4j.Logger;
 
@@ -33,24 +36,17 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportHand
 
 	static Logger log = Logger.getLogger(MovieManagerCommandImportHandler.class);
 
-	ArrayList<String> movieList = null;
+	ArrayList<ModelMovie> movieList = null;
 	
 	MovieManagerCommandImportText(ModelImportExportSettings settings) {
 		super(settings);
 	}
 	
+	public int getMovieListSize() throws Exception {
 		
-	public void execute() {
-
-		log.error("This function does nothing!!!!!");
-		
-		//DialogTableImport importTable = new DialogTableImport(MovieManager.getDialog(), importSettings.file, importSettings);
-		//GUIUtil.showAndWait(importTable, true);
-	} 
-	
-	
-	public int getMovieListSize() {
-		
+		if (movieList == null)
+			retrieveMovieList();
+			
 		if (movieList == null)
 			return -1;
 		
@@ -59,27 +55,46 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportHand
 	
 	
 	public String getTitle(int i) {
+		
 		modelMovieInfo.clearModel();
 		
-		return ((String) movieList.get(i));
-	}
+		String title = ((ModelMovie) movieList.get(i)).getTitle();
+		return title;
+	}	
 	
-	public int addMovie(int i) {
-     	
-     	int key = 1;
-     	String title = (String) movieList.get(i);
-     	
-     	modelMovieInfo.setTitle(title);
-     	
-     	 try {
-     		 key = (modelMovieInfo.saveToDatabase(addToThisList)).getKey();
-     		 modelMovieInfo.saveCoverToFile();
-          } catch (Exception e) {
-              log.error("Saving to database failed.", e);
-              key = -1; 
-          }
-          return key;
-     }
+	
+	public ImportExportReturn addMovie(int i) {
+
+		int key = 1;
+		ModelMovie movie = (ModelMovie) movieList.get(i);
+		String title = movie.getTitle();
+
+		if (title != null && !title.equals("")) {
+
+			if (settings.multiAddIMDbSelectOption != ImdbImportOption.off) {
+				ImportExportReturn ret = executeCommandGetIMDBInfoMultiMovies(title, settings, (ModelMovie) movieList.get(i));
+				if (ret == ImportExportReturn.cancelled || ret == ImportExportReturn.aborted) {
+					return ret;
+				}
+			}
+		}
+
+		modelMovieInfo.setModel(movie, false, false);
+
+		try {
+			key = (modelMovieInfo.saveToDatabase(addToThisList)).getKey();
+			modelMovieInfo.saveCoverToFile();
+		} catch (Exception e) {
+			log.error("Saving to database failed.", e);
+			key = -1; 
+		}
+
+		if (key == -1) {
+			return ImportExportReturn.error;
+		}
+
+		return ImportExportReturn.success;
+	}
 	 
 	
 	public void retrieveMovieList() throws Exception {
@@ -90,23 +105,24 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportHand
 			throw new Exception("Text file does not exist.");
 		}
 
-		movieList = new ArrayList<String>(10);
+		movieList = new ArrayList<ModelMovie>(10);
 
 		try {
 
+			ModelMovie tmpMovie;
 			FileReader reader = new FileReader(textFile);
 			BufferedReader stream = new BufferedReader(reader);
 
+			
 			String line;
 			while ((line = stream.readLine()) != null) {
-				movieList.add(line.trim());
+				tmpMovie = new ModelMovie();
+				tmpMovie.setTitle(line.trim());
+				movieList.add(tmpMovie);
 			}
 		}
 		catch (Exception e) {
 			log.error("", e);
-		}	
-
+		}
 	}
-
-
 }

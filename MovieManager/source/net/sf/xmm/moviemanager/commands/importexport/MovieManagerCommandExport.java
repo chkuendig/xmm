@@ -81,15 +81,20 @@ public class MovieManagerCommandExport implements ActionListener{
 			
 			
 			if (exporter != null) {
-				try {
-					exporter.execute();
-				} catch (Exception e) {
-					log.error("Exception:" + e.getMessage(), e);
-				}
-
-				if (!exporter.isCancelled()) {
+				final MovieManagerCommandImportExportHandler finalExporter = exporter;
+				
+				GUIUtil.invokeAndWait(new Runnable() {
 					
-					final MovieManagerCommandImportExportHandler finalExporter = exporter;
+					public void run() {
+						try {
+							finalExporter.execute();
+						} catch (Exception e) {
+							log.error("Exception:" + e.getMessage(), e);
+						}
+					}
+				});
+				
+				if (!exporter.isCancelled()) {
 					
 					Runnable createAndShow = new Runnable() {
 						public void run() {

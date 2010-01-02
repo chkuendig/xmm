@@ -32,6 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.gui.DialogTableExport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
@@ -227,7 +228,7 @@ public class MovieManagerCommandExportXML extends MovieManagerCommandExportHandl
 		
 	
 	
-	public int addMovie(int i) {
+	public ImportExportReturn addMovie(int i) {
 		
 		try {
 			
@@ -267,9 +268,10 @@ public class MovieManagerCommandExportXML extends MovieManagerCommandExportHandl
 			 
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
-			return -1;
+			return ImportExportReturn.error;
 		}
-		return 0;
+		         
+		return ImportExportReturn.success;
 	}
 	
 	public int addMovie1(int i) {
