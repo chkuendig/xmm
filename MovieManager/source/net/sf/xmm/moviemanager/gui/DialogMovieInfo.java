@@ -37,6 +37,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -60,7 +61,9 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -156,14 +159,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	public DialogMovieInfo() {
 		/* Dialog creation... */
 		super(MovieManager.getDialog());
-		/* Close dialog... */
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				saveWindowSize();
-				dispose();
-			}
-		});
-
+		
 		setModelMovieInfo(new ModelMovieInfo(false));
 
 		setUp(Localizer.getString("DialogMovieInfo.title.add-movie"));
@@ -178,13 +174,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	public DialogMovieInfo(ModelMovie model) throws Exception {
 		/* Dialog creation... */
 		super(MovieManager.getDialog());
-		/* Close dialog... */
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				saveWindowSize();
-				dispose();
-			}
-		});
 
 		if (model.getKey() == -1)
 			throw new Exception("MovieKey cannot be -1");
@@ -205,13 +194,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	public DialogMovieInfo(ModelEntry model) {
 		/* Dialog creation... */
 		super(MovieManager.getDialog());
-		/* Close dialog... */
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				saveWindowSize();
-				dispose();
-			}
-		});
 
 		setModelMovieInfo(new ModelMovieInfo(model, false));
 
@@ -242,19 +224,27 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		setModal(true);
 		setResizable(true);
 
-		/* Enables dispose when pushing escape */
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction() {
+		/* Save before closing dialog... */
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				saveWindowSize();
+			}
+		});
+		
+		GUIUtil.enableDisposeOnEscapeKey(this, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				saveWindowSize();
-				dispose();
 			}
-		};
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-		getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
-
+		});
+				
 		fontSize = MovieManager.getIt().getFontSize();
 		
+		setUpGUI();
+		setKeyKeyModifiers();
+	}
+		
+	private void setUpGUI() {
+	
 		JPanel panelMovieInfo = new JPanel();
 
 		panelMovieInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,7,0,7), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.getString("DialogMovieInfo.panel-movie-info.title."), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(panelMovieInfo.getFont().getName(),Font.BOLD, fontSize))), BorderFactory.createEmptyBorder(0,5,0,5))); //$NON-NLS-1$
@@ -914,6 +904,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelMovieInfo.add(panelAdditionalInfo, constraints);
 
+		createAdditionalInfoPopup();
+		
 		/* Creates the notes... */
 		JPanel panelNotes = new JPanel();
 		panelNotes.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(
@@ -1095,6 +1087,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		all.add(panelButtons, BorderLayout.SOUTH);
 		
 		
+		
 		/* Adds all and buttonsPanel... */
 		//getContentPane().add(panelMovieInfo, BorderLayout.NORTH);
 		//getContentPane().add(movieInfoScroll, BorderLayout.NORTH);
@@ -1169,6 +1162,50 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		setLocation(x, y);
 	}
 
+	
+	/**
+	 * Creates popup to clear the additional info data
+	 */
+	void createAdditionalInfoPopup() {
+		
+		final JPopupMenu popupMenu = new JPopupMenu();
+		JMenuItem resetData = new JMenuItem("Clear Additional Info data"); //$NON-NLS-1$
+		resetData.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				movieInfoModel.setAdditionalInfoFieldsEmpty();
+			}
+		});
+		
+		popupMenu.add(resetData);
+		
+		panelAdditionalInfo.addMouseListener(new MouseListener() {
+			
+			public void mouseReleased(MouseEvent e) {}
+
+			@Override
+			public void mousePressed(MouseEvent event) {
+
+				if (GUIUtil.isRightMouseButton(event)) {
+
+					//popupMenu.setInvoker(panelAdditionalInfo);
+					popupMenu.show(panelAdditionalInfo, event.getX(), event.getY());
+				}
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {}
+		});
+		
+		
+	}
+	
+	
 	/**
 	 * Gets the date JTextField...
 	 */
@@ -1384,6 +1421,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	
 		/* loads the additional info... */
 
+		_fieldUnits.clear();
+		_fieldDocuments.clear();
+		
 		_fieldUnits.add(""); //$NON-NLS-1$
 		_fieldDocuments.add(new PlainDocument());
 
@@ -1809,6 +1849,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	}
 	
 	public void saveWindowSize() {
+		System.err.println("saveWindowSize");
 		MovieManager.getConfig().setAddMovieWindowHeight(getSize().height);
 	}
 	
@@ -2107,14 +2148,20 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 						if (longestDurationIndex != biggestSizeIndex && longestDuration > 1800)
 							mainIfoIndex = longestDurationIndex;
-					} else
+					} else {
 						mainIfoIndex = biggestSizeIndex;
-
+					}
+					
+					if (mainIfoIndex == -1) {
+						log.debug("Main ifo not found");
+						return;
+					}
+					
 					FileSystemView fsv = fileChooser.getFileSystemView();
 					File tmp;
 					
 					if (fsv != null) {
-
+						
 						tmp = ifo[mainIfoIndex];
 
 						while (tmp.getParentFile() != null)
@@ -2162,7 +2209,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			if (useImdbKey && !getIMDb().getText().equals("")) {
 				DialogIMDB.getIMDbInfo(movieInfoModel.model, getIMDb().getText());
 			} else {
-				dialogIMDB = new DialogIMDB(movieInfoModel.model, false, null);
+				dialogIMDB = new DialogIMDB(movieInfoModel.model, null, true);
 				GUIUtil.showAndWait(dialogIMDB, true);
 			}
 			
@@ -2284,5 +2331,50 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			movieInfoModel.setSaveCover(!movieInfoModel.getNoCover());
 		}
 		getSeen().setSelected(movieInfoModel.model.getSeen());
+	}
+	
+	void setKeyKeyModifiers() {
+	
+		// ALT+N for Notes field 
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt N"), "nAction");
+		getRootPane().getActionMap().put("nAction", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				System.err.println("alt N");
+				textAreaNotes.requestFocusInWindow();
+				textAreaNotes.requestFocus();
+			}
+		});
+		
+		// ALT+I for additionalInfo combobox 
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt I"), "iAction");
+		getRootPane().getActionMap().put("iAction", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				additionalInfoFields.requestFocusInWindow();
+			}
+		});
+		
+		// ALT+V for additionalInfo value field 
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt V"), "vAction");
+		getRootPane().getActionMap().put("vAction", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				getAdditionalInfoValuePanel().getComponent(0).requestFocusInWindow();
+			}
+		});
+		
+		// ALT+T for title field 
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt V"), "vAction");
+		getRootPane().getActionMap().put("vAction", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				movieTitle.requestFocusInWindow();
+			}
+		});
+		
+		// ALT+T for title field 
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt K"), "kAction");
+		getRootPane().getActionMap().put("kAction", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				movieTitle.requestFocusInWindow();
+			}
+		});
 	}
 }
