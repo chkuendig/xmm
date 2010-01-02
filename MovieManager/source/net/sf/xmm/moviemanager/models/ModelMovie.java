@@ -31,11 +31,7 @@ public class ModelMovie extends ModelEntry {
 	
 	/* default public constructor for XML import using Castor */
 	public ModelMovie() {
-		additionalInfo = new ModelAdditionalInfo(true);
-	}
-
-	public ModelMovie(boolean initialize) {
-		additionalInfo = new ModelAdditionalInfo(initialize);
+		additionalInfo = new ModelAdditionalInfo();
 	}
 	
 	public ModelMovie(ModelMovie model) {
@@ -71,14 +67,14 @@ public class ModelMovie extends ModelEntry {
 		setAwards(awards);
 
 		hasGeneralInfoData = true;
-		additionalInfo = new ModelAdditionalInfo(true);
+		additionalInfo = new ModelAdditionalInfo();
 	}
 
 	public ModelMovie(int key, String title) {
 		setKey(key);
 		setTitle(title);
 		
-		additionalInfo = new ModelAdditionalInfo(true);
+		additionalInfo = new ModelAdditionalInfo();
 	}
 
 	public ModelMovie(int key, String title, String urlKey, String cover, String date) {
@@ -88,7 +84,7 @@ public class ModelMovie extends ModelEntry {
 		setCover(cover);
 		setDate(date);
 		
-		additionalInfo = new ModelAdditionalInfo(true);
+		additionalInfo = new ModelAdditionalInfo();
 	}
 
 	

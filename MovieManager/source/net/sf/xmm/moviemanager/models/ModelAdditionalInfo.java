@@ -53,28 +53,16 @@ public class ModelAdditionalInfo {
 	private String container = null;
 	private String mediaType = null;
 
-	// Each time a new additionial info field is added, this is encreased so that each ModelEntry knows that the additional info it already has needs to be updated from the database.
+	// Each time a new additional info field is added, this is increased so that each ModelEntry knows that the additional info it already has needs to be updated from the database.
 	private static int extraInfoChanged = 0;
 	private int lastExtraInfoCount = 0;
 
 	private HashMap<String, String> extraInfoFieldValuesMap = new HashMap<String, String>();
 	
-	boolean initialized = false;
 	
-	// Default empty constuctor used when importing from XML using Castor
+	// Default empty constructor used when importing from XML using Castor
 	public ModelAdditionalInfo() {}
-
-	public ModelAdditionalInfo(boolean initialize) {
-
-		if (initialize) {
-			
-			if (MovieManager.getIt().getDatabase() == null)
-				return;
-			
-			initialized = true;
-		}
-	}
-
+	
 	/**
 	 * The constructor.
 	 **/
