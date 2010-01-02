@@ -25,11 +25,18 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
@@ -175,5 +182,29 @@ public class GUIUtil {
 	// SwingUtilities.isLeftButton seemed to return true on right button on OS X.
 	public static boolean isLeftMouseButton(MouseEvent event) {
 		return event.getButton() == MouseEvent.BUTTON1;
+	}
+	
+	public static void enableDisposeOnEscapeKey(JDialog dialog) {
+		enableDisposeOnEscapeKey(dialog, null);
+	}
+	
+	public static void enableDisposeOnEscapeKey(final JDialog dialog, final Action escapeAction) {
+
+		/* Enables dispose when pushing escape */
+		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		
+		Action defaultAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if (escapeAction != null) {
+					escapeAction.actionPerformed(e);
+				}
+				dialog.dispose();
+			}
+		};
+		dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
+		dialog.getRootPane().getActionMap().put("ESCAPE", defaultAction); //$NON-NLS-1$
+	}
+	
+	public static void registerKeyboardShortcut() {
 	}
 } 
