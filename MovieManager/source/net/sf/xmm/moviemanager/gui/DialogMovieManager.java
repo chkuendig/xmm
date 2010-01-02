@@ -637,9 +637,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
    protected JMenuBar createMenuBar() {
 	   
 	   boolean defaultMenu = true;
-	   
-	 ///String className = "net.sf.xmm.moviemanager.gui.menubar.PlanetaryMenuBar";
-	   
+	  
 	   InternalConfig internalConfig = config.getInternalConfig();
 	   String className =  internalConfig.getPlugin("menuBar");
 	   	   
@@ -913,7 +911,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         ExtendedTreeCellRenderer.setDefaultColors();
          
-        moviesList.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(new ModelMovie(false)))); //$NON-NLS-1$
+        moviesList.setModel(new DefaultTreeModel(new DefaultMutableTreeNode(new ModelMovie()))); //$NON-NLS-1$
         
         moviesList.setRootVisible(false);
         moviesList.setDragEnabled(false);
