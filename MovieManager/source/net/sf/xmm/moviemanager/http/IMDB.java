@@ -20,15 +20,13 @@
 
 package net.sf.xmm.moviemanager.http;
 
-import java.io.InputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
@@ -44,7 +42,6 @@ import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.models.imdb.*;
 
 import org.apache.log4j.Logger;
-import org.lobobrowser.html.UserAgentContext;
 import org.lobobrowser.html.parser.DocumentBuilderImpl;
 import org.lobobrowser.html.parser.InputSourceImpl;
 import org.lobobrowser.html.test.SimpleUserAgentContext;
@@ -53,7 +50,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class IMDB /*extends IMDB_if */{
+public class IMDB {
   
 	static Logger log = Logger.getLogger(IMDB.class);
     
@@ -88,29 +85,6 @@ public class IMDB /*extends IMDB_if */{
     	this(null, null, settings);	
     }
          
-    /*
-    public IMDB getIMDB() throws Exception {
-    	return new IMDB();
-    }
-    
-    public IMDB getIMDB(String urlID) throws Exception {
-    	return new IMDB(urlID);
-    }
-    
-    public IMDB getIMDB(Strin g urlID, StringBuffer data) throws Exception {
-    	return new IMDB(urlID, data);
-    }
-    
-    public IMDB getIMDB(String urlID, HttpSettings settings) throws Exception {
-    	return new IMDB(urlID, settings);
-    }
-    
-    public IMDB getIMDB(HttpSettings settings) throws Exception {
-    	return new IMDB(settings);
-    }
-    */
-    
-    
     /**
      * The constructor. Initializes all vars (read from the net) for
      * the movie with key.
@@ -159,7 +133,7 @@ public class IMDB /*extends IMDB_if */{
     /*
      * If urlID is null, no extra plot will be retrieved
      */
-    private ModelIMDbEntry parseData(String urlID, StringBuffer data) throws Exception {
+    private ModelIMDbEntry parseData1(String urlID, StringBuffer data) throws Exception {
 		
         String date = "", title = "", directedBy = "", writtenBy = "", genre = "", rating = "", colour = "", aka = "", 
         country = "", language = "", mpaa = "", soundMix = "", runtime = "", certification = "", awards = "", plot = "", cast = "", 
@@ -506,7 +480,7 @@ public class IMDB /*extends IMDB_if */{
 
     
     
-    private ModelIMDbEntry parseData2(String urlID, StringBuffer data) throws Exception {
+    private ModelIMDbEntry parseData(String urlID, StringBuffer data) throws Exception {
 		
         String date = "", title = "", plot = "", coverURL = "", coverName = "";
     	  
@@ -774,7 +748,6 @@ public class IMDB /*extends IMDB_if */{
  				   
  				   for (int i = 0; i < children.getLength(); i++) {
  					   Node n = children.item(i);
- 					   //System.err.println(n.getLocalName() + ":" + n.getTextContent());
  					   String tmp = n.getTextContent();
  					   
  					   if (!tmp.trim().equals("") && !tmp.trim().equals("more")) {
@@ -782,7 +755,7 @@ public class IMDB /*extends IMDB_if */{
  					   }
  				   }
  				   aka = StringUtil.removeDoubleSpace(aka);
- 				  //System.err.println("Also Known As:" + aka);
+ 				  //System.out.println("Also Known As:" + aka);
  				   dataModel.setAka(aka);
  			   }
  			   else if (name.equals("Sound Mix")) {
@@ -791,9 +764,8 @@ public class IMDB /*extends IMDB_if */{
  				   
  				   String sound = getNodesContent(children);
  				   sound = sound.replaceAll("\\(", " (");
- 				   //sound = sound.replaceAll("\\|", ", ");
  				   
- 				  //System.err.println("sound:" + sound);
+ 				  //System.out.println("sound:" + sound);
  				   dataModel.setWebSoundMix(sound);
  			   }
  			   else if (name.equals("Plot")) {
@@ -810,7 +782,7 @@ public class IMDB /*extends IMDB_if */{
  				   String certification = getNodesContent(children);
  				   certification = certification.replaceAll("\\(", " (");
  				   certification = StringUtil.removeDoubleSpace(certification);
- 				   //System.err.println("Certification:" + certification);
+ 				   //System.out.println("Certification:" + certification);
  				   dataModel.setCertification(certification);
  			   }
  			   else if (name.equals("Language")) {
@@ -818,8 +790,7 @@ public class IMDB /*extends IMDB_if */{
  				   children = children.item(3).getChildNodes();
  				   
  				   String language = getNodesContent(children);
- 				   //language = language.replaceAll("\\|", ", ");
- 				  //System.err.println("Language:" + language);
+ 				  //System.out.println("Language:" + language);
  				   dataModel.setLanguage(language);
  			   }
  			   else if (name.startsWith("Country")) {
@@ -827,14 +798,18 @@ public class IMDB /*extends IMDB_if */{
  				   children = children.item(3).getChildNodes();
 
  				   String country = getNodesContent(children);
- 				   //country = country.replaceAll("\\|", ", ");
- 				  //System.err.println("Country:" + country);
+ 				  //System.out.println("Country:" + country);
  				   dataModel.setCountry(country);
  			   }
  			   else if (name.startsWith("User Rating")) {
- 				  //System.err.println("Rating:" + info);
- 				   // On the format 8.5/10
- 				   info = info.substring(0, info.indexOf("/"));
+ 				  NodeList children = e.getChildNodes();
+				   children = children.item(3).getChildNodes();
+				   children = children.item(3).getChildNodes();
+
+				   String rating = getNodesContent(children);
+				   
+				   // On the format 8.5/10
+ 				   info = rating.substring(0, rating.indexOf("/"));
  				   dataModel.setRating(info);
  			   }
  			   else if (name.startsWith("Writer") || name.startsWith("Creator") || name.startsWith("Director")) {
@@ -849,7 +824,10 @@ public class IMDB /*extends IMDB_if */{
  					   Node n = children.item(i);
  					   String tmp = n.getTextContent().trim();
 
- 					   if (!tmp.equals("") && !tmp.equals("more") && !tmp.startsWith("(written by)") && !tmp.startsWith("(co-creator)")) {
+ 					   if (!tmp.equals("") && !tmp.equals("more") && 
+ 							   !tmp.startsWith("(written by)") && 
+ 							   !tmp.startsWith("(writer)") && 
+ 							   !tmp.startsWith("(co-creator)")) {
  						   
  						   if (writer.length() > 0)
  							  writer += ", ";
@@ -866,29 +844,29 @@ public class IMDB /*extends IMDB_if */{
  				   
  			   }
  			   else if (name.startsWith("Creator")) {
- 				   //System.err.println("Director:" + info);
+ 				   //System.out.println("Director:" + info);
  				   dataModel.setWrittenBy(info);
  			   }
  			   else if (name.startsWith("Director")) {
- 				   //System.err.println("Director:" + info);
+ 				   //System.out.println("Director:" + info);
  				   dataModel.setDirectedBy(info);
  			   }
 			   else if (name.startsWith("Runtime")) {
  				   info = StringUtil.removeDoubleSpace(info);
  				   String runtime =  info.replaceAll("\\s\\|", ",");
- 				   //System.err.println("Runtime:" + runtime);
+ 				   //System.out.println("Runtime:" + runtime);
  				   dataModel.setWebRuntime(runtime);
  			   }
  			   else if (name.startsWith("Genre")) {
  				   String genre =  info.replaceAll("\\s\\|", ",");
 
  				   genre = StringUtil.removeAtEnd(genre, "more");
- 				   //System.err.println("Genre:" + genre);
+ 				   //System.out.println("Genre:" + genre);
  				   genre = genre.trim();
  				   dataModel.setGenre(genre);
  			   }
  			   else if (name.startsWith("MPAA")) {
- 				  //System.err.println("MPAA:" + info);
+ 				  //System.out.println("MPAA:" + info);
  				   dataModel.setMpaa(info);
  			   }
  			   else if (name.startsWith("Awards")) {
@@ -899,16 +877,16 @@ public class IMDB /*extends IMDB_if */{
  				   awards = awards.replaceAll("&", " & ");
  				   
  				   awards = StringUtil.removeAtEnd(awards, "more");
- 				   //System.err.println("Awards:" + info);
+ 				   //System.out.println("Awards:" + info);
  				   dataModel.setAwards(awards);
  			   }
  			   else if (name.startsWith("Color")) {
- 				  //System.err.println("Color:" + info);
+ 				  //System.out.println("Color:" + info);
  				   dataModel.setColour(info);
  			   }
  			   else {
- 				  // System.err.println("name:" + name);
- 				   //System.err.println("info:" + info);
+ 				  // System.out.println("name:" + name);
+ 				   //System.out.println("info:" + info);
  			   }
  		   }
  	   }
@@ -939,7 +917,7 @@ public class IMDB /*extends IMDB_if */{
  		   }
  		   cast = cast.replaceAll("\\s\\|", ",");
  		   
- 		  //System.err.println("Cast:" + cast);
+ 		  //System.out.println("Cast:" + cast);
  		   dataModel.setCast(cast);
  	   }
  	   return null;
@@ -951,7 +929,7 @@ public class IMDB /*extends IMDB_if */{
     	long time = System.currentTimeMillis();
     	NodeList nodeList = (NodeList) xpath.evaluate(path, document, XPathConstants.NODESET);
     	time = System.currentTimeMillis() - time;
-    	//System.err.println("time:" + time);
+    	//System.out.println("time:" + time);
 
     	ArrayList<Element> result = new ArrayList<Element>();
 
@@ -1139,8 +1117,9 @@ public class IMDB /*extends IMDB_if */{
 	/**
 	 * Returns simple matches list...
 	 * @throws UnsupportedEncodingException 
+	 * @throws UnknownHostException 
 	 **/
-	public ArrayList<ModelIMDbSearchHit> getSimpleMatches(String title) throws UnsupportedEncodingException {
+	public ArrayList<ModelIMDbSearchHit> getSimpleMatches(String title) throws UnsupportedEncodingException, UnknownHostException {
 					
 		//System.out.println("UTF-8:" + java.net.URLEncoder.encode(title, "UTF-8"));
 		//System.out.println("US-ASCII:" + java.net.URLEncoder.encode(title, "US-ASCII"));
@@ -1152,7 +1131,7 @@ public class IMDB /*extends IMDB_if */{
 	}
 
 	
-    private ArrayList<ModelIMDbSearchHit> getMatches(String strUrl) {
+    private ArrayList<ModelIMDbSearchHit> getMatches(String strUrl) throws UnknownHostException {
 
     	try {
     		    		
@@ -1169,7 +1148,8 @@ public class IMDB /*extends IMDB_if */{
     		}
 
     		return getMatches(data);
-
+    	} catch (UnknownHostException u) {
+    		throw u;
     	} catch (Exception e) {
     		log.warn("Exception:" + e.getMessage(), e);
     	}
@@ -1334,18 +1314,18 @@ public class IMDB /*extends IMDB_if */{
 			String className = m.group(1);
 			String info = m.group(2);
 			
-			//System.err.println("className:" + className + "|");
-			//System.err.println("info:" + info);
+			//System.out.println("className:" + className + "|");
+			//System.out.println("info:" + info);
 			
 			if (className != null && info != null) {
 				className = className.trim();
 				if (!className.endsWith(":"))
 					className += ":";
 				
-				//System.err.println("put=" + className + "|");
+				//System.out.println("put=" + className + "|");
 				
 				if (className.equals("Writers:")) {
-					//System.err.println("Writers put info:" + info);
+					//System.out.println("Writers put info:" + info);
 				}
 				classInfo.put(className, info);
 			}
@@ -1509,9 +1489,7 @@ public class IMDB /*extends IMDB_if */{
     		 	Pattern p = Pattern.compile("<a\\shref=\"/name/nm\\d+/.+?castlist.+?>(.+?)</a>.+?\\.\\.\\..+?<td\\sclass=\"char\">(?:<a\\shref=\"/character/ch\\d+/\">)?(.+?)</td>");
     			    			
     			for (int i = 0; i < castSplit.length; i++) {
-    				
-    				//System.err.println("castSplit[i]:" + castSplit[i]);
-    				
+    				    				
     				String nmClass = getCustomElementClass("td", "nm", new StringBuffer(castSplit[i]));
     				String charClass = getCustomElementClass("td", "char", new StringBuffer(castSplit[i]));
     				
@@ -1541,7 +1519,7 @@ public class IMDB /*extends IMDB_if */{
     							
     						String name = m.group(1);
     						String character = m.group(2);
-    						System.err.println("name:" + name);
+    						System.out.println("name:" + name);
     						decoded.append(name);
         					decoded.append(" (" + character + "), ");
     					}
@@ -1896,8 +1874,6 @@ public class IMDB /*extends IMDB_if */{
 			e1.printStackTrace();
 		}
     	
-    	System.err.println("retrieveBiggerCover");
-    	
     	URL url;
 
     	byte [] coverData = null;
@@ -1905,7 +1881,7 @@ public class IMDB /*extends IMDB_if */{
     	try {
     		url = new URL("http://akas.imdb.com/media/" + dataModel.bigCoverUrlId);
     		
-    		System.err.println("url:" + url);
+    		System.out.println("url:" + url);
     		
     		HTTPResult res = httpUtil.readData(url);
     		StringBuffer data = res.data;
@@ -1916,7 +1892,7 @@ public class IMDB /*extends IMDB_if */{
 
     			String tmp = data.substring(imgIndex, data.indexOf(">", imgIndex));
 
-    			//System.err.println("tmp:" + tmp);
+    			//System.out.println("tmp:" + tmp);
     			
     			//src="http://ia.media-imdb.com/images/M/MV5BMTI4ODg5MjkwMl5BMl5BanBnXkFtZTcwNTkzMjYyMQ@@._V1._SX307_SY400_.jpg">
 
@@ -1928,8 +1904,8 @@ public class IMDB /*extends IMDB_if */{
 
     				//String g = m.group();
 
-    				//System.err.println("BC g:" + m.group(0));
-    				//System.err.println("BC g1:" + m.group(1));
+    				//System.out.println("BC g:" + m.group(0));
+    				//System.out.println("BC g1:" + m.group(1));
 
     				coverData = httpUtil.readDataToByteArray(new URL(m.group(1)));
     				
@@ -1968,7 +1944,7 @@ public class IMDB /*extends IMDB_if */{
     	+                       url = new URL(m.group(1) + m.group(2) + m.group(3)+"0" + m.group(4) + m.group(5)+"0" +m.group(6));
     	+                           // try 10 times the resolution. imdb will return the maximum resolution possible
     	+               
-    	+                       //System.err.println("retrBiggerCover url:" + url);
+    	+                       //System.out.println("retrBiggerCover url:" + url);
     	+                       coverData = httpUtil.readDataToByteArray( url );
     	+                   }
     	+               }
