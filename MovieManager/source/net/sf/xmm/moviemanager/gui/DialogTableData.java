@@ -617,9 +617,9 @@ public abstract class DialogTableData extends JDialog {
 	}
 	
 	
-	public Object [][] retrieveValuesFromTable() {
+	public String [][] retrieveValuesFromTable() {
 
-		Object [][] output = null;
+		String [][] output = null;
 		
 		try {
 			
@@ -674,6 +674,7 @@ public abstract class DialogTableData extends JDialog {
 		
 		return output;
 	}
+	
 	
 	
 	

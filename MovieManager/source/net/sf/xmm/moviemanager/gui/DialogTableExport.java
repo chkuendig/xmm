@@ -27,6 +27,10 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -56,7 +60,8 @@ public class DialogTableExport extends DialogTableData {
 		
 		setTitle("Export " + ModelImportExportSettings.importTypes[settings.mode]);
 		setModal(true);
-
+		table.getTableHeader().setReorderingAllowed(true);
+		
 		JPanel content = new JPanel();
 		content.setLayout(new BorderLayout());        
 		
@@ -72,7 +77,6 @@ public class DialogTableExport extends DialogTableData {
 
 			tableData = new Object[rowLen][colsLen];
 			tableModel = new DefaultTableModel();
-			//tableModel.setDataVector(data, emptyColumnNames);
 			tableModel.setDataVector(tableData, emptyColumnNames);
 
 			table.setModel(tableModel);
@@ -116,75 +120,69 @@ public class DialogTableExport extends DialogTableData {
 				}
 			}
 			);
-		}
-		catch (Exception e) {
-			log.error("", e);
-		}
-	}
-	
+			
+			/*
+			table.getTableHeader().getColumnModel().addColumnModelListener(new TableColumnModelListener() {
 
-	
-	
-	
-	
-	public Object [][] retrieveValuesFromTable() {
-
-		Object [][] output = null;
-		
-		try {
-			
-			TableModel tableModel = table.getModel();
-			TableColumnModel columnModel = table.getColumnModel();
-			int columnCount = table.getModel().getColumnCount();
-
-			TableColumn tmpColumn;
-			FieldModel fieldModel;
-			
-			// Finding columns with values
-			
-			ArrayList<Integer> columns = new ArrayList<Integer>();
-			
-			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-				tmpColumn = columnModel.getColumn(columnIndex);
+				public void columnAdded(TableColumnModelEvent arg0) {}
+				public void columnMarginChanged(ChangeEvent arg0) {}
+				public void columnRemoved(TableColumnModelEvent arg0) {}
+				public void columnSelectionChanged(ListSelectionEvent arg0) {}
 				
-				Object o = tmpColumn.getHeaderValue();
-				
-				if (o instanceof String) {
-					continue;
-				}
-					
-				fieldModel = (FieldModel) o;
-	
-				// column has been assigned an info field 
-				if (!fieldModel.toString().trim().equals("")) {
-					columns.add(new Integer(columnIndex));
-					
-					if (fieldModel.toString().trim().equals("Title")) {
-						titleColumnIndex = columnIndex;
+				public void columnMoved(TableColumnModelEvent arg0) {
+
+					if (arg0.getFromIndex() != arg0.getToIndex()) {
+						
+						//table.getTableHeader().getColumnModel().moveColumn(arg0.getFromIndex(), arg0.getToIndex());
+						
+						switchColumnData(arg0.getFromIndex(), arg0.getToIndex());
+						printTable();
+						tableHeader.repaint();
 					}
 				}
-			}
-			
-			output = new String[tableModel.getRowCount()][columns.size()];
-			
-			for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
-				
-				for (int row = 0; row < tableModel.getRowCount(); row++) {
-					int colIndex = columns.get(columnIndex).intValue();
-					output[row][columnIndex] = (String) table.getModel().getValueAt(row, colIndex);
-				
-					if (colIndex == titleColumnIndex)
-						titleColumnIndex = columnIndex;
-				}
-			}
+			});
+			*/
 		}
 		catch (Exception e) {
 			log.error("", e);
-		}	
-		
-		return output;
+		}
 	}
 	
+	/*
+	void printTable() {
+		String [] titles = getHeaderTitles();
+		String [][] tData = retrieveValuesFromTable();
+		
+		for (int i = 0; i < titles.length; i++) {
+			System.err.print(titles[i] + "  ");
+		}
+		
+		System.err.println();
+		
+		for (int i = 0; i < tData[0].length; i++) {
+			System.err.print(tData[0][i] + "  ");
+		}
+	}
+	
+	
+	public void switchColumnData(int index1, int index2) {
+		
+		System.err.println("switch column data:" + index1 + " and " + index2);
+		
+		if (index1 != -1 && index2 != -1) {
+			// Removes data in old column
+			for (int i = 0; i < databaseData.length; i++) {
+				Object tmp1 = tableModel.getValueAt(i, index1);
+				Object tmp2 = tableModel.getValueAt(i, index2);
+				System.err.println("tmp1:" + tmp1);	
+				System.err.println("tmp2:" + tmp2);	
+				
+				tableModel.setValueAt(tmp2, i, index1);
+				tableModel.setValueAt(tmp1, i, index2);
+			}
+		}
+	}
+	*/
 	
 	public void updateColumnData(int oldModelIndex, int currentColumn, int initialColumnindex) {
 		
