@@ -24,10 +24,12 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSeries;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.PropertyConfigurator;
@@ -46,17 +48,9 @@ public class IMDBTest  {
 			return;
 		
 		setup =  true;
-		
-		File log4jConfigFile = FileUtil.getFile("config/log4j.properties"); //$NON-NLS-1$
-
-		System.err.println("log4jConfigFile:" + log4jConfigFile.isFile());
-		
-		if (log4jConfigFile.isFile()) {
-			PropertyConfigurator.configure(log4jConfigFile.getAbsolutePath());
-		} else {
-			BasicConfigurator.configure();
-		}
-		
+	
+		BasicConfigurator.configure();
+				
 		try {
     		/* Disable HTTPClient logging output */
     		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -85,6 +79,8 @@ public class IMDBTest  {
 			matches = imdb.getSimpleMatches(input);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
 		}
 		assertTrue("The number of results does not match the expected for input " + input, matches.size() ==  20);
 
@@ -94,7 +90,8 @@ public class IMDBTest  {
 		try {
 			matches = imdb.getSimpleMatches(input);
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
 		assertTrue("The number of results does not match the expected for input " + input, matches.size() ==  20);
@@ -147,12 +144,16 @@ public class IMDBTest  {
 		
 		testData.append(imdb.movieHitCategory[1]);
 		
+		// Troublesome because two movies with the same name was created than year (1998/I)
 		testData.append("<a href=\"/title/tt0120744/\">The Man in the Iron Mask</a> (1998/I)</td></tr>");
 		testData.append("<a href=\"/title/tt0103064/\">Terminator 2: Judgment Day</a> (1991)<br>&#160;aka <em>\"Terminator 2 - Le jugement dernier\"</em> - France<br>&#160;aka <em>\"T2 - Terminator 2: Judgment Day\"</em></td></tr>");
 	
 		testData.append(imdb.movieHitCategory[2]);
 		
+		// "Marley & Me" - troublesome because if &
 		testData.append("<a href=\"/title/tt0822832/\" onclick=\"(new Image()).src='/rg/find-title-1/title_popular/images/b.gif?link=/title/tt0822832/';\">Marley &#x26; Me</a> (2008)     </td></tr></table>");
+		
+		// "You Don't Mess with the Zohan" - troublesome because if '
 		testData.append("<a href=\"/title/tt0960144/\" onclick=\"(new Image()).src='/rg/find-title-1/title_popular/images/b.gif?link=/title/tt0960144/';\">You Don&#x27;t Mess with the Zohan</a> (2008)     </td></tr></table>");
 		
 		// Should NOT match because of (VG) which means Video Game
@@ -175,7 +176,6 @@ public class IMDBTest  {
 		try {
 			imdb = new IMDB();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return;
 		}
@@ -193,13 +193,13 @@ public class IMDBTest  {
 		String expectedCountry = "USA, France";
 		String expectedLanguage = "English, Spanish";
 		String expectedPlot = "Nearly 10 years have passed since Sarah Connor was targeted for termination by a cyborg from the future. Now her son, John, the future leader of the resistance, is the target for a newer, more deadly terminator. Once again, the resistance has managed to send a protector back to attempt to save John and his mother Sarah.";
-		String expectedCast = "Arnold Schwarzenegger (The Terminator), Linda Hamilton (Sarah Connor), Edward Furlong (John Connor), Robert Patrick (T-1000), Earl Boen (Dr. Silberman), Joe Morton (Miles Dyson), S. Epatha Merkerson (Tarissa Dyson), Castulo Guerra (Enrique Salceda), Danny Cooksey (Tim), Jenette Goldstein (Janelle Voight), Xander Berkeley (Todd Voight), Leslie Hamilton Gearren (Twin Sarah), Ken Gibbel (Douglas), Robert Winley (Cigar-Smoking Biker), Peter Schrum (Lloyd (as Pete Schrum)).";
+		String expectedCast = "Arnold Schwarzenegger (The Terminator), Linda Hamilton (Sarah Connor), Edward Furlong (John Connor), Robert Patrick (T-1000), Earl Boen (Dr. Silberman), Joe Morton (Miles Dyson), S. Epatha Merkerson (Tarissa Dyson), Castulo Guerra (Enrique Salceda), Danny Cooksey (Tim), Jenette Goldstein (Janelle Voight), Xander Berkeley (Todd Voight), Leslie Hamilton Gearren (Twin Sarah), Ken Gibbel (Douglas), Robert Winley (Cigar-Smoking Biker), Peter Schrum (Lloyd (as Pete Schrum))";
 		String expectedWebRuntime = "137 min, USA:152 min (special edition), USA:154 min (extended special edition)";
 		String expectedWebSoundMix = "70 mm 6-Track (analog 70 mm prints), CDS (digital 35 mm and 70 mm prints), Dolby SR (analog 35 mm prints)";
 		String expectedAwards = "Won 4 Oscars. Another 19 wins & 18 nominations";
 		String expectedMpaa = "Rated R for strong sci-fi action and violence, and for language.";
 		String expectedAka = 
-" El Exterminator 2 (USA: Spanish title)\n" +
+"El Exterminator 2 (USA: Spanish title)\n" +
 "T2 (USA) (promotional abbreviation)\n" +
 "T2 - Terminator 2: Judgment Day\n" +
 "T2: Extreme Edition (USA) (video box title)\n" +
@@ -251,7 +251,7 @@ public class IMDBTest  {
 		assertEquals(expectedColor, movie.getColour());		
 	}
 	
-	@Test
+	//@Test
 	public void dataRetrievalSeriesTest() throws Exception {
 		
 		IMDB imdb = null;
@@ -266,8 +266,10 @@ public class IMDBTest  {
 		// Buffy
 		StringBuffer data = imdb.getURLData("0118276");
 		
-		ModelIMDbEntry movie = imdb.grabInfo("0118276", data);
+		ModelIMDbEntry series = imdb.grabInfo("0118276", data);
 		
+		assertTrue("Not detected as a series!", series.isSeries());
+				
 		String expectedTitle = "\"Buffy the Vampire Slayer\"";
 		String expectedDate = "1997";
 		String expectedDirector = "";
@@ -276,13 +278,13 @@ public class IMDBTest  {
 		String expectedCountry = "USA";
 		String expectedLanguage = "English";
 		String expectedPlot = "At the young age of 16, Buffy was chosen to hunt vampires, demons, and the forces of darkness. After the ordeal at Hemery High Buffy Summers wound up at Sunnydale High. Joined with Willow Rosenberg and Alexander \"Xander\" Harris, and her watcher Giles, Buffy fights the challenges of High School and saves the world...a lot.";
-		String expectedCast = "";
+		String expectedCast = "Nicholas Brendon (Xander Harris (145 episodes, 1997-2003)), Alyson Hannigan (Willow Rosenberg (144 episodes, 1997-2003)), Anthony Head (Rupert Giles (123 episodes, 1997-2003)), James Marsters (Spike (97 episodes, 1997-2003)), Emma Caulfield (Anya (85 episodes, 1998-2003)), Michelle Trachtenberg (Dawn Summers (66 episodes, 2000-2003))";
 		String expectedWebRuntime = "44 min (144 episodes)";
 		String expectedWebSoundMix = "Dolby";
 		String expectedAwards = "Nominated for Golden Globe. Another 34 wins & 99 nominations";
 		String expectedMpaa = "";
 		String expectedAka = 
-" BtVS (USA) (promotional abbreviation)\n" +
+"BtVS (USA) (promotional abbreviation)\n" +
 "Buffy (USA) (short title)\n" +
 "Buffy, the Vampire Slayer: The Series (USA) (long title)\n" +
 "Buffy, la cazavampiros (Argentina) (Spain) (Venezuela) [es]\n" +
@@ -305,24 +307,110 @@ public class IMDBTest  {
 	
 		String expectedCertification = "UK:12 (some episodes), UK:15 (some episodes), Australia:PG (some episodes), Portugal:M/12, New Zealand:M, USA:TV-14, Australia:M, Israel:PG, Singapore:M18 (DVD rating) (season 7), Singapore:PG, USA:TV-14 (some episodes), USA:TV-PG (some episodes)";
 		String expectedColor = "Color";
+				
+		assertTrue(Double.parseDouble(series.getRating()) > 5);
 		
-		assertTrue(Double.parseDouble(movie.getRating()) > 5);
+		assertEquals(expectedTitle, series.getTitle());
+		assertEquals(expectedDate, series.getDate());
+		assertEquals(expectedDirector, series.getDirectedBy());
+		assertEquals(expectedWriter, series.getWrittenBy());
+		assertEquals(expectedGenre, series.getGenre());
+		assertEquals(expectedCountry, series.getCountry());
+		assertEquals(expectedLanguage, series.getLanguage());
+		assertEquals(expectedPlot, series.getPlot());
+		assertEquals(expectedCast, series.getCast());
+		assertEquals(expectedWebRuntime, series.getWebRuntime());
+		assertEquals(expectedWebSoundMix, series.getWebSoundMix());
+		assertEquals(expectedAwards, series.getAwards());
+		assertEquals(expectedMpaa, series.getMpaa());
+		assertEquals(expectedAka, series.getAka());
+		assertEquals(expectedCertification, series.getCertification());
+		assertEquals(expectedColor, series.getColour());		
 		
-		assertEquals(expectedTitle, movie.getTitle());
-		assertEquals(expectedDate, movie.getDate());
-		assertEquals(expectedDirector, movie.getDirectedBy());
-		assertEquals(expectedWriter, movie.getWrittenBy());
-		assertEquals(expectedGenre, movie.getGenre());
-		assertEquals(expectedCountry, movie.getCountry());
-		assertEquals(expectedLanguage, movie.getLanguage());
-		assertEquals(expectedPlot, movie.getPlot());
-		assertEquals(expectedCast, movie.getCast());
-		assertEquals(expectedWebRuntime, movie.getWebRuntime());
-		assertEquals(expectedWebSoundMix, movie.getWebSoundMix());
-		assertEquals(expectedAwards, movie.getAwards());
-		assertEquals(expectedMpaa, movie.getMpaa());
-		assertEquals(expectedAka, movie.getAka());
-		assertEquals(expectedCertification, movie.getCertification());
-		assertEquals(expectedColor, movie.getColour());		
+		
+	}
+	
+	
+	//@Test
+	public void dataRetrievalEpisodeTest() throws Exception {
+		
+		IMDB imdb = null;
+		try {
+			imdb = new IMDB();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+		
+		// Seinfeld - The Cadillac (Season 7, Episode 14)
+		StringBuffer data = imdb.getURLData("0697667");
+		
+		ModelIMDbEntry series = imdb.grabInfo("0697667", data);
+		
+		assertTrue("Not detected as an episode!", series.isEpisode());
+				
+		String expectedTitle = "The Cadillac";
+		String expectedDate = "1996";
+		String expectedDirector = "Andy Ackerman";
+		String expectedWriter = "Larry David, Jerry Seinfeld";
+		String expectedGenre = "Comedy";
+		String expectedCountry = "USA";
+		String expectedLanguage = "English";
+		String expectedPlot = "In this hour-long episode, Jerry performs the biggest show of his life in Atlantic City. He receives a rather generous pay check for the event, and decides to buy his father a Cadillac. Unfortunately, doing so puts Morty in the hot seat with the condo board of directors, where he serves as president. Morty is accused of stealing money from the board, and ultimately gets removed from his post as president and kicked out of the condo. Meanwhile, thanks to Elaine, George can score a date with \"My Cousin Vinnie\" star Marisa Tomei but Elaine objects because of George's engagement with Susan. Kramer turns the tables on the cable company when they want to disconnect his service.";
+		String expectedCast = "Jerry Seinfeld (Jerry Seinfeld (also archive footage)), Julia Louis-Dreyfus (Elaine Benes), Michael Richards (Cosmo Kramer), Jason Alexander (George Costanza), Marisa Tomei (Marisa Tomei (also archive footage)), Liz Sheridan (Helen Seinfeld), Barney Martin (Morty Seinfeld), Heidi Swedberg (Susan Biddle Ross), Walter Olkewicz (Nick Stevens - Cable Guy), Annabelle Gurwitch (Katy), Sandy Baron (Jack Klompus), Ann Morgan Guilbert (Evelyn (as Ann Guilbert)), Frances Bay (Mabel Choate (also archive footage)), Bill Macy (Herb), Jesse White (Ralph)";
+		String expectedWebRuntime = "60 min";
+		String expectedWebSoundMix = "Stereo";
+		String expectedAwards = "";
+		String expectedMpaa = "";
+		String expectedAka = "";
+		
+		String expectedCertification = "Canada:PG (video rating)";
+		String expectedColor = "Color";
+				
+		assertTrue(Double.parseDouble(series.getRating()) > 5);
+		
+		assertEquals(expectedTitle, series.getTitle());
+		assertEquals(expectedDate, series.getDate());
+		assertEquals(expectedDirector, series.getDirectedBy());
+		assertEquals(expectedWriter, series.getWrittenBy());
+		assertEquals(expectedGenre, series.getGenre());
+		assertEquals(expectedCountry, series.getCountry());
+		assertEquals(expectedLanguage, series.getLanguage());
+		assertEquals(expectedPlot, series.getPlot());
+		assertEquals(expectedCast, series.getCast());
+		assertEquals(expectedWebRuntime, series.getWebRuntime());
+		assertEquals(expectedWebSoundMix, series.getWebSoundMix());
+		assertEquals(expectedAwards, series.getAwards());
+		assertEquals(expectedMpaa, series.getMpaa());
+		assertEquals(expectedAka, series.getAka());
+		assertEquals(expectedCertification, series.getCertification());
+		assertEquals(expectedColor, series.getColour());		
+	}
+	
+	@Test
+	public void dataRetrievalMultipleDirectorsTest() throws Exception {
+		
+		IMDB imdb = null;
+		try {
+			imdb = new IMDB();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+		
+		// The Ladykillers
+		StringBuffer data = imdb.getURLData("0335245");
+		
+		ModelIMDbEntry series = imdb.grabInfo("0335245", data);
+						
+		String expectedTitle = "The Ladykillers";
+		String expectedDirector = "Ethan Coen, Joel Coen";
+		String expectedWriter = "Joel Coen, Ethan Coen";
+		
+		assertEquals(expectedTitle, series.getTitle());
+		assertEquals(expectedDirector, series.getDirectedBy());
+		assertEquals(expectedWriter, series.getWrittenBy());
 	}
 }
