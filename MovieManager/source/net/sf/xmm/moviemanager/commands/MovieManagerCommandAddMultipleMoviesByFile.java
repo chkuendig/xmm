@@ -35,6 +35,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogAddMultipleMovies;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogIMDB;
+import net.sf.xmm.moviemanager.gui.DialogIMDbMultiAdd;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
@@ -350,10 +351,10 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		/* Checks the movie title... */
 		log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
 		if (!searchString.equals("")) { //$NON-NLS-1$
-			DialogIMDB dialogIMDB = new DialogIMDB(imdbId, movieInfoModel.model, searchString, filename, movieInfoModel.getMultiAddFile(), multiAddSelectOption, addToThisList);
-			cancel = dialogIMDB.cancelSet;
-			cancelAll = dialogIMDB.cancelAllSet;
-			dropImdbInfo = dialogIMDB.dropImdbInfoSet;
+			DialogIMDbMultiAdd dialogIMDB = new DialogIMDbMultiAdd(imdbId, movieInfoModel.model, searchString, filename, movieInfoModel.getMultiAddFile(), multiAddSelectOption, addToThisList);
+			cancel = dialogIMDB.getCanceled();
+			cancelAll = dialogIMDB.getAborted();
+			dropImdbInfo = dialogIMDB.getDropIMDbInfo();
 
 		} else {
 			DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.alert"), Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
