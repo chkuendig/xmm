@@ -161,7 +161,7 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 		expandedNodes.put(node, node);
 	}
 		
-	protected JPopupMenu dir_popup, dir_popup_with_one_selected, root_device_directory_popup;
+	protected JPopupMenu dir_popup;
 	protected JPopupMenu file_popup;
 	protected Action dir_action;
 	protected Action file_action;
@@ -323,7 +323,7 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 		file_popup = new JPopupMenu();
 		file_popup.add(fileItem);
 				
-		// Popup
+		// Popup for directories
 		JPopupMenu popup;
 		popup = new JPopupMenu();
 		popup.add(folder);
@@ -746,8 +746,8 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 
 			if (SwingUtilities.isRightMouseButton(event)) {
 			
-				int x = event.getX();
-				int y = event.getY();
+				final int x = event.getX();
+				final int y = event.getY();
 
 				TreePath[] selectedPaths = fileTree.getSelectionPaths();
 				TreePath path = fileTree.getPathForLocation(x, y);
@@ -798,6 +798,9 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 
 						String txt = selectedPaths.length > 1 ? "Add files" : "Add file";
 
+						System.err.println("settext:" + txt);
+						System.err.println("x:" + x + " y:" + y);
+						
 						fileItem.setText(txt);
 						file_popup.show(fileTree, x, y);
 					}
@@ -837,7 +840,15 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 								modelTree.reload(node);
 							}
 						};
-						SwingUtilities.invokeLater(runnable);
+						try {
+							SwingUtilities.invokeAndWait(runnable);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					else {
 						fnode.updateNodesAndExpandedChildren(allowAnyExtension ? null : validExtensions);
