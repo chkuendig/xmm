@@ -309,8 +309,9 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuFile.add(menuExport);
 		
 		/* MenuItem Exit. */
-		menuItemExit = new JMenuItem(Localizer.getString("moviemanager.menu.file.exit"),'X'); //$NON-NLS-1$
-		menuItemExit.setActionCommand("Exit"); //$NON-NLS-1$
+		menuItemExit = new JMenuItem(Localizer.getString("moviemanager.menu.file.quit"),'Q'); //$NON-NLS-1$
+		menuItemExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		menuItemExit.setActionCommand("Quit"); //$NON-NLS-1$
 		menuItemExit.addActionListener(new MovieManagerCommandExit());
 
 		menuFile.addSeparator();
@@ -437,7 +438,6 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		this.menuItemAddMultipleMovies = menuItemAddMultipleMovies;
 	
 		JMenuItem menuItemUpdateIMDbInfo = new JMenuItem(Localizer.getString("moviemanager.menu.tools.updateIMDbInfo"),'U'); //$NON-NLS-1$
-		menuItemUpdateIMDbInfo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemUpdateIMDbInfo.setActionCommand("Update IMDb Info"); //$NON-NLS-1$
 		menuItemUpdateIMDbInfo.addActionListener(new MovieManagerCommandUpdateIMDBInfo());
 
@@ -552,6 +552,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		
 				/* Adds 'Show Unlisted' in the list */
 				showUnlisted = new JCheckBoxMenuItem("Show Unlisted"); //$NON-NLS-1$
+				showUnlisted.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 				showUnlisted.setActionCommand("Show Unlisted"); //$NON-NLS-1$
 				showUnlisted.setToolTipText("Right click to uniquely select");
 				showUnlisted.addActionListener(this);
