@@ -34,8 +34,8 @@ import java.util.ArrayList;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultListModel;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
@@ -184,14 +184,33 @@ public class GUIUtil {
 		return event.getButton() == MouseEvent.BUTTON1;
 	}
 	
-	public static void enableDisposeOnEscapeKey(JDialog dialog) {
+	public static void enableDisposeOnEscapeKey(KeyboardShortcutManager shortcutManager) {
+		enableDisposeOnEscapeKey(shortcutManager, null);
+	}
+	
+	public static void enableDisposeOnEscapeKey(final KeyboardShortcutManager shortcutManager, final Action escapeAction) {
+
+		KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		
+		Action defaultAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if (escapeAction != null) {
+					escapeAction.actionPerformed(e);
+				}
+				shortcutManager.getJDialog().dispose();
+			}
+		};
+		shortcutManager.registerKeyboardShortcut(key, "Escape", "Close window", defaultAction);
+	}
+	
+	
+	public static void enableDisposeOnEscapeKey(final JDialog dialog) {
 		enableDisposeOnEscapeKey(dialog, null);
 	}
 	
 	public static void enableDisposeOnEscapeKey(final JDialog dialog, final Action escapeAction) {
 
-		/* Enables dispose when pushing escape */
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+		KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		
 		Action defaultAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -201,10 +220,6 @@ public class GUIUtil {
 				dialog.dispose();
 			}
 		};
-		dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-		dialog.getRootPane().getActionMap().put("ESCAPE", defaultAction); //$NON-NLS-1$
-	}
-	
-	public static void registerKeyboardShortcut() {
+		KeyboardShortcutManager.registerKeyboardShortcut(key, "Escape", defaultAction, dialog.getRootPane());
 	}
 } 

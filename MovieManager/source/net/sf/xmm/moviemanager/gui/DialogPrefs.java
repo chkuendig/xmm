@@ -37,6 +37,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedInputStream;
@@ -90,6 +92,7 @@ import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
@@ -221,19 +224,15 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	private JTree exampleTree;
 	private MovieManagerConfig exampleConfig = new MovieManagerConfig(true);
 
-
+	KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
+	
+	
+	
 	public DialogPrefs() {
 		/* Dialog creation...*/
 		super(MovieManager.getDialog());
 
-		/* Close dialog... */
-		/*addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				dispose();
-			}
-		});*/
-
-		GUIUtil.enableDisposeOnEscapeKey(this);		
+		GUIUtil.enableDisposeOnEscapeKey(shortcutManager);
 		
 		setTitle(Localizer.getString("dialogprefs.title")); //$NON-NLS-1$
 		setModal(true);
@@ -244,7 +243,13 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		layoutPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("dialogprefs.panel.look-and-feel.title")), BorderFactory.createEmptyBorder(12,0,16,0))); //$NON-NLS-1$
 
-
+		// handle mouse scrolling
+		addMouseWheelListener(new MouseWheelListener() {
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				handleMouseScrolling(e);			
+			}
+		});
+		
 		/* Seen button icon */
 		JLabel seenIconLabel = new JLabel(Localizer.getString("dialogprefs.panel.look-and-feel.seen-unseen-icon")); //$NON-NLS-1$
 		regularSeenIcon = new JRadioButton(Localizer.getString("dialogprefs.panel.look-and-feel.seen-unseen-icon.regular")); //$NON-NLS-1$
@@ -1064,6 +1069,15 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		scroller.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+		scroller.setWheelScrollingEnabled(false);
+		
+		// handle mouse scrolling
+		scroller.addMouseWheelListener(new MouseWheelListener() {
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				handleMouseScrolling(e);			
+			}
+		});
+		
 		exampleTree.setRootVisible(false);
 		exampleTree.setShowsRootHandles(true);
 
@@ -1533,6 +1547,27 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		updateEnabling();
 	}
 
+	/**
+	 * Changes the current selected tab in the tabbed pane of the preferences dialog
+	 * @param e
+	 */
+	void handleMouseScrolling(MouseWheelEvent e) {
+
+		int notches = e.getWheelRotation();
+
+		int index = all.getSelectedIndex();
+		int count = all.getComponentCount();
+
+		// Find new index
+		if (notches < 0) {
+			index++;
+			index %= count;
+		} else {
+			index = (index == 0 ? count-1 : index-1);
+		}
+
+		all.setSelectedIndex(index);
+	}
 
 	void setBrowserComponentsEnabled() {
 

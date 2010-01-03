@@ -48,6 +48,8 @@ import javax.swing.KeyStroke;
 
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 
 import org.apache.log4j.Logger;
 
@@ -55,6 +57,8 @@ public class DialogInfo extends JDialog {
 
 	Logger log = Logger.getLogger(getClass());
 
+	KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
+	
 	public DialogInfo(Dialog parent, String title, String infoMsg) {
 		super(parent, true);
 		createHTMLDialog(parent, title, infoMsg);
@@ -105,34 +109,13 @@ public class DialogInfo extends JDialog {
 	}
 
 
-
-
-
-
 	void makeRest(Window parent, JComponent panelAlert) {
 		/* Dialog properties...*/
 
 		setModal(true);
 		setResizable(false);
 
-		/* Close dialog... */
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				dispose();
-			}
-		});
-
-		/* Enables dispose when pushing escape */
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				dispose();
-			}
-		};
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-		getRootPane().getActionMap().put("ESCAPE", escapeAction);
+		GUIUtil.enableDisposeOnEscapeKey(shortcutManager);
 
 		/* Buttons panel...*/
 		JPanel panelButtons = new JPanel();

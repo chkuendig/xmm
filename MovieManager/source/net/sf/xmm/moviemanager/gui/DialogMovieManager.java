@@ -36,12 +36,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -61,6 +64,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
@@ -96,6 +100,7 @@ import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerPlayHandler;
@@ -119,6 +124,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     public ExtendedToolBar toolBar;
             
     InternalConfig internalConfig = MovieManager.getConfig().getInternalConfig();
+    
+    public KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
     
     /*Number of entries in the list*/
     private int entries;
@@ -185,7 +192,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     JTextField languageTextField;
     JLabel languageLabel;
 
-    JTabbedPane movieInfo;
+    JTabbedPane tabbedMovieInfo;
     
 //  The movies that are currently displayed in the movie list
     ArrayList<ModelMovie> currentMovieList;
@@ -245,7 +252,36 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         dispose();
     }
     
-  
+    void setKeyKeyModifiers() {
+    	
+    	// ALT+N for search filter 
+		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK), "CTRL+s", 
+				"Give focus to the search filter", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				comboBoxFilter.requestFocusInWindow();
+			}
+		});
+		
+		// CTRL+T to choose vwitch view 
+		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_MASK), "CTRL+t", 
+				"Change the view", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				int index = getCurrentMainTabIndex();
+				index = (index == 0) ? 1 : 0;
+				setCurrentMainTabIndex(index);
+			}
+		});
+				
+		// ALT+N to focus notes area 
+		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_MASK), "ALT+n", 
+				"Give focus to notes area", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				notesTextArea.requestFocusInWindow();
+			}
+		});
+		
+		shortcutManager.setKeysToolTipComponent(toolBar);
+	}
     
     /**
      * Setup the main MovieManager object.
@@ -268,9 +304,11 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         setJMenuBar(createMenuBar());
         
-        getContentPane().add(createWorkingArea(),BorderLayout.CENTER);
+        getContentPane().add(createWorkingArea(), BorderLayout.CENTER);
         
         setResizable(true);
+        
+        setKeyKeyModifiers();
         
         /* Hides database related components. */
         menuBar.setDatabaseComponentsEnable(false);
@@ -674,12 +712,21 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
    
    // Below is GUI creation code 
    
+   public void setCurrentMainTabIndex(int index) {
+	   
+	   if (index != -1)
+		   tabbedMovieInfo.setSelectedIndex(index);
+	   
+	   config.setLastMovieInfoTabIndex(tabbedMovieInfo.getSelectedIndex());
+	   MovieManagerCommandSelect.execute();
+   }
+   
    public int getCurrentMainTabIndex() {
-	   return movieInfo.getSelectedIndex();
+	   return tabbedMovieInfo.getSelectedIndex();
    }
    
    public void setTabbedMovieInfoTitle(int i, String tabName) {
-	   movieInfo.setTitleAt(i, tabName);
+	   tabbedMovieInfo.setTitleAt(i, tabName);
    }
     
    
@@ -688,7 +735,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	ModelHTMLTemplate template = config.getHTMLTemplate();
     	
     	if (template == null) {
-    		movieInfo.setTitleAt(1, "No Templates available");
+    		tabbedMovieInfo.setTitleAt(1, "No Templates available");
     		return;
     	}
     
@@ -701,7 +748,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 			tabName = template.getName();
 		
 		// Setting the style name as title of tab bar.
-		movieInfo.setTitleAt(1, tabName);
+    	tabbedMovieInfo.setTitleAt(1, tabName);
     }
     
     
@@ -1085,22 +1132,21 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 
     protected JTabbedPane createMovieInfo() {
 
-    	movieInfo = new JTabbedPane();
-    	movieInfo.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
-    	movieInfo.add(config.sysSettings.getLookAndFeelTitle(), createStandardMovieInfo()); //$NON-NLS-1$
+    	tabbedMovieInfo = new JTabbedPane();
+    	tabbedMovieInfo.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
+    	tabbedMovieInfo.add(config.sysSettings.getLookAndFeelTitle(), createStandardMovieInfo()); //$NON-NLS-1$
 
     	if (!MovieManager.isApplet() && !config.getInternalConfig().getDisableHTMLView()) {
     		htmlPanel = new HtmlPanel();
-    		movieInfo.add(htmlPanel); //$NON-NLS-1$
+    		tabbedMovieInfo.add(htmlPanel); //$NON-NLS-1$
     		setTabbedMovieInfoTitle();
-    		movieInfo.setSelectedIndex(config.getLastMovieInfoTabIndex());
-    		final JTabbedPane finalMovieInfo = movieInfo;
+    		tabbedMovieInfo.setSelectedIndex(config.getLastMovieInfoTabIndex());
+    		final JTabbedPane finalMovieInfo = tabbedMovieInfo;
 
     		finalMovieInfo.addMouseListener(new MouseListener() {
 
-    			public	void mousePressed(MouseEvent e) {
-    				config.setLastMovieInfoTabIndex(finalMovieInfo.getSelectedIndex());
-    				MovieManagerCommandSelect.execute();
+    			public void mousePressed(MouseEvent e) {
+    				setCurrentMainTabIndex(-1);
     			}
 
     			public void mouseClicked(MouseEvent e) {}
@@ -1109,7 +1155,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     			public void mouseReleased(MouseEvent e) {}
     		});
     	}
-    	return movieInfo;
+    	return tabbedMovieInfo;
     }
 
 

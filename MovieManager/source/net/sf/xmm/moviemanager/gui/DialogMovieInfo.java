@@ -31,8 +31,10 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -46,6 +48,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -97,6 +100,7 @@ import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
@@ -120,6 +124,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	public List<PlainDocument> _fieldDocuments = new ArrayList<PlainDocument>();
 	public List<String> _fieldUnits = new ArrayList<String>();
 
+	KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
+	
 	public ModelMovieInfo movieInfoModel;
 
 	DialogMovieInfo dialogMovieInfo = this;
@@ -152,6 +158,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	private JPanel panelAdditionalInfo;
 	private JLabel additionalInfoUnit;
 	private JTextArea textAreaNotes;
+	
+	JPanel panelMovieInfo;
 	
 	/**
 	 * The Constructor - Add Movie.
@@ -231,7 +239,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			}
 		});
 		
-		GUIUtil.enableDisposeOnEscapeKey(this, new AbstractAction() {
+		GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				saveWindowSize();
 			}
@@ -245,7 +253,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		
 	private void setUpGUI() {
 	
-		JPanel panelMovieInfo = new JPanel();
+		panelMovieInfo = new JPanel();
 
 		panelMovieInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,7,0,7), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.getString("DialogMovieInfo.panel-movie-info.title."), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(panelMovieInfo.getFont().getName(),Font.BOLD, fontSize))), BorderFactory.createEmptyBorder(0,5,0,5))); //$NON-NLS-1$
 		
@@ -2336,45 +2344,38 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	void setKeyKeyModifiers() {
 	
 		// ALT+N for Notes field 
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt N"), "nAction");
-		getRootPane().getActionMap().put("nAction", new AbstractAction() {
+		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_MASK), "ALT+n", 
+				"Give focus to Notes text area", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
-				System.err.println("alt N");
 				textAreaNotes.requestFocusInWindow();
-				textAreaNotes.requestFocus();
 			}
 		});
-		
+
 		// ALT+I for additionalInfo combobox 
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt I"), "iAction");
-		getRootPane().getActionMap().put("iAction", new AbstractAction() {
+		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_MASK), "ALT+i", 
+				"Give focus to additional info dropdown", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
 				additionalInfoFields.requestFocusInWindow();
 			}
 		});
-		
+
+
 		// ALT+V for additionalInfo value field 
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt V"), "vAction");
-		getRootPane().getActionMap().put("vAction", new AbstractAction() {
+		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.ALT_MASK), "ALT+v", 
+				"Give focus to additional info value field", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
 				getAdditionalInfoValuePanel().getComponent(0).requestFocusInWindow();
 			}
 		});
-		
+
 		// ALT+T for title field 
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt V"), "vAction");
-		getRootPane().getActionMap().put("vAction", new AbstractAction() {
+		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_MASK), "ALT+t", 
+				"Give focus to the title field", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
 				movieTitle.requestFocusInWindow();
 			}
 		});
 		
-		// ALT+T for title field 
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("alt K"), "kAction");
-		getRootPane().getActionMap().put("kAction", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				movieTitle.requestFocusInWindow();
-			}
-		});
+		shortcutManager.setKeysToolTipComponent(panelMovieInfo);
 	}
 }

@@ -54,6 +54,7 @@ import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.util.BrowserOpener;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
@@ -68,6 +69,7 @@ public class DialogTVSeries extends JDialog {
     public JButton buttonSelect;
     public JButton buttonOk;
     
+    KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
     
     /**
      * The Constructor.
@@ -76,14 +78,7 @@ public class DialogTVSeries extends JDialog {
         /* Dialog creation...*/
         super(parent);
                 	
-        /* Close dialog... */
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        });
-        
-        GUIUtil.enableDisposeOnEscapeKey(this);
+        GUIUtil.enableDisposeOnEscapeKey(shortcutManager);
         
         createListDialog(null);
     }

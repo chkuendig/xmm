@@ -62,6 +62,8 @@ import net.sf.xmm.moviemanager.database.DatabaseHSQL;
 import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 import net.sf.xmm.moviemanager.models.ModelQuery;
 import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
@@ -71,6 +73,8 @@ public class DialogQueries extends JDialog {
 
 	Logger log = Logger.getLogger(getClass());
 
+	KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
+	
 	JPanel panelResult;
 
 	/**
@@ -81,27 +85,13 @@ public class DialogQueries extends JDialog {
 
 		/* Dialog creation...*/
 		super(MovieManager.getDialog());
-		/* Close dialog... */
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				dispose();
-			}
-		});
+		
 		/* Dialog properties...*/
 		setTitle(Localizer.getString("DialogQueries.title")); //$NON-NLS-1$
 		setModal(false);
 		setResizable(false);
 
-		/*Enables dispose when pushing escape*/
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		};
-
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-		getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
+		GUIUtil.enableDisposeOnEscapeKey(shortcutManager);
 
 		/* Execute panel...*/
 		JPanel panelExecute = new JPanel();

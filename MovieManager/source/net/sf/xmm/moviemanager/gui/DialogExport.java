@@ -56,6 +56,7 @@ import javax.swing.border.TitledBorder;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
@@ -90,7 +91,7 @@ public class DialogExport extends JDialog implements ActionListener {
     JTextField excelFilePath;
     JButton browseForEXCELFile;
     
- 
+    KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
     
     boolean cancelled = false;
         
@@ -106,23 +107,15 @@ public class DialogExport extends JDialog implements ActionListener {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
             	cancelled = true;
-                dispose();
             }
         });
-        
-        /*Enables dispose when pushing escape*/
-        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-        Action escapeAction = new AbstractAction() {
+       
+        GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
             	cancelled = true;
-                dispose();
             }
-        };
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-        getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
-        
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                
+        });
+                        
         setTitle(Localizer.getString("DialogExport.title")); //$NON-NLS-1$
         setResizable(false);
         setModal(true);

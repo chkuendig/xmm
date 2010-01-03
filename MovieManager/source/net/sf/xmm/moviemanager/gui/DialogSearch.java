@@ -63,6 +63,7 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandFilter;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
@@ -167,6 +168,8 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	ArrayList<String> extraInfoFields = null;
 	
 	JTabbedPane allTabbedPanes;
+	
+	KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
 
 	public DialogSearch() {
 		/* Dialog creation...*/
@@ -177,21 +180,15 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				dialogSearch = null;
-				dispose();
 			}
 		});
 
-		/* Enables dispose when pushing escape */
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction() {
+		GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				dialogSearch = null;
-				dispose();
 			}
-		};
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-		getRootPane().getActionMap().put("ESCAPE", escapeAction);
-
+		});
+		
 		setTitle(Localizer.getString("DialogSearch.title"));
 
 		setResizable(false);
@@ -493,44 +490,17 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 				JMenuItem insertDefaults;
 				
 				JPopupMenu popupMenu = new JPopupMenu();
-				popupMenu.add(insertDefaults = new JMenuItem("Insert default values"));
+				popupMenu.add(insertDefaults = new JMenuItem("Insert default aliases"));
 
 				insertDefaults.addActionListener(new ActionListener() {
-
 					public void actionPerformed(ActionEvent e) {
-												
-						int index = allTabbedPanes.getSelectedIndex();
-						HashMap<String, String> searchAlias = MovieManager.getConfig().getSearchAlias();
-						
-						String tmpKey;
-						
-						if (allTabbedPanes.getTitleAt(index).equals(Localizer.getString("DialogSearch.tab.alias.general-info.title"))) {
-
-							for (int i = 0; i < generalInfoFields.size(); i++) {
-							
-								tmpKey = "general info." + generalInfoFields.get(i).replaceAll("_", " ");
-								searchAlias.remove(tmpKey);
-								searchAlias.put(tmpKey, generalInfoFields.get(i).replaceAll("_", " "));
-							}
-							
-							run();
-						}
-						else if (allTabbedPanes.getTitleAt(index).equals(Localizer.getString("DialogSearch.tab.alias.additional-info.title"))) {
-
-							for (int i = 0; i < additionalInfoFields.size(); i++) {
-								
-								tmpKey = "additional info."+ additionalInfoFields.get(i).replaceAll("_", " ");
-								searchAlias.remove(tmpKey);
-								searchAlias.put(tmpKey, additionalInfoFields.get(i).replaceAll("_", " "));
-							}
-							run();
-						}						
+						insertDefaultAdditionalInfoAliases();
+						run();
 					}
 				});
 								
 				popupMenu.setLocation(event.getX(), event.getY());
 				popupMenu.show(allTabbedPanes, event.getX(), event.getY());
-				
 			}
 
 			public void mouseClicked(MouseEvent e) {}
@@ -565,6 +535,42 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 	}
 
 
+	void insertDefaultAdditionalInfoAliases() {
+		int index = allTabbedPanes.getSelectedIndex();
+		insertDefaultAdditionalInfoAliases(
+				allTabbedPanes.getTitleAt(index).equals(Localizer.getString("DialogSearch.tab.alias.general-info.title")),
+				allTabbedPanes.getTitleAt(index).equals(Localizer.getString("DialogSearch.tab.alias.additional-info.title")));
+	}
+	
+	void insertDefaultAdditionalInfoAliases(boolean general_info, boolean additional_info) {
+		int index = allTabbedPanes.getSelectedIndex();
+		HashMap<String, String> searchAlias = MovieManager.getConfig().getSearchAlias();
+		
+		String tmpKey;
+		
+		if (general_info) {
+
+			// Inserting default general info values
+			for (int i = 0; i < generalInfoFields.size(); i++) {
+			
+				tmpKey = "general info." + generalInfoFields.get(i).replaceAll("_", " ");
+				searchAlias.remove(tmpKey);
+				searchAlias.put(tmpKey, generalInfoFields.get(i).replaceAll("_", " "));
+			}			
+		}// Inserting default additional info values
+		
+		if (additional_info) {
+
+			for (int i = 0; i < additionalInfoFields.size(); i++) {
+				
+				tmpKey = "additional info."+ additionalInfoFields.get(i).replaceAll("_", " ");
+				searchAlias.remove(tmpKey);
+				searchAlias.put(tmpKey, additionalInfoFields.get(i).replaceAll("_", " "));
+			}
+		}	
+	}
+	
+	
 	public void loadSettings(boolean restoreDefault) {
 		
 		
@@ -652,11 +658,6 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 			rateList.setSelectedIndex((int)(MovieManager.getConfig().getRatingValue()-10)*-1);
 		}
 	
-		
-		
-		
-		
-		
 		int dateOption = MovieManager.getConfig().getDateOption();
 
 		/*Date is disabled but dateAbove button is selected*/
@@ -773,7 +774,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 
 	// Must be called from the EDT
 	private void setUpSearchAliasPanel() {
-		
+				
 		generalAliasPanel = new JPanel(new GridLayout(generalInfoFields.size()+1, 3));
 
 		JLabel tableName;
@@ -787,7 +788,15 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 		generalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.alias")));
 
 		HashMap<String, String> searchAlias = MovieManager.getConfig().getSearchAlias();
-
+		
+		System.err.println("searchAlias.size():" + searchAlias.size());
+		
+		// No aliases, fill in default values
+		if (searchAlias.size() == 0)
+			insertDefaultAdditionalInfoAliases(true, true);
+		
+		generalInfoFieldsCount = 0;
+		
 		for (int i = 0; i < generalInfoFields.size(); i++) {
 
 			tableName = new JLabel(tableNames.get(5));
@@ -810,7 +819,6 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 			generalInfoFieldsCount++;
 		}
 
-
 		additionalAliasPanel = new JPanel(new GridLayout(additionalInfoFields.size()+ extraInfoFields.size() +1, 3));
 
 		additionalAliasPanel.add(new JLabel(Localizer.getString("DialogSearch.alias.table-name")));   
@@ -819,7 +827,8 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 
 		String tmpColumn;
 		String table = (String) tableNames.get(0);
-
+		additionalInfoFieldsCount = 0;
+		
 		for (int i = 0;i < additionalInfoFields.size(); i++) {
 
 			tmpColumn = (String) additionalInfoFields.get(i);

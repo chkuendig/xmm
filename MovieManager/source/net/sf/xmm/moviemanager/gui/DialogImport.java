@@ -57,6 +57,7 @@ import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
 import org.apache.log4j.Logger;
@@ -103,6 +104,8 @@ public class DialogImport extends JDialog implements ActionListener {
 	boolean cancel = false;
 	public boolean cancelAll = false;
 
+	KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
+	
 	ModelImportExportSettings settings = new ModelImportExportSettings();
 
 	private ImdbImportOption multiAddSelectOption = ImdbImportOption.off; 
@@ -115,22 +118,14 @@ public class DialogImport extends JDialog implements ActionListener {
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				cancelAll = true;
-				dispose();
 			}
 		});
 
-		/*Enables dispose when pushing escape*/
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction()
-		{
+		GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction()	{
 			public void actionPerformed(ActionEvent e) {
 				cancelAll = true;
-				dispose();
 			}
-		};
-
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-		getRootPane().getActionMap().put("ESCAPE", escapeAction);
+		});
 
 		setTitle("Import Movies");
 		setModal(true);

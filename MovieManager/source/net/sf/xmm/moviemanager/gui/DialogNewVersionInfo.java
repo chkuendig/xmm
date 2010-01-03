@@ -45,85 +45,74 @@ import javax.swing.KeyStroke;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 
 public class DialogNewVersionInfo extends JDialog {
 
-	
+
 	String version;
 	String info;
-	
-    /**
-     * The Constructor.
-     **/
-    public DialogNewVersionInfo(String version, String info) {
-	/* Dialog creation...*/
-	super(MovieManager.getDialog());
-	/* Close dialog... */
-	addWindowListener(new WindowAdapter() {
-		public void windowClosing(WindowEvent e) {
-		    dispose();
-		}
-	    });
 
-	/*Enables dispose when pushing escape*/
-	KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-	Action escapeAction = new AbstractAction() {
-		public void actionPerformed(ActionEvent e) {
-			dispose();
-		}
-	};
-	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE");
-	getRootPane().getActionMap().put("ESCAPE", escapeAction);
+	KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
 
+	/**
+	 * The Constructor.
+	 **/
+	public DialogNewVersionInfo(String version, String info) {
+		/* Dialog creation...*/
+		super(MovieManager.getDialog());
 
-	/* Dialog properties...*/
-	setTitle("Version Info");
-	setModal(true);
-	setResizable(false);
-	
-	/* Info panel...*/
-	JPanel panelInfo = new JPanel();
-	panelInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Current Version "),
-							       BorderFactory.createEmptyBorder(5,5,5,5)));
-	JLabel labelInfo = new JLabel(" Current version: " + MovieManager.getConfig().sysSettings.getVersion(),
-				      new ImageIcon(FileUtil.getImage("/images/filmFolder.png").getScaledInstance(55,55,Image.SCALE_SMOOTH)),
-				      JLabel.CENTER);
-	labelInfo.setFont(new Font(labelInfo.getFont().getName(),Font.PLAIN,labelInfo.getFont().getSize()));
-	panelInfo.add(labelInfo);
-	
-	/* New version panel... */
-	JPanel newVersionPanel = new JPanel();
-	newVersionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," New Version "),
-								    BorderFactory.createEmptyBorder(5,5,5,5)));
-	JLabel newVersionLabel = new JLabel(info, JLabel.CENTER);
-	
-	newVersionLabel.setFont(new Font(newVersionLabel.getFont().getName(),Font.PLAIN,newVersionLabel.getFont().getSize()));
-	newVersionPanel.add(newVersionLabel);
-	
-	/* All stuff together... */
-	JPanel all = new JPanel();
-	all.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
-	all.setLayout(new BoxLayout(all,BoxLayout.Y_AXIS));
-	all.add(panelInfo);
-	all.add(newVersionPanel);
-	
-	/* Buttons panel...*/
-	JPanel panelButtons = new JPanel();
-	panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-	panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
-	JButton buttonOk = new JButton("OK");
-	buttonOk.setToolTipText("Close the About dialog");
-	buttonOk.setActionCommand("About - OK");
-	buttonOk.addActionListener(new CommandDialogDispose(this));
-	panelButtons.add(buttonOk);
-	
-	/* Adds all and buttonsPanel... */
-	getContentPane().add(all,BorderLayout.NORTH);
-	getContentPane().add(panelButtons,BorderLayout.SOUTH);
-	/* Packs and sets location... */
-	pack();
-	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
-		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
-    }
+		GUIUtil.enableDisposeOnEscapeKey(shortcutManager);
+
+		/* Dialog properties...*/
+		setTitle("Version Info");
+		setModal(true);
+		setResizable(false);
+
+		/* Info panel...*/
+		JPanel panelInfo = new JPanel();
+		panelInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Current Version "),
+				BorderFactory.createEmptyBorder(5,5,5,5)));
+		JLabel labelInfo = new JLabel(" Current version: " + MovieManager.getConfig().sysSettings.getVersion(),
+				new ImageIcon(FileUtil.getImage("/images/filmFolder.png").getScaledInstance(55,55,Image.SCALE_SMOOTH)),
+				JLabel.CENTER);
+		labelInfo.setFont(new Font(labelInfo.getFont().getName(),Font.PLAIN,labelInfo.getFont().getSize()));
+		panelInfo.add(labelInfo);
+
+		/* New version panel... */
+		JPanel newVersionPanel = new JPanel();
+		newVersionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," New Version "),
+				BorderFactory.createEmptyBorder(5,5,5,5)));
+		JLabel newVersionLabel = new JLabel(info, JLabel.CENTER);
+
+		newVersionLabel.setFont(new Font(newVersionLabel.getFont().getName(),Font.PLAIN,newVersionLabel.getFont().getSize()));
+		newVersionPanel.add(newVersionLabel);
+
+		/* All stuff together... */
+		JPanel all = new JPanel();
+		all.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
+		all.setLayout(new BoxLayout(all,BoxLayout.Y_AXIS));
+		all.add(panelInfo);
+		all.add(newVersionPanel);
+
+		/* Buttons panel...*/
+		JPanel panelButtons = new JPanel();
+		panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		JButton buttonOk = new JButton("OK");
+		buttonOk.setToolTipText("Close the About dialog");
+		buttonOk.setActionCommand("About - OK");
+		buttonOk.addActionListener(new CommandDialogDispose(this));
+		panelButtons.add(buttonOk);
+
+		/* Adds all and buttonsPanel... */
+		getContentPane().add(all,BorderLayout.NORTH);
+		getContentPane().add(panelButtons,BorderLayout.SOUTH);
+		/* Packs and sets location... */
+		pack();
+		setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
+				(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
+	}
 
 }

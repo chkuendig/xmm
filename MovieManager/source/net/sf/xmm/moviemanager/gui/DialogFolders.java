@@ -61,6 +61,7 @@ import net.sf.xmm.moviemanager.database.DatabaseAccess;
 import net.sf.xmm.moviemanager.database.DatabaseHSQL;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
@@ -92,6 +93,8 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     private JTextField textFieldDatabase;
     private JTextField textFieldConfigLocation;
     
+    KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
+    
     private Color invalidPathColor = new Color(233, 180, 180);
     
     /**
@@ -100,24 +103,8 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     public DialogFolders() {
         /* Dialog creation...*/
         super(MovieManager.getDialog());
-        /* Close dialog... */
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        });
         
-        /*Enables dispose when pushing escape*/
-        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-        Action escapeAction = new AbstractAction()
-        {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        };
-        
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-        getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
+        GUIUtil.enableDisposeOnEscapeKey(shortcutManager);
         
         /* Dialog properties...*/
         setTitle(Localizer.getString("DialogFolders.title")); //$NON-NLS-1$

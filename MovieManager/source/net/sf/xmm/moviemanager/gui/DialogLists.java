@@ -55,6 +55,8 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
+import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
@@ -71,6 +73,8 @@ public class DialogLists extends JDialog {
 
 	private JList listExistingFields;
 
+	KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
+	
 	public DialogLists(Dialog parent) {
 		super(parent, true);
 		construct();
@@ -85,31 +89,17 @@ public class DialogLists extends JDialog {
 	 * The Constructor.
 	 **/
 	 public void construct() {
-		/* Close dialog... */
-		 addWindowListener(new WindowAdapter() {
-			 public void windowClosing(WindowEvent e) {
-				 dispose();
-			 }
-		 });
-
-		 /*Enables dispose when pushing escape*/
-		 KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		 Action escapeAction = new AbstractAction()
-		 {
-			 public void actionPerformed(ActionEvent e) {
-				 dispose();
-			 }
-		 };
-
-		 getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-		 getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
-
+		 
 		 /* Dialog properties...*/
 		 setTitle(Localizer.getString("DialogLists.title")); //$NON-NLS-1$
 		 setModal(true);
 		 setResizable(false);
+		 
+		 GUIUtil.enableDisposeOnEscapeKey(shortcutManager);
+		 
 		 /* Initializes the original List... */
 		 _originalList = MovieManager.getIt().getDatabase().getListsColumnNames();
+		 
 		 /* Creates the list model... */
 		 DefaultListModel list = new DefaultListModel();
 		 for(int i=0; i<_originalList.size(); i++) {
