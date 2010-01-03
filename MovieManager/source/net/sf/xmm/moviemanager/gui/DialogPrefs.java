@@ -243,13 +243,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		layoutPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("dialogprefs.panel.look-and-feel.title")), BorderFactory.createEmptyBorder(12,0,16,0))); //$NON-NLS-1$
 
-		// handle mouse scrolling
-		addMouseWheelListener(new MouseWheelListener() {
-			public void mouseWheelMoved(MouseWheelEvent e) {
-				handleMouseScrolling(e);			
-			}
-		});
-		
 		/* Seen button icon */
 		JLabel seenIconLabel = new JLabel(Localizer.getString("dialogprefs.panel.look-and-feel.seen-unseen-icon")); //$NON-NLS-1$
 		regularSeenIcon = new JRadioButton(Localizer.getString("dialogprefs.panel.look-and-feel.seen-unseen-icon.regular")); //$NON-NLS-1$
@@ -1490,7 +1483,13 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		all = new JTabbedPane();
 		all.setBorder(BorderFactory.createEmptyBorder(8,8,5,8));
-								
+			
+		// handle mouse scrolling to change tab
+		all.addMouseWheelListener(new MouseWheelListener() {
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				handleMouseScrolling(e);			
+			}
+		});
 									
 		if (!disabledFeatures.isPreferencesLookAndFeelDisabled())
 			all.add(Localizer.getString("dialogprefs.tab"), layoutPanel); //$NON-NLS-1$
@@ -1552,7 +1551,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	 * @param e
 	 */
 	void handleMouseScrolling(MouseWheelEvent e) {
-
+			
 		int notches = e.getWheelRotation();
 
 		int index = all.getSelectedIndex();
