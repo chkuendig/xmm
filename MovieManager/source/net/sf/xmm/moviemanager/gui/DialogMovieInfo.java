@@ -159,6 +159,13 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	private JLabel additionalInfoUnit;
 	private JTextArea textAreaNotes;
 	
+	private JButton buttonSaveAndClose;
+	JButton buttonSave;
+	JButton buttonGetDVDInfo;
+	JButton buttonGetFileInfo;
+	JButton buttonGetIMDBInfo;
+	JButton buttonCancel;
+	
 	JPanel panelMovieInfo;
 	
 	/**
@@ -239,16 +246,17 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			}
 		});
 		
+		fontSize = MovieManager.getIt().getFontSize();
+		
+		setUpGUI();
+		
+		setKeyKeyModifiers();
+		
 		GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				saveWindowSize();
 			}
 		});
-				
-		fontSize = MovieManager.getIt().getFontSize();
-		
-		setUpGUI();
-		setKeyKeyModifiers();
 	}
 		
 	private void setUpGUI() {
@@ -942,17 +950,11 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelButtons.setBorder(BorderFactory.createEmptyBorder(15, 5, 5, 5));
 		panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-		JButton buttonSaveAndClose = new JButton("Save & Close");
-
-		int insetsMargin = 8;
-		Insets insets = buttonSaveAndClose.getMargin();
-		
-		//buttonSaveAndClose.setMargin(new Insets(insets.top, insets.left
-		//	- insetsMargin, insets.bottom, insets.right - insetsMargin));
+		buttonSaveAndClose = new JButton("Save & Close");
 
 		buttonSaveAndClose.setToolTipText("Save and Close the window"); //$NON-NLS-1$
 		buttonSaveAndClose.setActionCommand("MovieInfo - Save and Close"); //$NON-NLS-1$
-		buttonSaveAndClose.setMnemonic(KeyEvent.VK_S);
+		//buttonSaveAndClose.setMnemonic(KeyEvent.VK_S);
 		buttonSaveAndClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
@@ -962,12 +964,12 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelButtons.add(buttonSaveAndClose);
 
 		
-		JButton buttonSave = new JButton(Localizer.getString("DialogMovieInfo.button-save.text.save")); //$NON-NLS-1$
+		buttonSave = new JButton(Localizer.getString("DialogMovieInfo.button-save.text.save")); //$NON-NLS-1$
 		// Disabled if edit
 		buttonSave.setEnabled(!movieInfoModel.isEditMode());
 		buttonSave.setToolTipText(Localizer.getString("DialogMovieInfo.button-save.tooltip")); //$NON-NLS-1$
 		buttonSave.setActionCommand("MovieInfo - Save"); //$NON-NLS-1$
-		buttonSave.setMnemonic(KeyEvent.VK_A);
+		//buttonSave.setMnemonic(KeyEvent.VK_A);
 		buttonSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				log.debug("actionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
@@ -979,8 +981,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		});
 		panelButtons.add(buttonSave);
 
-		JButton buttonGetDVDInfo = new JButton(Localizer.getString("DialogMovieInfo.button-get-DVD-info.text")); //$NON-NLS-1$
-		buttonGetDVDInfo.setMnemonic(KeyEvent.VK_D);
+		buttonGetDVDInfo = new JButton(Localizer.getString("DialogMovieInfo.button-get-DVD-info.text")); //$NON-NLS-1$
+		//buttonGetDVDInfo.setMnemonic(KeyEvent.VK_D);
 		buttonGetDVDInfo.setToolTipText(Localizer.getString("DialogMovieInfo.button-get-DVD-info.tooltip")); //$NON-NLS-1$
 		buttonGetDVDInfo.setActionCommand("MovieInfo - GetDVDInfo"); //$NON-NLS-1$
 		buttonGetDVDInfo.addActionListener(new ActionListener() {
@@ -990,15 +992,10 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			}
 		});
 
-		/* Reduces the width of the button (less empty space between borders adn text) to avoid the window getting to wide */
-		if (!SysUtil.isMac()) {
-			insets = buttonGetDVDInfo.getMargin();
-			buttonGetDVDInfo.setMargin(new Insets(insets.top, insets.left - insetsMargin, insets.bottom, insets.right - insetsMargin));
-		}
 		panelButtons.add(buttonGetDVDInfo);
 
-		JButton buttonGetFileInfo = new JButton(Localizer.getString("DialogMovieInfo.button-get-file-info.text")); //$NON-NLS-1$
-		buttonGetFileInfo.setMnemonic(KeyEvent.VK_F);
+		buttonGetFileInfo = new JButton(Localizer.getString("DialogMovieInfo.button-get-file-info.text")); //$NON-NLS-1$
+		//buttonGetFileInfo.setMnemonic(KeyEvent.VK_F);
 		buttonGetFileInfo.setToolTipText(Localizer.getString("DialogMovieInfo.button-get-file-info.tooltip")); //$NON-NLS-1$
 		buttonGetFileInfo.setActionCommand("MovieInfo - GetFileInfo"); //$NON-NLS-1$
 		buttonGetFileInfo.addActionListener(new ActionListener() {
@@ -1017,22 +1014,16 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				}
 			});
 
-		/* Reduces the width of the button (less empty space between borders adn text) to avoid the window getting to wide */
-		if (!SysUtil.isMac()) {
-			insets = buttonGetFileInfo.getMargin();
-			buttonGetFileInfo.setMargin(new Insets(insets.top, insets.left - insetsMargin, insets.bottom, insets.right - insetsMargin));
-		}	
-		
+
 		panelButtons.add(buttonGetFileInfo);
 
-		JButton buttonGetIMDBInfo;
-
+		
 		if (movieInfoModel.isEpisode)
 			buttonGetIMDBInfo = new JButton(Localizer.getString("DialogMovieInfo.button-get-web-info.text.get-episode-info")); //$NON-NLS-1$
 		else
 			buttonGetIMDBInfo = new JButton(Localizer.getString("DialogMovieInfo.button-get-web-info.text.get-imdb-info")); //$NON-NLS-1$
 
-		buttonGetIMDBInfo.setMnemonic(KeyEvent.VK_M);
+		//buttonGetIMDBInfo.setMnemonic(KeyEvent.VK_M);
 		buttonGetIMDBInfo.setToolTipText(Localizer.getString("DialogMovieInfo.button-get-web-info.tooltip.get-imdb-info")); //$NON-NLS-1$
 		buttonGetIMDBInfo.setActionCommand("MovieInfo - GetIMDBInfo"); //$NON-NLS-1$
 		buttonGetIMDBInfo.addActionListener(new ActionListener() {
@@ -1051,17 +1042,11 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				}
 			}
 		});
-
-		/* Reduces the width of the button (less empty space between borders and text) to avoid the window getting to wide */
-		if (!SysUtil.isMac()) {
-			insets = buttonGetIMDBInfo.getMargin();
-			buttonGetIMDBInfo.setMargin(new Insets(insets.top, insets.left - insetsMargin, insets.bottom, insets.right - insetsMargin));
-		}
 		
 		panelButtons.add(buttonGetIMDBInfo);
 
-		JButton buttonCancel = new JButton(Localizer.getString("DialogMovieInfo.button-cancel.text")); //$NON-NLS-1$
-		buttonCancel.setMnemonic(KeyEvent.VK_C);
+		buttonCancel = new JButton(Localizer.getString("DialogMovieInfo.button-cancel.text")); //$NON-NLS-1$
+		//buttonCancel.setMnemonic(KeyEvent.VK_C);
 		buttonCancel.setToolTipText(Localizer.getString("DialogMovieInfo.button-cancel.tooltip")); //$NON-NLS-1$
 		buttonCancel.setActionCommand("MovieInfo - Cancel"); //$NON-NLS-1$
 		//buttonCancel.addActionListener(new CommandDialogDispose(this));
@@ -1072,16 +1057,32 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			}
 		});
 		
-		/* Reduces the width of the button (less empty space between borders adn text) to avoid the window getting to wide */
-		if (!SysUtil.isMac()) {
-			insets = buttonCancel.getMargin();
-			buttonCancel.setMargin(new Insets(insets.top, insets.left - insetsMargin, insets.bottom, insets.right - insetsMargin));
-		}
-		
-		
-		
 		panelButtons.add(buttonCancel);
 
+		/* Reduces the width of the buttons (less empty space between borders and text) to avoid the window getting to wide */
+		if (SysUtil.isMac()) {
+			int sideMargin = 6;
+			
+			buttonSaveAndClose.setMargin(new java.awt.Insets(buttonSaveAndClose.getMargin().top, 
+					sideMargin, buttonSaveAndClose.getMargin().bottom, sideMargin));
+						
+			buttonSave.setMargin(new java.awt.Insets(buttonSave.getMargin().top, 
+					sideMargin, buttonSave.getMargin().bottom, sideMargin));
+									
+			buttonGetDVDInfo.setMargin(new java.awt.Insets(buttonGetDVDInfo.getMargin().top, 
+					sideMargin, buttonGetDVDInfo.getMargin().bottom, sideMargin));
+			
+			buttonGetFileInfo.setMargin(new java.awt.Insets(buttonGetFileInfo.getMargin().top, 
+					sideMargin, buttonGetFileInfo.getMargin().bottom, sideMargin));
+			
+			buttonGetIMDBInfo.setMargin(new java.awt.Insets(buttonGetIMDBInfo.getMargin().top, 
+					sideMargin, buttonGetIMDBInfo.getMargin().bottom, sideMargin));
+			
+			buttonCancel.setMargin(new java.awt.Insets(buttonCancel.getMargin().top, 
+					sideMargin, buttonCancel.getMargin().bottom, sideMargin));
+			}
+		
+		
 		JScrollPane movieInfoScroll = new JScrollPane(panelMovieInfo);
 		movieInfoScroll.setBorder(null);
 		//JScrollPane movieInfoScroll = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -1095,11 +1096,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		all.add(panelButtons, BorderLayout.SOUTH);
 		
 		
-		
 		/* Adds all and buttonsPanel... */
-		//getContentPane().add(panelMovieInfo, BorderLayout.NORTH);
-		//getContentPane().add(movieInfoScroll, BorderLayout.NORTH);
-		//getContentPane().add(panelButtons, BorderLayout.CENTER);
 		getContentPane().add(all);
 		
 		additionalInfoFields.setPreferredSize(new Dimension((int) additionalInfoFields.getPreferredSize().getWidth() + 60, (int) additionalInfoFields.getPreferredSize().getHeight() + 15));
@@ -1188,29 +1185,17 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		
 		panelAdditionalInfo.addMouseListener(new MouseListener() {
 			
-			public void mouseReleased(MouseEvent e) {}
-
-			@Override
 			public void mousePressed(MouseEvent event) {
-
 				if (GUIUtil.isRightMouseButton(event)) {
-
-					//popupMenu.setInvoker(panelAdditionalInfo);
 					popupMenu.show(panelAdditionalInfo, event.getX(), event.getY());
 				}
 			}
 			
-			@Override
 			public void mouseExited(MouseEvent e) {}
-			
-			@Override
 			public void mouseEntered(MouseEvent e) {}
-			
-			@Override
 			public void mouseClicked(MouseEvent e) {}
+			public void mouseReleased(MouseEvent e) {}
 		});
-		
-		
 	}
 	
 	
@@ -2341,10 +2326,68 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		getSeen().setSelected(movieInfoModel.model.getSeen());
 	}
 	
+	
 	void setKeyKeyModifiers() {
 	
+		// ALT+S for Save and close
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+				"Save & Close", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				System.err.println("Save and close shortcut");
+				buttonSaveAndClose.doClick();
+			}
+		});
+		
+		// ALT+A for Save and Clear
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), 
+				"Save & Clear", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				buttonSave.doClick();
+			}
+		});
+		
+		// ALT+D for DVD Info
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+				"Get DVD Info", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				buttonGetDVDInfo.doClick();
+			}
+		});
+		
+		// ALT+F for File info
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+				"Get File Info", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				buttonGetFileInfo.doClick();
+			}
+		});
+		
+		// ALT+M for IMDb info
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+				"Get IMDb Info", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				System.err.println("IMDB");
+				buttonGetIMDBInfo.doClick();
+			}
+		});
+		
+		// ALT+C for Cancel
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+				"Cancel", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				buttonCancel.doClick();
+			}
+		});
+		
 		// ALT+N for Notes field 
-		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_MASK), "ALT+n", 
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
 				"Give focus to Notes text area", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
 				textAreaNotes.requestFocusInWindow();
@@ -2352,7 +2395,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		});
 
 		// ALT+I for additionalInfo combobox 
-		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.ALT_MASK), "ALT+i", 
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_I, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
 				"Give focus to additional info dropdown", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
 				additionalInfoFields.requestFocusInWindow();
@@ -2361,7 +2405,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 
 		// ALT+V for additionalInfo value field 
-		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.ALT_MASK), "ALT+v", 
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
 				"Give focus to additional info value field", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
 				getAdditionalInfoValuePanel().getComponent(0).requestFocusInWindow();
@@ -2369,13 +2414,14 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		});
 
 		// ALT+T for title field 
-		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_MASK), "ALT+t", 
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
 				"Give focus to the title field", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
 				movieTitle.requestFocusInWindow();
 			}
 		});
-		
+						
 		shortcutManager.setKeysToolTipComponent(panelMovieInfo);
 	}
 }
