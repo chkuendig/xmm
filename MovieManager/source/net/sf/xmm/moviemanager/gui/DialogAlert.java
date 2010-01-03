@@ -31,6 +31,7 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -229,6 +230,7 @@ public class DialogAlert extends JDialog {
 		JButton buttonOk = new JButton("OK");
 		buttonOk.setActionCommand("Alert - OK");
 		buttonOk.addActionListener(new CommandDialogDispose(this));
+				
 		panelButtons.add(buttonOk);
 		
 		/* Adds all and buttonsPanel... */    
@@ -248,6 +250,8 @@ public class DialogAlert extends JDialog {
 				setLocation((int)(dim.getWidth()-getWidth())/2, (int)(dim.getHeight()-getHeight())/2);
 			}
 		}
+		buttonOk.requestFocusInWindow();
+		
 	}
 }
 
