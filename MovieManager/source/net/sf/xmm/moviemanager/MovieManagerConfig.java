@@ -2877,7 +2877,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 // GUI/L&F settings
 		 appendToConfig("lookAndFeel:", getCustomLookAndFeel(), settings);
 		 appendToConfig("skinlfTheme:", getSkinlfThemePack(), settings);
-		 appendToConfig("getSkinlfThemePack:", getLookAndFeelType().toString(), settings);
+		 appendToConfig("lookAndFeelType:", getLookAndFeelType().toString(), settings);
 		 appendToConfig("regularToolButtonsUsed:", isRegularToolButtonsUsed(), settings);
 		 appendToConfig("useRegularSeenIcon:", getUseRegularSeenIcon(), settings);
 		 appendToConfig("getUseRegularSeenIcon:", getDefaultLookAndFeelDecorated(), settings);
