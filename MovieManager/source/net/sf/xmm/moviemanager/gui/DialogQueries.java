@@ -61,9 +61,9 @@ import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.database.DatabaseHSQL;
 import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 import net.sf.xmm.moviemanager.models.ModelQuery;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
-import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;

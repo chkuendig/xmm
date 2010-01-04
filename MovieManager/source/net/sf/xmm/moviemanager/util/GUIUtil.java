@@ -39,6 +39,8 @@ import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
+
 import org.apache.log4j.Logger;
 
 public class GUIUtil {

@@ -55,8 +55,8 @@ import javax.swing.border.TitledBorder;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.GUIUtil;
-import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;

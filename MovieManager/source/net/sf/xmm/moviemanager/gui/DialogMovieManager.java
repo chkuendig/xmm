@@ -98,13 +98,13 @@ import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeNode;
 import net.sf.xmm.moviemanager.swing.extentions.JComboCheckBox;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
+import net.sf.xmm.moviemanager.swing.util.FileDrop;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
-import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerPlayHandler;
-import net.sf.xmm.moviemanager.util.FileDrop;
 
 import org.apache.log4j.Logger;
 import org.dotuseful.ui.tree.AutomatedTreeModel;
@@ -1752,7 +1752,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         additionalInfoScrollPane = new JScrollPane(additionalInfoTextArea);
         additionalInfoScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
-        new net.sf.xmm.moviemanager.util.FileDrop(additionalInfoTextArea, new net.sf.xmm.moviemanager.util.FileDrop.Listener() {   
+        new net.sf.xmm.moviemanager.swing.util.FileDrop(additionalInfoTextArea, new net.sf.xmm.moviemanager.swing.util.FileDrop.Listener() {   
         	public void filesDropped(final File[] files) {
 
         		Point p = additionalInfoScrollPane.getMousePosition();

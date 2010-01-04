@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import org.apache.log4j.Logger;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.ReportGenerator;
+import net.sf.xmm.moviemanager.gui.DialogReportGenerator;
 
 public class MovieManagerCommandReportGenerator implements ActionListener {
 
@@ -16,7 +16,7 @@ public class MovieManagerCommandReportGenerator implements ActionListener {
      * Executes the command.
      **/
     protected static void execute() {
-        ReportGenerator dialogPrint = new ReportGenerator(MovieManager.getDialog());
+        DialogReportGenerator dialogPrint = new DialogReportGenerator(MovieManager.getDialog());
     }
 
     /**

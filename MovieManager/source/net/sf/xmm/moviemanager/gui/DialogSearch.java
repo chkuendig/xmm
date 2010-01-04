@@ -61,9 +61,9 @@ import javax.swing.border.TitledBorder;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandFilter;
 import net.sf.xmm.moviemanager.models.ModelEntry;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.GUIUtil;
-import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
@@ -742,7 +742,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 
 	public void run() {
 
-		net.sf.xmm.moviemanager.util.SwingWorker worker = new net.sf.xmm.moviemanager.util.SwingWorker() {
+		net.sf.xmm.moviemanager.swing.util.SwingWorker worker = new net.sf.xmm.moviemanager.swing.util.SwingWorker() {
 			public Object construct() {
 				try {
 					Thread.currentThread().setPriority(4);

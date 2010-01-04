@@ -47,9 +47,9 @@ import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
-import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 
 import org.apache.log4j.Logger;
 

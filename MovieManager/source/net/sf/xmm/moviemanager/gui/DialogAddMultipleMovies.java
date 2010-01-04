@@ -77,8 +77,6 @@ import javax.swing.event.CaretListener;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
-import net.sf.xmm.moviemanager.MultiAddProgressBar;
-import net.sf.xmm.moviemanager.SimpleProgressBar;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovie;
@@ -87,11 +85,13 @@ import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTreeEvent;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTreeEventListener;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileNode;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTree;
+import net.sf.xmm.moviemanager.swing.progressbar.MultiAddProgressBar;
+import net.sf.xmm.moviemanager.swing.progressbar.ProgressBean;
+import net.sf.xmm.moviemanager.swing.progressbar.ProgressBeanImpl;
+import net.sf.xmm.moviemanager.swing.progressbar.SimpleProgressBar;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.ProgressBean;
-import net.sf.xmm.moviemanager.util.ProgressBeanImpl;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.StringUtil.FilenameCloseness;
 

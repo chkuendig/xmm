@@ -35,8 +35,8 @@ import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
+import net.sf.xmm.moviemanager.swing.util.SwingWorker;
 import net.sf.xmm.moviemanager.util.FileUtil;
-import net.sf.xmm.moviemanager.util.SwingWorker;
 
 import org.apache.log4j.Logger;
 

@@ -62,21 +62,21 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.SimpleProgressBar;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.database.DatabaseAccess;
 import net.sf.xmm.moviemanager.database.DatabaseHSQL;
 import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
+import net.sf.xmm.moviemanager.swing.progressbar.ProgressBean;
+import net.sf.xmm.moviemanager.swing.progressbar.ProgressBeanImpl;
+import net.sf.xmm.moviemanager.swing.progressbar.SimpleProgressBar;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
+import net.sf.xmm.moviemanager.swing.util.SwingWorker;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
-import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.ProgressBean;
-import net.sf.xmm.moviemanager.util.ProgressBeanImpl;
-import net.sf.xmm.moviemanager.util.SwingWorker;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
 import org.apache.log4j.Logger;

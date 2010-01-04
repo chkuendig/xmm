@@ -27,7 +27,7 @@ import java.awt.event.ActionListener;
 import org.apache.log4j.Logger;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.ReportGenerator;
+import net.sf.xmm.moviemanager.gui.DialogReportGenerator;
 
 public class MovieManagerCommandPrint implements ActionListener {
 
@@ -35,7 +35,7 @@ public class MovieManagerCommandPrint implements ActionListener {
 
 	void execute() {
 		MovieManager.getDialog().setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		ReportGenerator.printDirect(MovieManager.getDialog().getMoviesList());
+		DialogReportGenerator.printDirect(MovieManager.getDialog().getMoviesList());
 		MovieManager.getDialog().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
