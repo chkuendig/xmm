@@ -353,13 +353,13 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Remove userdefined info</seg>
+                <seg>Remove user defined info</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Remove userdefined info</seg>
+                <seg>Remove user defined info</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-everything-after-match-on-user-defined-info.text">
@@ -383,13 +383,13 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Clean Search String</seg>
+                <seg>Clean title before search in IMDb</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg> Clean Search String </seg>
+                <seg>Clean title before search in IMDb</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-directory.button-browse.text">
@@ -3102,13 +3102,13 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Add without IMDB info</seg>
+                <seg>Add without IMDb info</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Add without IMDB info</seg>
+                <seg>Add without IMDb info</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogIMDB.button.add-without-web-info.tooltip">
@@ -5595,13 +5595,13 @@
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg> Show only </seg>
+                <seg> Show only movies that are</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg> Show only </seg>
+                <seg> Show only movies that are</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogSearch.sort-option.above">
@@ -6384,19 +6384,19 @@
                 <seg>Lukk Database</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="moviemanager.menu.file.exit">
+        <tu datatype="Text" tuid="moviemanager.menu.file.quit">
             <prop type="x-Group">MovieManager</prop>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="en-EN">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Exit</seg>
+                <seg>Quit</seg>
             </tuv>
             <tuv changedate="20070121T130738Z" changeid=""
                 creationdate="20070121T130738Z" creationid="" xml:lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Avslutt</seg>
+                <seg>Quit</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="moviemanager.menu.file.export">
