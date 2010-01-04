@@ -112,6 +112,7 @@
 		   useful.jar,
 		   xercesImpl.jar,
 		   xml-apis.jar,
+	       balloontip-1.0.jar,
 		   IMDb.jar
 		   " />
 	
