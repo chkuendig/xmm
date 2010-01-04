@@ -335,7 +335,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 
 		/* MenuItem Queries. */
 		menuItemQueries = new JMenuItem(Localizer.getString("moviemanager.menu.database.queries"),'Q'); //$NON-NLS-1$
-		menuItemQueries.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, (java.awt.event.InputEvent.SHIFT_MASK | (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))));
+		menuItemQueries.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, java.awt.event.InputEvent.SHIFT_MASK));
 		menuItemQueries.setActionCommand("Queries"); //$NON-NLS-1$
 		menuItemQueries.addActionListener(new MovieManagerCommandQueries());
 		menuDatabase.add(menuItemQueries);
@@ -358,7 +358,8 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuDatabase.add(menuItemAddField);
 
 		/* MenuItem AddList. */
-		menuItemAddList = new JMenuItem(Localizer.getString("moviemanager.menu.database.lists"),'L'); //$NON-NLS-1$
+		//menuItemAddList = new JMenuItem(Localizer.getString("moviemanager.menu.database.lists"),'L'); //$NON-NLS-1$
+		menuItemAddList = new JMenuItem(Localizer.getString("moviemanager.menu.database.lists")); //$NON-NLS-1$
 		menuItemAddList.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemAddList.setActionCommand("setLists"); //$NON-NLS-1$
 		menuItemAddList.addActionListener(new MovieManagerCommandLists(MovieManager.getDialog()));
@@ -368,6 +369,8 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuItemConvertDatabase = new JMenuItem(Localizer.getString("moviemanager.menu.database.covertdb")); //$NON-NLS-1$
 		menuItemConvertDatabase.setActionCommand("Convert Database"); //$NON-NLS-1$
 		menuItemConvertDatabase.addActionListener(new MovieManagerCommandConvertDatabase());
+		menuItemConvertDatabase.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		
 		
 		menuDatabase.add(menuItemConvertDatabase);
 
