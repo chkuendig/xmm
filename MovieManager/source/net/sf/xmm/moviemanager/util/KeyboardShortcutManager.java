@@ -1,12 +1,15 @@
 package net.sf.xmm.moviemanager.util;
 
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -27,11 +30,13 @@ public class KeyboardShortcutManager {
 
 	static Logger log = Logger.getLogger(KeyboardShortcutManager.class);
 	
-	HashMap<Integer, KeyMapping> map = new HashMap<Integer, KeyMapping>();
+	LinkedHashMap<String, KeyMapping> map = new LinkedHashMap<String, KeyMapping>();
 	
 	JDialog jDialog = null;
 	JFrame jFrame = null;
 	JRootPane rootPane;
+	
+	String macCmdChar = "⌘";
 	
 	JComponent tooltipAreaComponent;
 	
@@ -64,7 +69,13 @@ public class KeyboardShortcutManager {
 	
 	
 	void registerShowKeysKey() {
-		registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_MASK), "CTRL+k", 
+		System.err.println("getMenuShortcutKeyMask:" + Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+		System.err.println("CTRL_MASK:" + InputEvent.CTRL_MASK);
+		System.err.println("ALT_MASK:" + InputEvent.ALT_MASK);
+		System.err.println("META_MASK:" + InputEvent.META_MASK);
+				
+		registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_K, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
 				"Show available shortcuts for this window", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
 				
@@ -84,8 +95,6 @@ public class KeyboardShortcutManager {
 						});
 						bTip.setVisible(false);
 					}
-							
-					System.err.println("bTip.isVisible():" + bTip.isVisible());
 					
 					bTip.setVisible(!bTip.isVisible());
 				}
@@ -93,34 +102,76 @@ public class KeyboardShortcutManager {
 		});
 	}
 	
-	public void registerKeyboardShortcut(KeyStroke key, String actionName, String shortcutString, Action action) {
-		
-		if (map.containsKey(key.getKeyCode())) {
+	public KeyMapping registerKeyboardShortcut(KeyStroke key, String shortcutString, Action action) {
+				
+		if (map.containsKey(key.toString())) {
 			log.warn("already contains shortcut:" + key);
-			return;
+			return null;
 		}
 		
-		map.put(key.getKeyCode(), new KeyMapping(key, actionName, shortcutString));
+		KeyMapping keyMapping = new KeyMapping(key, shortcutString);
+		map.put(key.toString(), keyMapping);
 		
-		registerKeyboardShortcut(key, actionName, action, rootPane);
+		registerKeyboardShortcut(key, action, rootPane);
+		return keyMapping;
 	}
 
-	public static void registerKeyboardShortcut(KeyStroke key, String actionName, 
-			final Action action, JRootPane rootPane) {
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key, actionName); //$NON-NLS-1$
-		rootPane.getActionMap().put(actionName, action); //$NON-NLS-1$
+	public static void registerKeyboardShortcut(KeyStroke key, final Action action, JRootPane rootPane) {
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key, key.toString()); //$NON-NLS-1$
+		rootPane.getActionMap().put(key.toString(), action); //$NON-NLS-1$
 	}
 	
-	class KeyMapping {
+	
+	public class KeyMapping {
 		
 		KeyStroke key;
-		String actionName;
 		String shortcutString;
 		
-		KeyMapping(KeyStroke key, String actionName, String shortcutString) {
+		KeyMapping(KeyStroke key, String shortcutString) {
 			this.key = key;
-			this.actionName = actionName;
 			this.shortcutString = shortcutString;
+		}
+				
+		public String getDisplayName() {
+			
+			String name = "";
+			
+			if ((key.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+				name += "CTRL";
+			}
+			if ((key.getModifiers() & InputEvent.ALT_MASK) != 0) {
+				
+				if (name.length() > 0)
+					name += "+";
+				
+				name += "ALT";
+			}
+			if ((key.getModifiers() & InputEvent.META_MASK) != 0) {
+				
+				if (name.length() > 0)
+					name += "+";
+				
+				if (SysUtil.isMac()){
+					name += macCmdChar;
+				}
+				else
+					name += "META";
+			}
+			
+			if (name.length() > 0)
+				name += "+";
+						
+			if (key.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				name += "Escape";
+			}
+			else if (key.getKeyChar() < 128) {
+				name += key.getKeyChar();
+			}// Invalid character, use code instead
+			else if (key.getKeyCode() < 128) {
+				name += (char) key.getKeyCode();
+			}		
+			
+			return name;
 		}
 	}
 
@@ -134,14 +185,16 @@ public class KeyboardShortcutManager {
 		String text = "<html><table>";
 				
 		text += "<tr>";
-		text += "<th colspan=2>" + "<font size=4>Keyboard shortcuts</font>" + "</th>";
+		text += "<th colspan=3>" + "<font size=4>Keyboard shortcuts</font>" + "</th>";
 		text += "</tr>";
 				
 		Collection<KeyMapping> c = map.values();
 		
 		for (KeyMapping k : c) {
 			text += "<tr>";
-			text += "<td>" + k.actionName + "</td><td>-</td><td>" + k.shortcutString + "</td>";
+			//text += "<td>" + k.actionName + "</td><td>-</td><td>" + k.shortcutString + "</td>";
+			text += "<td>" + k.getDisplayName() + "</td><td>-</td><td>" + k.shortcutString + "</td>";
+						
 			text += "</tr>";
 		}
 		
