@@ -61,7 +61,7 @@ public class LookAndFeelManager {
             if (currentLAF != null) {
                 config.setCustomLookAndFeel(currentLAF.getName());
             } else {
-                for(int i = 0;i<installedLookAndFeels.length;i++) {
+                for (int i = 0;i<installedLookAndFeels.length;i++) {
                     if(installedLookAndFeels[i].getClassName().equals(UIManager.getSystemLookAndFeelClassName())) {
                         config.setCustomLookAndFeel(installedLookAndFeels[i].getName());
                     }
@@ -75,8 +75,8 @@ public class LookAndFeelManager {
             boolean laFSet = false;
             
             if (config.getLookAndFeelType() == LookAndFeelType.CustomLaF && 
-            		!config.getCustomLookAndFeel().equals("Metal")) {
-
+            		!config.getCustomLookAndFeel().equals(UIManager.getLookAndFeel().getName())) {
+            	
             	for (int i = 0; i < installedLookAndFeels.length; i++) {
             		if (installedLookAndFeels[i].getName().equals(config.getCustomLookAndFeel())) {
             			setLookAndFeel(installedLookAndFeels[i].getClassName());
@@ -188,21 +188,20 @@ public class LookAndFeelManager {
         	
         	File lookAndFeel;
         	
-        	if (!MovieManager.isMacAppBundle()) {
+        	if (!SysUtil.isMacAppBundle()) {
         		lookAndFeel =  FileUtil.getFile("lib/LookAndFeels/lookAndFeels.ini");
         	} else {
-                // Search in the absolute Path of the Application Bundle (Search as if we weren't in a Application Bundle)
-            	lookAndFeel =  FileUtil.getFile(System.getProperty("user.dir") + "/lib/LookAndFeels/lookAndFeels.ini");
-            }
+        		File f = new File(SysUtil.getJarLocation()).getParentFile();
+        		lookAndFeel = new File(f, "lib/LookAndFeels/lookAndFeels.ini");
+        	}
         	
         	if (!lookAndFeel.isFile()) {
-        		log.warn("lookAndFeels.ini was not found");
+        		log.warn("lookAndFeels.ini was not found:" + lookAndFeel.getAbsolutePath());
         		return;
         	}
         	
         	BufferedReader reader = new BufferedReader(new FileReader(lookAndFeel));
         	Pattern p = Pattern.compile("\"(.+?)\"\\s+?\"(.+?)\"\\s+?\"(.+?)\"\\s*(?:\"(.+?)\")?.*");
-        	//Pattern p = Pattern.compile("\"(.+?)\"\\s+?\"(.+?)\"\\s+?\"(.+?)\"\\s*?(\".+?\")?.*");
         	
         	double javaVersion = Double.parseDouble(System.getProperty("java.version").substring(0, 3));
         	
@@ -264,6 +263,7 @@ public class LookAndFeelManager {
             		}
            		
             		try {
+            			log.debug("m.group(2):" + m.group(2));
 						Class.forName(m.group(2));
 						UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(m.group(1), m.group(2)));
 					} catch (ClassNotFoundException e) {
@@ -273,8 +273,10 @@ public class LookAndFeelManager {
 					}										
                 }
                 catch (SecurityException s) {
-                    log.error("SecurityException: "+ s);
-                }
+                	log.warn("SecurityException: "+ s);
+                } catch(java.lang.NoClassDefFoundError e) {
+                	log.warn("NoClassDefFoundError:" + e.getMessage());
+                }	
             }
         }
         catch (Exception e) {
