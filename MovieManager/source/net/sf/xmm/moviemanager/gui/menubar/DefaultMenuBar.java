@@ -425,7 +425,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 	         on the selected movie or the filter*/
 
 		menuItemPrefs = new JMenuItem(Localizer.getString("moviemanager.menu.tools.preferences"),'P'); //$NON-NLS-1$
-		menuItemPrefs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		menuItemPrefs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.SHIFT_DOWN_MASK));
 		menuItemPrefs.setActionCommand("Preferences"); //$NON-NLS-1$
 		menuItemPrefs.addActionListener(new MovieManagerCommandPrefs());
 	
