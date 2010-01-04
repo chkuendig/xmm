@@ -200,7 +200,7 @@ public class GUIUtil {
 				shortcutManager.getJDialog().dispose();
 			}
 		};
-		shortcutManager.registerKeyboardShortcut(key, "Escape", "Close window", defaultAction);
+		shortcutManager.registerKeyboardShortcut(key, "Close window", defaultAction);
 	}
 	
 	
@@ -220,6 +220,6 @@ public class GUIUtil {
 				dialog.dispose();
 			}
 		};
-		KeyboardShortcutManager.registerKeyboardShortcut(key, "Escape", defaultAction, dialog.getRootPane());
+		KeyboardShortcutManager.registerKeyboardShortcut(key, defaultAction, dialog.getRootPane());
 	}
 } 
