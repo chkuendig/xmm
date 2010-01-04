@@ -27,7 +27,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -107,7 +109,19 @@ public class SysUtil {
     	return false;
     }
     
- 
+    public static boolean isMacAppBundle() {
+    	return SysUtil.isMac() && (getJarLocation().indexOf(".app/Contents/Resources") > -1);
+    }
+
+    public static String getJarLocation() {
+    	
+    	String jar = null;
+    	
+    	jar = MovieManager.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    	jar = jar.replaceAll("%20", " ");
+    	return jar;
+    }
+    
 	
 	/**
 	 * 
