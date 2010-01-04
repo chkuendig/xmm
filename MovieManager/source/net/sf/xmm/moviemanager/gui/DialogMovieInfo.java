@@ -1060,28 +1060,26 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelButtons.add(buttonCancel);
 
 		/* Reduces the width of the buttons (less empty space between borders and text) to avoid the window getting to wide */
-		if (SysUtil.isMac()) {
-			int sideMargin = 6;
-			
-			buttonSaveAndClose.setMargin(new java.awt.Insets(buttonSaveAndClose.getMargin().top, 
-					sideMargin, buttonSaveAndClose.getMargin().bottom, sideMargin));
-						
-			buttonSave.setMargin(new java.awt.Insets(buttonSave.getMargin().top, 
-					sideMargin, buttonSave.getMargin().bottom, sideMargin));
-									
-			buttonGetDVDInfo.setMargin(new java.awt.Insets(buttonGetDVDInfo.getMargin().top, 
-					sideMargin, buttonGetDVDInfo.getMargin().bottom, sideMargin));
-			
-			buttonGetFileInfo.setMargin(new java.awt.Insets(buttonGetFileInfo.getMargin().top, 
-					sideMargin, buttonGetFileInfo.getMargin().bottom, sideMargin));
-			
-			buttonGetIMDBInfo.setMargin(new java.awt.Insets(buttonGetIMDBInfo.getMargin().top, 
-					sideMargin, buttonGetIMDBInfo.getMargin().bottom, sideMargin));
-			
-			buttonCancel.setMargin(new java.awt.Insets(buttonCancel.getMargin().top, 
-					sideMargin, buttonCancel.getMargin().bottom, sideMargin));
-			}
-		
+		int sideMargin = 6;
+
+		buttonSaveAndClose.setMargin(new java.awt.Insets(buttonSaveAndClose.getMargin().top, 
+				sideMargin, buttonSaveAndClose.getMargin().bottom, sideMargin));
+
+		buttonSave.setMargin(new java.awt.Insets(buttonSave.getMargin().top, 
+				sideMargin, buttonSave.getMargin().bottom, sideMargin));
+
+		buttonGetDVDInfo.setMargin(new java.awt.Insets(buttonGetDVDInfo.getMargin().top, 
+				sideMargin, buttonGetDVDInfo.getMargin().bottom, sideMargin));
+
+		buttonGetFileInfo.setMargin(new java.awt.Insets(buttonGetFileInfo.getMargin().top, 
+				sideMargin, buttonGetFileInfo.getMargin().bottom, sideMargin));
+
+		buttonGetIMDBInfo.setMargin(new java.awt.Insets(buttonGetIMDBInfo.getMargin().top, 
+				sideMargin, buttonGetIMDBInfo.getMargin().bottom, sideMargin));
+
+		buttonCancel.setMargin(new java.awt.Insets(buttonCancel.getMargin().top, 
+				sideMargin, buttonCancel.getMargin().bottom, sideMargin));
+
 		
 		JScrollPane movieInfoScroll = new JScrollPane(panelMovieInfo);
 		movieInfoScroll.setBorder(null);
