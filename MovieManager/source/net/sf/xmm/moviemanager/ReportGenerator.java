@@ -130,7 +130,7 @@ public class ReportGenerator extends JFrame implements ActionListener, WindowLis
     }
 
     private static String getReportsDir() {
-    	if(MovieManager.isMacAppBundle()) { 
+    	if (SysUtil.isMacAppBundle()) { 
     		return "reports/";
     	}
     	return SysUtil.getUserDir() + "/reports/";
