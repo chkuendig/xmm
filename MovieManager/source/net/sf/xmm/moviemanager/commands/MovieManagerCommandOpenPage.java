@@ -26,7 +26,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.util.BrowserOpener;
+import net.sf.xmm.moviemanager.util.tools.BrowserOpener;
 
 import org.apache.log4j.Logger;
 

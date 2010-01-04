@@ -39,11 +39,11 @@ import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.util.GUIUtil;
-import net.sf.xmm.moviemanager.util.SimpleMailbox;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 import net.sf.xmm.moviemanager.util.StringUtil.FilenameCloseness;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerStreamerHandler;
+import net.sf.xmm.moviemanager.util.tools.SimpleMailbox;
 
 import org.apache.log4j.Logger;
 

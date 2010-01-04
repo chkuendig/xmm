@@ -45,9 +45,9 @@ import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEpisode;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.swing.extentions.events.ModelUpdatedEvent.IllegalEventTypeException;
 import net.sf.xmm.moviemanager.swing.util.SwingWorker;
-import net.sf.xmm.moviemanager.util.AdvancedMailbox;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
+import net.sf.xmm.moviemanager.util.tools.AdvancedMailbox;
 
 public class MovieManagerCommandIMDBSearch {
 
