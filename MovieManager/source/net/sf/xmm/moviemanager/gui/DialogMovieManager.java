@@ -136,11 +136,11 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 
     MovieManagerMenuBar menuBar = null;
     
-   public MovieManagerMenuBar getAppMenuBar() {
-	   return menuBar;
-   }
-    
-    
+    public MovieManagerMenuBar getAppMenuBar() {
+    	return menuBar;
+    }
+
+
     JPanel filterPanel;
     JPanel movieListPanel;
     
@@ -254,16 +254,9 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     
     void setKeyKeyModifiers() {
     	
-    	// ALT+N for search filter 
-		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK), "CTRL+s", 
-				"Give focus to the search filter", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				comboBoxFilter.requestFocusInWindow();
-			}
-		});
-		
-		// CTRL+T to choose vwitch view 
-		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_MASK), "CTRL+t", 
+    	// ALT+T to choose vwitch view 
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
 				"Change the view", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
 				int index = getCurrentMainTabIndex();
@@ -273,10 +266,29 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 		});
 				
 		// ALT+N to focus notes area 
-		shortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.ALT_MASK), "ALT+n", 
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
 				"Give focus to notes area", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
 				notesTextArea.requestFocusInWindow();
+			}
+		});
+		
+		// ALT+L to focus notes area 
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+				"Give focus to movie list", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				moviesList.requestFocusInWindow();
+			}
+		});
+		
+		// CTRL+s for search filter 
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK),
+				"Give focus to the search filter", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				comboBoxFilter.requestFocusInWindow();
 			}
 		});
 		
