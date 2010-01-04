@@ -38,10 +38,10 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandRemove;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSearch;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAdd;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandEdit;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager.KeyMapping;
 import net.sf.xmm.moviemanager.util.FileUtil;
-import net.sf.xmm.moviemanager.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.KeyboardShortcutManager.KeyMapping;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerPlayHandler;
 
 import org.apache.log4j.Logger;
@@ -481,8 +481,6 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 
 		try {
 
-			KeyboardShortcutManager.KeyMapping keyMapping;
-			
 			toolBar.setRollover(true);
 			toolBar.putClientProperty(new String("JToolBar.isRollover"), Boolean.TRUE);
 			toolBar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,0), BorderFactory.createEmptyBorder(0,10,0,10)));
@@ -499,16 +497,6 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 			buttonAdd.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
 			buttonAdd.setActionCommand("Add"); //$NON-NLS-1$
 			buttonAdd.addActionListener(new MovieManagerCommandAdd());
-						
-			// Add shortcut
-			KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-			keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
-					"Add movie", new AbstractAction() {
-				public void actionPerformed(ActionEvent ae) {
-					buttonAdd.doClick();
-				}
-			});
-			buttonAdd.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-add") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
 			
 			add(buttonAdd);
 			
@@ -523,16 +511,6 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 			buttonRemove.setActionCommand("Remove"); //$NON-NLS-1$
 			buttonRemove.addActionListener(new MovieManagerCommandRemove());
 			
-			// Adding shortcut
-			keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-			keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
-					"Remove movie(s)", new AbstractAction() {
-				public void actionPerformed(ActionEvent ae) {
-					buttonRemove.doClick();
-				}
-			});
-			buttonRemove.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-remove") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
-						
 			add(buttonRemove);
 			
 			/* A separator. */
@@ -540,23 +518,12 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 
 			/* The Edit button. */
 			buttonEdit = new JButton(new ImageIcon(FileUtil.getImage("/images/edit.png").getScaledInstance(26,26,Image.SCALE_SMOOTH))); //$NON-NLS-1$
-
 			buttonEdit.setMargin(new Insets(0,10,0,10));
 			buttonEdit.setPreferredSize(new Dimension(40, 40));
 			buttonEdit.setMaximumSize(new Dimension(44, 45));
 			buttonEdit.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-edit")); //$NON-NLS-1$
 			buttonEdit.setActionCommand("Edit"); //$NON-NLS-1$
 			buttonEdit.addActionListener(new MovieManagerCommandEdit());
-			buttonEdit.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-edit") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
-			
-			// Adding shortcut
-			keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-			keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
-					"Edit movie", new AbstractAction() {
-				public void actionPerformed(ActionEvent ae) {
-					buttonEdit.doClick();
-				}
-			});
 						
 			add(buttonEdit);
 			
@@ -571,16 +538,6 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 			buttonSearch.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-search")); //$NON-NLS-1$
 			buttonSearch.setActionCommand("Search"); //$NON-NLS-1$
 			buttonSearch.addActionListener(new MovieManagerCommandSearch());
-			buttonSearch.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-search") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
-			
-			// Adding shortcut
-			keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-			keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
-					"Search options", new AbstractAction() {
-				public void actionPerformed(ActionEvent ae) {
-					buttonSearch.doClick();
-				}
-			});
 			
 			add(buttonSearch);
 			
@@ -613,6 +570,8 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 				toolBarWidth -= 10;
 			}
 		
+			setShortcuts();
+			
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -631,16 +590,6 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 		buttonPlay.setPreferredSize(new Dimension(39, 39));
 		buttonPlay.setMaximumSize(new Dimension(45, 45));
 		buttonPlay.setActionCommand("Play");
-		
-		// Adding shortcut
-		KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-		KeyMapping keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
-				"Search options", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonPlay.doClick();
-			}
-		});
-		buttonPlay.setToolTipText("Play" + " " + keyMapping.getDisplayName());
 		
 		// Uses plugin playhandler is it exists
 		MovieManagerPlayHandler playHandler = MovieManager.getConfig().getPlayHandler();
@@ -680,8 +629,8 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 
     	JPopupMenu popupMenu = new JPopupMenu();
 
-    	final JCheckBoxMenuItem playButtonItem = new JCheckBoxMenuItem("Play");
-    	final JCheckBoxMenuItem printButtonItem = new JCheckBoxMenuItem("Print");
+    	final JCheckBoxMenuItem playButtonItem = new JCheckBoxMenuItem(Localizer.getString("moviemanager.listpanel-toolbar-play"));
+    	final JCheckBoxMenuItem printButtonItem = new JCheckBoxMenuItem(Localizer.getString("moviemanager.listpanel-toolbar-print"));
 
     	popupMenu.add(playButtonItem);
     	popupMenu.add(printButtonItem);
@@ -796,6 +745,67 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 
     	buttonPlay.setMaximumSize(dim);
     	buttonPrint.setMaximumSize(dim);
+    }
+    
+    
+    void setShortcuts() {
+    	
+    	KeyMapping keyMapping;
+    	
+    	
+    	// Add button
+		KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyboardShortcutManager.getToolbarShortcutMask());
+		keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
+				"Add movie", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				buttonAdd.doClick();
+			}
+		});
+		buttonAdd.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-add") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		    	
+    	
+    	// Remove button
+		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyboardShortcutManager.getToolbarShortcutMask());
+		keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
+				"Remove movie(s)", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				buttonRemove.doClick();
+			}
+		});
+		buttonRemove.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-remove") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+				
+		
+		// Edit button
+		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyboardShortcutManager.getToolbarShortcutMask());
+		keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
+				"Edit movie", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				buttonEdit.doClick();
+			}
+		});
+		buttonEdit.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-edit") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		    	
+		
+		// Search button
+		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask());
+		keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
+				"Search options", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				buttonSearch.doClick();
+			}
+		});
+		buttonSearch.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-search") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		
+    	
+    	// Play button
+		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyboardShortcutManager.getToolbarShortcutMask());
+		keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
+				"Search options", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				buttonPlay.doClick();
+			}
+		});
+		buttonPlay.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-play") + " " + keyMapping.getDisplayName());		
     }
 }   
 
