@@ -8,22 +8,26 @@ Version 2.8.8 ()
 
 - General improvements:
 
-  - Changed some texts in the language file to be more meaningful.
   - Added option to remove quotes ("") from series titles.
+  - Updated the HSQLDB driver which will hopefully fix some stability issues with HSQL. 
+  - Added right click popup when editing movie/episode to clear additional info values.
+  - Added better shortcut handling. Press ALT+k on Windows/GNU+Linux or CMD+k on OSX to see shortcut for a window.
 
   - Improvements for the multiadd-function:
 
-    - It's now possible to define folders as root devices in the tree which are stored for later use.
+    - It's now possible to define folders as root devices in the tree.
     - Hardcoded codec info has been replaced with user defined strings.
     - Search nfo/txt files for IMDb url when adding movies.
     - Improved "use folder instead of file name" option to use parent folder if the current folder is named CD1/CD2 etc.
     - New option to prefix movie titles with "_verify_" when using the option "Select First Hit".
+    - Added progress bar if expanding a directory takes more than half a second.
+    - Changed directory separator from '\\' to system file separator in a few places in add multiple movies function.
 
 - Bug fixes:
 
-  - Changed directory separator from '\\' to system file separator in a few places in add multiple movies function.
   - Fixed bug in IMDb parser making episode number and series wrong in some situations.
-  - After editing a movie, the lists it is a member of was not shown in the right click popup in the movie list.
+  - IMDb scraper did not retrieved cast on series.
+  - After editing a movie, the lists it is a member of was not shown in the right click popup in the movie list. (Bug ID:2879774)
 
 
 Version 2.8.7 (13-December-2009)
