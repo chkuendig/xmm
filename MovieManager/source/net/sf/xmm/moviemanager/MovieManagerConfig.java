@@ -185,6 +185,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean useDefaultWindowsPlayer = true;
 	private boolean executeExternalPlayCommand = false;
 	
+	public final String defaultLocale = "en-US";
+	private String locale = "en-US";
 	
 	private String systemWebBrowser = SysUtil.getDefaultPlatformBrowser();
 	
@@ -2143,8 +2145,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setExecuteExternalPlayCommand(boolean executeExternalPlayCommand) {
 		this.executeExternalPlayCommand = executeExternalPlayCommand;
 	}
-
 	
+	public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(String locale) {
+		this.locale = locale;
+	}
 	
 	public String getSystemWebBrowser() {
 		return systemWebBrowser;
@@ -2450,7 +2458,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 									
 			setHTMLTemplateName(getStringValue("HTMLTemplateName:", config));
 			setHTMLTemplateStyleName(getStringValue("HTMLTemplateStyleName:", config));
-			
+			setLocale(getStringValue("locale:", config, getLocale()));
 			setFilterCategory(getStringValue("filterOption:", config, getFilterCategory()));
 			setSortOption(getStringValue("sortOption:", config, getSortOption()));
 			setFilterSeen(getIntValue("filterSeen:", config, getFilterSeen()));
@@ -2712,11 +2720,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			setMediaPlayerPath(getStringValue("playerPath:", config, getMediaPlayerPath()));
 			setMediaPlayerCmdArgument(getStringValue("mediaPlayerCmdArgument:", config, getMediaPlayerCmdArgument()));
 			setBrowserPath(getStringValue("browserPath:", config, getBrowserPath()));
-			
 			setUseDefaultWindowsPlayer(getBooleanValue("useDefaultWindowsPlayer:", config));
 			setExecuteExternalPlayCommand(getBooleanValue("executeExternalPlayCommand:", config));
-			
 			setSystemWebBrowser(getStringValue("systemWebBrowser:", config, getSystemWebBrowser()));
+			
 			setDatabaseBackupEveryLaunch(getStringValue("databaseBackupEveryLaunch:", config, getDatabaseBackupEveryLaunch()));
 			setDatabaseBackupDeleteOldest(getStringValue("databaseBackupDeleteOldest:", config, getDatabaseBackupDeleteOldest()));
 			setDatabaseBackupLaunchCount(getStringValue("databaseBackupLaunchCount:", config, getDatabaseBackupLaunchCount()));
@@ -2871,8 +2878,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("loadDatabaseOnStartup:", getLoadDatabaseOnStartup(), settings);
 		 appendToConfig("useRelativeCoverPath:", getUseRelativeCoversPath(), settings);
 		 appendToConfig("useRelativeQueriesPath:", getUseRelativeQueriesPath(), settings);
-		 
 		 appendToConfig("useDisplayQueriesInTree:", getUseDisplayQueriesInTree(), settings);
+		 appendToConfig("locale:", getLocale(), settings);
 		 
 		 // GUI/L&F settings
 		 appendToConfig("lookAndFeel:", getCustomLookAndFeel(), settings);
