@@ -62,9 +62,9 @@ public class ModelImportExportSettings {
     void setExportTypeValues() {
     	exportTypes[ModelImportExportSettings.EXPORT_MODE_CSV] = "CSV File";
     	exportTypes[ModelImportExportSettings.EXPORT_MODE_EXCEL] = "Excel Spreadsheet";
-    	exportTypes[ModelImportExportSettings.EXPORT_MODE_XML] = Localizer.getString("DialogExport.panel-xml-export.title");
+    	exportTypes[ModelImportExportSettings.EXPORT_MODE_XML] = Localizer.get("DialogExport.panel-xml-export.title");
     	exportTypes[ModelImportExportSettings.EXPORT_MODE_XML_DATABASE] = "XML Database";
-    	exportTypes[ModelImportExportSettings.EXPORT_MODE_HTML] = Localizer.getString("DialogExport.panel-html-export.title");
+    	exportTypes[ModelImportExportSettings.EXPORT_MODE_HTML] = Localizer.get("DialogExport.panel-html-export.title");
     } 
     
     
