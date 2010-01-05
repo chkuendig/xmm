@@ -263,7 +263,6 @@ public class LookAndFeelManager {
             		}
            		
             		try {
-            			log.debug("m.group(2):" + m.group(2));
 						Class.forName(m.group(2));
 						UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(m.group(1), m.group(2)));
 					} catch (ClassNotFoundException e) {
