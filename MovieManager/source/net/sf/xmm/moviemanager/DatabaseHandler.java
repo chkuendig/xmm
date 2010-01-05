@@ -370,7 +370,7 @@ public class DatabaseHandler {
 					        	allowDatabaseUpdateTmp = true;
 					        }
 					        else {
-					            DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("moviemanager.update-necessary"), Localizer.getString("moviemanager.update-necessary-message")); //$NON-NLS-1$ //$NON-NLS-2$
+					            DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("DialogMovieManager.update-necessary"), Localizer.get("DialogMovieManager.update-necessary-message")); //$NON-NLS-1$ //$NON-NLS-2$
 					            GUIUtil.showAndWait(alert, true);
 					        }
 						
@@ -392,23 +392,23 @@ public class DatabaseHandler {
 
 					public void run() {
 						if (result.equals("Success")) { //$NON-NLS-1$
-							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("moviemanager.operation-successfull"), Localizer.getString("moviemanager.operation-successfullMessage")); //$NON-NLS-1$ //$NON-NLS-2$
+							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("DialogMovieManager.operation-successfull"), Localizer.get("DialogMovieManager.operation-successfullMessage")); //$NON-NLS-1$ //$NON-NLS-2$
 							GUIUtil.showAndWait(alert, true);
 						}
 						else if (result.equals("Database update error")) { //$NON-NLS-1$
-							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("moviemanager.database-update-failed"), Localizer.getString("moviemanager.database-update-failed-message")); //$NON-NLS-1$ //$NON-NLS-2$
+							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("DialogMovieManager.database-update-failed"), Localizer.get("DialogMovieManager.database-update-failed-message")); //$NON-NLS-1$ //$NON-NLS-2$
 							GUIUtil.showAndWait(alert, true);
 						}
 						else if (result.equals("Script update error")) { //$NON-NLS-1$
-							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("moviemanager.script-update-failed"), Localizer.getString("moviemanager.script-update-failed-message")); //$NON-NLS-1$ //$NON-NLS-2$
+							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("DialogMovieManager.script-update-failed"), Localizer.get("DialogMovieManager.script-update-failed-message")); //$NON-NLS-1$ //$NON-NLS-2$
 							GUIUtil.showAndWait(alert, true);
 						}
 						else if (result.equals("Backup failed")) { //$NON-NLS-1$
-							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("moviemanager.backup-failed"), Localizer.getString("moviemanager.backup-failed-message")); //$NON-NLS-1$ //$NON-NLS-2$
+							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("DialogMovieManager.backup-failed"), Localizer.get("DialogMovieManager.backup-failed-message")); //$NON-NLS-1$ //$NON-NLS-2$
 							GUIUtil.showAndWait(alert, true);
 						}
 						else {
-							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("moviemanager.update-failed"), result); //$NON-NLS-1$
+							DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("DialogMovieManager.update-failed"), result); //$NON-NLS-1$
 							GUIUtil.showAndWait(alert, true);
 						}
 					}
@@ -449,7 +449,7 @@ public class DatabaseHandler {
 	    			if (database != null) {
 	    				Runnable r = new Runnable() {
 	    					public void run() {
-	    						DialogQuestion question = new DialogQuestion(Localizer.getString("moviemanager.connection-reset"), "<html>The connection to the MySQL server has been reset.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$
+	    						DialogQuestion question = new DialogQuestion(Localizer.get("DialogMovieManager.connection-reset"), "<html>The connection to the MySQL server has been reset.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$
 	    						"Reconnect now?</html>"); //$NON-NLS-1$
 	    						GUIUtil.showAndWait(question, true);
 
@@ -552,7 +552,7 @@ public class DatabaseHandler {
 	    			
 	    			Runnable r = new Runnable() {
 	    				public void run() {
-	    					DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("moviemanager.mysql-out-of-space"), Localizer.getString("moviemanager.mysql-out-of-space-message")); //$NON-NLS-1$ //$NON-NLS-2$
+	    					DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("DialogMovieManager.mysql-out-of-space"), Localizer.get("DialogMovieManager.mysql-out-of-space-message")); //$NON-NLS-1$ //$NON-NLS-2$
 	    					GUIUtil.showAndWait(alert, true);
 	    				}
 	    			};
@@ -644,11 +644,11 @@ public class DatabaseHandler {
 
 	        			if (type.equals("MySQL")) { //$NON-NLS-1$
 	        				if (listener != null)
-	        					this.listener.propertyChange(new PropertyChangeEvent(this, "value", null, Localizer.getString("moviemanager.progress.connecting-to-database")));
+	        					this.listener.propertyChange(new PropertyChangeEvent(this, "value", null, Localizer.get("DialogMovieManager.progress.connecting-to-database")));
 	        			}
 	        			else {
 	        				if (listener != null)
-	        					listener.propertyChange(new PropertyChangeEvent(this, "value", null, Localizer.getString("moviemanager.progress.creating-connection")));
+	        					listener.propertyChange(new PropertyChangeEvent(this, "value", null, Localizer.get("DialogMovieManager.progress.creating-connection")));
 	        			}
 
 	        			if (!MovieManager.getConfig().getInternalConfig().getSensitivePrintMode())
@@ -706,7 +706,7 @@ public class DatabaseHandler {
 	        				long time = System.currentTimeMillis();
 
 	        				if (listener != null)
-	        					listener.propertyChange(new PropertyChangeEvent(this, "value", null, Localizer.getString("moviemanager.progress.retrieving-movie-list")));
+	        					listener.propertyChange(new PropertyChangeEvent(this, "value", null, Localizer.get("DialogMovieManager.progress.retrieving-movie-list")));
 
 	        				// If database loading aborted by user
 	        				if (getCancelled()) {
