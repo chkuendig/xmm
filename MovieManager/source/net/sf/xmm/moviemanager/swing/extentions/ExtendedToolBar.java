@@ -491,6 +491,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 
 			/* The Add button. */
 			buttonAdd = new JButton(new ImageIcon(FileUtil.getImage("/images/add.png").getScaledInstance(27, 27, Image.SCALE_SMOOTH))); //$NON-NLS-1$
+			buttonAdd.setToolTipText(Localizer.get("DialogMovieManager.toolbar-add")); //$NON-NLS-1$
 			buttonAdd.setPreferredSize(new Dimension(45, 45));
 			buttonAdd.setMinimumSize(new Dimension(45, 45));
 			buttonAdd.setMaximumSize(new Dimension(45, 45));
@@ -507,7 +508,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 			buttonRemove = new JButton(new ImageIcon(FileUtil.getImage("/images/remove.png").getScaledInstance(27,27,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 			buttonRemove.setPreferredSize(new Dimension(40, 40));
 			buttonRemove.setMaximumSize(new Dimension(44, 45));
-			buttonRemove.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-remove")); //$NON-NLS-1$
+			buttonRemove.setToolTipText(Localizer.get("DialogMovieManager.toolbar-remove")); //$NON-NLS-1$
 			buttonRemove.setActionCommand("Remove"); //$NON-NLS-1$
 			buttonRemove.addActionListener(new MovieManagerCommandRemove());
 			
@@ -521,7 +522,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 			buttonEdit.setMargin(new Insets(0,10,0,10));
 			buttonEdit.setPreferredSize(new Dimension(40, 40));
 			buttonEdit.setMaximumSize(new Dimension(44, 45));
-			buttonEdit.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-edit")); //$NON-NLS-1$
+			buttonEdit.setToolTipText(Localizer.get("DialogMovieManager.toolbar-edit")); //$NON-NLS-1$
 			buttonEdit.setActionCommand("Edit"); //$NON-NLS-1$
 			buttonEdit.addActionListener(new MovieManagerCommandEdit());
 						
@@ -535,7 +536,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 			buttonSearch.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonSearch.getBorder()));
 			buttonSearch.setPreferredSize(new Dimension(40, 40));
 			buttonSearch.setMaximumSize(new Dimension(45, 45));
-			buttonSearch.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-search")); //$NON-NLS-1$
+			buttonSearch.setToolTipText(Localizer.get("DialogMovieManager.toolbar-search")); //$NON-NLS-1$
 			buttonSearch.setActionCommand("Search"); //$NON-NLS-1$
 			buttonSearch.addActionListener(new MovieManagerCommandSearch());
 			
@@ -629,8 +630,8 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 
     	JPopupMenu popupMenu = new JPopupMenu();
 
-    	final JCheckBoxMenuItem playButtonItem = new JCheckBoxMenuItem(Localizer.getString("moviemanager.listpanel-toolbar-play"));
-    	final JCheckBoxMenuItem printButtonItem = new JCheckBoxMenuItem(Localizer.getString("moviemanager.listpanel-toolbar-print"));
+    	final JCheckBoxMenuItem playButtonItem = new JCheckBoxMenuItem(Localizer.get("DialogMovieManager.listpanel-toolbar-play"));
+    	final JCheckBoxMenuItem printButtonItem = new JCheckBoxMenuItem(Localizer.get("DialogMovieManager.listpanel-toolbar-print"));
 
     	popupMenu.add(playButtonItem);
     	popupMenu.add(printButtonItem);
@@ -761,7 +762,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 				buttonAdd.doClick();
 			}
 		});
-		buttonAdd.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-add") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		buttonAdd.setToolTipText(Localizer.get("DialogMovieManager.toolbar-add") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
 		    	
     	
     	// Remove button
@@ -772,7 +773,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 				buttonRemove.doClick();
 			}
 		});
-		buttonRemove.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-remove") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		buttonRemove.setToolTipText(Localizer.get("DialogMovieManager.toolbar-remove") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
 				
 		
 		// Edit button
@@ -783,7 +784,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 				buttonEdit.doClick();
 			}
 		});
-		buttonEdit.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-edit") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		buttonEdit.setToolTipText(Localizer.get("DialogMovieManager.toolbar-edit") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
 		    	
 		
 		// Search button
@@ -794,7 +795,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 				buttonSearch.doClick();
 			}
 		});
-		buttonSearch.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-search") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		buttonSearch.setToolTipText(Localizer.get("DialogMovieManager.toolbar-search") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
 		
     	
     	// Play button
@@ -805,7 +806,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
 				buttonPlay.doClick();
 			}
 		});
-		buttonPlay.setToolTipText(Localizer.getString("moviemanager.listpanel-toolbar-play") + " " + keyMapping.getDisplayName());		
+		buttonPlay.setToolTipText(Localizer.get("DialogMovieManager.toolbar-play") + " " + keyMapping.getDisplayName());		
     }
 }   
 

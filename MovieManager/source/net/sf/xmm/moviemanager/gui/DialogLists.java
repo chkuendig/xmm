@@ -91,7 +91,7 @@ public class DialogLists extends JDialog {
 	 public void construct() {
 		 
 		 /* Dialog properties...*/
-		 setTitle(Localizer.getString("DialogLists.title")); //$NON-NLS-1$
+		 setTitle(Localizer.get("DialogLists.title")); //$NON-NLS-1$
 		 setModal(true);
 		 setResizable(false);
 		 
@@ -108,7 +108,7 @@ public class DialogLists extends JDialog {
 
 		 /* Existing Fields panel...*/
 		 JPanel panelExistingFields = new JPanel();
-		 panelExistingFields.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogLists.panel-existing-list.title")), //$NON-NLS-1$
+		 panelExistingFields.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogLists.panel-existing-list.title")), //$NON-NLS-1$
 				 BorderFactory.createEmptyBorder(5,5,5,5)));
 		 panelExistingFields.setLayout(new GridBagLayout());
 		 GridBagConstraints constraints;
@@ -125,8 +125,8 @@ public class DialogLists extends JDialog {
 		 constraints.insets = new Insets(5,5,5,5);
 		 constraints.anchor = GridBagConstraints.WEST;
 		 panelExistingFields.add(scrollPaneExistingFields,constraints);
-		 JButton buttonRemove = new JButton(Localizer.getString("DialogLists.button.remove.text")); //$NON-NLS-1$
-		 buttonRemove.setToolTipText(Localizer.getString("DialogLists.button.remove.tooltip")); //$NON-NLS-1$
+		 JButton buttonRemove = new JButton(Localizer.get("DialogLists.button.remove.text")); //$NON-NLS-1$
+		 buttonRemove.setToolTipText(Localizer.get("DialogLists.button.remove.tooltip")); //$NON-NLS-1$
 		 buttonRemove.setActionCommand("AdditionalInfoFields - Remove"); //$NON-NLS-1$
 		 buttonRemove.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent event) {
@@ -141,7 +141,7 @@ public class DialogLists extends JDialog {
 		 panelExistingFields.add(buttonRemove,constraints);
 		 /* Add New Field panel...*/
 		 JPanel panelAddNewField = new JPanel();
-		 panelAddNewField.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogLists.panel-add-new-list.title")), //$NON-NLS-1$
+		 panelAddNewField.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogLists.panel-add-new-list.title")), //$NON-NLS-1$
 				 BorderFactory.createEmptyBorder(5,5,5,5)));
 		 panelAddNewField.setLayout(new GridBagLayout());
 		 JTextField textFieldAdd = new JTextField(22);
@@ -152,8 +152,8 @@ public class DialogLists extends JDialog {
 		 constraints.insets = new Insets(5,5,5,5);
 		 constraints.anchor = GridBagConstraints.WEST;
 		 panelAddNewField.add(textFieldAdd,constraints);
-		 JButton buttonAdd = new JButton(Localizer.getString("DialogLists.button.add.text")); //$NON-NLS-1$
-		 buttonAdd.setToolTipText(Localizer.getString("DialogLists.button.add.tooltip")); //$NON-NLS-1$
+		 JButton buttonAdd = new JButton(Localizer.get("DialogLists.button.add.text")); //$NON-NLS-1$
+		 buttonAdd.setToolTipText(Localizer.get("DialogLists.button.add.tooltip")); //$NON-NLS-1$
 		 buttonAdd.setActionCommand("AdditionalInfoFields - Add"); //$NON-NLS-1$
 		 buttonAdd.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent event) {
@@ -176,8 +176,8 @@ public class DialogLists extends JDialog {
 		 JPanel panelButtons = new JPanel();
 		 panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		 panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		 JButton buttonSave = new JButton(Localizer.getString("DialogLists.button.save.text")); //$NON-NLS-1$
-		 buttonSave.setToolTipText(Localizer.getString("DialogLists.button.save.tooltip")); //$NON-NLS-1$
+		 JButton buttonSave = new JButton(Localizer.get("DialogLists.button.save.text")); //$NON-NLS-1$
+		 buttonSave.setToolTipText(Localizer.get("DialogLists.button.save.tooltip")); //$NON-NLS-1$
 		 buttonSave.setActionCommand("AdditionalInfoFields - Save"); //$NON-NLS-1$
 		 buttonSave.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent event) {
@@ -185,8 +185,8 @@ public class DialogLists extends JDialog {
 				 executeCommandSave();
 			 }});
 		 panelButtons.add(buttonSave);
-		 JButton buttonCancel = new JButton(Localizer.getString("DialogLists.button.cancel.text")); //$NON-NLS-1$
-		 buttonCancel.setToolTipText(Localizer.getString("DialogLists.button.cancel.tooltip")); //$NON-NLS-1$
+		 JButton buttonCancel = new JButton(Localizer.get("DialogLists.button.cancel.text")); //$NON-NLS-1$
+		 buttonCancel.setToolTipText(Localizer.get("DialogLists.button.cancel.tooltip")); //$NON-NLS-1$
 		 buttonCancel.setActionCommand("AdditionalInfoFields - Cancel"); //$NON-NLS-1$
 		 buttonCancel.addActionListener(new CommandDialogDispose(this));
 		 panelButtons.add(buttonCancel);

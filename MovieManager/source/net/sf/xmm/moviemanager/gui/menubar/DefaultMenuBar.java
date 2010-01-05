@@ -262,11 +262,11 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 	 **/
 	protected JMenu createMenuFile() {
 		log.debug("Start creation of the File menu."); //$NON-NLS-1$
-		menuFile = new JMenu(Localizer.getString("moviemanager.menu.file")); //$NON-NLS-1$
+		menuFile = new JMenu(Localizer.get("DialogMovieManager.menu.file")); //$NON-NLS-1$
 		menuFile.setMnemonic('F');
 
 		/* MenuItem New. */
-		menuItemNew = new JMenuItem(Localizer.getString("moviemanager.menu.file.newdb"),'N'); //$NON-NLS-1$
+		menuItemNew = new JMenuItem(Localizer.get("DialogMovieManager.menu.file.newdb"),'N'); //$NON-NLS-1$
 		menuItemNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemNew.setActionCommand("New"); //$NON-NLS-1$
 		menuItemNew.addActionListener(new MovieManagerCommandNew());
@@ -275,7 +275,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuFile.add(menuItemNew);
 		
 		/* MenuItem Open. */
-		menuItemOpen = new JMenuItem(Localizer.getString("moviemanager.menu.file.opendb"),'O'); //$NON-NLS-1$
+		menuItemOpen = new JMenuItem(Localizer.get("DialogMovieManager.menu.file.opendb"),'O'); //$NON-NLS-1$
 		menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemOpen.setActionCommand("Open"); //$NON-NLS-1$
 		menuItemOpen.addActionListener(new MovieManagerCommandOpen());
@@ -284,7 +284,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuFile.add(menuItemOpen);
 		
 		/* MenuItem Close. */
-		menuItemClose = new JMenuItem(Localizer.getString("moviemanager.menu.file.closedb"),'C'); //$NON-NLS-1$
+		menuItemClose = new JMenuItem(Localizer.get("DialogMovieManager.menu.file.closedb"),'C'); //$NON-NLS-1$
 		menuItemClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, (java.awt.event.InputEvent.SHIFT_MASK | (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))));
 		menuItemClose.setActionCommand("Open"); //$NON-NLS-1$
 		menuItemClose.addActionListener(new MovieManagerCommandCloseDatabase());
@@ -293,7 +293,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuFile.add(menuItemClose);
 		
 		/* The Import menuItem. */
-		menuImport = new JMenuItem(Localizer.getString("moviemanager.menu.file.import"),'I'); //$NON-NLS-1$
+		menuImport = new JMenuItem(Localizer.get("DialogMovieManager.menu.file.import"),'I'); //$NON-NLS-1$
 		menuImport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, (java.awt.event.InputEvent.SHIFT_MASK | (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))));
 		menuImport.addActionListener(new MovieManagerCommandImport());
 
@@ -301,7 +301,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuFile.add(menuImport);
 		
 		/* The Export menuItem. */
-		menuExport = new JMenuItem(Localizer.getString("moviemanager.menu.file.export"),'E'); //$NON-NLS-1$
+		menuExport = new JMenuItem(Localizer.get("DialogMovieManager.menu.file.export"),'E'); //$NON-NLS-1$
 		menuExport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuExport.addActionListener(new MovieManagerCommandExport());
 
@@ -309,7 +309,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuFile.add(menuExport);
 		
 		/* MenuItem Exit. */
-		menuItemExit = new JMenuItem(Localizer.getString("moviemanager.menu.file.quit"),'Q'); //$NON-NLS-1$
+		menuItemExit = new JMenuItem(Localizer.get("DialogMovieManager.menu.file.quit"),'Q'); //$NON-NLS-1$
 		menuItemExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemExit.setActionCommand("Quit"); //$NON-NLS-1$
 		menuItemExit.addActionListener(new MovieManagerCommandExit());
@@ -330,11 +330,11 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 	 **/
 	protected JMenu createMenuDatabase() {
 		log.debug("Start creation of the Database menu."); //$NON-NLS-1$
-		menuDatabase = new JMenu(Localizer.getString("moviemanager.menu.database")); //$NON-NLS-1$
+		menuDatabase = new JMenu(Localizer.get("DialogMovieManager.menu.database")); //$NON-NLS-1$
 		menuDatabase.setMnemonic('D');
 
 		/* MenuItem Queries. */
-		menuItemQueries = new JMenuItem(Localizer.getString("moviemanager.menu.database.queries"),'Q'); //$NON-NLS-1$
+		menuItemQueries = new JMenuItem(Localizer.get("DialogMovieManager.menu.database.queries"),'Q'); //$NON-NLS-1$
 		menuItemQueries.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, java.awt.event.InputEvent.SHIFT_MASK));
 		menuItemQueries.setActionCommand("Queries"); //$NON-NLS-1$
 		menuItemQueries.addActionListener(new MovieManagerCommandQueries());
@@ -344,29 +344,28 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuDatabase.addSeparator();
 
 		/* MenuItem Folders. */
-		menuItemFolders = new JMenuItem(Localizer.getString("moviemanager.menu.database.folders"),'F'); //$NON-NLS-1$
+		menuItemFolders = new JMenuItem(Localizer.get("DialogMovieManager.menu.database.folders"),'F'); //$NON-NLS-1$
 		menuItemFolders.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemFolders.setActionCommand("Folders"); //$NON-NLS-1$
 		menuItemFolders.addActionListener(new MovieManagerCommandFolders());
 		menuDatabase.add(menuItemFolders);
 
 		/* MenuItem AddField. */
-		menuItemAddField = new JMenuItem(Localizer.getString("moviemanager.menu.database.additionalinfofields"),'I'); //$NON-NLS-1$
+		menuItemAddField = new JMenuItem(Localizer.get("DialogMovieManager.menu.database.additionalinfofields"),'I'); //$NON-NLS-1$
 		menuItemAddField.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, (java.awt.event.InputEvent.ALT_MASK | (Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))));
 		menuItemAddField.setActionCommand("AdditionalInfoFields"); //$NON-NLS-1$
 		menuItemAddField.addActionListener(new MovieManagerCommandAdditionalInfoFields());
 		menuDatabase.add(menuItemAddField);
 
 		/* MenuItem AddList. */
-		//menuItemAddList = new JMenuItem(Localizer.getString("moviemanager.menu.database.lists"),'L'); //$NON-NLS-1$
-		menuItemAddList = new JMenuItem(Localizer.getString("moviemanager.menu.database.lists")); //$NON-NLS-1$
+		menuItemAddList = new JMenuItem(Localizer.get("DialogMovieManager.menu.database.lists")); //$NON-NLS-1$
 		menuItemAddList.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemAddList.setActionCommand("setLists"); //$NON-NLS-1$
 		menuItemAddList.addActionListener(new MovieManagerCommandLists(MovieManager.getDialog()));
 		menuDatabase.add(menuItemAddList);
 
 		/* MenuItem Convert Database. */
-		menuItemConvertDatabase = new JMenuItem(Localizer.getString("moviemanager.menu.database.covertdb")); //$NON-NLS-1$
+		menuItemConvertDatabase = new JMenuItem(Localizer.get("DialogMovieManager.menu.database.covertdb")); //$NON-NLS-1$
 		menuItemConvertDatabase.setActionCommand("Convert Database"); //$NON-NLS-1$
 		menuItemConvertDatabase.addActionListener(new MovieManagerCommandConvertDatabase());
 		menuItemConvertDatabase.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -417,21 +416,21 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 	 **/
 	protected JMenu createMenuTools() {
 		log.debug("Start creation of the Tools menu."); //$NON-NLS-1$
-		menuTools = new JMenu(Localizer.getString("moviemanager.menu.tools")); //$NON-NLS-1$
+		menuTools = new JMenu(Localizer.get("DialogMovieManager.menu.tools")); //$NON-NLS-1$
 		menuTools.setMnemonic('T');
 	
 		/* MenuItem Preferences.
 	         For some reason, addMovie KeyEvent.VK_A doesn't work when focused
 	         on the selected movie or the filter*/
 
-		menuItemPrefs = new JMenuItem(Localizer.getString("moviemanager.menu.tools.preferences"),'P'); //$NON-NLS-1$
+		menuItemPrefs = new JMenuItem(Localizer.get("DialogMovieManager.menu.tools.preferences"),'P'); //$NON-NLS-1$
 		menuItemPrefs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.SHIFT_DOWN_MASK));
 		menuItemPrefs.setActionCommand("Preferences"); //$NON-NLS-1$
 		menuItemPrefs.addActionListener(new MovieManagerCommandPrefs());
 	
 		menuTools.add(menuItemPrefs);
 		
-		JMenuItem menuItemAddMultipleMovies = new JMenuItem(Localizer.getString("moviemanager.menu.tools.addmultiplemovies"),'M'); //$NON-NLS-1$
+		JMenuItem menuItemAddMultipleMovies = new JMenuItem(Localizer.get("DialogMovieManager.menu.tools.addmultiplemovies"),'M'); //$NON-NLS-1$
 		menuItemAddMultipleMovies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemAddMultipleMovies.setActionCommand("Add Multiple Movies"); //$NON-NLS-1$
 		menuItemAddMultipleMovies.addActionListener(new MovieManagerCommandAddMultipleMoviesByFile());
@@ -440,14 +439,14 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuTools.add(menuItemAddMultipleMovies);
 		this.menuItemAddMultipleMovies = menuItemAddMultipleMovies;
 	
-		JMenuItem menuItemUpdateIMDbInfo = new JMenuItem(Localizer.getString("moviemanager.menu.tools.updateIMDbInfo"),'U'); //$NON-NLS-1$
+		JMenuItem menuItemUpdateIMDbInfo = new JMenuItem(Localizer.get("DialogMovieManager.menu.tools.updateIMDbInfo"),'U'); //$NON-NLS-1$
 		menuItemUpdateIMDbInfo.setActionCommand("Update IMDb Info"); //$NON-NLS-1$
 		menuItemUpdateIMDbInfo.addActionListener(new MovieManagerCommandUpdateIMDBInfo());
 
 		menuTools.add(menuItemUpdateIMDbInfo);
 		this.menuItemUpdateIMDbInfo = menuItemUpdateIMDbInfo;
 		
-		JMenuItem menuItemReportGenerator = new JMenuItem(Localizer.getString("moviemanager.menu.tools.reportgenerator"),'R'); //$NON-NLS-1$
+		JMenuItem menuItemReportGenerator = new JMenuItem(Localizer.get("DialogMovieManager.menu.tools.reportgenerator"),'R'); //$NON-NLS-1$
 		menuItemReportGenerator.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemReportGenerator.setActionCommand("Report Generator"); //$NON-NLS-1$
 		menuItemReportGenerator.addActionListener(new MovieManagerCommandReportGenerator());
@@ -464,7 +463,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 	
 	protected JMenu createMenuLists() {
 		log.debug("Start creation of the Lists menu."); //$NON-NLS-1$
-		menuLists = new MenuLists(Localizer.getString("moviemanager.menu.lists")); //$NON-NLS-1$
+		menuLists = new MenuLists(Localizer.get("DialogMovieManager.menu.lists")); //$NON-NLS-1$
 		menuLists.setMnemonic('L');
 		
 		log.debug("Creation of the Lists menu done."); //$NON-NLS-1$
@@ -820,30 +819,30 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 	 **/
 	protected JMenu createMenuHelp() {
 		log.debug("Start creation of the Help menu."); //$NON-NLS-1$
-		menuHelp = new JMenu(Localizer.getString("moviemanager.menu.help")); //$NON-NLS-1$
+		menuHelp = new JMenu(Localizer.get("DialogMovieManager.menu.help")); //$NON-NLS-1$
 		menuHelp.setMnemonic('H');
 		/* MenuItem Help. */
-		JMenuItem menuItemHelp = new JMenuItem(Localizer.getString("moviemanager.menu.help.help"),'H'); //$NON-NLS-1$
+		JMenuItem menuItemHelp = new JMenuItem(Localizer.get("DialogMovieManager.menu.help.help"),'H'); //$NON-NLS-1$
 		menuItemHelp.setAccelerator(KeyStroke.getKeyStroke("F1")); //$NON-NLS-1$
 		menuItemHelp.setActionCommand("Help"); //$NON-NLS-1$
 		menuItemHelp.addActionListener(new MovieManagerCommandHelp());
 		menuHelp.add(menuItemHelp);
 		/* MenuItem Online Help. */
-		JMenuItem menuItemOnlineHelp = new JMenuItem(Localizer.getString("moviemanager.menu.help.onlinehelp"),'O'); //$NON-NLS-1$
+		JMenuItem menuItemOnlineHelp = new JMenuItem(Localizer.get("DialogMovieManager.menu.help.onlinehelp"),'O'); //$NON-NLS-1$
 		menuItemOnlineHelp.setActionCommand("OpenPage (Online Help)"); //$NON-NLS-1$
 		menuItemOnlineHelp.addActionListener(new MovieManagerCommandOpenPage("http://xmm.sourceforge.net/help.html")); //$NON-NLS-1$
 		menuHelp.add(menuItemOnlineHelp);
 		/* A Separator. */
 		menuHelp.addSeparator();
 		/* MenuItem HomePage. */
-		JMenuItem menuItemHomePage = new JMenuItem(Localizer.getString("moviemanager.menu.help.homepage"),'P'); //$NON-NLS-1$
+		JMenuItem menuItemHomePage = new JMenuItem(Localizer.get("DialogMovieManager.menu.help.homepage"),'P'); //$NON-NLS-1$
 		menuItemHomePage.setActionCommand("OpenPage (Home Page)"); //$NON-NLS-1$
 		menuItemHomePage.addActionListener(new MovieManagerCommandOpenPage("http://xmm.sourceforge.net/")); //$NON-NLS-1$
 		menuHelp.add(menuItemHomePage);
 		/* A Separator. */
 		menuHelp.addSeparator();
 		/* MenuItem About. */
-		menuItemAbout = new JMenuItem(Localizer.getString("moviemanager.menu.help.about")); //$NON-NLS-1$
+		menuItemAbout = new JMenuItem(Localizer.get("DialogMovieManager.menu.help.about")); //$NON-NLS-1$
 		menuItemAbout.setActionCommand("About"); //$NON-NLS-1$
 		menuItemAbout.addActionListener(new MovieManagerCommandAbout());
 		menuHelp.add(menuItemAbout);

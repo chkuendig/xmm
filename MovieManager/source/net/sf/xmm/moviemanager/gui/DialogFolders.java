@@ -107,7 +107,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         GUIUtil.enableDisposeOnEscapeKey(shortcutManager);
         
         /* Dialog properties...*/
-        setTitle(Localizer.getString("DialogFolders.title")); //$NON-NLS-1$
+        setTitle(Localizer.get("DialogFolders.title")); //$NON-NLS-1$
         setModal(true);
         setResizable(false);
         
@@ -120,7 +120,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         GridBagConstraints constraints;
         
         /*Covers*/
-        JLabel labelCovers = new JLabel(Localizer.getString("DialogFolders.label-covers")); //$NON-NLS-1$
+        JLabel labelCovers = new JLabel(Localizer.get("DialogFolders.label-covers")); //$NON-NLS-1$
         labelCovers.setFont(new Font(labelCovers.getFont().getName(),Font.PLAIN,labelCovers.getFont().getSize()));
         constraints = new GridBagConstraints();
         constraints.gridx = 0;
@@ -138,13 +138,13 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         textFieldCovers.getDocument().addDocumentListener(this);
         
 		
-        JButton buttonCovers = new JButton(Localizer.getString("DialogFolders.browse-covers")); //$NON-NLS-1$
-        buttonCovers.setToolTipText(Localizer.getString("DialogFolders.browse-covers-tooltip")); //$NON-NLS-1$
+        JButton buttonCovers = new JButton(Localizer.get("DialogFolders.browse-covers")); //$NON-NLS-1$
+        buttonCovers.setToolTipText(Localizer.get("DialogFolders.browse-covers-tooltip")); //$NON-NLS-1$
         buttonCovers.setActionCommand("Folders - Browse Covers"); //$NON-NLS-1$
         buttonCovers.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-                executeCommandBrowse(Localizer.getString("DialogFolders.selectCoversDir")); //$NON-NLS-1$
+                executeCommandBrowse(Localizer.get("DialogFolders.selectCoversDir")); //$NON-NLS-1$
             }});
                  
         constraints = new GridBagConstraints();
@@ -154,7 +154,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         panelFolders.add(buttonCovers,constraints); 
         
         /*Queries*/
-        JLabel labelQueries = new JLabel(Localizer.getString("DialogFolders.label-queries")); //$NON-NLS-1$
+        JLabel labelQueries = new JLabel(Localizer.get("DialogFolders.label-queries")); //$NON-NLS-1$
         labelQueries.setFont(new Font(labelQueries.getFont().getName(),Font.PLAIN,labelQueries.getFont().getSize()));
         constraints = new GridBagConstraints();
         constraints.gridx = 0;
@@ -172,13 +172,13 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         panelFolders.add(textFieldQueries,constraints);
         textFieldQueries.getDocument().addDocumentListener(this);
     
-        JButton buttonQueries = new JButton(Localizer.getString("DialogFolders.browse-queries")); //$NON-NLS-1$
-        buttonQueries.setToolTipText(Localizer.getString("DialogFolders.browse-queries-tooltip")); //$NON-NLS-1$
+        JButton buttonQueries = new JButton(Localizer.get("DialogFolders.browse-queries")); //$NON-NLS-1$
+        buttonQueries.setToolTipText(Localizer.get("DialogFolders.browse-queries-tooltip")); //$NON-NLS-1$
         buttonQueries.setActionCommand("Folders - Browse Queries"); //$NON-NLS-1$
         buttonQueries.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-                executeCommandBrowse(Localizer.getString("DialogFolders.selectQueriesDir")); //$NON-NLS-1$
+                executeCommandBrowse(Localizer.get("DialogFolders.selectQueriesDir")); //$NON-NLS-1$
             }});
                 
         constraints = new GridBagConstraints();
@@ -188,7 +188,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         panelFolders.add(buttonQueries,constraints);
         
         /* Database */
-        JLabel labelDatabase = new JLabel(Localizer.getString("DialogFolders.current-database")); //$NON-NLS-1$
+        JLabel labelDatabase = new JLabel(Localizer.get("DialogFolders.current-database")); //$NON-NLS-1$
         labelDatabase.setFont(new Font(labelDatabase.getFont().getName(),Font.PLAIN,labelDatabase.getFont().getSize()));
         constraints = new GridBagConstraints();
         constraints.gridx = 0;
@@ -215,7 +215,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         else if (isMySQL)
             labelDatabaseType.setText("     MySQL Database"); //$NON-NLS-1$
         else
-            labelDatabaseType.setText(Localizer.getString("DialogFolders.database-label")); //$NON-NLS-1$
+            labelDatabaseType.setText(Localizer.get("DialogFolders.database-label")); //$NON-NLS-1$
         
         labelDatabaseType.setFont(new Font(labelDatabase.getFont().getName(),Font.BOLD,labelDatabase.getFont().getSize()));
         constraints = new GridBagConstraints();
@@ -227,7 +227,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         
         
         
-        JLabel labelLoadDatabase = new JLabel(Localizer.getString("DialogFolders.load-database")); //$NON-NLS-1$
+        JLabel labelLoadDatabase = new JLabel(Localizer.get("DialogFolders.load-database")); //$NON-NLS-1$
         labelLoadDatabase.setFont(new Font(labelLoadDatabase.getFont().getName(),Font.PLAIN, labelLoadDatabase.getFont().getSize()));
         constraints = new GridBagConstraints();
         constraints.gridx = 0;
@@ -245,8 +245,8 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         constraints.insets = new Insets(5,5,5,5);
         panelFolders.add(textFieldLoadDatabase, constraints);
         
-        setPermanentDatabase = new JCheckBox(Localizer.getString("DialogFolders.set-permanent")); //$NON-NLS-1$
-        setPermanentDatabase.setToolTipText(Localizer.getString("DialogFolders.set-permanent-tooltip")); //$NON-NLS-1$
+        setPermanentDatabase = new JCheckBox(Localizer.get("DialogFolders.set-permanent")); //$NON-NLS-1$
+        setPermanentDatabase.setToolTipText(Localizer.get("DialogFolders.set-permanent-tooltip")); //$NON-NLS-1$
         
         if (MovieManager.getConfig().getDatabasePathPermanent())
             setPermanentDatabase.setSelected(true);
@@ -302,7 +302,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         JPanel panelOptions = new JPanel(new GridBagLayout());
         panelOptions.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
         
-        JLabel optionTitle = new JLabel(Localizer.getString("DialogFolders.save-paths-relative-to")); //$NON-NLS-1$
+        JLabel optionTitle = new JLabel(Localizer.get("DialogFolders.save-paths-relative-to")); //$NON-NLS-1$
         constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 0;
@@ -311,7 +311,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         constraints.anchor = GridBagConstraints.WEST;
         panelOptions.add(optionTitle, constraints);
         
-        optionCovers = new JLabel(Localizer.getString("DialogFolders.covers")); //$NON-NLS-1$
+        optionCovers = new JLabel(Localizer.get("DialogFolders.covers")); //$NON-NLS-1$
         optionCovers.setEnabled(false);
         constraints = new GridBagConstraints();
         constraints.gridx = 1;
@@ -320,7 +320,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         constraints.anchor = GridBagConstraints.WEST;
         panelOptions.add(optionCovers, constraints);
         
-        optionQueries = new JLabel(Localizer.getString("DialogFolders.queries")); //$NON-NLS-1$
+        optionQueries = new JLabel(Localizer.get("DialogFolders.queries")); //$NON-NLS-1$
         optionQueries.setEnabled(false);
         constraints = new GridBagConstraints();
         constraints.gridx = 2;
@@ -329,7 +329,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         constraints.anchor = GridBagConstraints.WEST;
         panelOptions.add(optionQueries, constraints);
         
-        optionDatabase = new JLabel(Localizer.getString("DialogFolders.database")); //$NON-NLS-1$
+        optionDatabase = new JLabel(Localizer.get("DialogFolders.database")); //$NON-NLS-1$
         optionDatabase.setEnabled(false);
         constraints = new GridBagConstraints();
         constraints.gridx = 3;
@@ -338,7 +338,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         constraints.anchor = GridBagConstraints.WEST;
         panelOptions.add(optionDatabase, constraints);
         
-        JLabel optionProgramLocation = new JLabel(Localizer.getString("DialogFolders.program-location")); //$NON-NLS-1$
+        JLabel optionProgramLocation = new JLabel(Localizer.get("DialogFolders.program-location")); //$NON-NLS-1$
         constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 1;
@@ -379,7 +379,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         constraints.anchor = GridBagConstraints.CENTER;
         panelOptions.add(relativeDatabaseProgram, constraints);
         
-        JLabel optionDatabaseLocation = new JLabel(Localizer.getString("DialogFolders.database-location")); //$NON-NLS-1$
+        JLabel optionDatabaseLocation = new JLabel(Localizer.get("DialogFolders.database-location")); //$NON-NLS-1$
         constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 2;
@@ -408,7 +408,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         panelOptions.add(relativeQueriesDatabase, constraints);
         
         
-        JLabel relativeEnable = new JLabel(Localizer.getString("DialogFolders.enable")); //$NON-NLS-1$
+        JLabel relativeEnable = new JLabel(Localizer.get("DialogFolders.enable")); //$NON-NLS-1$
         constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = 3;
@@ -504,8 +504,8 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
         
-        JButton buttonSave = new JButton(Localizer.getString("DialogFolders.save")); //$NON-NLS-1$
-        buttonSave.setToolTipText(Localizer.getString("DialogFolders.save-changes")); //$NON-NLS-1$
+        JButton buttonSave = new JButton(Localizer.get("DialogFolders.save")); //$NON-NLS-1$
+        buttonSave.setToolTipText(Localizer.get("DialogFolders.save-changes")); //$NON-NLS-1$
         buttonSave.setActionCommand("Folders - Save"); //$NON-NLS-1$
         buttonSave.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent event) {
@@ -518,8 +518,8 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         
         panelButtons.add(buttonSave);
         
-        JButton buttonCancel = new JButton(Localizer.getString("DialogFolders.cancel")); //$NON-NLS-1$
-        buttonCancel.setToolTipText(Localizer.getString("DialogFolders.cancel-tooltip")); //$NON-NLS-1$
+        JButton buttonCancel = new JButton(Localizer.get("DialogFolders.cancel")); //$NON-NLS-1$
+        buttonCancel.setToolTipText(Localizer.get("DialogFolders.cancel-tooltip")); //$NON-NLS-1$
         buttonCancel.setActionCommand("Folders - Cancel"); //$NON-NLS-1$
         buttonCancel.addActionListener(new CommandDialogDispose(this));
         panelButtons.add(buttonCancel);
@@ -635,7 +635,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     		String databasePath = MovieManager.getConfig().getDatabasePath(true);
 
     		if (databasePath.indexOf(SysUtil.getUserDir()) == -1) {
-    			DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogFolders.alert.title"), Localizer.getString("DialogFolders.alert.database-relative-install.message")); 
+    			DialogAlert alert = new DialogAlert(this, Localizer.get("DialogFolders.alert.title"), Localizer.get("DialogFolders.alert.database-relative-install.message")); 
     			GUIUtil.showAndWait(alert, true);
     			return;
     		}
@@ -804,11 +804,11 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 
     					if (new File(coversPath).isDirectory() && (new File(coversPath).getAbsolutePath().indexOf(SysUtil.getUserDir()) == -1)) {
     						textFieldCovers.setBackground(invalidPathColor);
-    						textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert.covers-inside-install.message"));
+    						textFieldCovers.setToolTipText(Localizer.get("DialogFolders.alert.covers-inside-install.message"));
     					}
     					else if (!new File(coversPath).isDirectory() && !(new File(SysUtil.getUserDir(), coversPath)).isDirectory()) { //$NON-NLS-1$
     						textFieldCovers.setBackground(invalidPathColor);
-    						textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert-covers-exist"));
+    						textFieldCovers.setToolTipText(Localizer.get("DialogFolders.alert-covers-exist"));
     					}
     					else {
     						textFieldCovers.setBackground(Color.WHITE);
@@ -823,7 +823,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 	
     						if (coversPath.indexOf(dbPath) == -1) {
     							textFieldCovers.setBackground(invalidPathColor);
-    							textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert-covers-relative-database"));
+    							textFieldCovers.setToolTipText(Localizer.get("DialogFolders.alert-covers-relative-database"));
     						}
     						else {
     							textFieldCovers.setBackground(Color.WHITE);
@@ -832,7 +832,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     					}
     					else if (!(new File(dbPath, coversPath)).isDirectory()) {
     						textFieldCovers.setBackground(invalidPathColor);
-    						textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert.covers-doesnt-exist.message"));
+    						textFieldCovers.setToolTipText(Localizer.get("DialogFolders.alert.covers-doesnt-exist.message"));
     					}
     					else {
     						textFieldCovers.setBackground(Color.WHITE);
@@ -895,7 +895,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 
     				if (!coversFolder.isDirectory()) {
     					textFieldCovers.setBackground(invalidPathColor);
-    					textFieldCovers.setToolTipText(Localizer.getString("DialogFolders.alert.covers-doesnt-exist.message"));
+    					textFieldCovers.setToolTipText(Localizer.get("DialogFolders.alert.covers-doesnt-exist.message"));
     				}
     				else {
     					textFieldCovers.setBackground(Color.WHITE);
@@ -914,13 +914,13 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 
     					if (new File(queriesPath).isDirectory() && (new File(queriesPath).getAbsolutePath().indexOf(SysUtil.getUserDir()) == -1)) {
     						textFieldQueries.setBackground(invalidPathColor);
-    						textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert.queries-inside-install.message"));
+    						textFieldQueries.setToolTipText(Localizer.get("DialogFolders.alert.queries-inside-install.message"));
     						return;
     					}
 
     					if (!new File(queriesPath).isDirectory() && !(new File(SysUtil.getUserDir(), queriesPath)).isDirectory()) { //$NON-NLS-1$
     						textFieldQueries.setBackground(invalidPathColor);
-    						textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert-Queries-exist"));
+    						textFieldQueries.setToolTipText(Localizer.get("DialogFolders.alert-Queries-exist"));
     						return;
     					}
 
@@ -935,13 +935,13 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 
     						if (queriesPath.indexOf(dbPath) == -1) {
     							textFieldQueries.setBackground(invalidPathColor);
-    							textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert-queries-relative-database"));
+    							textFieldQueries.setToolTipText(Localizer.get("DialogFolders.alert-queries-relative-database"));
     							return;
     						}
     					}
     					else if (!(new File(dbPath, queriesPath)).isDirectory()) {
     						textFieldQueries.setBackground(invalidPathColor);
-    						textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert.queries-doesnt-exist.message"));
+    						textFieldQueries.setToolTipText(Localizer.get("DialogFolders.alert.queries-doesnt-exist.message"));
     						return;
     					}
 
@@ -1005,7 +1005,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 
     				if (!queriesFolder.isDirectory()) {
     					textFieldQueries.setBackground(invalidPathColor);
-    					textFieldQueries.setToolTipText(Localizer.getString("DialogFolders.alert.queries-doesnt-exist.message"));
+    					textFieldQueries.setToolTipText(Localizer.get("DialogFolders.alert.queries-doesnt-exist.message"));
     					return;
     				}
 
@@ -1025,7 +1025,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     private void executeCommandBrowse(String title) {
     	JTextField textField;
     	/* Gets the right JTextField. */
-    	if (title.equals(Localizer.getString("DialogFolders.selectCoversDir"))) {
+    	if (title.equals(Localizer.get("DialogFolders.selectCoversDir"))) {
     		textField = getCovers();
     	} else {
     		textField = getQueries();
@@ -1034,14 +1034,14 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     	/*The Oyoaha theme wouldn't set the file name in the name texField so a contructor accepting current dir and selection mode takes care of that*/
     	ExtendedFileChooser fileChooser;
 
-    	if (title.equals(Localizer.getString("DialogFolders.selectCoversDir")))
+    	if (title.equals(Localizer.get("DialogFolders.selectCoversDir")))
     		fileChooser = new ExtendedFileChooser(MovieManager.getConfig().getCoversFolder(), ExtendedFileChooser.DIRECTORIES_ONLY);
     	else
     		fileChooser = new ExtendedFileChooser(MovieManager.getConfig().getQueriesFolder(), ExtendedFileChooser.DIRECTORIES_ONLY);
 
     	fileChooser.setDialogTitle(title);
-    	fileChooser.setApproveButtonText(Localizer.getString("DialogFolders.fileChooser.approve.text"));
-    	fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogFolders.filechooser.approve.tooltip"));
+    	fileChooser.setApproveButtonText(Localizer.get("DialogFolders.fileChooser.approve.text"));
+    	fileChooser.setApproveButtonToolTipText(Localizer.get("DialogFolders.filechooser.approve.tooltip"));
     	fileChooser.setAcceptAllFileFilterUsed(false);
 
     	int returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());

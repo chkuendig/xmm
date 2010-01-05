@@ -82,16 +82,16 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 	
 	databaseConverter = new DatabaseConverter(movieListModel.getSize()+ episodeList.size());
 	
-	startButton = new JButton(Localizer.getString("DialogDatabaseConverter.button.start.text")); //$NON-NLS-1$
+	startButton = new JButton(Localizer.get("DialogDatabaseConverter.button.start.text")); //$NON-NLS-1$
         startButton.setActionCommand("Start"); //$NON-NLS-1$
         startButton.addActionListener(this);
 	
-	cancelButton = new JButton(Localizer.getString("DialogDatabaseConverter.button.cancel.text")); //$NON-NLS-1$
+	cancelButton = new JButton(Localizer.get("DialogDatabaseConverter.button.cancel.text")); //$NON-NLS-1$
         cancelButton.setActionCommand("Cancel"); //$NON-NLS-1$
 	cancelButton.setEnabled(false);
         cancelButton.addActionListener(this);
 	
-	openDbButton = new JButton(Localizer.getString("DialogDatabaseConverter.button.open-new-database.text")); //$NON-NLS-1$
+	openDbButton = new JButton(Localizer.get("DialogDatabaseConverter.button.open-new-database.text")); //$NON-NLS-1$
         openDbButton.setActionCommand("Open"); //$NON-NLS-1$
 	openDbButton.setEnabled(false);
         openDbButton.addActionListener(this);
@@ -142,7 +142,7 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 		movieCounter++;
 		int percent = ((counter+1) * 100)/lengthOfTask;
 		
-		String msg = percent+ "%  (" + (counter+1) + Localizer.getString("DialogDatabaseConverter.progress.out-of") + lengthOfTask+")     "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String msg = percent+ "%  (" + (counter+1) + Localizer.get("DialogDatabaseConverter.progress.out-of") + lengthOfTask+")     "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		progressBar.setValue(counter+1);
 		progressBar.setString(msg);
 		taskOutput.append(movieCounter + " - " + transferred[counter] + newline); //$NON-NLS-1$
@@ -165,15 +165,15 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 		    if (newDatabase instanceof DatabaseAccess)
 			newDB = "MS Access"; //$NON-NLS-1$
 		    
-		    taskOutput.append(newline + oldDB+ Localizer.getString("DialogDatabaseConverter.message.database-conversion-successfull")+ newDB +Localizer.getString("DialogDatabaseConverter.message.database") + newline); //$NON-NLS-1$ //$NON-NLS-2$
+		    taskOutput.append(newline + oldDB+ Localizer.get("DialogDatabaseConverter.message.database-conversion-successfull")+ newDB +Localizer.get("DialogDatabaseConverter.message.database") + newline); //$NON-NLS-1$ //$NON-NLS-2$
 		    
-		    taskOutput.append(movieCounter + Localizer.getString("DialogDatabaseConverter.message.entries-processed-in") + (millisecondsToString(System.currentTimeMillis() - conversionStart)) + newline); //$NON-NLS-1$
+		    taskOutput.append(movieCounter + Localizer.get("DialogDatabaseConverter.message.entries-processed-in") + (millisecondsToString(System.currentTimeMillis() - conversionStart)) + newline); //$NON-NLS-1$
 		    openDbButton.setEnabled(true);
 		    cancelButton.setEnabled(false);
 		    parent.setDone(true);
 		}
 		else {
-		    taskOutput.append(newline + Localizer.getString("DialogDatabaseConverter.message.conversion-canceled") + newline); //$NON-NLS-1$
+		    taskOutput.append(newline + Localizer.get("DialogDatabaseConverter.message.conversion-canceled") + newline); //$NON-NLS-1$
 		    parent.setCanceled(true);
 		    
 		    databaseConverter = new DatabaseConverter(movieListModel.getSize()+ episodeList.size());
@@ -256,8 +256,8 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 	String finalString = ""; //$NON-NLS-1$
 	
 	if (!minutesStr.equals("00")) //$NON-NLS-1$
-	    finalString += minutesStr+Localizer.getString("DialogDatabaseConverter.message.minutes"); //$NON-NLS-1$
-	finalString += secondsStr+"."+millisecondsStr + Localizer.getString("DialogDatabaseConverter.message.seconds"); //$NON-NLS-1$ //$NON-NLS-2$
+	    finalString += minutesStr+Localizer.get("DialogDatabaseConverter.message.minutes"); //$NON-NLS-1$
+	finalString += secondsStr+"."+millisecondsStr + Localizer.get("DialogDatabaseConverter.message.seconds"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	return new String(finalString);
     }

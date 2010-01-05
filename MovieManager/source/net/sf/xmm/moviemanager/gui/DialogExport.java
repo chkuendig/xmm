@@ -116,16 +116,16 @@ public class DialogExport extends JDialog implements ActionListener {
             }
         });
                         
-        setTitle(Localizer.getString("DialogExport.title")); //$NON-NLS-1$
+        setTitle(Localizer.get("DialogExport.title")); //$NON-NLS-1$
         setResizable(false);
         setModal(true);
       
         
         /*Export options*/
-        simpleExport = new JRadioButton(Localizer.getString("DialogExport.panel-export-options.button.simple-export")); //$NON-NLS-1$
+        simpleExport = new JRadioButton(Localizer.get("DialogExport.panel-export-options.button.simple-export")); //$NON-NLS-1$
         simpleExport.setActionCommand("Simple Export"); //$NON-NLS-1$
         
-        fullExport = new JRadioButton(Localizer.getString("DialogExport.panel-export-options.button.full-export")); //$NON-NLS-1$
+        fullExport = new JRadioButton(Localizer.get("DialogExport.panel-export-options.button.full-export")); //$NON-NLS-1$
         fullExport.setActionCommand("Full Export"); //$NON-NLS-1$
         
         if (MovieManager.getConfig().getExportType().equals("full")) //$NON-NLS-1$
@@ -142,7 +142,7 @@ public class DialogExport extends JDialog implements ActionListener {
         simpleExport.addActionListener(this);
         fullExport.addActionListener(this);
         
-        enableAlphabeticSplit = new JCheckBox(Localizer.getString("DialogExport.panel-export-options.button.divide-alphabetically")); //$NON-NLS-1$
+        enableAlphabeticSplit = new JCheckBox(Localizer.get("DialogExport.panel-export-options.button.divide-alphabetically")); //$NON-NLS-1$
         enableAlphabeticSplit.setActionCommand("Divide alphabetically"); //$NON-NLS-1$
         enableAlphabeticSplit.setEnabled(false);
         
@@ -150,7 +150,7 @@ public class DialogExport extends JDialog implements ActionListener {
         JPanel exportOptionPanel = new JPanel(new GridLayout(2, 1));
         
         exportOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,5,0) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                Localizer.getString("DialogExport.panel-export-options.title"), //$NON-NLS-1$
+                Localizer.get("DialogExport.panel-export-options.title"), //$NON-NLS-1$
                 TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION,
                 new Font(exportOptionPanel.getFont().getName(),Font.BOLD, exportOptionPanel.getFont().getSize())),
@@ -165,7 +165,7 @@ public class DialogExport extends JDialog implements ActionListener {
         htmlExportPanel.setLayout(new BoxLayout(htmlExportPanel, BoxLayout.PAGE_AXIS));
         
         htmlExportPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,3,3,3), BorderFactory.createTitledBorder(
-                 BorderFactory.createEtchedBorder(), Localizer.getString("DialogExport.panel-html-export.title") , TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(htmlExportPanel.getFont().getName(),Font.BOLD, htmlExportPanel.getFont().getSize()) //$NON-NLS-1$
+                 BorderFactory.createEtchedBorder(), Localizer.get("DialogExport.panel-html-export.title") , TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(htmlExportPanel.getFont().getName(),Font.BOLD, htmlExportPanel.getFont().getSize()) //$NON-NLS-1$
         )), BorderFactory.createEmptyBorder(0,2,2,2)));
         
         
@@ -175,7 +175,7 @@ public class DialogExport extends JDialog implements ActionListener {
         titleTextField = new JTextField(16);
         titleTextField.setEditable(true);
         
-        JLabel titleLabel = new JLabel(Localizer.getString("DialogExport.title-text-field") + ": "); //$NON-NLS-1$
+        JLabel titleLabel = new JLabel(Localizer.get("DialogExport.title-text-field") + ": "); //$NON-NLS-1$
         titleLabel.setLabelFor(titleTextField);
         
         titlePanel.add(titleLabel);
@@ -188,11 +188,11 @@ public class DialogExport extends JDialog implements ActionListener {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         
-        exportButton = new JButton(Localizer.getString("DialogExport.button.export.text")); //$NON-NLS-1$
+        exportButton = new JButton(Localizer.get("DialogExport.button.export.text")); //$NON-NLS-1$
         exportButton.setActionCommand("Export"); //$NON-NLS-1$
         exportButton.addActionListener(this);
         
-        closeButton = new JButton(Localizer.getString("DialogExport.button.close.text")); //$NON-NLS-1$
+        closeButton = new JButton(Localizer.get("DialogExport.button.close.text")); //$NON-NLS-1$
         closeButton.setActionCommand("Close"); //$NON-NLS-1$
         closeButton.addActionListener(this);
         

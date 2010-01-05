@@ -89,7 +89,7 @@ public class DialogIMDB extends JDialog {
         this.modelEntry = modelEntry;
         
         if (alternateTitle == null)
-        	setTitle(Localizer.getString("DialogIMDB.title")); //$NON-NLS-1$
+        	setTitle(Localizer.get("DialogIMDB.title")); //$NON-NLS-1$
         else
         	setTitle(alternateTitle);
        	         
@@ -149,7 +149,7 @@ public class DialogIMDB extends JDialog {
     	setResizable(true);
     	/* Movies List panel...*/
     	panelMoviesList = new JPanel();
-    	panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogIMDB.panel-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+    	panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogIMDB.panel-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
     	listMovies = new JList() {
 
@@ -243,8 +243,8 @@ public class DialogIMDB extends JDialog {
     	panelRegularButtons.setBorder(BorderFactory.createEmptyBorder(0,0,4,0));
     	panelRegularButtons.setLayout(new FlowLayout());
     	
-    	buttonSelect = new JButton(Localizer.getString("DialogIMDB.button.select.text")); //$NON-NLS-1$
-    	buttonSelect.setToolTipText(Localizer.getString("DialogIMDB.button.select.tooltip")); //$NON-NLS-1$
+    	buttonSelect = new JButton(Localizer.get("DialogIMDB.button.select.text")); //$NON-NLS-1$
+    	buttonSelect.setToolTipText(Localizer.get("DialogIMDB.button.select.tooltip")); //$NON-NLS-1$
     	buttonSelect.setActionCommand("GetIMDBInfo - Select"); //$NON-NLS-1$
     	buttonSelect.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent event) {
@@ -256,8 +256,8 @@ public class DialogIMDB extends JDialog {
 
     	panelRegularButtons.add(buttonSelect);
 
-    	buttonCancel = new JButton(Localizer.getString("DialogIMDB.button.cancel.text.cancel")); //$NON-NLS-1$
-    	buttonCancel.setToolTipText(Localizer.getString("DialogIMDB.button.cancel.tooltip.cancel")); //$NON-NLS-1$
+    	buttonCancel = new JButton(Localizer.get("DialogIMDB.button.cancel.text.cancel")); //$NON-NLS-1$
+    	buttonCancel.setToolTipText(Localizer.get("DialogIMDB.button.cancel.tooltip.cancel")); //$NON-NLS-1$
     	
     	buttonCancel.setActionCommand("GetIMDBInfo - Cancel"); //$NON-NLS-1$
 
@@ -289,7 +289,7 @@ public class DialogIMDB extends JDialog {
     void executeSearch() {
     	    	
     	DefaultListModel model = new DefaultListModel();
-    	model.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.search-in-progress"), null)); //$NON-NLS-1$
+    	model.addElement(new ModelIMDbSearchHit(null, Localizer.get("DialogIMDB.list-element.messsage.search-in-progress"), null)); //$NON-NLS-1$
     	listMovies.setModel(model);
     	
     	SwingWorker worker = new SwingWorker() {
@@ -300,7 +300,7 @@ public class DialogIMDB extends JDialog {
     				final DefaultListModel list = new DefaultListModel();
 
     				if (hits.size() == 0) {
-    					list.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
+    					list.addElement(new ModelIMDbSearchHit(null, Localizer.get("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
     				}
     				else {
     					for (ModelIMDbSearchHit hit : hits)
@@ -369,27 +369,27 @@ public class DialogIMDB extends JDialog {
             return;
         
         if (message.startsWith("Server returned HTTP response code: 407")) { //$NON-NLS-1$
-            DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.authentication-required"), Localizer.getString("DialogIMDB.alert.message.proxy-authentication-required")); //$NON-NLS-1$ //$NON-NLS-2$
+            DialogAlert alert = new DialogAlert(this, Localizer.get("DialogIMDB.alert.title.authentication-required"), Localizer.get("DialogIMDB.alert.message.proxy-authentication-required")); //$NON-NLS-1$ //$NON-NLS-2$
             GUIUtil.showAndWait(alert, true);
         }
         
         if (message.startsWith("Connection timed out")) { //$NON-NLS-1$
-            DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.connection-timed-out"), Localizer.getString("DialogIMDB.alert.message.connection-timed-out")); //$NON-NLS-1$ //$NON-NLS-2$
+            DialogAlert alert = new DialogAlert(this, Localizer.get("DialogIMDB.alert.title.connection-timed-out"), Localizer.get("DialogIMDB.alert.message.connection-timed-out")); //$NON-NLS-1$ //$NON-NLS-2$
             GUIUtil.showAndWait(alert, true);
         }
         
         if (message.startsWith("Connection reset")) { //$NON-NLS-1$
-            DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.connection-reset"), Localizer.getString("DialogIMDB.alert.message.connection-reset")); //$NON-NLS-1$ //$NON-NLS-2$
+            DialogAlert alert = new DialogAlert(this, Localizer.get("DialogIMDB.alert.title.connection-reset"), Localizer.get("DialogIMDB.alert.message.connection-reset")); //$NON-NLS-1$ //$NON-NLS-2$
             GUIUtil.showAndWait(alert, true);
         }
         
         if (message.startsWith("Server redirected too many  times")) { //$NON-NLS-1$
-            DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.access-denied"), Localizer.getString("DialogIMDB.alert.message.username-of-password-invalid")); //$NON-NLS-1$ //$NON-NLS-2$
+            DialogAlert alert = new DialogAlert(this, Localizer.get("DialogIMDB.alert.title.access-denied"), Localizer.get("DialogIMDB.alert.message.username-of-password-invalid")); //$NON-NLS-1$ //$NON-NLS-2$
             GUIUtil.showAndWait(alert, true);
         }
         
         if (message.startsWith("The host did not accept the connection within timeout of")) { //$NON-NLS-1$
-            DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogIMDB.alert.title.connection-timed-out"), message); //$NON-NLS-1$
+            DialogAlert alert = new DialogAlert(this, Localizer.get("DialogIMDB.alert.title.connection-timed-out"), message); //$NON-NLS-1$
             GUIUtil.showAndWait(alert, true);
         }
         

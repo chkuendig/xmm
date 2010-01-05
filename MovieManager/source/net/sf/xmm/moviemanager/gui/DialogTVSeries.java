@@ -85,7 +85,7 @@ public class DialogTVSeries extends JDialog {
     
     void createListDialog(DefaultListModel list) {
         /* Dialog properties...*/
-        setTitle(Localizer.getString("DialogTVDOTCOM.title")); //$NON-NLS-1$
+        setTitle(Localizer.get("DialogTVDOTCOM.title")); //$NON-NLS-1$
         setModal(true);
         setResizable(false);
         
@@ -144,7 +144,7 @@ public class DialogTVSeries extends JDialog {
         panelRegularButtons.setBorder(BorderFactory.createEmptyBorder(0,0,4,0));
         panelRegularButtons.setLayout(new FlowLayout());
         
-        buttonSelectAll = new JButton(Localizer.getString("DialogTVDOTCOM.button.select-all.text")); //$NON-NLS-1$
+        buttonSelectAll = new JButton(Localizer.get("DialogTVDOTCOM.button.select-all.text")); //$NON-NLS-1$
         buttonSelectAll.setActionCommand("Select All"); //$NON-NLS-1$
         buttonSelectAll.setEnabled(false);
         buttonSelectAll.addActionListener(new ActionListener() {
@@ -157,16 +157,16 @@ public class DialogTVSeries extends JDialog {
             }});
         panelRegularButtons.add(buttonSelectAll);
         
-        buttonSelect = new JButton(Localizer.getString("DialogTVDOTCOM.button.select.text")); //$NON-NLS-1$
-        buttonSelect.setToolTipText(Localizer.getString("DialogTVDOTCOM.button.select.tooltip")); //$NON-NLS-1$
+        buttonSelect = new JButton(Localizer.get("DialogTVDOTCOM.button.select.text")); //$NON-NLS-1$
+        buttonSelect.setToolTipText(Localizer.get("DialogTVDOTCOM.button.select.tooltip")); //$NON-NLS-1$
         buttonSelect.setEnabled(false);
         buttonSelect.setActionCommand("GetTVDOTCOMInfo - Select"); //$NON-NLS-1$
                
         panelRegularButtons.add(buttonSelect);
         
         
-        buttonOk = new JButton(Localizer.getString("DialogTVDOTCOM.button.cancel.text")); //$NON-NLS-1$
-        buttonOk.setToolTipText(Localizer.getString("DialogTVDOTCOM.button.cancel.tooltip")); //$NON-NLS-1$
+        buttonOk = new JButton(Localizer.get("DialogTVDOTCOM.button.cancel.text")); //$NON-NLS-1$
+        buttonOk.setToolTipText(Localizer.get("DialogTVDOTCOM.button.cancel.tooltip")); //$NON-NLS-1$
         
         buttonOk.setActionCommand("GetIMDBInfo - Cancel"); //$NON-NLS-1$
         
@@ -189,7 +189,7 @@ public class DialogTVSeries extends JDialog {
                 (int)MovieManager.getDialog().getLocation().getY()+(MovieManager.getDialog().getHeight()-getHeight())/2);
         
         DefaultListModel model = new DefaultListModel();
-        model.addElement(new ModelMovie(-1, Localizer.getString("DialogTVDOTCOM.list-item.message.search-in-progress"))); //$NON-NLS-1$
+        model.addElement(new ModelMovie(-1, Localizer.get("DialogTVDOTCOM.list-item.message.search-in-progress"))); //$NON-NLS-1$
         listMovies.setModel(model);
     }
     

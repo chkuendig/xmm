@@ -34,7 +34,7 @@ public class Localizer {
 			}
 
 			if (inpuStream != null)
-				res_en = new TMXResourceBundle(null, inpuStream, "en-EN", "");
+				res_en = new TMXResourceBundle(null, inpuStream, "");
 			else
 				res_en = null;
 
@@ -65,7 +65,7 @@ public class Localizer {
 
 				if (inpuStream != null) {
 					log.debug("tmx ResourceAsStream");
-					res_en = new TMXResourceBundle(null, inpuStream, "en-EN", "");
+					res_en = new TMXResourceBundle(null, inpuStream, null);
 				}
 				else {
 					log.error("TMX lanuguage file not accessible");
@@ -73,27 +73,54 @@ public class Localizer {
 				}
 			}
 			else {
-				res_en = new TMXResourceBundle(f.getAbsolutePath(), "en-EN");
+				res_en = new TMXResourceBundle(f.getAbsolutePath());
 			}
 	
+			java.util.HashMap<String,String> langs = res_en.getLanuages();
+			
+			int counter = 0;
+			
+			System.err.println("loaded lanuage files:" + langs.keySet().size());
+			
+			for (String key : langs.keySet()) {
+				System.err.println("Language("+counter+"):" + key);
+			}
+			
 			//i18n = new org.xnap.commons.i18n.I18n(res_en);
 		}
+		
+		try {
+			
+			String locale = MovieManager.getConfig().getLocale();
+			System.err.println("locale:" + locale);
+			
+			// If failed to load language, load defulat en-US
+			//if (!res_en.loadLanguage(locale))
+			//	res_en.loadLanguage("en-US");		
+			res_en.load();
+			
+			if (!res_en.setDefaultLangauge("en-US"))
+				log.warn("Failed to set default language");
+			
+			if (!res_en.setLangauge(locale))
+				res_en.setLangauge("en-US");
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-
-	private Localizer() {
-	}
-
-
-	public static String getString(String key) {
+	
+	public static String get(String key) {
 
 		try {
-
 			temp = ""; //res_no.getString(key, "no-NO");
-			if ("".equals(temp)) {
-				temp = res_en.getString(key, "");
-			}
+			temp = res_en.getString(key, "");
+			
 			return temp;
 		} catch (MissingResourceException e) {
+			log.warn("Invalid key:" + key, e);
 			return '!' + key + '!';
 		}
 	}

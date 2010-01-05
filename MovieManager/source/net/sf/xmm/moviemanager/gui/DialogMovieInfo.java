@@ -178,7 +178,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		
 		setModelMovieInfo(new ModelMovieInfo(false));
 
-		setUp(Localizer.getString("DialogMovieInfo.title.add-movie"));
+		setUp(Localizer.get("DialogMovieInfo.title.add-movie"));
 		loadEmptyAdditionalFields();
 
 		updateGeneralInfoFromModel();
@@ -196,7 +196,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		setModelMovieInfo(new ModelMovieInfo(new ModelSeries(model)));
 		
-		setUp(Localizer.getString("DialogMovieInfo.title.add-episode"));
+		setUp(Localizer.get("DialogMovieInfo.title.add-episode"));
 
 		loadEmptyAdditionalFields();
 
@@ -214,9 +214,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		setModelMovieInfo(new ModelMovieInfo(model, false));
 
 		if (movieInfoModel.isEpisode)
-			setUp(Localizer.getString("DialogMovieInfo.title.edit-episode"));
+			setUp(Localizer.get("DialogMovieInfo.title.edit-episode"));
 		else
-			setUp(Localizer.getString("DialogMovieInfo.title.edit-movie"));
+			setUp(Localizer.get("DialogMovieInfo.title.edit-movie"));
 
 		/* Loads the movie info... */
 		loadMovieInfo();
@@ -264,7 +264,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	
 		panelMovieInfo = new JPanel();
 
-		panelMovieInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,7,0,7), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.getString("DialogMovieInfo.panel-movie-info.title."), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(panelMovieInfo.getFont().getName(),Font.BOLD, fontSize))), BorderFactory.createEmptyBorder(0,5,0,5))); //$NON-NLS-1$
+		panelMovieInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,7,0,7), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogMovieInfo.panel-movie-info.title."), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(panelMovieInfo.getFont().getName(),Font.BOLD, fontSize))), BorderFactory.createEmptyBorder(0,5,0,5))); //$NON-NLS-1$
 		
 		panelMovieInfo.setLayout(new GridBagLayout());
 		/* Creates the general info... */
@@ -275,7 +275,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		int textFieldInsets = 4;
 		int insetsTopBottom = 2;
 
-		JLabel dateID = new JLabel(Localizer.getString("DialogMovieInfo.field.date") + ": "); //$NON-NLS-1$
+		JLabel dateID = new JLabel(Localizer.get("DialogMovieInfo.field.date") + ": "); //$NON-NLS-1$
 		dateID.setFont((new Font(dateID.getFont().getName(), 1, fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -312,7 +312,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			}
 		});
 
-		JLabel colourID = new JLabel(Localizer.getString("DialogMovieInfo.field.colour") + ": "); //$NON-NLS-1$
+		JLabel colourID = new JLabel(Localizer.get("DialogMovieInfo.field.colour") + ": "); //$NON-NLS-1$
 		colourID.setFont((new Font(colourID.getFont().getName(), 1, fontSize)));
 
 		colour = new JTextField(12);
@@ -340,7 +340,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		panelGeneralInfo.add(imdbAndColour, constraints);
 
-		JLabel movieTitleID = new JLabel(Localizer.getString("DialogMovieInfo.field.title") + ": "); //$NON-NLS-1$
+		JLabel movieTitleID = new JLabel(Localizer.get("DialogMovieInfo.field.title") + ": "); //$NON-NLS-1$
 		movieTitleID.setFont((new Font(movieTitleID.getFont().getName(), 1, fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -393,7 +393,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelGeneralInfo.add(movieTitle, constraints);
 
-		JLabel directedID = new JLabel(Localizer.getString("DialogMovieInfo.field.directed-by") + ": "); //$NON-NLS-1$
+		JLabel directedID = new JLabel(Localizer.get("DialogMovieInfo.field.directed-by") + ": "); //$NON-NLS-1$
 		directedID.setFont((new Font(directedID.getFont().getName(), 1, fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -412,7 +412,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelGeneralInfo.add(directed, constraints);
 
-		JLabel writtenID = new JLabel(Localizer.getString("DialogMovieInfo.field.written-by") + ": "); //$NON-NLS-1$
+		JLabel writtenID = new JLabel(Localizer.get("DialogMovieInfo.field.written-by") + ": "); //$NON-NLS-1$
 		writtenID.setFont((new Font(writtenID.getFont().getName(), 1, fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -431,7 +431,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelGeneralInfo.add(written, constraints);
 
-		JLabel genreID = new JLabel(Localizer.getString("DialogMovieInfo.field.genre") + ": "); //$NON-NLS-1$
+		JLabel genreID = new JLabel(Localizer.get("DialogMovieInfo.field.genre") + ": "); //$NON-NLS-1$
 		genreID.setFont((new Font(genreID.getFont().getName(), 1, fontSize)));
 
 		constraints = new GridBagConstraints();
@@ -451,7 +451,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelGeneralInfo.add(genre, constraints);
 
-		JLabel ratingID = new JLabel(Localizer.getString("DialogMovieInfo.field.rating") + ": "); //$NON-NLS-1$
+		JLabel ratingID = new JLabel(Localizer.get("DialogMovieInfo.field.rating") + ": "); //$NON-NLS-1$
 		ratingID.setFont((new Font(ratingID.getFont().getName(), 1, fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -471,7 +471,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelGeneralInfo.add(rating, constraints);
 
-		JLabel countryID = new JLabel(Localizer.getString("DialogMovieInfo.field.country") + ": "); //$NON-NLS-1$
+		JLabel countryID = new JLabel(Localizer.get("DialogMovieInfo.field.country") + ": "); //$NON-NLS-1$
 		countryID.setFont((new Font(countryID.getFont().getName(), 1, fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 2;
@@ -490,7 +490,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelGeneralInfo.add(country, constraints);
 
-		JLabel seenID = new JLabel(Localizer.getString("DialogMovieInfo.field.seen") + ": "); //$NON-NLS-1$
+		JLabel seenID = new JLabel(Localizer.get("DialogMovieInfo.field.seen") + ": "); //$NON-NLS-1$
 		seenID.setFont((new Font(seenID.getFont().getName(), 1, fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -526,7 +526,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		
 		panelGeneralInfo.add(seenBox, constraints);
 
-		JLabel languageID = new JLabel(Localizer.getString("DialogMovieInfo.field.language") + ": "); //$NON-NLS-1$
+		JLabel languageID = new JLabel(Localizer.get("DialogMovieInfo.field.language") + ": "); //$NON-NLS-1$
 		languageID.setFont((new Font(languageID.getFont().getName(), 1,	fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 2;
@@ -577,7 +577,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelPlot.setLayout(new GridLayout(1,1));
 		
 		panelPlot.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                Localizer.getString("DialogMovieInfo.panel-plot.title."), //$NON-NLS-1$
+                Localizer.get("DialogMovieInfo.panel-plot.title."), //$NON-NLS-1$
 												TitledBorder.DEFAULT_JUSTIFICATION,
 												TitledBorder.DEFAULT_POSITION,
 												new Font(panelPlot.getFont()
@@ -597,7 +597,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelCast.setLayout(new GridLayout(1,1));
 		
 		panelCast.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                Localizer.getString("DialogMovieInfo.panel-cast.title."), //$NON-NLS-1$
+                Localizer.get("DialogMovieInfo.panel-cast.title."), //$NON-NLS-1$
 												TitledBorder.DEFAULT_JUSTIFICATION,
 												TitledBorder.DEFAULT_POSITION,
 												new Font(panelCast.getFont()
@@ -625,7 +625,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelMisc.setLayout(new GridBagLayout());
 		panelMisc.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
 				
-		JLabel webRuntimeID = new JLabel(Localizer.getString("DialogMovieInfo.field.web-runtime") + ": "); //$NON-NLS-1$
+		JLabel webRuntimeID = new JLabel(Localizer.get("DialogMovieInfo.field.web-runtime") + ": "); //$NON-NLS-1$
 		webRuntimeID.setFont((new Font(webRuntimeID.getFont().getName(), 1,	fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -650,7 +650,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.EAST;
 		panelMisc.add(textFieldWebRuntime, constraints);
 
-		JLabel soundMixID = new JLabel(Localizer.getString("DialogMovieInfo.field.sound-mix") + ": "); //$NON-NLS-1$
+		JLabel soundMixID = new JLabel(Localizer.get("DialogMovieInfo.field.sound-mix") + ": "); //$NON-NLS-1$
 		soundMixID.setFont((new Font(soundMixID.getFont().getName(), 1,	fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -675,7 +675,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.EAST;
 		panelMisc.add(textFieldSoundMix, constraints);
 
-		JLabel awardsID = new JLabel(Localizer.getString("DialogMovieInfo.field.awards") + ": "); //$NON-NLS-1$
+		JLabel awardsID = new JLabel(Localizer.get("DialogMovieInfo.field.awards") + ": "); //$NON-NLS-1$
 		awardsID.setFont((new Font(awardsID.getFont().getName(), 1, fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -700,7 +700,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.EAST;
 		panelMisc.add(textFieldAwards, constraints);
 
-		JLabel mpaaID = new JLabel(Localizer.getString("DialogMovieInfo.field.MPAA") + ": "); //$NON-NLS-1$
+		JLabel mpaaID = new JLabel(Localizer.get("DialogMovieInfo.field.MPAA") + ": "); //$NON-NLS-1$
 		mpaaID.setFont((new Font(mpaaID.getFont().getName(), 1, fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -725,7 +725,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.EAST;
 		panelMisc.add(textFieldMpaa, constraints);
 
-		JLabel akaID = new JLabel(Localizer.getString("DialogMovieInfo.field.also-known-as") + ": "); //$NON-NLS-1$
+		JLabel akaID = new JLabel(Localizer.get("DialogMovieInfo.field.also-known-as") + ": "); //$NON-NLS-1$
 		akaID.setFont((new Font(akaID.getFont().getName(), 1, fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -757,7 +757,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.EAST;
 		panelMisc.add(scrollPaneAka, constraints);
 
-		JLabel certificationID = new JLabel(Localizer.getString("DialogMovieInfo.field.certification") + ": "); //$NON-NLS-1$
+		JLabel certificationID = new JLabel(Localizer.get("DialogMovieInfo.field.certification") + ": "); //$NON-NLS-1$
 		certificationID.setFont((new Font(certificationID.getFont().getName(), 1, fontSize)));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -790,8 +790,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		JTabbedPane allTabbedInfo = new JTabbedPane();
 		allTabbedInfo.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		allTabbedInfo.add(Localizer.getString("DialogMovieInfo.tab.plot-and-cast"), panelPlotAndCast); //$NON-NLS-1$
-		allTabbedInfo.add(Localizer.getString("DialogMovieInfo.tab.miscellaneous"), panelMisc); //$NON-NLS-1$
+		allTabbedInfo.add(Localizer.get("DialogMovieInfo.tab.plot-and-cast"), panelPlotAndCast); //$NON-NLS-1$
+		allTabbedInfo.add(Localizer.get("DialogMovieInfo.tab.miscellaneous"), panelMisc); //$NON-NLS-1$
 
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -812,7 +812,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         			        			
         			if (files[i].isDirectory()) {
         				DialogAlert alert = new DialogAlert(dialogMovieInfo,
-        						net.sf.xmm.moviemanager.util.Localizer.getString("DialogMovieInfo.alert.title.alert"), //$NON-NLS-2$
+        						net.sf.xmm.moviemanager.util.Localizer.get("DialogMovieInfo.alert.title.alert"), //$NON-NLS-2$
 								"Please provide a valid media file:" + files[i]); //$NON-NLS-1$ /
         				GUIUtil.showAndWait(alert, true);
         				return;
@@ -820,7 +820,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
         			
         			if (!files[i].isFile()) {
         				DialogAlert alert = new DialogAlert(dialogMovieInfo,
-        						net.sf.xmm.moviemanager.util.Localizer.getString("DialogMovieInfo.alert.title.alert"), //$NON-NLS-2$
+        						net.sf.xmm.moviemanager.util.Localizer.get("DialogMovieInfo.alert.title.alert"), //$NON-NLS-2$
 								"File not found:" + files[i]); //$NON-NLS-1$ /
         				GUIUtil.showAndWait(alert, true);
         				return;
@@ -839,14 +839,14 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		});
 		
 		panelAdditionalInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-												Localizer.getString("DialogMovieInfo.panel-additional-info.title"), //$NON-NLS-1$
+												Localizer.get("DialogMovieInfo.panel-additional-info.title"), //$NON-NLS-1$
 												TitledBorder.DEFAULT_JUSTIFICATION,
 												TitledBorder.DEFAULT_POSITION,
 												new Font(panelAdditionalInfo.getFont().getName(),Font.PLAIN, fontSize)),
 								BorderFactory.createEmptyBorder(0, 5, 5, 5)));
 		panelAdditionalInfo.setLayout(new GridBagLayout());
 
-		JLabel fieldsID = new JLabel(Localizer.getString("DialogMovieInfo.panel-additional-info.field") + ": "); //$NON-NLS-1$
+		JLabel fieldsID = new JLabel(Localizer.get("DialogMovieInfo.panel-additional-info.field") + ": "); //$NON-NLS-1$
 		fieldsID.setFont(new Font(fieldsID.getFont().getName(), Font.PLAIN,fontSize));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -875,7 +875,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.anchor = GridBagConstraints.WEST;
 		panelAdditionalInfo.add(additionalInfoFields, constraints);
 
-		JLabel valueID = new JLabel(Localizer.getString("DialogMovieInfo.panel-additional-info.value") + ": "); //$NON-NLS-1$
+		JLabel valueID = new JLabel(Localizer.get("DialogMovieInfo.panel-additional-info.value") + ": "); //$NON-NLS-1$
 		valueID.setFont(new Font(valueID.getFont().getName(), Font.PLAIN,fontSize));
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -926,7 +926,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		/* Creates the notes... */
 		JPanel panelNotes = new JPanel();
 		panelNotes.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(
-												BorderFactory.createEtchedBorder(),Localizer.getString("DialogMovieInfo.panel-notes.title"), //$NON-NLS-1$
+												BorderFactory.createEtchedBorder(),Localizer.get("DialogMovieInfo.panel-notes.title"), //$NON-NLS-1$
 												TitledBorder.DEFAULT_JUSTIFICATION,
 												TitledBorder.DEFAULT_POSITION,
 												new Font(panelNotes.getFont()
@@ -963,7 +963,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelButtons.add(buttonSaveAndClose);
 
 		
-		buttonSave = new JButton(Localizer.getString("DialogMovieInfo.button-save.text.save")); //$NON-NLS-1$
+		buttonSave = new JButton(Localizer.get("DialogMovieInfo.button-save.text.save")); //$NON-NLS-1$
 		// Disabled if edit
 		buttonSave.setEnabled(!movieInfoModel.isEditMode());
 		buttonSave.setActionCommand("MovieInfo - Save"); //$NON-NLS-1$
@@ -978,7 +978,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		});
 		panelButtons.add(buttonSave);
 
-		buttonGetDVDInfo = new JButton(Localizer.getString("DialogMovieInfo.button-get-DVD-info.text")); //$NON-NLS-1$
+		buttonGetDVDInfo = new JButton(Localizer.get("DialogMovieInfo.button-get-DVD-info.text")); //$NON-NLS-1$
 		buttonGetDVDInfo.setActionCommand("MovieInfo - GetDVDInfo"); //$NON-NLS-1$
 		buttonGetDVDInfo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -989,7 +989,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		panelButtons.add(buttonGetDVDInfo);
 
-		buttonGetFileInfo = new JButton(Localizer.getString("DialogMovieInfo.button-get-file-info.text")); //$NON-NLS-1$
+		buttonGetFileInfo = new JButton(Localizer.get("DialogMovieInfo.button-get-file-info.text")); //$NON-NLS-1$
 		buttonGetFileInfo.setActionCommand("MovieInfo - GetFileInfo"); //$NON-NLS-1$
 		buttonGetFileInfo.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
@@ -1012,9 +1012,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		
 		if (movieInfoModel.isEpisode)
-			buttonGetIMDBInfo = new JButton(Localizer.getString("DialogMovieInfo.button-get-web-info.text.get-episode-info")); //$NON-NLS-1$
+			buttonGetIMDBInfo = new JButton(Localizer.get("DialogMovieInfo.button-get-web-info.text.get-episode-info")); //$NON-NLS-1$
 		else
-			buttonGetIMDBInfo = new JButton(Localizer.getString("DialogMovieInfo.button-get-web-info.text.get-imdb-info")); //$NON-NLS-1$
+			buttonGetIMDBInfo = new JButton(Localizer.get("DialogMovieInfo.button-get-web-info.text.get-imdb-info")); //$NON-NLS-1$
 
 		buttonGetIMDBInfo.setActionCommand("MovieInfo - GetIMDBInfo"); //$NON-NLS-1$
 		buttonGetIMDBInfo.addActionListener(new ActionListener() {
@@ -1036,7 +1036,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		
 		panelButtons.add(buttonGetIMDBInfo);
 
-		buttonCancel = new JButton(Localizer.getString("DialogMovieInfo.button-cancel.text")); //$NON-NLS-1$
+		buttonCancel = new JButton(Localizer.get("DialogMovieInfo.button-cancel.text")); //$NON-NLS-1$
 		buttonCancel.setActionCommand("MovieInfo - Cancel"); //$NON-NLS-1$
 		buttonCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -1540,8 +1540,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				fileChooser.setCurrentDirectory(MovieManager.getConfig().getLastCoversDir());
 			}
 
-			fileChooser.setDialogTitle(Localizer.getString("DialogMovieInfo.filechooser.select-cover.text")); //$NON-NLS-1$
-			fileChooser.setApproveButtonText(Localizer.getString("DialogMovieInfo.filechooser.select-cover.tooltip")); //$NON-NLS-1$
+			fileChooser.setDialogTitle(Localizer.get("DialogMovieInfo.filechooser.select-cover.text")); //$NON-NLS-1$
+			fileChooser.setApproveButtonText(Localizer.get("DialogMovieInfo.filechooser.select-cover.tooltip")); //$NON-NLS-1$
 			fileChooser.setApproveButtonToolTipText("Select cover"); //$NON-NLS-1$
 			fileChooser.setAcceptAllFileFilterUsed(false);
 
@@ -1856,13 +1856,13 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				if (isDisplayable()) {
 					alert = new DialogAlert(
 							this,
-							Localizer.getString("DialogMovieInfo.alert.title.access-denied"), 
-							Localizer.getString("DialogMovieInfo.alert.message.error-when-saving-cover"), e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+							Localizer.get("DialogMovieInfo.alert.title.access-denied"), 
+							Localizer.get("DialogMovieInfo.alert.message.error-when-saving-cover"), e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				else {
 					alert = new DialogAlert(MovieManager.getDialog(),
-											Localizer.getString("DialogMovieInfo.alert.title.access-denied"), 
-											Localizer.getString("DialogMovieInfo.alert.message.error-when-saving-cover"), e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+											Localizer.get("DialogMovieInfo.alert.title.access-denied"), 
+											Localizer.get("DialogMovieInfo.alert.message.error-when-saving-cover"), e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				GUIUtil.showAndWait(alert, true);
 
@@ -1883,8 +1883,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		} else {
 			DialogAlert alert = new DialogAlert(this,
-												Localizer.getString("DialogMovieInfo.alert.title.alert"), 
-												Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
+												Localizer.get("DialogMovieInfo.alert.title.alert"), 
+												Localizer.get("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
 			GUIUtil.showAndWait(alert, true);
 		}
 
@@ -1988,9 +1988,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			if (MovieManager.getConfig().getLastFileDir() != null)
 				fileChooser.setCurrentDirectory(MovieManager.getConfig().getLastFileDir());
 
-			fileChooser.setDialogTitle(Localizer.getString("DialogMovieInfo.filechooser.title.select-movie-file")); //$NON-NLS-1$
-			fileChooser.setApproveButtonText(Localizer.getString("DialogMovieInfo.filechooser.approve-button.text")); //$NON-NLS-1$
-			fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogMovieInfo.filechooser.approve-button.tooltip")); //$NON-NLS-1$
+			fileChooser.setDialogTitle(Localizer.get("DialogMovieInfo.filechooser.title.select-movie-file")); //$NON-NLS-1$
+			fileChooser.setApproveButtonText(Localizer.get("DialogMovieInfo.filechooser.approve-button.text")); //$NON-NLS-1$
+			fileChooser.setApproveButtonToolTipText(Localizer.get("DialogMovieInfo.filechooser.approve-button.tooltip")); //$NON-NLS-1$
 			fileChooser.setAcceptAllFileFilterUsed(false);
 			fileChooser.setMultiSelectionEnabled(true);
 
@@ -2033,11 +2033,11 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			fileChooser.setFileSelectionMode(ExtendedFileChooser.DIRECTORIES_ONLY);
 			
 			fileChooser.setFileFilter(new CustomFileFilter(CustomFileFilter.DIRECTORIES_ONLY,
-														   Localizer.getString("DialogMovieInfo.filechooser.filter.dvd-drive"))); //$NON-NLS-1$
+														   Localizer.get("DialogMovieInfo.filechooser.filter.dvd-drive"))); //$NON-NLS-1$
 			
-			fileChooser.setDialogTitle(Localizer.getString("DialogMovieInfo.filechooser.title.select-dvd-drive")); //$NON-NLS-1$
-			fileChooser.setApproveButtonText(Localizer.getString("DialogMovieInfo.filechooser.approve-button.text")); //$NON-NLS-1$
-			fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogMovieInfo.filechooser.approve-button.select-dvd-drive.tooltip")); //$NON-NLS-1$
+			fileChooser.setDialogTitle(Localizer.get("DialogMovieInfo.filechooser.title.select-dvd-drive")); //$NON-NLS-1$
+			fileChooser.setApproveButtonText(Localizer.get("DialogMovieInfo.filechooser.approve-button.text")); //$NON-NLS-1$
+			fileChooser.setApproveButtonToolTipText(Localizer.get("DialogMovieInfo.filechooser.approve-button.select-dvd-drive.tooltip")); //$NON-NLS-1$
 			fileChooser.setAcceptAllFileFilterUsed(false);
 			
 			if (MovieManager.getConfig().getLastDVDDir() != null)
@@ -2085,8 +2085,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				if (ifo == null || ifo.length == 0) {
 					DialogAlert alert = new DialogAlert(
 							this,
-							Localizer.getString("DialogMovieInfo.alert.title.alert"), 
-							Localizer.getString("DialogMovieInfo.alert.message.failed-to-locate-the-drive")); //$NON-NLS-1$ //$NON-NLS-2$
+							Localizer.get("DialogMovieInfo.alert.title.alert"), 
+							Localizer.get("DialogMovieInfo.alert.message.failed-to-locate-the-drive")); //$NON-NLS-1$ //$NON-NLS-2$
 					GUIUtil.showAndWait(alert, true);
 				} else {
 
@@ -2199,8 +2199,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		} else {
 			DialogAlert alert = new DialogAlert(
 					this,
-					Localizer.getString("DialogMovieInfo.alert.title.alert"), 
-					Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
+					Localizer.get("DialogMovieInfo.alert.title.alert"), 
+					Localizer.get("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
 			GUIUtil.showAndWait(alert, true);
 		}
 	}
@@ -2227,8 +2227,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		} else {
 			DialogAlert alert = new DialogAlert(
 					this,
-					Localizer.getString("DialogMovieInfo.alert.title.alert"), 
-					Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
+					Localizer.get("DialogMovieInfo.alert.title.alert"), 
+					Localizer.get("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
 			GUIUtil.showAndWait(alert, true);
 		}
 	}
@@ -2336,7 +2336,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				buttonSave.doClick();
 			}
 		});
-		buttonCancel.setToolTipText(Localizer.getString("DialogMovieInfo.button-cancel.tooltip") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		buttonCancel.setToolTipText(Localizer.get("DialogMovieInfo.button-cancel.tooltip") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
 				
 		
 		// ALT+D for DVD Info
@@ -2347,7 +2347,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				buttonGetDVDInfo.doClick();
 			}
 		});
-		buttonGetDVDInfo.setToolTipText(Localizer.getString("DialogMovieInfo.button-get-DVD-info.tooltip") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		buttonGetDVDInfo.setToolTipText(Localizer.get("DialogMovieInfo.button-get-DVD-info.tooltip") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
 		
 		
 		// ALT+F for File info
@@ -2358,7 +2358,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				buttonGetFileInfo.doClick();
 			}
 		});
-		buttonGetFileInfo.setToolTipText(Localizer.getString("DialogMovieInfo.button-get-file-info.tooltip") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		buttonGetFileInfo.setToolTipText(Localizer.get("DialogMovieInfo.button-get-file-info.tooltip") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
 		
 		
 		// ALT+M for IMDb info
@@ -2370,7 +2370,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				buttonGetIMDBInfo.doClick();
 			}
 		});
-		buttonGetIMDBInfo.setToolTipText(Localizer.getString("DialogMovieInfo.button-get-web-info.tooltip.get-imdb-info") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		buttonGetIMDBInfo.setToolTipText(Localizer.get("DialogMovieInfo.button-get-web-info.tooltip.get-imdb-info") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
 		
 		
 		// ALT+C for Cancel
@@ -2381,7 +2381,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				buttonCancel.doClick();
 			}
 		});
-		buttonSave.setToolTipText(Localizer.getString("DialogMovieInfo.button-save.tooltip") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		buttonSave.setToolTipText(Localizer.get("DialogMovieInfo.button-save.tooltip") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
 		
 		
 		// ALT+N for Notes field 

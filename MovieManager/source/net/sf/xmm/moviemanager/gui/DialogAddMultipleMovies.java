@@ -197,27 +197,27 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
 		getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
-		setTitle(Localizer.getString("DialogAddMultipleMovies.title")); //$NON-NLS-1$
+		setTitle(Localizer.get("DialogAddMultipleMovies.title")); //$NON-NLS-1$
 		setModal(true);
 		setResizable(true);
 
 		
 		/*Radio buttons, choses if the list of hits should apear or not*/
-		askButton = new JRadioButton(Localizer.getString("DialogAddMultipleMovies.panel-hits.option-display-list-of-hits.text")); //$NON-NLS-1$
+		askButton = new JRadioButton(Localizer.get("DialogAddMultipleMovies.panel-hits.option-display-list-of-hits.text")); //$NON-NLS-1$
 		askButton.setActionCommand("Display list of hits"); //$NON-NLS-1$
 		askButton.addActionListener(this);
 
-		selectFirstHitButton = new JRadioButton(Localizer.getString("DialogAddMultipleMovies.panel-hits.option-select-first-hit.text")); //$NON-NLS-1$
+		selectFirstHitButton = new JRadioButton(Localizer.get("DialogAddMultipleMovies.panel-hits.option-select-first-hit.text")); //$NON-NLS-1$
 		selectFirstHitButton.setActionCommand("Select First Hit"); //$NON-NLS-1$
 		selectFirstHitButton.addActionListener(this);
 
-		selectIfOnlyOneHitButton = new JRadioButton(Localizer.getString("DialogAddMultipleMovies.panel-hits.option-select-if-onlt-one-hit.text")); //$NON-NLS-1$
+		selectIfOnlyOneHitButton = new JRadioButton(Localizer.get("DialogAddMultipleMovies.panel-hits.option-select-if-onlt-one-hit.text")); //$NON-NLS-1$
 		selectIfOnlyOneHitButton.setActionCommand("Select If Only One Hit"); //$NON-NLS-1$
 		selectIfOnlyOneHitButton.addActionListener(this);
 
-		enableSelectFirstHitMark = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-hits.option-select-first-hit-mark.text")); //$NON-NLS-1$
+		enableSelectFirstHitMark = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-hits.option-select-first-hit-mark.text")); //$NON-NLS-1$
 		enableSelectFirstHitMark.setActionCommand("enableSelectFirstHitMark"); //$NON-NLS-1$
-		enableSelectFirstHitMark.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-hits.option-select-first-hit-mark-tooltip")); //$NON-NLS-1$
+		enableSelectFirstHitMark.setToolTipText(Localizer.get("DialogAddMultipleMovies.panel-hits.option-select-first-hit-mark-tooltip")); //$NON-NLS-1$
 		enableSelectFirstHitMark.addActionListener(this);
 		
 		ButtonGroup radioButtonGroup = new ButtonGroup();
@@ -227,7 +227,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 		
 		JPanel imdbRadioButtonPanel = new JPanel(new GridLayout(0, 1));
-		imdbRadioButtonPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogAddMultipleMovies.panel-hits.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		imdbRadioButtonPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAddMultipleMovies.panel-hits.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
 		imdbRadioButtonPanel.add(askButton);
 		imdbRadioButtonPanel.add(selectFirstHitButton);
@@ -238,19 +238,19 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		/*
 		 * The actual removal of the strings goes on in MovieManagerCommandAddMultipleMovies.java
 		 */
-		enableExludeParantheses = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-parantheses.text")); //$NON-NLS-1$
+		enableExludeParantheses = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-clean-string.remove-parantheses.text")); //$NON-NLS-1$
 		enableExludeParantheses.setActionCommand("enableExludeParantheses"); //$NON-NLS-1$
 		enableExludeParantheses.addActionListener(this);
 		
-		enableExludeCDNotation = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-cd-notation.text")); //$NON-NLS-1$
+		enableExludeCDNotation = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-clean-string.remove-cd-notation.text")); //$NON-NLS-1$
 		enableExludeCDNotation.setActionCommand("enableExludeCDNotation"); //$NON-NLS-1$
 		enableExludeCDNotation.addActionListener(this);
 		
-		enableExludeIntegers = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-integers.text")); //$NON-NLS-1$
+		enableExludeIntegers = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-clean-string.remove-integers.text")); //$NON-NLS-1$
 		enableExludeIntegers.setActionCommand("enableExludeInteger"); //$NON-NLS-1$
 		enableExludeIntegers.addActionListener(this);
 		
-		enableExludeUserdefinedInfo = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-user-defined-info.text")); //$NON-NLS-1$
+		enableExludeUserdefinedInfo = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-clean-string.remove-user-defined-info.text")); //$NON-NLS-1$
 		enableExludeUserdefinedInfo.setActionCommand("enableExludeUserdefinedInfo"); //$NON-NLS-1$
 		enableExludeUserdefinedInfo.addItemListener(new ItemListener() {
 		
@@ -264,7 +264,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		});
 		
 		// yes that is a ridiculously long variable name
-		enableExludeAllAfterMatchOnUserDefinedInfo = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-clean-string.remove-everything-after-match-on-user-defined-info.text")); //$NON-NLS-1$
+		enableExludeAllAfterMatchOnUserDefinedInfo = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-clean-string.remove-everything-after-match-on-user-defined-info.text")); //$NON-NLS-1$
 		enableExludeAllAfterMatchOnUserDefinedInfo.setToolTipText("Remove"); //$NON-NLS-1$
 		enableExludeAllAfterMatchOnUserDefinedInfo.setEnabled(false);
 		
@@ -281,12 +281,12 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		cleanStringPanel.add(enableExludeAllAfterMatchOnUserDefinedInfo);
 		cleanStringPanel.add(userDefinedInfo);
 				
-		cleanStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogAddMultipleMovies.panel-clean-string.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		cleanStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAddMultipleMovies.panel-clean-string.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
 		
-		enableUseFolderName = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming.text")); //$NON-NLS-1$
+		enableUseFolderName = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-options.enable-Folder-Naming.text")); //$NON-NLS-1$
 		enableUseFolderName.setActionCommand("enableFolderTitle"); //$NON-NLS-1$
-		enableUseFolderName.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-tooltip")); //$NON-NLS-1$
+		enableUseFolderName.setToolTipText(Localizer.get("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-tooltip")); //$NON-NLS-1$
 		enableUseFolderName.addItemListener(new ItemListener() {
 			
 			public void itemStateChanged(ItemEvent e) {
@@ -297,9 +297,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			}
 		});
 	
-		enableUseParentFolderIfCD = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-nocd.text")); //$NON-NLS-1$
+		enableUseParentFolderIfCD = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-nocd.text")); //$NON-NLS-1$
 		enableUseParentFolderIfCD.setActionCommand("enableTitleOptionNoCd"); //$NON-NLS-1$
-		enableUseParentFolderIfCD.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-nocd-tooltip")); //$NON-NLS-1$
+		enableUseParentFolderIfCD.setToolTipText(Localizer.get("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-nocd-tooltip")); //$NON-NLS-1$
 		enableUseParentFolderIfCD.setEnabled(false);
 		
 		JPanel titleOptionPanel = new JPanel(new GridLayout(0, 1));
@@ -311,9 +311,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		JPanel miscOptionsPanel = new JPanel(new GridLayout(0, 1));
 		miscOptionsPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Miscellaneous options")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 				
-		enableSearchNfoForImdb = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Nfo-scanning.text")); //$NON-NLS-1$
+		enableSearchNfoForImdb = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-options.enable-Folder-Nfo-scanning.text")); //$NON-NLS-1$
 		enableSearchNfoForImdb.setActionCommand("enableSearchNfoForImdb"); //$NON-NLS-1$
-		enableSearchNfoForImdb.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-options.enable-Folder-Nfo-scanning-tooltip")); //$NON-NLS-1$
+		enableSearchNfoForImdb.setToolTipText(Localizer.get("DialogAddMultipleMovies.panel-options.enable-Folder-Nfo-scanning-tooltip")); //$NON-NLS-1$
 		
 		miscOptionsPanel.add(enableSearchNfoForImdb);
 			
@@ -387,13 +387,13 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		buttonUpdateFileList.setActionCommand("DialogAddMultipleMovies - Update file list"); //$NON-NLS-1$
 		buttonUpdateFileList.addActionListener(this);
 
-		buttonCancel = new JButton(Localizer.getString("DialogAddMultipleMovies.button-close.text")); //$NON-NLS-1$
-		buttonCancel.setToolTipText(Localizer.getString("DialogAddMultipleMovies.button-close.tooltip")); //$NON-NLS-1$
+		buttonCancel = new JButton(Localizer.get("DialogAddMultipleMovies.button-close.text")); //$NON-NLS-1$
+		buttonCancel.setToolTipText(Localizer.get("DialogAddMultipleMovies.button-close.tooltip")); //$NON-NLS-1$
 		buttonCancel.setActionCommand("DialogAddMultipleMovies - Cancel"); //$NON-NLS-1$
 		buttonCancel.addActionListener(this);
 
-		buttonAddMovies = new JButton(Localizer.getString("DialogAddMultipleMovies.button-add-movies.text")); //$NON-NLS-1$
-		buttonAddMovies.setToolTipText(Localizer.getString("DialogAddMultipleMovies.button-add-movies.tooltip")); //$NON-NLS-1$
+		buttonAddMovies = new JButton(Localizer.get("DialogAddMultipleMovies.button-add-movies.text")); //$NON-NLS-1$
+		buttonAddMovies.setToolTipText(Localizer.get("DialogAddMultipleMovies.button-add-movies.tooltip")); //$NON-NLS-1$
 		buttonAddMovies.setActionCommand("DialogAddMultipleMovies - Add Movies"); //$NON-NLS-1$
 		buttonAddMovies.addActionListener(this);
 
@@ -712,23 +712,23 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	JPanel makeListPanel() {
 
 		JPanel listPanel = new JPanel();
-		listPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.getString("DialogAddMultipleMovies.panel-add-to-list.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		listPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogAddMultipleMovies.panel-add-to-list.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
 		ArrayList<String> columnListNames = MovieManager.getIt().getDatabase().getListsColumnNames();
 		Object [] listNames = columnListNames.toArray();
 
 		if (listNames.length == 0) {
 
-			JLabel label = new JLabel(Localizer.getString("DialogAddMultipleMovies.panel-add-to-list.label.create-list.text")); //$NON-NLS-1$
+			JLabel label = new JLabel(Localizer.get("DialogAddMultipleMovies.panel-add-to-list.label.create-list.text")); //$NON-NLS-1$
 			listPanel.add(label, BorderLayout.WEST);
 
-			buttonAddList = new JButton(Localizer.getString("DialogAddMultipleMovies.panel-add-to-list.button.add-list.text")); //$NON-NLS-1$
+			buttonAddList = new JButton(Localizer.get("DialogAddMultipleMovies.panel-add-to-list.button.add-list.text")); //$NON-NLS-1$
 			buttonAddList.addActionListener(this);
 			listPanel.add(buttonAddList, BorderLayout.CENTER);
 
 		}
 		else {
-			buttonAddList = new JButton(Localizer.getString("DialogAddMultipleMovies.panel-add-to-list.button.add-list.text")); //$NON-NLS-1$
+			buttonAddList = new JButton(Localizer.get("DialogAddMultipleMovies.panel-add-to-list.button.add-list.text")); //$NON-NLS-1$
 			buttonAddList.addActionListener(this);
 			listPanel.add(buttonAddList, BorderLayout.WEST);
 
@@ -737,9 +737,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			listChooser = new JComboBox(listNames);
 			listChooser.setSelectedItem(list);
 
-			enableAddMoviesToList = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.panel-add-to-list.button.enable-add-movies-to-list.text")); //$NON-NLS-1$
+			enableAddMoviesToList = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-add-to-list.button.enable-add-movies-to-list.text")); //$NON-NLS-1$
 			enableAddMoviesToList.setActionCommand("enableAddMoviesToList"); //$NON-NLS-1$
-			enableAddMoviesToList.setToolTipText(Localizer.getString("DialogAddMultipleMovies.panel-add-to-list.button.enable-add-movies-to-list.tooltip")); //$NON-NLS-1$
+			enableAddMoviesToList.setToolTipText(Localizer.get("DialogAddMultipleMovies.panel-add-to-list.button.enable-add-movies-to-list.tooltip")); //$NON-NLS-1$
 			enableAddMoviesToList.addActionListener(this);
 
 			if (MovieManager.getConfig().getMultiAddListEnabled()) {
@@ -1367,9 +1367,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			}
 		});
 
-		enableAutomaticCombine = new JCheckBox(Localizer.getString("DialogAddMultipleMovies.files-options.enable-automatic-combine.text")); //$NON-NLS-1$
+		enableAutomaticCombine = new JCheckBox(Localizer.get("DialogAddMultipleMovies.files-options.enable-automatic-combine.text")); //$NON-NLS-1$
 		enableAutomaticCombine.setActionCommand("enableAutomaticCombine"); //$NON-NLS-1$
-		enableAutomaticCombine.setToolTipText(Localizer.getString("DialogAddMultipleMovies.files-options.enable-automatic-combine-tooltip")); //$NON-NLS-1$
+		enableAutomaticCombine.setToolTipText(Localizer.get("DialogAddMultipleMovies.files-options.enable-automatic-combine-tooltip")); //$NON-NLS-1$
 		enableAutomaticCombine.addActionListener(this);
 
 		mediaFileListButtonPanel.add(clearFileList);

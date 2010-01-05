@@ -87,7 +87,7 @@ public class DialogQueries extends JDialog {
 		super(MovieManager.getDialog());
 		
 		/* Dialog properties...*/
-		setTitle(Localizer.getString("DialogQueries.title")); //$NON-NLS-1$
+		setTitle(Localizer.get("DialogQueries.title")); //$NON-NLS-1$
 		setModal(false);
 		setResizable(false);
 
@@ -95,7 +95,7 @@ public class DialogQueries extends JDialog {
 
 		/* Execute panel...*/
 		JPanel panelExecute = new JPanel();
-		panelExecute.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogQueries.panel-execute.title")), //$NON-NLS-1$
+		panelExecute.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogQueries.panel-execute.title")), //$NON-NLS-1$
 				BorderFactory.createEmptyBorder(5,5,5,5)));
 
 		if (MovieManager.getConfig().getUseDisplayQueriesInTree()) {
@@ -107,7 +107,7 @@ public class DialogQueries extends JDialog {
 
 		/* Result panel...*/
 		panelResult = new JPanel();
-		panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogQueries.panel-result.title")), //$NON-NLS-1$
+		panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogQueries.panel-result.title")), //$NON-NLS-1$
 				BorderFactory.createEmptyBorder(5,5,5,5)));
 		JTextArea textAreaResult = new JTextArea();
 		textAreaResult.setEditable(false);
@@ -127,8 +127,8 @@ public class DialogQueries extends JDialog {
 		JPanel panelButtons = new JPanel();
 		panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		JButton buttonOk = new JButton(Localizer.getString("DialogQueries.button.ok.text")); //$NON-NLS-1$
-		buttonOk.setToolTipText(Localizer.getString("DialogQueries.button.ok.tooltip")); //$NON-NLS-1$
+		JButton buttonOk = new JButton(Localizer.get("DialogQueries.button.ok.text")); //$NON-NLS-1$
+		buttonOk.setToolTipText(Localizer.get("DialogQueries.button.ok.tooltip")); //$NON-NLS-1$
 		buttonOk.setActionCommand("Queries - OK"); //$NON-NLS-1$
 		buttonOk.addActionListener(new CommandDialogDispose(this));
 		panelButtons.add(buttonOk);
@@ -455,7 +455,7 @@ public class DialogQueries extends JDialog {
 		/* if no query then set results to blank */
 		if (query == "") { //$NON-NLS-1$
 			getResult().setText(""); //$NON-NLS-1$
-			panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogQueries.panel-result.title")), //$NON-NLS-1$
+			panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogQueries.panel-result.title")), //$NON-NLS-1$
 					BorderFactory.createEmptyBorder(5,5,5,5)));            
 			return;
 		}
@@ -464,9 +464,9 @@ public class DialogQueries extends JDialog {
 		getResult().setCaretPosition(0);
 
 		panelResult.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-				Localizer.getString("DialogQueries.panel-result.title") +  //$NON-NLS-1$
+				Localizer.get("DialogQueries.panel-result.title") +  //$NON-NLS-1$
 				": "   + MovieManager.getIt().getDatabase().getRecordCount() +  " " +
-				Localizer.getString("DialogQueries.panel-result.records-returned")), //$NON-NLS-1$
+				Localizer.get("DialogQueries.panel-result.records-returned")), //$NON-NLS-1$
 				BorderFactory.createEmptyBorder(5,5,5,5)));
 	}
 }

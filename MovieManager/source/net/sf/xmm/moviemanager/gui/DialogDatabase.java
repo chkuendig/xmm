@@ -127,9 +127,9 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		GUIUtil.enableDisposeOnEscapeKey(shortcutManager);
 
 		if (newDatabase)
-			setTitle(Localizer.getString("DialogDatabase.title.new-database")); //$NON-NLS-1$
+			setTitle(Localizer.get("DialogDatabase.title.new-database")); //$NON-NLS-1$
 		else
-			setTitle(Localizer.getString("DialogDatabase.title.open-database")); //$NON-NLS-1$
+			setTitle(Localizer.get("DialogDatabase.title.open-database")); //$NON-NLS-1$
 
 		setModal(true);
 		setResizable(false);
@@ -149,9 +149,9 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		JLabel hsqlLabel;
 
 		if (newDatabase)
-			hsqlLabel = new JLabel(Localizer.getString("DialogDatabase.create-new-hsql-database")); //$NON-NLS-1$
+			hsqlLabel = new JLabel(Localizer.get("DialogDatabase.create-new-hsql-database")); //$NON-NLS-1$
 		else
-			hsqlLabel = new JLabel(Localizer.getString("DialogDatabase.create-existing-hsql-database")); //$NON-NLS-1$
+			hsqlLabel = new JLabel(Localizer.get("DialogDatabase.create-existing-hsql-database")); //$NON-NLS-1$
 
 		JPanel hsqlLabelPanel = new JPanel();
 		hsqlLabelPanel.add(hsqlLabel);
@@ -160,8 +160,8 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		hsqlFilePath = new JTextField(27);
 		hsqlFilePath.setText(""); //$NON-NLS-1$
 
-		browseForHSQLFile = new JButton(Localizer.getString("DialogDatabase.browse-text")); //$NON-NLS-1$
-		browseForHSQLFile.setToolTipText(Localizer.getString("DialogDatabase.browse-hsql-tooltip")); //$NON-NLS-1$
+		browseForHSQLFile = new JButton(Localizer.get("DialogDatabase.browse-text")); //$NON-NLS-1$
+		browseForHSQLFile.setToolTipText(Localizer.get("DialogDatabase.browse-hsql-tooltip")); //$NON-NLS-1$
 		browseForHSQLFile.setActionCommand("Browse HSQL"); //$NON-NLS-1$
 		browseForHSQLFile.addActionListener(this);
 
@@ -170,7 +170,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		hsqlPathPanel.add(hsqlFilePath);
 		hsqlPathPanel.add(browseForHSQLFile);
 
-		hsqlPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogDatabase.hsql-database-path")), BorderFactory.createEmptyBorder(0,5,0,5)))); //$NON-NLS-1$
+		hsqlPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2) ,BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogDatabase.hsql-database-path")), BorderFactory.createEmptyBorder(0,5,0,5)))); //$NON-NLS-1$
 
 		JPanel hsqlPanel = new JPanel(new BorderLayout());
 		hsqlPanel.add(hsqlLabelPanel, BorderLayout.NORTH);
@@ -181,15 +181,15 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		JLabel mysqlLabel;
 
 		if (newDatabase)
-			mysqlLabel = new JLabel(Localizer.getString("DialogDatabase.create-new-mysql-database")); //$NON-NLS-1$
+			mysqlLabel = new JLabel(Localizer.get("DialogDatabase.create-new-mysql-database")); //$NON-NLS-1$
 		else
-			mysqlLabel = new JLabel(Localizer.getString("DialogDatabase.create-existing-mysql-database")); //$NON-NLS-1$
+			mysqlLabel = new JLabel(Localizer.get("DialogDatabase.create-existing-mysql-database")); //$NON-NLS-1$
 
 		JPanel mysqlLabelPanel = new JPanel();
 		mysqlLabelPanel.add(mysqlLabel);
 
 
-		JLabel databaseNameLabel = new JLabel(Localizer.getString("DialogDatabase.mysql.schema-name") + ": "); //$NON-NLS-1$
+		JLabel databaseNameLabel = new JLabel(Localizer.get("DialogDatabase.mysql.schema-name") + ": "); //$NON-NLS-1$
 		databaseNameField = new JTextField(10);
 		databaseNameField.setText(""); //$NON-NLS-1$
 
@@ -197,7 +197,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		databaseNamePanel.add(databaseNameLabel);
 		databaseNamePanel.add(databaseNameField);
 
-		JLabel hostLabel = new JLabel(Localizer.getString("DialogDatabase.mysql.host-address") + ": "); //$NON-NLS-1$
+		JLabel hostLabel = new JLabel(Localizer.get("DialogDatabase.mysql.host-address") + ": "); //$NON-NLS-1$
 		hostTextField = new JTextField(15);
 		hostTextField.setText(""); //$NON-NLS-1$
 
@@ -211,7 +211,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		hostPanel.add(hostLabel);
 		hostPanel.add(hostTextField);
 
-		JLabel portLabel = new JLabel(Localizer.getString("DialogDatabase.mysql.port") + ": "); //$NON-NLS-1$
+		JLabel portLabel = new JLabel(Localizer.get("DialogDatabase.mysql.port") + ": "); //$NON-NLS-1$
 		portTextField = new JTextField(4);
 
 		portTextField.setDocument(new DocumentRegExp("(\\d)*",8)); //$NON-NLS-1$
@@ -269,7 +269,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		constraints.anchor = GridBagConstraints.EAST;
 		mysqlServerPanel.add(portPanel,constraints);
 
-		JLabel userNameLabel = new JLabel(Localizer.getString("DialogDatabase.mysql.username") + ": "); //$NON-NLS-1$
+		JLabel userNameLabel = new JLabel(Localizer.get("DialogDatabase.mysql.username") + ": "); //$NON-NLS-1$
 		userNameTextField = new JTextField(7);
 		userNameTextField.setText(""); //$NON-NLS-1$
 
@@ -277,17 +277,17 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		userNamePanel.add(userNameLabel);
 		userNamePanel.add(userNameTextField);
 
-		JLabel passwordLabel = new JLabel(Localizer.getString("DialogDatabase.mysql.password.text") + ": "); //$NON-NLS-1$
+		JLabel passwordLabel = new JLabel(Localizer.get("DialogDatabase.mysql.password.text") + ": "); //$NON-NLS-1$
 		passwordTextField = new JPasswordField(7);
 		passwordTextField.setText(""); //$NON-NLS-1$
-		passwordTextField.setToolTipText(Localizer.getString("DialogDatabase.mysql.password.tooltip"));
+		passwordTextField.setToolTipText(Localizer.get("DialogDatabase.mysql.password.tooltip"));
 
 		JPanel passwordPanel = new JPanel() ;
 		passwordPanel.add(passwordLabel);
 		passwordPanel.add(passwordTextField);
 
 		JPanel authenticationPanel = new JPanel(new GridBagLayout());
-		authenticationPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogDatabase.mysql.authentication")), BorderFactory.createEmptyBorder(0,5,5,5))); //$NON-NLS-1$
+		authenticationPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogDatabase.mysql.authentication")), BorderFactory.createEmptyBorder(0,5,5,5))); //$NON-NLS-1$
 
 
 		/* username */
@@ -314,7 +314,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		}
 
 		JPanel mysqlOptionPanel = new JPanel(new GridLayout(0, 1));
-		mysqlOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogDatabase.mysql.settings")), BorderFactory.createEmptyBorder(0,5,5,5))); //$NON-NLS-1$
+		mysqlOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogDatabase.mysql.settings")), BorderFactory.createEmptyBorder(0,5,5,5))); //$NON-NLS-1$
 
 		mysqlOptionPanel.add(mysqlServerPanel);
 		mysqlOptionPanel.add(authenticationPanel);
@@ -329,9 +329,9 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		JLabel accessLabel;
 
 		if (newDatabase)
-			accessLabel = new JLabel(Localizer.getString("DialogDatabase.create-new-msaccess-database")); //$NON-NLS-1$
+			accessLabel = new JLabel(Localizer.get("DialogDatabase.create-new-msaccess-database")); //$NON-NLS-1$
 		else
-			accessLabel = new JLabel(Localizer.getString("DialogDatabase.create-existing-msaccess-database")); //$NON-NLS-1$
+			accessLabel = new JLabel(Localizer.get("DialogDatabase.create-existing-msaccess-database")); //$NON-NLS-1$
 
 		JPanel accessLabelPanel = new JPanel();
 		accessLabelPanel.add(accessLabel);
@@ -340,8 +340,8 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		accessFilePath = new JTextField(27);
 		accessFilePath.setText(""); //$NON-NLS-1$
 
-		browseForAccessFile = new JButton(Localizer.getString("DialogDatabase.browse-text")); //$NON-NLS-1$
-		browseForAccessFile.setToolTipText(Localizer.getString("DialogDatabase.browse-msaccess-tooltip")); //$NON-NLS-1$
+		browseForAccessFile = new JButton(Localizer.get("DialogDatabase.browse-text")); //$NON-NLS-1$
+		browseForAccessFile.setToolTipText(Localizer.get("DialogDatabase.browse-msaccess-tooltip")); //$NON-NLS-1$
 		browseForAccessFile.setActionCommand("Browse MS Access"); //$NON-NLS-1$
 		browseForAccessFile.addActionListener(this);
 
@@ -350,7 +350,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		accessPathPanel.add(accessFilePath);
 		accessPathPanel.add(browseForAccessFile);
 
-		accessPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("DialogDatabase.msaccess-database-path")), BorderFactory.createEmptyBorder(0,0,0,0)))); //$NON-NLS-1$
+		accessPathPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,1,2), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogDatabase.msaccess-database-path")), BorderFactory.createEmptyBorder(0,0,0,0)))); //$NON-NLS-1$
 
 		JPanel accessPanel = new JPanel(new BorderLayout());
 		accessPanel.add(accessLabelPanel, BorderLayout.NORTH);
@@ -361,12 +361,12 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		tabbedPane = new JTabbedPane();
 
 		tabbedPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-		tabbedPane.add(Localizer.getString("DialogDatabase.tabbed-pane.hsql-database"), hsqlPanel); //$NON-NLS-1$
+		tabbedPane.add(Localizer.get("DialogDatabase.tabbed-pane.hsql-database"), hsqlPanel); //$NON-NLS-1$
 
 		if (SysUtil.isWindows())
-			tabbedPane.add(Localizer.getString("DialogDatabase.tabbed-pane.msaccess-database"), accessPanel); //$NON-NLS-1$
+			tabbedPane.add(Localizer.get("DialogDatabase.tabbed-pane.msaccess-database"), accessPanel); //$NON-NLS-1$
 
-		tabbedPane.add(Localizer.getString("DialogDatabase.tabbed-pane.mysql-database"), mysqlPanel); //$NON-NLS-1$
+		tabbedPane.add(Localizer.get("DialogDatabase.tabbed-pane.mysql-database"), mysqlPanel); //$NON-NLS-1$
 
 		// Disable MS Access and HSQL when running in applet mode
 		if (MovieManager.isApplet()) {
@@ -382,16 +382,16 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
 		/* Buttons */
 		if (newDatabase)
-			buttonConfirm = new JButton(Localizer.getString("DialogDatabase.button-confirm-text.create-database")); //$NON-NLS-1$
+			buttonConfirm = new JButton(Localizer.get("DialogDatabase.button-confirm-text.create-database")); //$NON-NLS-1$
 		else
-			buttonConfirm = new JButton(Localizer.getString("DialogDatabase.button-confirm-text.open-database")); //$NON-NLS-1$
+			buttonConfirm = new JButton(Localizer.get("DialogDatabase.button-confirm-text.open-database")); //$NON-NLS-1$
 
-		buttonConfirm.setToolTipText(Localizer.getString("DialogDatabase.button-confirm-tooltip")); //$NON-NLS-1$
+		buttonConfirm.setToolTipText(Localizer.get("DialogDatabase.button-confirm-tooltip")); //$NON-NLS-1$
 		buttonConfirm.setActionCommand("DialogAddMultipleMovies - OK"); //$NON-NLS-1$
 		buttonConfirm.addActionListener(this);
 
-		buttonCancel = new JButton(Localizer.getString("DialogDatabase.button-cancel-text")); //$NON-NLS-1$
-		buttonCancel.setToolTipText(Localizer.getString("DialogDatabase.button-cancel-tooltip")); //$NON-NLS-1$
+		buttonCancel = new JButton(Localizer.get("DialogDatabase.button-cancel-text")); //$NON-NLS-1$
+		buttonCancel.setToolTipText(Localizer.get("DialogDatabase.button-cancel-tooltip")); //$NON-NLS-1$
 		buttonCancel.setActionCommand("DialogAddMultipleMovies - Cancel"); //$NON-NLS-1$
 		buttonCancel.addActionListener(this);
 
@@ -441,16 +441,16 @@ public class DialogDatabase extends JDialog implements ActionListener {
 				fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
 				fileChooser.setFileAlreadyExistWarningMessage("Database "); //$NON-NLS-1$
 
-				fileChooser.setApproveButtonText(Localizer.getString("DialogDatabase.filechooser.approve-button-create-database.text")); //$NON-NLS-1$
-				fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogDatabase.filechooser.approve-button-create-database.tooltip")); //$NON-NLS-1$
-				fileChooser.setDialogTitle(Localizer.getString("DialogDatabase.filechooser.title.create-database")); //$NON-NLS-1$
+				fileChooser.setApproveButtonText(Localizer.get("DialogDatabase.filechooser.approve-button-create-database.text")); //$NON-NLS-1$
+				fileChooser.setApproveButtonToolTipText(Localizer.get("DialogDatabase.filechooser.approve-button-create-database.tooltip")); //$NON-NLS-1$
+				fileChooser.setDialogTitle(Localizer.get("DialogDatabase.filechooser.title.create-database")); //$NON-NLS-1$
 
 				returnVal = fileChooser.showSaveDialog(MovieManager.getDialog());
 			}
 			else {
-				fileChooser.setApproveButtonText(Localizer.getString("DialogDatabase.filechooser.approve-button-open-database.text")); //$NON-NLS-1$
-				fileChooser.setApproveButtonToolTipText(Localizer.getString("DialogDatabase.filechooser.approve-button-open-database.tooltip")); //$NON-NLS-1$
-				fileChooser.setDialogTitle(Localizer.getString("DialogDatabase.filechooser.title.open-database")); //$NON-NLS-1$
+				fileChooser.setApproveButtonText(Localizer.get("DialogDatabase.filechooser.approve-button-open-database.text")); //$NON-NLS-1$
+				fileChooser.setApproveButtonToolTipText(Localizer.get("DialogDatabase.filechooser.approve-button-open-database.tooltip")); //$NON-NLS-1$
+				fileChooser.setDialogTitle(Localizer.get("DialogDatabase.filechooser.title.open-database")); //$NON-NLS-1$
 
 				returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
 			}
@@ -510,11 +510,11 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
 		String type = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
 
-		if (type.equals(Localizer.getString("DialogDatabase.tabbed-pane.msaccess-database"))) //$NON-NLS-1$
+		if (type.equals(Localizer.get("DialogDatabase.tabbed-pane.msaccess-database"))) //$NON-NLS-1$
 			return "MSAccess"; //$NON-NLS-1$
-		else if (type.equals(Localizer.getString("DialogDatabase.tabbed-pane.hsql-database"))) //$NON-NLS-1$
+		else if (type.equals(Localizer.get("DialogDatabase.tabbed-pane.hsql-database"))) //$NON-NLS-1$
 			return "HSQL"; //$NON-NLS-1$
-		else if (type.equals(Localizer.getString("DialogDatabase.tabbed-pane.mysql-database"))) //$NON-NLS-1$
+		else if (type.equals(Localizer.get("DialogDatabase.tabbed-pane.mysql-database"))) //$NON-NLS-1$
 			return "MySQL"; //$NON-NLS-1$
 
 		return "";  //$NON-NLS-1$
@@ -563,18 +563,18 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		if (databaseType.equals("MySQL")) { //$NON-NLS-1$
 
 			if (databaseNameField.getText().equals("")) { //$NON-NLS-1$
-				DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogDatabase.alert.database-name.title"), Localizer.getString("DialogDatabase.alert.database-name.message")); //$NON-NLS-1$ //$NON-NLS-2$
+				DialogAlert alert = new DialogAlert(this, Localizer.get("DialogDatabase.alert.database-name.title"), Localizer.get("DialogDatabase.alert.database-name.message")); //$NON-NLS-1$ //$NON-NLS-2$
 				GUIUtil.show(alert, true);
 				return;
 			}
 			if (hostTextField.getText().equals("")) { //$NON-NLS-1$
-				DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogDatabase.alert.host-address.title"), Localizer.getString("DialogDatabase.alert.host-address.message")); //$NON-NLS-1$ //$NON-NLS-2$
+				DialogAlert alert = new DialogAlert(this, Localizer.get("DialogDatabase.alert.host-address.title"), Localizer.get("DialogDatabase.alert.host-address.message")); //$NON-NLS-1$ //$NON-NLS-2$
 				GUIUtil.show(alert, true);
 				return;
 			}
 
 			if (portTextField.getText().equals("")) { //$NON-NLS-1$
-				DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogDatabase.alert.port.title"), Localizer.getString("DialogDatabase.alert.port.message")); //$NON-NLS-1$ //$NON-NLS-2$
+				DialogAlert alert = new DialogAlert(this, Localizer.get("DialogDatabase.alert.port.title"), Localizer.get("DialogDatabase.alert.port.message")); //$NON-NLS-1$ //$NON-NLS-2$
 				GUIUtil.show(alert, true);
 				return;
 			}
@@ -582,14 +582,14 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		else if (databaseType.equals("HSQL")) { //$NON-NLS-1$
 
 			if (hsqlFilePath.getText().equals("")) { //$NON-NLS-1$
-				DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogDatabase.alert.database-path.title"), Localizer.getString("DialogDatabase.alert.database-path.message")); //$NON-NLS-1$ //$NON-NLS-2$
+				DialogAlert alert = new DialogAlert(this, Localizer.get("DialogDatabase.alert.database-path.title"), Localizer.get("DialogDatabase.alert.database-path.message")); //$NON-NLS-1$ //$NON-NLS-2$
 				GUIUtil.show(alert, true);
 				return;
 			}
 		}
 		else {
 			if (accessFilePath.getText().equals("")) { //$NON-NLS-1$
-				DialogAlert alert = new DialogAlert(this, Localizer.getString("DialogDatabase.alert.database-path.title"), Localizer.getString("DialogDatabase.alert.database-path.message")); //$NON-NLS-1$ //$NON-NLS-2$
+				DialogAlert alert = new DialogAlert(this, Localizer.get("DialogDatabase.alert.database-path.title"), Localizer.get("DialogDatabase.alert.database-path.message")); //$NON-NLS-1$ //$NON-NLS-2$
 				GUIUtil.show(alert, true);
 				return;
 			}
@@ -608,7 +608,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 					if (database != null) {
 
 						/* Loads the database... */
-						updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.connecting-to-database")); //$NON-NLS-1$
+						updateProgress(progressBar, Localizer.get("DialogDatabase.progress.connecting-to-database")); //$NON-NLS-1$
 						MovieManager.getDatabaseHandler().setDatabase(database, true);
 
 						if (database.isSetUp()) {
@@ -671,9 +671,9 @@ public class DialogDatabase extends JDialog implements ActionListener {
     static protected Database connectToDatabase(Window parent, String path) throws Exception {
 
     	if (getType().equals("MySQL")) //$NON-NLS-1$
-    		updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.connecting-to-database")); //$NON-NLS-1$
+    		updateProgress(progressBar, Localizer.get("DialogDatabase.progress.connecting-to-database")); //$NON-NLS-1$
     	else
-    		updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.creating-database-connection")); //$NON-NLS-1$
+    		updateProgress(progressBar, Localizer.get("DialogDatabase.progress.creating-database-connection")); //$NON-NLS-1$
 
     	String databaseType = getType();
     	Database database = null;
@@ -745,7 +745,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     		database.setUp();
 
     		if (database.isSetUp()) {
-    			updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.creating-database")); //$NON-NLS-1$
+    			updateProgress(progressBar, Localizer.get("DialogDatabase.progress.creating-database")); //$NON-NLS-1$
     			((DatabaseHSQL)database).createDatabaseTables();
     		}	
     	}
@@ -941,64 +941,64 @@ public class DialogDatabase extends JDialog implements ActionListener {
     		}
 
     		if (message.indexOf("Failed to connect to database") != -1 && _database.isMySQL()) { //$NON-NLS-1$
-    			message = Localizer.getString("DialogDatabase.mysql.message.failed-to-connect"); //$NON-NLS-1$
+    			message = Localizer.get("DialogDatabase.mysql.message.failed-to-connect"); //$NON-NLS-1$
 
     			if (_database.getException() != null)
     				message += SysUtil.getLineSeparator() + _database.getException().getMessage();
 
-    			title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
     		}
     		else if (message.indexOf("Connection refused") != -1 && _database.isMySQL()) { //$NON-NLS-1$
-    			message = Localizer.getString("DialogDatabase.mysql.message.could-not-connect-connection-refused"); //$NON-NLS-1$
-    			title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
+    			message = Localizer.get("DialogDatabase.mysql.message.could-not-connect-connection-refused"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
     		}
     		else if (message.indexOf("access denied (java.net.SocketPermission") != -1 && _database.isMySQL() && MovieManager.isApplet()) { //$NON-NLS-1$
-    			message = Localizer.getString("DialogDatabase.applet.message.jar-must-be-signed"); //$NON-NLS-1$
-    			title = Localizer.getString("DialogDatabase.applet.title.code-execution-error"); //$NON-NLS-1$
+    			message = Localizer.get("DialogDatabase.applet.message.jar-must-be-signed"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.applet.title.code-execution-error"); //$NON-NLS-1$
     		}
     		else if (message.indexOf("java.net.UnknownHostException") != -1 && _database.isMySQL()) { //$NON-NLS-1$
-    			message = Localizer.getString("DialogDatabase.mysql.message.unknow-host"); //$NON-NLS-1$
-    			title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
+    			message = Localizer.get("DialogDatabase.mysql.message.unknow-host"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
     		}
     		else if (message.indexOf("Network is unreachable") != -1 && _database.isMySQL()) { //$NON-NLS-1$
     			message = "Network is unreachable"; //$NON-NLS-1$
-    			title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
     		}
     		else if (message.indexOf("Connection timed out") != -1 || message.indexOf("Connection refused: connect") != -1 && _database.isMySQL()) { //$NON-NLS-1$
     			message = "<html> Connection timed out...<br>Make sure you have network access and that the IP and port is correct.</html>"; //$NON-NLS-1$
-    			title = Localizer.getString("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
     		}
     		else if (message.indexOf("CREATE command denied") != -1) { //$NON-NLS-1$
-    			String tmp = Localizer.getString("DialogDatabase.mysql.message.create-tables-denied"); //$NON-NLS-1$
+    			String tmp = Localizer.get("DialogDatabase.mysql.message.create-tables-denied"); //$NON-NLS-1$
     			message = "<html>"+ message + "<br>"+ tmp +"</html>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    			title = Localizer.getString("DialogDatabase.mysql.title.database-creation.failed"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.mysql.title.database-creation.failed"); //$NON-NLS-1$
     		}
     		else if (message.indexOf("Access denied") != -1 && _database.isMySQL()) { //$NON-NLS-1$
     			message = "<html>"+ message + "<br>Access was denied, permission not sufficient.</html>"; //$NON-NLS-1$ //$NON-NLS-2$
-    			title = Localizer.getString("DialogDatabase.mysql.title.access-denied"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.mysql.title.access-denied"); //$NON-NLS-1$
     		}
     		else if (message.indexOf("Authentication failed") != -1 && _database.isMySQL()) { //$NON-NLS-1$
     			message = "<html>"+ message + "<br>The authentication process failed.</html>"; //$NON-NLS-1$ //$NON-NLS-2$
-    			title = Localizer.getString("DialogDatabase.mysql.title.authentication-failed"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.mysql.title.authentication-failed"); //$NON-NLS-1$
     		}
     		else if (message.indexOf("Unknown database") != -1 && _database.isMySQL()) { //$NON-NLS-1$
     			message = "<html> Either the user doesn't have sufficient privileges <br> or the given Schema doesn't exist.</html>"; //$NON-NLS-1$
-    			title = Localizer.getString("DialogDatabase.mysql.title.connection-attempt-failed"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.mysql.title.connection-attempt-failed"); //$NON-NLS-1$
     		}
     		else if (message.equals("org.hsqldb.jdbcDriver")) { //$NON-NLS-1$
-    			title = Localizer.getString("DialogDatabase.mysql.title.failed-to-load-hsql-driver"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.mysql.title.failed-to-load-hsql-driver"); //$NON-NLS-1$
     			message = "<html> The HSQL database driver should be placed in the \"lib/drivers\" directory.</html>"; //$NON-NLS-1$
     		}
     		else if (message.equals("The database is already in use by another process")) { //$NON-NLS-1$
     			message = "<html>The database is already in use by another process.</html>"; //$NON-NLS-1$
-    			title = Localizer.getString("DialogDatabase.mysql.title.connection-attempt-failed"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.mysql.title.connection-attempt-failed"); //$NON-NLS-1$
     		}
     		else if (message.indexOf("settings' doesn't exist") != -1) { //$NON-NLS-1$
-    			title = Localizer.getString("DialogDatabase.alert.title.database-error"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.alert.title.database-error"); //$NON-NLS-1$
     			message = "<html>" + message + " <br> The database does not contain the necessary tables for MeD's Movie Manager to function properly." ; //$NON-NLS-1$ //$NON-NLS-2$
     		}
     		else if (message.indexOf("already exists") != -1) { //$NON-NLS-1$
-    			title = Localizer.getString("DialogDatabase.alert.title.database-error"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.alert.title.database-error"); //$NON-NLS-1$
     			message = "<html> Table creation was denied. <br>" + message; //$NON-NLS-1$
     		}
 
@@ -1006,7 +1006,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
     			MovieManager.getDialog().getAppMenuBar().setDatabaseComponentsEnable(false);
 
-    			DialogQuestion question = new DialogQuestion(Localizer.getString("DialogDatabase.alert.title.connection-reset"), "<html>The connection to the MySQL server has been reset.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$
+    			DialogQuestion question = new DialogQuestion(Localizer.get("DialogDatabase.alert.title.connection-reset"), "<html>The connection to the MySQL server has been reset.<br>"+ //$NON-NLS-1$ //$NON-NLS-2$
     			"Reconnect now?</html>"); //$NON-NLS-1$
 
     			GUIUtil.showAndWait(question, true);
@@ -1017,7 +1017,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     					Database db = connectToDatabase(parent, _database.getPath());
 
     					if (db != null && _database.isSetUp()) {
-    						updateProgress(progressBar, Localizer.getString("DialogDatabase.progress.retrieving-movie-list")); //$NON-NLS-1$
+    						updateProgress(progressBar, Localizer.get("DialogDatabase.progress.retrieving-movie-list")); //$NON-NLS-1$
     						MovieManager.getDatabaseHandler().setDatabase(_database, true);
     						return;
     					}
@@ -1049,8 +1049,8 @@ public class DialogDatabase extends JDialog implements ActionListener {
     			}
     		}
     		else if (message.equals("MySQL server is out of space")) { //$NON-NLS-1$
-    			title = Localizer.getString("DialogDatabase.alert.mysql.title.server-out-of-space"); //$NON-NLS-1$
-    			message = Localizer.getString("DialogDatabase.alert.mysql.message.server-out-of-space"); //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.alert.mysql.title.server-out-of-space"); //$NON-NLS-1$
+    			message = Localizer.get("DialogDatabase.alert.mysql.message.server-out-of-space"); //$NON-NLS-1$
     		}
 
     		if (!message.equals("")) { //$NON-NLS-1$

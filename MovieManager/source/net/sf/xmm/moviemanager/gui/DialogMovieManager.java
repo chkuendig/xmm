@@ -471,7 +471,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         		listsString = " - All";
         }
         
-        setListTitle(Localizer.getString("moviemanager.listpanel-title") + listsString);
+        setListTitle(Localizer.get("DialogMovieManager.listpanel-title") + listsString);
     }
     
     
@@ -1106,7 +1106,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	filter.setLayout(new BorderLayout());
     	
     	/* Adds the Label. */
-    	JLabel label = new JLabel(Localizer.getString("moviemanager.listpanel-filter")); //$NON-NLS-1$
+    	JLabel label = new JLabel(Localizer.get("DialogMovieManager.listpanel-filter")); //$NON-NLS-1$
     	label.setFont(new Font(label.getFont().getName(),Font.PLAIN,fontSize));
     	
     	filter.add(label, BorderLayout.WEST);
@@ -1187,7 +1187,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 
     	panelMovieInfo.setLayout(new info.clearthought.layout.TableLayout(size));
     	panelMovieInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,4,3,3), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-    			Localizer.getString("moviemanager.movieinfopanel.title"), //$NON-NLS-1$
+    			Localizer.get("DialogMovieManager.movieinfopanel.title"), //$NON-NLS-1$
     			TitledBorder.DEFAULT_JUSTIFICATION,
     			TitledBorder.DEFAULT_POSITION,
     			new Font(panelMovieInfo.getFont().getName(),Font.BOLD, fontSize)),
@@ -1213,8 +1213,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 
     	tabbedPlotCastMiscellaneous = new JTabbedPane();
     	tabbedPlotCastMiscellaneous.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
-    	tabbedPlotCastMiscellaneous.add(Localizer.getString("moviemanager.movie-info-panel.plot_and_cast"), plotAndCast); //$NON-NLS-1$
-    	tabbedPlotCastMiscellaneous.add(Localizer.getString("moviemanager.movie-info-panel.miscellaneous"), miscellaneous); //$NON-NLS-1$
+    	tabbedPlotCastMiscellaneous.add(Localizer.get("DialogMovieManager.movie-info-panel.plot_and_cast"), plotAndCast); //$NON-NLS-1$
+    	tabbedPlotCastMiscellaneous.add(Localizer.get("DialogMovieManager.movie-info-panel.miscellaneous"), miscellaneous); //$NON-NLS-1$
 
     	tabbedPlotCastMiscellaneous.addChangeListener(new ChangeListener() {
     		public void stateChanged(ChangeEvent arg0) {
@@ -1341,7 +1341,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         JPanel panelDirected = new JPanel();
         panelDirected.setLayout(new BoxLayout(panelDirected, BoxLayout.X_AXIS));
         
-        JLabel directedID = new JLabel(Localizer.getString("moviemanager.movie-info-panel.directedby") + ": "); //$NON-NLS-1$
+        JLabel directedID = new JLabel(Localizer.get("DialogMovieManager.movie-info-panel.directedby") + ": "); //$NON-NLS-1$
         directedID.setFont(new Font(directedID.getFont().getName(), Font.BOLD, fontSize));
         panelDirected.add(directedID);
         
@@ -1369,7 +1369,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         JPanel panelWritten = new JPanel();
         panelWritten.setLayout(new BoxLayout(panelWritten, BoxLayout.X_AXIS));
         
-        JLabel writtenID = new JLabel(Localizer.getString("moviemanager.movie-info-panel.writtenby") + ": "); //$NON-NLS-1$
+        JLabel writtenID = new JLabel(Localizer.get("DialogMovieManager.movie-info-panel.writtenby") + ": "); //$NON-NLS-1$
         writtenID.setFont(new Font(writtenID.getFont().getName(), Font.BOLD, fontSize));
         panelWritten.add(writtenID);
         
@@ -1394,7 +1394,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         JPanel panelGenre = new JPanel();
         panelGenre.setLayout(new BoxLayout(panelGenre, BoxLayout.X_AXIS));
         
-        JLabel genreID = new JLabel(Localizer.getString("moviemanager.movie-info-panel.genre") + ": "); //$NON-NLS-1$
+        JLabel genreID = new JLabel(Localizer.get("DialogMovieManager.movie-info-panel.genre") + ": "); //$NON-NLS-1$
         genreID.setFont(new Font(genreID.getFont().getName(), Font.BOLD, fontSize));
         panelGenre.add(genreID);
         
@@ -1421,7 +1421,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         
         
-        JLabel ratingID = new JLabel(Localizer.getString("moviemanager.movie-info-panel.raing") + ": "); //$NON-NLS-1$
+        JLabel ratingID = new JLabel(Localizer.get("DialogMovieManager.movie-info-panel.raing") + ": "); //$NON-NLS-1$
         ratingID.setFont(new Font(ratingID.getFont().getName(), Font.BOLD, fontSize));
         panelRating.add(ratingID);
         
@@ -1446,7 +1446,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         JPanel panelCountry = new JPanel();
         panelCountry.setLayout(new BoxLayout(panelCountry, BoxLayout.X_AXIS));
         
-        countryLabel = new JLabel(Localizer.getString("moviemanager.movie-info-panel.country") + ": "); //$NON-NLS-1$
+        countryLabel = new JLabel(Localizer.get("DialogMovieManager.movie-info-panel.country") + ": "); //$NON-NLS-1$
         countryLabel.setFont(new Font(countryLabel.getFont().getName(), Font.BOLD, fontSize));
         
         countryLabel.setMinimumSize(countryLabel.getPreferredSize());
@@ -1474,7 +1474,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         JPanel panelSeen = new JPanel();
         panelSeen.setLayout(new BoxLayout(panelSeen, BoxLayout.X_AXIS));
         
-        JLabel seenID = new JLabel(Localizer.getString("moviemanager.movie-info-panel.seen") + ": "); //$NON-NLS-1$
+        JLabel seenID = new JLabel(Localizer.get("DialogMovieManager.movie-info-panel.seen") + ": "); //$NON-NLS-1$
         seenID.setFont(new Font(seenID.getFont().getName(), Font.BOLD, fontSize));
         panelSeen.add(seenID);
         
@@ -1537,7 +1537,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         JPanel panelLanguage = new JPanel();
         panelLanguage.setLayout(new BoxLayout(panelLanguage, BoxLayout.X_AXIS));
         
-        languageLabel = new JLabel(Localizer.getString("moviemanager.movie-info-panel.language") + ": "); //$NON-NLS-1$
+        languageLabel = new JLabel(Localizer.get("DialogMovieManager.movie-info-panel.language") + ": "); //$NON-NLS-1$
         languageLabel.setFont(new Font(languageLabel.getFont().getName(), Font.BOLD, fontSize));
         languageLabel.setMinimumSize(languageLabel.getPreferredSize());
         
@@ -1631,7 +1631,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         plot.setLayout(new BorderLayout());
         
         plot.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder() /*BorderFactory.createEmptyBorder()*/,
-                Localizer.getString("moviemanager.movie-info-panel.plot"), //$NON-NLS-1$
+                Localizer.get("DialogMovieManager.movie-info-panel.plot"), //$NON-NLS-1$
                 TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION,
                 new Font(plot.getFont().getName(),Font.PLAIN, fontSize)),
@@ -1664,7 +1664,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         cast.setLayout(new BorderLayout());
         
         cast.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,4,2,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                Localizer.getString("moviemanager.movie-info-panel.cast"), //$NON-NLS-1$
+                Localizer.get("DialogMovieManager.movie-info-panel.cast"), //$NON-NLS-1$
                 TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION,
                 new Font(cast.getFont().getName(),Font.PLAIN, fontSize)),
@@ -1739,7 +1739,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         additionalInfo.addComponentListener(this);
         additionalInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,0), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                Localizer.getString("moviemanager.movie-info-panel.additionalinfo"), //$NON-NLS-1$
+                Localizer.get("DialogMovieManager.movie-info-panel.additionalinfo"), //$NON-NLS-1$
                 TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION,
                 new Font(additionalInfo.getFont().getName(),Font.PLAIN, fontSize)),
@@ -1822,7 +1822,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         notes.addComponentListener(this);
         
         notes.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,5,0,0), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-                Localizer.getString("moviemanager.movie-info-panel.notes"), //$NON-NLS-1$
+                Localizer.get("DialogMovieManager.movie-info-panel.notes"), //$NON-NLS-1$
                 TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION,
                 new Font(notes.getFont().getName(),Font.PLAIN, fontSize)),

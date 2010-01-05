@@ -85,7 +85,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 		 GUIUtil.enableDisposeOnEscapeKey(shortcutManager);	
 
 		 /* Dialog properties...*/
-		 setTitle(Localizer.getString("dialogadditionaiinfofields.title")); //$NON-NLS-1$
+		 setTitle(Localizer.get("dialogadditionaiinfofields.title")); //$NON-NLS-1$
 		 setModal(true);
 		 setResizable(false);
 
@@ -130,7 +130,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 
 		 /* Inactive Fields panel */
 		 JPanel panelInactiveFields = new JPanel();
-		 panelInactiveFields.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("dialogadditionaiinfofields.panel.hidden-fields.title")), //$NON-NLS-1$
+		 panelInactiveFields.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogadditionaiinfofields.panel.hidden-fields.title")), //$NON-NLS-1$
 				 BorderFactory.createEmptyBorder(5,5,5,5)));
 		 panelInactiveFields.setLayout(new GridBagLayout());
 		 GridBagConstraints constraints;
@@ -150,8 +150,8 @@ public class DialogAdditionalInfoFields extends JDialog {
 		 constraints.anchor = GridBagConstraints.WEST;
 		 panelInactiveFields.add(scrollPaneInactiveFields, constraints);
 
-		 JButton buttonMakeActive = new JButton(Localizer.getString("dialogadditionaiinfofields.button.make-active.text")); //$NON-NLS-1$
-		 buttonMakeActive.setToolTipText(Localizer.getString("dialogadditionaiinfofields.button.make-active.tooltip")); //$NON-NLS-1$
+		 JButton buttonMakeActive = new JButton(Localizer.get("dialogadditionaiinfofields.button.make-active.text")); //$NON-NLS-1$
+		 buttonMakeActive.setToolTipText(Localizer.get("dialogadditionaiinfofields.button.make-active.tooltip")); //$NON-NLS-1$
 		 buttonMakeActive.setActionCommand("AdditionalInfoFields - Make Active"); //$NON-NLS-1$
 		 buttonMakeActive.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent event) {
@@ -168,7 +168,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 
 		 /* Active Fields panel...*/
 		 JPanel panelActiveFields = new JPanel();
-		 panelActiveFields.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("dialogadditionaiinfofields.panel.active-fields.title")), //$NON-NLS-1$
+		 panelActiveFields.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogadditionaiinfofields.panel.active-fields.title")), //$NON-NLS-1$
 				 BorderFactory.createEmptyBorder(5,5,5,5)));
 		 panelActiveFields.setLayout(new GridBagLayout());
 
@@ -189,8 +189,8 @@ public class DialogAdditionalInfoFields extends JDialog {
 		 constraints.anchor = GridBagConstraints.WEST;
 		 panelActiveFields.add(scrollPaneActiveFields,constraints);
 
-		 JButton buttonMoveUp = new JButton(Localizer.getString("dialogadditionaiinfofields.button.move-up.text")); //$NON-NLS-1$
-		 buttonMoveUp.setToolTipText(Localizer.getString("dialogadditionaiinfofields.button.move-up.tooltip")); //$NON-NLS-1$
+		 JButton buttonMoveUp = new JButton(Localizer.get("dialogadditionaiinfofields.button.move-up.text")); //$NON-NLS-1$
+		 buttonMoveUp.setToolTipText(Localizer.get("dialogadditionaiinfofields.button.move-up.tooltip")); //$NON-NLS-1$
 		 buttonMoveUp.setActionCommand("AdditionalInfoFields - Move Up"); //$NON-NLS-1$
 		 buttonMoveUp.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent event) {
@@ -208,8 +208,8 @@ public class DialogAdditionalInfoFields extends JDialog {
 		 constraints.anchor = GridBagConstraints.SOUTHWEST;
 		 panelActiveFields.add(buttonMoveUp, constraints);
 
-		 JButton buttonMoveDown = new JButton(Localizer.getString("dialogadditionaiinfofields.button.move-down.text")); //$NON-NLS-1$
-		 buttonMoveDown.setToolTipText(Localizer.getString("dialogadditionaiinfofields.button.move-down.tooltip")); //$NON-NLS-1$
+		 JButton buttonMoveDown = new JButton(Localizer.get("dialogadditionaiinfofields.button.move-down.text")); //$NON-NLS-1$
+		 buttonMoveDown.setToolTipText(Localizer.get("dialogadditionaiinfofields.button.move-down.tooltip")); //$NON-NLS-1$
 		 buttonMoveDown.setActionCommand("AdditionalInfoFields - Move Down"); //$NON-NLS-1$
 		 buttonMoveDown.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent event) {
@@ -226,8 +226,8 @@ public class DialogAdditionalInfoFields extends JDialog {
 		 constraints.anchor = GridBagConstraints.NORTHWEST;
 		 panelActiveFields.add(buttonMoveDown, constraints);
 
-		 JButton buttonRemove = new JButton(Localizer.getString("dialogadditionaiinfofields.button.remove.text")); //$NON-NLS-1$
-		 buttonRemove.setToolTipText(Localizer.getString("dialogadditionaiinfofields.button.remove.tooltip")); //$NON-NLS-1$
+		 JButton buttonRemove = new JButton(Localizer.get("dialogadditionaiinfofields.button.remove.text")); //$NON-NLS-1$
+		 buttonRemove.setToolTipText(Localizer.get("dialogadditionaiinfofields.button.remove.tooltip")); //$NON-NLS-1$
 		 buttonRemove.setActionCommand("AdditionalInfoFields - Remove"); //$NON-NLS-1$
 		 buttonRemove.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent event) {
@@ -245,8 +245,8 @@ public class DialogAdditionalInfoFields extends JDialog {
 		 constraints.anchor = GridBagConstraints.SOUTHWEST;
 		 panelActiveFields.add(buttonRemove, constraints);
 
-		 JButton buttonHide = new JButton(Localizer.getString("dialogadditionaiinfofields.button.hide.text")); //$NON-NLS-1$
-		 buttonHide.setToolTipText(Localizer.getString("dialogadditionaiinfofields.button.hide.tooltip")); //$NON-NLS-1$
+		 JButton buttonHide = new JButton(Localizer.get("dialogadditionaiinfofields.button.hide.text")); //$NON-NLS-1$
+		 buttonHide.setToolTipText(Localizer.get("dialogadditionaiinfofields.button.hide.tooltip")); //$NON-NLS-1$
 		 buttonHide.setActionCommand("AdditionalInfoFields - Hide"); //$NON-NLS-1$
 		 buttonHide.setPreferredSize(buttonRemove.getPreferredSize());
 		 buttonHide.addActionListener(new ActionListener() {
@@ -268,7 +268,7 @@ public class DialogAdditionalInfoFields extends JDialog {
 
 		 /* Add New Field panel...*/
 		 JPanel panelAddNewField = new JPanel();
-		 panelAddNewField.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.getString("dialogadditionaiinfofields.panel-add-new-field.title")), //$NON-NLS-1$
+		 panelAddNewField.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogadditionaiinfofields.panel-add-new-field.title")), //$NON-NLS-1$
 				 BorderFactory.createEmptyBorder(5,5,5,5)));
 		 panelAddNewField.setLayout(new GridBagLayout());
 
@@ -281,8 +281,8 @@ public class DialogAdditionalInfoFields extends JDialog {
 		 constraints.anchor = GridBagConstraints.WEST;
 		 panelAddNewField.add(textFieldAdd,constraints);
 
-		 JButton buttonAdd = new JButton(Localizer.getString("dialogadditionaiinfofields.button.add.text")); //$NON-NLS-1$
-		 buttonAdd.setToolTipText(Localizer.getString("dialogadditionaiinfofields.button.add.tooltip")); //$NON-NLS-1$
+		 JButton buttonAdd = new JButton(Localizer.get("dialogadditionaiinfofields.button.add.text")); //$NON-NLS-1$
+		 buttonAdd.setToolTipText(Localizer.get("dialogadditionaiinfofields.button.add.tooltip")); //$NON-NLS-1$
 		 buttonAdd.setActionCommand("AdditionalInfoFields - Add"); //$NON-NLS-1$
 		 buttonAdd.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent event) {
@@ -309,8 +309,8 @@ public class DialogAdditionalInfoFields extends JDialog {
 		 panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		 panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-		 JButton buttonSave = new JButton(Localizer.getString("dialogadditionaiinfofields.button.save.text")); //$NON-NLS-1$
-		 buttonSave.setToolTipText(Localizer.getString("dialogadditionaiinfofields.button.save.tooltip")); //$NON-NLS-1$
+		 JButton buttonSave = new JButton(Localizer.get("dialogadditionaiinfofields.button.save.text")); //$NON-NLS-1$
+		 buttonSave.setToolTipText(Localizer.get("dialogadditionaiinfofields.button.save.tooltip")); //$NON-NLS-1$
 		 buttonSave.setActionCommand("AdditionalInfoFields - Save"); //$NON-NLS-1$
 		 buttonSave.addActionListener(new ActionListener() {
 			 public void actionPerformed(ActionEvent event) {
@@ -318,8 +318,8 @@ public class DialogAdditionalInfoFields extends JDialog {
 				 executeCommandSave();
 			 }});
 		 panelButtons.add(buttonSave);
-		 JButton buttonCancel = new JButton(Localizer.getString("dialogadditionaiinfofields.button.cancel.text")); //$NON-NLS-1$
-		 buttonCancel.setToolTipText(Localizer.getString("dialogadditionaiinfofields.button.cancel.tooltip")); //$NON-NLS-1$
+		 JButton buttonCancel = new JButton(Localizer.get("dialogadditionaiinfofields.button.cancel.text")); //$NON-NLS-1$
+		 buttonCancel.setToolTipText(Localizer.get("dialogadditionaiinfofields.button.cancel.tooltip")); //$NON-NLS-1$
 		 buttonCancel.setActionCommand("AdditionalInfoFields - Cancel"); //$NON-NLS-1$
 		 buttonCancel.addActionListener(new CommandDialogDispose(this));
 		 panelButtons.add(buttonCancel);

@@ -151,7 +151,7 @@ public class DialogQuestion extends JDialog  {
 		JPanel panelButtons = new JPanel();
 		panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		panelButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-		JButton buttonYes = new JButton(Localizer.getString("DialogQuestion.answer.yes")); //$NON-NLS-1$
+		JButton buttonYes = new JButton(Localizer.get("DialogQuestion.answer.yes")); //$NON-NLS-1$
 		buttonYes.setActionCommand("Question - Yes"); //$NON-NLS-1$
 		buttonYes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -171,7 +171,7 @@ public class DialogQuestion extends JDialog  {
 		panelButtons.add(buttonYes);
 
 
-		JButton buttonNo = new JButton(Localizer.getString("DialogQuestion.answer.no")); //$NON-NLS-1$
+		JButton buttonNo = new JButton(Localizer.get("DialogQuestion.answer.no")); //$NON-NLS-1$
 		buttonNo.setActionCommand("Question - No"); //$NON-NLS-1$
 		buttonNo.addActionListener(new CommandDialogDispose(this));
 		buttonNo.addKeyListener(new KeyAdapter() {
