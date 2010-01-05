@@ -119,7 +119,7 @@ public class MovieManagerCommandIMDBSearch {
                 	
                     if (list.size() == 0) {
                         final DefaultListModel model = new DefaultListModel();
-                        model.addElement(new ModelIMDbSearchHit(null, Localizer.getString("DialogTVDOTCOM.list-item.message.no-matches-found"), null)); //$NON-NLS-1$
+                        model.addElement(new ModelIMDbSearchHit(null, Localizer.get("DialogTVDOTCOM.list-item.message.no-matches-found"), null)); //$NON-NLS-1$
                         
                         Runnable updateProgres = new Runnable() {
                             public void run() {

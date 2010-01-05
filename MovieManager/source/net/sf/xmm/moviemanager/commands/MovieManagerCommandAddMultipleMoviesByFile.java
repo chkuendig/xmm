@@ -357,7 +357,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 			dropImdbInfo = dialogIMDB.getDropIMDbInfo();
 
 		} else {
-			DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("DialogMovieInfo.alert.title.alert"), Localizer.getString("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
+			DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("DialogMovieInfo.alert.title.alert"), Localizer.get("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
 			GUIUtil.showAndWait(alert, true);
 		}
 	}

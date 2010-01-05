@@ -147,7 +147,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 	void createAndShowGUI() {
 
 		/* Owner, title, modal=true */
-		dbConverter = new JDialog(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.database-converter.title"), true); //$NON-NLS-1$
+		dbConverter = new JDialog(MovieManager.getDialog(), Localizer.get("MovieManagerCommandConvertDatabase.database-converter.title"), true); //$NON-NLS-1$
 		dbConverter.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
 		final JComponent newContentPane = new DialogDatabaseConverter(newDatabase, movieListModel, episodeList, this);
@@ -251,13 +251,13 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 		if (MovieManager.getConfig().getLastDatabaseDir() != null)
 			fileChooser.setCurrentDirectory(MovieManager.getConfig().getLastDatabaseDir());
 
-		fileChooser.setDialogTitle(Localizer.getString("MovieManagerCommandConvertDatabase.filechooser.title.save-new-database")); 
-		fileChooser.setApproveButtonText(Localizer.getString("MovieManagerCommandConvertDatabase.filechooser.approve-button.text")); 
-		fileChooser.setApproveButtonToolTipText(Localizer.getString("MovieManagerCommandConvertDatabase.filechooser.approve-button.tooltip"));
+		fileChooser.setDialogTitle(Localizer.get("MovieManagerCommandConvertDatabase.filechooser.title.save-new-database")); 
+		fileChooser.setApproveButtonText(Localizer.get("MovieManagerCommandConvertDatabase.filechooser.approve-button.text")); 
+		fileChooser.setApproveButtonToolTipText(Localizer.get("MovieManagerCommandConvertDatabase.filechooser.approve-button.tooltip"));
 		fileChooser.setDialogType(1);
 		fileChooser.setAcceptAllFileFilterUsed(false);
 
-		int returnVal = fileChooser.showDialog(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.filechooser.approve-button.text"));
+		int returnVal = fileChooser.showDialog(MovieManager.getDialog(), Localizer.get("MovieManagerCommandConvertDatabase.filechooser.approve-button.text"));
 
 		if (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
 			/* Gets the path... */
@@ -287,7 +287,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 		MovieManagerCommandSaveChangedNotes.execute();
 
 		if (!SysUtil.isWindows() && !MovieManager.getIt().getDatabase().getDatabaseType().equals("MySQL")) {
-			DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.alert.not-linux-hsql.title"), Localizer.getString("MovieManagerCommandConvertDatabase.alert.not-linux-hsql.message"));
+			DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("MovieManagerCommandConvertDatabase.alert.not-linux-hsql.title"), Localizer.get("MovieManagerCommandConvertDatabase.alert.not-linux-hsql.message"));
 			GUIUtil.showAndWait(alert, true);
 		}
 		else {
@@ -298,7 +298,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 			int listModelSize = movieListModel.getSize();
 
 			if (listModelSize == 0) {
-				DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandConvertDatabase.alert.empty-database.title"), Localizer.getString("MovieManagerCommandConvertDatabase.alert.empty-database.message"));
+				DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("MovieManagerCommandConvertDatabase.alert.empty-database.title"), Localizer.get("MovieManagerCommandConvertDatabase.alert.empty-database.message"));
 				GUIUtil.showAndWait(alert, true);
 			}
 			else {

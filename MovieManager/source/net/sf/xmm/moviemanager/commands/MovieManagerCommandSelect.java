@@ -532,7 +532,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 		if (model != null && !model.getUrlKey().equals("")) { //$NON-NLS-1$
 			MovieManager.getDialog().getCover().addMouseListener(new MovieManagerCommandOpenPage(model.getCompleteUrl())); //$NON-NLS-1$ //$NON-NLS-2$
-			MovieManager.getDialog().getCover().setToolTipText(Localizer.getString("MovieManagerCommandSelect.show-cover.tooltip.open-in-browser")); //$NON-NLS-1$
+			MovieManager.getDialog().getCover().setToolTipText(Localizer.get("MovieManagerCommandSelect.show-cover.tooltip.open-in-browser")); //$NON-NLS-1$
 		} else {
 			MovieManager.getDialog().getCover().setToolTipText(null);
 		}
@@ -579,22 +579,22 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			misc.append("<html><font size="+fontSize+" face=\""+ fontname +"\">"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (!model.getWebSoundMix().equals("")) //$NON-NLS-1$
-				misc.append("<b>" + Localizer.getString("MovieManagerCommandSelect.miscellaneous-panel.field.sound-mix.title") + "</b><br>" + model.getWebSoundMix() + "<br><br>"); //$NON-NLS-1$ //$NON-NLS-2$
+				misc.append("<b>" + Localizer.get("MovieManagerCommandSelect.miscellaneous-panel.field.sound-mix.title") + "</b><br>" + model.getWebSoundMix() + "<br><br>"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (!model.getWebRuntime().equals("")) //$NON-NLS-1$
-				misc.append("<b>" + Localizer.getString("MovieManagerCommandSelect.miscellaneous-panel.field.runtime.title") + ":</b><br>" + model.getWebRuntime() + "<br><br>"); //$NON-NLS-1$ //$NON-NLS-2$
+				misc.append("<b>" + Localizer.get("MovieManagerCommandSelect.miscellaneous-panel.field.runtime.title") + ":</b><br>" + model.getWebRuntime() + "<br><br>"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (!model.getAwards().equals("")) //$NON-NLS-1$
-				misc.append("<b>" + Localizer.getString("MovieManagerCommandSelect.miscellaneous-panel.field.awards.title") +":</b><br>" + model.getAwards() + "<br><br>"); //$NON-NLS-1$ //$NON-NLS-2$
+				misc.append("<b>" + Localizer.get("MovieManagerCommandSelect.miscellaneous-panel.field.awards.title") +":</b><br>" + model.getAwards() + "<br><br>"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (!model.getMpaa().equals("")) //$NON-NLS-1$
-				misc.append("<b>" + Localizer.getString("MovieManagerCommandSelect.miscellaneous-panel.field.mpaa.title") + ":</b><br>"  + model.getMpaa() + "<br><br>"); //$NON-NLS-1$ //$NON-NLS-2$
+				misc.append("<b>" + Localizer.get("MovieManagerCommandSelect.miscellaneous-panel.field.mpaa.title") + ":</b><br>"  + model.getMpaa() + "<br><br>"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (!model.getCertification().equals("")) //$NON-NLS-1$
-				misc.append("<b>" + Localizer.getString("MovieManagerCommandSelect.miscellaneous-panel.field.certification.title") + ":</b><br>" + model.getCertification() + "<br><br>"); //$NON-NLS-1$
+				misc.append("<b>" + Localizer.get("MovieManagerCommandSelect.miscellaneous-panel.field.certification.title") + ":</b><br>" + model.getCertification() + "<br><br>"); //$NON-NLS-1$
 
 			if (!model.getAka().equals("")) //$NON-NLS-1$
-				misc.append("<b>" + Localizer.getString("MovieManagerCommandSelect.miscellaneous-panel.field.also-known-as.title") + ":</b><br>"  + model.getAka().replaceAll("\r\n|\n", "<br>") ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				misc.append("<b>" + Localizer.get("MovieManagerCommandSelect.miscellaneous-panel.field.also-known-as.title") + ":</b><br>"  + model.getAka().replaceAll("\r\n|\n", "<br>") ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 			misc.append("</FONT></html>"); //$NON-NLS-1$
 
@@ -606,7 +606,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 				MovieManager.getDialog().getCountryTextField().setText(""); //$NON-NLS-1$
 			}
 			else {
-				MovieManager.getDialog().getCountryLabel().setText(Localizer.getString("moviemanager.movie-info-panel.country")+ ": "); //$NON-NLS-1$
+				MovieManager.getDialog().getCountryLabel().setText(Localizer.get("DialogMovieManager.movie-info-panel.country")+ ": "); //$NON-NLS-1$
 				MovieManager.getDialog().getCountryTextField().setText(model.getCountry());
 				MovieManager.getDialog().getCountryTextField().setCaretPosition(0);
 			}
@@ -616,7 +616,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 				MovieManager.getDialog().getLanguageTextField().setText(""); //$NON-NLS-1$
 			}
 			else {
-				MovieManager.getDialog().getLanguageLabel().setText(Localizer.getString("moviemanager.movie-info-panel.language")+ ": "); //$NON-NLS-1$
+				MovieManager.getDialog().getLanguageLabel().setText(Localizer.get("DialogMovieManager.movie-info-panel.language")+ ": "); //$NON-NLS-1$
 				MovieManager.getDialog().getLanguageTextField().setText(model.getLanguage());
 				MovieManager.getDialog().getLanguageTextField().setCaretPosition(0);
 			}
@@ -1082,7 +1082,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			boolean seen = selected.getSeen();
 
 			if (selected instanceof ModelMovie) {
-				popupMenu.add(addEpisode = new JMenuItem(Localizer.getString("MovieManagerCommandSelect.movie-list-popup.add-episodes"))); //$NON-NLS-1$
+				popupMenu.add(addEpisode = new JMenuItem(Localizer.get("MovieManagerCommandSelect.movie-list-popup.add-episodes"))); //$NON-NLS-1$
 				addEpisode.addActionListener(new MovieManagerCommandAddEpisode());
 			}
 
@@ -1092,9 +1092,9 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 					popupMenu.add(new JPopupMenu.Separator());
 
 				if (seen)
-					popupMenu.add(change = new JMenuItem(Localizer.getString("MovieManagerCommandSelect.movie-list-popup.change-to-seen"))); //$NON-NLS-1$
+					popupMenu.add(change = new JMenuItem(Localizer.get("MovieManagerCommandSelect.movie-list-popup.change-to-seen"))); //$NON-NLS-1$
 				else 
-					popupMenu.add(change = new JMenuItem(Localizer.getString("MovieManagerCommandSelect.movie-list-popup.change-to-unseen"))); //$NON-NLS-1$
+					popupMenu.add(change = new JMenuItem(Localizer.get("MovieManagerCommandSelect.movie-list-popup.change-to-unseen"))); //$NON-NLS-1$
 
 				change.addActionListener(this);
 			}
@@ -1103,8 +1103,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			popupMenu = new JPopupMenu();
 
 			if (isSeenEditable) {
-				popupMenu.add(setAllToSeen = new JMenuItem(Localizer.getString("MovieManagerCommandSelect.movie-list-popup.set-selected-to-seen"))); //$NON-NLS-1$
-				popupMenu.add(setAllToUnseen = new JMenuItem(Localizer.getString("MovieManagerCommandSelect.movie-list-popup.set-selected-to-unseen"))); //$NON-NLS-1$
+				popupMenu.add(setAllToSeen = new JMenuItem(Localizer.get("MovieManagerCommandSelect.movie-list-popup.set-selected-to-seen"))); //$NON-NLS-1$
+				popupMenu.add(setAllToUnseen = new JMenuItem(Localizer.get("MovieManagerCommandSelect.movie-list-popup.set-selected-to-unseen"))); //$NON-NLS-1$
 				setAllToSeen.addActionListener(this);
 				setAllToUnseen.addActionListener(this);
 			}
@@ -1119,8 +1119,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		
 		if (listcolumns.size() > 0 && !selected.isEpisode()) {
 			
-			menuApplyToLists = new JMenu(Localizer.getString("MovieManagerCommandSelect.movie-list-popup.apply-to-list")); //$NON-NLS-1$
-			menuRemoveFromLists = new JMenu(Localizer.getString("MovieManagerCommandSelect.movie-list-popup.remove-from-list")); //$NON-NLS-1$
+			menuApplyToLists = new JMenu(Localizer.get("MovieManagerCommandSelect.movie-list-popup.apply-to-list")); //$NON-NLS-1$
+			menuRemoveFromLists = new JMenu(Localizer.get("MovieManagerCommandSelect.movie-list-popup.remove-from-list")); //$NON-NLS-1$
 			JMenuItem temp, temp2;
 			
 			while (!listcolumns.isEmpty()) {
