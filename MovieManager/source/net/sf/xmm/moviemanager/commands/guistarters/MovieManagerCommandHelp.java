@@ -38,7 +38,7 @@ public class MovieManagerCommandHelp implements ActionListener {
 	 * Executes the command.
 	 **/
 	protected static void execute() {
-		DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandHelp.dialog-alert.help.title"), Localizer.getString("MovieManagerCommandHelp.dialog-alert.help.message"));
+		DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("MovieManagerCommandHelp.dialog-alert.help.title"), Localizer.get("MovieManagerCommandHelp.dialog-alert.help.message"));
 		GUIUtil.show(alert, true);
 	}
 

@@ -131,9 +131,9 @@ public class MovieManagerCommandImport implements ActionListener{
 			else if (MovieManager.getConfig().getLastFileDir() != null)
 				fileChooser.setCurrentDirectory(MovieManager.getConfig().getLastFileDir());
 
-			fileChooser.setDialogTitle(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.title")); //$NON-NLS-1$
-			fileChooser.setApproveButtonText(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.approve-button.text")); //$NON-NLS-1$
-			fileChooser.setApproveButtonToolTipText(Localizer.getString("MovieManagerCommandImport.dialog-importer.filechooser.approve-button.tooltip")); //$NON-NLS-1$
+			fileChooser.setDialogTitle(Localizer.get("MovieManagerCommandImport.dialog-importer.filechooser.title")); //$NON-NLS-1$
+			fileChooser.setApproveButtonText(Localizer.get("MovieManagerCommandImport.dialog-importer.filechooser.approve-button.text")); //$NON-NLS-1$
+			fileChooser.setApproveButtonToolTipText(Localizer.get("MovieManagerCommandImport.dialog-importer.filechooser.approve-button.tooltip")); //$NON-NLS-1$
 			fileChooser.setAcceptAllFileFilterUsed(false);
 
 			int returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());

@@ -60,7 +60,7 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
 	void createAndShowGUI() {
 
 		/* Owner, title, modal=true */
-		dbImporter = new JDialog(MovieManager.getDialog(), Localizer.getString("MovieManagerCommandUpdateIMDBInfo.dialog-imdb-info-updater.title"), true); //$NON-NLS-1$
+		dbImporter = new JDialog(MovieManager.getDialog(), Localizer.get("MovieManagerCommandUpdateIMDBInfo.dialog-imdb-info-updater.title"), true); //$NON-NLS-1$
 		dbImporter.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
 		final JComponent newContentPane = new DialogUpdateIMDbInfo(this, dbImporter);
