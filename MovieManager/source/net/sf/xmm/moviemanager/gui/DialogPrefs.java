@@ -918,40 +918,53 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		
 		/* Cover settings */
 		JPanel coverPanel = new JPanel();
-		coverPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogprefs.panel.cover-settings.title")), BorderFactory.createEmptyBorder(12,30,16,0))); //$NON-NLS-1$
-		coverPanel.setLayout(new BoxLayout(coverPanel, BoxLayout.PAGE_AXIS));
-
+		//Box coverPanel = Box.createVerticalBox();
+		coverPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogprefs.panel.cover-settings.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		coverPanel.setLayout(new BoxLayout(coverPanel, BoxLayout.Y_AXIS));
+		//coverPanel.setLayout(new BorderLayout());
+		
 		enablePreserveCoverRatio = new JCheckBox(Localizer.get("dialogprefs.panel.cover-settings.preserve-aspect-ratio")); //$NON-NLS-1$
 		enablePreserveCoverRatio.setActionCommand("Preserve Cover ratio"); //$NON-NLS-1$
 		enablePreserveCoverRatio.addItemListener(this);
-
+		
 		if (config.getPreserveCoverAspectRatio() == 1)
 			enablePreserveCoverRatio.setSelected(true);
 
-		coverPanel.add(enablePreserveCoverRatio);
+		//coverPanel.add(enablePreserveCoverRatio);
 
 		enablePreserveCoverRatioEpisodesOnly = new JCheckBox(Localizer.get("dialogprefs.panel.cover-settings.preserve-aspect-ratio-episodes-only")); //$NON-NLS-1$
 		enablePreserveCoverRatioEpisodesOnly.setActionCommand("Preserve Cover ratio episodes"); //$NON-NLS-1$
 		enablePreserveCoverRatioEpisodesOnly.addItemListener(this);
-
+		
 		if (config.getPreserveCoverAspectRatio() == 2) {
 			enablePreserveCoverRatioEpisodesOnly.setSelected(true);
 			enablePreserveCoverRatio.setSelected(false);
 		}
-
-		coverPanel.add(enablePreserveCoverRatioEpisodesOnly);
+		
+		JPanel checkBoxPanel = new JPanel();
+		checkBoxPanel.setLayout(new BoxLayout(checkBoxPanel, BoxLayout.PAGE_AXIS));
+		checkBoxPanel.setAlignmentX(LEFT_ALIGNMENT);
+		checkBoxPanel.add(enablePreserveCoverRatio);
+		checkBoxPanel.add(enablePreserveCoverRatioEpisodesOnly);
+		
+		coverPanel.add(checkBoxPanel);
 
 		JPanel nocoverImagePanel = new JPanel();
-		nocoverImagePanel.setLayout(new BoxLayout(nocoverImagePanel, BoxLayout.PAGE_AXIS));
-		nocoverImagePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10,63,20,5), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogprefs.panel.cover-settings.nocover.title")), BorderFactory.createEmptyBorder(0,5,5,5)))); //$NON-NLS-1$
-
+		//nocoverImagePanel.setLayout(new BorderLayout());
+		nocoverImagePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(20,30,0,0), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogprefs.panel.cover-settings.nocover.title")), BorderFactory.createEmptyBorder(0,5,5,5)))); //$NON-NLS-1$
+		nocoverImagePanel.setLayout(new BoxLayout(nocoverImagePanel, BoxLayout.LINE_AXIS));
+		nocoverImagePanel.setAlignmentX(LEFT_ALIGNMENT);
+		
+		
+		JPanel nocoverCheckBoxPanel = new JPanel();
+		nocoverCheckBoxPanel.setLayout(new BoxLayout(nocoverCheckBoxPanel, BoxLayout.PAGE_AXIS));
+		
 		ButtonGroup nocoverGroup = new ButtonGroup();
 
 		pumaCover = new JRadioButton(Localizer.get("dialogprefs.panel.cover-settings.nocover.use-puma")); //$NON-NLS-1$
 		jaguarCover = new JRadioButton(Localizer.get("dialogprefs.panel.cover-settings.nocover.use-jaguar")); //$NON-NLS-1$
 		tigerCover = new JRadioButton("Use Tiger image"); 
-		
-		
+				
 		if (config.getNoCoverType() == NoCoverType.Jaguar)
 			jaguarCover.setSelected(true);
 		else if (config.getNoCoverType() == NoCoverType.Tiger)
@@ -963,12 +976,39 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		nocoverGroup.add(jaguarCover);
 		nocoverGroup.add(tigerCover);
 
-		nocoverImagePanel.add(pumaCover);
-		nocoverImagePanel.add(jaguarCover);
-		nocoverImagePanel.add(tigerCover);
+		nocoverCheckBoxPanel.add(pumaCover);
+		nocoverCheckBoxPanel.add(jaguarCover);
+		nocoverCheckBoxPanel.add(tigerCover);
 
+
+		final JLabel coverLabel = new JLabel(new ImageIcon(FileUtil.getImage("/images/" + config.getNoCoverFilename()).getScaledInstance(config.getCoverAreaSize().width, config.getCoverAreaSize().height,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+		coverLabel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,0), BorderFactory.createEtchedBorder()));
+		
+		nocoverImagePanel.add(nocoverCheckBoxPanel);
+		nocoverImagePanel.add(coverLabel);
+		
 		coverPanel.add(nocoverImagePanel);
 
+		ActionListener coverListener = new ActionListener() {
+
+			public void actionPerformed(ActionEvent a) {
+				if (a.getSource().equals(jaguarCover)) {
+					config.setNoCoverType(NoCoverType.Jaguar);
+				}
+				else if (a.getSource().equals(tigerCover)) {
+					config.setNoCoverType(NoCoverType.Tiger);
+				}
+				else if (a.getSource().equals(pumaCover)) {
+					config.setNoCoverType(NoCoverType.Puma);
+				}
+				coverLabel.setIcon(new ImageIcon(FileUtil.getImage("/images/" + config.getNoCoverFilename()).getScaledInstance(config.getCoverAreaSize().width, config.getCoverAreaSize().height,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+			}
+		};
+				
+		jaguarCover.addActionListener(coverListener);
+		tigerCover.addActionListener(coverListener);
+		pumaCover.addActionListener(coverListener);
+		
 		if (MovieManager.getIt().getDatabase() != null && MovieManager.getIt().getDatabase().isMySQL()) {
 
 			enableStoreCoversLocally = new JCheckBox(Localizer.get("dialogprefs.panel.cover-settings.store-covers-locally")); //$NON-NLS-1$
@@ -1071,20 +1111,15 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			}
 		});
 		
+		exampleConfig.setUseRelativeCoversPath(config.getUseRelativeCoversPath());
+		
 		exampleTree.setRootVisible(false);
 		exampleTree.setShowsRootHandles(true);
-
-		exampleConfig.setUseRelativeCoversPath(config.getUseRelativeCoversPath());
-
 		exampleTree.setCellRenderer(new ExtendedTreeCellRenderer(exampleTree, scroller, exampleConfig));
-		
-		//JScrollPane scrollPane = new JScrollPane();
-        //scrollPane.setViewportView(moviesList);
-        
-        exampleTree.setOpaque(false);
+		exampleTree.setOpaque(false);
         
         //Avoids NullPointer on Synthetica L&F.
-        //scrollPane.getViewport().setBackground(UIManager.getColor("ScrollPane.background"));
+        //scroller.getViewport().setBackground(UIManager.getColor("ScrollPane.background"));
 		
 		rowHeightSlider = new JSlider(6, 300, config.getMovieListRowHeight());
 		rowHeightSlider.addChangeListener(new ChangeListener() {
