@@ -33,6 +33,7 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import javax.swing.AbstractAction;
@@ -286,17 +287,21 @@ public class DialogQueries extends JDialog {
 			/* Adding the default queries to the list */
 			for (int i = 0; i < defaultQueries.length; i++) {
 
-				reader = new BufferedReader(new InputStreamReader(FileUtil.getResourceAsStream(queriesPath + defaultQueries[i])));
-				name = reader.readLine();
-				query = ""; //$NON-NLS-1$
+				InputStream s = FileUtil.getResourceAsStream(queriesPath + defaultQueries[i]);
+				
+				if (s != null) {
+					reader = new BufferedReader(new InputStreamReader(s));
+					name = reader.readLine();
+					query = ""; //$NON-NLS-1$
 
-				while ((line = reader.readLine()) != null) {
-					query = query + line;
-					if (!query.endsWith(" ")) { //$NON-NLS-1$
-						query = query + " "; //$NON-NLS-1$
+					while ((line = reader.readLine()) != null) {
+						query = query + line;
+						if (!query.endsWith(" ")) { //$NON-NLS-1$
+							query = query + " "; //$NON-NLS-1$
+						}
 					}
+					listModel.addElement(new ModelQuery(name, query));
 				}
-				listModel.addElement(new ModelQuery(name, query));
 			}
 
 		} catch (Exception e) {
