@@ -440,9 +440,6 @@ abstract public class Database {
 		return data;
 	}
 
-	/**
-	 * Returns the Duration with index index named name...
-	 **/
 /*	private int getInt(String query, String field) {
 
 		int data = -1;
@@ -3050,7 +3047,7 @@ abstract public class Database {
 	 * Part of the advanced search function
 	 * Used by method getMoviesList(ModelDatabaseSearch options)
 	 */
-	private String setTableJoins(String filter, ModelDatabaseSearch options) {
+	protected String setTableJoins(String filter, ModelDatabaseSearch options) {
 
 		String selectAndJoin;
 
@@ -3279,14 +3276,12 @@ abstract public class Database {
 		String selectAndJoin = setTableJoins(sqlFilter, options);
 		
 		String sqlQuery = selectAndJoin + " " + sqlAdcancedOptions + " " + sqlFilter + " ";
-	
-		
+			
 		log.debug("selectAndJoin:" + selectAndJoin);
 		log.debug("sqlAdcancedOptions:" + sqlAdcancedOptions);
 		log.debug("sqlFilter:" + sqlFilter);
 		log.debug("sqlQuery:" + sqlQuery);
-		
-		
+			
 		if (options.duplicates) {
 			
 			String dupQuery = getDuplicateQueryString(options);
@@ -3359,17 +3354,15 @@ abstract public class Database {
 								
 				ArrayList<String> listNames = getListsColumnNames();
 				int count = listNames.size();
-				
+								
 				if (count > 0) {
-					
 					for (int i = 0; i < count; i++) {
-						
-						if (resultSet.getBoolean(listsAliasPrefix + listNames.get(i)))
-								model.addToMemberOfList((String) listNames.get(i));
+						if (resultSet.getBoolean(listsAliasPrefix + listNames.get(i))) {
+							model.addToMemberOfList((String) listNames.get(i));
+						}
 					}
 				}
 				list.add(model);
-				
 			}
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
@@ -3555,14 +3548,9 @@ order by "Title"
 
 			options.setOrderCategory("");
 			options.setListOption(0);
-			
-			String selectAndJoin = setTableJoins("", options);
-			
-			//String sqlQuery = getMoviesSelectStatement();
-			String sqlQuery = selectAndJoin;
-			
+						
+			String sqlQuery = setTableJoins("", options);
 			sqlQuery += " WHERE \"General Info\".\"ID\"="+index+";";
-
 			
 			/* Gets the list in a result set... */
 			ResultSet resultSet = _sql.executeQuery(sqlQuery);

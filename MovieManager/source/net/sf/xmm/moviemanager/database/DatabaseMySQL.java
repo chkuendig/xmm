@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
+import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 
@@ -1406,189 +1407,59 @@ public class DatabaseMySQL extends Database {
     }
     
     
-    public String getMoviesSelectStatement() {
+    public synchronized String getMoviesSelectStatement(ModelDatabaseSearch options) {
 
-    	String select = "SELECT General_Info.ID, "+
-    	"General_Info.Imdb, "+
-    	"General_Info.Cover, "+
-    	"General_Info.Date, "+
-    	"General_Info.Title, "+
-    	"General_Info.Directed_By, "+
-    	"General_Info.Written_By, "+
-    	"General_Info.Genre, "+
-    	"General_Info.Rating, "+
-    	"General_Info.Plot, "+
-    	"General_Info.Cast, "+
-    	"General_Info.Notes, "+
-    	"General_Info.Seen, "+
-    	"General_Info.Aka, "+
-    	"General_Info.Country, "+
-    	"General_Info.Language, "+
-    	"General_Info.Colour, "+ 
-    	"General_Info.Certification, "+
-    	"General_Info.Mpaa, "+ 
-    	"General_Info.Sound_Mix, "+ 
-    	"General_Info.Web_Runtime, "+ 
-    	"General_Info.Awards "+ 
-    	"FROM General_Info "; 
+		StringBuffer buf = new StringBuffer();
+			
+		if (options.getFullGeneralInfo) {
+			buf.append("SELECT " + quotedGeneralInfoString + ".`ID`, " +
+					quotedGeneralInfoString + ".`Imdb`, "+
+					quotedGeneralInfoString + ".`Cover`, ");
+			    	
+			if (options.getCoverData)
+				buf.append(quotedGeneralInfoString + ".`CoverData`, ");
+			    	
+			buf.append(
+					quotedGeneralInfoString + ".`Date`, "+
+					quotedGeneralInfoString + ".`Title`, "+
+					quotedGeneralInfoString + ".`Directed_By`, "+
+					quotedGeneralInfoString + ".`Written_By`, "+
+					quotedGeneralInfoString + ".`Genre`, "+
+					quotedGeneralInfoString + ".`Rating`, "+
+					quotedGeneralInfoString + ".`Plot`, "+
+					quotedGeneralInfoString + ".`Cast`, "+
+					quotedGeneralInfoString + ".`Notes`, "+
+					quotedGeneralInfoString + ".`Seen`, "+
+					quotedGeneralInfoString + ".`Aka`, "+
+					quotedGeneralInfoString + ".`Country`, "+
+					quotedGeneralInfoString + ".`Language`, "+
+					quotedGeneralInfoString + ".`Colour`, "+
+					quotedGeneralInfoString + ".`Certification`, "+
+					quotedGeneralInfoString + ".`Mpaa`, "+
+					quotedGeneralInfoString + ".`Sound_Mix`, "+
+					quotedGeneralInfoString + ".`Web_Runtime`, "+
+					quotedGeneralInfoString + ".`Awards` ");
+		}
+		else {
+			buf.append("SELECT " + quotedGeneralInfoString + ".ID, " + 
+					quotedGeneralInfoString + "." + quote + "Title" + quote + ", " + 
+					quotedGeneralInfoString + "." + quote + "Imdb" + quote + ", " + 
+					quotedGeneralInfoString + "." + quote + "Cover" + quote +  ", " + 
+					quotedGeneralInfoString + "." + quote + "Date" + quote);
+		}
+		
+		ArrayList<String> lists = getListsColumnNames();
+		
+		if (lists != null && lists.size() > 0) {
+			
+			for (int i = 0; i < lists.size(); i++)
+				buf.append(", " + quotedListsString + "." +quote+ lists.get(i) + quote+ " AS " +quote+ listsAliasPrefix + lists.get(i) + quote + " ");
+		}	
+			
+		return buf.toString();
+	}
+	
     
-    	return select;
-    }
-    
-    
-    /**
-     * Returns a List of MovieModels that contains all the movies in the
-     * current database sorted by the sortBy string.
-     **/
-    /*
-    public ArrayList<ModelMovie> getMoviesList(String sortBy) {
-
-    	ArrayList<ModelMovie> movieList = new ArrayList<ModelMovie>();
-
-    	String sqlQuery = "SELECT General_Info.ID, "+
-    	"General_Info.Imdb, "+
-    	"General_Info.Cover, "+
-    	"General_Info.Date, "+
-    	"General_Info.Title, "+
-    	"General_Info.Directed_By, "+
-    	"General_Info.Written_By, "+
-    	"General_Info.Genre, "+
-    	"General_Info.Rating, "+
-    	"General_Info.Plot, "+
-    	"General_Info.Cast, "+
-    	"General_Info.Notes, "+
-    	"General_Info.Seen, "+
-    	"General_Info.Aka, "+
-    	"General_Info.Country, "+
-    	"General_Info.Language, "+
-    	"General_Info.Colour, "+ 
-    	"General_Info.Certification, "+
-    	"General_Info.Mpaa, "+ 
-    	"General_Info.Sound_Mix, "+ 
-    	"General_Info.Web_Runtime, "+ 
-    	"General_Info.Awards "+ 
-    	"FROM General_Info "; 
-
-
-    	if (sortBy.equals("Duration")) {
-    		sqlQuery += 
-    			"INNER JOIN Additional_Info ON General_Info.ID = Additional_Info.ID "+
-    			"ORDER BY Additional_Info.Duration DESC, General_Info.Title;";
-    	}
-    	else {
-    		sqlQuery += "ORDER BY General_Info."+sortBy+", General_Info.Title;";
-    	}
-
-    	try {
-    		ResultSet resultSet = _sql.executeQuery(sqlQuery);
-
-    		String rating;
-    		while (resultSet.next()) {
-
-    			// Makes the rating not appear as -1 if there is no rating
-    			rating = resultSet.getString("Rating");
-
-    			if (rating.equals("-1"))
-    				rating = "";
-
-    			movieList.add(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed_By"), resultSet.getString("Written_By"), resultSet.getString("Genre"), rating, resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound_Mix"), resultSet.getString("Web_Runtime"), resultSet.getString("Awards")));
-    		}
-    	} catch (Exception e) {
-    		log.error("", e);
-    		checkErrorMessage(e);
-    	} finally {
-    		try {
-    			_sql.clear();
-    		} catch (Exception e) {
-    			log.error("", e);
-    		}
-    	}
-    	return movieList;
-    }
-    */
-
-    /**
-     * Returns a List of MovieModels that contains all the movies in the
-     * lists column = column, sorted by the sortBy string.
-     **/
-    /*
-    public ArrayList<ModelMovie> getMoviesList(String sortBy, String column) {
-
-    	ArrayList<ModelMovie> movieList = new ArrayList<ModelMovie>();
-
-    	column = "`" +column +"`";
-
-    	String sqlQuery = "SELECT General_Info.ID, "+
-    	"General_Info.Imdb, "+
-    	"General_Info.Cover, "+
-    	"General_Info.Date, "+
-    	"General_Info.Title, "+
-    	"General_Info.Directed_By, "+
-    	"General_Info.Written_By, "+
-    	"General_Info.Genre, "+
-    	"General_Info.Rating, "+
-    	"General_Info.Plot, "+
-    	"General_Info.Cast, "+
-    	"General_Info.Notes, "+
-    	"General_Info.Seen, "+
-    	"General_Info.Aka, "+
-    	"General_Info.Country, "+
-    	"General_Info.Language, "+
-    	"General_Info.Colour, "+
-    	"General_Info.Certification, "+ 
-    	"General_Info.Mpaa, "+ 
-    	"General_Info.Sound_Mix, "+ 
-    	"General_Info.Web_Runtime, "+ 
-    	"General_Info.Awards ";
-
-    	sqlQuery += "FROM General_Info "+
-    	"INNER JOIN Lists ON General_Info.ID = Lists.ID ";
-
-    	if (sortBy.equals("Duration")) {
-    		sqlQuery +=
-    			"INNER JOIN Additional_Info ON General_Info.ID = Additional_Info.ID "+
-    			"WHERE Lists."+ column +"=True "+
-    			"ORDER BY Additional_Info.Duration, General_Info.Title"+
-    			";";
-    	}
-    	else {
-    		sqlQuery += 
-    			"WHERE Lists."+ column +"=True "+
-    			"ORDER BY General_Info."+sortBy+", General_Info.Title"+
-    			";";
-    	}
-
-
-    	try {
-    		ResultSet resultSet = _sql.executeQuery(sqlQuery);
-
-    		String rating;
-    		
-    		while (resultSet.next()) {
-
-    			// Makes the rating not appear as -1 if there is no rating
-    			rating = resultSet.getString("Rating");
-
-    			if (rating.equals("-1"))
-    				rating = "";
-
-    			movieList.add(new ModelMovie(resultSet.getInt("ID"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed_By"), resultSet.getString("Written_By"), resultSet.getString("Genre"), rating, resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound_Mix"), resultSet.getString("Web_Runtime"), resultSet.getString("Awards")));
-    		}
-    	} catch (Exception e) {
-    		log.error("", e);
-    		checkErrorMessage(e);
-    	} finally {
-    		try {
-    			_sql.clear();
-    		} catch (Exception e) {
-    			log.error("", e);
-    		}
-    	}
-    	return movieList;
-    }
-    */
-    
- 
     
     /** 
      * Returns a DefaultListModel that contains all the movies in the
@@ -1637,69 +1508,70 @@ public class DatabaseMySQL extends Database {
      * in the database.
      **/
     public ModelMovie getMovie(int index, boolean getCoverData) {
-	
-	ModelMovie movie = null;
-	
-	try {
-	    /* Gets the list in a result set... */
-	    
-	    String query = "SELECT General_Info.ID, ";
-	    
-	    if (getCoverData)
-		query += "General_Info.CoverData, ";
-	    
-	    query += "General_Info.Imdb, "+
-		"General_Info.Cover, "+
-		"General_Info.Date, "+
-		"General_Info.Title, "+
-		"General_Info.Directed_By, "+
-		"General_Info.Written_By, "+
-		"General_Info.Genre, "+
-		"General_Info.Rating, "+
-		"General_Info.Plot, "+
-		"General_Info.Cast, "+
-		"General_Info.Notes, "+
-		"General_Info.Seen, "+
-		"General_Info.Aka, "+
-		"General_Info.Country, "+
-		"General_Info.Language, "+
-		"General_Info.Colour, "+
-		"General_Info.Certification, "+ 
-		"General_Info.Mpaa, "+ 
-		"General_Info.Sound_Mix, "+ 
-		"General_Info.Web_Runtime, "+ 
-		"General_Info.Awards "+ 
-		"FROM General_Info "+ 
-		"WHERE General_Info.ID="+index+";";
-	    
-	    ResultSet resultSet = _sql.executeQuery(query);
-	    
-	    /* Processes the result set till the end... */
-	    if (resultSet.next()) {
-		
-		String rating = resultSet.getString("Rating");
-		
-		if (rating.equals("-1"))
-		    rating = "";
-		
-		movie = new ModelMovie(resultSet.getInt("id"), resultSet.getString("Imdb"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed_By"), resultSet.getString("Written_By"), resultSet.getString("Genre"), rating, resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), resultSet.getString("Aka"), resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), resultSet.getString("Mpaa"), resultSet.getString("Sound_Mix"), resultSet.getString("Web_Runtime"), resultSet.getString("Awards"));
-		
-		if (getCoverData)
-		    movie.setCoverData(resultSet.getBytes("CoverData"));
-	    }
-	} catch (Exception e) {
-	    log.error("", e);
-	    checkErrorMessage(e);
-	} finally {
-	    /* Clears the Statement in the dataBase... */
-	    try {
-		_sql.clear();
-	    } catch (Exception e) {
-		log.error("", e);
-	    }
-	}
-	/* Returns the list model... */
-	return movie;
+
+    	ModelMovie movie = null;
+
+    	try {
+    		/* Gets the list in a result set... */
+
+    		ModelDatabaseSearch options = new ModelDatabaseSearch();
+
+    		options.setOrderCategory("");
+    		options.setListOption(0);
+    		options.getCoverData = getCoverData;
+
+    		String query = setTableJoins("", options);
+    		query += "WHERE General_Info.ID="+index+";";
+
+    		ResultSet resultSet = _sql.executeQuery(query);
+
+    		/* Processes the result set for one movie */
+    		if (resultSet.next()) {
+
+    			String rating = resultSet.getString("Rating");
+
+    			if (rating.equals("-1"))
+    				rating = "";
+
+    			movie = new ModelMovie(resultSet.getInt("id"), 
+    					resultSet.getString("Imdb"), resultSet.getString("Cover"), 
+    					resultSet.getString("Date"), resultSet.getString("Title"), 
+    					resultSet.getString("Directed_By"), resultSet.getString("Written_By"), 
+    					resultSet.getString("Genre"), rating, resultSet.getString("Plot"), 
+    					resultSet.getString("Cast"), resultSet.getString("Notes"), 
+    					resultSet.getBoolean("Seen"), resultSet.getString("Aka"), 
+    					resultSet.getString("Country"), resultSet.getString("Language"), 
+    					resultSet.getString("Colour"), resultSet.getString("Certification"), 
+    					resultSet.getString("Mpaa"), resultSet.getString("Sound_Mix"), 
+    					resultSet.getString("Web_Runtime"), resultSet.getString("Awards"));
+
+    			if (getCoverData)
+    				movie.setCoverData(resultSet.getBytes("CoverData"));
+    			
+    			// Add lists
+        		ArrayList<String> listNames = getListsColumnNames();
+        		int count = listNames.size();
+
+        		if (count > 0) {
+        			for (int i = 0; i < count; i++) {
+        				if (resultSet.getBoolean(listsAliasPrefix + listNames.get(i)))
+        					movie.addToMemberOfList((String) listNames.get(i));
+        			}
+        		}
+    		}
+    	} catch (Exception e) {
+    		log.error("", e);
+    		checkErrorMessage(e);
+    	} finally {
+    		/* Clears the Statement in the dataBase... */
+    		try {
+    			_sql.clear();
+    		} catch (Exception e) {
+    			log.error("", e);
+    		}
+    	}
+    	/* Returns the list model... */
+    	return movie;
     }
     
     
