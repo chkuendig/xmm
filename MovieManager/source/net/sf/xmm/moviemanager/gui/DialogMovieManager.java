@@ -1158,6 +1158,11 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     		finalMovieInfo.addMouseListener(new MouseListener() {
 
     			public void mousePressed(MouseEvent e) {
+    				
+    				if (GUIUtil.isRightMouseButton(e)) {
+    					MovieManagerCommandSelect.resetHTMLTemplateChace();
+    				}
+    				
     				setCurrentMainTabIndex(-1);
     			}
 
