@@ -32,6 +32,7 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandSaveChangedNotes;
 import net.sf.xmm.moviemanager.gui.DialogDatabaseImporterExporter;
 import net.sf.xmm.moviemanager.gui.DialogImport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImportMode;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
@@ -71,41 +72,23 @@ public class MovieManagerCommandImport implements ActionListener{
 
 			MovieManagerCommandImportExportHandler importer = null;
 			
-			if (importSettings.mode == ModelImportExportSettings.IMPORT_MODE_TEXT) {
+			if (importSettings.importMode == ImportMode.TEXT) {
 				importer = new MovieManagerCommandImportText(importSettings);
 				importer.execute();
 			}
-			else if (importSettings.mode == ModelImportExportSettings.IMPORT_MODE_CSV) {
+			else if (importSettings.importMode == ImportMode.CSV) {
 				importer = new MovieManagerCommandImportCSV(importSettings);
 				importer.execute();
 			}
-			else if (importSettings.mode == ModelImportExportSettings.IMPORT_MODE_EXCEL) {
+			else if (importSettings.importMode == ImportMode.EXCEL) {
 				importer = new MovieManagerCommandImportExcel(importSettings);
 				importer.execute();
 			}
-			else if (importSettings.mode == ModelImportExportSettings.IMPORT_MODE_XML_DATABASE) {
+			else if (importSettings.importMode == ImportMode.XML_DATABASE) {
 				importer = new MovieManagerCommandImportXMLDatabase(importSettings);
 				importer.execute();
 			}
-			/*else if (importSettings.mode == ModelImportExportSettings.IMPORT_MODE_EXTREME) {
-
-				if (importMovie.enableOverwriteImportedInfoWithImdbInfo.isSelected())
-					importSettings.overwriteWithImdbInfo = true;
-
-				if (importMovie.useMediaLanguage.isSelected())
-					importSettings.extremeOriginalLanguage = false;
-
-				File tempFile = new File(importSettings.filePath);
-
-				importSettings.coverPath = tempFile.getParentFile().getParent()+ File.separator +"Covers" + File.separator; //$NON-NLS-1$
-				if (!new File(importSettings.coverPath).isDirectory()) {
-
-					String path = ""; //$NON-NLS-1$
-					if (!(path = getCoverDirectory(importSettings.filePath)).equals("")) //$NON-NLS-1$
-						importSettings.coverPath = path + File.separator;
-				}
-			}
-		*/
+			
 			if (importer != null && !importer.isCancelled()) {
 				final JDialog dialogExorter = new DialogDatabaseImporterExporter(importer, importSettings);
 				GUIUtil.show(dialogExorter, true);

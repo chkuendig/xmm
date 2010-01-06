@@ -39,7 +39,9 @@ import net.sf.xmm.moviemanager.http.HttpSettings;
 import net.sf.xmm.moviemanager.models.AdditionalInfoFieldDefaultValues;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ExportMode;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImportMode;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
 import net.sf.xmm.moviemanager.util.FileUtil;
@@ -321,7 +323,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		
 	
 	/* Import */
-	private int lastDialogImportType = 0;
+	private ImportMode lastDialogImportType = ImportMode.TEXT;
 	
 	private String importTextFilePath = "";
 	private String importExcelFilePath = "";
@@ -333,7 +335,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean importIMDbInfoEnabled = true;
 	
 	/* Export */
-	private int lastDialogExportType = 0;
+	private ExportMode lastDialogExportType = ExportMode.CSV;
 		
 	private String exportTextFilePath = "";
 	private String exportExcelFilePath = "";
@@ -346,7 +348,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private HttpSettings httpSettings = new HttpSettings();
 	
 	/*Export*/
-	private String exportType = "simple";
+	private String htmlExportType = "simple";
 
 	public enum NoCoverType {Puma, Jaguar, Tiger};
 	public NoCoverType noCoverType = NoCoverType.Puma;
@@ -1175,20 +1177,20 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.enableCtrlMouseRightClick = enableCtrlMouseRightClick;
 	}
 
-	public int getLastDialogImportType() {
+	public ImportMode getLastDialogImportType() {
 		return lastDialogImportType;
 	}
 
-	public void setLastDialogImportType(int lastDialogImportType) {
-		this.lastDialogImportType = lastDialogImportType >= 0 ? lastDialogImportType : 0;
+	public void setLastDialogImportType(ImportMode lastDialogImportType) {
+		this.lastDialogImportType = lastDialogImportType;
 	}
 		
-	public int getLastDialogExportType() {
+	public ExportMode getLastDialogExportType() {
 		return lastDialogExportType;
 	}
 
-	public void setLastDialogExportType(int lastDialogExportType) {
-		this.lastDialogExportType = lastDialogExportType >= 0 ? lastDialogExportType : 0;
+	public void setLastDialogExportType(ExportMode lastDialogExportType) {
+		this.lastDialogExportType = lastDialogExportType;
 	}
 	
 	
@@ -1968,12 +1970,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		return useDisplayQueriesInTree;
 	}
 
-	public String getExportType() {
-		return exportType;
+	public String getHTMLExportType() {
+		return htmlExportType;
 	}
 
-	public void setExportType(String exportType) {
-		this.exportType = exportType;
+	public void setHTMLExportType(String exportType) {
+		this.htmlExportType = exportType;
 	}
 
 	public String getNoCoverFilename() {
@@ -2565,7 +2567,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 
 			setLastFileFilterUsed(getStringValue("lastFileFilterMovieInfoUsed:", config, getLastFileFilterUsed()));
-			setExportType(getStringValue("exportType:", config, getExportType()));
+			setHTMLExportType(getStringValue("htmlExportType:", config, getHTMLExportType()));
 
 			setMainWindowSliderPosition(getIntValue("mainWindowSliderPosition:", config, getMainWindowSliderPosition()));
 			setMainWindowLastSliderPosition(getIntValue("mainWindowLastSliderPosition:", config, getMainWindowLastSliderPosition()));
@@ -2642,7 +2644,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 			setMultiAddList(getStringValue("multiAddList:", config, getMultiAddList()));
 			setMultiAddListEnabled(getBooleanValue("multiAddListEnabled:", config, getMultiAddListEnabled()));
-			setLastDialogImportType(getIntValue("lastDialogImportType:", config, getLastDialogImportType()));
+			
+			value = getStringValue("lastDialogImportType:", config);
+			
+			if (ImportMode.isValidValue(value))
+				setLastDialogImportType(ImportMode.valueOf(value));
 			
 			setImportTextFilePath(getStringValue("importTextfilePath:", config, getImportTextFilePath()));
 			setImportExcelFilePath(getStringValue("importExcelfilePath:", config, getImportExcelFilePath()));
@@ -2734,8 +2740,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			setCheckForProgramUpdates(getBooleanValue("checkForProgramUpdates:", config));
 			setHTMLViewDebugMode(getBooleanValue("htmlViewDebugMode:", config));
 									
-			setLastDialogExportType(getIntValue("lastDialogExportType:", config, getLastDialogExportType()));
-			setLastDialogImportType(getIntValue("lastDialogImportType:", config, getLastDialogImportType()));
+			value = getStringValue("lastDialogExportType:", config);
+			
+			if (ExportMode.isValidValue(value))
+				setLastDialogExportType(ExportMode.valueOf(value));
+			
+			value = getStringValue("lastDialogImportType:", config);
+			
+			if (ImportMode.isValidValue(value))
+				setLastDialogImportType(ImportMode.valueOf(value));
 			
 			setImportTextFilePath(getStringValue("importTextfilePath:", config, getImportTextFilePath()));
 			setImportExcelFilePath(getStringValue("importExcelfilePath:", config, getImportExcelFilePath()));
@@ -3044,9 +3057,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("databaseBackupDirectory:", getDatabaseBackupDirectory(), settings);
 		 
 		 // Import/Export settings
-		 appendToConfig("exportType:", getExportType(), settings);
-		 appendToConfig("lastDialogExportType:", getLastDialogExportType(), settings);
-		 appendToConfig("lastDialogImportType:", getLastDialogImportType(), settings);
+		 appendToConfig("htmlExportType:", getHTMLExportType(), settings);
+		 appendToConfig("lastDialogExportType:", getLastDialogExportType().toString(), settings);
 		 appendToConfig("exportTextfilePath:", getExportTextFilePath(), settings);
 		 appendToConfig("exportExcelfilePath:", getExportExcelFilePath(), settings);
 		 appendToConfig("exportXMLDbfilePath:", getExportXMLDbFilePath(), settings);
@@ -3054,6 +3066,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("exportCSVfilePath:", getExportCSVFilePath(), settings);
 		 appendToConfig("exportCSVseparator:", getExportCSVseparator(), settings);
 		 
+		 appendToConfig("lastDialogImportType:", getLastDialogImportType().toString(), settings);
 		 appendToConfig("importTextfilePath:", getImportTextFilePath(), settings);
 		 appendToConfig("importExcelfilePath:", getImportExcelFilePath(), settings);
 		 appendToConfig("importXMLfilePath:", getImportXMLFilePath(), settings);
@@ -3061,7 +3074,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("importCSVseparator:", getImportCSVseparator(), settings);
 		 appendToConfig("importIMDbInfoEnabled:", getImportIMDbInfoEnabled(), settings);
 		 appendToConfig("importIMDbSelectOption:", getImportIMDbSelectOption().toString(), settings);
-		 appendToConfig("lastDialogImportType:", getLastDialogImportType(), settings);
 		  		 
 		 
 		 // Default values in the additional info fields in DialogMovieInfo

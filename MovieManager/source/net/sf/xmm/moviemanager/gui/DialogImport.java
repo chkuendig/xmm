@@ -53,7 +53,9 @@ import net.sf.networktools.proportionlayout.ProportionLayout;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ExportMode;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImportMode;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
@@ -331,16 +333,17 @@ public class DialogImport extends JDialog implements ActionListener {
 		/* Tabbed pane */
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-		tabbedPane.add(textFilePanel, ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_TEXT]);
-		tabbedPane.add(excelFilePanel, ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_EXCEL]);
-		tabbedPane.add(xmlDatabaseFilePanel, ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_XML_DATABASE]);
-		tabbedPane.add(csvFilePanel, ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_CSV]);
+		tabbedPane.add(textFilePanel, ImportMode.TEXT.toString());
+		tabbedPane.add(excelFilePanel, ImportMode.EXCEL);
+		tabbedPane.add(xmlDatabaseFilePanel, ImportMode.XML_DATABASE);
+		tabbedPane.add(csvFilePanel, ImportMode.CSV);
 
-		if (MovieManager.getConfig().getLastDialogImportType() < ModelImportExportSettings.IMPORT_MODE_COUNT) {
-			int index = tabbedPane.indexOfTab(ModelImportExportSettings.importTypes[MovieManager.getConfig().getLastDialogImportType()]);
-			if (index >= 0)
-				tabbedPane.setSelectedIndex(index);
-		}
+		ImportMode lastImportType = MovieManager.getConfig().getLastDialogImportType();
+		
+		int index = tabbedPane.indexOfTab(lastImportType.toString());
+		if (index >= 0)
+			tabbedPane.setSelectedIndex(index);
+		
 		/* Add to list */
 		JPanel listPanel = makeListPanel();
 
@@ -446,7 +449,7 @@ public class DialogImport extends JDialog implements ActionListener {
 	}
 
 	/*Opens a filechooser and returns the absolute path to the selected file*/
-	private String executeCommandGetFile(int importMode) {
+	private String executeCommandGetFile(ImportMode importMode) {
 
 
 		/* Opens the Open dialog... */
@@ -464,21 +467,21 @@ public class DialogImport extends JDialog implements ActionListener {
 
 			String title = "";
 
-			if (importMode == ModelImportExportSettings.IMPORT_MODE_TEXT) {
+			if (importMode == ImportMode.TEXT) {
 				title = "Select text file";
 				fileChooser.setFileFilter(new CustomFileFilter(new String[]{"*.*"}, new String("All Files (*.*)")));
 				fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"txt"},new String("Textfile (*.txt)")));
 			} 
-			else if (importMode == ModelImportExportSettings.IMPORT_MODE_EXCEL) {
+			else if (importMode == ImportMode.EXCEL) {
 				title = "Select excel file";
 				fileChooser.setFileFilter(new CustomFileFilter(new String[]{"*.*"}, new String("All Files (*.*)")));
 				fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"xls"},new String("Excel spreadsheet (*.xls)")));
 			}
-			else if (importMode == ModelImportExportSettings.IMPORT_MODE_XML_DATABASE) {
+			else if (importMode == ImportMode.XML_DATABASE) {
 				title = "Select XML file";
 				fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"xml"},new String("Exported XML Database file (*.xml)")));
 			}
-			else if (importMode == ModelImportExportSettings.IMPORT_MODE_CSV) {
+			else if (importMode == ImportMode.CSV) {
 				title = "Select CSV file";
 				fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[] {
 						"csv"
@@ -544,7 +547,7 @@ public class DialogImport extends JDialog implements ActionListener {
 		
 		settings.textEncoding = (String) csvEncoding.getSelectedItem();
 		settings.filePath = csvFilePath.getText();
-		settings.mode = getImportMode();
+		settings.importMode = getImportMode();
 		
 
 		settings.multiAddIMDbSelectOption = getMultiAddSelectOption();
@@ -564,34 +567,33 @@ public class DialogImport extends JDialog implements ActionListener {
 
 
 
-	public int getImportMode() {
+	public ImportMode getImportMode() {
 
 		String title = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
 
-		if (title.equals(ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_TEXT]))
-			return ModelImportExportSettings.IMPORT_MODE_TEXT;
-		else if (title.equals(ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_EXCEL]))
-			return ModelImportExportSettings.IMPORT_MODE_EXCEL;
-		else if (title.equals(ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_XML_DATABASE]))
-			return ModelImportExportSettings.IMPORT_MODE_XML_DATABASE;
-		else if (title.equals(ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_XML]))
-			return ModelImportExportSettings.IMPORT_MODE_XML;
-		else if (title.equals(ModelImportExportSettings.importTypes[ModelImportExportSettings.IMPORT_MODE_CSV]))
-			return ModelImportExportSettings.IMPORT_MODE_CSV;
+		if (title.equals(ImportMode.TEXT.toString()))
+			return ImportMode.TEXT;
+		else if (title.equals(ImportMode.EXCEL.toString()))
+			return ImportMode.EXCEL;
+		else if (title.equals(ImportMode.XML_DATABASE.toString()))
+			return ImportMode.XML_DATABASE;
+		else if (title.equals(ImportMode.XML))
+			return ImportMode.XML;
+		else if (title.equals(ImportMode.CSV))
+			return ImportMode.CSV;
 	
-		return -1;
+		return ImportMode.TEXT;
 	}
 
 	/*Returns the string in the path textfield*/
 	public String getPath() {
 
 		switch (getImportMode()) {
-		case ModelImportExportSettings.IMPORT_MODE_TEXT : return textFilePath.getText();
-		case ModelImportExportSettings.IMPORT_MODE_EXCEL : return excelFilePath.getText();
-		case ModelImportExportSettings.IMPORT_MODE_XML_DATABASE : return xmlDatabaseFilePath.getText();
-		case ModelImportExportSettings.IMPORT_MODE_XML : return xmlFilePath.getText();
-		case ModelImportExportSettings.IMPORT_MODE_CSV : return csvFilePath.getText();
-		//case ModelImportExportSettings.IMPORT_MODE_EXTREME : return extremeFilePath.getText();
+		case TEXT : return textFilePath.getText();
+		case EXCEL : return excelFilePath.getText();
+		case XML_DATABASE : return xmlDatabaseFilePath.getText();
+		case XML : return xmlFilePath.getText();
+		case CSV : return csvFilePath.getText();
 		}
 		return "";
 	}
@@ -645,42 +647,35 @@ public class DialogImport extends JDialog implements ActionListener {
 		log.debug("ActionPerformed: "+ event.getActionCommand());
 
 		if (event.getSource().equals(browseForTextFile)) {
-			String ret = executeCommandGetFile(ModelImportExportSettings.IMPORT_MODE_TEXT);
+			String ret = executeCommandGetFile(ImportMode.TEXT);
 			if (!ret.equals(""))
 				textFilePath.setText(ret);
 		}
 
 		if (event.getSource().equals(browseForExcelFile)) {
-			String ret = executeCommandGetFile(ModelImportExportSettings.IMPORT_MODE_EXCEL);
+			String ret = executeCommandGetFile(ImportMode.EXCEL);
 			if (!ret.equals(""))
 				excelFilePath.setText(ret);
 		}
 
 		if (event.getSource().equals(browseForXMLDatabaseFile)) {
-			String ret = executeCommandGetFile(ModelImportExportSettings.IMPORT_MODE_XML_DATABASE);
+			String ret = executeCommandGetFile(ImportMode.XML_DATABASE);
 			if (!ret.equals(""))
 				xmlDatabaseFilePath.setText(ret);
 		}
 		
 		if (event.getSource().equals(browseForXMLFile)) {
-			String ret = executeCommandGetFile(ModelImportExportSettings.IMPORT_MODE_XML);
+			String ret = executeCommandGetFile(ImportMode.XML);
 			if (!ret.equals(""))
 				xmlFilePath.setText(ret);
 		}
 
 		if(event.getSource().equals(browseForCSVFile)) {
-			String s2 = executeCommandGetFile(ModelImportExportSettings.IMPORT_MODE_CSV);
+			String s2 = executeCommandGetFile(ImportMode.CSV);
 			if(!s2.equals(""))
 				csvFilePath.setText(s2);
 		}
-
-		/*if (event.getSource().equals(browseForExtremeFile)) {
-			String ret = executeCommandGetFile(ModelImportExportSettings.IMPORT_MODE_EXTREME);
-			if (!ret.equals(""))
-				extremeFilePath.setText(ret);
-		}*/
-
-
+		
 		if (event.getSource().equals(buttonCancel)) {
 			log.debug("ActionPerformed: " + event.getActionCommand());
 			executeSave();

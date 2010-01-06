@@ -30,6 +30,7 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandSaveChangedNotes;
 import net.sf.xmm.moviemanager.gui.DialogDatabaseImporterExporter;
 import net.sf.xmm.moviemanager.gui.DialogExport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ExportMode;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
@@ -63,15 +64,15 @@ public class MovieManagerCommandExport implements ActionListener{
 			MovieManagerCommandImportExportHandler exporter = null;
 
 			//CSV  or  Excel spreadsheet 
-			if (exportSettings.mode == ModelImportExportSettings.EXPORT_MODE_CSV)
+			if (exportSettings.exportMode == ExportMode.CSV)
 				exporter = new MovieManagerCommandExportCSV(exportSettings);
-			else if (exportSettings.mode == ModelImportExportSettings.EXPORT_MODE_EXCEL)
+			else if (exportSettings.exportMode == ExportMode.EXCEL)
 				exporter = new MovieManagerCommandExportExcel(exportSettings);
-			else if (exportSettings.mode == ModelImportExportSettings.EXPORT_MODE_XML_DATABASE)
+			else if (exportSettings.exportMode == ExportMode.XML_DATABASE)
 				exporter = new MovieManagerCommandExportXMLDatabase(exportSettings);
-			else if (exportSettings.mode == ModelImportExportSettings.EXPORT_MODE_XML)
+			else if (exportSettings.exportMode == ExportMode.XML)
 				exporter = new MovieManagerCommandExportXML(exportSettings);
-			else if (exportSettings.mode == ModelImportExportSettings.EXPORT_MODE_HTML) {
+			else if (exportSettings.exportMode == ExportMode.HTML) {
 			
 				if (exportSettings.getIsHTMLSimpleMode())
 					exporter = new MovieManagerCommandExportToSimpleXHTML(exportSettings.getHTMLTitle());

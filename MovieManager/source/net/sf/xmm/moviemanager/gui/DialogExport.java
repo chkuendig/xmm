@@ -55,6 +55,7 @@ import javax.swing.border.TitledBorder;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ExportMode;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
@@ -128,7 +129,7 @@ public class DialogExport extends JDialog implements ActionListener {
         fullExport = new JRadioButton(Localizer.get("DialogExport.panel-export-options.button.full-export")); //$NON-NLS-1$
         fullExport.setActionCommand("Full Export"); //$NON-NLS-1$
         
-        if (MovieManager.getConfig().getExportType().equals("full")) //$NON-NLS-1$
+        if (MovieManager.getConfig().getHTMLExportType().equals("full")) //$NON-NLS-1$
             fullExport.setSelected(true);
         else
             simpleExport.setSelected(true);
@@ -318,7 +319,7 @@ public class DialogExport extends JDialog implements ActionListener {
         xmlInfoPanel.setLayout(new BoxLayout(xmlInfoPanel, BoxLayout.PAGE_AXIS));
         
         xmlInfoPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,3,3,3), BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(), " XML Database " , TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(xmlInfoPanel.getFont().getName(),Font.BOLD, xmlInfoPanel.getFont().getSize()) //$NON-NLS-1$
+                BorderFactory.createEtchedBorder(), " XML " , TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(xmlInfoPanel.getFont().getName(),Font.BOLD, xmlInfoPanel.getFont().getSize()) //$NON-NLS-1$
         )), BorderFactory.createEmptyBorder(0,2,2,2)));
         
         JLabel xmllabelInfo = new JLabel("Export current movie list to XML Database");
@@ -400,23 +401,19 @@ public class DialogExport extends JDialog implements ActionListener {
     	
     	
         tabs = new JTabbedPane();
-        tabs.add(csvFilePanel, ModelImportExportSettings.exportTypes[ModelImportExportSettings.EXPORT_MODE_CSV]);
-        tabs.add(excelFilePanel, ModelImportExportSettings.exportTypes[ModelImportExportSettings.EXPORT_MODE_EXCEL]);
-        tabs.add(xmlDbPanel, ModelImportExportSettings.exportTypes[ModelImportExportSettings.EXPORT_MODE_XML_DATABASE]);
-        tabs.add(xmlPanel, ModelImportExportSettings.exportTypes[ModelImportExportSettings.EXPORT_MODE_XML]);
-        tabs.add(htmlExportPanel, ModelImportExportSettings.exportTypes[ModelImportExportSettings.EXPORT_MODE_HTML]);
+        tabs.add(csvFilePanel, ModelImportExportSettings.ExportMode.CSV);
+        tabs.add(excelFilePanel, ModelImportExportSettings.ExportMode.EXCEL);
+        tabs.add(xmlDbPanel, ModelImportExportSettings.ExportMode.XML_DATABASE);
+        tabs.add(xmlPanel, ModelImportExportSettings.ExportMode.XML);
+        tabs.add(htmlExportPanel, ModelImportExportSettings.ExportMode.HTML);
       
-        if (MovieManager.getConfig().getLastDialogImportType() < ModelImportExportSettings.EXPORT_MODE_COUNT) {
-        	
-        	int index = 0;
-        	
-        	if (MovieManager.getConfig().getLastDialogExportType() < ModelImportExportSettings.exportTypes.length)
-        		index = tabs.indexOfTab(ModelImportExportSettings.exportTypes[MovieManager.getConfig().getLastDialogExportType()]);
-        	
-        	if (index >= 0)
-        		tabs.setSelectedIndex(index);
-        }
-        
+        String lastTitle = MovieManager.getConfig().getLastDialogImportType().toString();
+
+        int index = tabs.indexOfTab(lastTitle);
+
+        if (index != -1)
+        	tabs.setSelectedIndex(index);
+
         Container container = getContentPane();
         container.setLayout(new BoxLayout(container,BoxLayout.Y_AXIS));
         container.add(tabs);
@@ -435,31 +432,31 @@ public class DialogExport extends JDialog implements ActionListener {
 	public String getPath() {
 
 		switch (getExportMode()) {
-		case ModelImportExportSettings.EXPORT_MODE_EXCEL : return excelFilePath.getText();
-		case ModelImportExportSettings.EXPORT_MODE_XML_DATABASE : return xmlDbFilePath.getText();
-		case ModelImportExportSettings.EXPORT_MODE_XML : return xmlFilePath.getText();
-		case ModelImportExportSettings.EXPORT_MODE_CSV : return csvFilePath.getText();
+		case EXCEL : return excelFilePath.getText();
+		case XML_DATABASE : return xmlDbFilePath.getText();
+		case XML : return xmlFilePath.getText();
+		case CSV : return csvFilePath.getText();
 		}
 		return "";
 	}
 
     
-    public int getExportMode() {
+    public ExportMode getExportMode() {
 
     	String title = tabs.getTitleAt(tabs.getSelectedIndex());
     	
-    	if (title.equals(ModelImportExportSettings.exportTypes[ModelImportExportSettings.EXPORT_MODE_CSV]))
-    		return ModelImportExportSettings.EXPORT_MODE_CSV;
-    	else if (title.equals(ModelImportExportSettings.exportTypes[ModelImportExportSettings.EXPORT_MODE_EXCEL]))
-    		return ModelImportExportSettings.EXPORT_MODE_EXCEL;
-    	else if (title.equals(ModelImportExportSettings.exportTypes[ModelImportExportSettings.EXPORT_MODE_XML]))
-    		return ModelImportExportSettings.EXPORT_MODE_XML;
-    	else if (title.equals(ModelImportExportSettings.exportTypes[ModelImportExportSettings.EXPORT_MODE_XML_DATABASE]))
-    		return ModelImportExportSettings.EXPORT_MODE_XML_DATABASE;
-    	else if (title.equals(ModelImportExportSettings.exportTypes[ModelImportExportSettings.EXPORT_MODE_HTML]))
-    		return ModelImportExportSettings.EXPORT_MODE_HTML;
+    	if (title.equals(ExportMode.CSV.toString()))
+    		return ExportMode.CSV;
+    	else if (title.equals(ExportMode.EXCEL.toString()))
+    		return ExportMode.EXCEL;
+    	else if (title.equals(ExportMode.XML.toString()))
+    		return ExportMode.XML;
+    	else if (title.equals(ExportMode.XML_DATABASE.toString()))
+    		return ExportMode.XML_DATABASE;
+    	else if (title.equals(ExportMode.HTML.toString()))
+    		return ExportMode.HTML;
     	    		
-    	return -1;
+    	return ExportMode.CSV;
     }
 
     public ModelImportExportSettings getSettings() {
@@ -481,33 +478,35 @@ public class DialogExport extends JDialog implements ActionListener {
     	if (csvSeparator.getText().trim().length() > 0)
     		settings.csvSeparator = csvSeparator.getText().trim().charAt(0);
     	    	
-    	settings.mode = getExportMode();
+    	settings.exportMode = getExportMode();
     	    	
     	settings.htmlTitle = titleTextField.getText();
     	settings.htmlAlphabeticSplit = enableAlphabeticSplit.isSelected();
     	settings.htmlSimpleMode = simpleExport.isSelected();
     	
-    	switch (settings.mode) {
-    	case ModelImportExportSettings.EXPORT_MODE_CSV: {
+    	switch (settings.exportMode) {
+    	case CSV: {
     		settings.filePath = csvFilePath.getText();
     		settings.textEncoding = (String) csvEncoding.getSelectedItem();
     		break;
     	}
-    	case ModelImportExportSettings.EXPORT_MODE_EXCEL: {
+    	case EXCEL: {
     		settings.filePath = excelFilePath.getText();
     		break;
     	}
-    	case ModelImportExportSettings.EXPORT_MODE_XML_DATABASE: {
+    	case XML_DATABASE: {
     		settings.filePath = xmlDbFilePath.getText();
     		settings.textEncoding = (String) xmlDbEncoding.getSelectedItem();
     		break;
     	}
-    	case ModelImportExportSettings.EXPORT_MODE_XML: {
+    	case XML: {
     		settings.filePath = xmlFilePath.getText();
     		settings.textEncoding = (String) xmlEncoding.getSelectedItem();
     		break;
     	}
-    	case ModelImportExportSettings.EXPORT_MODE_HTML: {}
+    	case HTML: {
+    		// No path 
+    	}
     	}
     }
     
@@ -527,21 +526,24 @@ public class DialogExport extends JDialog implements ActionListener {
             
         	cancelled = false;
         	
+        	ExportMode exportMode = ExportMode.valueOf(tabs.getTitleAt(tabs.getSelectedIndex()));
+        	
             /* HTMl export */
-            if (tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_HTML) {
-            	executeSave();
+            //if (tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_HTML) {
+        	if (exportMode == ExportMode.HTML) {
+                	executeSave();
             }
             // CSV or Excel
-            else if (tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_CSV || 
-            		tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_EXCEL ||
-            		tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_XML_DATABASE||
-            		tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_XML) {
+            else if (exportMode == ExportMode.CSV || 
+            		exportMode == ExportMode.EXCEL ||
+            		exportMode == ExportMode.XML_DATABASE||
+            		exportMode == ExportMode.XML) {
             
             	boolean execute = true;
             	String filePath = getPath();
             	
             	// Check separator for CSV
-            	if (tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_CSV && 
+            	if (exportMode == ExportMode.CSV && 
             			csvSeparator.getText().trim().equals("")) {
             		DialogAlert alert = new DialogAlert(this, "Separator missing","Please provide a separator.");
             		GUIUtil.showAndWait(alert, true);
@@ -590,27 +592,27 @@ public class DialogExport extends JDialog implements ActionListener {
         }
         
 
-        int saveExportFile = -1;
+        ExportMode saveExportFile = null;
         String extension = null;
         
         if (event.getSource().equals(browseForCSVFile)) {
-        	saveExportFile = ModelImportExportSettings.EXPORT_MODE_CSV;
+        	saveExportFile = ExportMode.CSV;
         	extension = ".csv";
         }
         else if (event.getSource().equals(browseForEXCELFile)) {
-        	saveExportFile = ModelImportExportSettings.EXPORT_MODE_EXCEL;
+        	saveExportFile = ExportMode.EXCEL;
         	extension = ".xls";
         }
         else if (event.getSource().equals(browseForXMLDbFile)) {
-        	saveExportFile = ModelImportExportSettings.EXPORT_MODE_XML_DATABASE;
+        	saveExportFile = ExportMode.XML_DATABASE;
         	extension = ".xml";
         }
         else if (event.getSource().equals(browseForXMLFile)) {
-        	saveExportFile = ModelImportExportSettings.EXPORT_MODE_XML;
+        	saveExportFile = ExportMode.XML;
         	extension = ".xml";
         }        
                 
-        if (saveExportFile != -1) {
+        if (saveExportFile != null) {
 
         	JFileChooser chooser = new JFileChooser();
         	String path = getPath();
@@ -630,13 +632,13 @@ public class DialogExport extends JDialog implements ActionListener {
 
         			settings.filePath = outputFile;
         			
-        			if (saveExportFile == ModelImportExportSettings.EXPORT_MODE_CSV)
+        			if (saveExportFile == ExportMode.CSV)
         				csvFilePath.setText(outputFile);
-        			else if (saveExportFile == ModelImportExportSettings.EXPORT_MODE_EXCEL)
+        			else if (saveExportFile == ExportMode.EXCEL)
         				excelFilePath.setText(outputFile);
-        			else if (saveExportFile == ModelImportExportSettings.EXPORT_MODE_XML_DATABASE)
+        			else if (saveExportFile == ExportMode.XML_DATABASE)
         				xmlDbFilePath.setText(outputFile);
-        			else if (saveExportFile == ModelImportExportSettings.EXPORT_MODE_XML)
+        			else if (saveExportFile == ExportMode.XML)
         				xmlFilePath.setText(outputFile);
 
         			return;

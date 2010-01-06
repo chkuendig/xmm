@@ -28,28 +28,87 @@ import net.sf.xmm.moviemanager.util.Localizer;
 
 public class ModelImportExportSettings {
 	
-	public final static int IMPORT_MODE_COUNT = 5;
 	
+	/*
 	public final static int IMPORT_MODE_TEXT = 0;
 	public final static int IMPORT_MODE_CSV = 1;
     public final static int IMPORT_MODE_EXCEL = 2;
 	public final static int IMPORT_MODE_XML_DATABASE = 3;
 	public final static int IMPORT_MODE_XML = 4;
+*/
+	public static enum ImportMode {
+		TEXT("Text File"), 
+		CSV("CSV File"), 
+		EXCEL("Excel Spreadsheet"), 
+		XML_DATABASE("XML Database"), 
+		XML("XML File");
 
-    public final static int EXPORT_MODE_COUNT = 5;
-	
+		String title;
+
+		ImportMode(String title) {
+			this.title = title;
+		}
+
+		public String toString() {
+			return title;
+		}
+
+		public static boolean isValidValue(String val) {
+
+			for (ImportMode mode : values()) {
+				if (mode.title.equals(val))
+					return true;
+			}
+			return false;
+		}
+	};
+	   
+    /*
 	public final static int EXPORT_MODE_CSV = 0;
     public final static int EXPORT_MODE_EXCEL = 1;
 	public final static int EXPORT_MODE_XML_DATABASE = 2;
 	public final static int EXPORT_MODE_XML = 3;
     public final static int EXPORT_MODE_HTML = 4;
-	
+	*/
+    
+    public static enum ExportMode {
+    	CSV("CSV File"), 
+    	EXCEL("Excel Spreadsheet"), 
+    	XML_DATABASE("XML Database"), 
+    	XML("XML File"), 
+    	HTML("HTML");
+    
+    	String title;
+
+    	ExportMode(String title) {
+			this.title = title;
+		}
+
+		public String toString() {
+			return title;
+		}
+		
+		public static boolean isValidValue(String val) {
+			
+			for (ExportMode mode : values()) {
+				if (mode.title.equals(val))
+					return true;
+			}
+			return false;
+		}
+    };
+    
+    public final static int IMPORT_MODE_COUNT = ImportMode.values().length;
+	public final static int EXPORT_MODE_COUNT = ExportMode.values().length;
+	    
     public static String [] encodings = new String[] {"US-ASCII", "ISO-8859-1", "UTF-8", "UTF-16BE", "UTF-16LE", "UTF-16"};
     
     // Stores in array for easy access through indexes.
+    /*
     public static final String [] importTypes = new String[ModelImportExportSettings.IMPORT_MODE_COUNT];
     public static final String [] exportTypes = new String[ModelImportExportSettings.EXPORT_MODE_COUNT];
-      
+     */
+    /*
     void setImportTypeValues() {
     	importTypes[ModelImportExportSettings.IMPORT_MODE_TEXT] = "Text File";
     	importTypes[ModelImportExportSettings.IMPORT_MODE_CSV] = "CSV File";
@@ -66,12 +125,12 @@ public class ModelImportExportSettings {
     	exportTypes[ModelImportExportSettings.EXPORT_MODE_XML_DATABASE] = "XML Database";
     	exportTypes[ModelImportExportSettings.EXPORT_MODE_HTML] = Localizer.get("DialogExport.panel-html-export.title");
     } 
-    
+    */
     
     
     public ModelImportExportSettings() {
-    	setImportTypeValues();
-    	setExportTypeValues();
+    	//setImportTypeValues();
+    	//setExportTypeValues();
     }
     
         
@@ -87,7 +146,8 @@ public class ModelImportExportSettings {
     	return multiAddIMDbSelectOption != ImdbImportOption.off;
     }
     
-    public int mode = IMPORT_MODE_TEXT;
+    public ImportMode importMode = ImportMode.TEXT;
+    public ExportMode exportMode = ExportMode.HTML;
     public boolean overwriteWithImdbInfo = false;
     
     public String addToThisList = null;

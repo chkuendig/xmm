@@ -58,7 +58,7 @@ public class DialogTableExport extends DialogTableData {
 		super(parent, settings);
 		this.databaseData = data;
 		
-		setTitle("Export " + ModelImportExportSettings.importTypes[settings.mode]);
+		setTitle("Export " + settings.exportMode);
 		setModal(true);
 		table.getTableHeader().setReorderingAllowed(true);
 		
