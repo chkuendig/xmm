@@ -1094,8 +1094,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         log.debug("Creation of the List done."); //$NON-NLS-1$
         return scrollPane;
     }
-    
-  
+      
      
 
     protected JPanel createFilter() {
@@ -1139,15 +1138,12 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	return filter;
     }
 
-    
-   
 
     protected JTabbedPane createMovieInfo() {
 
     	tabbedMovieInfo = new JTabbedPane();
-    	tabbedMovieInfo.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
     	tabbedMovieInfo.add(config.sysSettings.getLookAndFeelTitle(), createStandardMovieInfo()); //$NON-NLS-1$
-
+    	
     	if (!MovieManager.isApplet() && !config.getInternalConfig().getDisableHTMLView()) {
     		htmlPanel = new HtmlPanel();
     		tabbedMovieInfo.add(htmlPanel); //$NON-NLS-1$
@@ -1162,7 +1158,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     				if (GUIUtil.isRightMouseButton(e)) {
     					MovieManagerCommandSelect.resetHTMLTemplateChace();
     				}
-    				
     				setCurrentMainTabIndex(-1);
     			}
 
