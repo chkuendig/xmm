@@ -72,19 +72,12 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 		
 	
 	public void execute() {
-				
-		try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-				public void run() {
-					if (!handleGetOutputFile()) {
-						cancelled = true;
-					}
-				}
-			});
-		} catch (Exception e) {
-			log.error("Exception:" + e.getMessage(), e);
-		}
+			
 		
+		if (!handleGetOutputFile()) {
+			cancelled = true;
+		}
+				
 		if (cancelled) {
 			return;
 		}
@@ -216,7 +209,7 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 	 **/
 	void createMovieList(File outputFile, String coversPath) {
 
-		log.debug(this.getClass() + ".createMovieList");
+		log.debug(this.getClass().getName() + ".createMovieList");
 		
 		String fileName = outputFile.getName();
 
