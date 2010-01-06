@@ -29,6 +29,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -274,13 +275,22 @@ public class DialogAdditionalInfoFields extends JDialog {
 
 		 JTextField textFieldAdd = new JTextField(22);
 		 textFieldAdd.setDocument(new DocumentRegExp("([^\\p{Punct}]|[_-])*")); //$NON-NLS-1$
+		 textFieldAdd.addKeyListener(new KeyAdapter() {
+			 public void keyPressed(KeyEvent e) {
+
+				 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					 executeCommandAdd();
+				 }
+			 }
+		 });
+		 
 		 constraints = new GridBagConstraints();
 		 constraints.gridx = 0;
 		 constraints.gridy = 0;
 		 constraints.insets = new Insets(5,5,5,5);
 		 constraints.anchor = GridBagConstraints.WEST;
 		 panelAddNewField.add(textFieldAdd,constraints);
-
+				 
 		 JButton buttonAdd = new JButton(Localizer.get("dialogadditionaiinfofields.button.add.text")); //$NON-NLS-1$
 		 buttonAdd.setToolTipText(Localizer.get("dialogadditionaiinfofields.button.add.tooltip")); //$NON-NLS-1$
 		 buttonAdd.setActionCommand("AdditionalInfoFields - Add"); //$NON-NLS-1$
@@ -505,6 +515,8 @@ public class DialogAdditionalInfoFields extends JDialog {
 			 }
 			 /* Adds the field to the active fields list */
 			 ((DefaultListModel)getActiveFields().getModel()).addElement(field);
+			 getActiveFields().setSelectedValue(field, true);
+			 
 			 /* Clears the textField... */
 			 getFieldToAdd().setText(null);
 		 }
