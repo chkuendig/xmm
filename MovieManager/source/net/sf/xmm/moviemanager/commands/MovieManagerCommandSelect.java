@@ -679,7 +679,9 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	}
 
 	
-	
+	public static void resetHTMLTemplateChace() {
+		lastTemplateFile = null;
+	}
 
 	/**
 	 * Updates the HTML panel with the movie info of the current model
