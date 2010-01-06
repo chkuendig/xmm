@@ -272,13 +272,13 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			tabbedPane.add(Localizer.get("dialogprefs.panel.movie-list.title"), createMovieListPanel()); //$NON-NLS-1$
 
 		if (!disabledFeatures.isPreferencesExternalProgramsDisabled())
-			tabbedPane.add(Localizer.get("dialogprefs.panel.external-programs.title"), createExternalProgramsPanel());
+			tabbedPane.add(Localizer.get("dialogprefs.panel.external-programs.title"), createExternalProgramsPanel()); //$NON-NLS-1$
 
 		if (!disabledFeatures.isPreferencesDatabaseBackupDisabled())
-			tabbedPane.add(Localizer.get("dialogprefs.panel.database-backup.title"), createBackupPanel());
+			tabbedPane.add(Localizer.get("dialogprefs.panel.database-backup.title"), createBackupPanel()); //$NON-NLS-1$
 
 		if (!disabledFeatures.isPreferencesIMDbSettingsDisabled())
-			tabbedPane.add(Localizer.get("dialogprefs.panel.imdb-settings.title"), createIMDbPanel());
+			tabbedPane.add(Localizer.get("dialogprefs.panel.imdb-settings.title"), createIMDbPanel()); //$NON-NLS-1$
 
 
 		int selectTab = config.getLastPreferencesTabIndex();
@@ -322,7 +322,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		/* Seen button icon */
 		JLabel seenIconLabel = new JLabel(Localizer.get("dialogprefs.panel.look-and-feel.seen-unseen-icon")); //$NON-NLS-1$
 		regularSeenIcon = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.seen-unseen-icon.regular")); //$NON-NLS-1$
-		currentLookAndFeelIcon = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.seen-unseen-icon.look-and-feel") + ": "); //$NON-NLS-1$
+		currentLookAndFeelIcon = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.seen-unseen-icon.look-and-feel") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		regularSeenIcon.setActionCommand("SeenIcon"); //$NON-NLS-1$
 		currentLookAndFeelIcon.setActionCommand("SeenIcon"); //$NON-NLS-1$
 
@@ -353,7 +353,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		/* Toolbar button */
 		JLabel toolBarButtonLabel = new JLabel(Localizer.get("dialogprefs.panel.look-and-feel.toolbar-buttons-look")); //$NON-NLS-1$
 		regularToolBarButtons = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.toolbar-buttons-look.regular")); //$NON-NLS-1$
-		currentLookAndFeelButtons = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.toolbar-buttons-look.look-and-feel") + ": "); //$NON-NLS-1$
+		currentLookAndFeelButtons = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.toolbar-buttons-look.look-and-feel") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		regularToolBarButtons.setActionCommand("ToolBarButton"); //$NON-NLS-1$
 		currentLookAndFeelButtons.setActionCommand("ToolBarButton"); //$NON-NLS-1$
 
@@ -378,7 +378,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 
 		/* DefaultLookAndFeelDecorated */
-		JLabel defaultLafDecoratedLabel = new JLabel(Localizer.get("dialogprefs.panel.look-and-feel.title-bar-decoration") + ": "); //$NON-NLS-1$
+		JLabel defaultLafDecoratedLabel = new JLabel(Localizer.get("dialogprefs.panel.look-and-feel.title-bar-decoration") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		regularDecoratedButton = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.title-bar-decoration.regular")); //$NON-NLS-1$
 		defaultLafDecoratedButton = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.title-bar-decoration.look-and-feel")); //$NON-NLS-1$
 		regularDecoratedButton.setActionCommand("DefaultLafDecorated"); //$NON-NLS-1$
@@ -422,7 +422,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		for (int i = 0; i < numberOfLookAndFeels; i++) {
 
 			// Skip the ugly motif L&F
-			if (installedLookAndFeels[i].getName().equals("CDE/Motif")) {
+			if (installedLookAndFeels[i].getName().equals("CDE/Motif")) { //$NON-NLS-1$
 				continue;
 			}
 
@@ -467,7 +467,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 			// Prettify the names by removing zip
 			for (int i = 0; i < skinlfThemePackList.length; i++) {
-				skinlfThemePackList[i] = skinlfThemePackList[i].replace(".zip", "");
+				skinlfThemePackList[i] = skinlfThemePackList[i].replace(".zip", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			Arrays.sort(skinlfThemePackList);
@@ -475,7 +475,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			skinlfThemePackChooser = new JComboBox(skinlfThemePackList);
 			skinlfThemePackChooser.setEnabled(false);
 
-			String currentSkinlfThemePack = config.getSkinlfThemePack().replace(".zip", "");
+			String currentSkinlfThemePack = config.getSkinlfThemePack().replace(".zip", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			skinlfThemePackChooser.setSelectedItem(currentSkinlfThemePack);
 
 			if (skinlfThemePackChooser.getSelectedIndex() == -1)
@@ -526,11 +526,11 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		proxyType = new JComboBox(proxyTypeString);
 		proxyType.setSelectedItem(config.getProxyType());
 		proxyType.setEnabled(false);
-		proxyTypeLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.proxy-type") + ": "); //$NON-NLS-1$
+		proxyTypeLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.proxy-type") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		proxyTypeLabel.setEnabled(false);
 
 
-		hostLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.host") + ": "); //$NON-NLS-1$
+		hostLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.host") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		hostLabel.setEnabled(false);
 		hostTextField = new JTextField(18);
 		hostTextField.setText(""); //$NON-NLS-1$
@@ -540,7 +540,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		hostPanel.add(hostLabel);
 		hostPanel.add(hostTextField);
 
-		portLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.port") + ": "); //$NON-NLS-1$
+		portLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.port") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		portLabel.setEnabled(false);
 		portTextField = new JTextField(4);
 		portTextField.setText(""); //$NON-NLS-1$
@@ -601,7 +601,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		JPanel enableAuthenticationPanel = new JPanel();
 		enableAuthenticationPanel.add(enableAuthenticationButton);
 
-		userNameLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.username") + ": "); //$NON-NLS-1$
+		userNameLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.username") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		userNameLabel.setEnabled(false);
 		userNameTextField = new JTextField(7);
 		userNameTextField.setText(""); //$NON-NLS-1$
@@ -611,7 +611,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		userNamePanel.add(userNameLabel);
 		userNamePanel.add(userNameTextField);
 
-		passwordLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.password") + ": "); //$NON-NLS-1$
+		passwordLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.password") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		passwordLabel.setEnabled(false);
 		passwordTextField = new JPasswordField(7);
 		passwordTextField.setText(""); //$NON-NLS-1$
@@ -690,7 +690,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		JPanel enableIMDbAuthenticationPanel = new JPanel();
 		enableIMDbAuthenticationPanel.add(enableIMDbAuthenticationButton);
 
-		IMDbUserNameLabel = new JLabel("Username" + ": "); //$NON-NLS-1$
+		IMDbUserNameLabel = new JLabel("Username" + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		IMDbUserNameLabel.setEnabled(false);
 		IMDbUserNameTextField = new JTextField(7);
 		IMDbUserNameTextField.setEnabled(false);
@@ -699,7 +699,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		IMDbUserNamePanel.add(IMDbUserNameLabel);
 		IMDbUserNamePanel.add(IMDbUserNameTextField);
 
-		IMDbPasswordLabel = new JLabel("Password" + ": "); //$NON-NLS-1$
+		IMDbPasswordLabel = new JLabel("Password" + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		IMDbPasswordLabel.setEnabled(false);
 		IMDbPasswordTextField = new JPasswordField(7);
 		IMDbPasswordTextField.setEnabled(false);
@@ -768,7 +768,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		removeQuotesPanel.add(removeQuotesFromSeriesTitle);
 		titlePanel.add(removeQuotesPanel);
 
-		JLabel autoMoveLabel = new JLabel(Localizer.get("dialogprefs.panel.miscellaneous.auto-move-to-end-of-title") + ":");
+		JLabel autoMoveLabel = new JLabel(Localizer.get("dialogprefs.panel.miscellaneous.auto-move-to-end-of-title") + ":"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		autoMovieToEndOfTitlePanel.add(autoMoveLabel, c);
 
@@ -806,24 +806,24 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		JPanel akaTitlePanel = new JPanel();
 		akaTitlePanel.setLayout(new GridLayout(4, 1));
 
-		storeAllAvailableAkaTitles = new JCheckBox("Store all available aka titles");
-		includeAkaLanguageCodes = new JCheckBox("Include comments and language codes");
-		useLanguageSpecificTitle = new JCheckBox("Replace original title with aka title with the following language code:");
+		storeAllAvailableAkaTitles = new JCheckBox(Localizer.get("DialogPrefs.panel.imdb-settings.store-all-available-aka-titles")); //$NON-NLS-1$
+		includeAkaLanguageCodes = new JCheckBox(Localizer.get("DialogPrefs.panel.imdb-settings.include-comments-and-language-codes")); //$NON-NLS-1$
+		useLanguageSpecificTitle = new JCheckBox(Localizer.get("DialogPrefs.panel.imdb-settings.replace-original-title-with-aka-title-with-the-following-language")); //$NON-NLS-1$
 
 		ArrayList<String> langCodesList = new ArrayList<String>(150);
 		int index = 0;
 
 		try {
 
-			InputStream inputStream = FileUtil.getResourceAsStream("/codecs/LanguageCodes.txt");
+			InputStream inputStream = FileUtil.getResourceAsStream("/codecs/LanguageCodes.txt"); //$NON-NLS-1$
 
 			BufferedInputStream stream = new BufferedInputStream(inputStream);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8")); //$NON-NLS-1$
 
 			String currentLangCode = config.getTitleLanguageCode();
 
-			if (currentLangCode.equals(""))
-				currentLangCode = System.getProperty("user.language");
+			if (currentLangCode.equals("")) //$NON-NLS-1$
+				currentLangCode = System.getProperty("user.language"); //$NON-NLS-1$
 
 			String line;
 
@@ -832,7 +832,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				if (line.startsWith(currentLangCode))
 					index = langCodesList.size();
 
-				line = " " + line.replaceFirst("\t", " - ");
+				line = " " + line.replaceFirst("\t", " - "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 				langCodesList.add(line);
 			}
@@ -976,7 +976,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 
 		/* Enable load last used list */
-		enableAddNewMoviesToCurrentLists = new JCheckBox("Add new movies to the currently selected lists"); 
+		enableAddNewMoviesToCurrentLists = new JCheckBox(Localizer.get("DialogPrefs.panel.miscellaneous.add-new-movies-to-currently-selected-lists"));  //$NON-NLS-1$
 		enableAddNewMoviesToCurrentLists.setActionCommand("Enable Add new movies to current lists"); //$NON-NLS-1$
 
 		if (config.getAddNewMoviesToCurrentLists())
@@ -1004,7 +1004,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		
 		// Only if MySQL database
 		if (MovieManager.getIt().getDatabase() != null && MovieManager.getIt().getDatabase().isMySQL()) {
-			checkEnableMySQLSocketTimeout = new JCheckBox("<html>Enable MySQL Socket timeout after 15 minutes <br>(requires reconnect to database to take effect)</html>"); //$NON-NLS-1$
+			checkEnableMySQLSocketTimeout = new JCheckBox("<html>"+Localizer.get("DialogPrefs.enable-mysql-socket-timout")+"</html>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 			if (config.getMySQLSocketTimeoutEnabled())
 				checkEnableMySQLSocketTimeout.setSelected(true);
@@ -1066,7 +1066,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		pumaCover = new JRadioButton(Localizer.get("dialogprefs.panel.cover-settings.nocover.use-puma")); //$NON-NLS-1$
 		jaguarCover = new JRadioButton(Localizer.get("dialogprefs.panel.cover-settings.nocover.use-jaguar")); //$NON-NLS-1$
-		tigerCover = new JRadioButton("Use Tiger image"); 
+		tigerCover = new JRadioButton(Localizer.get("DialogPrefs.panel.cover-settings.nocover.use-tiger"));  //$NON-NLS-1$
 
 		if (config.getNoCoverType() == NoCoverType.Jaguar)
 			jaguarCover.setSelected(true);
@@ -1197,7 +1197,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				if (rows != null && rows.length > 0) {
 					Rectangle b = getRowBounds(rows[0]);
 
-					g.setColor(UIManager.getColor("Tree.selectionBackground"));
+					g.setColor(UIManager.getColor("Tree.selectionBackground")); //$NON-NLS-1$
 					g.fillRect(0, b.y, getWidth(), b.height);
 				}
 				super.paintComponent(g);
@@ -1251,10 +1251,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		playerPanel.setLayout(new GridBagLayout());
 
 		playerPanel.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Media Player "),
+				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogPrefs.panel.external-programs.media-player.title")), //$NON-NLS-1$
 				BorderFactory.createEmptyBorder(0,5,5,5)));
 
-		enableUseDefaultWindowsPlayer = new JCheckBox("Use the default Windows player");
+		enableUseDefaultWindowsPlayer = new JCheckBox(Localizer.get("DialogPrefs.panel.external-programs.media-player.use-default-windows-player")); //$NON-NLS-1$
 		enableUseDefaultWindowsPlayer.setSelected(config.getUseDefaultWindowsPlayer());
 
 		if (!SysUtil.isWindows())
@@ -1267,7 +1267,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
 		playerPanel.add(enableUseDefaultWindowsPlayer, c);
 
-		JLabel playerLabel = new JLabel("Player Location:");
+		JLabel playerLabel = new JLabel(Localizer.get("DialogPrefs.panel.external-programs.media-player.player-location")); //$NON-NLS-1$
 
 		c = new GridBagConstraints();
 		c.gridx = 0;
@@ -1279,9 +1279,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		mediaPlayerPathField = new JTextField(30);
 		mediaPlayerPathField.setText(config.getMediaPlayerPath());
 
-		JButton mediaPlayerBrowse = new JButton("Browse");
+		JButton mediaPlayerBrowse = new JButton(Localizer.get("common.button.browse")); //$NON-NLS-1$
 
-		mediaPlayerBrowse.setActionCommand("Browse Player Path");
+		mediaPlayerBrowse.setActionCommand(Localizer.get("DialogPrefs.panel.external-programs.media-player.browse-player-path")); //$NON-NLS-1$
 		mediaPlayerBrowse.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
@@ -1293,10 +1293,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				if (parent != null && parent.isDirectory())
 					path = parent.getParent();
 				else 
-					path = "";
+					path = ""; //$NON-NLS-1$
 
 				JFileChooser chooser = new JFileChooser(path);
-				int returnVal = chooser.showDialog(null, "Choose");
+				int returnVal = chooser.showDialog(null, Localizer.get("common.button.choose")); //$NON-NLS-1$
 				if (returnVal != JFileChooser.APPROVE_OPTION)
 					return;
 
@@ -1306,7 +1306,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 					if (location != null)
 						mediaPlayerPathField.setText(location);
 				} catch (IOException e) {
-					log.warn("Failed to retrieve player path");
+					log.warn(Localizer.get("DialogPrefs.panel.external-programs.media-player.failed-to-retrieve-player-path")); //$NON-NLS-1$
 				}
 
 			}});
@@ -1321,7 +1321,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		playerPanel.add(mediaPlayerFilePanel, c);
 
 
-		JLabel cmdArgLabel = new JLabel("Command line arguments:");
+		JLabel cmdArgLabel = new JLabel(Localizer.get("DialogPrefs.panel.external-programs.media-player.command-line-arguments")); //$NON-NLS-1$
 		mediaPlayerCmdArgument = new JTextField(15);
 		mediaPlayerCmdArgument.setText(config.getMediaPlayerCmdArgument());
 
@@ -1334,12 +1334,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		playerPanel.add(cmdArg, c);
 
 
-		externalCmd = new JCheckBox("Enable");
+		externalCmd = new JCheckBox(Localizer.get("common.button.enable")); //$NON-NLS-1$
 		externalCmd.setSelected(config.getExecuteExternalPlayCommand());
 
-		JLabel externalCmdLabel = new JLabel("<html>A command located in a file in the directory<br> of the media files will be executed.</html>");
+		JLabel externalCmdLabel = new JLabel("<html>"+Localizer.get("DialogPrefs.panel.external-programs.media-player.execute-external-command.label.text")+"</html>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		externCommandInfo = new JButton("Read more");
+		externCommandInfo = new JButton(Localizer.get("common.button.read-more")); //$NON-NLS-1$
 
 		externCommandInfo.addActionListener(this);
 
@@ -1348,7 +1348,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		JPanel externalCommand = new JPanel();
 
 		externalCommand.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Execute external command "),
+				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogPrefs.panel.external-programs.media-player.execute-external-command.enable")), //$NON-NLS-1$
 				BorderFactory.createEmptyBorder(0,0,0,0)));
 		externalCommand.add(externalCmd);
 		externalCommand.add(externalCmdLabel);
@@ -1364,40 +1364,40 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		c = new GridBagConstraints();
 
 		browserPanel.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Web Browser "),
+				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogPrefs.panel.external-programs.web-browser.title")), //$NON-NLS-1$
 				BorderFactory.createEmptyBorder(5,3,5,3)));
 
 		JPanel browserOptionPanel = new JPanel(new GridLayout(3, 3));
 
-		enableUseDefaultWindowsBrowser = new JRadioButton("Windows default");
-		enableCustomBrowser =            new JRadioButton("Custom browser");
-		browserOptionOpera =             new JRadioButton("Opera");
-		browserOptionFirefox =           new JRadioButton("Firefox");
-		browserOptionMozilla =           new JRadioButton("Mozilla");
-		browserOptionSafari =            new JRadioButton("Safari");
-		browserOptionNetscape =          new JRadioButton("Netscape");
-		browserOptionIE =                new JRadioButton("Internet Explorer");
+		enableUseDefaultWindowsBrowser = new JRadioButton(Localizer.get("DialogPrefs.panel.external-programs.web-browser.windows-default")); //$NON-NLS-1$
+		enableCustomBrowser =            new JRadioButton(Localizer.get("DialogPrefs.panel.external-programs.web-browser.custom-browser")); //$NON-NLS-1$
+		browserOptionOpera =             new JRadioButton("Opera"); //$NON-NLS-1$
+		browserOptionFirefox =           new JRadioButton("Firefox"); //$NON-NLS-1$
+		browserOptionMozilla =           new JRadioButton("Mozilla"); //$NON-NLS-1$
+		browserOptionSafari =            new JRadioButton("Safari"); //$NON-NLS-1$
+		browserOptionNetscape =          new JRadioButton("Netscape"); //$NON-NLS-1$
+		browserOptionIE =                new JRadioButton("Internet Explorer"); //$NON-NLS-1$
 
 
 		String browser = config.getSystemWebBrowser();
 
-		if (browser.equals("Default"))
+		if (browser.equals("Default")) //$NON-NLS-1$
 			enableUseDefaultWindowsBrowser.setSelected(true);
-		else if (browser.equals("Custom"))
+		else if (browser.equals("Custom")) //$NON-NLS-1$
 			enableCustomBrowser.setSelected(true);
-		else if (browser.equals("Opera"))
+		else if (browser.equals("Opera")) //$NON-NLS-1$
 			browserOptionOpera.setSelected(true);
-		else if (browser.equals("Firefox"))
+		else if (browser.equals("Firefox")) //$NON-NLS-1$
 			browserOptionFirefox.setSelected(true);
-		else if (browser.equals("Mozilla"))
+		else if (browser.equals("Mozilla")) //$NON-NLS-1$
 			browserOptionMozilla.setSelected(true);
-		else if (browser.equals("Safari"))
+		else if (browser.equals("Safari")) //$NON-NLS-1$
 			browserOptionSafari.setSelected(true);
-		else if (browser.equals("Google Chrome"))
+		else if (browser.equals("Google Chrome")) //$NON-NLS-1$
 			browserOptionSafari.setSelected(true);
-		else if (browser.equals("Netscape"))
+		else if (browser.equals("Netscape")) //$NON-NLS-1$
 			browserOptionNetscape.setSelected(true);
-		else if (browser.equals("IE"))
+		else if (browser.equals("IE")) //$NON-NLS-1$
 			browserOptionIE.setSelected(true);
 
 
@@ -1438,7 +1438,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		browserPanel.add(browserOptionPanel, c);
 
 
-		JLabel browserLabel = new JLabel("Custom Browser Location:");
+		JLabel browserLabel = new JLabel(Localizer.get("DialogPrefs.panel.external-programs.web-browser.custom-browser.location")); //$NON-NLS-1$
 
 		c.gridx = 0;
 		c.gridy = 1;
@@ -1448,15 +1448,15 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		customBrowserPathField = new JTextField(30);
 		customBrowserPathField.setText(config.getBrowserPath());
 
-		browserBrowse = new JButton("Browse");
-		browserBrowse.setActionCommand("Browse Path");
+		browserBrowse = new JButton(Localizer.get("common.button.browse")); //$NON-NLS-1$
+		browserBrowse.setActionCommand("Browse Path"); //$NON-NLS-1$
 
 		browserBrowse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// check if there is a file selected
 
 				JFileChooser chooser = new JFileChooser();
-				int returnVal = chooser.showDialog(null, "Choose");
+				int returnVal = chooser.showDialog(null, Localizer.get("common.button.choose")); //$NON-NLS-1$
 				if (returnVal != JFileChooser.APPROVE_OPTION)
 					return;
 
@@ -1466,7 +1466,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 					if (location != null)
 						customBrowserPathField.setText(location);
 				} catch (IOException e) {
-					log.warn("Failed to retrieve browser path");
+					log.warn("Failed to retrieve browser path"); //$NON-NLS-1$
 				}
 
 			}});
@@ -1491,7 +1491,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		programPathsPanel.setLayout(new BoxLayout(programPathsPanel, BoxLayout.Y_AXIS));
 
 		programPathsPanel.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " External Programs "),
+				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogPrefs.panel.external-programs.title")), //$NON-NLS-1$
 				BorderFactory.createEmptyBorder(5,3,5,3)));
 
 
@@ -1510,13 +1510,13 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		backupSettingsPanel.setLayout(new GridBagLayout());
 
 
-		JLabel makeBackupEveryLaunchLabel = new JLabel("Make backup every (X)th time the program is launched. X:");
+		JLabel makeBackupEveryLaunchLabel = new JLabel(Localizer.get("DialogPrefs.panel.backup.backup-every-xth-time.text")); //$NON-NLS-1$
 		makeBackupEveryLaunchField = new JTextField(4);
-		makeBackupEveryLaunchField.setToolTipText("Use 0 to disable database backup");
+		makeBackupEveryLaunchField.setToolTipText(Localizer.get("DialogPrefs.panel.backup.backup-every-xth-time.tooltip")); //$NON-NLS-1$
 
-		JLabel deleteOldestWhenSizeExcedesMBLabel = new JLabel("Delete oldest backup when total backup size excedes (size) MB:");
+		JLabel deleteOldestWhenSizeExcedesMBLabel = new JLabel(Localizer.get("DialogPrefs.panel.backup.delete-oldest-when-total-excedes-size.text")); //$NON-NLS-1$
 		deleteOldestWhenSizeExcedesMBField = new JTextField(4);
-		deleteOldestWhenSizeExcedesMBField.setToolTipText("Use 0 to disable this option");
+		deleteOldestWhenSizeExcedesMBField.setToolTipText(Localizer.get("DialogPrefs.panel.backup.delete-oldest-when-total-excedes-size.tooltip")); //$NON-NLS-1$
 
 		JPanel everyTimePanel = new JPanel();
 		everyTimePanel.add(makeBackupEveryLaunchLabel);
@@ -1540,7 +1540,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
 		backupSettingsPanel.add(deleteOldest, c);
 
-		JLabel directoryLabel = new JLabel("Backup directory:");
+		JLabel directoryLabel = new JLabel(Localizer.get("DialogPrefs.panel.backup.bacup-directory-path")); //$NON-NLS-1$
 
 		c = new GridBagConstraints();
 		c.gridx = 0;
@@ -1550,9 +1550,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		backupDirField = new JTextField(32);
 
-		JButton backupDirBrowse = new JButton("Browse");
+		JButton backupDirBrowse = new JButton(Localizer.get("common.button.browse")); //$NON-NLS-1$
 
-		backupDirBrowse.setActionCommand("Browse Back Directory");
+		backupDirBrowse.setActionCommand("Browse Back Directory"); //$NON-NLS-1$
 		backupDirBrowse.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg) {
@@ -1564,7 +1564,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				if (parent != null && parent.isDirectory())
 					path = parent.getParent();
 				else 
-					path = "";
+					path = ""; //$NON-NLS-1$
 
 				JFileChooser chooser = new JFileChooser(path);
 				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -1580,7 +1580,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 					if (location != null)
 						backupDirField.setText(location);
 				} catch (IOException e) {
-					log.warn("Failed to retrieve player path");
+					log.warn("Failed to retrieve player path"); //$NON-NLS-1$
 				}
 			}});
 
@@ -1605,7 +1605,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		backupPanel.setLayout(new BoxLayout(backupPanel, BoxLayout.Y_AXIS));
 
 		backupPanel.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Backup Settings "),
+				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogPrefs.panel.backup.title")), //$NON-NLS-1$
 				BorderFactory.createEmptyBorder(12,5,16,5)));
 
 		backupPanel.add(backupSettingsPanel);
@@ -1728,26 +1728,26 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		/* Web Browser */
 		if (enableUseDefaultWindowsBrowser.isSelected())
-			config.setSystemWebBrowser("Default");
+			config.setSystemWebBrowser("Default"); //$NON-NLS-1$
 		else if (browserOptionOpera.isSelected())
-			config.setSystemWebBrowser("Opera");
+			config.setSystemWebBrowser("Opera"); //$NON-NLS-1$
 		else if (browserOptionFirefox.isSelected())
-			config.setSystemWebBrowser("Firefox");
+			config.setSystemWebBrowser("Firefox"); //$NON-NLS-1$
 		else if (browserOptionMozilla.isSelected())
-			config.setSystemWebBrowser("Mozilla");
+			config.setSystemWebBrowser("Mozilla"); //$NON-NLS-1$
 		else if (browserOptionSafari.isSelected())
-			config.setSystemWebBrowser("Safari");
+			config.setSystemWebBrowser("Safari"); //$NON-NLS-1$
 		else if (browserOptionNetscape.isSelected())
-			config.setSystemWebBrowser("Netscape");
+			config.setSystemWebBrowser("Netscape"); //$NON-NLS-1$
 		else if (browserOptionIE.isSelected())
-			config.setSystemWebBrowser("IE");
+			config.setSystemWebBrowser("IE"); //$NON-NLS-1$
 		else if (enableCustomBrowser.isSelected()) {
-			config.setSystemWebBrowser("Custom");
+			config.setSystemWebBrowser("Custom"); //$NON-NLS-1$
 
 			File browser = new File(customBrowserPathField.getText());
 
 			if (!browser.isFile()) {
-				DialogAlert alert = new DialogAlert(this, Localizer.get("dialogprefs.alert.title.alert"), "The custom browser path is invalid."); //$NON-NLS-1$ 
+				DialogAlert alert = new DialogAlert(this, Localizer.get("dialogprefs.alert.title.alert"), Localizer.get("DialogPrefs.panel.backup.alert.invalid-browser-path.text")); //$NON-NLS-1$ //$NON-NLS-2$ 
 				GUIUtil.showAndWait(alert, true);
 				return false;
 			}
@@ -1757,15 +1757,15 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		String tmp;
 		tmp = makeBackupEveryLaunchField.getText();
 
-		if (tmp.equals(""))
-			tmp = "0";
+		if (tmp.equals("")) //$NON-NLS-1$
+			tmp = "0"; //$NON-NLS-1$
 
 		config.setDatabaseBackupEveryLaunch(tmp);
 
 		tmp = deleteOldestWhenSizeExcedesMBField.getText();
 
-		if (tmp.equals(""))
-			tmp = "0";
+		if (tmp.equals("")) //$NON-NLS-1$
+			tmp = "0"; //$NON-NLS-1$
 
 		config.setDatabaseBackupDeleteOldest(tmp);
 
@@ -1932,7 +1932,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	}
 
 	void setSkinlfLookAndFeel() {
-		String selectedItem = (String) skinlfThemePackChooser.getSelectedItem() + ".zip";
+		String selectedItem = (String) skinlfThemePackChooser.getSelectedItem() + ".zip"; //$NON-NLS-1$
 		String skinlfThemePackPath = config.getSkinlfThemePackDir() + selectedItem;
 
 		try {
@@ -1962,9 +1962,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	void showErrorMessage(String error, String name) {
 
-		String message = Localizer.get("dialogprefs.alert.message.laf-improperly-installed-or-not-supported-by-jre")+ 
+		String message = Localizer.get("dialogprefs.alert.message.laf-improperly-installed-or-not-supported-by-jre")+  //$NON-NLS-1$
 		System.getProperty("java.version") + //$NON-NLS-1$ //$NON-NLS-2$
-		" You're advised to restart the program.";
+		Localizer.get("DialogPrefs.panel.backup.alert.adviced-to-restart-application"); //$NON-NLS-1$
 
 		if (name.equals("")) //$NON-NLS-1$
 			message = Localizer.get("dialogprefs.alert.message.laf.this")+ message; //$NON-NLS-1$
@@ -2145,12 +2145,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		}
 
 		if (event.getSource().equals(externCommandInfo)) { //$NON-NLS-1$
-			DialogInfo info = new DialogInfo(this, "Execute external command", 
-					"<html>When clicking the play button, the default media player is usually started. <br> " +
-					"With this option enabled, the directory of the media file is first checked for a file <br>" +
-					"with the same name as the media file, but ending in \"xmm.sh\" or \"xmm.bat\". If such a file exists, <br>" +
-					"the file content will be executed as it would be done on the command line. If no such file <br>" +
-			"is found, the media player will be executed instead.</html>");
+			DialogInfo info = new DialogInfo(this, Localizer.get("DialogPrefs.panel.external-programs.media-player.execute-external-command.info.title"),  //$NON-NLS-1$
+					"<html>"+"When clicking the play button, the default media player is usually started. <br> " + //$NON-NLS-1$ //$NON-NLS-2$
+					"With this option enabled, the directory of the media file is first checked for a file <br>" + //$NON-NLS-1$
+					"with the same name as the media file, but ending in \"xmm.sh\" or \"xmm.bat\". If such a file exists, <br>" + //$NON-NLS-1$
+					"the file content will be executed as it would be done on the command line. If no such file <br>" + //$NON-NLS-1$
+			"is found, the media player will be executed instead."+"</html>"); //$NON-NLS-1$ //$NON-NLS-2$
 			GUIUtil.showAndWait(info, true);
 		}
 

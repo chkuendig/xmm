@@ -25,6 +25,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -94,7 +95,6 @@ public class DialogImport extends JDialog implements ActionListener {
 	private JCheckBox imdbSearchAddToSkippedList;
 	
 	protected JCheckBox enableSearchForImdbInfo;
-	public JCheckBox enableOverwriteImportedInfoWithImdbInfo;
 
 	public JCheckBox enableAddMoviesToList;
 	public JComboBox listChooser;
@@ -120,20 +120,116 @@ public class DialogImport extends JDialog implements ActionListener {
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				cancelAll = true;
+				MovieManager.getConfig().setLastDialogImportType(getImportMode());
+				System.err.println("saved import mode:" + getImportMode());
 			}
 		});
 
 		GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction()	{
 			public void actionPerformed(ActionEvent e) {
 				cancelAll = true;
+				MovieManager.getConfig().setLastDialogImportType(getImportMode());
+				System.err.println("saved import mode:" + getImportMode());
 			}
 		});
 
 		setTitle("Import Movies");
 		setModal(true);
 		setResizable(false);
+	
+		createGUI();
+	}
+
+	void createGUI() {
+		/* Tabbed pane */
+		tabbedPane = new JTabbedPane();
+		tabbedPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		tabbedPane.add(createTextPanel(), ImportMode.TEXT.getTitle());
+		tabbedPane.add(createExcelPanel(), ImportMode.EXCEL.getTitle());
+		tabbedPane.add(createXMLPanel(), ImportMode.XML_DATABASE.getTitle());
+		tabbedPane.add(createCSVPanel(), ImportMode.CSV.getTitle());
+
+		ImportMode lastImportType = MovieManager.getConfig().getLastDialogImportType();
+
+		int index = tabbedPane.indexOfTab(lastImportType.getTitle());
+		if (index >= 0)
+			tabbedPane.setSelectedIndex(index);
+		
+		all = new JPanel();
+		all.setLayout(new BoxLayout(all, BoxLayout.Y_AXIS));
+		all.add(createIMDbOptions());
+		all.add(tabbedPane);
+		all.add(createListPanel());
+		all.add(createButtonPanel());
+
+		KeyStroke left_arrow = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false);
+		KeyStroke right_arrow = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false);
+		Action left_action = new AbstractAction()  {
+			public void actionPerformed(ActionEvent e) {
+				int sel = tabbedPane.getSelectedIndex();
+				if (--sel == -1)
+					sel = tabbedPane.getTabCount()-1;
+
+				tabbedPane.setSelectedIndex(sel);
+			}
+		};
+		Action right_action = new AbstractAction()  {
+			public void actionPerformed(ActionEvent e) {
+				int sel = tabbedPane.getSelectedIndex();
+				if (++sel == tabbedPane.getTabCount())
+					sel = 0;
+
+				tabbedPane.setSelectedIndex(sel);
+			}
+		};
+
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(left_arrow, "LEFT");
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(right_arrow, "RIGHT");
+		getRootPane().getActionMap().put("LEFT", left_action);
+		getRootPane().getActionMap().put("RIGHT", right_action);
 
 
+		getContentPane().add(all, BorderLayout.NORTH);
+		/* Packs and sets location... */
+		pack();
+
+		setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
+				(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
+
+
+		if (MovieManager.getConfig().getImportIMDbInfoEnabled())
+			enableSearchForImdbInfo.doClick();
+
+		switch (MovieManager.getConfig().getImportIMDbSelectOption()) {
+		case displayList: {askButton.setSelected(true); break;}
+		case selectFirst: {selectFirstHitButton.setSelected(true); break;}
+		case selectFirstOrAddToSkippedList: {selectFirstHitButton.setSelected(true); imdbSearchAddToSkippedList.setSelected(true); break;}
+		case selectIfOnlyOneHit: {selectIfOnlyOneHitButton.setSelected(true); break;}
+		case selectIfOnlyOneHitOrAddToSkippedList: {selectIfOnlyOneHitButton.setSelected(true); imdbSearchAddToSkippedList.setSelected(true); break;}
+		}
+
+		updateIMDbSearchButtonSettings();
+	}
+	
+	JPanel createButtonPanel() {
+		buttonCancel = new JButton("Cancel");
+		buttonCancel.setActionCommand("DialogAddMultipleMovies - Cancel");
+		buttonCancel.addActionListener(this);
+
+		buttonAddMovies = new JButton("Add Movies");
+		buttonAddMovies.setToolTipText("Add movies in the selected directory");
+		buttonAddMovies.setActionCommand("DialogAddMultipleMovies - Add Movies");
+		buttonAddMovies.addActionListener(this);
+
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel.add(buttonAddMovies);
+		buttonPanel.add(buttonCancel);
+
+		return buttonPanel;
+	}
+	
+	JPanel createIMDbOptions() {
 		/*Radio buttons, choses if the list of hits should apear or not*/
 		askButton = new JRadioButton("Display list of hits");
 		askButton.setActionCommand("Display list of hits");
@@ -144,25 +240,25 @@ public class DialogImport extends JDialog implements ActionListener {
 		selectFirstHitButton.setActionCommand("Select First Hit");
 		selectFirstHitButton.addActionListener(this);
 
-		
+
 		selectIfOnlyOneHitButton = new JRadioButton("Select If Only One Hit, else display list of hits");
 		selectIfOnlyOneHitButton.setActionCommand("Select If Only One Hit");
 		selectIfOnlyOneHitButton.addActionListener(this);
 
 		imdbSearchAddToSkippedList = new JCheckBox("If no hits, add to skipped-list instead");
 		imdbSearchAddToSkippedList.setToolTipText("The movie will be added to a list named 'Importer-skipped'");
-	
+
 		imdbSearchAddToSkippedList.addActionListener(this);
-		
+
 		askButton.setEnabled(false);
 		selectIfOnlyOneHitButton.setEnabled(false);
 		selectFirstHitButton.setEnabled(false);
-		
+
 		ButtonGroup radioButtonGroup = new ButtonGroup();
 		radioButtonGroup.add(askButton);
 		radioButtonGroup.add(selectFirstHitButton);
 		radioButtonGroup.add(selectIfOnlyOneHitButton);
-		
+
 		JPanel radioButtonPanel = new JPanel(new GridLayout(0, 1));
 
 		radioButtonPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(5,5,5,5)));
@@ -175,7 +271,7 @@ public class DialogImport extends JDialog implements ActionListener {
 
 		enableSearchForImdbInfo = new JCheckBox("Get IMDb info");
 		enableSearchForImdbInfo.addActionListener(this);
-		
+
 		JPanel imdbPanel = new JPanel();
 
 		imdbPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," IMDb Dialog "), BorderFactory.createEmptyBorder(5,5,5,5)));
@@ -183,6 +279,11 @@ public class DialogImport extends JDialog implements ActionListener {
 		imdbPanel.add(enableSearchForImdbInfo);
 		imdbPanel.add(radioButtonPanel);
 
+		return imdbPanel;
+	}
+
+
+	JPanel createTextPanel() {
 		/* Textfile */
 
 		JLabel textlabel = new JLabel("Import movies from a textfile containing movie titles only");
@@ -208,6 +309,11 @@ public class DialogImport extends JDialog implements ActionListener {
 		JPanel textFilePanel = new JPanel(new BorderLayout());
 		textFilePanel.add(textLabelPanel, BorderLayout.NORTH);
 		textFilePanel.add(textPathPanel, BorderLayout.SOUTH);
+
+		return textFilePanel;
+	}
+
+	JPanel createExcelPanel() {
 
 		/* Excel spreadsheet */
 		JLabel excelLabel = new JLabel("Import movies from an excel spreadsheet");
@@ -260,7 +366,10 @@ public class DialogImport extends JDialog implements ActionListener {
 		excelFilePanel.add(excelOptionPanel, BorderLayout.CENTER);
 		excelFilePanel.add(excelPathPanel, BorderLayout.SOUTH);
 
+		return excelFilePanel;
+	}
 
+	JPanel createXMLPanel() {
 		/* XML file path */
 		xmlDatabaseFilePath = new JTextField(27);
 		xmlDatabaseFilePath.setText(MovieManager.getConfig().getImportXMLFilePath());
@@ -285,19 +394,22 @@ public class DialogImport extends JDialog implements ActionListener {
 		xmlDatabaseFilePanel.add(xmlDatabaseLabelPanel, BorderLayout.NORTH);
 		xmlDatabaseFilePanel.add(xmlDatabasePathPanel, BorderLayout.SOUTH);
 
-		
+		return xmlDatabaseFilePanel;
+	}
+
+	JPanel createCSVPanel() {
 		JLabel csvLabel = new JLabel("Import movies from a CSV file");
 		JPanel csvLabelPanel = new JPanel();
 		csvLabelPanel.add(csvLabel);
-		
-		
+
+
 		JLabel csvSeparatorLabel = new JLabel("Separator:");
 		csvSeparator = new JTextField(5);
 		csvSeparator.setText(MovieManager.getConfig().getImportCSVseparator());
-		
+
 		JLabel csvEncodingLabel = new JLabel("File encoding:");
-        csvEncoding = new JComboBox(new DefaultComboBoxModel(ModelImportExportSettings.encodings));
-		
+		csvEncoding = new JComboBox(new DefaultComboBoxModel(ModelImportExportSettings.encodings));
+
 		JPanel csvOpt = new JPanel();
 		csvOpt.add(csvSeparatorLabel);
 		csvOpt.add(csvSeparator);
@@ -329,70 +441,13 @@ public class DialogImport extends JDialog implements ActionListener {
 		csvFilePanel.add(csvOptionPanel1, BorderLayout.CENTER);
 		csvFilePanel.add(csvPathPanel, BorderLayout.SOUTH);
 
-
-		/* Tabbed pane */
-		tabbedPane = new JTabbedPane();
-		tabbedPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-		tabbedPane.add(textFilePanel, ImportMode.TEXT.toString());
-		tabbedPane.add(excelFilePanel, ImportMode.EXCEL);
-		tabbedPane.add(xmlDatabaseFilePanel, ImportMode.XML_DATABASE);
-		tabbedPane.add(csvFilePanel, ImportMode.CSV);
-
-		ImportMode lastImportType = MovieManager.getConfig().getLastDialogImportType();
-		
-		int index = tabbedPane.indexOfTab(lastImportType.toString());
-		if (index >= 0)
-			tabbedPane.setSelectedIndex(index);
-		
-		/* Add to list */
-		JPanel listPanel = makeListPanel();
-
-		buttonCancel = new JButton("Cancel");
-		buttonCancel.setActionCommand("DialogAddMultipleMovies - Cancel");
-		buttonCancel.addActionListener(this);
-
-		buttonAddMovies = new JButton("Add Movies");
-		buttonAddMovies.setToolTipText("Add movies in the selected directory");
-		buttonAddMovies.setActionCommand("DialogAddMultipleMovies - Add Movies");
-		buttonAddMovies.addActionListener(this);
-
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		buttonPanel.add(buttonAddMovies);
-		buttonPanel.add(buttonCancel);
-
-		all = new JPanel();
-		all.setLayout(new BoxLayout(all, BoxLayout.Y_AXIS));
-		all.add(imdbPanel);
-		all.add(tabbedPane);
-		all.add(listPanel);
-		all.add(buttonPanel);
-
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-		getContentPane().add(all,BorderLayout.NORTH);
-		/* Packs and sets location... */
-		pack();
-
-		setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
-				(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
-
-			
-		if (MovieManager.getConfig().getImportIMDbInfoEnabled())
-			enableSearchForImdbInfo.doClick();
-
-		switch (MovieManager.getConfig().getImportIMDbSelectOption()) {
-			case displayList: {askButton.setSelected(true); break;}
-			case selectFirst: {selectFirstHitButton.setSelected(true); break;}
-			case selectFirstOrAddToSkippedList: {selectFirstHitButton.setSelected(true); imdbSearchAddToSkippedList.setSelected(true); break;}
-			case selectIfOnlyOneHit: {selectIfOnlyOneHitButton.setSelected(true); break;}
-			case selectIfOnlyOneHitOrAddToSkippedList: {selectIfOnlyOneHitButton.setSelected(true); imdbSearchAddToSkippedList.setSelected(true); break;}
-			}
-				
-		updateIMDbSearchButtonSettings();
+		return csvFilePanel;
 	}
 
-	JPanel makeListPanel() {
+
+	
+
+	JPanel createListPanel() {
 
 		JPanel listPanel = new JPanel();
 		listPanel.setLayout(new BorderLayout());
@@ -458,7 +513,7 @@ public class DialogImport extends JDialog implements ActionListener {
 			fileChooser.setFileSelectionMode(ExtendedFileChooser.FILES_ONLY);
 
 			String path = getPath();
-			
+
 			if (!path.equals("") && new File(path).isFile() && !new File(path).isDirectory()) {
 				path = new File(path).getParent();
 			}
@@ -487,7 +542,7 @@ public class DialogImport extends JDialog implements ActionListener {
 						"csv"
 				}, new String("Exported CSV file (*.csv)")));
 			}
-			
+
 			fileChooser.setDialogTitle(title);
 			fileChooser.setApproveButtonText("Select");
 			fileChooser.setApproveButtonToolTipText("Select file");
@@ -518,9 +573,9 @@ public class DialogImport extends JDialog implements ActionListener {
 	void executeSave() {
 
 		MovieManager.getConfig().setImportIMDbInfoEnabled(enableSearchForImdbInfo.isSelected());
-			
+
 		MovieManager.getConfig().setImportIMDbSelectOption(getMultiAddSelectOption());
-		
+
 		MovieManager.getConfig().setLastDialogImportType(getImportMode());
 
 		MovieManager.getConfig().setImportTextFilePath(textFilePath.getText());
@@ -541,17 +596,17 @@ public class DialogImport extends JDialog implements ActionListener {
 		MovieManager.getConfig().setMultiAddSelectOption(multiAddSelectOption);
 
 		settings.multiAddIMDbSelectOption = multiAddSelectOption;
-		
+
 		if (csvSeparator.getText().trim().length() > 0)
 			settings.csvSeparator = csvSeparator.getText().trim().charAt(0);
-		
+
 		settings.textEncoding = (String) csvEncoding.getSelectedItem();
 		settings.filePath = csvFilePath.getText();
 		settings.importMode = getImportMode();
-		
+
 
 		settings.multiAddIMDbSelectOption = getMultiAddSelectOption();
-		
+
 		// File path depending on import mode
 		settings.filePath = getPath();
 
@@ -566,22 +621,23 @@ public class DialogImport extends JDialog implements ActionListener {
 	}
 
 
-
 	public ImportMode getImportMode() {
 
 		String title = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
 
-		if (title.equals(ImportMode.TEXT.toString()))
+		System.err.println("title:" + title);
+
+		if (title.equals(ImportMode.TEXT.getTitle()))
 			return ImportMode.TEXT;
-		else if (title.equals(ImportMode.EXCEL.toString()))
+		else if (title.equals(ImportMode.EXCEL.getTitle()))
 			return ImportMode.EXCEL;
-		else if (title.equals(ImportMode.XML_DATABASE.toString()))
+		else if (title.equals(ImportMode.XML_DATABASE.getTitle()))
 			return ImportMode.XML_DATABASE;
-		else if (title.equals(ImportMode.XML))
+		else if (title.equals(ImportMode.XML.getTitle()))
 			return ImportMode.XML;
-		else if (title.equals(ImportMode.CSV))
+		else if (title.equals(ImportMode.CSV.getTitle()))
 			return ImportMode.CSV;
-	
+
 		return ImportMode.TEXT;
 	}
 
@@ -604,36 +660,35 @@ public class DialogImport extends JDialog implements ActionListener {
 		if (!enableSearchForImdbInfo.isSelected()) {
 			return ImdbImportOption.off;
 		}
-		
+
 		if (askButton.isSelected())
 			return ImdbImportOption.displayList;
-		
+
 		if (selectFirstHitButton.isSelected())
 			return !imdbSearchAddToSkippedList.isSelected() ? 
 					ImdbImportOption.selectFirst : ImdbImportOption.selectFirstOrAddToSkippedList;
-		
+
 		if (selectIfOnlyOneHitButton.isSelected())
 			return !imdbSearchAddToSkippedList.isSelected() ? 
 					ImdbImportOption.selectIfOnlyOneHit : ImdbImportOption.selectIfOnlyOneHitOrAddToSkippedList;
-		
+
 		return ImdbImportOption.off;
 	}
 
 	public void updateIMDbSearchButtonSettings() {
-	
+
 		if (!enableSearchForImdbInfo.isSelected()) {
 			askButton.setEnabled(false);
 			selectIfOnlyOneHitButton.setEnabled(false);
 			selectFirstHitButton.setEnabled(false);
-			enableOverwriteImportedInfoWithImdbInfo.setEnabled(false);
-			
+
 			imdbSearchAddToSkippedList.setEnabled(false);
 		}
 		else {
 			askButton.setEnabled(true);
 			selectIfOnlyOneHitButton.setEnabled(true);
 			selectFirstHitButton.setEnabled(true);
-			
+
 			if (askButton.isSelected()) {
 				imdbSearchAddToSkippedList.setEnabled(false);
 			}
@@ -642,7 +697,7 @@ public class DialogImport extends JDialog implements ActionListener {
 			}
 		}
 	}
-	
+
 	public void actionPerformed(ActionEvent event) {
 		log.debug("ActionPerformed: "+ event.getActionCommand());
 
@@ -663,7 +718,7 @@ public class DialogImport extends JDialog implements ActionListener {
 			if (!ret.equals(""))
 				xmlDatabaseFilePath.setText(ret);
 		}
-		
+
 		if (event.getSource().equals(browseForXMLFile)) {
 			String ret = executeCommandGetFile(ImportMode.XML);
 			if (!ret.equals(""))
@@ -675,7 +730,7 @@ public class DialogImport extends JDialog implements ActionListener {
 			if(!s2.equals(""))
 				csvFilePath.setText(s2);
 		}
-		
+
 		if (event.getSource().equals(buttonCancel)) {
 			log.debug("ActionPerformed: " + event.getActionCommand());
 			executeSave();
@@ -696,7 +751,7 @@ public class DialogImport extends JDialog implements ActionListener {
 			}
 			else {
 				executeSave();
-				
+
 				if (imdbSearchAddToSkippedList.isSelected()) {
 					if (!MovieManager.getIt().getDatabase().listColumnExist(settings.skippedListName)) {
 						if (MovieManager.getIt().getDatabase().addListsColumn(settings.skippedListName) != 0) {
@@ -716,7 +771,7 @@ public class DialogImport extends JDialog implements ActionListener {
 			MovieManagerCommandLists.execute(this);
 
 			all.remove(2);
-			all.add(makeListPanel(), 2);
+			all.add(createListPanel(), 2);
 			pack();
 
 			GUIUtil.show(this, true);
@@ -725,19 +780,19 @@ public class DialogImport extends JDialog implements ActionListener {
 		if (event.getSource().equals(enableSearchForImdbInfo)) {
 			updateIMDbSearchButtonSettings();
 		}
-		
+
 		if (event.getSource().equals(askButton)) {
 			updateIMDbSearchButtonSettings();
 		}
-		
+
 		if (event.getSource().equals(selectFirstHitButton)) {
 			updateIMDbSearchButtonSettings();
 		}
-	
+
 		if (event.getSource().equals(selectIfOnlyOneHitButton)) {
 			updateIMDbSearchButtonSettings();
 		}
-		
+
 		if (event.getSource().equals(enableAddMoviesToList)) {
 
 			if (enableAddMoviesToList.isSelected())

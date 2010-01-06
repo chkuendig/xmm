@@ -236,7 +236,7 @@ public class DialogDatabaseConverter extends JPanel implements ActionListener {
 	    try {
 			parent.loadDatabase();
 		} catch (Exception e) {
-			log.error("Exception:" + e.getMessage(), e);
+			log.error("Exception:" + e.getMessage(), e); //$NON-NLS-1$
 		}
 	    parent.dispose();
 	}

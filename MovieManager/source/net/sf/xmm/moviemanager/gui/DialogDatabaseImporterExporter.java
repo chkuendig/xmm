@@ -271,7 +271,7 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 
 			timer.start();
 			conversionStart = System.currentTimeMillis();
-			taskOutput.append(Localizer.get("DialogDatabaseImporter.message.processing-import-list") + SysUtil.getLineSeparator());
+			taskOutput.append(Localizer.get("DialogDatabaseImporter.message.processing-import-list") + SysUtil.getLineSeparator()); //$NON-NLS-1$
 		}
 
 		if (evt.getActionCommand().equals("Cancel")) { //$NON-NLS-1$

@@ -165,7 +165,7 @@ public class DialogIMDB extends JDialog {
 				if (row >= 0 && row < getModel().getSize() && getMoviesList().getModel().getElementAt(row) instanceof ModelIMDbSearchHit) {
     				retVal = ((ModelIMDbSearchHit) getMoviesList().getModel().getElementAt(row)).getAka();
     				
-    				if (retVal != null && retVal.trim().equals(""))
+    				if (retVal != null && retVal.trim().equals("")) //$NON-NLS-1$
     					retVal = null;
 				}
     			return retVal;

@@ -189,7 +189,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		mysqlLabelPanel.add(mysqlLabel);
 
 
-		JLabel databaseNameLabel = new JLabel(Localizer.get("DialogDatabase.mysql.schema-name") + ": "); //$NON-NLS-1$
+		JLabel databaseNameLabel = new JLabel(Localizer.get("DialogDatabase.mysql.schema-name") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		databaseNameField = new JTextField(10);
 		databaseNameField.setText(""); //$NON-NLS-1$
 
@@ -197,7 +197,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		databaseNamePanel.add(databaseNameLabel);
 		databaseNamePanel.add(databaseNameField);
 
-		JLabel hostLabel = new JLabel(Localizer.get("DialogDatabase.mysql.host-address") + ": "); //$NON-NLS-1$
+		JLabel hostLabel = new JLabel(Localizer.get("DialogDatabase.mysql.host-address") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		hostTextField = new JTextField(15);
 		hostTextField.setText(""); //$NON-NLS-1$
 
@@ -211,7 +211,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		hostPanel.add(hostLabel);
 		hostPanel.add(hostTextField);
 
-		JLabel portLabel = new JLabel(Localizer.get("DialogDatabase.mysql.port") + ": "); //$NON-NLS-1$
+		JLabel portLabel = new JLabel(Localizer.get("DialogDatabase.mysql.port") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		portTextField = new JTextField(4);
 
 		portTextField.setDocument(new DocumentRegExp("(\\d)*",8)); //$NON-NLS-1$
@@ -269,7 +269,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		constraints.anchor = GridBagConstraints.EAST;
 		mysqlServerPanel.add(portPanel,constraints);
 
-		JLabel userNameLabel = new JLabel(Localizer.get("DialogDatabase.mysql.username") + ": "); //$NON-NLS-1$
+		JLabel userNameLabel = new JLabel(Localizer.get("DialogDatabase.mysql.username") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		userNameTextField = new JTextField(7);
 		userNameTextField.setText(""); //$NON-NLS-1$
 
@@ -277,10 +277,10 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		userNamePanel.add(userNameLabel);
 		userNamePanel.add(userNameTextField);
 
-		JLabel passwordLabel = new JLabel(Localizer.get("DialogDatabase.mysql.password.text") + ": "); //$NON-NLS-1$
+		JLabel passwordLabel = new JLabel(Localizer.get("DialogDatabase.mysql.password.text") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		passwordTextField = new JPasswordField(7);
 		passwordTextField.setText(""); //$NON-NLS-1$
-		passwordTextField.setToolTipText(Localizer.get("DialogDatabase.mysql.password.tooltip"));
+		passwordTextField.setToolTipText(Localizer.get("DialogDatabase.mysql.password.tooltip")); //$NON-NLS-1$
 
 		JPanel passwordPanel = new JPanel() ;
 		passwordPanel.add(passwordLabel);
@@ -425,10 +425,10 @@ public class DialogDatabase extends JDialog implements ActionListener {
 			fileChooser.setFileSelectionMode(ExtendedFileChooser.FILES_ONLY);
 
 			if (databaseMode == 0) {
-				fileChooser.setFileFilter(new CustomFileFilter(new String[]{"properties", "script", "lck"},new String("HSQL Database Files (*.properties, *.script, *.lck)"), "HSQL")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				fileChooser.setFileFilter(new CustomFileFilter(new String[]{"properties", "script", "lck"},new String("HSQL Database Files (*.properties, *.script, *.lck)"), "HSQL")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			} 
 			else if (databaseMode == 1) {
-				fileChooser.setFileFilter(new CustomFileFilter(new String[]{"mdb", "accdb"},new String("MS Access Database Files (*.mdb, *.accdb)"), "MSAccess")); //$NON-NLS-1$ //$NON-NLS-2$
+				fileChooser.setFileFilter(new CustomFileFilter(new String[]{"mdb", "accdb"},new String("MS Access Database Files (*.mdb, *.accdb)"), "MSAccess")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 
 			fileChooser.setAcceptAllFileFilterUsed(false);
@@ -463,9 +463,9 @@ public class DialogDatabase extends JDialog implements ActionListener {
 				if (!newDatabase && !(new File(filepath).exists()))
 					return ""; //$NON-NLS-1$
 				else {
-					if (((CustomFileFilter) fileChooser.getFileFilter()).getIdentifier().equals("MSAccess")) {
-						if (!filepath.endsWith(".mdb") && !filepath.endsWith(".accdb"))
-							filepath += ".mdb";
+					if (((CustomFileFilter) fileChooser.getFileFilter()).getIdentifier().equals("MSAccess")) { //$NON-NLS-1$
+						if (!filepath.endsWith(".mdb") && !filepath.endsWith(".accdb")) //$NON-NLS-1$ //$NON-NLS-2$
+							filepath += ".mdb"; //$NON-NLS-1$
 					}
 				}
 
@@ -613,7 +613,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
 						if (database.isSetUp()) {
 							GUIUtil.invokeLater(new Runnable() {public void run() {
-								listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
+								listener.propertyChange(new PropertyChangeEvent(this, "value", null, null)); //$NON-NLS-1$
 							}});
 							dispose();
 						}
@@ -624,18 +624,18 @@ public class DialogDatabase extends JDialog implements ActionListener {
 					}
 				}
 				catch (Exception e) {
-					log.error("Exception:" + e.getMessage(), e);
+					log.error("Exception:" + e.getMessage(), e); //$NON-NLS-1$
 					GUIUtil.invokeLater(new Runnable() {public void run() {
-						listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
+						listener.propertyChange(new PropertyChangeEvent(this, "value", null, null)); //$NON-NLS-1$
 					}});
 				}
 				GUIUtil.invokeLater(new Runnable() {public void run() {
-					listener.propertyChange(new PropertyChangeEvent(this, "value", null, null));
+					listener.propertyChange(new PropertyChangeEvent(this, "value", null, null)); //$NON-NLS-1$
 				}});
 			}
 		};
 
-		SimpleProgressBar progressBar = new SimpleProgressBar(MovieManager.getDialog(), "Loading Database", true, worker);
+		SimpleProgressBar progressBar = new SimpleProgressBar(MovieManager.getDialog(), Localizer.get("DialogDatabase.progress.loading-database"), true, worker); //$NON-NLS-1$
 		DialogDatabase.progressBar = progressBar;
 		GUIUtil.show(progressBar, true);        
 
@@ -766,23 +766,23 @@ public class DialogDatabase extends JDialog implements ActionListener {
     			String newDatabaseMsg = database.getErrorMessage();
     			String message = newDatabaseMsg;
 
-    			log.debug("Datbase error message:" + message);
+    			log.debug("Datbase error message:" + message); //$NON-NLS-1$
     			
     			if (message.indexOf("Connection refused") != -1) { //$NON-NLS-1$
-    				log.debug("Connection refused");
+    				log.debug("Connection refused"); //$NON-NLS-1$
     				progressBar.close();
     				showDatabaseMessage(dialogDatabase, database, "Connection refused"); //$NON-NLS-1$
     				return null;
     			}
     			else if (message.indexOf("Connection timed out") != -1) { //$NON-NLS-1$
-    				log.debug("Connection timed out");
+    				log.debug("Connection timed out"); //$NON-NLS-1$
     				progressBar.close();
     				showDatabaseMessage(dialogDatabase, database, "Connection timed out"); //$NON-NLS-1$
     				return null;
     			}
 
     			if (message.indexOf("denied") != -1) { //$NON-NLS-1$
-    				log.debug("Denied:" + message);
+    				log.debug("Denied:" + message); //$NON-NLS-1$
     			}
 
     			/* If the database doesn't already exists, a connection must be made through a default database,
@@ -858,7 +858,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     	}
     	else {
 
-    		log.debug("Creates the MS Access database file");
+    		log.debug("Creates the MS Access database file"); //$NON-NLS-1$
 
     		/* Creates the MS Access database file... */
     		File databaseFile = new File(path);
@@ -964,7 +964,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     			message = "Network is unreachable"; //$NON-NLS-1$
     			title = Localizer.get("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
     		}
-    		else if (message.indexOf("Connection timed out") != -1 || message.indexOf("Connection refused: connect") != -1 && _database.isMySQL()) { //$NON-NLS-1$
+    		else if (message.indexOf("Connection timed out") != -1 || message.indexOf("Connection refused: connect") != -1 && _database.isMySQL()) { //$NON-NLS-1$ //$NON-NLS-2$
     			message = "<html> Connection timed out...<br>Make sure you have network access and that the IP and port is correct.</html>"; //$NON-NLS-1$
     			title = Localizer.get("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
     		}
@@ -1081,11 +1081,11 @@ public class DialogDatabase extends JDialog implements ActionListener {
     		}
 
     	} catch (InterruptedException err) {
-    		log.error("Exception:" + err.getMessage(), err);
+    		log.error("Exception:" + err.getMessage(), err); //$NON-NLS-1$
     	} catch (InvocationTargetException err) {
-    		log.error("Exception:" + err.getMessage(), err);
+    		log.error("Exception:" + err.getMessage(), err); //$NON-NLS-1$
     	} catch (Exception err) {
-    		log.error("Exception:" + err.getMessage(), err);
+    		log.error("Exception:" + err.getMessage(), err); //$NON-NLS-1$
     	}    	
     }
 }

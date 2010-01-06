@@ -54,6 +54,7 @@ import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.Localizer;
 
 import org.apache.log4j.Logger;
 
@@ -115,13 +116,13 @@ public class DialogAlert extends JDialog {
 
 			JLabel labelIcon = new JLabel();
 			labelIcon.setBorder(BorderFactory.createEmptyBorder(5,5,5,8));
-			labelIcon.setIcon(new ImageIcon(FileUtil.getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH)));
+			labelIcon.setIcon(new ImageIcon(FileUtil.getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 
 			JTextPane area = new JTextPane();
 			area.setOpaque(false);
 			area.setBorder(null);
 			area.setEditable(false);
-			area.setContentType("text/html");
+			area.setContentType("text/html"); //$NON-NLS-1$
 			area.setText(alertMsg);
 
 			area.setFocusable(true);
@@ -137,7 +138,7 @@ public class DialogAlert extends JDialog {
 			makeRest(parent, panelAlert);
 
 		} catch (Exception e) {
-			log.error("Exception:" + e.getMessage());
+			log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
 		}
 	}
 
@@ -160,7 +161,7 @@ public class DialogAlert extends JDialog {
 
 			JLabel labelIcon = new JLabel();
 			labelIcon.setBorder(BorderFactory.createEmptyBorder(5,5,5,8));
-			labelIcon.setIcon(new ImageIcon(FileUtil.getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH)));
+			labelIcon.setIcon(new ImageIcon(FileUtil.getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 
 			JTextArea area = new JTextArea(alertMsg);
 			area.setOpaque(false);
@@ -181,7 +182,7 @@ public class DialogAlert extends JDialog {
 			makeRest(MovieManager.getDialog(), panelAlert);
 
 		} catch (Exception e) {
-			log.error("Exception:" + e.getMessage());
+			log.error("Exception:" + e.getMessage()); //$NON-NLS-1$
 		}
 	}
 
@@ -199,7 +200,7 @@ public class DialogAlert extends JDialog {
 
 		JLabel labelIcon = new JLabel();
 		labelIcon.setBorder(BorderFactory.createEmptyBorder(5,5,5,10));
-		labelIcon.setIcon(new ImageIcon(FileUtil.getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH)));
+		labelIcon.setIcon(new ImageIcon(FileUtil.getImage("/images/alert.png").getScaledInstance(50,50,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 
 		JLabel labelAlert = new JLabel(alertMsg);
 		JLabel labelAlert2 = new JLabel(alertMsg2);
@@ -227,8 +228,8 @@ public class DialogAlert extends JDialog {
 		JPanel panelButtons = new JPanel();
 		panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		panelButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-		JButton buttonOk = new JButton("OK");
-		buttonOk.setActionCommand("Alert - OK");
+		JButton buttonOk = new JButton(Localizer.get("DialogAlert.button-ok.text")); //$NON-NLS-1$
+		buttonOk.setActionCommand("Alert - OK"); //$NON-NLS-1$
 		buttonOk.addActionListener(new CommandDialogDispose(this));
 				
 		panelButtons.add(buttonOk);

@@ -47,6 +47,7 @@ import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandOpenPage;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
 public class DialogAbout extends JDialog {
@@ -61,33 +62,33 @@ public class DialogAbout extends JDialog {
 	GUIUtil.enableDisposeOnEscapeKey(this);
 
 	/* Dialog properties...*/
-	setTitle("About");
+	setTitle(Localizer.get("DialogAbout.title")); //$NON-NLS-1$
 	setModal(true);
 	setResizable(false);
 	/* Info panel...*/
 	JPanel panelInfo = new JPanel();
-	panelInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Info "),
+	panelInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAbout.panel-info.title")), //$NON-NLS-1$
 							       BorderFactory.createEmptyBorder(5,5,5,5)));
-	JLabel labelInfo = new JLabel(" MeD's Movie Manager version "+MovieManager.getConfig().sysSettings.getVersion(),
-				      new ImageIcon(FileUtil.getImage("/images/filmFolder.png").getScaledInstance(55,55,Image.SCALE_SMOOTH)),
+	JLabel labelInfo = new JLabel(" MeD's Movie Manager version "+MovieManager.getConfig().sysSettings.getVersion(), //$NON-NLS-1$
+				      new ImageIcon(FileUtil.getImage("/images/filmFolder.png").getScaledInstance(55,55,Image.SCALE_SMOOTH)), //$NON-NLS-1$
 				      JLabel.CENTER);
 	labelInfo.setFont(new Font(labelInfo.getFont().getName(),Font.PLAIN,labelInfo.getFont().getSize()));
 	panelInfo.add(labelInfo);
 	/* Copyright panel... */
 	JPanel panelCopyright = new JPanel();
-	panelCopyright.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Copyright "),
+	panelCopyright.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Copyright "), //$NON-NLS-1$
 								    BorderFactory.createEmptyBorder(5,5,5,5)));
-	JLabel labelCopyright = new JLabel("(C) 2003-2009 Mediterranean, Bro",JLabel.CENTER);
+	JLabel labelCopyright = new JLabel("(C) 2003-2009 Mediterranean, Bro",JLabel.CENTER); //$NON-NLS-1$
 	labelCopyright.setFont(new Font(labelCopyright.getFont().getName(),Font.PLAIN,labelCopyright.getFont().getSize()));
 	panelCopyright.add(labelCopyright);
 	/* Developers panel... */
 	JPanel panelDevelopers = new JPanel();
 	panelDevelopers.setLayout(new GridLayout(0, 1));
-	panelDevelopers.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Developers "),
+	panelDevelopers.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAbout.panel-developers.title")), //$NON-NLS-1$
 								     BorderFactory.createEmptyBorder(0,5,5,5)));
-	JLabel labelDevelopers = new JLabel("<html>Mediterranean, Bro</html>",JLabel.CENTER);
+	JLabel labelDevelopers = new JLabel("<html>Mediterranean, Bro</html>",JLabel.CENTER); //$NON-NLS-1$
 	labelDevelopers.setFont(new Font(labelDevelopers.getFont().getName(),Font.PLAIN,labelDevelopers.getFont().getSize()));
-	JLabel labelContributers = new JLabel("<html><center>Contributors:</center><br>olba2, Steven, kreegee Matthias Ihmig, Johannes Adams</html>",JLabel.CENTER);
+	JLabel labelContributers = new JLabel("<html><center>Contributors:</center><br>olba2, Steven, kreegee Matthias Ihmig, Johannes Adams</html>",JLabel.CENTER); //$NON-NLS-1$
 	labelContributers.setFont(new Font(labelContributers.getFont().getName(),Font.PLAIN, labelContributers.getFont().getSize()));
 		
 	panelDevelopers.add(labelDevelopers);
@@ -95,20 +96,20 @@ public class DialogAbout extends JDialog {
 	
 	/* Licenses panel... */
 	JPanel panelLicenses = new JPanel();
-	panelLicenses.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Licenses "),
+	panelLicenses.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAbout.panel-license.title")), //$NON-NLS-1$
 								   BorderFactory.createEmptyBorder(5,5,5,5)));
-	JLabel labelLicense = new JLabel("Licensed under The GNU General Public License, Version 2 or later",JLabel.CENTER);
+	JLabel labelLicense = new JLabel(Localizer.get("DialogAbout.panel-license.text"),JLabel.CENTER); //$NON-NLS-1$
 	labelLicense.setFont(new Font(labelLicense.getFont().getName(),Font.PLAIN,labelLicense.getFont().getSize()-2));
-	labelLicense.addMouseListener(new MovieManagerCommandOpenPage("http://www.fsf.org/licenses/info/GPLv2.html"));
+	labelLicense.addMouseListener(new MovieManagerCommandOpenPage("http://www.fsf.org/licenses/info/GPLv2.html")); //$NON-NLS-1$
 	panelLicenses.add(labelLicense);
 	
 	/* System panel... */
 	JPanel panelSystem = new JPanel();
-	panelSystem.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," System "),
+	panelSystem.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAbout.panel-system.title")), //$NON-NLS-1$
 								   BorderFactory.createEmptyBorder(5,5,5,5)));
-	JLabel labelSystem = new JLabel("<html>" + 
-			SysUtil.getSystemInfo("<br>") +
-			"</html>",JLabel.CENTER);
+	JLabel labelSystem = new JLabel("<html>" +  //$NON-NLS-1$
+			SysUtil.getSystemInfo("<br>") + //$NON-NLS-1$
+			"</html>",JLabel.CENTER); //$NON-NLS-1$
 	
 	panelSystem.add(labelSystem);
 	
@@ -128,9 +129,9 @@ public class DialogAbout extends JDialog {
 	JPanel panelButtons = new JPanel();
 	panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 	panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
-	JButton buttonOk = new JButton("OK");
-	buttonOk.setToolTipText("Close the About dialog");
-	buttonOk.setActionCommand("About - OK");
+	JButton buttonOk = new JButton(Localizer.get("DialogAbout.button-close.title")); //$NON-NLS-1$
+	buttonOk.setToolTipText(Localizer.get("DialogAbout.button-close.tooltip")); //$NON-NLS-1$
+	buttonOk.setActionCommand("About - OK"); //$NON-NLS-1$
 	buttonOk.addActionListener(new CommandDialogDispose(this));
 	panelButtons.add(buttonOk);
 	/* Adds all and buttonsPanel... */
