@@ -82,17 +82,8 @@ public class MovieManagerCommandExport implements ActionListener{
 			
 			if (exporter != null) {
 				final MovieManagerCommandImportExportHandler finalExporter = exporter;
-				
-				GUIUtil.invokeAndWait(new Runnable() {
-					
-					public void run() {
-						try {
-							finalExporter.execute();
-						} catch (Exception e) {
-							log.error("Exception:" + e.getMessage(), e);
-						}
-					}
-				});
+							
+				finalExporter.execute();
 				
 				if (!exporter.isCancelled()) {
 					
@@ -105,7 +96,6 @@ public class MovieManagerCommandExport implements ActionListener{
 					};
 					
 					SwingUtilities.invokeAndWait(createAndShow);
-					
 				}
 			}
 		} catch (Exception e) {
