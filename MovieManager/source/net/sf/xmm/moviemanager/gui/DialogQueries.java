@@ -56,6 +56,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
@@ -78,6 +79,8 @@ public class DialogQueries extends JDialog {
 	
 	JPanel panelResult;
 
+	TreePath defaultQueriesPath = null;
+	
 	/**
 	 * The Constructor.
 	 **/
@@ -192,6 +195,11 @@ public class DialogQueries extends JDialog {
 
 		JScrollPane scrollPaneExecute = new JScrollPane(jTree);
 		scrollPaneExecute.setPreferredSize(new Dimension(200,350));
+		
+		// Expand default queires
+		if (defaultQueriesPath != null)
+			jTree.expandPath(defaultQueriesPath);
+		
 		panelExecute.add(scrollPaneExecute);
 	}
 
@@ -401,6 +409,10 @@ public class DialogQueries extends JDialog {
 
 		DefaultTreeModel t = new DefaultTreeModel(top);
 
+		// If only default queries are present, expand the default dir
+		if (top.getChildCount() == 1)
+			defaultQueriesPath = new TreePath(defaultNode.getPath());
+		
 		return t;
 	}
 
