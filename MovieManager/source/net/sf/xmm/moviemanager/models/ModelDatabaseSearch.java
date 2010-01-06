@@ -47,7 +47,9 @@ public class ModelDatabaseSearch {
     	searchTerms.add(term);
     }
        
-  
+    // MySQL
+    public boolean getCoverData = false;
+    
     /**
        Tells if the filter should filter out seen/unseen movies.
        0 == off
