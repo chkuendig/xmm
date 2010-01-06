@@ -2,6 +2,7 @@ package net.sf.xmm.moviemanager.util;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.MissingResourceException;
 
 import net.sf.xmm.moviemanager.MovieManager;
@@ -124,4 +125,17 @@ public class Localizer {
 			return '!' + key + '!';
 		}
 	}
+	
+	public static String [] getAvailableLanguages() {
+		HashMap<String, String> langauges = res_en.getLanuages();
+		String [] langs = new String[langauges.size()];
+		
+		int index = 0;
+		for (String key : langauges.keySet()) {
+			langs[index] = key;
+			index++;
+		}
+		return langs;
+	}
+	
 }
