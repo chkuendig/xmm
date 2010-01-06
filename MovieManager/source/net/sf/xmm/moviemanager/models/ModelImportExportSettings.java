@@ -49,14 +49,14 @@ public class ModelImportExportSettings {
 			this.title = title;
 		}
 
-		public String toString() {
+		public String getTitle() {
 			return title;
 		}
 
 		public static boolean isValidValue(String val) {
 
 			for (ImportMode mode : values()) {
-				if (mode.title.equals(val))
+				if (mode.toString().equals(val))
 					return true;
 			}
 			return false;
@@ -84,14 +84,14 @@ public class ModelImportExportSettings {
 			this.title = title;
 		}
 
-		public String toString() {
+		public String getTitle() {
 			return title;
 		}
 		
 		public static boolean isValidValue(String val) {
 			
 			for (ExportMode mode : values()) {
-				if (mode.title.equals(val))
+				if (mode.toString().equals(val))
 					return true;
 			}
 			return false;
