@@ -121,7 +121,6 @@ public class DialogImport extends JDialog implements ActionListener {
 			public void windowClosing(WindowEvent e) {
 				cancelAll = true;
 				MovieManager.getConfig().setLastDialogImportType(getImportMode());
-				System.err.println("saved import mode:" + getImportMode());
 			}
 		});
 
@@ -129,7 +128,6 @@ public class DialogImport extends JDialog implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				cancelAll = true;
 				MovieManager.getConfig().setLastDialogImportType(getImportMode());
-				System.err.println("saved import mode:" + getImportMode());
 			}
 		});
 
