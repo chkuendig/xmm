@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tmx version="1.2">
-    <header adminlang="en-us" creationdate="20100106T175544Z"
+    <header adminlang="en-us" creationdate="20100107T021542Z"
         creationtool="RBManager" creationtoolversion="0.7.2"
         datatype="PlainText" o-tmf="none" segtype="sentance" srclang="EN">
         <note>This document was created automatically by RBManager</note>
@@ -441,19 +441,19 @@
                 <seg>Aktivér å legge til filmer til en liste</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-add-to-list.message.create-list.text">
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-add-to-list.label.no-lists-exist.text">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
             <tuv changedate="20100104T000000Z" changeid="Bro"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">true</prop>
-                <seg>To add the movies to a list you need need to create                     a list</seg>
+                <seg>No lists currently exists</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid="Bro"
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>To add the movies to a list you need need to create                     a list</seg>
+                <seg>No lists currently exists</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-add-to-list.title">
@@ -486,16 +486,31 @@
                 <seg>Remove cd notations e.g. cd1 and 1of2</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-everything-after-match-on-user-defined-info.text">
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-everything-after-match.text">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Remove everything after a match on the user defined info.</seg>
+                <seg>Remove everything after a match.</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Remove everything after a match.</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-everything-after-match.tooltip">
+            <prop type="x-Group">DialogAddMultipleMovies</prop>
+            <tuv changedate="20100106T000000Z" changeid="Unknown"
+                creationdate="20100106T000000Z" creationid="Unknown" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">true</prop>
+                <seg>Remove everything after a match on the user defined info.</seg>
+            </tuv>
+            <tuv changedate="20100106T000000Z" changeid="Unknown"
+                creationdate="20100106T000000Z" creationid="Unknown" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
                 <seg>Remove everything after a match on the user defined info.</seg>
@@ -518,17 +533,32 @@
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-parantheses.text">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
-            <tuv changedate="20100105T000000Z" changeid="Unknown"
+            <tuv changedate="20100106T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">true</prop>
-                <seg>Remove parantheses and their content ( "()" , "[]" , "{}" )</seg>
+                <seg>Remove parantheses and their content.</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid="Unknown"
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">true</prop>
                 <seg>Remove parantheses and their content ( "()" , "[]" , "{}" ).</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-parantheses.tooltip">
+            <prop type="x-Group">DialogAddMultipleMovies</prop>
+            <tuv changedate="20100106T000000Z" changeid="Unknown"
+                creationdate="20100106T000000Z" creationid="Unknown" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">true</prop>
+                <seg>Remove parantheses and their content ( "()" , "[]" , "{}" )</seg>
+            </tuv>
+            <tuv changedate="20100106T000000Z" changeid="Unknown"
+                creationdate="20100106T000000Z" creationid="Unknown" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Remove parantheses and their content ( "()" , "[]" , "{}" )</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-clean-string.remove-user-defined-info.text">
@@ -666,34 +696,34 @@
                 <seg>Display list of hits</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-hits.option-select-first-hit-mark-tooltip">
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-hits.option-prefix-movie-title.text">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
+            <tuv changedate="20100106T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>If more than one entry is found for a movie the title is prefixed with "_verify_" to identify these movies.</seg>
+                <prop type="x-Translated">true</prop>
+                <seg>Prefix movie title with "_verify_"</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>If more than one entry is found for a movie the title is prefixed with "_verify_" to identify these movies.</seg>
+                <seg>Prefix movie title if "Select First Hit" is selected</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-hits.option-select-first-hit-mark.text">
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-hits.option-prefix-movie-title.tooltip">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
+            <tuv changedate="20100106T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Prefix movie title if "Select First Hit" is selected</seg>
+                <seg>If more than one entry is found for a movie the title is prefixed with "_verify_" to identify these movies.</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Prefix movie title if "Select First Hit" is selected</seg>
+                <seg>If more than one entry is found for a movie the title is prefixed with "_verify_" to identify these movies.</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-hits.option-select-first-hit.text">
@@ -758,11 +788,11 @@
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-options.enable-Folder-Naming-nocd.text">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
+            <tuv changedate="20100106T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Use parent folder name if last folder name starts with CD*</seg>
+                <prop type="x-Translated">true</prop>
+                <seg>&lt;html&gt;Use parent folder name if last folder&lt;br&gt;starts with CD*&lt;/html&gt;</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
@@ -788,11 +818,11 @@
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-options.enable-Folder-Naming.text">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
+            <tuv changedate="20100106T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Search IMDb using folder name instead of file name.</seg>
+                <prop type="x-Translated">true</prop>
+                <seg>Search IMDb using folder instead of file name.</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
@@ -5721,6 +5751,111 @@
                 <seg>This version cannot be used with an old database file!</seg>
             </tuv>
         </tu>
+        <tu datatype="Text" tuid="DialogPrefs.alert.message.advised-to-restart-application">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>You're advised to restart the application</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>You're advised to restart the application</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.alert.message.covers-dir-not-existing">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Covers directory doesn't exist</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Covers directory doesn't exist</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.alert.message.laf-improperly-installed-or-not-supported-by-jre">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Look and feel reported an error. It might not supported on Java RE</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Look and feel reported an error. It might not supported on Java RE</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.alert.message.laf-not-supported">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>This look and feel is not supported on this platform</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>This look and feel is not supported on this platform</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.alert.message.laf.this">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>This</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>This</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.alert.title.alert">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Alert</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Alert</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.alert.title.laf-error">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Look and Feel error</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Look and Feel error</seg>
+            </tuv>
+        </tu>
         <tu datatype="Text" tuid="DialogPrefs.enable-mysql-socket-timout">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20100106T000000Z" changeid=""
@@ -5734,6 +5869,21 @@
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
                 <seg>Enable MySQL Socket timeout after 15 minutes &lt;br&gt;(requires reconnect to database to take effect)</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.addmultiplefiles.title">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Add multiple files</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Add multiple files</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogPrefs.panel.backup.alert.adviced-to-restart-application">
@@ -5856,6 +6006,81 @@
                 <seg> Backup Settings </seg>
             </tuv>
         </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.button-save.text">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Save</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Save</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.button-save.tooltip">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Save and Close</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Save and Close</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.cover-settings.nocover.title">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg> No Cover Image </seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg> No Cover Image </seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.cover-settings.nocover.use-jaguar">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Use Jaguar image</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Use Jaguar image</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.cover-settings.nocover.use-puma">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Use Puma image</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Use Puma image</seg>
+            </tuv>
+        </tu>
         <tu datatype="Text" tuid="DialogPrefs.panel.cover-settings.nocover.use-tiger">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20100106T000000Z" changeid=""
@@ -5869,6 +6094,81 @@
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
                 <seg>Use Tiger image</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.cover-settings.preserve-aspect-ratio">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Preserve aspect ratio on cover in General Info</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Preserve aspect ratio on cover in General Info</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.cover-settings.preserve-aspect-ratio-episodes-only">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Preserve aspect ratio on episode covers only</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Preserve aspect ratio on episode covers only</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.cover-settings.store-covers-locally">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Store covers locally to make loading faster (MySQL)</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Store covers locally to make loading faster (MySQL)</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.cover-settings.title">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Cover Settings</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Cover Settings</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.database-backup.title">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20100105T000000Z" changeid="Unknown"
+                creationdate="20100105T000000Z" creationid="Unknown" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">true</prop>
+                <seg>Database Backup</seg>
+            </tuv>
+            <tuv changedate="20100105T000000Z" changeid="Unknown"
+                creationdate="20100105T000000Z" creationid="Unknown" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Database Backup</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogPrefs.panel.external-programs.media-player.browse-player-path">
@@ -6027,13 +6327,13 @@
                 creationdate="20100106T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg> External Programs </seg>
+                <seg>External Programs</seg>
             </tuv>
             <tuv changedate="20100106T000000Z" changeid=""
                 creationdate="20100106T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg> External Programs </seg>
+                <seg>External Programs</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogPrefs.panel.external-programs.web-browser.custom-browser">
@@ -6141,6 +6441,216 @@
                 <seg>Store all available aka titles</seg>
             </tuv>
         </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.imdb-settings.title">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20100105T000000Z" changeid="Unknown"
+                creationdate="20100105T000000Z" creationid="Unknown" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">true</prop>
+                <seg>IMDb Settings</seg>
+            </tuv>
+            <tuv changedate="20100105T000000Z" changeid="Unknown"
+                creationdate="20100105T000000Z" creationid="Unknown" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>IMDb Settings</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.look-and-feel.enable-custom-laf.text">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Custom</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Custom</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.look-and-feel.enable-skinlf.text">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Skinlf</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Skinlf</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.look-and-feel.endable-oyoaha-laf.text">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Oyoaha</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Oyoaha</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.look-and-feel.seen-unseen-icon">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Seen/Unseen icon</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Seen/Unseen icon</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.look-and-feel.seen-unseen-icon.look-and-feel">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Look and Feel</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Look and Feel</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.look-and-feel.seen-unseen-icon.regular">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Regular</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Regular</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.look-and-feel.title">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg> Look and Feel </seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg> Look and Feel </seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.look-and-feel.title-bar-decoration">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Title bar decorated</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Title bar decorated</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.look-and-feel.title-bar-decoration.look-and-feel">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Look and Feel</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Look and Feel</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.look-and-feel.title-bar-decoration.regular">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Regular</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Regular</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.look-and-feel.toolbar-buttons-look">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20100105T000000Z" changeid="Unknown"
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">true</prop>
+                <seg>Toolbar Buttons Look</seg>
+            </tuv>
+            <tuv changedate="20100105T000000Z" changeid="Unknown"
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">true</prop>
+                <seg>Toolbar Buttons look</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.look-and-feel.toolbar-buttons-look.look-and-feel">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20100105T000000Z" changeid="Unknown"
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">true</prop>
+                <seg>Look and Feel</seg>
+            </tuv>
+            <tuv changedate="20100105T000000Z" changeid="Unknown"
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">true</prop>
+                <seg>Look and Feel</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogPrefs.panel.look-and-feel.toolbar-buttons-look.regular">
+            <prop type="x-Group">DialogPrefs</prop>
+            <tuv changedate="20100105T000000Z" changeid="Unknown"
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">true</prop>
+                <seg>Regular</seg>
+            </tuv>
+            <tuv changedate="20100105T000000Z" changeid="Unknown"
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">true</prop>
+                <seg>Vanlig</seg>
+            </tuv>
+        </tu>
         <tu datatype="Text" tuid="DialogPrefs.panel.miscellaneous.add-new-movies-to-currently-selected-lists">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20100106T000000Z" changeid=""
@@ -6156,502 +6666,7 @@
                 <seg>Add new movies to the currently selected lists</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.alert.message.advised-to-restart-application">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>You're advised to restart the application</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>You're advised to restart the application</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.alert.message.covers-dir-not-existing">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Covers directory doesn't exist</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Covers directory doesn't exist</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.alert.message.laf-improperly-installed-or-not-supported-by-jre">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Look and feel reported an error. It might not supported on Java RE</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Look and feel reported an error. It might not supported on Java RE</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.alert.message.laf-not-supported">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>This look and feel is not supported on this platform</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>This look and feel is not supported on this platform</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.alert.message.laf.this">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>This</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>This</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.alert.title.alert">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Alert</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Alert</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.alert.title.laf-error">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Look and Feel error</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Look and Feel error</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.addmultiplefiles.title">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Add multiple files</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Add multiple files</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.button-ok.text">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>OK</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>OK</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.button-ok.tooltip">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Close</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Close</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.cover-settings.nocover.title">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg> No Cover Image </seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg> No Cover Image </seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.cover-settings.nocover.use-jaguar">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Use Jaguar image</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Use Jaguar image</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.cover-settings.nocover.use-puma">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Use Puma image</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Use Puma image</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.cover-settings.preserve-aspect-ratio">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Preserve aspect ratio on cover in General Info</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Preserve aspect ratio on cover in General Info</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.cover-settings.preserve-aspect-ratio-episodes-only">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Preserve aspect ratio on episode covers only</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Preserve aspect ratio on episode covers only</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.cover-settings.store-covers-locally">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Store covers locally to make loading faster (MySQL)</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Store covers locally to make loading faster (MySQL)</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.cover-settings.title">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Cover Settings</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Cover Settings</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.database-backup.title">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20100105T000000Z" changeid="Unknown"
-                creationdate="20100105T000000Z" creationid="Unknown" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">true</prop>
-                <seg>Database Backup</seg>
-            </tuv>
-            <tuv changedate="20100105T000000Z" changeid="Unknown"
-                creationdate="20100105T000000Z" creationid="Unknown" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Database Backup</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.external-programs.title">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20100105T000000Z" changeid="Unknown"
-                creationdate="20100105T000000Z" creationid="Unknown" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">true</prop>
-                <seg>External Programs</seg>
-            </tuv>
-            <tuv changedate="20100105T000000Z" changeid="Unknown"
-                creationdate="20100105T000000Z" creationid="Unknown" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>External Programs</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.imdb-settings.title">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20100105T000000Z" changeid="Unknown"
-                creationdate="20100105T000000Z" creationid="Unknown" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">true</prop>
-                <seg>IMDb Settings</seg>
-            </tuv>
-            <tuv changedate="20100105T000000Z" changeid="Unknown"
-                creationdate="20100105T000000Z" creationid="Unknown" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>IMDb Settings</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.look-and-feel.enable-custom-laf.text">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Custom</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Custom</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.look-and-feel.enable-skinlf.text">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Skinlf</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Skinlf</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.look-and-feel.endable-oyoaha-laf.text">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Oyoaha</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Oyoaha</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.look-and-feel.seen-unseen-icon">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Seen/Unseen icon</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Seen/Unseen icon</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.look-and-feel.seen-unseen-icon.look-and-feel">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Look and Feel</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Look and Feel</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.look-and-feel.seen-unseen-icon.regular">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Regular</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Regular</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.look-and-feel.title">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg> Look and Feel </seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg> Look and Feel </seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.look-and-feel.title-bar-decoration">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Title bar decorated</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Title bar decorated</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.look-and-feel.title-bar-decoration.look-and-feel">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Look and Feel</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Look and Feel</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.look-and-feel.title-bar-decoration.regular">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Regular</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Regular</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.look-and-feel.toolbar-buttons-look">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20100105T000000Z" changeid="Unknown"
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">true</prop>
-                <seg>Toolbar Buttons Look</seg>
-            </tuv>
-            <tuv changedate="20100105T000000Z" changeid="Unknown"
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">true</prop>
-                <seg>Toolbar Buttons look</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.look-and-feel.toolbar-buttons-look.look-and-feel">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20100105T000000Z" changeid="Unknown"
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">true</prop>
-                <seg>Look and Feel</seg>
-            </tuv>
-            <tuv changedate="20100105T000000Z" changeid="Unknown"
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">true</prop>
-                <seg>Look and Feel</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.look-and-feel.toolbar-buttons-look.regular">
-            <prop type="x-Group">DialogPrefs</prop>
-            <tuv changedate="20100105T000000Z" changeid="Unknown"
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">true</prop>
-                <seg>Regular</seg>
-            </tuv>
-            <tuv changedate="20100105T000000Z" changeid="Unknown"
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">true</prop>
-                <seg>Vanlig</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.miscellaneous.auto-load-database">
+        <tu datatype="Text" tuid="DialogPrefs.panel.miscellaneous.auto-load-database">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6666,7 +6681,7 @@
                 <seg>Automatically load database on startup</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.miscellaneous.auto-move-to-end-of-title">
+        <tu datatype="Text" tuid="DialogPrefs.panel.miscellaneous.auto-move-to-end-of-title">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6681,7 +6696,7 @@
                 <seg>Automatically move to the end of imported movie titles</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.miscellaneous.enable-seen-editable-main-window">
+        <tu datatype="Text" tuid="DialogPrefs.panel.miscellaneous.enable-seen-editable-main-window">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6696,7 +6711,7 @@
                 <seg>Enable 'Seen' editable (Main window)</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.miscellaneous.title">
+        <tu datatype="Text" tuid="DialogPrefs.panel.miscellaneous.title">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6711,7 +6726,7 @@
                 <seg>Miscellaneous</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.miscellaneous.use-directory-structure-to-group-queries">
+        <tu datatype="Text" tuid="DialogPrefs.panel.miscellaneous.use-directory-structure-to-group-queries">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6726,7 +6741,7 @@
                 <seg>Use directory structure to group queries</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.movie-list.enable-covers-in-movie-list">
+        <tu datatype="Text" tuid="DialogPrefs.panel.movie-list.enable-covers-in-movie-list">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6741,7 +6756,7 @@
                 <seg>Show covers in movielist</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.movie-list.enable-icons-in-movie-list">
+        <tu datatype="Text" tuid="DialogPrefs.panel.movie-list.enable-icons-in-movie-list">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6756,7 +6771,7 @@
                 <seg>Show icons in movie list</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.movie-list.enable-right-click-by-ctrl-in-movie-list">
+        <tu datatype="Text" tuid="DialogPrefs.panel.movie-list.enable-right-click-by-ctrl-in-movie-list">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6771,7 +6786,7 @@
                 <seg>Enable right click by ctrl-key in movielist</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.movie-list.highlight-entire-rom-in-movie-list">
+        <tu datatype="Text" tuid="DialogPrefs.panel.movie-list.highlight-entire-rom-in-movie-list">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6786,7 +6801,7 @@
                 <seg>Highlight entire row in movielist</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.movie-list.load-last-used-list">
+        <tu datatype="Text" tuid="DialogPrefs.panel.movie-list.load-last-used-list">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6801,7 +6816,7 @@
                 <seg>Load last used list at startup</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.movie-list.title">
+        <tu datatype="Text" tuid="DialogPrefs.panel.movie-list.title">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6816,7 +6831,7 @@
                 <seg>Filmliste</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.proxy.authentication">
+        <tu datatype="Text" tuid="DialogPrefs.panel.proxy.authentication">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6831,7 +6846,7 @@
                 <seg>Autentisering</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.proxy.enable-authentication">
+        <tu datatype="Text" tuid="DialogPrefs.panel.proxy.enable-authentication">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6846,7 +6861,7 @@
                 <seg>Aktivér autentisering</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.proxy.enable-proxy">
+        <tu datatype="Text" tuid="DialogPrefs.panel.proxy.enable-proxy">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6861,7 +6876,7 @@
                 <seg>Enable Proxy</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.proxy.host">
+        <tu datatype="Text" tuid="DialogPrefs.panel.proxy.host">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6876,7 +6891,7 @@
                 <seg>Host</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.proxy.password">
+        <tu datatype="Text" tuid="DialogPrefs.panel.proxy.password">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6891,7 +6906,7 @@
                 <seg>Password</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.proxy.port">
+        <tu datatype="Text" tuid="DialogPrefs.panel.proxy.port">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6906,7 +6921,7 @@
                 <seg>Port</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.proxy.proxy-type">
+        <tu datatype="Text" tuid="DialogPrefs.panel.proxy.proxy-type">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6921,7 +6936,7 @@
                 <seg>Proxy Type</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.proxy.title">
+        <tu datatype="Text" tuid="DialogPrefs.panel.proxy.title">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6936,7 +6951,7 @@
                 <seg>Proxy Settings</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.panel.proxy.username">
+        <tu datatype="Text" tuid="DialogPrefs.panel.proxy.username">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -6951,7 +6966,7 @@
                 <seg>Username</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="dialogprefs.title">
+        <tu datatype="Text" tuid="DialogPrefs.title">
             <prop type="x-Group">DialogPrefs</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">

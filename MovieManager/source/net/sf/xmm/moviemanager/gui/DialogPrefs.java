@@ -32,6 +32,7 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -90,6 +91,7 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager.KeyMapping;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
@@ -117,6 +119,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	private Container contentPane;
 	private JTabbedPane tabbedPane;
 
+	JButton buttonSave;
+	JButton buttonCancel;
+	
 	private JComboBox lafChooser;
 	private JCheckBox enableLafChooser;
 	private JComboBox skinlfThemePackChooser;
@@ -226,7 +231,33 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
 
+	void setKeyKeyModifiers() {
 
+		shortcutManager.setKeysToolTipComponent(tabbedPane);
+		
+		// ALT+S
+		KeyMapping m = shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask()),
+				"Save and Close", new AbstractAction() {
+					public void actionPerformed(ActionEvent ae) {
+						buttonSave.doClick();
+						dispose();
+					}
+				});
+		buttonSave.setToolTipText(buttonSave.getToolTipText() + "   " + m.getDisplayName());
+		
+		
+		// ALT+C
+		m = shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
+				"Close", new AbstractAction() {
+					public void actionPerformed(ActionEvent ae) {
+						config.setLastPreferencesTabIndex(tabbedPane.getSelectedIndex());
+						dispose();
+					}
+				});
+		buttonCancel.setToolTipText(buttonCancel.getToolTipText() + "   " + m.getDisplayName());
+	}
 
 	public DialogPrefs() {
 		/* Dialog creation...*/
@@ -238,11 +269,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			}
 		});
 		
-		setTitle(Localizer.get("dialogprefs.title")); //$NON-NLS-1$
+		setTitle(Localizer.get("DialogPrefs.title")); //$NON-NLS-1$
 		setModal(true);
 		setResizable(false);
 		
 		createGUI();
+		setKeyKeyModifiers();
 	}
 	
 	void createGUI() {
@@ -257,28 +289,28 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		});
 
 		if (!disabledFeatures.isPreferencesLookAndFeelDisabled())
-			tabbedPane.add(Localizer.get("dialogprefs.panel.look-and-feel.title"), createLookAndFeelPanel()); //$NON-NLS-1$
+			tabbedPane.add(Localizer.get("DialogPrefs.panel.look-and-feel.title"), createLookAndFeelPanel()); //$NON-NLS-1$
 
 		if (!disabledFeatures.isPreferencesProxySettingsDisabled())
-			tabbedPane.add(Localizer.get("dialogprefs.panel.proxy.title"), createProxyPanel()); //$NON-NLS-1$
+			tabbedPane.add(Localizer.get("DialogPrefs.panel.proxy.title"), createProxyPanel()); //$NON-NLS-1$
 
 		if (!disabledFeatures.isPreferencesMiscellaneousDisabled())
-			tabbedPane.add(Localizer.get("dialogprefs.panel.miscellaneous.title"), createMiscellaneousPanel()); //$NON-NLS-1$
+			tabbedPane.add(Localizer.get("DialogPrefs.panel.miscellaneous.title"), createMiscellaneousPanel()); //$NON-NLS-1$
 
 		if (!disabledFeatures.isPreferencesCoverSettingsDisabled())
-			tabbedPane.add(Localizer.get("dialogprefs.panel.cover-settings.title"), createCoverPanel()); //$NON-NLS-1$
+			tabbedPane.add(Localizer.get("DialogPrefs.panel.cover-settings.title"), createCoverPanel()); //$NON-NLS-1$
 
 		if (!disabledFeatures.isPreferencesMovieListDisabled())
-			tabbedPane.add(Localizer.get("dialogprefs.panel.movie-list.title"), createMovieListPanel()); //$NON-NLS-1$
+			tabbedPane.add(Localizer.get("DialogPrefs.panel.movie-list.title"), createMovieListPanel()); //$NON-NLS-1$
 
 		if (!disabledFeatures.isPreferencesExternalProgramsDisabled())
-			tabbedPane.add(Localizer.get("dialogprefs.panel.external-programs.title"), createExternalProgramsPanel()); //$NON-NLS-1$
+			tabbedPane.add(Localizer.get("DialogPrefs.panel.external-programs.title"), createExternalProgramsPanel()); //$NON-NLS-1$
 
 		if (!disabledFeatures.isPreferencesDatabaseBackupDisabled())
-			tabbedPane.add(Localizer.get("dialogprefs.panel.database-backup.title"), createBackupPanel()); //$NON-NLS-1$
+			tabbedPane.add(Localizer.get("DialogPrefs.panel.database-backup.title"), createBackupPanel()); //$NON-NLS-1$
 
 		if (!disabledFeatures.isPreferencesIMDbSettingsDisabled())
-			tabbedPane.add(Localizer.get("dialogprefs.panel.imdb-settings.title"), createIMDbPanel()); //$NON-NLS-1$
+			tabbedPane.add(Localizer.get("DialogPrefs.panel.imdb-settings.title"), createIMDbPanel()); //$NON-NLS-1$
 
 
 		int selectTab = config.getLastPreferencesTabIndex();
@@ -301,8 +333,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		contentPane.add(tabbedPane);
 		contentPane.add(createButtonPanel());
 
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
 		/*Display the window.*/
 		pack();
 		setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
@@ -317,12 +347,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		/* LookAndFeel panel */
 		JPanel lafPanel = new JPanel(new BorderLayout());
 
-		lafPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogprefs.panel.look-and-feel.title")), BorderFactory.createEmptyBorder(12,0,16,0))); //$NON-NLS-1$
+		lafPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogPrefs.panel.look-and-feel.title")), BorderFactory.createEmptyBorder(12,0,16,0))); //$NON-NLS-1$
 
 		/* Seen button icon */
-		JLabel seenIconLabel = new JLabel(Localizer.get("dialogprefs.panel.look-and-feel.seen-unseen-icon")); //$NON-NLS-1$
-		regularSeenIcon = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.seen-unseen-icon.regular")); //$NON-NLS-1$
-		currentLookAndFeelIcon = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.seen-unseen-icon.look-and-feel") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
+		JLabel seenIconLabel = new JLabel(Localizer.get("DialogPrefs.panel.look-and-feel.seen-unseen-icon")); //$NON-NLS-1$
+		regularSeenIcon = new JRadioButton(Localizer.get("DialogPrefs.panel.look-and-feel.seen-unseen-icon.regular")); //$NON-NLS-1$
+		currentLookAndFeelIcon = new JRadioButton(Localizer.get("DialogPrefs.panel.look-and-feel.seen-unseen-icon.look-and-feel") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		regularSeenIcon.setActionCommand("SeenIcon"); //$NON-NLS-1$
 		currentLookAndFeelIcon.setActionCommand("SeenIcon"); //$NON-NLS-1$
 
@@ -351,9 +381,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 
 		/* Toolbar button */
-		JLabel toolBarButtonLabel = new JLabel(Localizer.get("dialogprefs.panel.look-and-feel.toolbar-buttons-look")); //$NON-NLS-1$
-		regularToolBarButtons = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.toolbar-buttons-look.regular")); //$NON-NLS-1$
-		currentLookAndFeelButtons = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.toolbar-buttons-look.look-and-feel") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
+		JLabel toolBarButtonLabel = new JLabel(Localizer.get("DialogPrefs.panel.look-and-feel.toolbar-buttons-look")); //$NON-NLS-1$
+		regularToolBarButtons = new JRadioButton(Localizer.get("DialogPrefs.panel.look-and-feel.toolbar-buttons-look.regular")); //$NON-NLS-1$
+		currentLookAndFeelButtons = new JRadioButton(Localizer.get("DialogPrefs.panel.look-and-feel.toolbar-buttons-look.look-and-feel") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		regularToolBarButtons.setActionCommand("ToolBarButton"); //$NON-NLS-1$
 		currentLookAndFeelButtons.setActionCommand("ToolBarButton"); //$NON-NLS-1$
 
@@ -378,9 +408,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 
 		/* DefaultLookAndFeelDecorated */
-		JLabel defaultLafDecoratedLabel = new JLabel(Localizer.get("dialogprefs.panel.look-and-feel.title-bar-decoration") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
-		regularDecoratedButton = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.title-bar-decoration.regular")); //$NON-NLS-1$
-		defaultLafDecoratedButton = new JRadioButton(Localizer.get("dialogprefs.panel.look-and-feel.title-bar-decoration.look-and-feel")); //$NON-NLS-1$
+		JLabel defaultLafDecoratedLabel = new JLabel(Localizer.get("DialogPrefs.panel.look-and-feel.title-bar-decoration") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
+		regularDecoratedButton = new JRadioButton(Localizer.get("DialogPrefs.panel.look-and-feel.title-bar-decoration.regular")); //$NON-NLS-1$
+		defaultLafDecoratedButton = new JRadioButton(Localizer.get("DialogPrefs.panel.look-and-feel.title-bar-decoration.look-and-feel")); //$NON-NLS-1$
 		regularDecoratedButton.setActionCommand("DefaultLafDecorated"); //$NON-NLS-1$
 		defaultLafDecoratedButton.setActionCommand("DefaultLafDecorated"); //$NON-NLS-1$
 
@@ -430,7 +460,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			indexCount++;
 		}
 		lafChooser = new JComboBox(lookAndFeelStrings);
-		enableLafChooser = new JCheckBox(Localizer.get("dialogprefs.panel.look-and-feel.enable-custom-laf.text")); //$NON-NLS-1$
+		enableLafChooser = new JCheckBox(Localizer.get("DialogPrefs.panel.look-and-feel.enable-custom-laf.text")); //$NON-NLS-1$
 		enableLafChooser.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
 		lafGroup.add(enableLafChooser);
 
@@ -461,7 +491,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		String [] skinlfThemePackList = LookAndFeelManager.getSkinlfThemepackList();
 
 		if (skinlfThemePackList != null) {
-			enableSkinlf = new JCheckBox(Localizer.get("dialogprefs.panel.look-and-feel.enable-skinlf.text")); //$NON-NLS-1$
+			enableSkinlf = new JCheckBox(Localizer.get("DialogPrefs.panel.look-and-feel.enable-skinlf.text")); //$NON-NLS-1$
 			enableSkinlf.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
 			lafGroup.add(enableSkinlf);
 
@@ -518,7 +548,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		/* Proxy settings */
 
-		enableProxyButton = new JCheckBox(Localizer.get("dialogprefs.panel.proxy.enable-proxy")); //$NON-NLS-1$
+		enableProxyButton = new JCheckBox(Localizer.get("DialogPrefs.panel.proxy.enable-proxy")); //$NON-NLS-1$
 		enableProxyButton.setActionCommand("Enable Proxy"); //$NON-NLS-1$
 		enableProxyButton.addItemListener(this);
 
@@ -526,11 +556,11 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		proxyType = new JComboBox(proxyTypeString);
 		proxyType.setSelectedItem(config.getProxyType());
 		proxyType.setEnabled(false);
-		proxyTypeLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.proxy-type") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
+		proxyTypeLabel = new JLabel(Localizer.get("DialogPrefs.panel.proxy.proxy-type") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		proxyTypeLabel.setEnabled(false);
 
 
-		hostLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.host") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
+		hostLabel = new JLabel(Localizer.get("DialogPrefs.panel.proxy.host") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		hostLabel.setEnabled(false);
 		hostTextField = new JTextField(18);
 		hostTextField.setText(""); //$NON-NLS-1$
@@ -540,7 +570,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		hostPanel.add(hostLabel);
 		hostPanel.add(hostTextField);
 
-		portLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.port") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
+		portLabel = new JLabel(Localizer.get("DialogPrefs.panel.proxy.port") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		portLabel.setEnabled(false);
 		portTextField = new JTextField(4);
 		portTextField.setText(""); //$NON-NLS-1$
@@ -593,7 +623,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		constraints.anchor = GridBagConstraints.EAST;
 		proxyServerPanel.add(portPanel,constraints);
 
-		enableAuthenticationButton = new JCheckBox(Localizer.get("dialogprefs.panel.proxy.enable-authentication")); //$NON-NLS-1$
+		enableAuthenticationButton = new JCheckBox(Localizer.get("DialogPrefs.panel.proxy.enable-authentication")); //$NON-NLS-1$
 		enableAuthenticationButton.setActionCommand("Enable Authentication"); //$NON-NLS-1$
 		enableAuthenticationButton.setEnabled(false);
 		enableAuthenticationButton.addItemListener(this);
@@ -601,7 +631,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		JPanel enableAuthenticationPanel = new JPanel();
 		enableAuthenticationPanel.add(enableAuthenticationButton);
 
-		userNameLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.username") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
+		userNameLabel = new JLabel(Localizer.get("DialogPrefs.panel.proxy.username") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		userNameLabel.setEnabled(false);
 		userNameTextField = new JTextField(7);
 		userNameTextField.setText(""); //$NON-NLS-1$
@@ -611,7 +641,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		userNamePanel.add(userNameLabel);
 		userNamePanel.add(userNameTextField);
 
-		passwordLabel = new JLabel(Localizer.get("dialogprefs.panel.proxy.password") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
+		passwordLabel = new JLabel(Localizer.get("DialogPrefs.panel.proxy.password") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		passwordLabel.setEnabled(false);
 		passwordTextField = new JPasswordField(7);
 		passwordTextField.setText(""); //$NON-NLS-1$
@@ -622,7 +652,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		passwordPanel.add(passwordTextField);
 
 		JPanel proxyAuthenticationPanel = new JPanel(new GridBagLayout());
-		proxyAuthenticationPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogprefs.panel.proxy.authentication")), BorderFactory.createEmptyBorder(0,5,5,5))); //$NON-NLS-1$
+		proxyAuthenticationPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogPrefs.panel.proxy.authentication")), BorderFactory.createEmptyBorder(0,5,5,5))); //$NON-NLS-1$
 
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
@@ -650,7 +680,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 
 		JPanel proxyPanel = new JPanel(new GridLayout(0, 1));
-		proxyPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogprefs.panel.proxy.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		proxyPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogPrefs.panel.proxy.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
 		proxyPanel.add(proxyServerPanel);
 		proxyPanel.add(proxyAuthenticationPanel);
@@ -768,7 +798,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		removeQuotesPanel.add(removeQuotesFromSeriesTitle);
 		titlePanel.add(removeQuotesPanel);
 
-		JLabel autoMoveLabel = new JLabel(Localizer.get("dialogprefs.panel.miscellaneous.auto-move-to-end-of-title") + ":"); //$NON-NLS-1$ //$NON-NLS-2$
+		JLabel autoMoveLabel = new JLabel(Localizer.get("DialogPrefs.panel.miscellaneous.auto-move-to-end-of-title") + ":"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		autoMovieToEndOfTitlePanel.add(autoMoveLabel, c);
 
@@ -889,7 +919,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	JPanel createMiscellaneousPanel() {
 		/* Miscellaneous panel */
 		JPanel miscPanel = new JPanel();
-		miscPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogprefs.panel.miscellaneous.title")), BorderFactory.createEmptyBorder(12,1,16,1))); //$NON-NLS-1$
+		miscPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogPrefs.panel.miscellaneous.title")), BorderFactory.createEmptyBorder(12,1,16,1))); //$NON-NLS-1$
 		miscPanel.setLayout(new BorderLayout());
 
 		//miscPanel.setBackground(Color.black);
@@ -900,7 +930,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		//miscCheckBoxes.setLayout(new BorderLayout());
 
 
-		loadDatabaseOnStartUp = new JCheckBox(Localizer.get("dialogprefs.panel.miscellaneous.auto-load-database")); //$NON-NLS-1$
+		loadDatabaseOnStartUp = new JCheckBox(Localizer.get("DialogPrefs.panel.miscellaneous.auto-load-database")); //$NON-NLS-1$
 		loadDatabaseOnStartUp.setActionCommand("Load databse"); //$NON-NLS-1$
 
 		if (config.getLoadDatabaseOnStartup())
@@ -910,7 +940,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 
 		/* Enable seen editable */
-		enableSeenEditable = new JCheckBox(Localizer.get("dialogprefs.panel.miscellaneous.enable-seen-editable-main-window")); //$NON-NLS-1$
+		enableSeenEditable = new JCheckBox(Localizer.get("DialogPrefs.panel.miscellaneous.enable-seen-editable-main-window")); //$NON-NLS-1$
 
 		enableSeenEditable.setActionCommand("Enable Seen"); //$NON-NLS-1$
 
@@ -920,7 +950,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		miscCheckBoxes.add(enableSeenEditable);
 
 
-		displayQueriesInTree = new JCheckBox(Localizer.get("dialogprefs.panel.miscellaneous.use-directory-structure-to-group-queries")); //$NON-NLS-1$
+		displayQueriesInTree = new JCheckBox(Localizer.get("DialogPrefs.panel.miscellaneous.use-directory-structure-to-group-queries")); //$NON-NLS-1$
 
 		if (config.getUseDisplayQueriesInTree())
 			displayQueriesInTree.setSelected(true);
@@ -963,7 +993,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 
 		/* Enable load last used list */
-		enableLoadLastUsedList = new JCheckBox(Localizer.get("dialogprefs.panel.movie-list.load-last-used-list")); //$NON-NLS-1$
+		enableLoadLastUsedList = new JCheckBox(Localizer.get("DialogPrefs.panel.movie-list.load-last-used-list")); //$NON-NLS-1$
 		enableLoadLastUsedList.setActionCommand("Enable lastLoadedList"); //$NON-NLS-1$
 
 		if (config.getLoadLastUsedListAtStartup())
@@ -1022,11 +1052,11 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		/* Cover settings */
 		JPanel coverPanel = new JPanel();
 		//Box coverPanel = Box.createVerticalBox();
-		coverPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogprefs.panel.cover-settings.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		coverPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogPrefs.panel.cover-settings.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 		coverPanel.setLayout(new BoxLayout(coverPanel, BoxLayout.Y_AXIS));
 		//coverPanel.setLayout(new BorderLayout());
 
-		enablePreserveCoverRatio = new JCheckBox(Localizer.get("dialogprefs.panel.cover-settings.preserve-aspect-ratio")); //$NON-NLS-1$
+		enablePreserveCoverRatio = new JCheckBox(Localizer.get("DialogPrefs.panel.cover-settings.preserve-aspect-ratio")); //$NON-NLS-1$
 		enablePreserveCoverRatio.setActionCommand("Preserve Cover ratio"); //$NON-NLS-1$
 		enablePreserveCoverRatio.addItemListener(this);
 
@@ -1035,7 +1065,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		//coverPanel.add(enablePreserveCoverRatio);
 
-		enablePreserveCoverRatioEpisodesOnly = new JCheckBox(Localizer.get("dialogprefs.panel.cover-settings.preserve-aspect-ratio-episodes-only")); //$NON-NLS-1$
+		enablePreserveCoverRatioEpisodesOnly = new JCheckBox(Localizer.get("DialogPrefs.panel.cover-settings.preserve-aspect-ratio-episodes-only")); //$NON-NLS-1$
 		enablePreserveCoverRatioEpisodesOnly.setActionCommand("Preserve Cover ratio episodes"); //$NON-NLS-1$
 		enablePreserveCoverRatioEpisodesOnly.addItemListener(this);
 
@@ -1054,7 +1084,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		JPanel nocoverImagePanel = new JPanel();
 		//nocoverImagePanel.setLayout(new BorderLayout());
-		nocoverImagePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(20,30,0,0), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogprefs.panel.cover-settings.nocover.title")), BorderFactory.createEmptyBorder(0,5,5,5)))); //$NON-NLS-1$
+		nocoverImagePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(20,30,0,0), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogPrefs.panel.cover-settings.nocover.title")), BorderFactory.createEmptyBorder(0,5,5,5)))); //$NON-NLS-1$
 		nocoverImagePanel.setLayout(new BoxLayout(nocoverImagePanel, BoxLayout.LINE_AXIS));
 		nocoverImagePanel.setAlignmentX(LEFT_ALIGNMENT);
 
@@ -1064,8 +1094,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		ButtonGroup nocoverGroup = new ButtonGroup();
 
-		pumaCover = new JRadioButton(Localizer.get("dialogprefs.panel.cover-settings.nocover.use-puma")); //$NON-NLS-1$
-		jaguarCover = new JRadioButton(Localizer.get("dialogprefs.panel.cover-settings.nocover.use-jaguar")); //$NON-NLS-1$
+		pumaCover = new JRadioButton(Localizer.get("DialogPrefs.panel.cover-settings.nocover.use-puma")); //$NON-NLS-1$
+		jaguarCover = new JRadioButton(Localizer.get("DialogPrefs.panel.cover-settings.nocover.use-jaguar")); //$NON-NLS-1$
 		tigerCover = new JRadioButton(Localizer.get("DialogPrefs.panel.cover-settings.nocover.use-tiger"));  //$NON-NLS-1$
 
 		if (config.getNoCoverType() == NoCoverType.Jaguar)
@@ -1114,7 +1144,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		if (MovieManager.getIt().getDatabase() != null && MovieManager.getIt().getDatabase().isMySQL()) {
 
-			enableStoreCoversLocally = new JCheckBox(Localizer.get("dialogprefs.panel.cover-settings.store-covers-locally")); //$NON-NLS-1$
+			enableStoreCoversLocally = new JCheckBox(Localizer.get("DialogPrefs.panel.cover-settings.store-covers-locally")); //$NON-NLS-1$
 			enableStoreCoversLocally.setActionCommand("Store covers locally"); //$NON-NLS-1$
 
 			if (config.getStoreCoversLocally())
@@ -1134,11 +1164,11 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		/* Movie List Options  */
 		JPanel movieListPanel = new JPanel();
-		movieListPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("dialogprefs.panel.movie-list.title")), BorderFactory.createEmptyBorder(0,10,5,10))); //$NON-NLS-1$
+		movieListPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogPrefs.panel.movie-list.title")), BorderFactory.createEmptyBorder(0,10,5,10))); //$NON-NLS-1$
 		movieListPanel.setLayout(new BoxLayout(movieListPanel, BoxLayout.PAGE_AXIS));
 
 		/* Enable rightclick by ctrl key */
-		enableRightclickByCtrl = new JCheckBox(Localizer.get("dialogprefs.panel.movie-list.enable-right-click-by-ctrl-in-movie-list")); //$NON-NLS-1$
+		enableRightclickByCtrl = new JCheckBox(Localizer.get("DialogPrefs.panel.movie-list.enable-right-click-by-ctrl-in-movie-list")); //$NON-NLS-1$
 		enableRightclickByCtrl.setActionCommand("Enable right click by ctrl"); //$NON-NLS-1$
 
 		if (config.getEnableCtrlMouseRightClick())
@@ -1148,7 +1178,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 
 		/* Enable Use JTree Icons */
-		enableUseJTreeIcons = new JCheckBox(Localizer.get("dialogprefs.panel.movie-list.enable-icons-in-movie-list")); //$NON-NLS-1$
+		enableUseJTreeIcons = new JCheckBox(Localizer.get("DialogPrefs.panel.movie-list.enable-icons-in-movie-list")); //$NON-NLS-1$
 		enableUseJTreeIcons.setActionCommand("Enable JTree Icons"); //$NON-NLS-1$
 		enableUseJTreeIcons.addActionListener(this);
 
@@ -1158,7 +1188,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		movieListPanel.add(enableUseJTreeIcons);
 
 		/* Enable Use JTree Covers */
-		enableUseJTreeCovers = new JCheckBox(Localizer.get("dialogprefs.panel.movie-list.enable-covers-in-movie-list")); //$NON-NLS-1$
+		enableUseJTreeCovers = new JCheckBox(Localizer.get("DialogPrefs.panel.movie-list.enable-covers-in-movie-list")); //$NON-NLS-1$
 		enableUseJTreeCovers.setActionCommand("Enable JTree Covers"); //$NON-NLS-1$
 		enableUseJTreeCovers.addActionListener(this);
 
@@ -1619,14 +1649,14 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(0,0,5,5));
+		
+		buttonSave = new JButton(Localizer.get("DialogPrefs.panel.button-save.text")); //$NON-NLS-1$
+		buttonSave.setToolTipText(Localizer.get("DialogPrefs.panel.button-save.tooltip")); //$NON-NLS-1$
+		buttonSave.addActionListener(this);
+		buttonSave.setActionCommand("Save"); //$NON-NLS-1$
+		buttonPanel.add(buttonSave);
 
-		JButton buttonOk = new JButton(Localizer.get("dialogprefs.panel.button-ok.text")); //$NON-NLS-1$
-		buttonOk.setToolTipText(Localizer.get("dialogprefs.panel.button-ok.tooltip")); //$NON-NLS-1$
-		buttonOk.addActionListener(this);
-		buttonOk.setActionCommand("OK"); //$NON-NLS-1$
-		buttonPanel.add(buttonOk);
-
-		JButton buttonCancel = new JButton("Cancel"); //$NON-NLS-1$
+		buttonCancel = new JButton("Cancel"); //$NON-NLS-1$
 		buttonCancel.setToolTipText("Close without saving settings"); //$NON-NLS-1$
 		buttonCancel.addActionListener(this);
 		buttonCancel.setActionCommand("Cancel"); //$NON-NLS-1$
@@ -1747,7 +1777,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			File browser = new File(customBrowserPathField.getText());
 
 			if (!browser.isFile()) {
-				DialogAlert alert = new DialogAlert(this, Localizer.get("dialogprefs.alert.title.alert"), Localizer.get("DialogPrefs.panel.backup.alert.invalid-browser-path.text")); //$NON-NLS-1$ //$NON-NLS-2$ 
+				DialogAlert alert = new DialogAlert(this, Localizer.get("DialogPrefs.alert.title.alert"), Localizer.get("DialogPrefs.panel.backup.alert.invalid-browser-path.text")); //$NON-NLS-1$ //$NON-NLS-2$ 
 				GUIUtil.showAndWait(alert, true);
 				return false;
 			}
@@ -1849,7 +1879,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 			if (!(new File(config.getCoversFolder()).isDirectory())) {
 
-				DialogAlert alert = new DialogAlert(this, Localizer.get("dialogprefs.alert.title.alert"), Localizer.get("dialogprefs.alert.message.covers-dir-not-existing")); //$NON-NLS-1$ //$NON-NLS-2$
+				DialogAlert alert = new DialogAlert(this, Localizer.get("DialogPrefs.alert.title.alert"), Localizer.get("DialogPrefs.alert.message.covers-dir-not-existing")); //$NON-NLS-1$ //$NON-NLS-2$
 				GUIUtil.showAndWait(alert, true);
 
 				// need to save enabled option to allow DialogFolders to determine whether to check paths or not
@@ -1962,25 +1992,25 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	void showErrorMessage(String error, String name) {
 
-		String message = Localizer.get("dialogprefs.alert.message.laf-improperly-installed-or-not-supported-by-jre")+  //$NON-NLS-1$
+		String message = Localizer.get("DialogPrefs.alert.message.laf-improperly-installed-or-not-supported-by-jre")+  //$NON-NLS-1$
 		System.getProperty("java.version") + //$NON-NLS-1$ //$NON-NLS-2$
 		Localizer.get("DialogPrefs.panel.backup.alert.adviced-to-restart-application"); //$NON-NLS-1$
 
 		if (name.equals("")) //$NON-NLS-1$
-			message = Localizer.get("dialogprefs.alert.message.laf.this")+ message; //$NON-NLS-1$
+			message = Localizer.get("DialogPrefs.alert.message.laf.this")+ message; //$NON-NLS-1$
 		else
 			message = name + message;
 
 		if (error != null && error.indexOf("not supported on this platform") != -1) //$NON-NLS-1$
-			message = Localizer.get("dialogprefs.alert.message.laf-not-supported"); //$NON-NLS-1$
+			message = Localizer.get("DialogPrefs.alert.message.laf-not-supported"); //$NON-NLS-1$
 
 		if (error != null && error.indexOf("You're advised to restart the application") != -1) { //$NON-NLS-1$
-			message = Localizer.get("dialogprefs.alert.message.advised-to-restart-application"); //$NON-NLS-1$
+			message = Localizer.get("DialogPrefs.alert.message.advised-to-restart-application"); //$NON-NLS-1$
 			error = ""; //$NON-NLS-1$
 		}
 
 
-		DialogAlert alert = new DialogAlert(this, Localizer.get("dialogprefs.alert.title.laf-error"), message, error); //$NON-NLS-1$
+		DialogAlert alert = new DialogAlert(this, Localizer.get("DialogPrefs.alert.title.laf-error"), message, error); //$NON-NLS-1$
 		GUIUtil.showAndWait(alert, true);
 	}
 
@@ -2096,7 +2126,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
 
 		/* OK - Saves settings */
-		if (event.getActionCommand().equals("OK")) { //$NON-NLS-1$
+		if (event.getSource().equals(buttonSave)) { //$NON-NLS-1$
 
 			if (saveSettings()) {
 				dispose();
@@ -2112,7 +2142,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		}
 
 		/* Cancel - close */
-		if (event.getActionCommand().equals("Cancel")) { //$NON-NLS-1$
+		if (event.getSource().equals(buttonCancel)) { //$NON-NLS-1$
 			dispose();
 		}
 
