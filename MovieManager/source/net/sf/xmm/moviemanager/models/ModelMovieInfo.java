@@ -649,7 +649,7 @@ public class ModelMovieInfo {
     		/* Sets title if title field is empty... */
     		if (model.getTitle().equals("")) { //$NON-NLS-1$
     			String title = "";
-				if (MovieManager.getConfig().getMultiAddSelectFirstHitMark())
+				if (MovieManager.getConfig().getMultiAddPrefixMovieTitle())
 	    			// Insert prefix in Title to show that these movies maybe got wrong imdb infos
 					title = "_verify_";
 
