@@ -61,22 +61,25 @@ public class MovieManagerCommandPlay implements ActionListener {
 		try {
 						
 			execute(mailbox);
-						
 			mailbox.wait_for_message();
-			
-			LaunchError msg = mailbox.getMessage();
-			
-			if (msg.errorCode != -1) {
-				// errorCode 2: File or dir not found
-				// errorCode 13: Permission denied
-				
-				DialogAlert alert = new DialogAlert(MovieManager.getDialog(), msg.errorTitle, msg.message);
-				GUIUtil.show(alert, true);
-			}
+			handleReturnMessage(mailbox);
 
 		} catch (IOException e1) {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
+		}
+	}
+	
+	static void handleReturnMessage(SimpleMailbox<LaunchError> mailbox) {
+		LaunchError msg = mailbox.getMessage();
+		
+		// -1 == success
+		if (msg.errorCode != -1) {
+			// errorCode 2: File or dir not found
+			// errorCode 13: Permission denied
+			
+			DialogAlert alert = new DialogAlert(MovieManager.getDialog(), msg.errorTitle, msg.message);
+			GUIUtil.show(alert, true);
 		}
 	}
 	
@@ -85,7 +88,13 @@ public class MovieManagerCommandPlay implements ActionListener {
 	}
 	
 	public static void executePlay(String [] files) throws IOException, InterruptedException {
-		executePlay(files, null);
+		
+		SimpleMailbox<LaunchError> mailbox = new SimpleMailbox<LaunchError>();
+		
+		executePlay(files, mailbox);
+		mailbox.wait_for_message();
+		handleReturnMessage(mailbox);
+		
 	}
 	
 	public static void executePlay(String [] files, final SimpleMailbox<LaunchError> mailbox) throws IOException, InterruptedException {
