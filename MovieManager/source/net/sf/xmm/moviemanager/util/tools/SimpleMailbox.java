@@ -23,23 +23,23 @@ package net.sf.xmm.moviemanager.util.tools;
 
 import java.util.ArrayList;
 
-public class SimpleMailbox {
+public class SimpleMailbox<E> {
 
-	ArrayList<String> msgs = new ArrayList<String>();
+	ArrayList<E> msgs = new ArrayList<E>();
 	
 	synchronized public int getMessageCount()  {
 		return msgs.size();
 	}
 	
-	synchronized public String getMessage() {
+	synchronized public E getMessage() {
 		
 		if (msgs.size() == 0)
 			return null;
 		
-		return (String) msgs.remove(0);
+		return msgs.remove(0);
 	}
 	
-	synchronized public void setMessage(String msg) throws InterruptedException {
+	synchronized public void setMessage(E msg) throws InterruptedException {
 		msgs.add(msg);
 		notify_message();
 	}
