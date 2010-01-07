@@ -29,6 +29,18 @@ public class FileTreeEventsHandler {
         }
     }
   
+    void firePlaySelectedFilesEvent(FileTreeEvent evt) {
+        Object[] listeners = listenerList.getListenerList();
+        // Each listener occupies two elements - the first is the listener class
+        // and the second is the listener instance
+         
+        for (int i=0; i<listeners.length; i+=2) {
+            if (listeners[i] == FileTreeEventListener.class) {
+                ((FileTreeEventListener)listeners[i+1]).playSelectedFilesEventOccurred(evt);
+            }
+        }
+    }
+  
     void fireRootDeviceAddedEvent(FileTreeEvent evt) {
         Object[] listeners = listenerList.getListenerList();
         // Each listener occupies two elements - the first is the listener class

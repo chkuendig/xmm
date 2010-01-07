@@ -167,6 +167,7 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 	protected Action file_action;
 	protected TreePath clickedPath;
 	protected JMenuItem fileItem;
+	protected JMenuItem playFileItem;
 
 	JMenuItem excludeAll, includeAll, folder, includeContent, addFiles = null;
 	JMenuItem addDirAsRootDevice, removeDirAsRootDevice;
@@ -322,6 +323,7 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 		// Popup for file
 		file_popup = new JPopupMenu();
 		file_popup.add(fileItem);
+		file_popup.add(playFileItem);
 				
 		// Popup for directories
 		JPopupMenu popup;
@@ -344,6 +346,15 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 				eventHandler.fireAddSelectedFilesEvent(new FileTreeEvent((Object) fileItem));
 			}
 		});
+		
+		playFileItem = new JMenuItem("Play");
+		playFileItem.setIcon(getImageIcon("play.png", 20));
+		playFileItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				eventHandler.firePlaySelectedFilesEvent(new FileTreeEvent((Object) playFileItem));
+			}
+		});
+		
 		
 		folder = new JMenuItem("Folder (no action)");
 		folder.addActionListener(new ActionListener() {
@@ -796,12 +807,15 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 						if (selectedPaths == null)
 							return;
 
-						String txt = selectedPaths.length > 1 ? "Add files" : "Add file";
+						String txt = selectedPaths.length > 1 ? "Add files to list" : "Add file to list";
 
-						System.err.println("settext:" + txt);
-						System.err.println("x:" + x + " y:" + y);
-						
 						fileItem.setText(txt);
+						
+						file_popup.remove(playFileItem);
+						
+						if (selectedPaths.length == 1)
+							file_popup.add(playFileItem);
+							
 						file_popup.show(fileTree, x, y);
 					}
 

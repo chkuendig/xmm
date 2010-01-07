@@ -96,6 +96,7 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.StringUtil.FilenameCloseness;
+import net.sf.xmm.moviemanager.util.tools.SimpleMailbox;
 
 import org.apache.log4j.Logger;
 
@@ -451,23 +452,24 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			}
 
 			public void playSelectedFilesEventOccurred(FileTreeEvent evt) {
-				ArrayList<FileNode> files =  fileTree.getSelectedFiles();
+				ArrayList<FileNode> filesNodes =  fileTree.getSelectedFiles();
 				// Remove directories
-				for (int i = 0; i < files.size(); i++) {
-					if (files.get(i).isDirectory()) {
-						files.remove(files.get(i));
+				for (int i = 0; i < filesNodes.size(); i++) {
+					if (filesNodes.get(i).isDirectory()) {
+						filesNodes.remove(filesNodes.get(i));
 						i--;
 					}
 				}
 				
-				try {
-					new MovieManagerCommandPlay().execute();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if (filesNodes.size() > 0) {
+					String [] file = new String[] {filesNodes.get(0).getFile().getAbsolutePath()};
+					try {
+						MovieManagerCommandPlay.executePlay(file);
+					} catch (IOException e) {
+						log.warn("Exception:" + e.getMessage(), e);
+					} catch (InterruptedException e) {
+						log.warn("Exception:" + e.getMessage(), e);
+					}
 				}
 			}
 			
