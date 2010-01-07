@@ -41,6 +41,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -77,6 +78,7 @@ import javax.swing.event.CaretListener;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
+import net.sf.xmm.moviemanager.commands.MovieManagerCommandPlay;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovie;
@@ -122,7 +124,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	public JCheckBox enableSearchNfoForImdb;
 	public JCheckBox enableSkipHiddenDirectories;
 	public JCheckBox enableUseFolderName;
-	public JCheckBox enableSelectFirstHitMark;
+	public JCheckBox enablePrefixMovieTitle;
 	
 	public JCheckBox enableAutomaticCombine;
 	public JCheckBox enableUseParentFolderIfCD;
@@ -215,10 +217,10 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		selectIfOnlyOneHitButton.setActionCommand("Select If Only One Hit"); //$NON-NLS-1$
 		selectIfOnlyOneHitButton.addActionListener(this);
 
-		enableSelectFirstHitMark = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-hits.option-select-first-hit-mark.text")); //$NON-NLS-1$
-		enableSelectFirstHitMark.setActionCommand("enableSelectFirstHitMark"); //$NON-NLS-1$
-		enableSelectFirstHitMark.setToolTipText(Localizer.get("DialogAddMultipleMovies.panel-hits.option-select-first-hit-mark-tooltip")); //$NON-NLS-1$
-		enableSelectFirstHitMark.addActionListener(this);
+		enablePrefixMovieTitle = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-hits.option-prefix-movie-title.text")); //$NON-NLS-1$
+		enablePrefixMovieTitle.setActionCommand("enableSelectFirstHitMark"); //$NON-NLS-1$
+		enablePrefixMovieTitle.setToolTipText(Localizer.get("DialogAddMultipleMovies.panel-hits.option-prefix-movie-title.tooltip")); //$NON-NLS-1$
+		enablePrefixMovieTitle.addActionListener(this);
 		
 		ButtonGroup radioButtonGroup = new ButtonGroup();
 		radioButtonGroup.add(askButton);
@@ -232,13 +234,14 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		imdbRadioButtonPanel.add(askButton);
 		imdbRadioButtonPanel.add(selectFirstHitButton);
 		imdbRadioButtonPanel.add(selectIfOnlyOneHitButton);
-		imdbRadioButtonPanel.add(enableSelectFirstHitMark);
+		imdbRadioButtonPanel.add(enablePrefixMovieTitle);
 
 		
 		/*
 		 * The actual removal of the strings goes on in MovieManagerCommandAddMultipleMovies.java
 		 */
 		enableExludeParantheses = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-clean-string.remove-parantheses.text")); //$NON-NLS-1$
+		enableExludeParantheses.setToolTipText(Localizer.get("DialogAddMultipleMovies.panel-clean-string.remove-parantheses.tooltip")); //$NON-NLS-1$
 		enableExludeParantheses.setActionCommand("enableExludeParantheses"); //$NON-NLS-1$
 		enableExludeParantheses.addActionListener(this);
 		
@@ -264,8 +267,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		});
 		
 		// yes that is a ridiculously long variable name
-		enableExludeAllAfterMatchOnUserDefinedInfo = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-clean-string.remove-everything-after-match-on-user-defined-info.text")); //$NON-NLS-1$
-		enableExludeAllAfterMatchOnUserDefinedInfo.setToolTipText("Remove"); //$NON-NLS-1$
+		enableExludeAllAfterMatchOnUserDefinedInfo = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-clean-string.remove-everything-after-match.text")); //$NON-NLS-1$
+		enableExludeAllAfterMatchOnUserDefinedInfo.setToolTipText(Localizer.get("DialogAddMultipleMovies.panel-clean-string.remove-everything-after-match.tooltip"));
 		enableExludeAllAfterMatchOnUserDefinedInfo.setEnabled(false);
 		
 		// JTextField is not as nice displayed as JTextArea but it has a fixed width and a larger string is scrolled within instead of growing in width with JTextArea.
@@ -430,7 +433,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		fileTree = new FileTree();
 		
 		fileTree.eventHandler.addFileTreeEventListener(new FileTreeEventListener() {
-			
+						
 			/**
 			 * Removes any directories in the list, and calls addFilesToAddToList
 			 */
@@ -447,6 +450,27 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				addFilesToAddToList(files);
 			}
 
+			public void playSelectedFilesEventOccurred(FileTreeEvent evt) {
+				ArrayList<FileNode> files =  fileTree.getSelectedFiles();
+				// Remove directories
+				for (int i = 0; i < files.size(); i++) {
+					if (files.get(i).isDirectory()) {
+						files.remove(files.get(i));
+						i--;
+					}
+				}
+				
+				try {
+					new MovieManagerCommandPlay().execute();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
 			public void rootDeviceAddedEventOccurred(FileTreeEvent evt) {
 				File f = evt.getFile();
 				MovieManager.getConfig().addMultiAddRootDevice(f.getAbsolutePath());
@@ -483,6 +507,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 								e.printStackTrace();
 							}
 
+							System.err.println("fileTree.isReady():" + fileTree.isReady());
+							
 							if (!fileTree.isReady())
 								GUIUtil.show(progressBar, true);
 						}					
@@ -713,13 +739,15 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 		JPanel listPanel = new JPanel();
 		listPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogAddMultipleMovies.panel-add-to-list.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
-
+		listPanel.setLayout(new BorderLayout());
+		
 		ArrayList<String> columnListNames = MovieManager.getIt().getDatabase().getListsColumnNames();
 		Object [] listNames = columnListNames.toArray();
 
 		if (listNames.length == 0) {
 
-			JLabel label = new JLabel(Localizer.get("DialogAddMultipleMovies.panel-add-to-list.label.create-list.text")); //$NON-NLS-1$
+			JLabel label = new JLabel(Localizer.get("DialogAddMultipleMovies.panel-add-to-list.label.no-lists-exist.text")); //$NON-NLS-1$
+			label.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
 			listPanel.add(label, BorderLayout.WEST);
 
 			buttonAddList = new JButton(Localizer.get("DialogAddMultipleMovies.panel-add-to-list.button.add-list.text")); //$NON-NLS-1$
@@ -781,6 +809,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		default: askButton.setSelected(true);
 		}
 
+		// Disable if selectFirstHitButton isn't selected
+		enablePrefixMovieTitle.setEnabled(selectFirstHitButton.isSelected());
 
 		enableUseFolderName.setSelected(config.getMultiAddTitleOption());
 		enableExludeAllAfterMatchOnUserDefinedInfo.setSelected(config.getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo());
@@ -791,7 +821,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		enableSearchNfoForImdb.setSelected(config.getMultiAddSearchNfoForImdb());
 		
 		
-		enableSelectFirstHitMark.setSelected(config.getMultiAddSelectFirstHitMark());
+		enablePrefixMovieTitle.setSelected(config.getMultiAddPrefixMovieTitle());
 		enableExludeUserdefinedInfo.setSelected(config.getMultiAddEnableExludeUserdefinedInfo());
 		enableAutomaticCombine.setSelected(config.getMultiAddEnableAutomaticCombine());
 
@@ -912,7 +942,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		config.setMultiAddEnableAutomaticCombine(enableAutomaticCombine.isSelected());
 		config.setMultiAddSearchNfoForImdb(enableSearchNfoForImdb.isSelected());
 		config.setMultiAddSkipHiddenDirectories(enableSkipHiddenDirectories.isSelected());
-		config.setMultiAddSelectFirstHitMark(enableSelectFirstHitMark.isSelected());
+		config.setMultiAddPrefixMovieTitle(enablePrefixMovieTitle.isSelected());
 		config.setMultiAddEnableExludeUserdefinedInfo(enableExludeUserdefinedInfo.isSelected());
 		config.setMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo(enableExludeAllAfterMatchOnUserDefinedInfo.isSelected());
 		
@@ -1091,10 +1121,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 							}
 						});
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -1143,15 +1171,19 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				listChooser.setEnabled(false);
 		}
 
-		if (event.getSource().equals(askButton))
+		if (event.getSource().equals(askButton)) {
 			multiAddSelectOption = ImdbImportOption.displayList;
-
-		if (event.getSource().equals(selectFirstHitButton))
+			enablePrefixMovieTitle.setEnabled(false);
+		}
+		if (event.getSource().equals(selectFirstHitButton)) {
 			multiAddSelectOption = ImdbImportOption.selectFirst;
+			enablePrefixMovieTitle.setEnabled(true);
+		}
 
-		if (event.getSource().equals(selectIfOnlyOneHitButton))
+		if (event.getSource().equals(selectIfOnlyOneHitButton)) {
 			multiAddSelectOption = ImdbImportOption.selectIfOnlyOneHit;
-			
+			enablePrefixMovieTitle.setEnabled(false);	
+		}
 	}
 	
 	
