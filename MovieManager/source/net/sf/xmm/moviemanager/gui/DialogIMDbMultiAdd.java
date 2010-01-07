@@ -342,7 +342,7 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     			GUIUtil.showAndWait(this, true);
 
     	    // Insert prefix in Title to show that these movies maybe got wrong imdb infos
-    		if (MovieManager.getConfig().getMultiAddSelectFirstHitMark() && hitCount > 1 && 
+    		if (MovieManager.getConfig().getMultiAddPrefixMovieTitle() && hitCount > 1 && 
     				multiAddSelectOption == ImdbImportOption.selectFirst && (imdbId == null))
     			modelEntry.setTitle("_verify_" + modelEntry.getTitle()); //$NON-NLS-1$
     		
