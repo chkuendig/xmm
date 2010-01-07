@@ -801,7 +801,7 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
     	// Play button
 		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyboardShortcutManager.getToolbarShortcutMask());
 		keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
-				"Search options", new AbstractAction() {
+				"PLay", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
 				buttonPlay.doClick();
 			}
