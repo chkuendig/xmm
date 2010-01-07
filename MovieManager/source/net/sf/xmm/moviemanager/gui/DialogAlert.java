@@ -30,6 +30,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -231,7 +233,14 @@ public class DialogAlert extends JDialog {
 		JButton buttonOk = new JButton(Localizer.get("DialogAlert.button-ok.text")); //$NON-NLS-1$
 		buttonOk.setActionCommand("Alert - OK"); //$NON-NLS-1$
 		buttonOk.addActionListener(new CommandDialogDispose(this));
-				
+		buttonOk.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER)
+					dispose();
+			}
+		});
+		
+		
 		panelButtons.add(buttonOk);
 		
 		/* Adds all and buttonsPanel... */    
