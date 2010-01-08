@@ -316,7 +316,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean multiAddTitleOptionNoCd;
 	private boolean multiAddAddSearchNfoForImdb;
 	private boolean multiAddSkipHiddenDirectories;
-	private boolean multiAddSelectFirstHitMark;
+	private boolean multiAddPrefixMovieTitle;
 	private boolean multiAddEnableAutomaticCombine;
 	
 	private String multiAddExcludeUserDefined = "";
@@ -1522,12 +1522,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		multiAddSkipHiddenDirectories = val;
 	}
 	
-	public boolean getMultiAddSelectFirstHitMark() {
-		return multiAddSelectFirstHitMark;
+	public boolean getMultiAddPrefixMovieTitle() {
+		return multiAddPrefixMovieTitle;
 	}
 	
-	public void setMultiAddSelectFirstHitMark(boolean val) {
-		multiAddSelectFirstHitMark = val;
+	public void setMultiAddPrefixMovieTitle(boolean val) {
+		multiAddPrefixMovieTitle = val;
 	}
 	
 	
@@ -2508,7 +2508,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			setMultiAddEnableExludeCDNotation(getBooleanValue("multiAddEnableExludeCDNotation:", config, getMultiAddEnableExludeCDNotation()));
 			setMultiAddEnableExludeIntegers(getBooleanValue("multiAddEnableExludeIntegers:", config, getMultiAddEnableExludeIntegers()));
 			setMultiAddEnableExludeUserdefinedInfo(getBooleanValue("multiAddEnableExludeUserdefinedInfo:", config, getMultiAddEnableExludeUserdefinedInfo()));
-			setMultiAddSelectFirstHitMark(getBooleanValue("multiAddSelectFirstHitMark:", config, getMultiAddSelectFirstHitMark()));
+			setMultiAddPrefixMovieTitle(getBooleanValue("multiAddPrefixMovieTitle:", config, getMultiAddPrefixMovieTitle()));
 			setMultiAddEnableAutomaticCombine(getBooleanValue("multiAddEnableAutomaticCombine:", config, getMultiAddEnableAutomaticCombine()));
 			setMultiAddTitleOptionNoCd(getBooleanValue("multiAddTitleOptionNoCd:", config, getMultiAddTitleOptionNoCd()));
 			setMultiAddSearchNfoForImdb(getBooleanValue("multiAddSearchNfoForImdb:", config, getMultiAddSearchNfoForImdb()));
@@ -2969,7 +2969,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("multiAddEnableExludeCDNotation:", getMultiAddEnableExludeCDNotation(), settings);
 		 appendToConfig("multiAddEnableExludeIntegers:", getMultiAddEnableExludeIntegers(), settings);
 		 appendToConfig("multiAddEnableExludeUserdefinedInfo:", getMultiAddEnableExludeUserdefinedInfo(), settings);
-		 appendToConfig("multiAddSelectFirstHitMark:", getMultiAddSelectFirstHitMark(), settings);
+		 appendToConfig("multiAddPrefixMovieTitle:", getMultiAddPrefixMovieTitle(), settings);
 		 appendToConfig("multiAddEnableAutomaticCombine:", getMultiAddEnableAutomaticCombine(), settings);
 		 appendToConfig("multiAddTitleOption:", getMultiAddTitleOption(), settings);
 		 appendToConfig("multiAddTitleOptionNoCd:", getMultiAddTitleOptionNoCd(), settings);
