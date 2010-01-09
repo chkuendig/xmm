@@ -251,7 +251,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		
 		setUpGUI();
 		
-		setKeyKeyModifiers();
+		setHotkeyModifiers();
 		
 		GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -2312,7 +2312,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	}
 	
 	
-	void setKeyKeyModifiers() {
+	void setHotkeyModifiers() {
 	
 		KeyMapping keyMapping;
 		
