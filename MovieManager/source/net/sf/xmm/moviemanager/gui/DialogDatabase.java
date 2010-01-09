@@ -726,7 +726,19 @@ public class DialogDatabase extends JDialog implements ActionListener {
     	String path = getPath();
     	String parentPath = path.substring(0, path.lastIndexOf(File.separator) +1);
     	
-     	if (!databaseType.equals("MySQL")) { //$NON-NLS-1$
+    	if (!databaseType.equals("MySQL")) { //$NON-NLS-1$
+    		
+    		File testFile = new File(parentPath, "MMM.test");
+        	
+        	try {
+    			testFile.createNewFile();
+    			testFile.delete();
+    		} catch (Exception e) {
+    			log.error("Exception:" + e.getMessage(), e);
+    			showDatabaseMessage(dialogDatabase, database, "Failed to create new database"); //$NON-NLS-1$
+				return null;
+    		}
+        	
     		/* Creates the covers folder... */
     		File coversDir = new File(parentPath + "Covers"); //$NON-NLS-1$
     		if (!coversDir.exists() && !coversDir.mkdir()) {
@@ -862,10 +874,18 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
     		/* Creates the MS Access database file... */
     		File databaseFile = new File(path);
-    		if (!databaseFile.createNewFile()) {
-    			throw new Exception("Cannot create database file."); //$NON-NLS-1$
-    		}
-
+    		
+    		
+    		try {
+    			if (!databaseFile.createNewFile()) {
+    				showDatabaseMessage(dialogDatabase, database, "Failed to create database file"); //$NON-NLS-1$
+    				throw new Exception("Cannot create database file."); //$NON-NLS-1$
+    			}
+    		} catch (Exception e) {
+    			showDatabaseMessage(dialogDatabase, database, "Failed to create database file"); //$NON-NLS-1$
+				return null;
+			}
+    		
     		/* Copies the empty database file in the package to the new file... */
     		byte[] data;
     		InputStream inputStream;
@@ -923,15 +943,19 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
     
     public static void showDatabaseMessage(final Window parent, Database _database, String msg) {
-
+    	
     	try {
 
     		String title = ""; //$NON-NLS-1$
 
-    		String message = _database.getErrorMessage();
-    		Exception exception = _database.getException();
-
-    		_database.resetError();
+    		String message = "";
+    		Exception exception = null;
+    		
+    		if(_database != null) {
+    			message = _database.getErrorMessage();
+    			exception = _database.getException();
+        		_database.resetError();
+    		}
 
     		if (msg != null && !msg.equals("")) //$NON-NLS-1$
     			message = msg;
@@ -939,7 +963,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     		if (message == null) {
     			message = ""; //$NON-NLS-1$
     		}
-
+    		
     		if (message.indexOf("Failed to connect to database") != -1 && _database.isMySQL()) { //$NON-NLS-1$
     			message = Localizer.get("DialogDatabase.mysql.message.failed-to-connect"); //$NON-NLS-1$
 
@@ -951,6 +975,10 @@ public class DialogDatabase extends JDialog implements ActionListener {
     		else if (message.indexOf("Connection refused") != -1 && _database.isMySQL()) { //$NON-NLS-1$
     			message = Localizer.get("DialogDatabase.mysql.message.could-not-connect-connection-refused"); //$NON-NLS-1$
     			title = Localizer.get("DialogDatabase.mysql.title.connection-alert"); //$NON-NLS-1$
+    		}
+    		else if (message.indexOf("Failed to create database file") != -1) { //$NON-NLS-1$
+    			message = "Failed to create database file";
+    			title = "Database creation failed";
     		}
     		else if (message.indexOf("access denied (java.net.SocketPermission") != -1 && _database.isMySQL() && MovieManager.isApplet()) { //$NON-NLS-1$
     			message = Localizer.get("DialogDatabase.applet.message.jar-must-be-signed"); //$NON-NLS-1$
@@ -1052,7 +1080,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     			title = Localizer.get("DialogDatabase.alert.mysql.title.server-out-of-space"); //$NON-NLS-1$
     			message = Localizer.get("DialogDatabase.alert.mysql.message.server-out-of-space"); //$NON-NLS-1$
     		}
-
+    		
     		if (!message.equals("")) { //$NON-NLS-1$
 
     			String msg2 = ""; //$NON-NLS-1$
@@ -1068,7 +1096,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
     				public void run() {
     					JDialog alert;
-
+    					
     					if (parent instanceof Frame)
     						alert = new DialogAlert((Frame) parent, finalTitle, finalMessage, true);
     					else
