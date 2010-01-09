@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -48,7 +49,9 @@ import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.swing.util.SwingWorker;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager.KeyMapping;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.tools.BrowserOpener;
@@ -78,7 +81,7 @@ public class DialogIMDB extends JDialog {
             
     private boolean canceled = false;    
     
-   
+    KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
     
     /**
      * Constructor used by UpdateIMDBInfo
@@ -87,61 +90,23 @@ public class DialogIMDB extends JDialog {
         /* Dialog creation...*/
         super(MovieManager.getDialog());
         this.modelEntry = modelEntry;
-        
+                
         if (alternateTitle == null)
         	setTitle(Localizer.get("DialogIMDB.title")); //$NON-NLS-1$
         else
         	setTitle(alternateTitle);
        	         
-        /* Close dialog... */
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        });
+        GUIUtil.enableDisposeOnEscapeKey(shortcutManager);
         
-        /*Enables dispose when pushing escape*/
-        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-        Action escapeAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        };
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-        getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
+        createListDialog();
         
-        createListDialog(); //$NON-NLS-1$ //$NON-NLS-2$
+        setHotkeyModifiers();
         
         if (executeSearch)
         	executeSearch();
     }
     
     
-   
-    /**
-     * Constructor - When adding multiple movies by file.
-     **/
-    /*
-    public DialogIMDB(String _imdbId, ModelEntry modelEntry, String searchString, String filename, File multiAddFile, ImdbImportOption multiAddSelectOption, String addToThisList) {
-    	    	
-        super(MovieManager.getDialog());
-        setTitle(Localizer.getString("DialogIMDB.title")); //$NON-NLS-1$
-        
-        imdbId = _imdbId;
-        this.modelEntry = modelEntry;
-        this.multiAddFile = multiAddFile;
-        this.addToThisList = addToThisList;
-                        
-        time = System.currentTimeMillis();
-                
-        createListDialog(searchString, filename);
-        
-        // Insert prefix in Title to show that these movies maybe got wrong imdb infos
-		if (MovieManager.getConfig().getMultiAddSelectFirstHitMark() && hitCount > 1 && multiAddSelectOption == ImdbImportOption.selectFirst && (_imdbId == null || _imdbId.equals("")))
-			modelEntry.setTitle("_verify_" + modelEntry.getTitle());
-    }
-*/
-
     void createListDialog() {
     	/* Dialog properties...*/
 
@@ -162,17 +127,17 @@ public class DialogIMDB extends JDialog {
     			
     			int row = (int) e.getPoint().getY() / (int) getCellBounds(0,0).getHeight();
 
-				if (row >= 0 && row < getModel().getSize() && getMoviesList().getModel().getElementAt(row) instanceof ModelIMDbSearchHit) {
+    			if (row >= 0 && row < getModel().getSize() && getMoviesList().getModel().getElementAt(row) instanceof ModelIMDbSearchHit) {
     				retVal = ((ModelIMDbSearchHit) getMoviesList().getModel().getElementAt(row)).getAka();
     				
     				if (retVal != null && retVal.trim().equals("")) //$NON-NLS-1$
     					retVal = null;
 				}
+				
     			return retVal;
     		}
 
     		public JToolTip createToolTip() {
-
     			JMultiLineToolTip tooltip = new JMultiLineToolTip();
     			tooltip.setComponent(this);
     			return tooltip;
@@ -276,8 +241,8 @@ public class DialogIMDB extends JDialog {
     	    	
     	getMoviesList().ensureIndexIsVisible(0);
     	
-    	setPreferredSize(new Dimension(420, 440));
-    	setMinimumSize(new Dimension(420, 440));
+    	setPreferredSize(new Dimension(500, 440));
+    	setMinimumSize(new Dimension(500, 440));
     	
     	pack();
     	    	
@@ -520,4 +485,31 @@ public class DialogIMDB extends JDialog {
     		return this;
     	}
     }
+    
+	void setHotkeyModifiers() {
+				
+		KeyMapping keyMapping;
+		
+		// ALT+S for Select
+		keyMapping = shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_S, shortcutManager.getToolbarShortcutMask()),
+				"Select", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				buttonSelect.doClick();
+			}
+		});
+		buttonSelect.setToolTipText(buttonSelect.getToolTipText() + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+			
+		// ALT+D for skip (Discard)
+		keyMapping = shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_D, shortcutManager.getToolbarShortcutMask()),
+				"Discard", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				buttonCancel.doClick();
+			}
+		});
+		buttonCancel.setToolTipText(buttonCancel.getToolTipText() + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		
+		shortcutManager.setKeysToolTipComponent(panelMoviesList);
+	}
 }
