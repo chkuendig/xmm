@@ -79,11 +79,11 @@ public class KeyboardShortcutManager {
 	}
 	
 	void registerShowKeysKey() {
-		System.err.println("getMenuShortcutKeyMask:" + Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-		System.err.println("getToolbarShortcutMask:" + getToolbarShortcutMask());
-		System.err.println("CTRL_MASK:" + InputEvent.CTRL_MASK);
-		System.err.println("ALT_MASK:" + InputEvent.ALT_MASK);
-		System.err.println("META_MASK:" + InputEvent.META_MASK);
+		//System.err.println("getMenuShortcutKeyMask:" + Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+		//System.err.println("getToolbarShortcutMask:" + getToolbarShortcutMask());
+		//System.err.println("CTRL_MASK:" + InputEvent.CTRL_MASK);
+		//System.err.println("ALT_MASK:" + InputEvent.ALT_MASK);
+		//System.err.println("META_MASK:" + InputEvent.META_MASK);
 				
 		registerKeyboardShortcut(
 				KeyStroke.getKeyStroke(KeyEvent.VK_K, getToolbarShortcutMask()),
