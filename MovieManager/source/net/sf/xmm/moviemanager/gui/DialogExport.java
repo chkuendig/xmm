@@ -576,7 +576,7 @@ public class DialogExport extends JDialog implements ActionListener {
 
     		cancelled = false;
 
-    		ExportMode exportMode = ExportMode.valueOf(tabs.getTitleAt(tabs.getSelectedIndex()));
+    		ExportMode exportMode = getExportMode();
 
     		/* HTMl export */
     		//if (tabs.getSelectedIndex() == ModelImportExportSettings.EXPORT_MODE_HTML) {
