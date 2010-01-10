@@ -110,25 +110,28 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
         return filename;
     }
    
-    /**
-     * Constructor used by UpdateIMDBInfo
-     **/
     public DialogIMDbMultiAdd(ModelEntry modelEntry, boolean getUrlKeyOnly, String alternateTitle) {
-        /* Dialog creation...*/
-        super(modelEntry, alternateTitle);
-        
-        if (alternateTitle != null)
-        	setTitle(alternateTitle);
-       	        
-        this.getUrlKeyOnly = getUrlKeyOnly;
-        addWithoutIMDBInfo = true;
-        
-        addToListDialog();
+    	super(modelEntry, alternateTitle, false);
+    	
+    	  if (alternateTitle != null)
+          	setTitle(alternateTitle);
+         	        
+          this.getUrlKeyOnly = getUrlKeyOnly;
+          addWithoutIMDBInfo = true;
+          
+          addToListDialog();
     }
-     
+       
     public DialogIMDbMultiAdd(ModelEntry modelEntry, String searchString, 
     		ImdbImportOption multiAddSelectOption, String addToThisList) {
     	this(modelEntry, searchString, multiAddSelectOption, addToThisList, true);
+    	
+    	try {
+			throw new Exception("Wrong constructor");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     /**
@@ -157,7 +160,7 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
      * Constructor - When adding multiple movies by file.
      **/
     public DialogIMDbMultiAdd(String _imdbId, ModelEntry modelEntry, String searchString, 
-    		String filename, File multiAddFile, ImdbImportOption multiAddSelectOption, String addToThisList) {
+    		String filename, File multiAddFile, ImdbImportOption multiAddSelectOption, String addToThisList, boolean performSearch) {
     	    	
     	/* Dialog creation...*/
     	this(modelEntry, searchString, multiAddSelectOption, addToThisList, false);
@@ -169,7 +172,8 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
         
         setTitle(filename);
           
-        performSearch(searchString);
+        if (performSearch)
+        	performSearch(searchString);
     }
 
 
@@ -282,7 +286,7 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
 
     	JButton abortButton = new JButton(Localizer.get("DialogIMDbMultiAdd.button.abort.text")); //$NON-NLS-1$
     	abortButton.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.abort.tooltip")); //$NON-NLS-1$
-    	abortButton.setActionCommand("GetIMDBInfo - cancelAll"); //$NON-NLS-1$
+    	abortButton.setActionCommand("GetIMDBInfo - abort"); //$NON-NLS-1$
 
     	abortButton.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent event) {
@@ -304,7 +308,7 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
      }
 	
     void performSearch(String searchString) {
-	
+		
     	try {
     		int pos = 0;
     		DefaultListModel list = new DefaultListModel();
@@ -321,7 +325,7 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
 
     			/*Number of movie hits*/
     			hitCount = hits.size();
-
+    			
     			if (hitCount == 0)
     				list.addElement(new ModelIMDbSearchHit(null, Localizer.get("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
     			else {
@@ -340,7 +344,7 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     		
     		if (executeCommandMultipleMoviesSelectCheck(hitCount) == ShowListOption.show)
     			GUIUtil.showAndWait(this, true);
-
+    		
     	    // Insert prefix in Title to show that these movies maybe got wrong imdb infos
     		if (MovieManager.getConfig().getMultiAddPrefixMovieTitle() && hitCount > 1 && 
     				multiAddSelectOption == ImdbImportOption.selectFirst && (imdbId == null))
@@ -532,5 +536,10 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
 			
 			dispose();
     	}
+    }
+
+    void setHotkeyModifiers() {
+    	super.setHotkeyModifiers();
+    	
     }
 }
