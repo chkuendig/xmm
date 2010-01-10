@@ -40,6 +40,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -88,15 +89,10 @@ import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTreeEventListener;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileNode;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTree;
 import net.sf.xmm.moviemanager.swing.progressbar.MultiAddProgressBar;
-import net.sf.xmm.moviemanager.swing.progressbar.ProgressBean;
-import net.sf.xmm.moviemanager.swing.progressbar.ProgressBeanImpl;
-import net.sf.xmm.moviemanager.swing.progressbar.SimpleProgressBar;
-import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.StringUtil.FilenameCloseness;
-import net.sf.xmm.moviemanager.util.tools.SimpleMailbox;
 
 import org.apache.log4j.Logger;
 
@@ -163,6 +159,11 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	JPanel optionsPanel;
 	JPanel all;
 	
+	JTabbedPane tabbedPane;
+	
+	JSplitPane addMultipleMoviesSplitPane;
+	JSplitPane fileListsSplitPane;
+	
 	private HashMap<String, Files> nodesInFileLists = new HashMap<String, Files>();
 		
 	boolean mediaFilesInDatabaseAdded = false;
@@ -180,6 +181,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	public DialogAddMultipleMovies() {
 		/* Dialog creation...*/
 		super(MovieManager.getDialog());
+				
 		/* Close dialog... */
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -188,18 +190,12 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			}
 		});
 
-		/* Enables dispose when pushing escape */
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
+		GUIUtil.enableDisposeOnEscapeKey(this, new AbstractAction() {
+			public void actionPerformed(ActionEvent arg0) {
 				executeSave();
-				dispose();
 			}
-		};
-
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-		getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
-
+		});
+		
 		setTitle(Localizer.get("DialogAddMultipleMovies.title")); //$NON-NLS-1$
 		setModal(true);
 		setResizable(true);
@@ -278,6 +274,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		userDefinedInfo.setEnabled(false);
 		
 		JPanel cleanStringPanel = new JPanel(new GridLayout(0, 1));
+		cleanStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAddMultipleMovies.panel-clean-string.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		
 		cleanStringPanel.add(enableExludeParantheses);
 		cleanStringPanel.add(enableExludeCDNotation);
 		cleanStringPanel.add(enableExludeIntegers);
@@ -285,9 +283,6 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		cleanStringPanel.add(enableExludeAllAfterMatchOnUserDefinedInfo);
 		cleanStringPanel.add(userDefinedInfo);
 				
-		cleanStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAddMultipleMovies.panel-clean-string.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
-
-		
 		enableUseFolderName = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-options.enable-Folder-Naming.text")); //$NON-NLS-1$
 		enableUseFolderName.setActionCommand("enableFolderTitle"); //$NON-NLS-1$
 		enableUseFolderName.setToolTipText(Localizer.get("DialogAddMultipleMovies.panel-options.enable-Folder-Naming-tooltip")); //$NON-NLS-1$
@@ -307,7 +302,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		enableUseParentFolderIfCD.setEnabled(false);
 		
 		JPanel titleOptionPanel = new JPanel(new GridLayout(0, 1));
-		titleOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Title options")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		titleOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Title options")), BorderFactory.createEmptyBorder(0,5,5,5))); //$NON-NLS-1$
 
 		titleOptionPanel.add(enableUseFolderName);
 		titleOptionPanel.add(enableUseParentFolderIfCD);
@@ -407,7 +402,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		buttonPanel.add(buttonAddMovies);
 		buttonPanel.add(buttonCancel);
 
-		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane = new JTabbedPane();
 		
 		imdbOptionsPanel = new JPanel();
 		imdbOptionsPanel.setLayout(new BoxLayout(imdbOptionsPanel, BoxLayout.Y_AXIS));
@@ -508,9 +503,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
-
-							System.err.println("fileTree.isReady():" + fileTree.isReady());
-							
+	
 							if (!fileTree.isReady())
 								GUIUtil.show(progressBar, true);
 						}					
@@ -546,7 +539,6 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		for (String device : rootDevices) {
 			fileTree.addRootDevice(new File(device));		
 		}
-		
 		
 	
 		// Regular expression
@@ -665,7 +657,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		mediaFilesPanel.add(new JLabel("media files list"));
 		mediaFilesToAddPanel.add(new JLabel("media files to add list"));
 		
-		JSplitPane addMultipleMoviesSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, mainTop, createMediaFilesListPanel());
+		addMultipleMoviesSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, mainTop, createMediaFilesListPanel());
 				
 		all = new JPanel();
 		all.setLayout(new BorderLayout());
@@ -793,7 +785,47 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		return listPanel;
 	}
 
+	void updateExtensionoOnTree() {
+		
+		ArrayList<String> validExtensions = new ArrayList<String>();
+		
+		if (aviExtension.isSelected())
+			validExtensions.add("avi");
+		
+		if (divxExtension.isSelected())
+			validExtensions.add("divx");
+		
+		if (mpegExtension.isSelected()) {
+			validExtensions.add("mpeg");
+			validExtensions.add("mpg");
+		}
+		
+		if (ogmExtension.isSelected())
+			validExtensions.add("ogm");
+		
+		if (mkvExtension.isSelected())
+			validExtensions.add("mkv");
+		
+		if (mp4Extension.isSelected())
+			validExtensions.add("mp4");
+			
+		
+		String [] ext = customExtension.getText().trim().split("\\s*,\\s*");
+		
+		for (int i = 0; i < ext.length; i++) {
+			
+			if (ext[i].length() > 0)
+				validExtensions.add(ext[i].startsWith(".") ? ext[i].substring(1, ext[i].length()) : ext[i]);
+		}
+		
+		if (anyExtension.isSelected()) {
+			fileTree.setAllowAnyExtension(true);
+		}
+		else
+			fileTree.setAllowAnyExtension(false);		
 	
+		fileTree.setValidExtension(validExtensions);
+	}
 	
 	
 	void loadConfigSettings() {
@@ -875,52 +907,11 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		
 		updateRegexPattern();
 		updateExtensionoOnTree();
+		
+		loadWindowSettings();
 	}
 	
 	
-	void updateExtensionoOnTree() {
-				
-		ArrayList<String> validExtensions = new ArrayList<String>();
-		
-		if (aviExtension.isSelected())
-			validExtensions.add("avi");
-		
-		if (divxExtension.isSelected())
-			validExtensions.add("divx");
-		
-		if (mpegExtension.isSelected()) {
-			validExtensions.add("mpeg");
-			validExtensions.add("mpg");
-		}
-		
-		if (ogmExtension.isSelected())
-			validExtensions.add("ogm");
-		
-		if (mkvExtension.isSelected())
-			validExtensions.add("mkv");
-		
-		if (mp4Extension.isSelected())
-			validExtensions.add("mp4");
-			
-		
-		String [] ext = customExtension.getText().trim().split("\\s*,\\s*");
-		
-		for (int i = 0; i < ext.length; i++) {
-			
-			if (ext[i].length() > 0)
-				validExtensions.add(ext[i].startsWith(".") ? ext[i].substring(1, ext[i].length()) : ext[i]);
-		}
-		
-		if (anyExtension.isSelected()) {
-			fileTree.setAllowAnyExtension(true);
-		}
-		else
-			fileTree.setAllowAnyExtension(false);		
-	
-		fileTree.setValidExtension(validExtensions);
-	}
-	
-
 	/*Saves the options to the MovieManager object*/
 	public void executeSave() {
 		
@@ -974,22 +965,59 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 					
 		MovieManager.getConfig().setMultiAddValidExtension(ext);
 		MovieManager.getConfig().setMultiAddCustomExtensions(customExtension.getText());
+	
+		saveWindowSettings();
 	}
 	
 	
+	
+	public void saveWindowSettings() {
+
+		MovieManagerConfig config = MovieManager.getConfig();
+				
+		config.setMultiAddWindowSize(getSize());
+		config.setMultiAddMainSliderPosition(addMultipleMoviesSplitPane.getDividerLocation());
+		config.setMultiAddFileSliderPosition(fileListsSplitPane.getDividerLocation());
+		config.setMultiAddTabIndex(tabbedPane.getSelectedIndex());
+	}
+		
+	public void loadWindowSettings() {
+		
+		MovieManagerConfig config = MovieManager.getConfig();
+		
+		if (config.getMultiAddWindowSize() != null)	
+			setSize(config.getMultiAddWindowSize());
+		
+		addMultipleMoviesSplitPane.setDividerLocation(config.getMultiAddMainSliderPosition());
+		fileListsSplitPane.setDividerLocation(config.getMultiAddFileSliderPosition());
+		
+		int index = config.getMultiAddTabIndex();
+		
+		if (index >= 0 && index < tabbedPane.getComponentCount()) {
+			tabbedPane.setSelectedIndex(index);
+		}
+	}
+
 
 	void addFilesToAddToList(ArrayList<FileNode> files) {
 
-		DefaultListModel model = (DefaultListModel) filesToAddList.getModel();
+		final DefaultListModel newModel = new DefaultListModel();
 
 		for (int i = 0; i < files.size(); i++) {
 
 			if (!nodesInFileLists.containsKey(files.get(i).getFile().getAbsolutePath())) {
 				Files newFile = new Files(files.get(i).getFile());
 				nodesInFileLists.put(files.get(i).getFile().getAbsolutePath(), newFile);
-				model.addElement(newFile);
+				newModel.addElement(newFile);
 			}
 		}
+
+		// Change JList model on EDT
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				filesToAddList.setModel(newModel);
+			}
+		});
 	}
 	
 	/**
@@ -998,35 +1026,48 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	 */
 	void addFilesToFileList(ArrayList<FileNode> files) {
 		
-		DefaultListModel model = (DefaultListModel) mediaFileList.getModel();
-		
-		model.clear();
+		final DefaultListModel newModel = new DefaultListModel();
 		
 		 for (int i = 0; i < files.size(); i++) {
 			 File f = ((FileNode) files.get(i)).getFile();
-			 model.addElement(new Files(f));
+			 newModel.addElement(new Files(f));
 		 }
+		 
+		// Change JList model on EDT
+		 SwingUtilities.invokeLater(new Runnable() {
+			 public void run() {
+				mediaFileList.setModel(newModel);
+			}
+		});
 	}		
 	
 	void addSelectedMediaFilesToAddList() {
 		
-		DefaultListModel mediaFilelistModel = (DefaultListModel) mediaFileList.getModel();
-		DefaultListModel fileToAddListModel = (DefaultListModel) filesToAddList.getModel();
+		final DefaultListModel mediaFilelistModel = (DefaultListModel) mediaFileList.getModel();
+		final DefaultListModel fileToAddListModel = (DefaultListModel) filesToAddList.getModel();
 				
 		// No valid entries in the list
 		if (noFilesMatchListAlert) {
 			return;
 		}
-		
-		Object[] selectedValues = mediaFileList.getSelectedValues(); 
+						
+		final Object[] selectedValues = mediaFileList.getSelectedValues(); 
 		
 		 for (int i = 0; i < selectedValues.length; i++) {
-			 mediaFilelistModel.removeElement(selectedValues[i]);
-		 
-			 if (!nodesInFileLists.containsKey(((Files) selectedValues[i]).getFile().getAbsolutePath())) {
-				 fileToAddListModel.addElement(selectedValues[i]);
-				 nodesInFileLists.put(((Files) selectedValues[i]).getFile().getAbsolutePath(), (Files) selectedValues[i]);
-			 }
+			 
+			 final int fi = i;
+			 
+			 SwingUtilities.invokeLater(new Runnable() {
+				 public void run() {
+
+					 mediaFilelistModel.removeElement(selectedValues[fi]);
+
+					 if (!nodesInFileLists.containsKey(((Files) selectedValues[fi]).getFile().getAbsolutePath())) {
+						 fileToAddListModel.addElement(selectedValues[fi]);
+						 nodesInFileLists.put(((Files) selectedValues[fi]).getFile().getAbsolutePath(), (Files) selectedValues[fi]);
+					 }
+				 }
+			 });
 		 }
 		 
 		 calculateSimilarity(fileToAddListModel);
@@ -1094,7 +1135,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			public void run() {
 				
 				ArrayList<FileNode> files =  fileTree.getFilesFromDirectoryTree(true);
-				
+					
 				if (files == null || files.size() == 0) {
 					
 					try {
@@ -1155,6 +1196,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		if (event.getSource().equals(buttonAddList)) {
 			
 			MovieManagerCommandLists.execute(this);
+			executeSave();
+			
 			SwingUtilities.invokeLater(new Runnable() {
 				/* Must do changed on EDT to be safe */
 				public void run() {
@@ -1206,41 +1249,54 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		}
 		
 		public String getName() {
-			if (addedFiles.size() == 0 )
-				return file.getName();
-
-			return null;
+			return file.getName();
+		}
+		
+		public int getFileCount() {
+			return 1 + addedFiles.size();
 		}
 		
 		public void addFile(Files f) {
-			addedFiles.add(f);
+						
+			ArrayList<Files> files = f.getFiles();
 			
-			Files [] files = f.getAddedFiles();
-			
-			for (int i = 0; i < files.length; i++) {
-				addedFiles.add(files[i]);
+			for (int i = 0; i < files.size(); i++) {
+				addedFiles.add(files.get(i));
 			}
-			
-			f.clearAddedFiles();
+			f.clearFiles();
 		}
 		
 		public File getFile() {
 			return file;
 		}
 		
-		public Files [] getAddedFiles() {
-			return addedFiles.toArray(new Files[addedFiles.size()]);
+		public ArrayList<Files> getFiles() {
+			ArrayList<Files> files  = (ArrayList<Files>) addedFiles.clone();
+			files.add(0, this);
+			return files;
 		}
 		
-		public void clearAddedFiles() {
+		public void clearFiles() {
 			addedFiles.clear();
+		}
+		
+		/**
+		 * Removes all the added files
+		 */
+		public ArrayList<Files> expandFiles() {
+			ArrayList<Files> expanded = addedFiles;
+			
+			// Clear list
+			addedFiles = new ArrayList<Files>();
+			
+			return expanded;
 		}
 		
 		public String toString() {
 			
-			String str = file.getName();
+			String str = "";
 			
-			for (Files f : addedFiles)
+			for (Files f : getFiles())
 				str += " " + f.getName();
 			
 			return str; 
@@ -1248,9 +1304,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		
 		public String toToolTipText() {
 			
-			String str = "<html> Files:<br>" + file.getName();
+			String str = "<html> Files:";
 			
-			for (Files f : addedFiles) {
+			for (Files f : getFiles()) {
 				str += "<br>" + f.getName();
 			}
 			str += "</html>";
@@ -1380,8 +1436,12 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				Object [] elems = model.toArray();
 				model.removeAllElements();
 				
-				for (int i = 0; i < elems.length; i++)
-					nodesInFileLists.remove(((Files)elems[i]).getFile().getAbsolutePath());
+				for (int i = 0; i < elems.length; i++) {
+					ArrayList<Files> files = ((Files)elems[i]).getFiles();
+					
+					for (Files f : files)
+						nodesInFileLists.remove(f.getFile().getAbsolutePath());
+				}
 			}
 		});
 
@@ -1502,7 +1562,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		filesToAddListPanel.add(scrollPaneNotes, BorderLayout.CENTER);
 		filesToAddListPanel.add(filesToAddButtonPanel, BorderLayout.EAST);
 		
-		JSplitPane fileListsSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, mediaFilesListPanel, filesToAddListPanel);
+		fileListsSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, mediaFilesListPanel, filesToAddListPanel);
 		fileListsSplitPane.setOneTouchExpandable(true);
 		fileListsSplitPane.setContinuousLayout(true);
 		fileListsSplitPane.setDividerSize(7);
@@ -1558,8 +1618,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			DefaultListModel model = (DefaultListModel) filesToAddList.getModel();
 			Files f1 = (Files) model.getElementAt(selectedIndexes[0]);
 			
-			// If only one file, no need to show popup
-			if (f1.getAddedFiles().length > 0)
+			// Only show popup if more than one file
+			if (f1.getFileCount() > 1)
 				popupMenu.add(expandSelectedEntries);
 		}
 		else
@@ -1594,14 +1654,12 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				
 				DefaultListModel model = (DefaultListModel) filesToAddList.getModel();
 				Files f1 = (Files) model.getElementAt(selectedIndexes[0]);
+								
+				ArrayList<Files> expanded = f1.expandFiles();
 				
-				Files [] files = f1.getAddedFiles();
-				
-				for (int i = 0; i < files.length; i++) {
-					model.add(selectedIndexes[0]+ 1 + i, files[i]);
+				for (int i = 0; i < expanded.size(); i++) {
+					model.add(selectedIndexes[0] + 1 + i, expanded.get(i));
 				}
-				
-				f1.clearAddedFiles();
 			}
 		});
 		
@@ -1619,9 +1677,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			}
 		});
 		
-		//popupMenu.setInvoker(movieList);
 		popupMenu.setLocation(x, y);
-
 		popupMenu.show(filesToAddList, x, y);
 	}
 }
