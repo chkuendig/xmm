@@ -43,7 +43,7 @@ import org.apache.log4j.Logger;
 
 public class ModelMovieInfo {
     	  
-	Logger log = Logger.getLogger(getClass());
+	static Logger log = Logger.getLogger(ModelMovieInfo.class);
 		
     private ModelUpdatedHandler modelUpdatedHandler = new ModelUpdatedHandler();
         
@@ -860,7 +860,10 @@ public class ModelMovieInfo {
         byte [] cover = model.getCoverData();
         String coverName = model.getCover();
          
-        if (cover == null || coverName == null || coverName.equals("")) {
+        if (cover == null) {
+        	throw new Exception("Unable to save cover: Data is null");
+        }
+        else if (coverName == null || coverName.equals("")) {
         	throw new Exception("Unable to save cover file:" + coverName);
         }
         
@@ -939,7 +942,12 @@ public class ModelMovieInfo {
     	while (tokenizer.hasMoreTokens()) {
 
     		value = tokenizer.nextToken();
-    		key = StringUtil.performExcludeParantheses(value, false).trim();
+    		
+    		try {
+				key = StringUtil.performExcludeParantheses(value, false).trim();
+			} catch (Exception e) {
+				log.error("Exception:" + e.getMessage(), e);
+			}
 	    		
     		if (MovieManager.getConfig().getUseLanguageSpecificTitle() && value.indexOf("[" + languageCode + "]") != -1) {
 
