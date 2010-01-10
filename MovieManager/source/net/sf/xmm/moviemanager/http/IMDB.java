@@ -133,7 +133,7 @@ public class IMDB {
     /*
      * If urlID is null, no extra plot will be retrieved
      */
-    private ModelIMDbEntry parseData1(String urlID, StringBuffer data) throws Exception {
+    private ModelIMDbEntry parseData(String urlID, StringBuffer data) throws Exception {
 		
         String date = "", title = "", directedBy = "", writtenBy = "", genre = "", rating = "", colour = "", aka = "", 
         country = "", language = "", mpaa = "", soundMix = "", runtime = "", certification = "", awards = "", plot = "", cast = "", 
@@ -480,7 +480,7 @@ public class IMDB {
 
     
     
-    private ModelIMDbEntry parseData(String urlID, StringBuffer data) throws Exception {
+    private ModelIMDbEntry parseData2(String urlID, StringBuffer data) throws Exception {
 		
         String date = "", title = "", plot = "", coverURL = "", coverName = "";
     	  
@@ -910,6 +910,7 @@ public class IMDB {
 				}
 				
 				aka = getDecodedClassInfo("Also Known As:", data);
+				
 				listModel.add(new ModelIMDbSearchHit(key, movieTitle, aka));
 				
 				return listModel;
@@ -979,9 +980,10 @@ public class IMDB {
 				
 				title += " (" + year + ")"; 
 				
+				//System.err.println("m.group(0):" + m.group(0));
 				// Aka
 				aka = grabAkaTitlesFromSearchHit(m.group(0));
-				
+				//System.err.println("aka:" + aka);
 				int matchIndex = m.start();
 				
 				String category = null;
@@ -1008,19 +1010,30 @@ public class IMDB {
     
     public static String grabAkaTitlesFromSearchHit(String substring) {
 		
+    	/* 
+    	  Example: 
+    	  
+    	  <a href="/title/tt0093773/" onclick="(new Image()).src='/rg/find-title-1/title_popular/images/b.gif?link=/title/tt0093773/';">
+    	    	Predator</a> (1987)  <br>
+    		&nbsp;aka <em>"Predator - Jagten er begyndt"</em> - Denmark<br>
+    		&nbsp;aka <em>"Pred&#xE1;tor"</em> - Czech Republic<br>
+    		&nbsp;aka <em>"Predator - saalistaja"</em> - Finland<br>
+    		&nbsp;aka <em>"Predator: Den usynlige fiende"</em> - Norway </td></tr>
+    	 */
+    	
+    	
     	String aka = " ";
-    	String akas [] = substring.split("&#160;aka");
+    	String akas [] = substring.split("aka ");
     	
     	// skips the first index which is the original title
     	for (int i = 1; i < akas.length; i++) {
     		
     		if (!aka.equals(" "))
     			aka += "\r\n ";
-    		
+    		    		
     		aka += HttpUtil.decodeHTML(akas[i]);
     	}
-    	    	
-		return aka;
+    	return aka;
     }
   
    // <div.*?class=\"info.+?<.+?>(.*?)(\(?:.*?\))?<.+?>(.+?)</div>
