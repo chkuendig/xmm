@@ -1,5 +1,5 @@
 /**
- * @(#)ModelImportExportSettings.java 1.0 26.01.06 (dd.mm.yy)
+ * @(#)ModelImportExportSettings.java
  *
  * Copyright (2003) Bro3
  * 
@@ -28,14 +28,6 @@ import net.sf.xmm.moviemanager.util.Localizer;
 
 public class ModelImportExportSettings {
 	
-	
-	/*
-	public final static int IMPORT_MODE_TEXT = 0;
-	public final static int IMPORT_MODE_CSV = 1;
-    public final static int IMPORT_MODE_EXCEL = 2;
-	public final static int IMPORT_MODE_XML_DATABASE = 3;
-	public final static int IMPORT_MODE_XML = 4;
-*/
 	public static enum ImportMode {
 		TEXT("Text File"), 
 		CSV("CSV File"), 
@@ -63,14 +55,6 @@ public class ModelImportExportSettings {
 		}
 	};
 	   
-    /*
-	public final static int EXPORT_MODE_CSV = 0;
-    public final static int EXPORT_MODE_EXCEL = 1;
-	public final static int EXPORT_MODE_XML_DATABASE = 2;
-	public final static int EXPORT_MODE_XML = 3;
-    public final static int EXPORT_MODE_HTML = 4;
-	*/
-    
     public static enum ExportMode {
     	CSV("CSV File"), 
     	EXCEL("Excel Spreadsheet"), 
@@ -103,43 +87,13 @@ public class ModelImportExportSettings {
 	    
     public static String [] encodings = new String[] {"US-ASCII", "ISO-8859-1", "UTF-8", "UTF-16BE", "UTF-16LE", "UTF-16"};
     
-    // Stores in array for easy access through indexes.
-    /*
-    public static final String [] importTypes = new String[ModelImportExportSettings.IMPORT_MODE_COUNT];
-    public static final String [] exportTypes = new String[ModelImportExportSettings.EXPORT_MODE_COUNT];
-     */
-    /*
-    void setImportTypeValues() {
-    	importTypes[ModelImportExportSettings.IMPORT_MODE_TEXT] = "Text File";
-    	importTypes[ModelImportExportSettings.IMPORT_MODE_CSV] = "CSV File";
-    	importTypes[ModelImportExportSettings.IMPORT_MODE_EXCEL] = "Excel Spreadsheet";
-    	importTypes[ModelImportExportSettings.IMPORT_MODE_XML] = "XML File";
-    	importTypes[ModelImportExportSettings.IMPORT_MODE_XML_DATABASE] = "XML Database";
-    } 
     
-    
-    void setExportTypeValues() {
-    	exportTypes[ModelImportExportSettings.EXPORT_MODE_CSV] = "CSV File";
-    	exportTypes[ModelImportExportSettings.EXPORT_MODE_EXCEL] = "Excel Spreadsheet";
-    	exportTypes[ModelImportExportSettings.EXPORT_MODE_XML] = Localizer.get("DialogExport.panel-xml-export.title");
-    	exportTypes[ModelImportExportSettings.EXPORT_MODE_XML_DATABASE] = "XML Database";
-    	exportTypes[ModelImportExportSettings.EXPORT_MODE_HTML] = Localizer.get("DialogExport.panel-html-export.title");
-    } 
-    */
-    
-    
-    public ModelImportExportSettings() {
-    	//setImportTypeValues();
-    	//setExportTypeValues();
-    }
-    
+   
         
     public enum ImdbImportOption {off, displayList, selectFirst, selectFirstOrAddToSkippedList, 
     	selectIfOnlyOneHit, selectIfOnlyOneHitOrAddToSkippedList}
        
-    
-   // public int multiAddIMDbSelectOption = -1;
-  
+      
     public ImdbImportOption multiAddIMDbSelectOption = ImdbImportOption.off;
     
     public boolean isIMDbEnabled() {
