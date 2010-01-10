@@ -112,7 +112,7 @@ public class MovieManagerCommandConvertDatabase extends JPanel implements Action
 				InputStream inputStream;
 				OutputStream outputStream;
 
-				inputStream = new FileInputStream(FileUtil.getFile("Temp.mdb")); //$NON-NLS-1$
+				inputStream = new FileInputStream(FileUtil.getFile("config/Temp.mdb")); //$NON-NLS-1$
 				outputStream = new FileOutputStream(dataBaseFile);
 				data = new byte[inputStream.available()];
 
