@@ -38,7 +38,7 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
 
 	static Logger log = Logger.getLogger(MovieManagerCommandImportHandler.class);
 	
-	boolean cancelled = false;
+	private boolean cancelled = false;
 	boolean aborted = false;
 	
 	ModelMovieInfo modelMovieInfo = new ModelMovieInfo(false, true);
@@ -85,6 +85,10 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
 		return aborted;
 	}
 	
+	public void resetStatus() {
+		cancelled = false;
+	}
+	
 	public void execute() throws Exception {};
 	
 	public void done() throws Exception {};
@@ -104,7 +108,7 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
     public ImportExportReturn executeCommandGetIMDBInfoMultiMovies(String searchString, ModelImportExportSettings settings, ModelMovie model) {
       	
     	ImportExportReturn ret = ImportExportReturn.success;
-    	
+
         /* Checks the movie title... */
         log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
         
