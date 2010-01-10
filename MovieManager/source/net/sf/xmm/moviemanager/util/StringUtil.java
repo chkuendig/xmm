@@ -110,9 +110,14 @@ public class StringUtil {
 	
 	/**
 	 *  Removes all parantheses including it's content 
+	 * @throws Exception 
 	 */
-	public static String performExcludeParantheses(String searchString, boolean toLowerCase) {
+	public static String performExcludeParantheses(String searchString, boolean toLowerCase) throws Exception {
 
+		if (searchString == null) {
+			throw new Exception("Input string cannot be null");
+		}
+		
 		if (toLowerCase)
 			searchString = searchString.toLowerCase();
 		
