@@ -38,6 +38,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -536,6 +537,17 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 		Set<String> keySet = changedNodes.keySet();
 		String [] keys = keySet.toArray(new String[keySet.size()]);
 		
+		for (int i = 0; i < keys.length; i++) {
+			IconData r = (IconData) changedNodes.get((String) keys[i]);
+			addFiles(r, files, keys, false);
+		}
+
+		eventHandler.fireFileTreeReadyEvent(new FileTreeEvent(true));
+		
+		cancelledJob = false;
+		ready = true;
+		
+		/*
 		Arrays.sort(keys, new Comparator<String>() {
 
 			public int compare(String s1, String s2) {
@@ -546,17 +558,14 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 				return this == obj;
 			}
 		});
-
-
-		for (int i = 0; i < keys.length; i++) {
-			IconData r = (IconData) changedNodes.get((String) keys[i]);
-			addFiles(r, files, keys, false);
-		}
-
-		eventHandler.fireFileTreeReadyEvent(new FileTreeEvent(true));
+		*/
 		
-		cancelledJob = false;
-		ready = true;
+		Collections.sort(files, new Comparator<FileNode>() {
+
+			public int compare(FileNode f1, FileNode f2) {
+				return f1.getName().compareTo(f2.getName());
+			}
+		});
 		
 		return files;
 	}
@@ -796,8 +805,11 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 							if (icon.isRootElement()) {
 								dir_popup.add(removeDirAsRootDevice);
 							}
-							else
-								dir_popup.add(addDirAsRootDevice);
+							else  {
+								// If it isn't already a root device (but shown in the regular directory tree)
+								if (!rootDevices.contains(icon.getFile().getAbsolutePath()))
+									dir_popup.add(addDirAsRootDevice);
+							}
 						}
 						
 						dir_popup.show(fileTree, x, y);
@@ -856,12 +868,8 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 						};
 						try {
 							SwingUtilities.invokeAndWait(runnable);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (InvocationTargetException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+						} catch (Exception e) {
+							log.warn("Exception:" + e.getMessage(), e);
 						}
 					}
 					else {
@@ -1003,10 +1011,6 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 	}
 
 	public enum FileMatch {ERROR, REGULAR, MATCH, NO_MATCH, EXISTS_IN_DB};
-	//public static final int FILE_REGULAR    = 1;
-	//public static final int FILE_MATCH 		= 2;
-	//public static final int FILE_NO_MATCH 	= 3;
-	//public static final int FILE_EXISTS 	= 4;
 
 	
 	public FileMatch checkFileMatch(Object fileObj) {
