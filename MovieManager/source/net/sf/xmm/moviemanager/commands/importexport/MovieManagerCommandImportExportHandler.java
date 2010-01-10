@@ -2,7 +2,7 @@ package net.sf.xmm.moviemanager.commands.importexport;
 
 public interface MovieManagerCommandImportExportHandler {
 
-	public enum ImportExportReturn {success, error, cancelled, aborted};
+	public enum ImportExportReturn {success, error, cancelled, aborted, skipIMDbInfo};
 	
 	public void setCancelled(boolean cancel);
 		
