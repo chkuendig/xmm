@@ -796,7 +796,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		
 		if (lastDVDDir != null) {
 			displayName = SysUtil.getDriveDisplayName(lastDVDDir);
-			displayName = StringUtil.performExcludeParantheses(displayName, false);
+			
+			try {
+				displayName = StringUtil.performExcludeParantheses(displayName, false);
+			} catch (Exception e) {
+				log.error("Exception:" + e.getMessage(), e);
+			}
 		}
 		
 		if (displayName != null) {
@@ -2200,6 +2205,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
     
 	
+	// DialogMovieManager window values
 	
 	public int getMainWindowSliderPosition() {
 		return mainWindowSliderPosition;
@@ -2250,6 +2256,47 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 	
 	
+	int multiAddMainSliderPosition = -1;
+	int multiAddFileSliderPosition = -1;
+	int multiAddTabIndex = 0;
+	Dimension multiAddWindowSize = null;
+	
+	
+	// DialogMultiAdd window values
+	
+	public int getMultiAddMainSliderPosition() {
+		return multiAddMainSliderPosition;
+	}
+	
+	public void setMultiAddMainSliderPosition(int value) {
+		multiAddMainSliderPosition = value;
+	}
+	
+	public int getMultiAddFileSliderPosition() {
+		return multiAddFileSliderPosition;
+	}
+	
+	public void setMultiAddFileSliderPosition(int value) {
+		multiAddFileSliderPosition = value;
+	}
+		
+	public int getMultiAddTabIndex() {
+		return multiAddTabIndex;
+	}
+	
+	public void setMultiAddTabIndex(int value) {
+		multiAddTabIndex = value;
+	}
+		
+	public Dimension getMultiAddWindowSize() {
+		return multiAddWindowSize;
+	}
+	
+	public void setMultiAddWindowSize(Dimension value) {
+		multiAddWindowSize = value;
+	}
+	
+		
 	boolean getBooleanValue(String key, HashMap<String, String> config) {
 		return getBooleanValue(key, config, false);
 	}
@@ -2614,8 +2661,22 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 
 			setMainMaximized(getBooleanValue("mainMaximized:", config, getMainMaximized()));
-		
+			
 			setAddMovieWindowHeight(getIntValue("addMovieWindowHeight:", config, getAddMovieWindowHeight()));
+			
+			// MultiAdd window
+			setMultiAddMainSliderPosition(getIntValue("multiAddMainSliderPosition:", config, getMultiAddMainSliderPosition()));
+			setMultiAddFileSliderPosition(getIntValue("multiAddFileSliderPosition:", config, getMultiAddFileSliderPosition()));
+			setMultiAddTabIndex(getIntValue("multiAddTabIndex:", config, getMultiAddTabIndex()));
+			
+			int multiAddWidth = getIntValue("multiAddWindowWidth:", config, -1);
+			int multiAddHeight = getIntValue("multiAddWindowHeight:", config, -1);
+			
+			if (multiAddHeight != -1 && multiAddWidth != -1)
+				setMultiAddWindowSize(new Dimension(multiAddWidth, multiAddHeight));
+			
+			
+			// Misc options
 			setShowUnlistedEntries(getBooleanValue("showUnlistedEntries:", config, getShowUnlistedEntries()));
 			setLoadLastUsedListAtStartup(getBooleanValue("loadCurrentListAtStartup:", config, getLoadLastUsedListAtStartup()));
 			setAddNewMoviesToCurrentLists(getBooleanValue("addNewMoviesToCurrentLists:", config, getAddNewMoviesToCurrentLists()));
@@ -2932,14 +2993,23 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 // Size of Movie Manager window
 		 appendToConfig("mainWidth:", (int) mainSize.getWidth(), settings);
 		 appendToConfig("mainHeight:", (int) mainSize.getHeight(), settings);
-		
+		 appendToConfig("mainMaximized:", getMainMaximized(), settings);
+		 
 		 // Main dialog location
 		 appendToConfig("screenLocationX:", (int) getScreenLocation().getX(), settings);
 		 appendToConfig("screenLocationY:", (int) getScreenLocation().getY(), settings);
 		 
 		 // Window mode
-		 appendToConfig("mainMaximized:", getMainMaximized(), settings);
+		
 		 appendToConfig("addMovieWindowHeight:", getAddMovieWindowHeight(), settings);
+		 
+		 
+		 // MultiAdd window
+		 appendToConfig("multiAddMainSliderPosition:", getMultiAddMainSliderPosition(), settings);
+		 appendToConfig("multiAddFileSliderPosition:", getMultiAddFileSliderPosition(), settings);
+		 appendToConfig("multiAddTabIndex:", getMultiAddTabIndex(), settings);
+		 appendToConfig("multiAddWindowWidth:", getMultiAddWindowSize().width, settings);
+		 appendToConfig("multiAddWindowHeight:", getMultiAddWindowSize().height, settings);
 		 
 		 
 		 // The current template
