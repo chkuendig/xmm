@@ -90,8 +90,8 @@ public class MovieManagerCommandImport implements ActionListener{
 			}
 			
 			if (importer != null && !importer.isCancelled()) {
-				final JDialog dialogExorter = new DialogDatabaseImporterExporter(importer, importSettings);
-				GUIUtil.show(dialogExorter, true);
+				final JDialog dialog = new DialogDatabaseImporterExporter(importer, importSettings);
+				GUIUtil.show(dialog, true);
 			}
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
