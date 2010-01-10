@@ -144,7 +144,12 @@ public class DatabaseImporterExporter {
 					title = handler.getTitle(i);
 					
 					if (title != null && !title.equals("")) {
-					
+												
+						if (handler.isCancelled()) {
+							addNewTransferred("Skipped " + title);
+							continue;
+						}
+						
 						if (isStopped()) {
 							addNewTransferred((handler.isImporter() ? "Import " : "Export ") + "process stopped");
 							break;
@@ -154,9 +159,9 @@ public class DatabaseImporterExporter {
 							addNewTransferred((handler.isImporter() ? "Import " : "Export ") + "process aborted");
 							break;
 						}
-
+												
 						ImportExportReturn ret = handler.addMovie(i);
-
+						
 						if (ret == ImportExportReturn.error)
 							addNewTransferred("Failed to " + (handler.isImporter() ? "import " : "export ") + title);
 						else if (ret == ImportExportReturn.cancelled)
