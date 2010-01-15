@@ -88,7 +88,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		ModelImportExportSettings importSettings = getSettings();
 		MovieManagerCommandImportMoviesByFile importByFile = new MovieManagerCommandImportMoviesByFile(importSettings);
 
-		final JDialog dialog = new DialogDatabaseImporterExporter(importByFile, importSettings);
+		final JDialog dialog = new DialogDatabaseImporterExporter(importByFile, importSettings, true);
 		GUIUtil.show(dialog, true);
 	}
 	
@@ -121,6 +121,10 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		}
 		else
 			importSettings.addMovieToList = false;
+		
+		
+		importSettings.existingMediaFiles = damm.getExistingMediaFiles();
+		importSettings.existingMediaFileNames = damm.getExistingMediaFileNames();
 		
 		return importSettings;
 	}
