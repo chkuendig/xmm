@@ -138,6 +138,15 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 		existingMediaFileNames.put(file.getName(), model);
 	}
 	
+	public HashMap<String, ModelEntry> getExistingMediaFiles() {
+		return existingMediaFiles;
+	}
+	
+	public HashMap<String, ModelEntry> getExistingMediaFileNames() {
+		return existingMediaFileNames;
+	}
+	
+	
 	/* 
 	 * Key = filepath, obj = IconData
 	 */
@@ -853,6 +862,8 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 			Thread runner = new Thread()	{
 				public void run() {
 										
+					ready = false;
+					
 					if (fnode != null && fnode.expand(node, allowAnyExtension ? null : validExtensions)) {
 												
 						addExpandedNode(fnode);
@@ -871,6 +882,7 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 					else {
 						fnode.updateNodesAndExpandedChildren(allowAnyExtension ? null : validExtensions);
 					}
+					ready = true;
 					// Fire ready event
 					eventHandler.fireFileTreeReadyEvent(new FileTreeEvent(false));
 				}
@@ -935,7 +947,8 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 			boolean regularFile = false;
 			
 			if (obj instanceof Boolean) {
-				setText("Retrieving data...");
+				setText("Retrieving file list...");
+				setIcon(null);
 			}
 			else if (obj instanceof IconData) {
 

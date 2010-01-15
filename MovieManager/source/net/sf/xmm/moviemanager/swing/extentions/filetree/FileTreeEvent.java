@@ -8,10 +8,15 @@ public class FileTreeEvent extends EventObject {
 	
 	File file = null;
 	boolean searching = false;	
+	boolean buildingTree = false;	
 	
 	public FileTreeEvent(boolean searching) {
 		super(searching);
-		this.searching = searching;
+		
+		if (searching)
+			this.searching = true;
+		else
+			buildingTree = true;
 	}
 	
 	public FileTreeEvent(File f) {
@@ -29,5 +34,9 @@ public class FileTreeEvent extends EventObject {
     
     public boolean isSearching() {
     	return searching;
+    }
+    
+    public boolean isBuildingTree() {
+    	return buildingTree;
     }
 }
