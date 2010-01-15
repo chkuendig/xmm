@@ -271,7 +271,7 @@ public class StringUtil {
 	}
 
 	/**
-	 * Removes the exention of a file name and dot, comma and equal sign and double spaces
+	 * Removes the extension of a file name and dot, comma, underscore and equal sign and double spaces
 	 * @param searchString  the string to be modified
 	 * @return
 	 */
@@ -286,13 +286,11 @@ public class StringUtil {
 		searchString = searchString.replace('.', ' ');
 		searchString = searchString.replace(',', ' ');
 		searchString = searchString.replace('=', ' ');
-
-		int index;
+		searchString = searchString.replace('_', ' ');
 
 		/*Removes all double spaces*/
-		while ((index = searchString.indexOf("  ")) != -1) {
-			searchString = removeCharAt(searchString, index);
-		}
+		searchString = removeDoubleSpace(searchString);
+		
 		return searchString;
 	}
 
