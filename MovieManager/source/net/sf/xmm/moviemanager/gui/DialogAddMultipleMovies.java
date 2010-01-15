@@ -36,6 +36,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
@@ -89,6 +90,9 @@ import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTreeEventListener;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileNode;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTree;
 import net.sf.xmm.moviemanager.swing.progressbar.MultiAddProgressBar;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager.KeyMapping;
+import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.StringUtil;
@@ -152,6 +156,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	
 	JPanel listPanel;
 	JPanel regularOptionsPanel;
+	JPanel filterPanel;
 	
 	FileTree fileTree;
 	
@@ -178,6 +183,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	
 	private ImdbImportOption multiAddSelectOption;
 
+	KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
+	
 	public DialogAddMultipleMovies() {
 		/* Dialog creation...*/
 		super(MovieManager.getDialog());
@@ -197,7 +204,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		});
 		
 		setTitle(Localizer.get("DialogAddMultipleMovies.title")); //$NON-NLS-1$
-		setModal(true);
+		setModal(false);
 		setResizable(true);
 
 		
@@ -394,8 +401,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		buttonAddMovies = new JButton(Localizer.get("DialogAddMultipleMovies.button-add-movies.text")); //$NON-NLS-1$
 		buttonAddMovies.setToolTipText(Localizer.get("DialogAddMultipleMovies.button-add-movies.tooltip")); //$NON-NLS-1$
 		buttonAddMovies.setActionCommand("DialogAddMultipleMovies - Add Movies"); //$NON-NLS-1$
-		buttonAddMovies.addActionListener(this);
-
+		
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		buttonPanel.add(buttonUpdateFileList);
@@ -491,22 +497,32 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 							fileTree.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 					}
 				});
-				
-				if (evt.isSearching()) {
+								
+				if (evt.isSearching() || evt.isBuildingTree()) {
 
 					// Shows the progress bar after some time has passed
 					SwingUtilities.invokeLater(new Runnable() {
 
 						public void run() {
 							try {
-								Thread.sleep(500);
+								Thread.sleep(1000);
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
-	
-							if (!fileTree.isReady())
+														
+							if (!fileTree.isReady()) {
+								
+								if (evt.isSearching()) {
+									progressBar.showAbortButton(true);
+									progressBar.setString("Searching...");
+								}
+								else {
+									progressBar.showAbortButton(false);
+									progressBar.setString("Retrieving file list...");
+								}
 								GUIUtil.show(progressBar, true);
-						}					
+							}					
+						}
 					});
 				}
 			}
@@ -526,7 +542,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 						}
 					});					
 				}
-				if (evt.isSearching()) {
+				
+				if (evt.isSearching() || evt.isBuildingTree()) {
 					GUIUtil.show(progressBar, false);
 				}
 			}
@@ -599,10 +616,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		filterOutDuplicates = new JCheckBox("Ignore media files already in database"); 
 		filterOutDuplicates.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setFilterOutDuplicates(filterOutDuplicates.isSelected());
+				updateFilterOutDuplicates();
 			}
 		});
-
 		
 		filterOutDuplicatesEntireFilePath = new JCheckBox("Use entire file path");
 		filterOutDuplicatesEntireFilePath.setEnabled(false);
@@ -616,7 +632,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		duplicatesPanel.add(filterOutDuplicates);
 		duplicatesPanel.add(filterOutDuplicatesEntireFilePath);
 		
-		JPanel filterPanel = new JPanel();
+		filterPanel = new JPanel();
 		filterPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(4,4,4,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Filter files"), BorderFactory.createEmptyBorder(4,4,4,4)))); //$NON-NLS-1$
 				
 		filterPanel.setLayout(new BorderLayout());
@@ -666,6 +682,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		
 		
 		getContentPane().add(all, BorderLayout.CENTER);
+				
+		setHotkeyModifiersMultiAdd();
+		
 		/* Packs and sets location... */
 		pack();
 
@@ -693,41 +712,50 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			fileTree.setRegexPattern(null, false);
 	}
 	
-	void setFilterOutDuplicates(boolean value) {
+	void updateFilterOutDuplicates() {
 					
 		filterOutDuplicatesEntireFilePath.setEnabled(filterOutDuplicates.isSelected());
 		
-		fileTree.setFilterOutDuplicates(value);
+		fileTree.setFilterOutDuplicates(filterOutDuplicates.isSelected());
 		
-		// Adding all the file paths of each media file from the database
+		// Adding all the file paths of each media file from the database, happens only the first time it's selected
 		if (filterOutDuplicates.isSelected() && !mediaFilesInDatabaseAdded) {
 
 			mediaFilesInDatabaseAdded = true;
-			
-			ArrayList<ModelMovie> list = MovieManager.getIt().getDatabase().getMoviesList("Title");
-			DefaultListModel movies = GUIUtil.toDefaultListModel(list);
-			
-			for (int i = 0; i < movies.size(); i++) {
-
-				ModelEntry model = (ModelEntry) movies.get(i);
-				
-				if (!model.getHasAdditionalInfoData())
-					model.updateAdditionalInfoData();
-				
-				String fileLocation = model.getAdditionalInfo().getFileLocation();
-
-				if (fileLocation.trim().equals(""))
-					continue;
-				
-				String [] files = fileLocation.split("\\*");
-				
-				for (int u = 0; u < files.length; u++) {
-					fileTree.addExistingMediaFileInDatabase(files[u], model);
-				}
-			}
+			addCurrentMediaFilesToTree();
 		}
 	}
 
+	
+	public void addCurrentMediaFilesToTree() {
+		
+		ArrayList<ModelMovie> list = MovieManager.getIt().getDatabase().getMoviesList("Title");
+		
+		for (int i = 0; i < list.size(); i++) {
+
+			ModelMovie model = list.get(i);
+			
+			if (!model.getHasAdditionalInfoData())
+				model.updateAdditionalInfoData();
+			
+			String [] files = model.getAdditionalInfo().getFileLocationAsArray();
+						
+			if (files == null)
+				continue;
+			
+			for (int u = 0; u < files.length; u++) {
+				fileTree.addExistingMediaFileInDatabase(new File(files[u]), model);
+			}
+		}
+	}
+	
+	public HashMap<String, ModelEntry> getExistingMediaFiles() {
+		return fileTree.getExistingMediaFiles();
+	}
+	
+	public HashMap<String, ModelEntry> getExistingMediaFileNames() {
+		return fileTree.getExistingMediaFileNames();
+	}
 	
 	JPanel makeListPanel() {
 
@@ -859,6 +887,16 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		enableExludeUserdefinedInfo.setSelected(config.getMultiAddEnableExludeUserdefinedInfo());
 		enableAutomaticCombine.setSelected(config.getMultiAddEnableAutomaticCombine());
 
+		filterOutDuplicates.setSelected(config.getMultiAddFilterOutDuplicates());
+		
+		updateFilterOutDuplicates();
+		
+		if (!filterOutDuplicates.isSelected())
+			filterOutDuplicatesEntireFilePath.setEnabled(false);
+		
+		if (config.getMultiAddFilterOutDuplicatesByAbsolutePath())
+			filterOutDuplicatesEntireFilePath.doClick();
+				
 		// Simulate click so that actionlistener is triggered.
 		if (MovieManager.getConfig().getMultiAddSkipHiddenDirectories())
 			enableSkipHiddenDirectories.doClick();
@@ -933,6 +971,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		config.setMultiAddTitleOption(enableUseFolderName.isSelected());
 		config.setMultiAddTitleOptionNoCd(enableUseParentFolderIfCD.isSelected());
 		config.setMultiAddEnableAutomaticCombine(enableAutomaticCombine.isSelected());
+		config.setMultiAddFilterOutDuplicates(filterOutDuplicates.isSelected());
+		config.setMultiAddFilterOutDuplicatesByAbsolutePath(filterOutDuplicatesEntireFilePath.isSelected());
+				
 		config.setMultiAddSearchNfoForImdb(enableSearchNfoForImdb.isSelected());
 		config.setMultiAddSkipHiddenDirectories(enableSkipHiddenDirectories.isSelected());
 		config.setMultiAddPrefixMovieTitle(enablePrefixMovieTitle.isSelected());
@@ -1050,29 +1091,30 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		if (noFilesMatchListAlert) {
 			return;
 		}
-						
+
 		final Object[] selectedValues = mediaFileList.getSelectedValues(); 
-		
-		 for (int i = 0; i < selectedValues.length; i++) {
-			 
-			 final int fi = i;
-			 
-			 SwingUtilities.invokeLater(new Runnable() {
-				 public void run() {
 
-					 mediaFilelistModel.removeElement(selectedValues[fi]);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
 
-					 if (!nodesInFileLists.containsKey(((Files) selectedValues[fi]).getFile().getAbsolutePath())) {
-						 fileToAddListModel.addElement(selectedValues[fi]);
-						 nodesInFileLists.put(((Files) selectedValues[fi]).getFile().getAbsolutePath(), (Files) selectedValues[fi]);
-					 }
-				 }
-			 });
-		 }
-		 
-		 calculateSimilarity(fileToAddListModel);
+				setCursor(new Cursor(Cursor.WAIT_CURSOR));
+				
+				for (int i = 0; i < selectedValues.length; i++) {
+
+					mediaFilelistModel.removeElement(selectedValues[i]);
+
+					if (!nodesInFileLists.containsKey(((Files) selectedValues[i]).getFile().getAbsolutePath())) {
+						fileToAddListModel.addElement(selectedValues[i]);
+						nodesInFileLists.put(((Files) selectedValues[i]).getFile().getAbsolutePath(), (Files) selectedValues[i]);
+					}
+				}
+				calculateSimilarity(fileToAddListModel);
+				
+				setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+		});
 	}
-	
+
 	/** 
 	 * Returns the user defined exclude string
 	 */
@@ -1236,20 +1278,18 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	 * Used in the list of media files to add. 
 	 * Files can contain multiple filenames when two or more files are combined in the list
 	 */
-	public class Files {
-		
-		File file = null;
+	public class Files extends File {
 		
 		ArrayList<Files> addedFiles = new ArrayList<Files>();
 		
 		public Color similarityColor = null;
 		
 		Files(File f) {
-			file = f;
+			super(f.getAbsolutePath());
 		}
 		
 		public String getName() {
-			return file.getName();
+			return super.getName();
 		}
 		
 		public int getFileCount() {
@@ -1267,7 +1307,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		}
 		
 		public File getFile() {
-			return file;
+			return this;
 		}
 		
 		public ArrayList<Files> getFiles() {
@@ -1275,6 +1315,22 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			files.add(0, this);
 			return files;
 		}
+		
+		public File [] toFileArray() {
+			return getFiles().toArray(new File[getFileCount()]);
+		}
+		
+		public String [] toStringArray() {
+			
+			ArrayList<Files> files = getFiles();
+			String [] ret = new String[files.size()];
+			
+			for (int i = 0; i < ret.length; i++) {
+				ret[i] = files.get(i).getAbsolutePath();
+			}
+			return ret;
+		}
+		
 		
 		public void clearFiles() {
 			addedFiles.clear();
@@ -1304,7 +1360,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		
 		public String toToolTipText() {
 			
-			String str = "<html> Files:";
+			String str = "<html> Dir:" + getParentFile().getAbsolutePath() + File.pathSeparator + "<br>";
+			str += "Files:";
 			
 			for (Files f : getFiles()) {
 				str += "<br>" + f.getName();
@@ -1323,7 +1380,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		for (int i = 0; i <fileToAddListModel.getSize(); i++) {
 			list.add((Files) fileToAddListModel.get(i));
 		}
-
+	
 		for (int i = 0; i < list.size(); i++) {
 			
 			Files f1 = list.get(i);
@@ -1362,6 +1419,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 					
 					if (MovieManager.getConfig().getMultiAddEnableAutomaticCombine()) {
 						// Automatically combine files only if they are almost identical
+						
 						f1.addFile(f2);
 						toRemove.add(list.get(j));
 					}
@@ -1408,7 +1466,36 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				TitledBorder.DEFAULT_POSITION,
 				new Font(mediaFilesListPanel.getFont().getName(),Font.PLAIN, 12)),
 				BorderFactory.createEmptyBorder(1,5,3,5))));
-		mediaFileList = new JList(); //$NON-NLS-1$
+		
+		mediaFileList = new JList() {
+
+			public String getToolTipText(MouseEvent evt) {
+				int index = locationToIndex(evt.getPoint());
+
+				if (index == -1)
+					return null;
+
+				Object item = getModel().getElementAt(index);
+
+				if (item instanceof Files) {
+					Files f = (Files) item;
+					return f.getFile().getParent();
+				}
+
+				// Return the tool tip text
+				return null;
+			}
+		};
+		
+		mediaFileList.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				// Select all elements on double click
+				if (e.getClickCount() == 2) {
+					mediaFileList.getSelectionModel().setSelectionInterval(0, mediaFileList.getModel().getSize() - 1);
+				}
+			}
+		});
+		
 		mediaFileList.setModel(new DefaultListModel()); 
 
 		JScrollPane mediaFileListScrollPane = new JScrollPane(mediaFileList);
@@ -1680,4 +1767,36 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		popupMenu.setLocation(x, y);
 		popupMenu.show(filesToAddList, x, y);
 	}
+	
+	 void setHotkeyModifiersMultiAdd() {
+	    		    	
+	    	// ALT+C for Close
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Close Window", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonCancel.doClick();
+				}
+			}, buttonCancel);
+			
+			// ALT+A for add movies
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Abort", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonAddMovies.doClick();
+				}
+			}, buttonAddMovies);
+			
+			// ALT+F for add movies
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Abort", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonUpdateFileList.doClick();
+				}
+			}, buttonUpdateFileList);
+						
+			shortcutManager.setKeysToolTipComponent(filterPanel);
+	    }
 }
