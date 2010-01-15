@@ -233,10 +233,6 @@ public class TMXResourceBundle {
 			for (int j = 0; j < numberOfTUVs; j++) {
 				temp_list = listOfTUVs.item(j).getAttributes();
 				temp_attr = (Attr) temp_list.getNamedItem("lang");
-
-				//System.err.println("language:" + temp_attr);
-				//if (!languages.containsKey(temp_attr.getValue()))
-				//	languages.put(temp_attr.getValue(), temp_attr.getValue());
 				
 				t = locales.get(temp_attr.getValue());
 				if (t == null) {
@@ -384,7 +380,6 @@ public class TMXResourceBundle {
 		if (locales.containsKey(lang)) {
 			currentLang = lang;
 			currentLanguage = locales.get(lang);
-			System.err.println("set current language:" + currentLang);
 			return true;
 		}
 		return false;
@@ -397,7 +392,6 @@ public class TMXResourceBundle {
 	public boolean setDefaultLangauge(String lang) {
 		if (locales.containsKey(lang)) {
 			defaultLang = lang;
-			System.err.println("set defaultLang:" + defaultLang);
 			return true;
 		}
 		return false;
