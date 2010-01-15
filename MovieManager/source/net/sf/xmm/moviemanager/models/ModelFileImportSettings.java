@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import net.sf.xmm.moviemanager.gui.DialogAddMultipleMovies;
 
@@ -44,6 +45,8 @@ public class ModelFileImportSettings extends ModelImportExportSettings {
 	public String addToThisList = null;
 	
 	public ArrayList <DialogAddMultipleMovies.Files> fileList;
-    
+    	 
+    public HashMap<String, ModelEntry> existingMediaFileNames;
+    public HashMap<String, ModelEntry> existingMediaFiles;
 }
 
