@@ -413,33 +413,25 @@ public class TMXResourceBundle {
 	 *            default value
 	 * @return parameter value or default
 	 */
-	public String getString(String key, String def) {
+	public String getString(String key, String def) throws MissingResourceException {
 		return getString(key); 
 	}
 	
-	public String getString(String key) {
-		
-		try {
-			
-			String value = currentLanguage.get(key);
-									
-			if (value != null) {
-				return value;
-			}
-			
-			value = locales.get(defaultLang).get(key);
-						
-			if (value == null) {
-				log.warn("Invalid key:" + key);
-				throw new Exception();
-			}
+	public String getString(String key) throws MissingResourceException {
+
+		String value = currentLanguage.get(key);
+
+		if (value != null) {
 			return value;
-			
-		} catch (Exception e) {
-			// for any exception return the default value
-			e.printStackTrace();
-			return "";
 		}
+
+		if (defaultLang != null)
+			value = locales.get(defaultLang).get(key);
+
+		if (value == null) {
+			throw new MissingResourceException("Invalid key", this.getClass().getName(), key);
+		}
+		return value;
 	}
 
 	/**

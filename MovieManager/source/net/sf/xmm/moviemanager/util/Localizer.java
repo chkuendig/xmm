@@ -116,12 +116,11 @@ public class Localizer {
 	public static String get(String key) {
 
 		try {
-			temp = ""; //res_no.getString(key, "no-NO");
-			temp = res_en.getString(key, "");
+			temp = res_en.getString(key);
 			
 			return temp;
 		} catch (MissingResourceException e) {
-			log.warn("Invalid key:" + key, e);
+			log.warn("Invalid key:" + key);
 			return '!' + key + '!';
 		}
 	}
