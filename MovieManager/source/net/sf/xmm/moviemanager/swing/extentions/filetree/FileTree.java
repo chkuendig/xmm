@@ -133,13 +133,9 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 	 * @param path
 	 * @param model
 	 */
-	public void addExistingMediaFileInDatabase(String path, ModelEntry model) {
-		
-		existingMediaFiles.put(path, model);
-		
-		File f = new File(path);
-		
-		existingMediaFileNames.put(f.getName(), model);
+	public void addExistingMediaFileInDatabase(File file, ModelEntry model) {
+		existingMediaFiles.put(file.getAbsolutePath(), model);
+		existingMediaFileNames.put(file.getName(), model);
 	}
 	
 	/* 
@@ -1018,7 +1014,7 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 		File file = null;
 		
 		if (fileObj instanceof FileNode) {
-			// SHOULD NEWVER BE FILENODE
+			// SHOULD NEVER BE FILENODE
 			file = ((FileNode) fileObj).getFile();
 		} else if (fileObj instanceof File) {
 			file = ((File) fileObj);
