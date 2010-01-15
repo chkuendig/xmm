@@ -286,6 +286,14 @@ public class ModelAdditionalInfo {
 			return "";
 		return fileLocation;
 	}
+	
+	public String [] getFileLocationAsArray() {
+		if (fileLocation == null)
+			return null;
+		
+		String [] files = fileLocation.trim().split("\\*");
+		return files;
+	}
 
 	public int getFileCount() {
 		return fileCount;
