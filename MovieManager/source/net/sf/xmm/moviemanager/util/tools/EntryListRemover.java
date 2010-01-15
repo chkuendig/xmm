@@ -34,6 +34,7 @@ import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
+import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 
@@ -167,16 +168,24 @@ public class EntryListRemover {
 
 			MovieManager.getIt().setDeleting(false);
 
-			if (fastremove)
-				MovieManagerCommandSelect.executeAndReload(selectedIndex);
-			else {
-				if (selectedIndex == 0)
-					moviesList.setSelectionRow(selectedIndex);
-				else
-					moviesList.setSelectionRow(selectedIndex-1);
-				MovieManagerCommandSelect.execute();
-			}
-			MovieManager.getDialog().setAndShowEntries();
+			final boolean finalFastremove = fastremove;
+			
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				public void run() {
+					if (finalFastremove)
+						MovieManagerCommandSelect.executeAndReload(selectedIndex);
+					else {
+						
+						if (selectedIndex == 0)
+							moviesList.setSelectionRow(selectedIndex);
+						else
+							moviesList.setSelectionRow(selectedIndex-1);
+						MovieManagerCommandSelect.execute();
+					}
+					MovieManager.getDialog().setAndShowEntries();
+				}
+			});			
 		}
 	}
 }
