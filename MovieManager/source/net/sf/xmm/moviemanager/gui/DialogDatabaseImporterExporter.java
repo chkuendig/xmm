@@ -64,7 +64,7 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 	public final static int milliseconds = 1;
 	private Timer timer;
 	private JButton startButton;
-	private JButton cancelButton;
+	private JButton abortButton;
 	private JButton closeButton;
 
 	private DatabaseImporterExporter databaseImporter;
@@ -75,7 +75,8 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 
 	int lengthOfTask = 0;
 	long conversionStart = 0;
-	boolean canceled;
+	
+	boolean aborted;
 	
 	public MovieManagerCommandImportExportHandler handler;
 	
@@ -84,8 +85,6 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 	ModelImportExportSettings importSettings;
 
 	boolean done = false;
-
-	boolean cancelAll = false;
 	
 	
 	public DialogDatabaseImporterExporter(final MovieManagerCommandImportExportHandler handler, ModelImportExportSettings importSettings) {
@@ -103,10 +102,10 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 		startButton.setActionCommand("Start"); //$NON-NLS-1$
 		startButton.addActionListener(this);
 
-		cancelButton = new JButton(Localizer.get("DialogDatabaseImporter.button.cancel.text")); //$NON-NLS-1$
-		cancelButton.setActionCommand("Cancel"); //$NON-NLS-1$
-		cancelButton.setEnabled(true);
-		cancelButton.addActionListener(this);
+		abortButton = new JButton(Localizer.get("DialogDatabaseImporter.button.abort.text")); //$NON-NLS-1$
+		abortButton.setActionCommand("Cancel"); //$NON-NLS-1$
+		abortButton.setEnabled(true);
+		abortButton.addActionListener(this);
 
 		closeButton = new JButton(Localizer.get("DialogDatabaseImporter.button.close.text")); //$NON-NLS-1$
 		closeButton.setActionCommand("Close"); //$NON-NLS-1$
@@ -126,7 +125,7 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 
 		JPanel panelTop = new JPanel();
 		panelTop.add(startButton);
-		panelTop.add(cancelButton);
+		panelTop.add(abortButton);
 		panelTop.add(closeButton);
 		panelTop.add(progressBar);
 
@@ -140,32 +139,27 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-				
-				if (!canceled)
-					databaseImporter.stop();
-				else if (canceled || done) {
+								
+				if (aborted || done) {
 					dispose();
 					MovieManagerCommandSelect.executeAndReload(-1);
 				}
 			}
 		});
 
-		/*Dispose on escape*/
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction() {
+		GUIUtil.enableDisposeOnEscapeKey(this, new  AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				
-				if (!canceled)
+				if (!aborted) {
 					databaseImporter.stop();
-				else if (canceled || done) {
+				}
+				else if (aborted || done) {
 					dispose();
 					MovieManagerCommandSelect.executeAndReload(-1);
 				}
 			}
-		};
-
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-		getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
+		});
+		
 
 		pack();
 		
@@ -173,15 +167,22 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 
 		setLocation((int) mm.getLocation().getX()+(mm.getWidth()-getWidth())/2,
 				(int) mm.getLocation().getY()+(mm.getHeight()-getHeight())/2);
-
-		setLocation((int)mm.getLocation().getX()+(mm.getWidth()- getWidth())/2,
-				(int)mm.getLocation().getY()+(mm.getHeight()- getHeight())/2);
-		
-		
+	
 		
 		/*Create a timer*/
 		timer = new Timer(milliseconds, new TimerListener());
 	}
+	
+	
+	public DialogDatabaseImporterExporter(final MovieManagerCommandImportExportHandler handler, 
+			ModelImportExportSettings importSettings, boolean startprocess) {
+		
+		this(handler, importSettings);
+		
+		if (startprocess)
+			startProcess();
+	}
+	
 
 	class TimerListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
@@ -207,19 +208,19 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 				taskOutput.setCaretPosition(taskOutput.getDocument().getLength());
 			}
 
-			if (databaseImporter.isDone() || canceled) {
+			if (databaseImporter.isDone() || aborted) {
 				timer.stop();
 
-				if (!canceled) {
+				if (!aborted) {
 
 					taskOutput.append(newline + movieCounter + Localizer.get("DialogDatabaseImporterExporter.message.entries-processed-in") + (millisecondsToString(System.currentTimeMillis() - conversionStart)) + newline); //$NON-NLS-1$
 					closeButton.setEnabled(true);
-					cancelButton.setEnabled(false);
+					abortButton.setEnabled(false);
 					setDone(true);
 				}
 				else {
 					taskOutput.append(newline + Localizer.get("DialogDatabaseImporter.message.import-canceled") + newline); //$NON-NLS-1$
-					setCanceled(true);
+					setAborted(true);
 
 					databaseImporter = new DatabaseImporterExporter(outer, outer.handler, importSettings);
 					timer = new Timer(milliseconds, new TimerListener());
@@ -231,8 +232,8 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 	}
 
 	
-	public void setCanceled(boolean canceled) {
-		this.canceled = canceled;
+	public void setAborted(boolean aborted) {
+		this.aborted = aborted;
 	}
 
 	public void setDone(boolean done) {
@@ -242,12 +243,27 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 	public void dispose() {
 		GUIUtil.show(this, false);
 	}
+	
+	
+	void startProcess() {
+		/*If the conversion was canceled it removes the listed movies to start fresh*/
+		taskOutput.setText(""); //$NON-NLS-1$
 
-	public void setCancelAll(boolean value) {
-		cancelAll = value;
+		startButton.setEnabled(false);
+		abortButton.setEnabled(true);
+		closeButton.setEnabled(false);
+
+		aborted = false;
+		setAborted(false);
+		setDone(false);
+		databaseImporter.go();
+
+		timer.start();
+		conversionStart = System.currentTimeMillis();
+		taskOutput.append(Localizer.get("DialogDatabaseImporter.message.processing-import-list") + SysUtil.getLineSeparator()); //$NON-NLS-1$
+
 	}
 	
-		
 	/**
 	 * Called when the user presses the start button.
 	 */
@@ -256,28 +272,13 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 		log.debug("ActionPerformed: "+ evt.getActionCommand()); //$NON-NLS-1$
 
 		if (evt.getActionCommand().equals("Start")) { //$NON-NLS-1$
-
-			/*If the conversion was canceled it removes the listed movies to start fresh*/
-			taskOutput.setText(""); //$NON-NLS-1$
-
-			startButton.setEnabled(false);
-			cancelButton.setEnabled(true);
-			closeButton.setEnabled(false);
-
-			canceled = false;
-			setCanceled(false);
-			setDone(false);
-			databaseImporter.go();
-
-			timer.start();
-			conversionStart = System.currentTimeMillis();
-			taskOutput.append(Localizer.get("DialogDatabaseImporter.message.processing-import-list") + SysUtil.getLineSeparator()); //$NON-NLS-1$
+			startProcess();
 		}
 
-		if (evt.getActionCommand().equals("Cancel")) { //$NON-NLS-1$
-			setCanceled(true);
-			canceled = true;
-			cancelButton.setEnabled(false);
+		if (evt.getSource() == abortButton) { //$NON-NLS-1$
+			setAborted(true);
+			aborted = true;
+			abortButton.setEnabled(false);
 			startButton.setEnabled(true);
 			closeButton.setEnabled(true);
 			databaseImporter.stop();
