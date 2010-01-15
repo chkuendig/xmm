@@ -61,6 +61,8 @@ public class IMDB {
     
     private HttpSettings settings = null;
     
+    HTTPResult lastHTTPResult = null;
+    
     private ModelIMDbEntry lastDataModel;
     
     public final String [] movieHitCategory = {"Popular Titles", "Titles (Exact Matches)", "Titles (Partial Matches)", "Titles (Approx Matches)"};
@@ -241,8 +243,8 @@ public class IMDB {
 						
 							String g = m.group();
 						
-							//System.err.println("g:" + m.group(0));
-							//System.err.println("g1:" + m.group(1));
+							//System.out.println("g:" + m.group(0));
+							//System.out.println("g1:" + m.group(1));
 							
 							dataModel.bigCoverUrlId = m.group(1);
 							
@@ -275,7 +277,7 @@ public class IMDB {
 			
 			/* Gets the rating... */
 			if ((start = data.indexOf("User Rating:", start)) != -1 && 
-					((start = data.indexOf("general rating", start)) != -1) &&
+					((start = data.indexOf("<div class=\"starbar-meta\">", start)) != -1) &&
 					(end = data.indexOf("/10</b>",start)) != -1 &&
 					(start = data.indexOf("<b>",end-9) +3) != 2) {
 
@@ -316,7 +318,7 @@ public class IMDB {
 			
 			//Set<String> keys = classInfo.keySet();
 			//for (String key : keys)
-			//	System.err.println("key:" + key);
+			//	System.out.println("key:" + key);
 			
 			// Gets the Writer or Writers (Writer matches both Writer: and Writers:)
 			if (classInfo.containsKey("Writer:")) {
@@ -582,8 +584,8 @@ public class IMDB {
 						
 							String g = m.group();
 						
-							//System.err.println("g:" + m.group(0));
-							//System.err.println("g1:" + m.group(1));
+							//System.out.println("g:" + m.group(0));
+							//System.out.println("g1:" + m.group(1));
 							
 							dataModel.bigCoverUrlId = m.group(1);
 							
@@ -856,6 +858,9 @@ public class IMDB {
 		return getMatches("http://akas.imdb.com/find?s=tt&q="+ java.net.URLEncoder.encode(title, "ISO-8859-1"));
 	}
 
+	public HTTPResult getLastHTTPResult() {
+		return lastHTTPResult;
+	}
 	
     private ArrayList<ModelIMDbSearchHit> getMatches(String strUrl) throws UnknownHostException {
 
@@ -865,8 +870,8 @@ public class IMDB {
 
     		log.debug("getMatches:" + url);
     		
-    		HTTPResult res = httpUtil.readData(url);
-			StringBuffer data = res.data;
+    		lastHTTPResult = httpUtil.readData(url);
+			StringBuffer data = lastHTTPResult.data;
 
     		if (data == null) {
     			log.warn("Failed to retrieve data from :" + url);
@@ -980,10 +985,9 @@ public class IMDB {
 				
 				title += " (" + year + ")"; 
 				
-				//System.err.println("m.group(0):" + m.group(0));
 				// Aka
 				aka = grabAkaTitlesFromSearchHit(m.group(0));
-				//System.err.println("aka:" + aka);
+				
 				int matchIndex = m.start();
 				
 				String category = null;
@@ -1231,19 +1235,14 @@ public class IMDB {
     				    				
     				String nmClass = getCustomElementClass("td", "nm", new StringBuffer(castSplit[i]));
     				String charClass = getCustomElementClass("td", "char", new StringBuffer(castSplit[i]));
-    				
+    				    				
     				if (nmClass == null || charClass == null)
     					continue;
     					
     				ArrayList<String> nm = getLinkContentName(nmClass);
-    				ArrayList<String> charResult = getLinkContentName(charClass);
-    				
-    				if (nm.size() != 1 || charResult.size() != 1) {
-    					continue;
-    				}
+    				String character = HttpUtil.decodeHTML(charClass); //getLinkContentName(charClass);
     				
     				String name = nm.get(0);
-					String character = charResult.get(0);
 					decoded.append(name);
 					decoded.append(" (" + character + "), ");
 					
