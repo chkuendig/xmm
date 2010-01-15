@@ -788,9 +788,7 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 		generalAliasPanel.add(new JLabel(Localizer.get("DialogSearch.alias.alias")));
 
 		HashMap<String, String> searchAlias = MovieManager.getConfig().getSearchAlias();
-		
-		System.err.println("searchAlias.size():" + searchAlias.size());
-		
+				
 		// No aliases, fill in default values
 		if (searchAlias.size() == 0)
 			insertDefaultAdditionalInfoAliases(true, true);
