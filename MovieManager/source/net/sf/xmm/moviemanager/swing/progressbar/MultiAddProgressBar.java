@@ -37,6 +37,11 @@ public class MultiAddProgressBar extends JDialog implements PropertyChangeListen
 	ProgressBean progressBean;
 	boolean done = false;
 	
+	JPanel panel;
+	JPanel buttonPanel;
+	
+	boolean abortButtonVisible = true;
+	
 	public MultiAddProgressBar(Dialog parent, String title, boolean modal, ProgressBean progressBean) {
 		super(parent, modal);
 		this.progressBean = progressBean;
@@ -60,25 +65,24 @@ public class MultiAddProgressBar extends JDialog implements PropertyChangeListen
 		/* Close dialog... */
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				close();
+				if (abortButtonVisible)
+					close();
+				else
+					dispose();
 			}
-		    });
+		});
 		
-		
-		/*Enables dispose when pushing escape*/
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction()
-		    {
+		GUIUtil.enableDisposeOnEscapeKey(this, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				close();
+				
+				if (abortButtonVisible)
+					close();
+				else
+					dispose();
 			}
-		    };
+		});
 		
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-		getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
-		
-		
-		JPanel panel = new JPanel();
+		panel = new JPanel();
 		//panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
 		double size[][] = {{10, TableLayout.FILL, TableLayout.PREFERRED, TableLayout.FILL, 10}, {5, TableLayout.PREFERRED, 10, TableLayout.PREFERRED, 15, TableLayout.PREFERRED, 1}};
@@ -97,15 +101,13 @@ public class MultiAddProgressBar extends JDialog implements PropertyChangeListen
 		JButton abortButton = new JButton("Abort");
 
 		abortButton.setPreferredSize(new Dimension(150, 30));
-
 		abortButton.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
 				close();
 			}
 		});
 
-		JPanel buttonPanel = new JPanel(new BorderLayout());
+		buttonPanel = new JPanel(new BorderLayout());
 		buttonPanel.add(abortButton, BorderLayout.NORTH);
 
 		panel.add(label, "1, 1, 4, 1");
@@ -120,6 +122,21 @@ public class MultiAddProgressBar extends JDialog implements PropertyChangeListen
 		setLocationRelativeTo(parent);
 	}
 
+	public void showAbortButton(boolean show) {
+		
+		if (!show) {
+			panel.remove(buttonPanel);
+			abortButtonVisible = false;
+		}
+		else {
+		
+			if (!abortButtonVisible)
+				panel.add(buttonPanel, "2, 5");
+			
+			abortButtonVisible = true;
+		}
+	}
+	
 	public void setString(String str) {
 		label.setText(str);
 	}
@@ -130,6 +147,7 @@ public class MultiAddProgressBar extends JDialog implements PropertyChangeListen
 		while (!progressBean.isReady()) {
 			try {
 				Thread.sleep(100);
+				System.err.println("progressBean.isReady():" + progressBean.isReady());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
