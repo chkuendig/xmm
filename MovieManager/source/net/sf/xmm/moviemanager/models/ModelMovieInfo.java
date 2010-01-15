@@ -52,8 +52,6 @@ public class ModelMovieInfo {
     public boolean _hasReadProperties = false; // File info has been read and stored
     public boolean isEpisode = false;
     
-    private int _lastFieldIndex = -1; // the last additional info field that was displayed
-    
     private List<String> _fieldNames = new ArrayList<String>();
     private List<String> _fieldValues = new ArrayList<String>();
     
@@ -61,11 +59,6 @@ public class ModelMovieInfo {
     
     // The index of the first extra info field
     public int EXTRA_START = 17;
-    
-    
-    /* Used when multiadding movies, if adding fileinfo
-     to existing movie */
-    private File multiAddFile; 
     
     public ModelEntry model;
     
@@ -169,14 +162,6 @@ public class ModelMovieInfo {
         modelUpdatedHandler.modelChanged(source, type);
     }
         
-    public void setLastFieldIndex(int index) {
-    	_lastFieldIndex = index;
-    }
-    
-    public int getLastFieldIndex() {
-    	return _lastFieldIndex;
-    }
-    
     public Image getCoverImage() {
         
         Image image = null;
@@ -235,17 +220,6 @@ public class ModelMovieInfo {
             image = FileUtil.getImage("/images/unseen.png"); //$NON-NLS-1$
         
         return image.getScaledInstance(18,18,Image.SCALE_SMOOTH);    
-    }
-    
-    
-    /*Used when multiadding*/
-    public File getMultiAddFile() {
-        return multiAddFile;
-    }
-    
-    /*Used when multiadding*/
-    public void setMultiAddFile(File multiAddFile) {
-        this.multiAddFile = multiAddFile;
     }
     
     public boolean getNoCover() {
@@ -649,10 +623,7 @@ public class ModelMovieInfo {
     		/* Sets title if title field is empty... */
     		if (model.getTitle().equals("")) { //$NON-NLS-1$
     			String title = "";
-				if (MovieManager.getConfig().getMultiAddPrefixMovieTitle())
-	    			// Insert prefix in Title to show that these movies maybe got wrong imdb infos
-					title = "_verify_";
-
+				
     			if (properties.getMetaDataTagInfo("INAM") != null && !properties.getMetaDataTagInfo("INAM").equals("")) //$NON-NLS-1$ //$NON-NLS-2$
     				setTitle(title + properties.getMetaDataTagInfo("INAM")); //$NON-NLS-1$
 
@@ -668,6 +639,8 @@ public class ModelMovieInfo {
 
     		_hasReadProperties = true;
 	
+    		saveAdditionalInfoData();
+    		
     		modelChanged(this, "AdditionalInfo");
 
     	} catch (Exception e) {
