@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -148,14 +149,20 @@ public class HttpUtil {
 		
 		StringBuffer data = null;
 		StatusLine statusLine = null;
+		public int statusCode = -1;
 		
-		HTTPResult(StringBuffer data, StatusLine statusLine) {
+		HTTPResult(StringBuffer data, StatusLine statusLine, int statusCode) {
 			this.data = data;
 			this.statusLine = statusLine;
+			this.statusCode = statusCode;
 		}
 		
 		public StringBuffer getData() {
 			return data;
+		}
+		
+		public int getStatusCode() {
+			return statusCode;
 		}
 	}
 	
@@ -185,7 +192,7 @@ public class HttpUtil {
 		
 		stream.close();
 		
-		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
+		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine(), statusCode);
 	}
 	
 
@@ -214,11 +221,11 @@ public class HttpUtil {
 
 		stream.close();
 
-		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
+		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine(), statusCode);
 	}
 
 	
-	public HTTPResult readData(URL url) throws Exception {
+	public HTTPResult readData(URL url) throws TimeoutException, Exception {
 
 		if (!isSetup())
 			setup();
@@ -228,6 +235,10 @@ public class HttpUtil {
 
 		if (statusCode != HttpStatus.SC_OK) {
 			log.debug("HTTP StatusCode not HttpStatus.SC_OK:(" + statusCode + "):" + method.getStatusLine());
+		}
+		
+		if (statusCode == HttpStatus.SC_REQUEST_TIMEOUT) {
+			throw new TimeoutException();
 		}
 
 		//java.io.BufferedReader stream = new java.io.BufferedReader(new java.io.InputStreamReader(method.getResponseBodyAsStream(), "ISO-8859-1"));
@@ -249,7 +260,7 @@ public class HttpUtil {
 		temp.close();
 		data.append(new String(buff, chrSet));
 
-		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
+		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine(), statusCode);
 	}
 	
 	
