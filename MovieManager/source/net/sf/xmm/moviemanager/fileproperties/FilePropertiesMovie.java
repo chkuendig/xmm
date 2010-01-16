@@ -161,6 +161,8 @@ public class FilePropertiesMovie {
 			_fileSize = Math.round((new File(filePath).length()) / 1024F / 1024F);
 			_location = filePath;
 			
+			log.debug("Processing file " + filePath);
+			
 			/* The input stream... */
 			RandomAccessFile dataStream = new RandomAccessFile(filePath, "r");
 
@@ -246,6 +248,8 @@ public class FilePropertiesMovie {
 
 					if (fileProperties != null) {
 
+						System.err.println("fileProperties:" + fileProperties);
+						
 						time = System.currentTimeMillis();
 						
 						/* Starts parsing the file...*/
@@ -308,8 +312,8 @@ public class FilePropertiesMovie {
 					mediaInfoOption = MediaInfoOption.MediaInfo_No;
 					
 				} catch (Exception e) {
-					log.error("Exception: " + e.getMessage(), e);
 					log.debug("Media file:" + filePath);
+					log.error("Exception: " + e.getMessage(), e);
 					
 					if (tryMediaInfo) {
 						

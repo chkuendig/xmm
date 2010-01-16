@@ -39,6 +39,10 @@ abstract class FileProperties {
 	protected boolean supported = false;
 	protected boolean errorOccured = false;
 
+	public String toString() {
+		return getClass().getName();
+	}
+	
 	/**
 	 * The subtitles.
 	 **/
