@@ -131,6 +131,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 	DialogMovieInfo dialogMovieInfo = this;
 	
+	private int _lastFieldIndex = -1; // the last additional info field that was displayed
+	
 	JTextField date;
 	JTextField imdb;
 	JTextField colour;
@@ -952,7 +954,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
 		buttonSaveAndClose = new JButton("Save & Close");
-
+		buttonSaveAndClose.setToolTipText("Save and Close the window"); //$NON-NLS-1$
 		buttonSaveAndClose.setActionCommand("MovieInfo - Save and Close"); //$NON-NLS-1$
 		buttonSaveAndClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -964,6 +966,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		
 		buttonSave = new JButton(Localizer.get("DialogMovieInfo.button-save.text.save")); //$NON-NLS-1$
+		buttonSave.setToolTipText(Localizer.get("DialogMovieInfo.button-save.tooltip")); //$NON-NLS-1$
 		// Disabled if edit
 		buttonSave.setEnabled(!movieInfoModel.isEditMode());
 		buttonSave.setActionCommand("MovieInfo - Save"); //$NON-NLS-1$
@@ -979,6 +982,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelButtons.add(buttonSave);
 
 		buttonGetDVDInfo = new JButton(Localizer.get("DialogMovieInfo.button-get-DVD-info.text")); //$NON-NLS-1$
+		buttonGetDVDInfo.setToolTipText(Localizer.get("DialogMovieInfo.button-get-DVD-info.tooltip")); //$NON-NLS-1$
 		buttonGetDVDInfo.setActionCommand("MovieInfo - GetDVDInfo"); //$NON-NLS-1$
 		buttonGetDVDInfo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -990,6 +994,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelButtons.add(buttonGetDVDInfo);
 
 		buttonGetFileInfo = new JButton(Localizer.get("DialogMovieInfo.button-get-file-info.text")); //$NON-NLS-1$
+		buttonGetFileInfo.setToolTipText(Localizer.get("DialogMovieInfo.button-get-file-info.tooltip")); //$NON-NLS-1$
 		buttonGetFileInfo.setActionCommand("MovieInfo - GetFileInfo"); //$NON-NLS-1$
 		buttonGetFileInfo.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
@@ -1016,6 +1021,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		else
 			buttonGetIMDBInfo = new JButton(Localizer.get("DialogMovieInfo.button-get-web-info.text.get-imdb-info")); //$NON-NLS-1$
 
+		buttonGetIMDBInfo.setToolTipText(Localizer.get("DialogMovieInfo.button-get-web-info.tooltip.get-imdb-info")); //$NON-NLS-1$
 		buttonGetIMDBInfo.setActionCommand("MovieInfo - GetIMDBInfo"); //$NON-NLS-1$
 		buttonGetIMDBInfo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
@@ -1037,6 +1043,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		panelButtons.add(buttonGetIMDBInfo);
 
 		buttonCancel = new JButton(Localizer.get("DialogMovieInfo.button-cancel.text")); //$NON-NLS-1$
+		buttonCancel.setToolTipText(Localizer.get("DialogMovieInfo.button-cancel.tooltip")); //$NON-NLS-1$
 		buttonCancel.setActionCommand("MovieInfo - Cancel"); //$NON-NLS-1$
 		buttonCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -1182,8 +1189,15 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			public void mouseReleased(MouseEvent e) {}
 		});
 	}
-	
-	
+
+	public void setLastFieldIndex(int index) {
+		_lastFieldIndex = index;
+	}
+
+	public int getLastFieldIndex() {
+		return _lastFieldIndex;
+	}
+
 	/**
 	 * Gets the date JTextField...
 	 */
@@ -1586,9 +1600,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		activeAdditionalInfoFields = MovieManager.getDatabaseHandler().getActiveAdditionalInfoFields();
 		
-		if (movieInfoModel.getLastFieldIndex() != -1) {
+		if (getLastFieldIndex() != -1) {
 	
-			int oldIndex = activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()];
+			int oldIndex = activeAdditionalInfoFields[getLastFieldIndex()];
 			
 			/* Duration... */
 			if (oldIndex == 1) {
@@ -1607,7 +1621,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 					if (!secds.equals("")) //$NON-NLS-1$
 						time += Integer.parseInt(secds);
 
-					movieInfoModel.getFieldValues().set(activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()], String.valueOf(time));
+					movieInfoModel.getFieldValues().set(activeAdditionalInfoFields[getLastFieldIndex()], String.valueOf(time));
 				}
 
 				/* Recreates the JPanel... */
@@ -1625,19 +1639,19 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				String value = (String) ((JComboBox) getAdditionalInfoValuePanel().getComponent(0)).getSelectedItem();
 
 				/* Old value */
-				String oldValue = (String) movieInfoModel.getFieldValues().get(activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()]);
+				String oldValue = (String) movieInfoModel.getFieldValues().get(activeAdditionalInfoFields[getLastFieldIndex()]);
 
-				movieInfoModel.getFieldValues().set(activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()], value);
+				movieInfoModel.getFieldValues().set(activeAdditionalInfoFields[getLastFieldIndex()], value);
 
 				AdditionalInfoFieldDefaultValues valuesObj = (AdditionalInfoFieldDefaultValues) 
-					MovieManager.getConfig().getAdditionalInfoDefaultValues().get(movieInfoModel.getFieldNames().get(movieInfoModel.getLastFieldIndex()));
+					MovieManager.getConfig().getAdditionalInfoDefaultValues().get(movieInfoModel.getFieldNames().get(getLastFieldIndex()));
 
 				/* Creating a new entry in the values hashmap */
 				if (valuesObj == null) {
-					valuesObj = new AdditionalInfoFieldDefaultValues((String) movieInfoModel.getFieldNames().get(movieInfoModel.getLastFieldIndex()));
+					valuesObj = new AdditionalInfoFieldDefaultValues((String) movieInfoModel.getFieldNames().get(getLastFieldIndex()));
 					
 					valuesObj.addValue(oldValue);
-					MovieManager.getConfig().getAdditionalInfoDefaultValues().put(movieInfoModel.getFieldNames().get(movieInfoModel.getLastFieldIndex()), valuesObj);
+					MovieManager.getConfig().getAdditionalInfoDefaultValues().put(movieInfoModel.getFieldNames().get(getLastFieldIndex()), valuesObj);
 				}
 
 				valuesObj.insertValue(value);
@@ -1652,7 +1666,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			} else {
 				
 				/* Saves the field... */
-				movieInfoModel.getFieldValues().set(activeAdditionalInfoFields[movieInfoModel.getLastFieldIndex()], 
+				movieInfoModel.getFieldValues().set(activeAdditionalInfoFields[getLastFieldIndex()], 
 												((JTextField) getAdditionalInfoValuePanel().getComponent(0)).getText());
 			}
 		}
@@ -1806,7 +1820,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		getAdditionalInfoUnits().revalidate();
 
 		/* updates index... */
-		movieInfoModel.setLastFieldIndex(currentFieldIndex);
+		setLastFieldIndex(currentFieldIndex);
 	}
 
 	/**
@@ -1827,7 +1841,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	}
 	
 	public void saveWindowSize() {
-		System.err.println("saveWindowSize");
 		MovieManager.getConfig().setAddMovieWindowHeight(getSize().height);
 	}
 	
@@ -2321,11 +2334,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
 				"Save & Close", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
-				System.err.println("Save and close shortcut");
 				buttonSaveAndClose.doClick();
 			}
-		});
-		buttonSaveAndClose.setToolTipText("Save and Close the window" + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		}, buttonSaveAndClose);
 		
 		
 		// ALT+A for Save and Clear
@@ -2335,8 +2346,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			public void actionPerformed(ActionEvent ae) {
 				buttonSave.doClick();
 			}
-		});
-		buttonCancel.setToolTipText(Localizer.get("DialogMovieInfo.button-cancel.tooltip") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		}, buttonCancel);
 				
 		
 		// ALT+D for DVD Info
@@ -2346,8 +2356,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			public void actionPerformed(ActionEvent ae) {
 				buttonGetDVDInfo.doClick();
 			}
-		});
-		buttonGetDVDInfo.setToolTipText(Localizer.get("DialogMovieInfo.button-get-DVD-info.tooltip") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		}, buttonGetDVDInfo);
 		
 		
 		// ALT+F for File info
@@ -2357,8 +2366,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			public void actionPerformed(ActionEvent ae) {
 				buttonGetFileInfo.doClick();
 			}
-		});
-		buttonGetFileInfo.setToolTipText(Localizer.get("DialogMovieInfo.button-get-file-info.tooltip") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		}, buttonGetFileInfo);
 		
 		
 		// ALT+M for IMDb info
@@ -2366,11 +2374,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
 				"Get IMDb Info", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
-				System.err.println("IMDB");
 				buttonGetIMDBInfo.doClick();
 			}
-		});
-		buttonGetIMDBInfo.setToolTipText(Localizer.get("DialogMovieInfo.button-get-web-info.tooltip.get-imdb-info") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		}, buttonGetIMDBInfo);
 		
 		
 		// ALT+C for Cancel
@@ -2380,10 +2386,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			public void actionPerformed(ActionEvent ae) {
 				buttonCancel.doClick();
 			}
-		});
-		buttonSave.setToolTipText(Localizer.get("DialogMovieInfo.button-save.tooltip") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
-		
-		
+		}, buttonSave);
+				
 		// ALT+N for Notes field 
 		shortcutManager.registerKeyboardShortcut(
 				KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
