@@ -281,8 +281,13 @@ public class IMDB {
 					(end = data.indexOf("/10</b>",start)) != -1 &&
 					(start = data.indexOf("<b>",end-9) +3) != 2) {
 
-				rating = HttpUtil.decodeHTML(data.substring(start, end));
-				dataModel.setRating(rating);
+				
+				try {
+					rating = HttpUtil.decodeHTML(data.substring(start, end));
+					dataModel.setRating(rating);
+				} catch (IndexOutOfBoundsException e) {
+					log.debug("No rating found for " + title  + " ("+urlID+")");
+				}
 			}
 	     
 			start = 0;
@@ -898,7 +903,7 @@ public class IMDB {
 
     		int start = 0;
 			String key = "";
-			String movieTitle = "", aka = "";
+			String movieTitle = "", year = null, aka = "";
 			int titleSTart, titleEnd;
 			int movieCount = 0;
 			
@@ -910,13 +915,25 @@ public class IMDB {
 				titleEnd = data.indexOf("</title>", titleSTart);
 				movieTitle = HttpUtil.decodeHTML(data.substring(titleSTart, titleEnd));
 				
+				// get date
+				String [] year2 = new String[1];
+				StringUtil.removeYearAndAllAfter(movieTitle, year2);
+				
+				if (year2[0] != null) {
+					year = year2[0];
+					
+					// Clean up title
+					movieTitle = movieTitle.replaceFirst("\\("+year+"\\)", "");
+				}
+				
 				if ((start=data.indexOf("title/tt",start) + 8) != 7) {
 					key = HttpUtil.decodeHTML(data.substring(start, start + 7));
 				}
 				
 				aka = getDecodedClassInfo("Also Known As:", data);
+				aka = aka.trim();
 				
-				listModel.add(new ModelIMDbSearchHit(key, movieTitle, aka));
+				listModel.add(new ModelIMDbSearchHit(key, movieTitle, year, aka));
 				
 				return listModel;
 			}
@@ -971,7 +988,7 @@ public class IMDB {
 				
 				key = m.group(1);
 				String title = m.group(2);
-				String year = m.group(3);
+				year = m.group(3);
 				
 				title = HttpUtil.decodeHTML(title);
 				
@@ -982,8 +999,6 @@ public class IMDB {
 				if (m.group(0).indexOf("VG") != -1) {
 					continue;	
 				}
-				
-				title += " (" + year + ")"; 
 				
 				// Aka
 				aka = grabAkaTitlesFromSearchHit(m.group(0));
@@ -998,7 +1013,7 @@ public class IMDB {
 						category = movieHitCategory[i];
 				}
 				
-				listModel.add(new ModelIMDbSearchHit(key, title, aka, category));
+				listModel.add(new ModelIMDbSearchHit(key, title, year, aka, category));
 				
 				movieCount++;
 			}
