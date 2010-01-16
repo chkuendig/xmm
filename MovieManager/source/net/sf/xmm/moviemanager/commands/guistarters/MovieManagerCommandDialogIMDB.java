@@ -22,7 +22,7 @@ public class MovieManagerCommandDialogIMDB {
 	String tmpUrlKey;
 		
 	public synchronized String getIMDBKey(final String movieTitle) throws InterruptedException {
-
+		
 		if (cancelAll)
 			return null;
 
@@ -36,8 +36,7 @@ public class MovieManagerCommandDialogIMDB {
 					modelInfo.model.setTitle(movieTitle);
 
 					DialogIMDbMultiAdd dialogImdb = new DialogIMDbMultiAdd(modelInfo.model, true, movieTitle);
-					GUIUtil.showAndWait(dialogImdb, true);
-
+				
 					tmpUrlKey = modelInfo.model.getUrlKey();
 					
 					cancel = dialogImdb.getCanceled();
