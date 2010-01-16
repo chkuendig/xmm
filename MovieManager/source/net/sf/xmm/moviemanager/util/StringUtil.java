@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager.util;
 
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
@@ -155,44 +156,89 @@ public class StringUtil {
 		}
 		return searchStringBuf.toString();
 	}
-
-
-	public static String performExcludeString(String searchString, String excludeString) {
-
-		String [] excludeStrings = new String[50];
-		searchString = searchString.toLowerCase();
-
-		StringTokenizer tokenizer = new StringTokenizer(excludeString," ");
-		for ( int i = 0; tokenizer.hasMoreTokens() && i < 49; i++) {
-			excludeStrings[i] = tokenizer.nextToken();
-			excludeStrings[i+1] = null;
-		}
-
-		for (int u = 0; excludeStrings[u] != null; u++) {
-
-			Pattern excludeFilter = Pattern.compile("(.*"+ excludeStrings[u].toLowerCase()+ ".*)+");
-			if (excludeFilter.matcher(searchString).matches()) {
-				searchString = searchString.replaceAll(((excludeStrings[u]).toLowerCase()), " ");
-			}
-		}
-		return searchString;
-	}
-
-	/*Removes the predefined codec info*/
-	public static String performExcludeCodecInfo(String searchString, String [] excludeStrings) {
-
-		searchString = searchString.toLowerCase();
-
+	
+	/**
+	 * Remove the strings in the array from the input string.
+	 * The case of the searchString is preserved.
+	 */
+	public static String performExcludeStrings(String searchString, String [] excludeStrings) {
+				
 		for (int u = 0; u < excludeStrings.length; u++) {
-			Pattern excludeFilter = Pattern.compile("(.*"+excludeStrings[u].toLowerCase()+".*)+");
-
-			if (excludeFilter.matcher(searchString).matches()) {
-				searchString = searchString.replaceAll(((excludeStrings[u]).toLowerCase()), " ");
-			}
+			searchString = removeMatches(searchString, excludeStrings[u].toLowerCase());
 		}
 		return searchString;
 	}
 
+	/**
+	 * Removes a match on the (lowercased) regex, keeping the case of the original string.
+	 * @param searchString
+	 * @param regex
+	 * @return
+	 */
+	static String removeMatches(String searchString, String regex) {
+		
+		Pattern excludeFilter = Pattern.compile(regex.toLowerCase());
+		String searchStringLower = searchString.toLowerCase();
+		
+		Matcher m = excludeFilter.matcher(searchStringLower);
+				
+		while (m.find()) {
+			int start = m.start();
+			int end = m.end();
+			String toRemove = searchString.substring(start, end);
+			
+			searchString = searchString.replaceAll(toRemove, " ");
+			searchStringLower = searchString.toLowerCase();
+			m = excludeFilter.matcher(searchStringLower);
+		}
+		
+		return searchString;
+	}
+	
+	/**
+	 * Keep only string content before a year
+	 * Will not remove if the year is at the beginning of the string
+	 * @param input
+	 * @return
+	 */
+	public static String removeYearAndAllAfter(String input) {
+		return removeYearAndAllAfter(input, null);
+	}
+	
+	public static String removeYearAndAllAfter(String input, String [] yearOutput) {
+			
+		Pattern excludeFilter = Pattern.compile("\\d{4}");
+
+		Matcher m = excludeFilter.matcher(input);
+
+		int lastIndexToKeep = input.length();
+		
+		while (m.find()) {
+			int start = m.start();
+			int end = m.end();
+			
+			// If date is in the beginning, do not remove
+			if (start == 0)
+				continue;
+				
+			String year = input.substring(start, end);
+					
+			int y = Integer.parseInt(year);
+			
+			// Verify it's a valid movie year
+			if (y > 1895 && y < 2100) {
+				lastIndexToKeep = start;
+				
+				if (yearOutput != null && yearOutput.length > 0)
+					yearOutput[0] = year;
+			}
+		}
+		
+		input = input.substring(0, lastIndexToKeep);
+		
+		return input;
+	}
+	
 	/**
 	 * Deletes everything which occurs behind any of the found Strings
 	 * @param searchString
@@ -201,13 +247,15 @@ public class StringUtil {
 	 */
 	public static String performExcludeUserdefinedInfo(String searchString, String [] excludeStrings) {
 		
-		searchString = searchString.toLowerCase();
+		String searchStringLower = searchString.toLowerCase();
 		
 		int pos;
 		for (int u = 0; u < excludeStrings.length; u++) {
-			pos = searchString.indexOf(excludeStrings[u]);
-			if (pos != -1)
+			pos = searchStringLower.indexOf(excludeStrings[u]);
+			if (pos != -1) {
 				searchString = searchString.substring(0, pos);
+				searchStringLower = searchString.toLowerCase();
+			}
 		}
 		return searchString;
 	}
@@ -217,41 +265,16 @@ public class StringUtil {
 	/*Removes cd notations from the search string*/
 	public static String performExcludeCDNotations(String searchString) {
 
-		searchString = searchString.toLowerCase();
-
-		int index = 0;
-
-		while ((index = searchString.indexOf("cd", index)) != -1) {
-
-			/*if character after cd is a digit, the notation is removed*/
-			if (Character.isDigit(searchString.charAt(index+2))) {
-				searchString = removeCharAt(searchString, index);
-				searchString = removeCharAt(searchString, index);
-				searchString = replaceCharAt(searchString, index, ' ');
-
-				if (Character.isDigit(searchString.charAt(index)))
-					searchString = removeCharAt(searchString, index);
-			}
-			index++;
-		}
-		index = 0;
-		while ((index = searchString.indexOf("of", index)) != -1) {
-			if (index > 0) {
-				if (Character.isDigit(searchString.charAt(index+2)) && Character.isDigit(searchString.charAt(index-1))) {
-					searchString = removeCharAt(searchString, index-1);
-					searchString = removeCharAt(searchString, index-1);
-					searchString = removeCharAt(searchString, index-1);
-					searchString = replaceCharAt(searchString, index-1, ' ');
-				}
-			}
-			index++;
-		}
+		searchString = removeMatches(searchString, "cd\\dof\\d");
+		searchString = removeMatches(searchString, "cd\\d");
+		searchString = removeMatches(searchString, "\\dof\\d");
+		
 		return searchString;
 	}
 
 	/*Removes all integers from the search string*/
 	public static String performExcludeIntegers(String searchString) {
-		/* If folder name is extension, no '.' in file */
+		/* If folder, name is extension, no '.' in file */
 		int length = searchString.lastIndexOf('.');
 		if (length == -1) {
 			length = searchString.length();
@@ -287,9 +310,18 @@ public class StringUtil {
 		searchString = searchString.replace(',', ' ');
 		searchString = searchString.replace('=', ' ');
 		searchString = searchString.replace('_', ' ');
-
+		searchString = searchString.replace('(', ' ');
+		searchString = searchString.replace(')', ' ');
+		searchString = searchString.replace('[', ' ');
+		searchString = searchString.replace(']', ' ');
+		
+		searchString = " " + searchString + " ";
+		
+		searchString = searchString.replace(" - ", " ");
+		
 		/*Removes all double spaces*/
 		searchString = removeDoubleSpace(searchString);
+		searchString = searchString.trim();
 		
 		return searchString;
 	}
