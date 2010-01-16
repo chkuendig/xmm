@@ -190,7 +190,11 @@ public class GUIUtil {
 		enableDisposeOnEscapeKey(shortcutManager, null);
 	}
 	
-	public static void enableDisposeOnEscapeKey(final KeyboardShortcutManager shortcutManager, final Action escapeAction) {
+	public static void enableDisposeOnEscapeKey(KeyboardShortcutManager shortcutManager, Action escapeAction) {
+		enableDisposeOnEscapeKey(shortcutManager, escapeAction, null);
+	}
+	
+	public static void enableDisposeOnEscapeKey(final KeyboardShortcutManager shortcutManager, final Action escapeAction, String actionDescription) {
 
 		KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		
@@ -202,7 +206,11 @@ public class GUIUtil {
 				shortcutManager.getJDialog().dispose();
 			}
 		};
-		shortcutManager.registerKeyboardShortcut(key, "Close window", defaultAction);
+		
+		if (actionDescription == null)
+			actionDescription = "Close window";
+		
+		shortcutManager.registerKeyboardShortcut(key, actionDescription, defaultAction);
 	}
 	
 	
