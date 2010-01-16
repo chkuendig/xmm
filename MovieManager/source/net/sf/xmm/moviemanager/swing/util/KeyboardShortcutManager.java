@@ -113,6 +113,23 @@ public class KeyboardShortcutManager {
 		});
 	}
 	
+	
+	public KeyMapping registerKeyboardShortcut(KeyStroke key, String shortcutString, Action action, JComponent tooltipComponent) {
+		KeyMapping mapping = registerKeyboardShortcut(key, shortcutString, action);
+		
+		// Adding shortcut explanation to tooltip
+		String tooltip = tooltipComponent.getToolTipText();
+		
+		if (tooltip == null)
+			tooltip = mapping.getDisplayName();
+		else
+			tooltip += "   " + mapping.getDisplayName();
+		
+		tooltipComponent.setToolTipText(tooltip); //$NON-NLS-1$
+		
+		return mapping;
+	}
+	
 	public KeyMapping registerKeyboardShortcut(KeyStroke key, String shortcutString, Action action) {
 				
 		if (map.containsKey(key.toString())) {
