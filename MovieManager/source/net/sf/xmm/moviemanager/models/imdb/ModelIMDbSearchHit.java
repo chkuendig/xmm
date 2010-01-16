@@ -55,6 +55,8 @@ public class ModelIMDbSearchHit {
 	 **/
 	private String searchTitle;
 
+	private String date;
+	
 	/**
 	 * The season number
 	 **/
@@ -79,14 +81,23 @@ public class ModelIMDbSearchHit {
 		return model;
 	}
 	
-	public ModelIMDbSearchHit(String key, String title, String aka) {
-		this(key, title, aka, null);
+	/**
+	 * Used for message to user like "Connection time out and "no hits"
+	 * @param title
+	 */
+	public ModelIMDbSearchHit(String title) {
+		this(null, title, null, null);
+	}
+	
+	public ModelIMDbSearchHit(String key, String title, String date, String aka) {
+		this(key, title, date, aka, null);
 	}
 
 	
-	public ModelIMDbSearchHit(String key, String title, String aka, String hitCategory) {
+	public ModelIMDbSearchHit(String key, String title, String date, String aka, String hitCategory) {
 		urlID = key; 
 		this.title = title;
+		this.date = date;
 		this.aka = aka;
 		this.hitCategory = hitCategory;
 	}
@@ -138,6 +149,10 @@ public class ModelIMDbSearchHit {
 		return title;
 	}
 
+	public String getDate() {
+		return date;
+	}
+	
 	public String getAka() {
 		return aka;
 	}
@@ -193,6 +208,10 @@ public class ModelIMDbSearchHit {
 	 * Returns the title.
 	 **/
 	public String toString() {
+		
+		if (date != null && !date.equals(""))
+			return title + " (" + date + ")";
+			
 		return title;
 	}
 }
