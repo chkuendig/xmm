@@ -309,18 +309,28 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean multiAddEnableExludeParantheses;
 	private boolean multiAddEnableExludeCDNotation;
 	private boolean multiAddEnableExludeIntegers;
-	private boolean getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo;
+	private boolean multiAddEnableExludeYear;
+	private boolean multiAddEnableExludeAllAfterMatchOnUserDefinedInfo;
 	private boolean multiAddEnableSearchInSubdirectories;
 	private boolean multiAddTitleOption;
 	private boolean multiAddEnableExludeUserdefinedInfo;
 	private boolean multiAddTitleOptionNoCd;
 	private boolean multiAddAddSearchNfoForImdb;
-	private boolean multiAddSkipHiddenDirectories;
+	private boolean multiAddSkipHiddenDirectories = true;
 	private boolean multiAddPrefixMovieTitle;
-	private boolean multiAddEnableAutomaticCombine;
+	private boolean multiAddEnableAutomaticCombine = true;
+	private boolean multiAddFilterOutDuplicates = true;
+	private boolean multiAddFilterOutDuplicatesByAbsolutePath = true;
+	
 	
 	private String multiAddExcludeUserDefined = "";
 		
+	int multiAddMainSliderPosition = -1;
+	int multiAddFileSliderPosition = -1;
+	int multiAddTabIndex = 0;
+	Dimension multiAddWindowSize = null;
+	
+	Dimension multiAddIMDbDialogWindowSize = null;
 	
 	/* Import */
 	private ImportMode lastDialogImportType = ImportMode.TEXT;
@@ -1457,13 +1467,21 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		multiAddEnableExludeIntegers = val;
 	}
 	
+	public boolean getMultiAddEnableExludeYear() {
+		return multiAddEnableExludeYear;
+	}
+
+	public void setMultiAddEnableExludeYear(boolean val) {
+		multiAddEnableExludeYear = val;
+	}
+	
 	
 	public boolean getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo() {
-		return getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo;
+		return multiAddEnableExludeAllAfterMatchOnUserDefinedInfo;
 	}
 
 	public void setMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo(boolean val) {
-		getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo = val;
+		multiAddEnableExludeAllAfterMatchOnUserDefinedInfo = val;
 	}
 	
 	
@@ -1544,7 +1562,22 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		multiAddEnableAutomaticCombine = val;
 	}
 	
-		
+	public boolean getMultiAddFilterOutDuplicates() {
+		return multiAddFilterOutDuplicates;
+	}
+	
+	public void setMultiAddFilterOutDuplicates(boolean val) {
+		multiAddFilterOutDuplicates = val;
+	}
+	
+	public boolean getMultiAddFilterOutDuplicatesByAbsolutePath() {
+		return multiAddFilterOutDuplicatesByAbsolutePath;
+	}
+	
+	public void setMultiAddFilterOutDuplicatesByAbsolutePath(boolean val) {
+		multiAddFilterOutDuplicatesByAbsolutePath = val;
+	}
+			
 	public void addMultiAddRootDevice(String filePath) {
 				
 		if (!multiaddRootDevices.contains(filePath))
@@ -2255,13 +2288,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		additionalInfoNotesLastSliderPosition = value;
 	}
 	
-	
-	int multiAddMainSliderPosition = -1;
-	int multiAddFileSliderPosition = -1;
-	int multiAddTabIndex = 0;
-	Dimension multiAddWindowSize = null;
-	
-	
+		
 	// DialogMultiAdd window values
 	
 	public int getMultiAddMainSliderPosition() {
@@ -2294,6 +2321,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	
 	public void setMultiAddWindowSize(Dimension value) {
 		multiAddWindowSize = value;
+	}
+	
+	public Dimension getMultiAddIMDbDialogWindowSize() {
+		return multiAddIMDbDialogWindowSize;
+	}
+	
+	public void setMultiAddIMDbDialogWindowSize(Dimension value) {
+		multiAddIMDbDialogWindowSize = value;
 	}
 	
 		
@@ -2554,9 +2589,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			setMultiAddEnableExludeParantheses(getBooleanValue("multiAddEnableExludeParantheses:", config, getMultiAddEnableExludeParantheses()));
 			setMultiAddEnableExludeCDNotation(getBooleanValue("multiAddEnableExludeCDNotation:", config, getMultiAddEnableExludeCDNotation()));
 			setMultiAddEnableExludeIntegers(getBooleanValue("multiAddEnableExludeIntegers:", config, getMultiAddEnableExludeIntegers()));
+			setMultiAddEnableExludeYear(getBooleanValue("multiAddEnableExludeYear:", config, getMultiAddEnableExludeYear()));
 			setMultiAddEnableExludeUserdefinedInfo(getBooleanValue("multiAddEnableExludeUserdefinedInfo:", config, getMultiAddEnableExludeUserdefinedInfo()));
 			setMultiAddPrefixMovieTitle(getBooleanValue("multiAddPrefixMovieTitle:", config, getMultiAddPrefixMovieTitle()));
 			setMultiAddEnableAutomaticCombine(getBooleanValue("multiAddEnableAutomaticCombine:", config, getMultiAddEnableAutomaticCombine()));
+			setMultiAddFilterOutDuplicates(getBooleanValue("multiAddFilterOutDuplicates:", config, getMultiAddFilterOutDuplicates()));
+			setMultiAddFilterOutDuplicatesByAbsolutePath(getBooleanValue("multiAddFilterOutDuplicatesByAbsolutePath:", config, getMultiAddFilterOutDuplicatesByAbsolutePath()));
+						
 			setMultiAddTitleOptionNoCd(getBooleanValue("multiAddTitleOptionNoCd:", config, getMultiAddTitleOptionNoCd()));
 			setMultiAddSearchNfoForImdb(getBooleanValue("multiAddSearchNfoForImdb:", config, getMultiAddSearchNfoForImdb()));
 			setMultiAddSkipHiddenDirectories(getBooleanValue("multiAddSkipHiddenDirectories:", config, getMultiAddSkipHiddenDirectories()));
@@ -2669,12 +2708,20 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			setMultiAddFileSliderPosition(getIntValue("multiAddFileSliderPosition:", config, getMultiAddFileSliderPosition()));
 			setMultiAddTabIndex(getIntValue("multiAddTabIndex:", config, getMultiAddTabIndex()));
 			
+			// Size of MultiAdd dialog
 			int multiAddWidth = getIntValue("multiAddWindowWidth:", config, -1);
 			int multiAddHeight = getIntValue("multiAddWindowHeight:", config, -1);
 			
 			if (multiAddHeight != -1 && multiAddWidth != -1)
 				setMultiAddWindowSize(new Dimension(multiAddWidth, multiAddHeight));
 			
+			// Size of MultiAdd IMDb dialog
+			multiAddWidth = getIntValue("multiAddIMDbDialogWindowWidth:", config, -1);
+			multiAddHeight = getIntValue("multiAddIMDbDialogWindowHeight:", config, -1);
+			
+			if (multiAddHeight != -1 && multiAddWidth != -1)
+				setMultiAddIMDbDialogWindowSize(new Dimension(multiAddWidth, multiAddHeight));
+					
 			
 			// Misc options
 			setShowUnlistedEntries(getBooleanValue("showUnlistedEntries:", config, getShowUnlistedEntries()));
@@ -3010,8 +3057,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("multiAddTabIndex:", getMultiAddTabIndex(), settings);
 		 appendToConfig("multiAddWindowWidth:", getMultiAddWindowSize().width, settings);
 		 appendToConfig("multiAddWindowHeight:", getMultiAddWindowSize().height, settings);
-		 
-		 
+		 appendToConfig("multiAddIMDbDialogWindowWidth:", getMultiAddIMDbDialogWindowSize().width, settings);
+		 appendToConfig("multiAddIMDbDialogWindowHeight:", getMultiAddIMDbDialogWindowSize().height, settings);
+		 		 
 		 // The current template
 		 appendToConfig("HTMLTemplateName:", getHTMLTemplateName(), settings);
 		 appendToConfig("HTMLTemplateStyleName:", getHTMLTemplateStyleName(), settings);
@@ -3038,9 +3086,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("multiAddEnableExludeParantheses:", getMultiAddEnableExludeParantheses(), settings);
 		 appendToConfig("multiAddEnableExludeCDNotation:", getMultiAddEnableExludeCDNotation(), settings);
 		 appendToConfig("multiAddEnableExludeIntegers:", getMultiAddEnableExludeIntegers(), settings);
+		 appendToConfig("multiAddEnableExludeYear:", getMultiAddEnableExludeYear(), settings);
 		 appendToConfig("multiAddEnableExludeUserdefinedInfo:", getMultiAddEnableExludeUserdefinedInfo(), settings);
 		 appendToConfig("multiAddPrefixMovieTitle:", getMultiAddPrefixMovieTitle(), settings);
 		 appendToConfig("multiAddEnableAutomaticCombine:", getMultiAddEnableAutomaticCombine(), settings);
+		 appendToConfig("multiAddFilterOutDuplicates:", getMultiAddFilterOutDuplicates(), settings);
+		 appendToConfig("multiAddFilterOutDuplicatesByAbsolutePath:", getMultiAddFilterOutDuplicatesByAbsolutePath(), settings);
 		 appendToConfig("multiAddTitleOption:", getMultiAddTitleOption(), settings);
 		 appendToConfig("multiAddTitleOptionNoCd:", getMultiAddTitleOptionNoCd(), settings);
 		 appendToConfig("multiAddSearchNfoForImdb:", getMultiAddSearchNfoForImdb(), settings);
