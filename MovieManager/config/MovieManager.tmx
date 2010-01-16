@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tmx version="1.2">
-    <header adminlang="en-us" creationdate="20100107T021542Z"
+    <header adminlang="en-us" creationdate="20100115T192511Z"
         creationtool="RBManager" creationtoolversion="0.7.2"
         datatype="PlainText" o-tmf="none" segtype="sentance" srclang="EN">
         <note>This document was created automatically by RBManager</note>
@@ -252,13 +252,13 @@
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Add movies in the selected directory</seg>
+                <seg>Add the movies to database</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid="Unknown"
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">true</prop>
-                <seg>Add movies in the selected directory</seg>
+                <seg>Add the movies to database</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.button-close.text">
@@ -282,7 +282,7 @@
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Leave without saving</seg>
+                <seg>Close without adding movies</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid="Unknown"
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
@@ -387,7 +387,7 @@
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>automatic combine</seg>
+                <seg>&lt;html&gt;Automatic&lt;br&gt;combine&lt;/html&gt;</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid="Unknown"
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
@@ -803,11 +803,11 @@
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-options.enable-Folder-Naming-tooltip">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
+            <tuv changedate="20100115T035119Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Use folder name instead of files name when searching IMDB</seg>
+                <seg>Use folder name instead of files name when searching IMDb</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
@@ -833,11 +833,11 @@
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-options.enable-Folder-Nfo-scanning-tooltip">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
+            <tuv changedate="20100115T035051Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Scan folder for nfo or txt files with an embedded IMDB url</seg>
+                <seg>Scan folder for nfo or txt files with an embedded IMDb url</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
@@ -2361,19 +2361,19 @@
                 <seg> entries processed in </seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogDatabaseImporter.button.cancel.text">
+        <tu datatype="Text" tuid="DialogDatabaseImporter.button.abort.text">
             <prop type="x-Group">DialogDatabaseImporter</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Cancel</seg>
+                <seg>Abort</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Cancel</seg>
+                <seg>Abort</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogDatabaseImporter.button.close.text">
@@ -3413,11 +3413,11 @@
         </tu>
         <tu datatype="Text" tuid="DialogIMDB.button.cancel.tooltip.cancel">
             <prop type="x-Group">DialogIMDB</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
+            <tuv changedate="20100115T035112Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Close the Get IMDB Info dialog</seg>
+                <seg>Close the Get IMDb Info dialog</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
@@ -3426,82 +3426,22 @@
                 <seg>Close the Get IMDB Info dialog</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogIMDB.button.less-titles.text">
+        <tu datatype="Text" tuid="DialogIMDB.button.choose.text">
             <prop type="x-Group">DialogIMDB</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Less Titles</seg>
+                <seg>Choose</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Less Titles</seg>
+                <seg>Choose</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogIMDB.button.less-titles.tooltip">
-            <prop type="x-Group">DialogIMDB</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Show less related titles</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Show less related titles</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="DialogIMDB.button.more-titles.text">
-            <prop type="x-Group">DialogIMDB</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>More Titles</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>More Titles</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="DialogIMDB.button.more-titles.tooltip">
-            <prop type="x-Group">DialogIMDB</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Get more related titles from IMDB</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Get more related titles from IMDB</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="DialogIMDB.button.select.text">
-            <prop type="x-Group">DialogIMDB</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Select</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Select</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="DialogIMDB.button.select.tooltip">
+        <tu datatype="Text" tuid="DialogIMDB.button.choose.tooltip">
             <prop type="x-Group">DialogIMDB</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
@@ -3548,11 +3488,11 @@
         </tu>
         <tu datatype="Text" tuid="DialogIMDB.panel-movie-list.title">
             <prop type="x-Group">DialogIMDB</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
+            <tuv changedate="20100115T035041Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg> IMDB Movies List </seg>
+                <seg>IMDb movie hits</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
@@ -3567,13 +3507,13 @@
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg> Search string </seg>
+                <seg>Title search</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg> Search string </seg>
+                <seg>Title search</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogIMDB.panel-your-movie-list.title">
@@ -3728,11 +3668,11 @@
         </tu>
         <tu datatype="Text" tuid="DialogIMDbMultiAdd.button.add-without-web-info.tooltip">
             <prop type="x-Group">DialogIMDbMultiAdd</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
+            <tuv changedate="20100115T035124Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Add movie to database without retrieving movie info from IMDB</seg>
+                <seg>Add movie to database without retrieving movie info from IMDb</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
@@ -3743,11 +3683,11 @@
         </tu>
         <tu datatype="Text" tuid="DialogIMDbMultiAdd.button.search-on-IMDb.text">
             <prop type="x-Group">DialogIMDbMultiAdd</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
+            <tuv changedate="20100115T035025Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Search on IMDB</seg>
+                <seg>Search on IMDb</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
@@ -3758,11 +3698,11 @@
         </tu>
         <tu datatype="Text" tuid="DialogIMDbMultiAdd.button.search-on-IMDb.tooltip">
             <prop type="x-Group">DialogIMDbMultiAdd</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
+            <tuv changedate="20100115T035019Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Search on IMDB</seg>
+                <prop type="x-Translated">true</prop>
+                <seg>Search on IMDb</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
@@ -4148,11 +4088,11 @@
         </tu>
         <tu datatype="Text" tuid="DialogMovieInfo.button-get-web-info.text.get-imdb-info">
             <prop type="x-Group">DialogMovieInfo</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
+            <tuv changedate="20100115T035104Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Get IMDB Info</seg>
+                <seg>Get IMDb Info</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
@@ -4163,11 +4103,11 @@
         </tu>
         <tu datatype="Text" tuid="DialogMovieInfo.button-get-web-info.tooltip.get-imdb-info">
             <prop type="x-Group">DialogMovieInfo</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
+            <tuv changedate="20100115T035057Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Get the IMDB info for this movie title</seg>
+                <seg>Get the IMDb info for this movie title</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
@@ -6027,13 +5967,13 @@
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Save and Close</seg>
+                <seg>Save &amp; Close</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Save and Close</seg>
+                <seg>Save &amp; Close</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogPrefs.panel.cover-settings.nocover.title">
