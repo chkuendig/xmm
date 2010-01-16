@@ -63,8 +63,7 @@ public class DialogIMDB extends JDialog {
     
 	static Logger log = Logger.getLogger(DialogIMDB.class);
 	
-
-    JButton buttonSelect;
+    JButton buttonChoose;
 	JButton buttonCancel;
 	JPanel panelButtons;
 
@@ -96,7 +95,11 @@ public class DialogIMDB extends JDialog {
         else
         	setTitle(alternateTitle);
        	         
-        GUIUtil.enableDisposeOnEscapeKey(shortcutManager);
+        GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction() {
+    		public void actionPerformed(ActionEvent arg0) {
+				setCanceled(true);
+			}
+		}, "Close window (and discard)");
         
         createListDialog();
         
@@ -167,20 +170,24 @@ public class DialogIMDB extends JDialog {
     				
     				if (index >= 0) {
     					ModelIMDbSearchHit hit = (ModelIMDbSearchHit) listMovies.getModel().getElementAt(index);
-    					BrowserOpener opener = new BrowserOpener(hit.getCompleteUrl());
-    					opener.executeOpenBrowser(MovieManager.getConfig().getSystemWebBrowser(), MovieManager.getConfig().getBrowserPath());
+    					
+    					if (hit.getUrlID() != null && !hit.getUrlID().equals("")) {
+    						BrowserOpener opener = new BrowserOpener(hit.getCompleteUrl());
+    						opener.executeOpenBrowser(MovieManager.getConfig().getSystemWebBrowser(), MovieManager.getConfig().getBrowserPath());
+    					}
     				}
     			}
     			else if (SwingUtilities.isLeftMouseButton(event) && event.getClickCount() >= 2) {
-    				buttonSelect.doClick();
+    				buttonChoose.doClick();
     			}
     		}
     	});
 
     	KeyStroke enterKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0, true);
     	ActionListener listKeyBoardActionListener = new ActionListener() {
-    		public void actionPerformed(ActionEvent ae) {
-    			buttonSelect.doClick();
+    		public void actionPerformed(ActionEvent ae) {    			
+    			log.debug("ActionPerformed: " + "Movielist - ENTER pressed."); //$NON-NLS-1$
+    			buttonChoose.doClick();
     		}
     	};
     	listMovies.registerKeyboardAction(listKeyBoardActionListener, enterKeyStroke, JComponent.WHEN_FOCUSED);
@@ -198,9 +205,10 @@ public class DialogIMDB extends JDialog {
 
     	all.setLayout(new BorderLayout());
     	all.add(panelMoviesList, BorderLayout.CENTER);
-    	all.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(8,8,0,8), null));
+    	all.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,0,5), null));
 
     	panelButtons = new JPanel();
+    	panelButtons.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,0,5), null));
     	panelButtons.setLayout(new BorderLayout());
     	
     	/* regular Buttons panel...*/
@@ -208,10 +216,10 @@ public class DialogIMDB extends JDialog {
     	panelRegularButtons.setBorder(BorderFactory.createEmptyBorder(0,0,4,0));
     	panelRegularButtons.setLayout(new FlowLayout());
     	
-    	buttonSelect = new JButton(Localizer.get("DialogIMDB.button.select.text")); //$NON-NLS-1$
-    	buttonSelect.setToolTipText(Localizer.get("DialogIMDB.button.select.tooltip")); //$NON-NLS-1$
-    	buttonSelect.setActionCommand("GetIMDBInfo - Select"); //$NON-NLS-1$
-    	buttonSelect.addActionListener(new ActionListener() {
+    	buttonChoose = new JButton(Localizer.get("DialogIMDB.button.choose.text")); //$NON-NLS-1$
+    	buttonChoose.setToolTipText(Localizer.get("DialogIMDB.button.choose.tooltip")); //$NON-NLS-1$
+    	buttonChoose.setActionCommand("GetIMDBInfo - Select"); //$NON-NLS-1$
+    	buttonChoose.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent event) {
     			log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
 
@@ -219,7 +227,7 @@ public class DialogIMDB extends JDialog {
     				executeCommandSelect();
     		}});
 
-    	panelRegularButtons.add(buttonSelect);
+    	panelRegularButtons.add(buttonChoose);
 
     	buttonCancel = new JButton(Localizer.get("DialogIMDB.button.cancel.text.cancel")); //$NON-NLS-1$
     	buttonCancel.setToolTipText(Localizer.get("DialogIMDB.button.cancel.tooltip.cancel")); //$NON-NLS-1$
@@ -254,7 +262,7 @@ public class DialogIMDB extends JDialog {
     void executeSearch() {
     	    	
     	DefaultListModel model = new DefaultListModel();
-    	model.addElement(new ModelIMDbSearchHit(null, Localizer.get("DialogIMDB.list-element.messsage.search-in-progress"), null)); //$NON-NLS-1$
+    	model.addElement(new ModelIMDbSearchHit(Localizer.get("DialogIMDB.list-element.messsage.search-in-progress"))); //$NON-NLS-1$
     	listMovies.setModel(model);
     	
     	SwingWorker worker = new SwingWorker() {
@@ -265,7 +273,7 @@ public class DialogIMDB extends JDialog {
     				final DefaultListModel list = new DefaultListModel();
 
     				if (hits.size() == 0) {
-    					list.addElement(new ModelIMDbSearchHit(null, Localizer.get("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
+    					list.addElement(new ModelIMDbSearchHit(Localizer.get("DialogIMDB.list-element.messsage.no-hits-found"))); //$NON-NLS-1$
     				}
     				else {
     					for (ModelIMDbSearchHit hit : hits)
@@ -277,7 +285,7 @@ public class DialogIMDB extends JDialog {
     					public void run() {
     						listMovies.setModel(list);
     						listMovies.setSelectedIndex(0);
-    						getButtonSelect().setEnabled(true);
+    						getButtonChoose().setEnabled(true);
     					}
     				});
     			}
@@ -315,8 +323,8 @@ public class DialogIMDB extends JDialog {
     /**
      * Returns the JButton select.
      **/
-    protected JButton getButtonSelect() {
-        return buttonSelect;
+    protected JButton getButtonChoose() {
+        return buttonChoose;
     }
    
     
@@ -487,28 +495,24 @@ public class DialogIMDB extends JDialog {
     }
     
 	void setHotkeyModifiers() {
-				
-		KeyMapping keyMapping;
 		
-		// ALT+S for Select
-		keyMapping = shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_S, shortcutManager.getToolbarShortcutMask()),
-				"Select", new AbstractAction() {
+		// ALT+C for Select
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
+				"Choose selected title", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
-				buttonSelect.doClick();
+				buttonChoose.doClick();
 			}
-		});
-		buttonSelect.setToolTipText(buttonSelect.getToolTipText() + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		}, buttonChoose);
 			
 		// ALT+D for skip (Discard)
-		keyMapping = shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_D, shortcutManager.getToolbarShortcutMask()),
-				"Discard", new AbstractAction() {
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyboardShortcutManager.getToolbarShortcutMask()),
+				"Discard this movie", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
 				buttonCancel.doClick();
 			}
-		});
-		buttonCancel.setToolTipText(buttonCancel.getToolTipText() + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
+		}, buttonCancel);
 		
 		shortcutManager.setKeysToolTipComponent(panelMoviesList);
 	}

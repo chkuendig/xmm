@@ -27,18 +27,24 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeoutException;
 
 import javax.swing.*;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.commands.MovieManagerCommandPlay;
+import net.sf.xmm.moviemanager.gui.DialogAddMultipleMovies.Files;
 import net.sf.xmm.moviemanager.http.IMDB;
+import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.models.ModelMovie;
@@ -46,23 +52,31 @@ import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.swing.util.SwingWorker;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager.KeyMapping;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
+import net.sf.xmm.moviemanager.util.SysUtil;
 import net.sf.xmm.moviemanager.util.tools.BrowserOpener;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
 
 /* This class is a total mess */
 public class DialogIMDbMultiAdd extends DialogIMDB {
     
+	private static final long serialVersionUID = 9074815790929713958L;
+
 	static Logger log = Logger.getLogger(DialogIMDbMultiAdd.class);
 	
-	int hitCount;
-    
-    
-    JTextField searchStringField;
-    
+	JTextField searchStringField;
+	JButton playMediaFiles;
+	JButton abortButton;
+	JTextArea fileLocation;
+	JButton buttonSearch;
+	JButton addWithoutIMDBInfoButton;
+	
     boolean multiAddByFile = false;
     
     boolean addInfoToExistingMovie = false;
@@ -71,9 +85,8 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     
     enum ShowListOption {show, no_show};
     
-    File multiAddFile;
+    Files multiAddFile = null;
     
-
     String filename = null;
     
     String imdbId = null;
@@ -113,25 +126,22 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     public DialogIMDbMultiAdd(ModelEntry modelEntry, boolean getUrlKeyOnly, String alternateTitle) {
     	super(modelEntry, alternateTitle, false);
     	
-    	  if (alternateTitle != null)
-          	setTitle(alternateTitle);
-         	        
-          this.getUrlKeyOnly = getUrlKeyOnly;
-          addWithoutIMDBInfo = true;
-          
-          addToListDialog();
+    	if (alternateTitle != null)
+    		setTitle(alternateTitle);
+
+    	this.getUrlKeyOnly = getUrlKeyOnly;
+    	addWithoutIMDBInfo = true;
+
+    	createUpdateIMDbComponents();
+
+    	searchStringField.setText(alternateTitle);
+    	
+    	executeSearchMultipleMovies();
     }
        
     public DialogIMDbMultiAdd(ModelEntry modelEntry, String searchString, 
     		ImdbImportOption multiAddSelectOption, String addToThisList) {
     	this(modelEntry, searchString, multiAddSelectOption, addToThisList, true);
-    	
-    	try {
-			throw new Exception("Wrong constructor");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
     }
     
     /**
@@ -140,30 +150,39 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     private DialogIMDbMultiAdd(ModelEntry modelEntry, String searchString, 
     		ImdbImportOption multiAddSelectOption, String addToThisList, boolean performSearch) {
     	    	
+    	super(modelEntry, searchString, false);
+    	    	
+    	createMultiAddComponents();
+    	
     	/* Dialog creation...*/
-        this(modelEntry, false, searchString);
-                
+    	 if (searchString != null)
+           	setTitle(searchString);
+          	        
+    	 addWithoutIMDBInfo = true;
+        
         this.addToThisList = addToThisList;
         
         /* Sets parent... */
         this.multiAddSelectOption = multiAddSelectOption;
         
         switchBetweenIMDBAndDatabase = true;
-                        
+        
         searchStringField.setText(searchString);
         
         if (performSearch)
-        	performSearch(searchString);
+        	performSearch(searchString, null, null);
     }
     
     /**
      * Constructor - When adding multiple movies by file.
      **/
-    public DialogIMDbMultiAdd(String _imdbId, ModelEntry modelEntry, String searchString, 
-    		String filename, File multiAddFile, ImdbImportOption multiAddSelectOption, String addToThisList, boolean performSearch) {
-    	    	
+    public DialogIMDbMultiAdd(String _imdbId, ModelEntry modelEntry, String searchString, String year,
+    		String filename, Files multiAddFile, ImdbImportOption multiAddSelectOption, String addToThisList, 
+    		ArrayList<ModelIMDbSearchHit> hits, boolean performSearch) {
+    
     	/* Dialog creation...*/
     	this(modelEntry, searchString, multiAddSelectOption, addToThisList, false);
+    	
     	
         imdbId = (_imdbId == null || _imdbId.equals("")) ? null : null; //$NON-NLS-1$
         this.multiAddFile = multiAddFile;
@@ -172,36 +191,149 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
         
         setTitle(filename);
           
+        setFileLocationContent();
+        
         if (performSearch)
-        	performSearch(searchString);
+        	performSearch(searchString, year, hits);
+    }
+
+   
+    
+    public void dispose() {
+    	MovieManager.getConfig().setMultiAddIMDbDialogWindowSize(getSize());
+    	super.dispose();
     }
 
 
-    void addToListDialog() {
-    	
-    	JPanel searchStringPanel = new JPanel();
-    	searchStringPanel.setLayout(new BorderLayout());
-    	searchStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogIMDB.panel-search-string.title")), BorderFactory.createEmptyBorder(4,4,4,4))); //$NON-NLS-1$
-    	searchStringField = new JTextField(27);
-    	searchStringField.setActionCommand("Search String:"); //$NON-NLS-1$
-    	
-    	searchStringField.setCaretPosition(0);
-    	searchStringField.addActionListener(new ActionListener() {
-    		public void actionPerformed(ActionEvent event) {
-    			log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-    			executeSearchMultipleMovies();
+    void createMultiAddComponents() {
+
+    	addWindowListener(new WindowAdapter() {
+    		public void windowClosing(WindowEvent e) {
+    			dispose();
     		}
     	});
 
-    	searchStringPanel.add(searchStringField, BorderLayout.NORTH);
-    	panelButtons.add(searchStringPanel, BorderLayout.CENTER);
 
     	JPanel multipleMovieButtons = new JPanel();
     	multipleMovieButtons.setLayout(new FlowLayout());
 
+    	buttonSearch = createButtonSearch();
 
+    	multipleMovieButtons.add(buttonSearch);
+
+    	if (switchBetweenIMDBAndDatabase) {
+
+    		if (multiAddFile != null) {
+    			JButton chooseBetweenImdbAndLocalDatabase = createChooseBetweenImdbAndLocalDatabaseButton();
+    			multipleMovieButtons.add(chooseBetweenImdbAndLocalDatabase);
+    		}
+    	}
+
+    	addWithoutIMDBInfoButton = createAddWithoutIMDBInfoButton();
+    	multipleMovieButtons.add(addWithoutIMDBInfoButton);
+    	
+    	System.err.println("CREATED addWithoutIMDBInfoButton:" + addWithoutIMDBInfoButton);
+    	
+    	playMediaFiles = createPlayButton();
+
+    	multipleMovieButtons.add(playMediaFiles);
+
+    	abortButton = createAbortButton();
+    	multipleMovieButtons.add(abortButton);
+
+    	JPanel multiAddButtonsPanel = new JPanel();
+    	multiAddButtonsPanel.setLayout(new BorderLayout());
+    	multiAddButtonsPanel.add(createSearchStringPanel(), BorderLayout.NORTH);
+    	multiAddButtonsPanel.add(multipleMovieButtons, BorderLayout.CENTER);
+    	multiAddButtonsPanel.add(createFileLocationPanel(), BorderLayout.SOUTH);
+
+    	panelButtons.add(multiAddButtonsPanel, BorderLayout.CENTER);
+
+    	buttonChoose.setEnabled(false);
+    	buttonCancel.setText(Localizer.get("DialogIMDB.button.cancel.text.skip-movie")); //$NON-NLS-1$
+
+    	pack();
+
+    	Dimension dim = MovieManager.getConfig().getMultiAddIMDbDialogWindowSize();
+
+    	if (dim != null && dim.height > 0 && dim.width > 0) {
+    		setSize(dim);
+    	}
+
+    	setHotkeyModifiersMultiAdd();
+    }
+    
+    void createUpdateIMDbComponents() {
+    	
+    	addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				dispose();
+			}
+		});    	    	
+    	
+    	JPanel multipleMovieButtons = new JPanel();
+    	multipleMovieButtons.setLayout(new FlowLayout());
+
+    	buttonSearch = createButtonSearch();
+    	multipleMovieButtons.add(buttonSearch);
+    	    
+    	abortButton = createAbortButton();
+    	multipleMovieButtons.add(abortButton);
+    	    	
+    	JPanel multiAddButtonsPanel = new JPanel();
+    	multiAddButtonsPanel.setLayout(new BorderLayout());
+    	multiAddButtonsPanel.add(createSearchStringPanel(), BorderLayout.NORTH);
+    	multiAddButtonsPanel.add(multipleMovieButtons, BorderLayout.CENTER);
+    	    	
+    	panelButtons.add(multiAddButtonsPanel, BorderLayout.CENTER);
+    	
+    	buttonCancel.setText(Localizer.get("DialogIMDB.button.cancel.text.skip-movie")); //$NON-NLS-1$
+        
+    	pack();
+    	
+    	Dimension dim = MovieManager.getConfig().getMultiAddIMDbDialogWindowSize();
+    	
+    	if (dim != null && dim.height > 0 && dim.width > 0) {
+    		setSize(dim);
+    	}
+    	
+        setHotkeyModifiersMultiAdd();
+     }
+	
+    /**
+     * Creates a panel containing a text field used to search
+     * @return
+     */
+    JPanel createSearchStringPanel() {
+    	
+    	JPanel searchStringPanel = new JPanel();
+    	searchStringPanel.setLayout(new BorderLayout());
+    	searchStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogIMDB.panel-search-string.title")), BorderFactory.createEmptyBorder(4,4,4,4))); //$NON-NLS-1$
+    	
+    	searchStringField = new JTextField(27);
+    	searchStringField.setActionCommand("Search String:"); //$NON-NLS-1$
+    	searchStringField.setCaretPosition(0);
+    	searchStringField.addKeyListener(new KeyAdapter() {
+    		public void keyPressed(KeyEvent e) {
+			    			
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					executeSearchMultipleMovies();
+				}
+			}
+    	});
+    	
+    	searchStringPanel.add(searchStringField, BorderLayout.NORTH);
+    	
+    	return searchStringPanel;
+    }
+    
+    /**
+     * Creates the button for searching IMDb
+     * @return
+     */
+    JButton createButtonSearch() {
     	/*This button is used to search for on IMDB and for movies in the Database
-             Where to search is decided in the executeSearchMultipleMovies method
+        Where to search is decided in the executeSearchMultipleMovies method
     	 */
     	JButton buttonSearch = new JButton(Localizer.get("DialogIMDbMultiAdd.button.search.text")); //$NON-NLS-1$
     	buttonSearch.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.search.tooltip")); //$NON-NLS-1$
@@ -213,77 +345,109 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     			log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
     			executeSearchMultipleMovies();
     		}});
-    	multipleMovieButtons.add(buttonSearch);
 
-    	if (switchBetweenIMDBAndDatabase) {
+    	return buttonSearch;
+    }
+    
+    
+    JButton createChooseBetweenImdbAndLocalDatabaseButton() {
+    	
+    	/*This button choses between IMDB and local movie database*/
+		final JButton chooseBetweenImdbAndLocalDatabase  = new JButton(Localizer.get("DialogIMDbMultiAdd.button.add-to-existing-movie.text")); //$NON-NLS-1$
+		chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.add-to-existing-movie.tooltip")); //$NON-NLS-1$
+		chooseBetweenImdbAndLocalDatabase.setActionCommand("GetIMDBInfo - chooseBetweenImdbAndLocalDatabase"); //$NON-NLS-1$
+		chooseBetweenImdbAndLocalDatabase.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 
-    		if (multiAddFile != null) {
+				if (addInfoToExistingMovie) {
+					panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogIMDB.panel-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+					chooseBetweenImdbAndLocalDatabase.setText(Localizer.get("DialogIMDbMultiAdd.button.add-to-existing-movie.text")); //$NON-NLS-1$
+					chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.add-to-existing-movie.tooltip")); //$NON-NLS-1$
+					addInfoToExistingMovie = false;
+					executeSearchMultipleMovies();
+				}
 
-    			/*This button choses between IMDB and local movie database*/
-    			final JButton chooseBetweenImdbAndLocalDatabase  = new JButton(Localizer.get("DialogIMDbMultiAdd.button.add-to-existing-movie.text")); //$NON-NLS-1$
-    			chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.add-to-existing-movie.tooltip")); //$NON-NLS-1$
-    			chooseBetweenImdbAndLocalDatabase.setActionCommand("GetIMDBInfo - chooseBetweenImdbAndLocalDatabase"); //$NON-NLS-1$
-    			chooseBetweenImdbAndLocalDatabase.addActionListener(new ActionListener() {
-    				public void actionPerformed(ActionEvent event) {
-    					log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
+				else {
+					executeEditExistingMovie(""); //$NON-NLS-1$
+					chooseBetweenImdbAndLocalDatabase.setText(Localizer.get("DialogIMDbMultiAdd.button.search-on-IMDb.text")); //$NON-NLS-1$
+					chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.search-on-IMDb.tooltip")); //$NON-NLS-1$
+					addInfoToExistingMovie = true;
 
-    					if (addInfoToExistingMovie) {
-    						panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogIMDB.panel-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
-    						chooseBetweenImdbAndLocalDatabase.setText(Localizer.get("DialogIMDbMultiAdd.button.add-to-existing-movie.text")); //$NON-NLS-1$
-    						chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.add-to-existing-movie.tooltip")); //$NON-NLS-1$
-    						addInfoToExistingMovie = false;
-    						executeSearchMultipleMovies();
-    					}
+					panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogIMDB.panel-your-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+				}
+			}});
+		
+		return chooseBetweenImdbAndLocalDatabase;
+    }
+    
+    
+    JButton createAddWithoutIMDBInfoButton() {
 
-    					else {
-    						executeEditExistingMovie(""); //$NON-NLS-1$
-    						chooseBetweenImdbAndLocalDatabase.setText(Localizer.get("DialogIMDbMultiAdd.button.search-on-IMDb.text")); //$NON-NLS-1$
-    						chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.search-on-IMDb.tooltip")); //$NON-NLS-1$
-    						addInfoToExistingMovie = true;
+    	JButton addWithoutIMDBInfo = new JButton(Localizer.get("DialogIMDbMultiAdd.button.add-without-web-info.text")); //$NON-NLS-1$
+    	addWithoutIMDBInfo.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.add-without-web-info.tooltip")); //$NON-NLS-1$
+    	addWithoutIMDBInfo.setActionCommand("GetIMDBInfo - addWithoutIMDBInfo"); //$NON-NLS-1$
 
-    						panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogIMDB.panel-your-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
-    					}
-    				}});
-    			multipleMovieButtons.add(chooseBetweenImdbAndLocalDatabase);
+    	addWithoutIMDBInfo.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent event) {
+
+    			log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
+
+    			if (multiAddByFile) {
+    				String fileName = getFilename();
+
+    				if (fileName.lastIndexOf('.') != -1)
+    					modelEntry.setTitle(fileName.substring(0, fileName.lastIndexOf('.')));
+    				else
+    					modelEntry.setTitle(fileName);
+    			}
+    			else {
+    				if (searchStringField.getText().trim().equals("")) { //$NON-NLS-1$
+    					DialogAlert alert = new DialogAlert(thisDialog, Localizer.get("DialogIMDbMultiAdd.alert.no-title-specified.title"), "<html>" + Localizer.get("DialogIMDbMultiAdd.alert.no-title-specified.message") + "</html>", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    					GUIUtil.show(alert, true);
+    					return;
+    				}
+
+    				modelEntry.setTitle(searchStringField.getText());
+    			}
+
+    			dropImdbInfoSet = true;
+    			dispose();
+    			return;
+    		}});
+
+    	return addWithoutIMDBInfo;
+    }
+    
+    JButton createPlayButton() {
+    	
+    	JButton playMediaFiles = new JButton("Play");
+    	playMediaFiles.setActionCommand("DialogIMDbMultiAdd - Play"); //$NON-NLS-1$
+
+    	playMediaFiles.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent event) {
+    			log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
+    			
+    			if (multiAddFile != null) {
+    				
+    				String [] files = multiAddFile.toStringArray();
+    				
+    				try {
+    					MovieManagerCommandPlay.executePlay(files);
+    				} catch (IOException e) {
+    					log.warn("Exception:" + e.getMessage(), e);
+    				} catch (InterruptedException e) {
+    					log.warn("Exception:" + e.getMessage(), e);
+    				}
+    			}
     		}
-    	}
-
-    	if (addWithoutIMDBInfo) {
-
-    		JButton addWithoutIMDBInfo = new JButton(Localizer.get("DialogIMDbMultiAdd.button.add-without-web-info.text")); //$NON-NLS-1$
-    		addWithoutIMDBInfo.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.add-without-web-info.tooltip")); //$NON-NLS-1$
-    		addWithoutIMDBInfo.setActionCommand("GetIMDBInfo - addWithoutIMDBInfo"); //$NON-NLS-1$
-
-    		addWithoutIMDBInfo.addActionListener(new ActionListener() {
-    			public void actionPerformed(ActionEvent event) {
-    				
-    				log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
-    				
-    				if (multiAddByFile) {
-    					String fileName = getFilename();
-    					
-    					if (fileName.lastIndexOf('.') != -1)
-    						modelEntry.setTitle(fileName.substring(0, fileName.lastIndexOf('.')));
-    					else
-    						modelEntry.setTitle(fileName);
-    				}
-    				else {
-    					if (searchStringField.getText().trim().equals("")) { //$NON-NLS-1$
-    						DialogAlert alert = new DialogAlert(thisDialog, Localizer.get("DialogIMDbMultiAdd.alert.no-title-specified.title"), "<html>" + Localizer.get("DialogIMDbMultiAdd.alert.no-title-specified.message") + "</html>", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-    						GUIUtil.show(alert, true);
-    						return;
-    					}
-    					
-    					modelEntry.setTitle(searchStringField.getText());
-    				}
-    				    				
-    				dropImdbInfoSet = true;
-    				dispose();
-    				return;
-    			}});
-    		multipleMovieButtons.add(addWithoutIMDBInfo);
-    	}
-
+    	});
+    	
+    	return playMediaFiles;
+    }
+    
+    
+    JButton createAbortButton() {
     	JButton abortButton = new JButton(Localizer.get("DialogIMDbMultiAdd.button.abort.text")); //$NON-NLS-1$
     	abortButton.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.abort.tooltip")); //$NON-NLS-1$
     	abortButton.setActionCommand("GetIMDBInfo - abort"); //$NON-NLS-1$
@@ -299,18 +463,55 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     			aborted = true;
     			dispose();
     		}});
-    	multipleMovieButtons.add(abortButton);
-    	panelButtons.add(multipleMovieButtons, BorderLayout.NORTH);
 
-    	buttonSelect.setEnabled(false);
+    	return abortButton;
+    }
+    
+    JPanel createFileLocationPanel() {
+    	// Panel file location
+    	JPanel fileLocationPanel = new JPanel();
+    	fileLocationPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Movie parts "), BorderFactory.createEmptyBorder(0,3,3,3)));
+    	fileLocationPanel.setLayout(new BorderLayout());
+    	fileLocation = new JTextArea();
+    	fileLocation.setEditable(false);
     	
-        buttonCancel.setText(Localizer.get("DialogIMDB.button.cancel.text.skip-movie")); //$NON-NLS-1$
-     }
-	
-    void performSearch(String searchString) {
-		
+    	JScrollPane fileLocaScroll = new JScrollPane(fileLocation);
+    	
+    	fileLocationPanel.add(fileLocaScroll, BorderLayout.CENTER);
+    	fileLocation.addMouseListener(new MouseAdapter() {
+    		public void mouseClicked(MouseEvent e) {
+    			//handleFileLocationPopup(e);
+    		}
+    	});
+    	
+    	return fileLocationPanel;
+    }
+    
+    /**
+     * Not yet implemented
+     * @param e
+     */
+    void handleFileLocationPopup(MouseEvent e) {
+    	
+    	if (!GUIUtil.isRightMouseButton(e))
+    		return;
+    	
+    	JPopupMenu fileLocationPopup = new JPopupMenu();
+    	JMenuItem fileLocationItem = new JMenuItem("Open content folder");
+    	fileLocationPopup.add(fileLocationItem);
+    	
+    	fileLocationPopup.show(fileLocation, e.getX(), e.getY());
+    }
+    
+    
+    
+    
+    void performSearch(String searchString, String year, ArrayList<ModelIMDbSearchHit> hits) {
+		    	
     	try {
-    		int pos = 0;
+    		int hitCount = -1;
+    		
+    		int pos = -1;
     		DefaultListModel list = new DefaultListModel();
 
     		if (multiAddSelectOption == ImdbImportOption.selectFirst && imdbId != null) {
@@ -321,17 +522,24 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     		}
     		else {
     			// Only pull list from imdb if not "Select FirstHit" is selected and no IMDB Id was found in an nfo/txt file
-    			ArrayList<ModelIMDbSearchHit> hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchString);
+    			
+    			if (hits == null)
+    				hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchString);
 
     			/*Number of movie hits*/
     			hitCount = hits.size();
     			
     			if (hitCount == 0)
-    				list.addElement(new ModelIMDbSearchHit(null, Localizer.get("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
+    				list.addElement(new ModelIMDbSearchHit(Localizer.get("DialogIMDB.list-element.messsage.no-hits-found"))); //$NON-NLS-1$
     			else {
     				for (int i = 0; i < hitCount; i++) {
     					ModelIMDbSearchHit hit = hits.get(i);
     					list.addElement(hit);
+    					
+    					if (pos == -1 && year != null && year.equals(hit.getDate())) {
+    						pos = i;
+    					}
+    					
     					if (imdbId != null && hit.getUrlID().equals(imdbId))
     						// If current movie equals the one in the nfo than preselect this in the list
     						pos = i;
@@ -339,16 +547,21 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     			}
     		}
     		listMovies.setModel(list);
-    		listMovies.setSelectedIndex(pos);
-    		getButtonSelect().setEnabled(true);
     		
-    		if (executeCommandMultipleMoviesSelectCheck(hitCount) == ShowListOption.show)
+    		if (pos == -1)
+    			pos = 0;
+    		    		
+    		listMovies.setSelectedIndex(pos);
+    		getButtonChoose().setEnabled(true);
+    		
+    		if (executeCommandMultipleMoviesSelectCheck(hitCount) == ShowListOption.show) {
     			GUIUtil.showAndWait(this, true);
+    		}
     		
     	    // Insert prefix in Title to show that these movies maybe got wrong imdb infos
     		if (MovieManager.getConfig().getMultiAddPrefixMovieTitle() && hitCount > 1 && 
     				multiAddSelectOption == ImdbImportOption.selectFirst && (imdbId == null))
-    			modelEntry.setTitle("_verify_" + modelEntry.getTitle()); //$NON-NLS-1$
+    			modelEntry.setTitle("_verify_ " + modelEntry.getTitle()); //$NON-NLS-1$
     		
     	} catch (Exception e) {
     		executeErrorMessage(e);
@@ -389,16 +602,29 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     		executeEditExistingMovie(searchStringField.getText());
 
     	else {
-    		DefaultListModel listModel = new DefaultListModel();
+    		final DefaultListModel listModel = new DefaultListModel();
 	
+    		int setSelectedIndex = 0;
+    		
     		try {
-    			ArrayList<ModelIMDbSearchHit> hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchStringField.getText());
+    			    			
+    			IMDB imdb = new IMDB(MovieManager.getConfig().getHttpSettings());
+    			ArrayList<ModelIMDbSearchHit> hits = imdb.getSimpleMatches(searchStringField.getText());
+    			        		
+    			// Error
+    			if (hits == null) {
+    				HTTPResult res = imdb.getLastHTTPResult();
+    				
+    				if (res.getStatusCode() == HttpStatus.SC_REQUEST_TIMEOUT) {
+    					listModel.addElement(new ModelIMDbSearchHit("Connection timed out...")); //$NON-NLS-1$
+    				}
+    			}
     			
-    			/* Number of movie hits */
-    			//int hitCount = hits.size();
-        		
-    			for (ModelIMDbSearchHit hit : hits)
-    				listModel.addElement(hit);
+    			for (int i = 0; i < hits.size(); i++) {
+    				listModel.addElement(hits.get(i));
+    				
+    				//if (hits.get(i).getDate())
+    			}
 
     		} catch (Exception e) {
     			executeErrorMessage(e);
@@ -408,10 +634,20 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     		}
     		    		
     		if (listModel.getSize() == 0)
-    			listModel.addElement(new ModelIMDbSearchHit(null, Localizer.get("DialogIMDB.list-element.messsage.no-hits-found"), null)); //$NON-NLS-1$
+    			listModel.addElement(new ModelIMDbSearchHit(Localizer.get("DialogIMDB.list-element.messsage.no-hits-found"))); //$NON-NLS-1$
+    		    		
     		    		
     		getMoviesList().setModel(listModel);
-    		getMoviesList().setSelectedIndex(0);
+    		getMoviesList().setSelectedIndex(setSelectedIndex);
+    		    		
+    		// This delays the execution of requestFocusInWindow.
+    		// The reason is to avoid that the actionlistener for the choose button 
+    		// is invoked, which is would be if invokelater isn't used. (Experienced on Ubuntu).
+    		SwingUtilities.invokeLater(new Runnable() {
+    			public void run() {
+    				getMoviesList().requestFocusInWindow();
+    			}
+    		});
     	}
     }
 
@@ -463,6 +699,7 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
      * Gets info...
      **/
     private void executeCommandSelect() {
+    	    	
     	int index = getMoviesList().getSelectedIndex();
     	
     	/*
@@ -498,7 +735,7 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     		
     		modelInfoTmp._hasReadProperties = true;
     		try {
-				modelInfoTmp.getFileInfo(new File[] {multiAddFile});
+				modelInfoTmp.getFileInfo(new File[] {multiAddFile.getFile()});
 			} catch (Exception e) {
 				log.error("Error occured while retrieving file info.", e); //$NON-NLS-1$
 			}
@@ -514,7 +751,7 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     	}
     	else {
     		ModelIMDbSearchHit model = ((ModelIMDbSearchHit) listModel.getElementAt(index));
-	
+	    		
     		if (model.getUrlID() == null)
     			return;
 
@@ -538,8 +775,107 @@ public class DialogIMDbMultiAdd extends DialogIMDB {
     	}
     }
 
-    void setHotkeyModifiers() {
-    	super.setHotkeyModifiers();
-    	
+    /**
+     * Takes all the media files in a Files object and generated a string 
+     * listing all the files categorized by parent directory.
+     */
+    void setFileLocationContent() {
+        
+      	if (multiAddFile != null && multiAddFile.getFile() != null) {
+      		
+      		int height = 0;
+      		
+      		ArrayList<Files> files = multiAddFile.getFiles();
+      		String str = "";
+      		
+      		while (files.size() > 0) {
+      			      			
+      			String parent = files.get(0).getParent();
+      			
+      			if (str.length() > 0)
+      				str += SysUtil.getLineSeparator();
+      				
+      			// Show directory of the file(s)
+      			str += parent + SysUtil.getDirSeparator();
+      			height++;
+      			
+      			int fileNumber = 1;
+      			
+      			for (int i = 0; i < files.size(); i++) {
+          			      				
+      				// Find all files in the current parent
+      				if (files.get(i).getParent().equals(parent)) {
+      					height++;
+      					str += SysUtil.getLineSeparator() + String.format("  %-3d - %s", fileNumber++, files.get(i).getName());
+      					files.remove(i);
+      					i--;
+      				}
+      			}
+      			
+      		}
+      		      		
+      		fileLocation.setText(str);
+      		fileLocation.setRows(height);
+      	}
+    }
+    
+    void setHotkeyModifiersMultiAdd() {
+    	    	
+    	// ALT+P for Play
+    	if (playMediaFiles != null) {
+    		shortcutManager.registerKeyboardShortcut(
+    				KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyboardShortcutManager.getToolbarShortcutMask()),
+    				"Play file", new AbstractAction() {
+    					public void actionPerformed(ActionEvent ae) {
+    						playMediaFiles.doClick();
+    					}
+    				}, playMediaFiles);
+    	}
+
+		// ALT+A for abort
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyboardShortcutManager.getToolbarShortcutMask()),
+				"Abort import", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				abortButton.doClick();
+			}
+		}, abortButton);
+		
+		System.err.println("addWithoutIMDBInfoButton:" + addWithoutIMDBInfoButton);
+		
+		if (addWithoutIMDBInfoButton != null) {
+			// ALT+W for add without IMDb info
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Add without IMDb info", new AbstractAction() {
+						public void actionPerformed(ActionEvent ae) {
+							addWithoutIMDBInfoButton.doClick();
+						}
+					}, addWithoutIMDBInfoButton);
+		}
+		
+		// ALT+L for list focus
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyboardShortcutManager.getToolbarShortcutMask()),
+				"List Focus", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+				listMovies.requestFocusInWindow();
+			}
+		});
+		
+		// ALT+S for search field focus
+		shortcutManager.registerKeyboardShortcut(
+				KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask()),
+				"Give search field focus or perform search", new AbstractAction() {
+			public void actionPerformed(ActionEvent ae) {
+								
+				if (!searchStringField.hasFocus()) {
+					searchStringField.requestFocusInWindow();
+				}
+				else {
+					buttonSearch.doClick();
+				}
+			}
+		});
     }
 }
