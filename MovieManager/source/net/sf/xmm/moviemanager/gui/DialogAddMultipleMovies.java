@@ -120,6 +120,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	public JCheckBox enableExludeParantheses;
 	public JCheckBox enableExludeCDNotation;
 	public JCheckBox enableExludeIntegers;
+	public JCheckBox enableExludeYear;
 	public JCheckBox enableExludeUserdefinedInfo;
 	public JCheckBox enableExludeAllAfterMatchOnUserDefinedInfo;
 	public JCheckBox enableSearchNfoForImdb;
@@ -233,7 +234,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 		
 		JPanel imdbRadioButtonPanel = new JPanel(new GridLayout(0, 1));
-		imdbRadioButtonPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAddMultipleMovies.panel-hits.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		imdbRadioButtonPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,4,0,4), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAddMultipleMovies.panel-hits.title"))), BorderFactory.createEmptyBorder(0,4,0,4))); //$NON-NLS-1$
 
 		imdbRadioButtonPanel.add(askButton);
 		imdbRadioButtonPanel.add(selectFirstHitButton);
@@ -257,6 +258,11 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		enableExludeIntegers.setActionCommand("enableExludeInteger"); //$NON-NLS-1$
 		enableExludeIntegers.addActionListener(this);
 		
+		enableExludeYear = new JCheckBox("Exclude year and all after"); //$NON-NLS-1$
+		enableExludeYear.setToolTipText("If a valid year is found, the year, and everything after will be removed."); //$NON-NLS-1$
+		enableExludeYear.setActionCommand("enableExludeInteger"); //$NON-NLS-1$
+		enableExludeYear.addActionListener(this);
+				
 		enableExludeUserdefinedInfo = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-clean-string.remove-user-defined-info.text")); //$NON-NLS-1$
 		enableExludeUserdefinedInfo.setActionCommand("enableExludeUserdefinedInfo"); //$NON-NLS-1$
 		enableExludeUserdefinedInfo.addItemListener(new ItemListener() {
@@ -281,11 +287,12 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		userDefinedInfo.setEnabled(false);
 		
 		JPanel cleanStringPanel = new JPanel(new GridLayout(0, 1));
-		cleanStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAddMultipleMovies.panel-clean-string.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		cleanStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,4,5,4), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAddMultipleMovies.panel-clean-string.title"))), BorderFactory.createEmptyBorder(0,4,0,4))); //$NON-NLS-1$
 		
 		cleanStringPanel.add(enableExludeParantheses);
 		cleanStringPanel.add(enableExludeCDNotation);
 		cleanStringPanel.add(enableExludeIntegers);
+		cleanStringPanel.add(enableExludeYear);
 		cleanStringPanel.add(enableExludeUserdefinedInfo);
 		cleanStringPanel.add(enableExludeAllAfterMatchOnUserDefinedInfo);
 		cleanStringPanel.add(userDefinedInfo);
@@ -309,13 +316,13 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		enableUseParentFolderIfCD.setEnabled(false);
 		
 		JPanel titleOptionPanel = new JPanel(new GridLayout(0, 1));
-		titleOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Title options")), BorderFactory.createEmptyBorder(0,5,5,5))); //$NON-NLS-1$
+		titleOptionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,4,5,4), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Title options ")), BorderFactory.createEmptyBorder(0,4,0,4))); //$NON-NLS-1$
 
 		titleOptionPanel.add(enableUseFolderName);
 		titleOptionPanel.add(enableUseParentFolderIfCD);
 		
 		JPanel miscOptionsPanel = new JPanel(new GridLayout(0, 1));
-		miscOptionsPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Miscellaneous options")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		miscOptionsPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,4,5,4), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Miscellaneous options ")), BorderFactory.createEmptyBorder(0,4,1,4))); //$NON-NLS-1$
 				
 		enableSearchNfoForImdb = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-options.enable-Folder-Nfo-scanning.text")); //$NON-NLS-1$
 		enableSearchNfoForImdb.setActionCommand("enableSearchNfoForImdb"); //$NON-NLS-1$
@@ -379,7 +386,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		customExtension.setToolTipText("Specify additional extensions separated by comma");
 		
 		JPanel extensionPanel = new JPanel(new BorderLayout());
-		extensionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "File extensions")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		extensionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,3,0,3), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " File extensions ")), BorderFactory.createEmptyBorder(0,4,4,4))); //$NON-NLS-1$
 		extensionPanel.add(validExtension, BorderLayout.NORTH);
 		extensionPanel.add(customExtension, BorderLayout.CENTER);
 		
@@ -606,7 +613,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		JPanel includeOrExcludeStringsAndRegex = new JPanel();
 		includeOrExcludeStringsAndRegex.setLayout(new TableLayout(size));
 		
-		includeOrExcludeStringsAndRegex.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "String matching on filename"), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		includeOrExcludeStringsAndRegex.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "String matching on filename"), BorderFactory.createEmptyBorder(1,1,3,5))); //$NON-NLS-1$
 				
 		includeOrExcludeStringsAndRegex.add(enabledRegEx,   "0, 0");
 		includeOrExcludeStringsAndRegex.add(regexTextField, "1, 0");
@@ -633,7 +640,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		duplicatesPanel.add(filterOutDuplicatesEntireFilePath);
 		
 		filterPanel = new JPanel();
-		filterPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(4,4,4,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Filter files"), BorderFactory.createEmptyBorder(4,4,4,4)))); //$NON-NLS-1$
+		filterPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,4,4), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Filter files"), BorderFactory.createEmptyBorder(0,3,2,3)))); //$NON-NLS-1$
 				
 		filterPanel.setLayout(new BorderLayout());
 		filterPanel.add(duplicatesPanel, BorderLayout.NORTH);
@@ -722,7 +729,13 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		if (filterOutDuplicates.isSelected() && !mediaFilesInDatabaseAdded) {
 
 			mediaFilesInDatabaseAdded = true;
-			addCurrentMediaFilesToTree();
+			
+			Thread t = new Thread(new Runnable() {
+				public void run() {
+					addCurrentMediaFilesToTree();
+				}
+			});
+			t.start();
 		}
 	}
 
@@ -760,7 +773,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	JPanel makeListPanel() {
 
 		JPanel listPanel = new JPanel();
-		listPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,5,5), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogAddMultipleMovies.panel-add-to-list.title"))), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
+		listPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,3,0,3), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogAddMultipleMovies.panel-add-to-list.title"))), BorderFactory.createEmptyBorder(0,5,5,3))); //$NON-NLS-1$
 		listPanel.setLayout(new BorderLayout());
 		
 		ArrayList<String> columnListNames = MovieManager.getIt().getDatabase().getListsColumnNames();
@@ -877,6 +890,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		enableUseFolderName.setSelected(config.getMultiAddTitleOption());
 		enableExludeAllAfterMatchOnUserDefinedInfo.setSelected(config.getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo());
 		enableExludeIntegers.setSelected(config.getMultiAddEnableExludeIntegers());
+		enableExludeYear.setSelected(config.getMultiAddEnableExludeYear());
 		enableExludeCDNotation.setSelected(config.getMultiAddEnableExludeCDNotation());
 		enableExludeParantheses.setSelected(config.getMultiAddEnableExludeParantheses());
 		enableUseParentFolderIfCD.setSelected(config.getMultiAddTitleOptionNoCd());
@@ -968,6 +982,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		config.setMultiAddEnableExludeParantheses(enableExludeParantheses.isSelected());
 		config.setMultiAddEnableExludeCDNotation(enableExludeCDNotation.isSelected());
 		config.setMultiAddEnableExludeIntegers(enableExludeIntegers.isSelected());
+		config.setMultiAddEnableExludeYear(enableExludeYear.isSelected());
 		config.setMultiAddTitleOption(enableUseFolderName.isSelected());
 		config.setMultiAddTitleOptionNoCd(enableUseParentFolderIfCD.isSelected());
 		config.setMultiAddEnableAutomaticCombine(enableAutomaticCombine.isSelected());
