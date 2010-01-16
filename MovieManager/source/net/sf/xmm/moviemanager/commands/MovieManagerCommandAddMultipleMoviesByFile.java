@@ -96,8 +96,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 	ModelImportExportSettings getSettings() {
 
 		ModelFileImportSettings importSettings = new ModelFileImportSettings();
-		
-		
+				
 		ArrayList <DialogAddMultipleMovies.Files> fileList = damm.getMoviesToAdd();
 
 		if (fileList == null) {
@@ -109,6 +108,7 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		importSettings.enableExludeParantheses = damm.enableExludeParantheses.isSelected();
 		importSettings.enableExludeCDNotations = damm.enableExludeCDNotation.isSelected();
 		importSettings.enableExludeIntegers = damm.enableExludeIntegers.isSelected();
+		importSettings.enableExludeYear = damm.enableExludeYear.isSelected();
 		importSettings.enableUseFolderName = damm.enableUseFolderName.isSelected();
 		importSettings.enableSearchNfoForImdb = damm.enableSearchNfoForImdb.isSelected();
 		importSettings.enableExludeUserdefinedInfo = damm.getEnableExludeUserdefinedInfo();
