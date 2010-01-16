@@ -22,17 +22,13 @@ package net.sf.xmm.moviemanager.http;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
-import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSeries;
-import net.sf.xmm.moviemanager.util.FileUtil;
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,14 +57,13 @@ public class IMDBTest  {
 	}
 
 	
-	//@Test
+	@Test
 	public void getSimpleMatchesTest() {
 
 		IMDB imdb = null;
 		try {
 			imdb = new IMDB();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -77,9 +72,7 @@ public class IMDBTest  {
 		ArrayList<ModelIMDbSearchHit> matches = null;
 		try {
 			matches = imdb.getSimpleMatches(input);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (UnknownHostException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		assertTrue("The number of results does not match the expected for input " + input, matches.size() ==  20);
@@ -89,17 +82,25 @@ public class IMDBTest  {
 
 		try {
 			matches = imdb.getSimpleMatches(input);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (UnknownHostException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		assertTrue("The number of results does not match the expected for input " + input, matches.size() ==  20);
 
 
-		for (int i = 0; i < matches.size(); i++)
-			System.out.println("matches.get("+i+"):" + matches.get(i));	
+		//for (int i = 0; i < matches.size(); i++)
+			//System.out.println("matches.get("+i+"):" + matches.get(i));	
 
+		// Special case with only one hit, where one is directly referred to the movie page
+		
+		input = "Ofelas";
+
+		try {
+			matches = imdb.getSimpleMatches(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		assertTrue("The number of results does not match the expected for input " + input, matches.size() ==  1);
 	}
 
 
@@ -196,7 +197,7 @@ public class IMDBTest  {
 		String expectedCast = "Arnold Schwarzenegger (The Terminator), Linda Hamilton (Sarah Connor), Edward Furlong (John Connor), Robert Patrick (T-1000), Earl Boen (Dr. Silberman), Joe Morton (Miles Dyson), S. Epatha Merkerson (Tarissa Dyson), Castulo Guerra (Enrique Salceda), Danny Cooksey (Tim), Jenette Goldstein (Janelle Voight), Xander Berkeley (Todd Voight), Leslie Hamilton Gearren (Twin Sarah), Ken Gibbel (Douglas), Robert Winley (Cigar-Smoking Biker), Peter Schrum (Lloyd (as Pete Schrum))";
 		String expectedWebRuntime = "137 min, USA:152 min (special edition), USA:154 min (extended special edition)";
 		String expectedWebSoundMix = "70 mm 6-Track (analog 70 mm prints), CDS (digital 35 mm and 70 mm prints), Dolby SR (analog 35 mm prints)";
-		String expectedAwards = "Won 4 Oscars. Another 19 wins & 18 nominations";
+		String expectedAwards = "Won 4 Oscars. Another 20 wins & 18 nominations";
 		String expectedMpaa = "Rated R for strong sci-fi action and violence, and for language.";
 		String expectedAka = 
 "El Exterminator 2 (USA: Spanish title)\n" +
@@ -225,7 +226,7 @@ public class IMDBTest  {
 "Terminator 2: Dommedag (Denmark) [da]\n" +
 "Terminator 2: Dzien sadu (Poland) [pl]\n" +
 "Terminator 2: Sudnji dan (Croatia) [hr]\n" +
-"Terminator 2: Sudnyi den' (Soviet Union: Russian title) [ru]\n";
+"Terminator 2: Sudnyi den' (Soviet Union: Russian title) [ru]";
 		
 	
 		String expectedCertification = "Canada:18 (Nova Scotia) (DVD rating), Canada:A (Nova Scotia) (original cut), Canada:AA (Ontario) (original cut), Canada:PA (Manitoba) (original cut), Finland:K-18 (original rating) (1991), Italy:T, USA:R (certificate #31159), Iceland:16, South Korea:15, Brazil:12, Malaysia:18SG, New Zealand:M, Netherlands:12 (edited TV version), Portugal:M/12, Argentina:16, Australia:M, Canada:13+ (Quebec), Canada:18A (Alberta) (re-rating) (1999), Canada:18A (Manitoba/Ontario) (DVD rating), Chile:14, Finland:K-16 (re-rating) (1991), France:-12, Germany:16, Ireland:15, Israel:PG, Japan:R-15, Netherlands:16, Norway:15 (video rating) (director's cut), Norway:18 (original rating), Peru:14, Singapore:NC-16, Singapore:PG (cut), Spain:18, Sweden:15, UK:15 (original rating) (cut), UK:15 (video rating) (1992) (cut), UK:15 (video re-rating) (2001) (uncut), UK:18 (laserdisc rating) (1992) (uncut), Iran:18+";
@@ -278,7 +279,7 @@ public class IMDBTest  {
 		String expectedCountry = "USA";
 		String expectedLanguage = "English";
 		String expectedPlot = "At the young age of 16, Buffy was chosen to hunt vampires, demons, and the forces of darkness. After the ordeal at Hemery High Buffy Summers wound up at Sunnydale High. Joined with Willow Rosenberg and Alexander \"Xander\" Harris, and her watcher Giles, Buffy fights the challenges of High School and saves the world...a lot.";
-		String expectedCast = "Nicholas Brendon (Xander Harris (145 episodes, 1997-2003)), Alyson Hannigan (Willow Rosenberg (144 episodes, 1997-2003)), Anthony Head (Rupert Giles (123 episodes, 1997-2003)), James Marsters (Spike (97 episodes, 1997-2003)), Emma Caulfield (Anya (85 episodes, 1998-2003)), Michelle Trachtenberg (Dawn Summers (66 episodes, 2000-2003))";
+		String expectedCast = "Sarah Michelle Gellar (Buffy Summers /, (145 episodes, 1997-2003)), Nicholas Brendon (Xander Harris (145 episodes, 1997-2003)), Alyson Hannigan (Willow Rosenberg (144 episodes, 1997-2003)), Anthony Head (Rupert Giles (123 episodes, 1997-2003)), James Marsters (Spike (97 episodes, 1997-2003)), Emma Caulfield (Anya (85 episodes, 1998-2003)), Michelle Trachtenberg (Dawn Summers (66 episodes, 2000-2003))";
 		String expectedWebRuntime = "44 min (144 episodes)";
 		String expectedWebSoundMix = "Dolby";
 		String expectedAwards = "Nominated for Golden Globe. Another 34 wins & 99 nominations";
@@ -302,7 +303,7 @@ public class IMDBTest  {
 "Buffy, a vámpírok réme (Hungary) [hu]\n" +
 "Buffy, l'ammazzavampiri (Italy) [it]\n" +
 "Buffy, vampyyrintappaja (Finland) [fi]\n" +
-"Nightfall (Japan: English title) [en]\n";
+"Nightfall (Japan: English title) [en]";
 	
 	
 		String expectedCertification = "UK:12 (some episodes), UK:15 (some episodes), Australia:PG (some episodes), Portugal:M/12, New Zealand:M, USA:TV-14, Australia:M, Israel:PG, Singapore:M18 (DVD rating) (season 7), Singapore:PG, USA:TV-14 (some episodes), USA:TV-PG (some episodes)";
@@ -358,7 +359,7 @@ public class IMDBTest  {
 		String expectedCountry = "USA";
 		String expectedLanguage = "English";
 		String expectedPlot = "In this hour-long episode, Jerry performs the biggest show of his life in Atlantic City. He receives a rather generous pay check for the event, and decides to buy his father a Cadillac. Unfortunately, doing so puts Morty in the hot seat with the condo board of directors, where he serves as president. Morty is accused of stealing money from the board, and ultimately gets removed from his post as president and kicked out of the condo. Meanwhile, thanks to Elaine, George can score a date with \"My Cousin Vinnie\" star Marisa Tomei but Elaine objects because of George's engagement with Susan. Kramer turns the tables on the cable company when they want to disconnect his service.";
-		String expectedCast = "Jerry Seinfeld (Jerry Seinfeld (also archive footage)), Julia Louis-Dreyfus (Elaine Benes), Michael Richards (Cosmo Kramer), Jason Alexander (George Costanza), Marisa Tomei (Marisa Tomei (also archive footage)), Liz Sheridan (Helen Seinfeld), Barney Martin (Morty Seinfeld), Heidi Swedberg (Susan Biddle Ross), Walter Olkewicz (Nick Stevens - Cable Guy), Annabelle Gurwitch (Katy), Sandy Baron (Jack Klompus), Ann Morgan Guilbert (Evelyn (as Ann Guilbert)), Frances Bay (Mabel Choate (also archive footage)), Bill Macy (Herb), Jesse White (Ralph)";
+		String expectedCast = "Jerry Seinfeld (Jerry Seinfeld (also archive footage)), Julia Louis-Dreyfus (Elaine Benes), Michael Richards (Cosmo Kramer), Jason Alexander (George), Marisa Tomei (Herself (also archive footage)), Liz Sheridan (Helen), Barney Martin (Morty), Heidi Swedberg (Susan), Walter Olkewicz (Nick), Annabelle Gurwitch (Katy), Sandy Baron (Jack), Ann Morgan Guilbert (Evelyn (as Ann Guilbert)), Frances Bay (Mrs. Choate (also archive footage)), Bill Macy (Herb), Jesse White (Ralph)";
 		String expectedWebRuntime = "60 min";
 		String expectedWebSoundMix = "Stereo";
 		String expectedAwards = "";
@@ -388,7 +389,7 @@ public class IMDBTest  {
 		assertEquals(expectedColor, series.getColour());		
 	}
 	
-	@Test
+	//@Test
 	public void dataRetrievalMultipleDirectorsTest() throws Exception {
 		
 		IMDB imdb = null;
@@ -403,14 +404,14 @@ public class IMDBTest  {
 		// The Ladykillers
 		StringBuffer data = imdb.getURLData("0335245");
 		
-		ModelIMDbEntry series = imdb.grabInfo("0335245", data);
+		ModelIMDbEntry movie = imdb.grabInfo("0335245", data);
 						
 		String expectedTitle = "The Ladykillers";
 		String expectedDirector = "Ethan Coen, Joel Coen";
 		String expectedWriter = "Joel Coen, Ethan Coen";
 		
-		assertEquals(expectedTitle, series.getTitle());
-		assertEquals(expectedDirector, series.getDirectedBy());
-		assertEquals(expectedWriter, series.getWrittenBy());
+		assertEquals(expectedTitle, movie.getTitle());
+		assertEquals(expectedDirector, movie.getDirectedBy());
+		assertEquals(expectedWriter, movie.getWrittenBy());
 	}
 }
