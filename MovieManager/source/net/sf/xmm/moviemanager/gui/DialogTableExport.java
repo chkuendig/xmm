@@ -154,13 +154,13 @@ public class DialogTableExport extends DialogTableData {
 		String [][] tData = retrieveValuesFromTable();
 		
 		for (int i = 0; i < titles.length; i++) {
-			System.err.print(titles[i] + "  ");
+			System.out.print(titles[i] + "  ");
 		}
 		
 		System.err.println();
 		
 		for (int i = 0; i < tData[0].length; i++) {
-			System.err.print(tData[0][i] + "  ");
+			System.out.print(tData[0][i] + "  ");
 		}
 	}
 	
@@ -174,8 +174,8 @@ public class DialogTableExport extends DialogTableData {
 			for (int i = 0; i < databaseData.length; i++) {
 				Object tmp1 = tableModel.getValueAt(i, index1);
 				Object tmp2 = tableModel.getValueAt(i, index2);
-				System.err.println("tmp1:" + tmp1);	
-				System.err.println("tmp2:" + tmp2);	
+				System.out.println("tmp1:" + tmp1);	
+				System.out.println("tmp2:" + tmp2);	
 				
 				tableModel.setValueAt(tmp2, i, index1);
 				tableModel.setValueAt(tmp1, i, index2);
