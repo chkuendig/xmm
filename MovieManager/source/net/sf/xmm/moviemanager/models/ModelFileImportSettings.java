@@ -34,6 +34,7 @@ public class ModelFileImportSettings extends ModelImportExportSettings {
 	public boolean enableExludeParantheses = false;
 	public boolean enableExludeCDNotations = false;
 	public boolean enableExludeIntegers = false;
+	public boolean enableExludeYear = false;
 	public boolean enableExludeAllAfterMatchOnUserDefinedInfo = false;
 	public boolean enableSearchNfoForImdb = false;
 	public boolean searchInSubdirectories = false;
