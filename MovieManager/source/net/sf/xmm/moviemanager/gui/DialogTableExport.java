@@ -156,9 +156,7 @@ public class DialogTableExport extends DialogTableData {
 		for (int i = 0; i < titles.length; i++) {
 			System.out.print(titles[i] + "  ");
 		}
-		
-		System.err.println();
-		
+				
 		for (int i = 0; i < tData[0].length; i++) {
 			System.out.print(tData[0][i] + "  ");
 		}
@@ -167,7 +165,7 @@ public class DialogTableExport extends DialogTableData {
 	
 	public void switchColumnData(int index1, int index2) {
 		
-		System.err.println("switch column data:" + index1 + " and " + index2);
+		System.out.println("switch column data:" + index1 + " and " + index2);
 		
 		if (index1 != -1 && index2 != -1) {
 			// Removes data in old column
