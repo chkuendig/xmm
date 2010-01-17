@@ -27,6 +27,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
@@ -252,48 +253,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         dispose();
     }
     
-    void setKeyKeyModifiers() {
-    	
-    	// ALT+T to choose vwitch view 
-		shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"Change the view", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				int index = getCurrentMainTabIndex();
-				index = (index == 0) ? 1 : 0;
-				setCurrentMainTabIndex(index);
-			}
-		});
-				
-		// ALT+N to focus notes area 
-		shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"Give focus to notes area", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				notesTextArea.requestFocusInWindow();
-			}
-		});
-		
-		// ALT+L to focus notes area 
-		shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"Give focus to movie list", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				moviesList.requestFocusInWindow();
-			}
-		});
-		
-		// CTRL+s for search filter 
-		shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK),
-				"Give focus to the search filter", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				comboBoxFilter.requestFocusInWindow();
-			}
-		});
-		
-		shortcutManager.setKeysToolTipComponent(toolBar);
-	}
+   
     
     /**
      * Setup the main MovieManager object.
@@ -320,7 +280,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         setResizable(true);
         
-        setKeyKeyModifiers();
+        setHotkeyModifiers();
         
         /* Hides database related components. */
         menuBar.setDatabaseComponentsEnable(false);
@@ -2057,6 +2017,54 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
      **/
     public JLabel getLanguageLabel() {
         return languageLabel;
+    }
+
+    void setHotkeyModifiers() {
+
+    	try {
+    		// ALT+T to choose vwitch view 
+    		shortcutManager.registerKeyboardShortcut(
+    				KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+    				"Change the view", new AbstractAction() {
+    					public void actionPerformed(ActionEvent ae) {
+    						int index = getCurrentMainTabIndex();
+    						index = (index == 0) ? 1 : 0;
+    						setCurrentMainTabIndex(index);
+    					}
+    				});
+
+    		// ALT+N to focus notes area 
+    		shortcutManager.registerKeyboardShortcut(
+    				KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+    				"Give focus to notes area", new AbstractAction() {
+    					public void actionPerformed(ActionEvent ae) {
+    						notesTextArea.requestFocusInWindow();
+    					}
+    				});
+
+    		// ALT+L to focus notes area 
+    		shortcutManager.registerKeyboardShortcut(
+    				KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+    				"Give focus to movie list", new AbstractAction() {
+    					public void actionPerformed(ActionEvent ae) {
+    						moviesList.requestFocusInWindow();
+    					}
+    				});
+
+    		// CTRL+s for search filter 
+    		shortcutManager.registerKeyboardShortcut(
+    				KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK),
+    				"Give focus to the search filter", new AbstractAction() {
+    					public void actionPerformed(ActionEvent ae) {
+    						comboBoxFilter.requestFocusInWindow();
+    					}
+    				});
+
+    		shortcutManager.setKeysToolTipComponent(toolBar);
+
+    	} catch (Exception e) {
+    		log.warn("Exception:" + e.getMessage(), e);
+    	}
     }
 }
 
