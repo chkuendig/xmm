@@ -23,8 +23,10 @@ package net.sf.xmm.moviemanager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +44,8 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
 import org.apache.log4j.Logger;
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import org.pushingpixels.substance.api.skin.SkinInfo;
 
 import com.l2fprod.gui.plaf.skin.Skin;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
@@ -49,7 +53,7 @@ import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 public class LookAndFeelManager {
     
     static Logger log = Logger.getRootLogger();
-    
+        
     public static void setLookAndFeel() {
         
         MovieManagerConfig config = MovieManager.getConfig();
@@ -117,7 +121,11 @@ public class LookAndFeelManager {
             		config.setCustomLookAndFeel("Metal");
             	}
             }
-
+            
+            if (config.getLookAndFeelType() == LookAndFeelType.Substance) {
+            	String skin = config.getSubstanceSkin();
+            	setSubstanceLookAndFeel(skin);
+            }
 
             ExtendedTreeCellRenderer.setDefaultColors();
 
@@ -137,7 +145,55 @@ public class LookAndFeelManager {
         }
     }
     
+    public static void setSubstanceLookAndFeel(String skinName) {
+    	
+    	ArrayList<SkinInfo> list = getSubstanceSkinList();
+    	
+    	for (SkinInfo s : list) {
+    		
+    		if (skinName.equals(s.getDisplayName())) {
+    			log.debug("Setting substance skin " + skinName);
+    		
+    			final SkinInfo finalSkin = s;
+    			
+    			try {
+					GUIUtil.invokeAndWait(new Runnable() {
+						public void run() {
+							SubstanceLookAndFeel.setSkin(finalSkin.getClassName());
+						}
+					});
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}
+    	}
+    }
     
+    public static ArrayList<SkinInfo> getSubstanceSkinList() {
+    	Map<String, SkinInfo> m = SubstanceLookAndFeel.getAllSkins();
+
+    	ArrayList<SkinInfo> list = new ArrayList<SkinInfo>();
+    	
+    	for (SkinInfo s : m.values()) {
+    		list.add(s);
+    	}
+    	return list;
+    }
+    
+    public static String [] getSubstanceSkinListArray() {
+    	ArrayList<SkinInfo> list = getSubstanceSkinList();
+    	String [] names = new String[list.size()];
+    	
+    	for (int i = 0; i < names.length; i++)
+    		names[i] = list.get(i).getDisplayName();
+    		
+    	return names;
+    }
+
     public static String [] getSkinlfThemepackList() {
         
         try {
@@ -314,6 +370,7 @@ public class LookAndFeelManager {
     }
     
     private static void setLookAndFeel(final String className) {
+    	    	
     	SwingUtilities.invokeLater(new Runnable() {
     		public void run() {
     			try {
@@ -335,6 +392,7 @@ public class LookAndFeelManager {
     }
     
     private static void setLookAndFeel(final LookAndFeel lookAndFeel) {
+    	    	
     	SwingUtilities.invokeLater(new Runnable() {
     		public void run() {
     			try {
