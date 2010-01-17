@@ -28,6 +28,7 @@ import java.awt.FontMetrics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -302,6 +303,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		imdbID.setFont((new Font(imdbID.getFont().getName(), 1, fontSize)));
 
 		imdb = new JTextField(6);
+		imdb.setDocument(new DocumentRegExp("(\\d)*"));
+		
 		imdb.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				
@@ -2326,105 +2329,108 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	
 	
 	void setHotkeyModifiers() {
-	
-		KeyMapping keyMapping;
-		
-		// ALT+S for Save and close
-		keyMapping = shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"Save & Close", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonSaveAndClose.doClick();
-			}
-		}, buttonSaveAndClose);
-		
-		
-		// ALT+A for Save and Clear
-		keyMapping = shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), 
-				"Save & Clear", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonSave.doClick();
-			}
-		}, buttonCancel);
-				
-		
-		// ALT+D for DVD Info
-		keyMapping = shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"Get DVD Info", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonGetDVDInfo.doClick();
-			}
-		}, buttonGetDVDInfo);
-		
-		
-		// ALT+F for File info
-		keyMapping = shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"Get File Info", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonGetFileInfo.doClick();
-			}
-		}, buttonGetFileInfo);
-		
-		
-		// ALT+M for IMDb info
-		keyMapping = shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"Get IMDb Info", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonGetIMDBInfo.doClick();
-			}
-		}, buttonGetIMDBInfo);
-		
-		
-		// ALT+C for Cancel
-		keyMapping = shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"Cancel", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonCancel.doClick();
-			}
-		}, buttonSave);
-				
-		// ALT+N for Notes field 
-		shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"Give focus to Notes text area", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				textAreaNotes.requestFocusInWindow();
-			}
-		});
+			
+		try {
+			// ALT+S for Save and close
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					"Save & Close", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonSaveAndClose.doClick();
+				}
+			}, buttonSaveAndClose);
+			
+			
+			// ALT+A for Save and Clear
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), 
+					"Save & Clear", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonSave.doClick();
+				}
+			}, buttonCancel);
+					
+			
+			// ALT+D for DVD Info
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					"Get DVD Info", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonGetDVDInfo.doClick();
+				}
+			}, buttonGetDVDInfo);
+			
+			
+			// ALT+F for File info
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					"Get File Info", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonGetFileInfo.doClick();
+				}
+			}, buttonGetFileInfo);
+			
+			
+			// ALT+M for IMDb info
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					"Get IMDb Info", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonGetIMDBInfo.doClick();
+				}
+			}, buttonGetIMDBInfo);
+			
+			
+			// ALT+C for Cancel
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					"Cancel", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonCancel.doClick();
+				}
+			}, buttonSave);
+					
+			// ALT+N for Notes field 
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					"Give focus to Notes text area", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					textAreaNotes.requestFocusInWindow();
+				}
+			});
 
-		// ALT+I for additionalInfo combobox 
-		shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_I, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"Give focus to additional info dropdown", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				additionalInfoFields.requestFocusInWindow();
-			}
-		});
+			// ALT+I for additionalInfo combobox 
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_I, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					"Give focus to additional info dropdown", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					additionalInfoFields.requestFocusInWindow();
+				}
+			});
 
 
-		// ALT+V for additionalInfo value field 
-		shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"Give focus to additional info value field", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				getAdditionalInfoValuePanel().getComponent(0).requestFocusInWindow();
-			}
-		});
+			// ALT+V for additionalInfo value field 
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					"Give focus to additional info value field", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					getAdditionalInfoValuePanel().getComponent(0).requestFocusInWindow();
+				}
+			});
 
-		// ALT+T for title field 
-		shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
-				"Give focus to the title field", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				movieTitle.requestFocusInWindow();
-			}
-		});
-	
-		shortcutManager.setKeysToolTipComponent(panelMovieInfo);
+			// ALT+T for title field 
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					"Give focus to the title field", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					movieTitle.requestFocusInWindow();
+				}
+			});
+
+			shortcutManager.setKeysToolTipComponent(panelMovieInfo);
+			
+		} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
+		}
 	}
 }
