@@ -149,12 +149,10 @@ public class HttpUtil {
 		
 		StringBuffer data = null;
 		StatusLine statusLine = null;
-		public int statusCode = -1;
 		
-		HTTPResult(StringBuffer data, StatusLine statusLine, int statusCode) {
+		HTTPResult(StringBuffer data, StatusLine statusLine) {
 			this.data = data;
 			this.statusLine = statusLine;
-			this.statusCode = statusCode;
 		}
 		
 		public StringBuffer getData() {
@@ -162,7 +160,11 @@ public class HttpUtil {
 		}
 		
 		public int getStatusCode() {
-			return statusCode;
+			return statusLine.getStatusCode();
+		}
+		
+		public String getStatusMessage() {
+			return statusLine.getReasonPhrase();
 		}
 	}
 	
@@ -192,7 +194,7 @@ public class HttpUtil {
 		
 		stream.close();
 		
-		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine(), statusCode);
+		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
 	}
 	
 
@@ -221,7 +223,7 @@ public class HttpUtil {
 
 		stream.close();
 
-		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine(), statusCode);
+		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
 	}
 
 	
@@ -234,7 +236,8 @@ public class HttpUtil {
 		int statusCode = client.executeMethod(method);
 
 		if (statusCode != HttpStatus.SC_OK) {
-			log.debug("HTTP StatusCode not HttpStatus.SC_OK:(" + statusCode + "):" + method.getStatusLine());
+			log.debug("HTTP StatusCode not HttpStatus.SC_OK:" + method.getStatusLine());
+			log.debug("For url:" + url.toString());
 		}
 		
 		if (statusCode == HttpStatus.SC_REQUEST_TIMEOUT) {
@@ -260,7 +263,7 @@ public class HttpUtil {
 		temp.close();
 		data.append(new String(buff, chrSet));
 
-		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine(), statusCode);
+		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
 	}
 	
 	

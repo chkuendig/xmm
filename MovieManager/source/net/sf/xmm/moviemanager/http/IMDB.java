@@ -104,14 +104,14 @@ public class IMDB {
     	return grabInfo(urlID, null);	
     }
     
-    public StringBuffer getURLData(String urlID) throws Exception {
+    public HTTPResult getURLData(String urlID) throws Exception {
     	
     	if (urlID == null)
     		throw new Exception("Movie ID is empty");
     
     	URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/");
-		HTTPResult res = httpUtil.readData(url);
-		return res.data;
+    	lastHTTPResult = httpUtil.readData(url);
+		return lastHTTPResult;
     }
     
     public ModelIMDbEntry grabInfo(String urlID, StringBuffer data) throws Exception {
@@ -121,8 +121,9 @@ public class IMDB {
     	if (urlID == null && data == null)
     		throw new Exception("Input data is null.");
     	
-    	if (urlID != null) {
-    		data = getURLData(urlID);
+    	if (urlID != null && data == null) {
+    		HTTPResult res = getURLData(urlID);
+    		data = res.getData();
     	}
     	
     	if (data == null) {
@@ -445,31 +446,33 @@ public class IMDB {
 				}
 			}
 			
-			/* Gets a bigger plot (if it exists...) */
-			URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/plotsummary");
-	    
-			HTTPResult result = httpUtil.readData(url);
-			data = result.data;
-			
-			/* Processes the data... */
-			start = 0;
-			end = 0;
-	    					
-			if (data != null) {
-					
-				if ((start = data.indexOf("class=\"plotpar\">",start)+16) != 15 &&
-						(end=data.indexOf("</p>",start)) != -1) {
-					plot = HttpUtil.decodeHTML(data.substring(start, end));
+			if (urlID != null) {
+				/* Gets a bigger plot (if it exists...) */
+				URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/plotsummary");
 
-					if (plot.indexOf("Written by") != -1)
-						plot = plot.substring(0, plot.indexOf("Written by"));
+				HTTPResult result = httpUtil.readData(url);
+				data = result.data;
+
+				/* Processes the data... */
+				start = 0;
+				end = 0;
+
+				if (data != null) {
+
+					if ((start = data.indexOf("class=\"plotpar\">",start)+16) != 15 &&
+							(end=data.indexOf("</p>",start)) != -1) {
+						plot = HttpUtil.decodeHTML(data.substring(start, end));
+
+						if (plot.indexOf("Written by") != -1)
+							plot = plot.substring(0, plot.indexOf("Written by"));
+					}
 				}
-			}
-			
-			if (plot != null) {
-				plot = plot.trim();
-				plot = plot.replaceAll("(more)$", "");
-				dataModel.setPlot(plot);
+
+				if (plot != null) {
+					plot = plot.trim();
+					plot = plot.replaceAll("(more)$", "");
+					dataModel.setPlot(plot);
+				}
 			}
 			
 			lock.tryLock((long) 10, TimeUnit.SECONDS);
