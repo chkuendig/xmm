@@ -85,38 +85,43 @@ public class KeyboardShortcutManager {
 		//System.err.println("ALT_MASK:" + InputEvent.ALT_MASK);
 		//System.err.println("META_MASK:" + InputEvent.META_MASK);
 				
-		registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_K, getToolbarShortcutMask()),
-				"Show available shortcuts for this window", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				
-				if (tooltipAreaComponent != null) {
+		try {
+			registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_K, getToolbarShortcutMask()),
+					"Show available shortcuts for this window", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
 					
-					// No shortcuts available for this dialog
-					if (getShortCutsString() == null)
-						return;
-										
-					if (bTip == null) {
-						toolTipLook = new ModernBalloonStyle(13, 13, new Color(153, 153, 255), new Color(255, 255, 255), new Color(102, 102, 255));
-						bTip = new BalloonTip(tooltipAreaComponent, getShortCutsString(), toolTipLook, Orientation.LEFT_ABOVE, AttachLocation.NORTHWEST, 0, 0, true);
-						bTip.setCloseButtonActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								bTip.setVisible(false);
-							}
-						});
-						bTip.setVisible(false);
+					if (tooltipAreaComponent != null) {
+						
+						// No shortcuts available for this dialog
+						if (getShortCutsString() == null)
+							return;
+											
+						if (bTip == null) {
+							toolTipLook = new ModernBalloonStyle(13, 13, new Color(153, 153, 255), new Color(255, 255, 255), new Color(102, 102, 255));
+							bTip = new BalloonTip(tooltipAreaComponent, getShortCutsString(), toolTipLook, Orientation.LEFT_ABOVE, AttachLocation.NORTHWEST, 0, 0, true);
+							bTip.setCloseButtonActionListener(new ActionListener() {
+								public void actionPerformed(ActionEvent e) {
+									bTip.setVisible(false);
+								}
+							});
+							bTip.setVisible(false);
+						}
+						
+						bTip.setVisible(!bTip.isVisible());
 					}
-					
-					bTip.setVisible(!bTip.isVisible());
 				}
-			}
-		});
+			});
+		} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
+		}
 	}
 	
 	
-	public KeyMapping registerKeyboardShortcut(KeyStroke key, String shortcutString, Action action, JComponent tooltipComponent) {
-		KeyMapping mapping = registerKeyboardShortcut(key, shortcutString, action);
+	public KeyMapping registerKeyboardShortcut(KeyStroke key, String shortcutString, Action action, JComponent tooltipComponent) throws Exception {
 		
+		KeyMapping mapping = registerKeyboardShortcut(key, shortcutString, action);
+						
 		if (tooltipComponent != null) {
 			// Adding shortcut explanation to tooltip
 			String tooltip = tooltipComponent.getToolTipText();
@@ -124,7 +129,7 @@ public class KeyboardShortcutManager {
 			if (tooltip == null)
 				tooltip = mapping.getDisplayName();
 			else
-				tooltip += "   " + mapping.getDisplayName();
+				tooltip += " - " + mapping.getDisplayName();
 
 			tooltipComponent.setToolTipText(tooltip); //$NON-NLS-1$
 		}
@@ -132,11 +137,11 @@ public class KeyboardShortcutManager {
 		return mapping;
 	}
 	
-	public KeyMapping registerKeyboardShortcut(KeyStroke key, String shortcutString, Action action) {
+	public KeyMapping registerKeyboardShortcut(KeyStroke key, String shortcutString, Action action) throws Exception {
 				
 		if (map.containsKey(key.toString())) {
-			log.warn("already contains shortcut:" + key);
-			return null;
+			log.warn("Already contains shortcut:" + key);
+			throw new Exception("Already contains shortcut:" + key);
 		}
 		
 		KeyMapping keyMapping = new KeyMapping(key, shortcutString);

@@ -210,7 +210,11 @@ public class GUIUtil {
 		if (actionDescription == null)
 			actionDescription = "Close window";
 		
-		shortcutManager.registerKeyboardShortcut(key, actionDescription, defaultAction);
+		try {
+			shortcutManager.registerKeyboardShortcut(key, actionDescription, defaultAction);
+		} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
+		}
 	}
 	
 	
