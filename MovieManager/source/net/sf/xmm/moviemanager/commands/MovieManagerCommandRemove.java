@@ -23,6 +23,7 @@ package net.sf.xmm.moviemanager.commands;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -47,8 +48,8 @@ public class MovieManagerCommandRemove implements ActionListener {
 	 **/
 	protected static void execute() {
 		/* Makes sure a movie is selected... */
-		ExtendedJTree movieList = MovieManager.getDialog().getMoviesList();
-
+		JTree movieList = MovieManager.getDialog().getMoviesList();
+		
 		DefaultMutableTreeNode selected = (DefaultMutableTreeNode) movieList.getLastSelectedPathComponent();
 
 		int ret = 0;
