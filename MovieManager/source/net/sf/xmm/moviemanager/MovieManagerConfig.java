@@ -424,7 +424,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private String skinlfThemePackDir;
 
-	public enum LookAndFeelType {CustomLaF, SkinlfLaF}
+	private String substanceSkin = "Sahara";
+	
+	public enum LookAndFeelType {CustomLaF, SkinlfLaF, Substance}
 	
 	private LookAndFeelType lookAndFeelType = LookAndFeelType.CustomLaF;
 
@@ -1767,6 +1769,17 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		this.skinlfThemePackDir = skinlfThemePackDir;
 	}
 
+	public String getSubstanceSkin() {
+		return substanceSkin;
+	}
+
+	public void setSubstanceSkin(String substanceSkin) {
+		System.err.println("setSubstanceSkin:"  + substanceSkin);
+		
+		if (substanceSkin != null && !substanceSkin.equals(""))
+			this.substanceSkin = substanceSkin;
+	}
+	
 	public LookAndFeelType getLookAndFeelType() {
 		return lookAndFeelType;
 	}
@@ -2513,7 +2526,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 			setCustomLookAndFeel(getStringValue("lookAndFeel:", config, getCustomLookAndFeel()));
 			setSkinlfThemePack(getStringValue("skinlfTheme:", config, getSkinlfThemePack()));
-
+			setSubstanceSkin(getStringValue("substanceSkin:", config, getSubstanceSkin()));
+			
 			value = (String) config.get("lookAndFeelType:");
 
 			if (value != null) {
@@ -3005,6 +3019,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 // GUI/L&F settings
 		 appendToConfig("lookAndFeel:", getCustomLookAndFeel(), settings);
 		 appendToConfig("skinlfTheme:", getSkinlfThemePack(), settings);
+		 appendToConfig("substanceSkin:", getSubstanceSkin(), settings);
 		 appendToConfig("lookAndFeelType:", getLookAndFeelType().toString(), settings);
 		 appendToConfig("regularToolButtonsUsed:", isRegularToolButtonsUsed(), settings);
 		 appendToConfig("useRegularSeenIcon:", getUseRegularSeenIcon(), settings);
