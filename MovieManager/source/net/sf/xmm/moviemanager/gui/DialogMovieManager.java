@@ -65,6 +65,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
@@ -173,8 +174,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     private JTextArea textAreaPlot;
     private JTextArea textAreaCast;
  
-
-    ExtendedJTree moviesList;
+    JTree moviesList;
     ExtendedTreeCellRenderer treeCellRenderer;
     
    public JComboCheckBox comboBoxFilter;
@@ -244,13 +244,8 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
             applet.destroy();
     }
     
-    /**
-     * Finalizes this object (closes the out streams and disposes).
-     **/
     public void finalize() {
-        
-        /* Disposes. */
-        dispose();
+    	dispose();
     }
     
    
@@ -271,7 +266,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
             System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         
         setTitle(config.sysSettings.getAppTitle()); //$NON-NLS-1$
-        //setIconImage(FileUtil.getImageFromJar("/images/film.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH)); //$NON-NLS-1$
         setIconImage(FileUtil.getImage("/images/film.png").getScaledInstance(16, 16, Image.SCALE_SMOOTH)); //$NON-NLS-1$
         
         setJMenuBar(createMenuBar());
@@ -549,7 +543,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     /* mode = 0 (invert), 1 (all to seen), 2(all to unseen). */
     public void updateSeen(int mode) {
         
-    	ExtendedJTree movieList = getMoviesList();
+    	JTree movieList = getMoviesList();
         
         if (movieList.getLastSelectedPathComponent() == null)
             return;
@@ -911,22 +905,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     
     	log.debug("Start creation of the List."); //$NON-NLS-1$
 
-    	moviesList = new ExtendedJTree() {
-
-    		// This makes sure the entire width of the tree rows is painted
-    		protected void paintComponent(Graphics g) {
-    			int[] rows = getSelectionRows();
-
-    			if (rows != null && rows.length > 0) {
-    				for (int i = 0; i < rows.length; i++) {
-    					Rectangle b = getRowBounds(rows[i]);
-    					g.setColor(UIManager.getColor("Tree.selectionBackground"));
-    					g.fillRect(0, b.y, getWidth(), b.height);
-    				}
-    			}
-    			super.paintComponent(g);
-    		}
-    	};
+    	moviesList = new ExtendedJTree();
         
         ExtendedTreeCellRenderer.setDefaultColors();
          
@@ -935,8 +914,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         moviesList.setRootVisible(false);
         moviesList.setDragEnabled(false);
         moviesList.setLargeModel(true);
-        
-     
+             
         
         // Gives error on some versions of substance L&F.
         moviesList.setFont(new Font(moviesList.getFont().getName(),Font.PLAIN,fontSize));
@@ -967,7 +945,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         		
         		Point p = moviesList.getMousePosition();
         		
-        		final ExtendedJTree movieList = getMoviesList();
+        		final JTree movieList = getMoviesList();
         		
         		JPopupMenu popupMenu = new JPopupMenu();
         		        		
@@ -1722,7 +1700,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         		add.addActionListener(new ActionListener() {
         			public void actionPerformed(ActionEvent event) {
         				
-        				ExtendedJTree movieList = getMoviesList();
+        				JTree movieList = getMoviesList();
         		        
         		        if (movieList.getLastSelectedPathComponent() == null)
         		            return;
@@ -1816,7 +1794,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     
     
     
-    JPanel getPanelMovieList() {
+    public JPanel getPanelMovieList() {
         return movieListPanel;
     }
      
@@ -1893,7 +1871,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
      *
      * @return JList that displays the MovieList.
      **/
-    public ExtendedJTree getMoviesList() {
+    public JTree getMoviesList() {
         return moviesList;
     }
     
