@@ -91,7 +91,13 @@ abstract public class ModelEntry {
 		return true;
 	}
 	
-	public abstract boolean isEpisode();
+	public boolean isEpisode() {
+		return false;
+	}
+	
+	public boolean isMovie() {
+		return false;
+	}
 
 	public boolean getHasGeneralInfoData() {
 		return hasGeneralInfoData;

@@ -86,11 +86,9 @@ public class ModelMovie extends ModelEntry {
 		
 		additionalInfo = new ModelAdditionalInfo();
 	}
-
 	
-
-	public boolean isEpisode() {
-		return false;
+	public boolean isMovie() {
+		return true;
 	}
 	
 	public void copyData(ModelEntry model) {
