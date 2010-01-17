@@ -28,6 +28,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -42,6 +43,7 @@ import javax.swing.*;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.http.IMDB;
+import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.models.ModelMovie;
@@ -56,20 +58,24 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.tools.BrowserOpener;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
 
-/* This class is a total mess */
 public class DialogIMDB extends JDialog {
     
 	static Logger log = Logger.getLogger(DialogIMDB.class);
 	
-    JButton buttonChoose;
-	JButton buttonCancel;
-	JPanel panelButtons;
+	private JTextField searchStringField;
+	
+    private JButton buttonChoose;
+	private JButton buttonCancel;
+	private JButton buttonSearch;
+	
+    private JPanel panelMoviesList;
 
-    JPanel panelMoviesList;
-
-    JList listMovies;
+    JPanel subclassButtons;
+    
+    private JList listMovies;
 
     ModelEntry modelEntry = null;
     IMDB imdb = null;
@@ -105,18 +111,15 @@ public class DialogIMDB extends JDialog {
         
         setHotkeyModifiers();
         
-        if (executeSearch)
-        	executeSearch();
+        searchStringField.setText(modelEntry.getTitle());
+        
+        //if (executeSearch)
+        callSearch();
     }
     
-    
-    void createListDialog() {
-    	/* Dialog properties...*/
-
-    	setModal(true);
-    	setResizable(true);
+    JPanel createMoviehitsList()  {
     	/* Movies List panel...*/
-    	panelMoviesList = new JPanel();
+    	JPanel panelMoviesList = new JPanel();
     	panelMoviesList.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogIMDB.panel-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
     	listMovies = new JList() {
@@ -195,19 +198,60 @@ public class DialogIMDB extends JDialog {
     	JScrollPane scrollPaneMovies = new JScrollPane(listMovies);
     	scrollPaneMovies.setAutoscrolls(true);
     	//scrollPaneMovies.registerKeyboardAction(listKeyBoardActionListener,enterKeyStroke, JComponent.WHEN_FOCUSED);
-    	
-    	
+    	    	
     	panelMoviesList.setLayout(new BorderLayout());
     	panelMoviesList.add(scrollPaneMovies, BorderLayout.CENTER);
+    	
+    	return panelMoviesList;
+    }
+    
+    private void createListDialog() {
+    	/* Dialog properties...*/
 
+    	setModal(true);
+    	setResizable(true);
+    	
+    	panelMoviesList = createMoviehitsList();
+    	JPanel searchPanel = createSearchStringPanel();
+    	JPanel panelButtons = createButtonsPanel();
+    	
+    	JPanel panelSearchAndButtons = new JPanel();
+    	panelSearchAndButtons.setLayout(new BorderLayout());
+    	panelSearchAndButtons.add(searchPanel, BorderLayout.NORTH);
+    	panelSearchAndButtons.add(panelButtons, BorderLayout.SOUTH);
+    	
+    	subclassButtons = new JPanel();
+    	
+    	JPanel sharedPanel = new JPanel();
+    	sharedPanel.setLayout(new BorderLayout());
+    	sharedPanel.add(panelSearchAndButtons, BorderLayout.NORTH);
+    	sharedPanel.add(subclassButtons, BorderLayout.SOUTH);
+    	
     	/* To add outside border... */
     	JPanel all = new JPanel();
-
     	all.setLayout(new BorderLayout());
-    	all.add(panelMoviesList, BorderLayout.CENTER);
     	all.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,0,5), null));
+    	all.add(panelMoviesList, BorderLayout.CENTER);
+    	all.add(sharedPanel, BorderLayout.SOUTH);
+    	    	
+    	getContentPane().add(all, BorderLayout.CENTER);
+    	//getContentPane().add(sharedPanel,BorderLayout.SOUTH);
+    	    	
+    	getMoviesList().ensureIndexIsVisible(0);
+    	
+    	setPreferredSize(new Dimension(500, 440));
+    	setMinimumSize(new Dimension(500, 440));
+    	
+    	pack();
+    	    	
+    	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
+    			(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
 
-    	panelButtons = new JPanel();
+    }
+    
+    private JPanel createButtonsPanel() {
+    	
+    	JPanel panelButtons = new JPanel();
     	panelButtons.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,0,5), null));
     	panelButtons.setLayout(new BorderLayout());
     	
@@ -229,6 +273,23 @@ public class DialogIMDB extends JDialog {
 
     	panelRegularButtons.add(buttonChoose);
 
+    	// Search button
+    	/*This button is used to search for on IMDB and for movies in the Database
+        Where to search is decided in the executeSearchMultipleMovies method
+    	 */
+    	JButton buttonSearch = new JButton(Localizer.get("DialogIMDbMultiAdd.button.search.text")); //$NON-NLS-1$
+    	buttonSearch.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.search.tooltip")); //$NON-NLS-1$
+    	buttonSearch.setActionCommand("GetIMDBInfo - Search again"); //$NON-NLS-1$
+    	buttonSearch.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent event) {
+    			log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
+    			executeSearch();
+    		}
+    	});
+    	
+    	panelRegularButtons.add(buttonSearch);
+    	
+    	// cancel button
     	buttonCancel = new JButton(Localizer.get("DialogIMDB.button.cancel.text.cancel")); //$NON-NLS-1$
     	buttonCancel.setToolTipText(Localizer.get("DialogIMDB.button.cancel.tooltip.cancel")); //$NON-NLS-1$
     	
@@ -243,63 +304,142 @@ public class DialogIMDB extends JDialog {
 
     	panelRegularButtons.add(buttonCancel);
     	panelButtons.add(panelRegularButtons, BorderLayout.SOUTH);
+  
+    	return panelButtons;
+    }
+    
+   
+    
+    /**
+     * Creates a panel containing a text field used to search
+     * @return
+     */
+    private JPanel createSearchStringPanel() {
     	
-    	getContentPane().add(all, BorderLayout.CENTER);
-    	getContentPane().add(panelButtons,BorderLayout.SOUTH);
-    	    	
-    	getMoviesList().ensureIndexIsVisible(0);
+    	JPanel searchStringPanel = new JPanel();
+    	searchStringPanel.setLayout(new BorderLayout());
+    	searchStringPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogIMDB.panel-search-string.title")), BorderFactory.createEmptyBorder(4,4,4,4))); //$NON-NLS-1$
     	
-    	setPreferredSize(new Dimension(500, 440));
-    	setMinimumSize(new Dimension(500, 440));
+    	searchStringField = new JTextField(27);
+    	searchStringField.setActionCommand("Search String:"); //$NON-NLS-1$
+    	searchStringField.setCaretPosition(0);
+    	searchStringField.addKeyListener(new KeyAdapter() {
+    		public void keyPressed(KeyEvent e) {
+    			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+    				executeSearch();
+    			}
+    		}
+    	});
     	
-    	pack();
-    	    	
-    	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
-    			(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
-
+    	searchStringPanel.add(searchStringField, BorderLayout.NORTH);
+    	
+    	return searchStringPanel;
+    }
+    
+    /**
+     * This method can be overridden by subclass to avoid executeSearch 
+     * being called by the constructor
+     */
+    void callSearch() {
+    	executeSearch();
     }
     
     void executeSearch() {
-    	    	
-    	DefaultListModel model = new DefaultListModel();
-    	model.addElement(new ModelIMDbSearchHit(Localizer.get("DialogIMDB.list-element.messsage.search-in-progress"))); //$NON-NLS-1$
-    	listMovies.setModel(model);
-    	
     	SwingWorker worker = new SwingWorker() {
     		public Object construct() {
-    			try {
-
-    				ArrayList<ModelIMDbSearchHit> hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(modelEntry.getTitle());
-    				final DefaultListModel list = new DefaultListModel();
-
-    				if (hits.size() == 0) {
-    					list.addElement(new ModelIMDbSearchHit(Localizer.get("DialogIMDB.list-element.messsage.no-hits-found"))); //$NON-NLS-1$
-    				}
-    				else {
-    					for (ModelIMDbSearchHit hit : hits)
-    						list.addElement(hit);
-    				}
-
-    				// make changes on EDT
-    				SwingUtilities.invokeLater(new Runnable() {
-    					public void run() {
-    						listMovies.setModel(list);
-    						listMovies.setSelectedIndex(0);
-    						getButtonChoose().setEnabled(true);
-    					}
-    				});
-    			}
-    			catch (Exception e) {
-    				log.error(e.getMessage(), e);
-    				executeErrorMessage(e);
-    				dispose();
-    			}
-    			return ""; //$NON-NLS-1$
+    			performSearch();
+    			return null;
     		}
     	};
     	worker.start();
     }
+    
+    ArrayList<ModelIMDbSearchHit> performSearch() {
+    	    	
+    	DefaultListModel model = new DefaultListModel();
+    	model.addElement(new ModelIMDbSearchHit(Localizer.get("DialogIMDB.list-element.messsage.search-in-progress"))); //$NON-NLS-1$
+    	listMovies.setModel(model);
 
+    	ArrayList<ModelIMDbSearchHit> hits = null;
+    	
+    	try {
+    		hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchStringField.getText());
+    		handleSearchResults(hits);
+    	}
+    	catch (Exception e) {
+    		log.error(e.getMessage(), e);
+    		executeErrorMessage(e);
+    		dispose();
+    	}
+    	return hits;
+    }
+    
+    void handleSearchResults(ArrayList<ModelIMDbSearchHit> hits) {
+
+		final DefaultListModel list = new DefaultListModel();
+
+		boolean noHits = false;
+		
+		// Error
+		if (hits == null) {
+			HTTPResult res = imdb.getLastHTTPResult();
+
+			if (res.getStatusCode() == HttpStatus.SC_REQUEST_TIMEOUT) {
+				list.addElement(new ModelIMDbSearchHit("Connection timed out...")); //$NON-NLS-1$
+				noHits = true;
+			}
+		}
+		else if (hits.size() == 0) {
+			list.addElement(new ModelIMDbSearchHit(Localizer.get("DialogIMDB.list-element.messsage.no-hits-found"))); //$NON-NLS-1$
+			noHits = true;
+		}
+		else {
+			for (ModelIMDbSearchHit hit : hits)
+				list.addElement(hit);
+		}
+
+		final boolean setButtonChooseEnabled = !noHits;
+		
+		// make changes on EDT
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				setListModel(list);
+				listMovies.setSelectedIndex(0);
+				getButtonChoose().setEnabled(setButtonChooseEnabled);
+			}
+		});
+    }
+    
+    /**
+     * Takes the current selected element, retrieves the IMDb info and disposes.
+     **/
+    private void executeCommandSelect() {
+    	
+    	int index = getMoviesList().getSelectedIndex();
+    	DefaultListModel listModel = (DefaultListModel) getMoviesList().getModel();
+
+    	if (index == -1 || index > listModel.size())
+    		return;
+
+    	ModelIMDbSearchHit model = ((ModelIMDbSearchHit) listModel.getElementAt(index));
+
+    	if (model.getUrlID() == null)
+    		return;
+
+    	getIMDbInfo(modelEntry, model.getUrlID());
+
+    	ModelMovieInfo.executeTitleModification(modelEntry);
+
+    	dispose();
+    }
+    
+
+    public void setListModel(DefaultListModel list) {
+    	listMovies.setModel(list);
+    	listMovies.requestFocusInWindow();
+    }
+    
+    
     public boolean getCanceled() {
     	return canceled;
     }
@@ -319,6 +459,13 @@ public class DialogIMDB extends JDialog {
         return listMovies;
     }
     
+    protected JPanel getPanelMoviesList() {
+        return panelMoviesList;
+    }
+    
+    public JTextField getSearchField() {
+    	return searchStringField;
+    }
     
     /**
      * Returns the JButton select.
@@ -327,6 +474,15 @@ public class DialogIMDB extends JDialog {
         return buttonChoose;
     }
    
+    
+    JButton getButtonSearch() {
+    	return buttonSearch;
+    }
+    
+    JButton getButtonCancel() {
+    	return buttonCancel;
+    }
+    
     
     /*ALerts the user of different error messages from proxy servers*/
     void executeErrorMessage(Exception e) {
@@ -368,39 +524,8 @@ public class DialogIMDB extends JDialog {
         
     }
     
-    /**
-     * Gets info...
-     **/
-    private void executeCommandSelect() {
-    	
-    	int index = getMoviesList().getSelectedIndex();
-    	
-    	/*
-    	 * When adding the file info the an existing movie, a new ModelMovieInfo object is created. 
-    	 * When done, the old ModelMovieInfo object created in the 
-    	 * MovieManagerCommandAddMultipleMovies object needs not to save the file as a new movie,
-    	 * therefore setCancel method with true is called at the end of the if scoop.
-    	 */	
-
-    	DefaultListModel listModel = (DefaultListModel) getMoviesList().getModel();
-
-    	if (index == -1 || index > listModel.size())
-    		return;
-
-    	ModelIMDbSearchHit model = ((ModelIMDbSearchHit) listModel.getElementAt(index));
-
-    	if (model.getUrlID() == null)
-    		return;
-
-    	time = System.currentTimeMillis();
-
-    	getIMDbInfo(modelEntry, model.getUrlID());
-
-    	ModelMovieInfo.executeTitleModification(modelEntry);
-
-    	dispose();
-    }
-
+  
+    
     
     public static boolean getIMDbInfo(ModelEntry modelEntry, String key) {
     	IMDB imdb;
@@ -494,26 +619,45 @@ public class DialogIMDB extends JDialog {
     	}
     }
     
-	void setHotkeyModifiers() {
+	private void setHotkeyModifiers() {
 		
-		// ALT+C for Select
-		shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
-				"Choose selected title", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonChoose.doClick();
-			}
-		}, buttonChoose);
+		try {
+			// ALT+C for Select
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Choose selected title", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonChoose.doClick();
+				}
+			}, buttonChoose);
+				
+			// ALT+D for skip (Discard)
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Discard this movie", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonCancel.doClick();
+				}
+			}, buttonCancel);
 			
-		// ALT+D for skip (Discard)
-		shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyboardShortcutManager.getToolbarShortcutMask()),
-				"Discard this movie", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonCancel.doClick();
-			}
-		}, buttonCancel);
-		
-		shortcutManager.setKeysToolTipComponent(panelMoviesList);
+			// ALT+S for search field focus
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Give search field focus or perform search", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+									
+					if (!searchStringField.hasFocus()) {
+						searchStringField.requestFocusInWindow();
+					}
+					else {
+						buttonSearch.doClick();
+					}
+				}
+			}, buttonSearch);
+			
+			shortcutManager.setKeysToolTipComponent(panelMoviesList);
+		} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
+		}
 	}
 }
