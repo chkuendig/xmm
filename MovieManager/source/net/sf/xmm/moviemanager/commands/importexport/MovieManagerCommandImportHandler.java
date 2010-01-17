@@ -162,19 +162,12 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
 							setCancelled(true);
 							ret = ImportExportReturn.cancelled;
 						}
-
-						System.err.println("ret:" + ret);
 						
 						if (dialogIMDB.getAborted()) {
 							setAborted(true);
 							ret = ImportExportReturn.aborted;
 						}
 
-						System.err.println("ret:" + ret);
-						
-						//if (dialogIMDB.getDropIMDbInfo())
-						//	addToThisList.add(settings.skippedListName);
-						//else
 						addToThisList.add(settings.addToThisList);
 					}
 				});
