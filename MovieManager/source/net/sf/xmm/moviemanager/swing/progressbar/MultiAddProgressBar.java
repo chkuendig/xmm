@@ -147,7 +147,6 @@ public class MultiAddProgressBar extends JDialog implements PropertyChangeListen
 		while (!progressBean.isReady()) {
 			try {
 				Thread.sleep(100);
-				System.err.println("progressBean.isReady():" + progressBean.isReady());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
