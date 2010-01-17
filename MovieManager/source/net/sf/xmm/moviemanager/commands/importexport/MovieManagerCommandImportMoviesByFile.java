@@ -339,9 +339,9 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 					else {
 						GUIUtil.invokeAndWait(new Runnable() {
 							public void run() {
-								DialogIMDbMultiAdd dialogIMDB = new DialogIMDbMultiAdd(imdbId, movieInfoModel.model, searchString, year,
-										filename, files, multiAddSelectOption, addToThisList, hits, true);
-
+								DialogIMDbMultiAdd dialogIMDB = new DialogIMDbMultiAdd(movieInfoModel.model, searchString, 
+										year, filename, files, imdbId);
+								
 								if (dialogIMDB.getCanceled()) {
 									setCancelled(true);
 								}
