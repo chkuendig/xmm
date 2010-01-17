@@ -54,7 +54,9 @@ public abstract class MovieManagerCommandExportHandler implements MovieManagerCo
 	/** The list to add movie to. */
 	public String listToAddMovieTo = null;
 	
-	
+	public void resetStatus() {
+		cancelled = false;
+	}
 	
 	/* (non-Javadoc)
 	 * @see net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler#setCancelled(boolean)
