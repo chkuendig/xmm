@@ -77,22 +77,16 @@ public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionL
 				}
 			}
 		});
-
-		/*Dispose on escape*/
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction() {
+		
+		GUIUtil.enableDisposeOnEscapeKey(dbImporter, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-
 				if (canceled || done) {
 					dbImporter.dispose();
 					MovieManagerCommandSelect.execute();
 				}
 			}
-		};
-
-		dbImporter.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-		dbImporter.getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
-
+		});
+		
 		MovieManager mm = MovieManager.getIt();
 
 		setLocation((int) mm.getLocation().getX()+(mm.getWidth()-getWidth())/2,
