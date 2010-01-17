@@ -750,63 +750,56 @@ public class ExtendedToolBar extends JToolBar implements MouseListener, MouseMot
     
     
     void setShortcuts() {
-    	
-    	KeyMapping keyMapping;
-    	
-    	
-    	// Add button
-		KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyboardShortcutManager.getToolbarShortcutMask());
-		keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
-				"Add movie", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonAdd.doClick();
-			}
-		});
-		buttonAdd.setToolTipText(Localizer.get("DialogMovieManager.toolbar-add") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
-		    	
-    	
-    	// Remove button
-		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyboardShortcutManager.getToolbarShortcutMask());
-		keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
-				"Remove movie(s)", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonRemove.doClick();
-			}
-		});
-		buttonRemove.setToolTipText(Localizer.get("DialogMovieManager.toolbar-remove") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
-				
-		
-		// Edit button
-		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyboardShortcutManager.getToolbarShortcutMask());
-		keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
-				"Edit movie", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonEdit.doClick();
-			}
-		});
-		buttonEdit.setToolTipText(Localizer.get("DialogMovieManager.toolbar-edit") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
-		    	
-		
-		// Search button
-		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask());
-		keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
-				"Search options", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonSearch.doClick();
-			}
-		});
-		buttonSearch.setToolTipText(Localizer.get("DialogMovieManager.toolbar-search") + "   " + keyMapping.getDisplayName()); //$NON-NLS-1$
-		
-    	
-    	// Play button
-		keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyboardShortcutManager.getToolbarShortcutMask());
-		keyMapping = MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
-				"PLay", new AbstractAction() {
-			public void actionPerformed(ActionEvent ae) {
-				buttonPlay.doClick();
-			}
-		});
-		buttonPlay.setToolTipText(Localizer.get("DialogMovieManager.toolbar-play") + " " + keyMapping.getDisplayName());		
+    	    	
+    	try {
+			// Add button
+			KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyboardShortcutManager.getToolbarShortcutMask());
+			MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
+					"Add movie", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonAdd.doClick();
+				}
+			}, buttonAdd);
+			
+			// Remove button
+			keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyboardShortcutManager.getToolbarShortcutMask());
+			MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
+					"Remove movie(s)", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonRemove.doClick();
+				}
+			}, buttonRemove);
+			
+			// Edit button
+			keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyboardShortcutManager.getToolbarShortcutMask());
+			MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
+					"Edit movie", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonEdit.doClick();
+				}
+			}, buttonEdit);
+			
+			// Search button
+			keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask());
+			MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
+					"Search options", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonSearch.doClick();
+				}
+			}, buttonSearch);
+			
+			// Play button
+			keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyboardShortcutManager.getToolbarShortcutMask());
+			MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
+					"PLay", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonPlay.doClick();
+				}
+			}, buttonPlay);
+	
+    	} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
+		}		
     }
 }   
 
