@@ -21,14 +21,17 @@
 package net.sf.xmm.moviemanager.swing.extentions;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.dnd.Autoscroll;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -37,6 +40,7 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.MovieManagerConfig.LookAndFeelType;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
 import org.apache.log4j.Logger;
@@ -73,13 +77,32 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
    JTree getTree() {
 	   return this;
    }
-      
+   
+   
+   // This makes sure the entire width of the tree rows is painted
+   protected void paintComponent(Graphics g) {
+	   int[] rows = getSelectionRows();
+
+	   if (rows != null && rows.length > 0) {
+		   for (int i = 0; i < rows.length; i++) {
+			   Rectangle b = getRowBounds(rows[i]);
+			   g.setColor(UIManager.getColor("Tree.selectionBackground"));
+			   g.fillRect(0, b.y, getWidth(), b.height);
+		   }
+	   }
+	   super.paintComponent(g);
+   }
+
+   
    class TreeMouseListener extends MouseAdapter {
 	   
 	   /**
 	    * Handles selection on nodes with CTRL + SHIFT keys + right click menu
 	    **/
 	   public void mousePressed(MouseEvent event) {
+		   
+		  // if (true)
+			//   return;
 		   
 		   ExtendedJTree movieList = (ExtendedJTree) MovieManager.getDialog().getMoviesList();
 		   int rowForLocation = movieList.getRowForLocation(event.getX(), event.getY());
@@ -113,12 +136,17 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 			   }
 		   }      
 		   else {
-			   			   
+
 			   if (SysUtil.isShiftPressed(event)) {
-				   				   				   
+				 				  
+				   // if substance laf, drop this. Thats because substance already handles selecting the entire row.
+				   if (MovieManager.getConfig().getLookAndFeelType() == LookAndFeelType.Substance)
+					   return;
+
 				   // Cannot use setSelectionInterval if both are equal, see setSelectionInterval
-				   if (rowForLocation == firstShiftRow)
+				   if (rowForLocation == firstShiftRow) {
 					   movieList.setSelectionRow(rowForLocation);
+				   }
 				   else
 					   movieList.setSelectionInterval(rowForLocation, firstShiftRow);
 			   }
@@ -145,19 +173,8 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 	   }
    }
    
-   /**
-    * Overrides parent method
-    * If the two indexes are equal, return
-    */
-   public void setSelectionInterval(int index0, int index1) {
-	   
-	   // For some reason, this method is called with index0 and index1 being equal, after it's been called with different values.
-	   // That would in some cases make selecting multiple rows using SHIFT key impossible. This solves this.
-	   if (index0 == index1)
-		   return;
-	   	   
-	   super.setSelectionInterval(index0, index1);
-   }
+     
+
    
    /**
     * Constructor.
@@ -169,7 +186,7 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 	   addMouseListener(new TreeMouseListener());
 	   setDragEnabled(false);
 	   
-	   addTreeSelectionListener( new TreeSelectionListener() {
+	   addTreeSelectionListener(new TreeSelectionListener() {
 		   public void valueChanged( TreeSelectionEvent e ) {
 			   DefaultMutableTreeNode node = ( DefaultMutableTreeNode ) getLastSelectedPathComponent();
 			   getChildren(node);
