@@ -64,15 +64,17 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportHand
 	
 	
 	public ImportExportReturn addMovie(int i) {
-
-		int key = 1;
+		
+		ImportExportReturn ret = ImportExportReturn.success;
+		
 		ModelMovie movie = (ModelMovie) movieList.get(i);
 		String title = movie.getTitle();
-
+		
 		if (title != null && !title.equals("")) {
 
 			if (settings.multiAddIMDbSelectOption != ImdbImportOption.off) {
-				ImportExportReturn ret = executeCommandGetIMDBInfoMultiMovies(title, settings, (ModelMovie) movieList.get(i));
+				ret = executeCommandGetIMDBInfoMultiMovies(title, settings, (ModelMovie) movieList.get(i));
+				
 				if (ret == ImportExportReturn.cancelled || ret == ImportExportReturn.aborted) {
 					return ret;
 				}
@@ -81,19 +83,18 @@ public class MovieManagerCommandImportText extends MovieManagerCommandImportHand
 
 		modelMovieInfo.setModel(movie, false, false);
 
-		try {
-			key = (modelMovieInfo.saveToDatabase(addToThisList)).getKey();
-			modelMovieInfo.saveCoverToFile();
+		try {						
+			int key = (modelMovieInfo.saveToDatabase(addToThisList)).getKey();
+			
+			if (key == -1)
+				ret = ImportExportReturn.error;
+			
 		} catch (Exception e) {
 			log.error("Saving to database failed.", e);
-			key = -1; 
+			ret = ImportExportReturn.error;
 		}
-
-		if (key == -1) {
-			return ImportExportReturn.error;
-		}
-
-		return ImportExportReturn.success;
+		
+		return ret;
 	}
 	 
 	
