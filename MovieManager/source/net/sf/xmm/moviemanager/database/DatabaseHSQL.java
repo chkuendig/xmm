@@ -1169,6 +1169,25 @@ public class DatabaseHSQL extends Database {
     }
     
     
+    public boolean isDriverOld() throws Exception {
+    	
+    	String filePath = getPath();
+    	
+    	File dbPropertiesFile = new File(filePath + ".properties");
+    	
+    	if (!dbPropertiesFile.exists())
+			throw new Exception("properies file does not exist:" + dbPropertiesFile);
+    	
+    	StringBuffer properties = FileUtil.readFileToStringBuffer(dbPropertiesFile);
+
+		// Updating from hsql v1.7 to 1.8
+		if (properties.indexOf("compatible_version=1.7") != -1)
+			return true;
+		
+		return false;
+		//	MovieManager.getDatabaseHandler().makeDatabaseBackup(this, "Update_from_HSQL_1.7_to_1.8");
+    }
+    
     /* Have to update the script manually since hsqldb driver v1.7.3 doesn't support changing the datatype */
     public boolean isScriptOutOfDate() {
 
@@ -1183,12 +1202,14 @@ public class DatabaseHSQL extends Database {
     		else if (!dbScriptFile.exists())
     			throw new Exception("script file does not exist.");
 
+    		/*
     		StringBuffer properties = FileUtil.readFileToStringBuffer(dbPropertiesFile);
 
     		// Updating from hsql v1.7 to 1.8
     		if (properties.indexOf("compatible_version=1.7") != -1)
     			MovieManager.getDatabaseHandler().makeDatabaseBackup(this, "Update_from_HSQL_1.7_to_1.8");
-
+*/
+    		
     		FileInputStream stream = new FileInputStream(dbScriptFile);
     		StringBuffer stringBuffer = new StringBuffer();
     		int buffer;

@@ -137,13 +137,22 @@ public class DatabaseHandler {
 
 	    		/* Check if script file needs update (v2.1) */
 	    		if (_database instanceof DatabaseHSQL) {
-	    			if (((DatabaseHSQL) _database).isScriptOutOfDate()) {
+	    			boolean scriptOutdated = ((DatabaseHSQL) _database).isScriptOutOfDate();
+	    			boolean driverOld = ((DatabaseHSQL) _database).isDriverOld();
+	    			
+	    			if (scriptOutdated || driverOld) {
 
 	    				if (!allowDatabaseUpdate(_database.getPath())) {
 	    					return false;
 	    				}
-
-	    				if (!makeDatabaseBackup(_database)) {
+	    				
+	    				if (driverOld) {
+	    					if (!makeDatabaseBackup(_database, "Update_from_HSQL_1.7_to_1.8")) {
+	    						showDatabaseUpdateMessage("Backup failed"); //$NON-NLS-1$
+		    					return false;
+	    					}
+	    				}
+	    				else if (!makeDatabaseBackup(_database)) {
 	    					showDatabaseUpdateMessage("Backup failed"); //$NON-NLS-1$
 	    					return false;
 	    				}
@@ -906,12 +915,15 @@ public class DatabaseHandler {
 	    				throw new Exception("HSQLDB properties file does not exist.");
 	    			else
 	    				FileUtil.copyToDir(tmp, dbBackup);
+	    		
+	    			log.debug("Created backup of database to " + tmp);
 	    		}
 	    		else if (db.isMSAccess()) {
 	    			File tmp;
 
 	    			if ((tmp = new File(dbPath)).isFile()) {
 	    				FileUtil.copyToDir(tmp, dbBackup);
+	    				log.debug("Created backup of database to " + tmp + " in directory " + dbBackup);
 	    			}
 	    			else
 	    				throw new Exception("MS Access database file does not exist:" + dbPath);
