@@ -22,13 +22,22 @@ package net.sf.xmm.moviemanager.commands.importexport;
 
 import java.util.ArrayList;
 
+import javax.swing.SwingUtilities;
+
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogIMDB;
+import net.sf.xmm.moviemanager.gui.DialogIMDbImport;
+import net.sf.xmm.moviemanager.gui.DialogIMDbUpdate;
 import net.sf.xmm.moviemanager.gui.DialogIMDbMultiAdd;
+import net.sf.xmm.moviemanager.gui.DialogAddMultipleMovies.Files;
+import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
+import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 
@@ -101,41 +110,78 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
 	
 	public abstract String getTitle(int i) throws Exception;
 	
+	ImportExportReturn ret;
 		
 	/**
-     * Gets the IMDB info for movies (multiAdd)
-     **/
-    public ImportExportReturn executeCommandGetIMDBInfoMultiMovies(String searchString, ModelImportExportSettings settings, ModelMovie model) {
-      	
-    	ImportExportReturn ret = ImportExportReturn.success;
+	 * Gets the IMDB info for movies (multiAdd)
+	 **/
+	public ImportExportReturn executeCommandGetIMDBInfoMultiMovies(final String searchString, final ModelImportExportSettings settings, final ModelMovie model) {
 
-        /* Checks the movie title... */
-        log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
-        
-        if (!searchString.equals("")) { //$NON-NLS-1$
-        	DialogIMDbMultiAdd dialogIMDB = new DialogIMDbMultiAdd(model, searchString, settings.multiAddIMDbSelectOption, null);
-             
-            if (dialogIMDB.getCanceled()) {
-            	setCancelled(true);
-            	ret = ImportExportReturn.cancelled;
-            }
-            
-            if (dialogIMDB.getAborted()) {
-            	setAborted(true);
-            	ret = ImportExportReturn.aborted;
-            }
-            
-            addToThisList.clear();
-            
-            if (dialogIMDB.getDropIMDbInfo())
-            	addToThisList.add(settings.skippedListName);
-            else
-            	addToThisList.add(settings.addToThisList);
-                        
-        } else {
-            DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("DialogMovieInfo.alert.title.alert"), Localizer.get("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
-            GUIUtil.showAndWait(alert, true);
-        }
-        return ret;
-    }
+		ret = ImportExportReturn.success;
+
+		/* Checks the movie title... */
+		log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
+
+		try {
+
+			if (searchString.equals("")) { //$NON-NLS-1$
+				DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("DialogMovieInfo.alert.title.alert"), Localizer.get("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
+				GUIUtil.showAndWait(alert, true);
+				return ImportExportReturn.error;
+			}
+
+			addToThisList.clear();
+			
+			// Only pull list from imdb if not "Select FirstHit" is selected and no IMDB Id was found in an nfo/txt file
+			final ArrayList<ModelIMDbSearchHit> hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchString);
+
+			/*Number of movie hits*/
+			int hitCount = hits.size();
+
+			if ((hitCount > 0 && (settings.multiAddIMDbSelectOption == ImdbImportOption.selectFirst ||
+					settings.multiAddIMDbSelectOption == ImdbImportOption.selectFirstOrAddToSkippedList)) || 
+					(hitCount == 1 && (settings.multiAddIMDbSelectOption == ImdbImportOption.selectIfOnlyOneHit ||
+							settings.multiAddIMDbSelectOption == ImdbImportOption.selectIfOnlyOneHitOrAddToSkippedList))) {
+
+				addToThisList.add(settings.addToThisList);
+				DialogIMDB.getIMDbInfo(model, hits.get(0).getUrlID());
+			}
+			else if (hitCount == 0 && 
+					(settings.multiAddIMDbSelectOption == ImdbImportOption.selectFirstOrAddToSkippedList || 
+							settings.multiAddIMDbSelectOption == ImdbImportOption.selectIfOnlyOneHitOrAddToSkippedList)) {
+				addToThisList.add(settings.skippedListName);
+			}
+			else {
+
+				SwingUtilities.invokeAndWait(new Runnable() {
+					public void run() {
+						DialogIMDbImport dialogIMDB = new DialogIMDbImport(model, searchString, hits);
+						GUIUtil.showAndWait(dialogIMDB, true);
+						
+						if (dialogIMDB.getCanceled()) {
+							setCancelled(true);
+							ret = ImportExportReturn.cancelled;
+						}
+
+						System.err.println("ret:" + ret);
+						
+						if (dialogIMDB.getAborted()) {
+							setAborted(true);
+							ret = ImportExportReturn.aborted;
+						}
+
+						System.err.println("ret:" + ret);
+						
+						//if (dialogIMDB.getDropIMDbInfo())
+						//	addToThisList.add(settings.skippedListName);
+						//else
+						addToThisList.add(settings.addToThisList);
+					}
+				});
+			}
+		} catch (Exception e) {
+			log.debug("Exception:" + e.getMessage(), e);
+		}
+		return ret;
+	}
 }
