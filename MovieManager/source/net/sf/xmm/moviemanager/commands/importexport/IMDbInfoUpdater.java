@@ -351,6 +351,7 @@ public class IMDbInfoUpdater {
 			} catch (InterruptedException e) {
 				log.error("Fatal interrupted error: " + e.getMessage());
 			} finally {
+			
 				try {
 					threadHandler.decreaseThreadCount();
 				} catch (Exception e) {
@@ -447,28 +448,32 @@ public class IMDbInfoUpdater {
 				model.setCertification(getIMDbModel(model.getUrlKey()).getCertification());
 			}
 
-			if (cover == 1 || (cover == 2 && (model.getCover().equals("") || 
+			String coverPath = MovieManager.getConfig().getCoversPath(false);
+						
+			if (cover == 1 || (cover == 2 && (!new File(coverPath, model.getCover()).isFile() || 
 					(MovieManager.getIt().getDatabase().isMySQL() && model.getCoverData() == null)))) {
-											
+			
 				if (canceled) {
 					changed = false;
 					return;
 				}
 				
 				try {
-
-					byte [] coverData = getIMDbModel(model.getUrlKey()).getCoverData();
 					
+					byte [] coverData = getIMDbModel(model.getUrlKey()).getCoverData();
+										
 					if (coverData != null) {
+						
 						model.setCoverData(coverData);
-						model.setCover(getIMDbModel(model.getUrlKey()).getCoverName());
 
+						model.setCover(getIMDbModel(model.getUrlKey()).getCoverName());
+						
 						if (!((MovieManager.getIt().getDatabase().isMySQL()) 
 								&& !MovieManager.getConfig().getStoreCoversLocally()) 
 								&& (getIMDbModel(model.getUrlKey()).getCoverURL().indexOf("/") != -1)) {
-							
+														
 							if (new File(coversFolder).isDirectory()) {
-
+								
 								/* Creates the new file... */
 								File coverFile = new File(coversFolder, getIMDbModel(model.getUrlKey()).getCoverName());
 
@@ -481,6 +486,7 @@ public class IMDbInfoUpdater {
 										throw new Exception("Cannot create cover file.");
 									}
 								}
+								
 								/* Copies the cover to the covers folder... */
 								FileUtil.writeToFile(coverData, coverFile);
 							}
@@ -544,6 +550,10 @@ public class IMDbInfoUpdater {
 		
 		
 		public void waitForNextDecrease() throws Exception {
+			
+			// If no active threads, do not wait.
+			if (threadCount == 0)
+				return;
 			
 			synchronized(this) {
 				wait();
