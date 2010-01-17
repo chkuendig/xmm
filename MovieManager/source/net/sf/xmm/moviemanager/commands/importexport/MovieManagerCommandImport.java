@@ -89,9 +89,15 @@ public class MovieManagerCommandImport implements ActionListener{
 				importer.execute();
 			}
 			
+			final MovieManagerCommandImportExportHandler finalImporter = importer;
+			
 			if (importer != null && !importer.isCancelled()) {
-				final JDialog dialog = new DialogDatabaseImporterExporter(importer, importSettings);
-				GUIUtil.show(dialog, true);
+				SwingUtilities.invokeAndWait(new Runnable() {
+					public void run() {
+						final JDialog dialog = new DialogDatabaseImporterExporter(finalImporter, importSettings);
+						GUIUtil.show(dialog, true);
+					}
+				});
 			}
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
