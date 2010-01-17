@@ -97,7 +97,7 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 		   if (rowForLocation == -1) {
 			   return;
 		   }
-			   
+		   
 		   setCurrentRow(rowForLocation);
 		   
 		   // If right clicking an already selected row, no changes are done.
@@ -112,11 +112,15 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 				   getTree().addSelectionRow(rowForLocation);
 			   }
 		   }      
-		   		   
 		   else {
 			   			   
 			   if (SysUtil.isShiftPressed(event)) {
-				   movieList.setSelectionInterval(rowForLocation, firstShiftRow);
+				   				   				   
+				   // Cannot use setSelectionInterval if both are equal, see setSelectionInterval
+				   if (rowForLocation == firstShiftRow)
+					   movieList.setSelectionRow(rowForLocation);
+				   else
+					   movieList.setSelectionInterval(rowForLocation, firstShiftRow);
 			   }
 			   else if (SysUtil.isCtrlPressed(event)) {
 
@@ -139,6 +143,20 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 		   }
 		   setLastButtonPushed(SysUtil.isShiftPressed(event));
 	   }
+   }
+   
+   /**
+    * Overrides parent method
+    * If the two indexes are equal, return
+    */
+   public void setSelectionInterval(int index0, int index1) {
+	   
+	   // For some reason, this method is called with index0 and index1 being equal, after it's been called with different values.
+	   // That would in some cases make selecting multiple rows using SHIFT key impossible. This solves this.
+	   if (index0 == index1)
+		   return;
+	   	   
+	   super.setSelectionInterval(index0, index1);
    }
    
    /**
