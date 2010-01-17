@@ -231,34 +231,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
 
-	void setKeyKeyModifiers() {
-
-		shortcutManager.setKeysToolTipComponent(tabbedPane);
-		
-		// ALT+S
-		KeyMapping m = shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask()),
-				"Save and Close", new AbstractAction() {
-					public void actionPerformed(ActionEvent ae) {
-						buttonSave.doClick();
-						dispose();
-					}
-				});
-		buttonSave.setToolTipText(buttonSave.getToolTipText() + "   " + m.getDisplayName());
-		
-		
-		// ALT+C
-		m = shortcutManager.registerKeyboardShortcut(
-				KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
-				"Close", new AbstractAction() {
-					public void actionPerformed(ActionEvent ae) {
-						config.setLastPreferencesTabIndex(tabbedPane.getSelectedIndex());
-						dispose();
-					}
-				});
-		buttonCancel.setToolTipText(buttonCancel.getToolTipText() + "   " + m.getDisplayName());
-	}
-
 	public DialogPrefs() {
 		/* Dialog creation...*/
 		super(MovieManager.getDialog());
@@ -274,7 +246,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		setResizable(false);
 		
 		createGUI();
-		setKeyKeyModifiers();
+		setHotkeyModifiers();
 	}
 	
 	void createGUI() {
@@ -840,36 +812,41 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		includeAkaLanguageCodes = new JCheckBox(Localizer.get("DialogPrefs.panel.imdb-settings.include-comments-and-language-codes")); //$NON-NLS-1$
 		useLanguageSpecificTitle = new JCheckBox(Localizer.get("DialogPrefs.panel.imdb-settings.replace-original-title-with-aka-title-with-the-following-language")); //$NON-NLS-1$
 
+		
+		
 		ArrayList<String> langCodesList = new ArrayList<String>(150);
 		int index = 0;
 
 		try {
 
 			InputStream inputStream = FileUtil.getResourceAsStream("/codecs/LanguageCodes.txt"); //$NON-NLS-1$
+						
+			if (inputStream != null) {
 
-			BufferedInputStream stream = new BufferedInputStream(inputStream);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8")); //$NON-NLS-1$
+				BufferedInputStream stream = new BufferedInputStream(inputStream);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8")); //$NON-NLS-1$
 
-			String currentLangCode = config.getTitleLanguageCode();
+				String currentLangCode = config.getTitleLanguageCode();
 
-			if (currentLangCode.equals("")) //$NON-NLS-1$
-				currentLangCode = System.getProperty("user.language"); //$NON-NLS-1$
+				if (currentLangCode.equals("")) //$NON-NLS-1$
+					currentLangCode = System.getProperty("user.language"); //$NON-NLS-1$
 
-			String line;
+				String line;
 
-			while ((line = reader.readLine()) != null) {
+				while ((line = reader.readLine()) != null) {
+					
+					if (line.startsWith(currentLangCode)) {
+						index = langCodesList.size();
+					}
 
-				if (line.startsWith(currentLangCode))
-					index = langCodesList.size();
+					line = " " + line.replaceFirst("\t", " - "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-				line = " " + line.replaceFirst("\t", " - "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-				langCodesList.add(line);
+					langCodesList.add(line);
+				}
+				reader.close();
 			}
-			reader.close();
-
 		} catch (IOException e) {
-			log.warn(e);
+			log.warn("Exception:" + e.getMessage(), e);
 		}
 
 		akaTitlePanel.add(storeAllAvailableAkaTitles);
@@ -877,7 +854,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		akaTitlePanel.add(useLanguageSpecificTitle);
 
 		Object [] languageCodes = langCodesList.toArray();
-
+	
 		if (languageCodes.length > 0) {
 
 			languageCodeSelector = new JComboBox(languageCodes);
@@ -989,7 +966,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		// Lists
 		JPanel listsPanel = new JPanel();
 		listsPanel.setLayout(new BoxLayout(listsPanel, BoxLayout.Y_AXIS));
-		listsPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,0,3,0), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Lists"), BorderFactory.createEmptyBorder(5,5,5,5)))); //$NON-NLS-1$
+		listsPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10,0,10,0), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Lists"), BorderFactory.createEmptyBorder(5,5,5,5)))); //$NON-NLS-1$
 
 
 		/* Enable load last used list */
@@ -999,11 +976,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		if (config.getLoadLastUsedListAtStartup())
 			enableLoadLastUsedList.setSelected(true);
 
-
 		if (!MovieManager.getConfig().getInternalConfig().getDisableLoadLastUsedList())
 			listsPanel.add(enableLoadLastUsedList);
-		//	movieListPanel.add(enableLoadLastUsedList);
-
 
 		/* Enable load last used list */
 		enableAddNewMoviesToCurrentLists = new JCheckBox(Localizer.get("DialogPrefs.panel.miscellaneous.add-new-movies-to-currently-selected-lists"));  //$NON-NLS-1$
@@ -1012,11 +986,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		if (config.getAddNewMoviesToCurrentLists())
 			enableAddNewMoviesToCurrentLists.setSelected(true);
 
-		listsPanel.add(enableAddNewMoviesToCurrentLists);
-		//movieListPanel.add(enableAddNewMoviesToCurrentLists);
-		miscCheckBoxes.add(listsPanel);
-
+		listsPanel.add(enableAddNewMoviesToCurrentLists);		
+		
 		JPanel languagePanel = new JPanel();	
+		languagePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,0,3,0), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " Language "), BorderFactory.createEmptyBorder(5,5,5,5)))); //$NON-NLS-1$
+		
+		
 		String [] langs = Localizer.getAvailableLanguages();
 		
 		langauges = new JComboBox(langs);
@@ -1025,12 +1000,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		languagePanel.add(langauges);
 		langauges.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//System.err.println("ActionListener:" + langauges.getSelectedItem());
+				//System.out.println("ActionListener:" + langauges.getSelectedItem());
 			}
 		});
-		
-		
-		miscCheckBoxes.add(languagePanel);
 		
 		// Only if MySQL database
 		if (MovieManager.getIt().getDatabase() != null && MovieManager.getIt().getDatabase().isMySQL()) {
@@ -1042,8 +1014,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			miscCheckBoxes.add(checkEnableMySQLSocketTimeout);
 		}
 
-		miscPanel.add(miscCheckBoxes, BorderLayout.WEST);
-
+		miscPanel.add(miscCheckBoxes, BorderLayout.NORTH);
+		miscPanel.add(listsPanel, BorderLayout.SOUTH);
+		//miscPanel.add(languagePanel, BorderLayout.SOUTH);
+		
 		return miscPanel;
 	}
 
@@ -2345,6 +2319,37 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		if (source.equals(enableUseDefaultWindowsBrowser)) {
 			setBrowserComponentsEnabled();
 		} 
+	}
+	
+	void setHotkeyModifiers() {
+
+		try {
+			shortcutManager.setKeysToolTipComponent(tabbedPane);
+
+			// ALT+S
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Save and Close", new AbstractAction() {
+						public void actionPerformed(ActionEvent ae) {
+							buttonSave.doClick();
+							dispose();
+						}
+					}, buttonSave);
+
+
+			// ALT+C
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Close", new AbstractAction() {
+						public void actionPerformed(ActionEvent ae) {
+							config.setLastPreferencesTabIndex(tabbedPane.getSelectedIndex());
+							dispose();
+						}
+					}, buttonCancel);
+
+		} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
+		}
 	}
 }
 
