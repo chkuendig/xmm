@@ -59,5 +59,8 @@ public interface MovieManagerCommandImportExportHandler {
 	 */
 	public boolean isExporter();
 	
-	
+	/**
+	 * Resets the status fields
+	 */
+	public void resetStatus();
 }

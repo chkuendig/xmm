@@ -151,21 +151,23 @@ public class DatabaseImporterExporter {
 						}
 						
 						if (isStopped()) {
-							addNewTransferred((handler.isImporter() ? "Import " : "Export ") + "process stopped");
+							addNewTransferred((handler.isImporter() ? "Import" : "Export") + " process stopped");
 							break;
 						}
 						
 						if (handler.isAborted()) {
-							addNewTransferred((handler.isImporter() ? "Import " : "Export ") + "process aborted");
+							addNewTransferred((handler.isImporter() ? "Import" : "Export") + " process aborted");
 							break;
 						}
 												
 						ImportExportReturn ret = handler.addMovie(i);
 						
+						System.err.println("handler ret:" + ret);
+						
 						if (ret == ImportExportReturn.error)
 							addNewTransferred("Failed to " + (handler.isImporter() ? "import " : "export ") + title);
 						else if (ret == ImportExportReturn.cancelled)
-							addNewTransferred(title + " (skipped)");
+							addNewTransferred("Skipped " + title);
 						else if (!title.equals(""))
 							addNewTransferred(title);
 
@@ -175,6 +177,7 @@ public class DatabaseImporterExporter {
 						addNewTransferred("Empty entry");
 						current++;
 					}
+					handler.resetStatus();
 				}
 				done = true;
 				handler.done();
