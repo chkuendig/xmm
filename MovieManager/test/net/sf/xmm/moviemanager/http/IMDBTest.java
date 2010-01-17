@@ -182,7 +182,7 @@ public class IMDBTest  {
 		}
 		
 		// Terminator 2
-		StringBuffer data = imdb.getURLData("0103064");
+		StringBuffer data = imdb.getURLData("0103064").getData();
 		
 		ModelIMDbEntry movie = imdb.grabInfo("0103064", data);
 		
@@ -265,7 +265,7 @@ public class IMDBTest  {
 		}
 		
 		// Buffy
-		StringBuffer data = imdb.getURLData("0118276");
+		StringBuffer data = imdb.getURLData("0118276").getData();
 		
 		ModelIMDbEntry series = imdb.grabInfo("0118276", data);
 		
@@ -345,7 +345,7 @@ public class IMDBTest  {
 		}
 		
 		// Seinfeld - The Cadillac (Season 7, Episode 14)
-		StringBuffer data = imdb.getURLData("0697667");
+		StringBuffer data = imdb.getURLData("0697667").getData();
 		
 		ModelIMDbEntry series = imdb.grabInfo("0697667", data);
 		
@@ -402,7 +402,7 @@ public class IMDBTest  {
 		}
 		
 		// The Ladykillers
-		StringBuffer data = imdb.getURLData("0335245");
+		StringBuffer data = imdb.getURLData("0335245").getData();
 		
 		ModelIMDbEntry movie = imdb.grabInfo("0335245", data);
 						
