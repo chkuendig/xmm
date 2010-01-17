@@ -48,9 +48,9 @@ import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
-import net.sf.xmm.moviemanager.IMDbInfoUpdater;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandUpdateIMDBInfo;
+import net.sf.xmm.moviemanager.commands.importexport.IMDbInfoUpdater;
 import net.sf.xmm.moviemanager.swing.extentions.ButtonGroupNoSelection;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.GUIUtil;
