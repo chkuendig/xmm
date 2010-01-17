@@ -126,7 +126,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	private JCheckBox enableLafChooser;
 	private JComboBox skinlfThemePackChooser;
 	private JCheckBox enableSkinlf;
-
+	private JComboBox substanceChooser;
+	private JCheckBox enableSubstanceChooser;
+	
+	
 	private UIManager.LookAndFeelInfo[] installedLookAndFeels;
 
 	private JRadioButton regularToolBarButtons;
@@ -443,7 +446,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		lafChooser.addActionListener(this);
 		enableLafChooser.addActionListener(this);
 
-		lafChooser.setPreferredSize(new Dimension(200, (int) lafChooser.getPreferredSize().getHeight()));
+		lafChooser.setPreferredSize(new Dimension(250, (int) lafChooser.getPreferredSize().getHeight()));
 
 		JPanel customLafChooserPanel = new JPanel(new BorderLayout());
 		customLafChooserPanel.setBorder(BorderFactory.createEmptyBorder(4,20,4,20));
@@ -495,12 +498,46 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			enableSkinlf.addActionListener(this);
 		}
 
+		// Add substance
+		
+		String [] substanceSkins = LookAndFeelManager.getSubstanceSkinListArray();
+		
+		substanceChooser = new JComboBox(substanceSkins);
+		enableSubstanceChooser = new JCheckBox("Substance"); //$NON-NLS-1$
+		enableSubstanceChooser.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
+		lafGroup.add(enableSubstanceChooser);
 
+		String currentSubstance = config.getSubstanceSkin();
+
+		substanceChooser.setSelectedItem(currentSubstance);
+		substanceChooser.setEnabled(false);
+		substanceChooser.addActionListener(this);
+		enableSubstanceChooser.addActionListener(this);
+
+		substanceChooser.setPreferredSize(new Dimension(250, (int) lafChooser.getPreferredSize().getHeight()));
+		
+		
+		JPanel substanceLafChooserPanel = new JPanel(new BorderLayout());
+		substanceLafChooserPanel.setBorder(BorderFactory.createEmptyBorder(4,20,4,20));
+
+		substanceLafChooserPanel.add(enableSubstanceChooser, BorderLayout.WEST);
+		substanceLafChooserPanel.add(substanceChooser, BorderLayout.EAST);
+
+		substanceLafChooserPanel.setMaximumSize(new Dimension(250,30));
+		substanceLafChooserPanel.setPreferredSize(new Dimension(250,30));
+
+		lafChooserPanel.add(substanceLafChooserPanel, BorderLayout.SOUTH);
+			
 		setLafChooserPreferredSize();
 
+		
 		if ((skinlfThemePackList != null) && (config.getLookAndFeelType() == LookAndFeelType.SkinlfLaF)) {
 			enableSkinlf.setSelected(true);
 			skinlfThemePackChooser.setEnabled(true);
+		}
+		else if (config.getLookAndFeelType() == LookAndFeelType.Substance) {
+			enableSubstanceChooser.setSelected(true);
+			substanceChooser.setEnabled(true);
 		}
 		else {
 			enableLafChooser.setSelected(true);
@@ -509,7 +546,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			if (skinlfThemePackList == null)
 				enableLafChooser.setEnabled(false);
 		}
-
 
 		lafPanel.add(lafChooserPanel, BorderLayout.SOUTH);
 
@@ -1880,6 +1916,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		final DialogPrefs prefs = this;
 
+		System.err.println("setLookAndFeel:" + type);
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				prefs.setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -1887,6 +1925,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				switch (type) {
 				case CustomLaF: {setCustomLookAndFeel(0); break;}
 				case SkinlfLaF: {setSkinlfLookAndFeel(); break;}
+				case Substance: {setSubstanceLookAndFeel(); break;}
 				}
 				MovieManager.getDialog().updateLookAndFeelValues();
 				prefs.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -1963,6 +2002,21 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	}
 
 
+	void setSubstanceLookAndFeel() {
+		String selectedItem = (String) substanceChooser.getSelectedItem(); //$NON-NLS-1$
+	
+		try {
+			LookAndFeelManager.setSubstanceLookAndFeel(selectedItem);
+
+			updateLookAndFeel();
+
+		} catch (Exception e) {
+			log.error("Exception: "+ e.getMessage()); //$NON-NLS-1$
+			showErrorMessage(e.getMessage(), "Substance"); //$NON-NLS-1$
+			return;
+		}
+		config.setSubstanceSkin(selectedItem);
+	}
 
 	void showErrorMessage(String error, String name) {
 
@@ -2131,15 +2185,25 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 				skinlfThemePackChooser.setEnabled(true);
 				lafChooser.setEnabled(false);
-
+				substanceChooser.setEnabled(false);
+				
 				config.setLookAndFeelType(LookAndFeelType.SkinlfLaF);
 				setLookAndFeel(LookAndFeelType.SkinlfLaF);
 
 			}
-
+			else if (enableSubstanceChooser.isSelected()) {
+				substanceChooser.setEnabled(true);
+				lafChooser.setEnabled(false);
+				skinlfThemePackChooser.setEnabled(false);
+				
+				config.setLookAndFeelType(LookAndFeelType.Substance);
+				setLookAndFeel(LookAndFeelType.SkinlfLaF);
+			}
 			else {
 				lafChooser.setEnabled(true);
 
+				substanceChooser.setEnabled(false);
+				
 				if (skinlfThemePackChooser != null)
 					skinlfThemePackChooser.setEnabled(false);
 
@@ -2148,6 +2212,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			}
 		}
 
+		
+		
 		if (event.getSource().equals(externCommandInfo)) { //$NON-NLS-1$
 			DialogInfo info = new DialogInfo(this, Localizer.get("DialogPrefs.panel.external-programs.media-player.execute-external-command.info.title"),  //$NON-NLS-1$
 					"<html>"+"When clicking the play button, the default media player is usually started. <br> " + //$NON-NLS-1$ //$NON-NLS-2$
@@ -2198,6 +2264,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			setLookAndFeel(LookAndFeelType.SkinlfLaF);
 		}
 
+		if (event.getSource().equals(substanceChooser)) {
+			setLookAndFeel(LookAndFeelType.Substance);
+		}
+		
 
 		MovieManager.getDialog().getMoviesList().requestFocus(true);
 	}
