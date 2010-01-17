@@ -256,7 +256,7 @@ public class IMDB {
 			}
 	    				
 			final ReentrantLock lock = new ReentrantLock();
-			
+						
 			if (getCover) {
 								
 				Thread t = new Thread(new Runnable() {
@@ -275,7 +275,7 @@ public class IMDB {
 			
 			start = 0;
 			end = 0;
-			
+						
 			/* Gets the rating... */
 			if ((start = data.indexOf("User Rating:", start)) != -1 && 
 					((start = data.indexOf("<div class=\"starbar-meta\">", start)) != -1) &&
@@ -293,8 +293,7 @@ public class IMDB {
 	     
 			start = 0;
 			end = 0;
-			
-			
+						
 			// Gets the directed by... 
 			
 			HashMap<String, String> classInfo = decodeClassInfo(data);
@@ -415,7 +414,7 @@ public class IMDB {
 				awards = awards.replaceAll("(more)$", "");
 				dataModel.setAwards(awards);
 			}
-			
+						
 			String airdateContent = null;
 			
 			if (classInfo.containsKey("Original Air Date:"))
@@ -474,9 +473,9 @@ public class IMDB {
 					dataModel.setPlot(plot);
 				}
 			}
-			
+						
 			lock.tryLock((long) 10, TimeUnit.SECONDS);
-			
+						
 			lastDataModel = dataModel;
 			
 			return dataModel;
@@ -1066,31 +1065,59 @@ public class IMDB {
     	
     	//Pattern p = Pattern.compile("<div.*?class=\"info\">.*?<.+?>(.+?)</.+?>.*?<div\\sclass=\"info-content\">(.+?)</div>", Pattern.DOTALL);
     	Pattern p = Pattern.compile("<div.*?class=\"info\">.*?<.+?>(.+?)(?:\\(.*?)?</.+?>.*?<div\\sclass=\"info-content\">(.+?)</div>", Pattern.DOTALL);
-		Matcher m = p.matcher(data);
-		 		
-		while (m.find()) {
 		
-			//int gCount = m.groupCount();
+    	int cur_index = 0;
+    	    	
+		try {
 			
-			String className = m.group(1);
-			String info = m.group(2);
+			while (true) {
 			
-			//System.out.println("className:" + className + "|");
-			//System.out.println("info:" + info);
-			
-			if (className != null && info != null) {
-				className = className.trim();
-				if (!className.endsWith(":"))
-					className += ":";
+				// Find instance of class=\"info\
+				int index_start = data.indexOf("class=\"info\"", cur_index);
 				
-				//System.out.println("put=" + className + "|");
+				if (index_start < cur_index)
+					break;
 				
-				if (className.equals("Writers:")) {
-					//System.out.println("Writers put info:" + info);
+				cur_index = index_start;
+				
+				// Find next instance of class=\"info\
+				int next_info = data.indexOf("class=\"info\"", cur_index+1);
+				
+				if (next_info == -1) {
+					next_info = cur_index + 500;
+				
+					if (next_info > data.length())
+						next_info = data.length();
 				}
-				classInfo.put(className, info);
+				
+				Matcher m = p.matcher(data.substring(cur_index, next_info));
+
+				if (m.find()) {
+
+					String className = m.group(1);
+					String info = m.group(2);
+
+					if (className != null && info != null) {
+						className = className.trim();
+
+						if (!className.endsWith(":"))
+							className += ":";
+
+						if (className.equals("Writers:")) {
+							//System.out.println("Writers put info:" + info);
+						}
+						classInfo.put(className, info);
+					}
+				}
+				else {
+					break;
+				}
 			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
 		
 		return classInfo;
     }
