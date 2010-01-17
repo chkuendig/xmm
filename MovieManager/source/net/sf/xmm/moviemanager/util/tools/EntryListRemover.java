@@ -22,6 +22,7 @@ package net.sf.xmm.moviemanager.util.tools;
 
 import java.util.ArrayList;
 
+import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -48,12 +49,12 @@ public class EntryListRemover {
 	TreePath[] selectedPaths;
 
 	Database database;
-	ExtendedJTree moviesList;
+	JTree moviesList;
 	int selectedIndex = -1;
 
 	ExtendedTreeCellRenderer treeCellRenderer = MovieManager.getDialog().getTreeCellRenderer();
 	
-	public EntryListRemover(Database database, ExtendedJTree moviesList) {
+	public EntryListRemover(Database database, JTree moviesList) {
 		this.database = database;
 		this.moviesList = moviesList;
 
