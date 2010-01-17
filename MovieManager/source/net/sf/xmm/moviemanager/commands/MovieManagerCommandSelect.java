@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager.commands;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
@@ -52,6 +53,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
@@ -97,7 +99,6 @@ import org.w3c.dom.Document;
 public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelectionListener, MouseListener, ActionListener {
 
 	static Logger log = Logger.getLogger(MovieManagerCommandSelect.class);
-	
 	private JMenuItem change, setAllToSeen, setAllToUnseen, addEpisode;
 	private JMenu menuApplyToLists, menuRemoveFromLists;
 
@@ -275,7 +276,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		BufferedImage image = null;
 
 		ModelEntry model = new ModelMovie();
-		ExtendedJTree movieList = MovieManager.getDialog().getMoviesList();
+		JTree movieList = MovieManager.getDialog().getMoviesList();
 
 		/* Makes sure the list is not empty and an object is selected... */
 		if (movieList.getModel() != null && movieList.getModel().getChildCount(movieList.getModel().getRoot()) > 0 && movieList.getMaxSelectionRow() != -1) {
@@ -662,11 +663,11 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			}
 		}
 		
-		ExtendedJTree movieList = MovieManager.getDialog().getMoviesList();
+		JTree movieList = MovieManager.getDialog().getMoviesList();
 		TreeNode selected = ((TreeNode) movieList.getLastSelectedPathComponent());
 		int horizontalPosition = MovieManager.getDialog().getMoviesListScrollPane().getHorizontalScrollBar().getValue();
 		
-		if (selected != null) {
+		if (selected != null && movieList instanceof ExtendedJTree) {
 			// Scrolls to the selected row
 	 
 			if (movieList.getLastSelectedPathComponent() != null && 
@@ -913,7 +914,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		/* If Button1 and more than 1 click the node is expanded/collapsed */
 		if (GUIUtil.isLeftMouseButton(event)) {
 			if (event.getClickCount() >= 2) {
-				ExtendedJTree movieList = MovieManager.getDialog().getMoviesList();
+				JTree movieList = MovieManager.getDialog().getMoviesList();
 				int rowForLocation = movieList.getRowForLocation(event.getX(), event.getY());
 
 				if (rowForLocation == -1) {
@@ -949,7 +950,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	 **/
 	public void mousePressed(MouseEvent event) {
 
-		ExtendedJTree movieList = (ExtendedJTree) MovieManager.getDialog().getMoviesList();
+		JTree movieList = MovieManager.getDialog().getMoviesList();
 		int rowForLocation = movieList.getRowForLocation(event.getX(), event.getY());
 
 		if (rowForLocation == -1) {
@@ -1004,50 +1005,61 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			MovieManager.getDialog().updateSeen(2);
 
 		else if (menuApplyToLists != null) {
-
-			Component[] applyComponents = menuApplyToLists.getMenuComponents();
-			Component[] removeComponents = menuRemoveFromLists.getMenuComponents();
-
-			String columnName = event.getActionCommand();
-			/* = false; */
-			int mode = -1;
-
-			for (int i = 0; i < applyComponents.length; i++) {
-				if (applyComponents[i].equals(event.getSource())) {
-					mode = 1;
-					break;
-				}
-				else if (removeComponents[i].equals(event.getSource())) {
-					mode = 0;
-					break;
-				}
-			}
-
-			boolean apply = false;
-
-			if (mode == -1)
-				return;
-			else if (mode == 1)
-				apply = true;
-
-			TreePath[] selectedPaths = MovieManager.getDialog().getMoviesList().getSelectionPaths();
-			ModelEntry temp;
-
-			for (int i = 0; i < selectedPaths.length; i++) {
-				temp = (ModelEntry) ((DefaultMutableTreeNode) selectedPaths[i].getLastPathComponent()).getUserObject();
-
-				if (temp instanceof ModelMovie) {
-					MovieManager.getIt().getDatabase().setLists(temp.getKey(), columnName, new Boolean(apply));
-					
-					if (apply)
-						temp.addToMemberOfList(columnName);
-					else
-						temp.removeAsMemberOfList(columnName);
-				}
-			}
+			MovieManager.getDialog().getPanelMovieList().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+			handleAppyToLists(event);
+			MovieManager.getDialog().getPanelMovieList().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
 
+	void handleAppyToLists(ActionEvent event) {
+
+		log.debug("ActionPerformed - handleAppyToLists");
+		
+		Component[] applyComponents = menuApplyToLists.getMenuComponents();
+		Component[] removeComponents = menuRemoveFromLists.getMenuComponents();
+
+		String columnName = event.getActionCommand();
+		
+		/* = false; */
+		int mode = -1;
+
+		for (int i = 0; i < applyComponents.length; i++) {
+			if (applyComponents[i].equals(event.getSource())) {
+				mode = 1;
+				break;
+			}
+			else if (removeComponents[i].equals(event.getSource())) {
+				mode = 0;
+				break;
+			}
+		}
+
+		boolean apply = false;
+
+		if (mode == -1)
+			return;
+		else if (mode == 1)
+			apply = true;
+
+		TreePath[] selectedPaths = MovieManager.getDialog().getMoviesList().getSelectionPaths();
+		ModelEntry temp;
+		
+		for (int i = 0; i < selectedPaths.length; i++) {
+			temp = (ModelEntry) ((DefaultMutableTreeNode) selectedPaths[i].getLastPathComponent()).getUserObject();
+
+			if (temp.isMovie()) {
+				System.err.println(temp.getTitle() + " setList("+apply+"):" + columnName);
+				MovieManager.getIt().getDatabase().setLists(temp.getKey(), columnName, new Boolean(apply));
+				
+				if (apply)
+					temp.addToMemberOfList(columnName);
+				else
+					temp.removeAsMemberOfList(columnName);
+			}
+		}
+	}
+	
+	
 	public void keyPressed(KeyEvent e) {
 
 		/* 127 == delete key */
@@ -1063,7 +1075,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	
 	public void makeMovieListPopupMenu(int x, int y, MouseEvent event, ModelEntry selected, int selectionCount) {
 
-		ExtendedJTree movieList = MovieManager.getDialog().getMoviesList();
+		JTree movieList = MovieManager.getDialog().getMoviesList();
 		boolean isSeenEditable = MovieManager.getConfig().getSeenEditable();
 		JPopupMenu popupMenu = null;
 
