@@ -1783,35 +1783,41 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		popupMenu.show(filesToAddList, x, y);
 	}
 	
-	 void setHotkeyModifiersMultiAdd() {
-	    		    	
-	    	// ALT+C for Close
+	void setHotkeyModifiersMultiAdd() {
+
+		// ALT+C for Close
+		try {
 			shortcutManager.registerKeyboardShortcut(
 					KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
 					"Close Window", new AbstractAction() {
-				public void actionPerformed(ActionEvent ae) {
-					buttonCancel.doClick();
-				}
-			}, buttonCancel);
-			
+						public void actionPerformed(ActionEvent ae) {
+							buttonCancel.doClick();
+						}
+					}, buttonCancel);
+
 			// ALT+A for add movies
 			shortcutManager.registerKeyboardShortcut(
 					KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyboardShortcutManager.getToolbarShortcutMask()),
 					"Abort", new AbstractAction() {
-				public void actionPerformed(ActionEvent ae) {
-					buttonAddMovies.doClick();
-				}
-			}, buttonAddMovies);
-			
+						public void actionPerformed(ActionEvent ae) {
+							buttonAddMovies.doClick();
+						}
+					}, buttonAddMovies);
+
 			// ALT+F for add movies
 			shortcutManager.registerKeyboardShortcut(
 					KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyboardShortcutManager.getToolbarShortcutMask()),
 					"Abort", new AbstractAction() {
-				public void actionPerformed(ActionEvent ae) {
-					buttonUpdateFileList.doClick();
-				}
-			}, buttonUpdateFileList);
-						
+						public void actionPerformed(ActionEvent ae) {
+							buttonUpdateFileList.doClick();
+						}
+					}, buttonUpdateFileList);
+
 			shortcutManager.setKeysToolTipComponent(filterPanel);
-	    }
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
