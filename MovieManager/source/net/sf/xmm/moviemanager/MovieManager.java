@@ -61,6 +61,7 @@ import net.sf.xmm.moviemanager.swing.extentions.events.NewMovieListLoadedHandler
 import net.sf.xmm.moviemanager.swing.progressbar.ProgressBean;
 import net.sf.xmm.moviemanager.swing.progressbar.ProgressBeanImpl;
 import net.sf.xmm.moviemanager.swing.util.SwingWorker;
+import net.sf.xmm.moviemanager.updater.AppUpdater;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
@@ -652,6 +653,8 @@ public class MovieManager {
             		
             		handleVersionUpdate();
             		            		
+            		new AppUpdater();
+            		
             	} catch (Exception e) {
             		log.error("Exception occured while intializing MeD's Movie Manager", e);
             	}
