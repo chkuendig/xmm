@@ -28,8 +28,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -42,7 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-import net.sf.xmm.moviemanager.http.IMDB;
+import net.sf.xmm.moviemanager.http.IMDbLib;
 
 public class DialogAboutIMDb extends JDialog {
 
@@ -71,7 +69,8 @@ public class DialogAboutIMDb extends JDialog {
 		setTitle("About IMDb library");
 		setModal(true);
 		setResizable(false);
-	
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		
 		JPanel all = createAboutPanel();
 
 		/* Buttons panel...*/
@@ -107,7 +106,7 @@ public class DialogAboutIMDb extends JDialog {
 		JPanel panelInfo = new JPanel();
 		panelInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Info "),
 				BorderFactory.createEmptyBorder(5,5,5,5)));
-		JLabel labelInfo = new JLabel("<html><center> MeD's Movie Manager IMDb library <br> version " + IMDB.getVersion() + "</center></html>", JLabel.CENTER);
+		JLabel labelInfo = new JLabel("<html><center> MeD's Movie Manager IMDb library <br> version " + IMDbLib.getVersion() + "</center></html>", JLabel.CENTER);
 		labelInfo.setFont(new Font(labelInfo.getFont().getName(),Font.PLAIN,labelInfo.getFont().getSize()));
 		panelInfo.add(labelInfo);
 		/* Copyright panel... */
@@ -126,6 +125,14 @@ public class DialogAboutIMDb extends JDialog {
 		labelLicense.setFont(new Font(labelLicense.getFont().getName(),Font.PLAIN,labelLicense.getFont().getSize()-2));
 		panelLicenses.add(labelLicense);		
 
+		/* Licenses panel... */
+		JPanel panelDependency = new JPanel();
+		panelDependency.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Dependency "),
+				BorderFactory.createEmptyBorder(5,5,5,5)));
+		JLabel labelDependency = new JLabel("log4j",JLabel.CENTER);
+		labelDependency.setFont(new Font(labelDependency.getFont().getName(),Font.PLAIN,labelDependency.getFont().getSize()-2));
+		panelDependency.add(labelDependency);		
+		
 		/* All stuff together... */
 		JPanel all = new JPanel();
 		all.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
@@ -133,6 +140,7 @@ public class DialogAboutIMDb extends JDialog {
 		all.add(panelInfo);
 		all.add(panelCopyright);
 		all.add(panelLicenses);
+		all.add(panelDependency);
 		
 		return all;
 	}
