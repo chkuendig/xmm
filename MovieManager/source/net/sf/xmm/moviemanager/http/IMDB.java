@@ -32,31 +32,16 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.models.imdb.*;
 
 import org.apache.log4j.Logger;
-import org.lobobrowser.html.parser.DocumentBuilderImpl;
-import org.lobobrowser.html.parser.InputSourceImpl;
-import org.lobobrowser.html.test.SimpleUserAgentContext;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class IMDB {
   
 	static Logger log = Logger.getLogger(IMDB.class);
-    
-	public final static String version = "1.0.0";
-	public final static String numveric_version = "100";
-	
+    	
     private HttpUtil httpUtil = new HttpUtil();
     
     private HttpSettings settings = null;
