@@ -2,7 +2,7 @@ Required libraries for MeD's Movie Manager v2.8
 
 These libraries can be found in the MovieManager binary or source release.
 
-BrowserLauncher2-10rc4.jar		- Browser launcher java library
+BrowserLauncher2-1_3.jar		- Browser launcher java library
 
 castor-1.2.jar					- Object-XML binding utility.
 xercesImpl.jar					- Required by castor with Java 1.4
@@ -38,7 +38,9 @@ commons-codec-1.3.jar			- Needed for jasperreports
 commons-collections-3.2.jar		- Needed for jasperreports
 commons-digester-1.7.jar		- Needed for jasperreports
 
- 
+jupidator.jar					- Library for updating application.
+ant-contrib-0.6.jar				- Easier ant build script.
+
 In applet mode, these are the only required libraries:
 
 TableLayout.jar						  	   Layout of the main window
