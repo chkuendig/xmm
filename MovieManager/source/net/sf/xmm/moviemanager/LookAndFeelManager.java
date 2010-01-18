@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -34,6 +35,7 @@ import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import net.sf.xmm.moviemanager.MovieManagerConfig.LookAndFeelType;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
@@ -44,8 +46,6 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
 import org.apache.log4j.Logger;
-import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-import org.pushingpixels.substance.api.skin.SkinInfo;
 
 import com.l2fprod.gui.plaf.skin.Skin;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
@@ -54,43 +54,25 @@ public class LookAndFeelManager {
     
     static Logger log = Logger.getRootLogger();
         
+   
+    
     public static void setLookAndFeel() {
         
         MovieManagerConfig config = MovieManager.getConfig();
-        
-        final UIManager.LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
-        
+                
         if (config.getCustomLookAndFeel().equals("")) {
-            LookAndFeel currentLAF = UIManager.getLookAndFeel();
-            if (currentLAF != null) {
-                config.setCustomLookAndFeel(currentLAF.getName());
-            } else {
-                for (int i = 0;i<installedLookAndFeels.length;i++) {
-                    if(installedLookAndFeels[i].getClassName().equals(UIManager.getSystemLookAndFeelClassName())) {
-                        config.setCustomLookAndFeel(installedLookAndFeels[i].getName());
-                    }
-                }
-            }
+        	setDefaultCustomLaF();
         }
         
         try {
-            config.numberOfLookAndFeels = installedLookAndFeels.length;
-            
+        	
             boolean laFSet = false;
             
             if (config.getLookAndFeelType() == LookAndFeelType.CustomLaF && 
             		!config.getCustomLookAndFeel().equals(UIManager.getLookAndFeel().getName())) {
-            	
-            	for (int i = 0; i < installedLookAndFeels.length; i++) {
-            		if (installedLookAndFeels[i].getName().equals(config.getCustomLookAndFeel())) {
-            			setLookAndFeel(installedLookAndFeels[i].getClassName());
-            			laFSet = true;
-            			break;
-            		}
-            	}
+            	laFSet = setCustomLaf(config.getCustomLookAndFeel());
             }        
-
-            if (config.getLookAndFeelType() == LookAndFeelType.SkinlfLaF &&
+            else if (config.getLookAndFeelType() == LookAndFeelType.SkinlfLaF &&
             		getSkinlfThemepackList() != null) {
                 
             	File theme = new File(config.getSkinlfThemePackDir(), config.getSkinlfThemePack());
@@ -106,93 +88,179 @@ public class LookAndFeelManager {
             	}
             	
             	if (theme.isFile()) {
-            		/* Sets the themepack and then sets the skinlf look and feel */
-            		Skin skin = SkinLookAndFeel.loadThemePack(theme.getAbsolutePath());
-            		SkinLookAndFeel.setSkin(skin);
-            		LookAndFeel laf = new SkinLookAndFeel();
-            		setLookAndFeel(laf);
-            		laFSet = true;
+            		laFSet = setSkinlfLookAndFeel(theme.getName());
             	}
             	else {
             		log.debug("SkinLf theme file not found:" + theme);
             		log.debug("Default Look & Feel is used.");
-            		
-            		config.setLookAndFeelType(LookAndFeelType.CustomLaF);
-            		config.setCustomLookAndFeel("Metal");
             	}
             }
-            
-            if (config.getLookAndFeelType() == LookAndFeelType.Substance) {
-            	String skin = config.getSubstanceSkin();
-            	setSubstanceLookAndFeel(skin);
+            else if (config.getLookAndFeelType() == LookAndFeelType.Substance) {
+            	laFSet = setSubstanceLookAndFeel(config.getSubstanceSkin());
             }
 
-            ExtendedTreeCellRenderer.setDefaultColors();
-
             if (laFSet) {
+            
+            	ExtendedTreeCellRenderer.setDefaultColors();
+            	
             	SwingUtilities.invokeLater(new Runnable() {
             		public void run() {
             			SwingUtilities.updateComponentTreeUI(MovieManager.getDialog());
             		}
             	});
             }
+            else {
+            	config.setLookAndFeelType(LookAndFeelType.CustomLaF);
+        		config.setCustomLookAndFeel("Metal");
+            }
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Exception: " + e.getMessage());
             e.printStackTrace();
-            DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Look and Feel error", "Look and feel may not be properly installed.", e.getMessage());
-            GUIUtil.showAndWait(alert, true);
+            SwingUtilities.invokeLater(new Runnable() {
+            	public void run() {
+            		DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Look and Feel error", "Look and feel may not be properly installed.", e.getMessage());
+            		GUIUtil.showAndWait(alert, true);
+				}
+			});
         }
     }
     
-    public static void setSubstanceLookAndFeel(String skinName) {
-    	
-    	ArrayList<SkinInfo> list = getSubstanceSkinList();
-    	
-    	for (SkinInfo s : list) {
-    		
-    		if (skinName.equals(s.getDisplayName())) {
-    			log.debug("Setting substance skin " + skinName);
-    		
-    			final SkinInfo finalSkin = s;
-    			
-    			try {
-					GUIUtil.invokeAndWait(new Runnable() {
-						public void run() {
-							SubstanceLookAndFeel.setSkin(finalSkin.getClassName());
-						}
-					});
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+    static void setDefaultCustomLaF() {
+
+    	final UIManager.LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+
+    	LookAndFeel currentLAF = UIManager.getLookAndFeel();
+    	if (currentLAF != null) {
+    		MovieManager.getConfig().setCustomLookAndFeel(currentLAF.getName());
+    	} else {
+    		for (int i = 0;i < installedLookAndFeels.length;i++) {
+    			if(installedLookAndFeels[i].getClassName().equals(UIManager.getSystemLookAndFeelClassName())) {
+    				MovieManager.getConfig().setCustomLookAndFeel(installedLookAndFeels[i].getName());
+    			}
     		}
     	}
     }
     
-    public static ArrayList<SkinInfo> getSubstanceSkinList() {
-    	Map<String, SkinInfo> m = SubstanceLookAndFeel.getAllSkins();
-
-    	ArrayList<SkinInfo> list = new ArrayList<SkinInfo>();
+    /**
+     * Takes the name of a custom Look & Feel, finds it's classname, and sets the L&F.
+     * @param lafName
+     * @return
+     */
+    public static boolean setCustomLaf(String lafName) {
     	
-    	for (SkinInfo s : m.values()) {
-    		list.add(s);
+    	ArrayList<LookAndFeelInfo> lafs = getCustomLaFList();
+    	    	
+    	for (int i = 0; i < lafs.size(); i++) {
+    		if (lafs.get(i).getName().equals(lafName)) {
+    			setLookAndFeel(lafs.get(i).getClassName());
+    			return true;
+    		}
     	}
-    	return list;
+    	return false;
     }
     
-    public static String [] getSubstanceSkinListArray() {
-    	ArrayList<SkinInfo> list = getSubstanceSkinList();
+    /**
+     * Takes the name of a SkinLf themepack and loads the theme pack from the default theme pack directory.
+     * @param skinLfSkinFile
+     * @return
+     * @throws MalformedURLException
+     * @throws Exception
+     */
+    public static boolean setSkinlfLookAndFeel(String skinLfSkinFile) throws MalformedURLException, Exception {
+
+    	String skinlfThemePackPath = MovieManager.getConfig().getSkinlfThemePackDir() + skinLfSkinFile;
+
+    	Skin skin = null;
+
+    	if (MovieManager.isApplet())
+    		skin = SkinLookAndFeel.loadThemePack(FileUtil.getAppletFile(skinlfThemePackPath, DialogMovieManager.applet).toURI().toURL());
+    	else {
+    		skin = SkinLookAndFeel.loadThemePack(skinlfThemePackPath);
+    	}
+    	SkinLookAndFeel.setSkin(skin);
+    	return setLookAndFeel(new SkinLookAndFeel());
+    }
+    
+    
+    public static boolean setSubstanceLookAndFeel(String skinName) {
+    	
+    	ArrayList<LookAndFeelInfo> list = getSubstanceSkinList();
+    	
+    	for (LookAndFeelInfo laf : list) {
+    		
+    		if (skinName.equals(laf.getName())) {
+    			log.debug("Setting substance skin " + laf.getClassName());
+    			return setLookAndFeel(laf.getClassName());
+    		}
+    	}
+    	return false;
+    }
+    
+    
+    // "org.jvnet.substance.skin"
+    static final String substanceClassPrefix = "org.pushingpixels.substance.api.skin";
+    
+    static ArrayList<LookAndFeelInfo> customLaFs = null;
+    static ArrayList<LookAndFeelInfo> substanceSkins = null;
+    
+    static void setupLaFList() {
+    	
+    	UIManager.LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
+    	customLaFs = new ArrayList<LookAndFeelInfo>();
+    	substanceSkins = new ArrayList<LookAndFeelInfo>();
+    	
+    	for (int i = 0; i < installedLookAndFeels.length; i++) {
+    		
+    		if (installedLookAndFeels[i].getClassName().startsWith(substanceClassPrefix)) {
+    			substanceSkins.add(installedLookAndFeels[i]);
+    		}
+    		// Skip the ugly motif L&F
+    		else if (!installedLookAndFeels[i].getName().equals("CDE/Motif"))
+    			customLaFs.add(installedLookAndFeels[i]);
+    	}
+    }
+    
+    
+    public static ArrayList<LookAndFeelInfo> getCustomLaFList() {
+
+    	if (customLaFs == null)
+    		setupLaFList();
+    		
+    	return customLaFs;
+    }
+    
+    public static ArrayList<LookAndFeelInfo> getSubstanceSkinList() {
+
+    	if (substanceSkins == null)
+    		setupLaFList();
+    		
+    	return substanceSkins;
+    }
+    
+    
+    public static String [] getLaFListArray() {
+    	
+    	ArrayList<LookAndFeelInfo> list = getCustomLaFList();
     	String [] names = new String[list.size()];
     	
     	for (int i = 0; i < names.length; i++)
-    		names[i] = list.get(i).getDisplayName();
+    		names[i] = list.get(i).getName();
     		
     	return names;
     }
+    
+    public static String [] getSubstanceSkinListArray() {
+    	    	
+    	ArrayList<LookAndFeelInfo> list = getSubstanceSkinList();
+    	String [] names = new String[list.size()];
+    	
+    	for (int i = 0; i < names.length; i++)
+    		names[i] = list.get(i).getName();
+    		
+    	return names;
+    }
+    
 
     public static String [] getSkinlfThemepackList() {
         
@@ -232,6 +300,70 @@ public class LookAndFeelManager {
             log.error("", e);
         }
         return null;
+    }
+    
+    
+    
+   static boolean error = false;
+    
+    private static boolean setLookAndFeel(final String className) {
+    	
+    	error = false;
+    	
+    	try {
+
+    		if (SwingUtilities.isEventDispatchThread()) {
+    			System.err.println("setLookAndFeel laf:" + className);
+    			UIManager.setLookAndFeel(className);
+    		}
+    		else {
+
+    			SwingUtilities.invokeAndWait(new Runnable() {
+    				public void run() {
+    					System.err.println("setLookAndFeel invokeandwait laf:" + className);
+    					try {
+							UIManager.setLookAndFeel(className);
+    					} catch (Exception e) {
+    						error = true;
+							e.printStackTrace();
+						}
+    				}
+    			});
+    		}
+    	} catch (Exception e) {
+    		error = true;
+			e.printStackTrace();
+		}
+    
+    	return !error;
+    }
+    
+    
+    private static boolean setLookAndFeel(final LookAndFeel lookAndFeel) {
+    	    	
+    	error = false;
+
+    	try {
+    		if (SwingUtilities.isEventDispatchThread()) {
+    			UIManager.setLookAndFeel(lookAndFeel);
+    		}
+    		else {
+    			SwingUtilities.invokeAndWait(new Runnable() {
+    				public void run() {
+    					try {
+    						UIManager.setLookAndFeel(lookAndFeel);
+    					} catch (UnsupportedLookAndFeelException e) {
+    						log.warn("Exception:" + e.getMessage(), e);
+    						error = true;
+    					}
+    				}
+    			});
+    		}
+    	} catch (Exception e) {
+    		error = true;
+			e.printStackTrace();
+		}
+    	return !error;
     }
     
     
@@ -339,6 +471,8 @@ public class LookAndFeelManager {
         }
     }
     
+   
+ 
     
     public static void setupOSXLaF() {
         
@@ -368,42 +502,6 @@ public class LookAndFeelManager {
             }
         }
     }
-    
-    private static void setLookAndFeel(final String className) {
-    	    	
-    	SwingUtilities.invokeLater(new Runnable() {
-    		public void run() {
-    			try {
-    				UIManager.setLookAndFeel(className);
-				} catch (UnsupportedLookAndFeelException e) {
-					log.warn("Exception:" + e.getMessage(), e);
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    		}
-    	});
-    }
-    
-    private static void setLookAndFeel(final LookAndFeel lookAndFeel) {
-    	    	
-    	SwingUtilities.invokeLater(new Runnable() {
-    		public void run() {
-    			try {
-    				UIManager.setLookAndFeel(lookAndFeel);
-				} catch (UnsupportedLookAndFeelException e) {
-					log.warn("Exception:" + e.getMessage(), e);
-				}
-    		}
-    	});
-    }
-    
     
     public static void macOSXRegistration() {
     	
