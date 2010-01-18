@@ -430,8 +430,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	
 	private LookAndFeelType lookAndFeelType = LookAndFeelType.CustomLaF;
 
-	public int numberOfLookAndFeels;
-
 	private boolean defaultLookAndFeelDecorated = false;
 
 	private boolean checkForProgramUpdates = true;
@@ -1739,10 +1737,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	public void setDefaultLookAndFeelDecorated(boolean defaultLookAndFeelDecorated) {
 		this.defaultLookAndFeelDecorated = defaultLookAndFeelDecorated;
-	}
-
-	public int getNumberOfLookAndFeels() {
-		return numberOfLookAndFeels;
 	}
 
 	public String getCustomLookAndFeel() {
