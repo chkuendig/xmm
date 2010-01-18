@@ -414,15 +414,9 @@
 		  <include name="net/sf/xmm/moviemanager/models/imdb/"/>
 		  <include name="net/sf/xmm/moviemanager/gui/imdb/"/>
 		</fileset>
-		
-		<!--
-			<fileset dir="MovieManager/"
-					 includes="net/sf/xmm/moviemanager/models/ModelIMDB.java,
-							   net/sf/xmm/moviemanager/util/StringUtil.java "/>
-			-->
-		
+	  	
 		<manifest>
-		  <attribute name="Main-Class" value="net.sf.xmm.moviemanager.gui.imdb.DialogAboutIMDb" />
+		  <attribute name="Main-Class" value="net.sf.xmm.moviemanager.gui.imdb.DialogAboutIMDbLib" />
 		</manifest>
 		
 		</jar>
