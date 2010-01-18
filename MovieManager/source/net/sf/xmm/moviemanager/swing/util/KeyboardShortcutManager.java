@@ -37,7 +37,8 @@ public class KeyboardShortcutManager {
 	JFrame jFrame = null;
 	JRootPane rootPane;
 	
-	String macCmdChar = "⌘";
+	String macCmdChar = "@";
+	String macCmdCharacter = "&#8984;";
 	
 	JComponent tooltipAreaComponent;
 	
@@ -187,7 +188,7 @@ public class KeyboardShortcutManager {
 					name += "+";
 				
 				if (SysUtil.isMac()){
-					name += macCmdChar;
+					name += macCmdCharacter;
 				}
 				else
 					name += "META";
