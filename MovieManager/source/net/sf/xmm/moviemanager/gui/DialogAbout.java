@@ -90,11 +90,8 @@ public class DialogAbout extends JDialog {
 	/* Packs and sets location... */
 	
 	pack();
-	
-	System.err.println("Size:" + getSize());
-	System.err.println("Pref:" + getPreferredSize());
-	System.err.println("Mini:" + getMinimumSize());
-	
+		
+	setPreferredSize(getMinimumSize());
 	setSize(getMinimumSize());
 	
 	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
