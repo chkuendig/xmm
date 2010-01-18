@@ -1906,8 +1906,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	void setLookAndFeel(final LookAndFeelType type) {
 
 		final DialogPrefs prefs = this;
-
-		System.err.println("setLookAndFeel:" + type);
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -1942,7 +1940,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				return;
 			}
 
-			System.err.println("setcustom:" + selectedItemClass);
 			UIManager.setLookAndFeel(selectedItemClass);
 			updateLookAndFeel();
 
