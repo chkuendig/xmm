@@ -1063,37 +1063,33 @@ public class IMDB {
     		
     	HashMap<String, String> classInfo = new HashMap<String, String>();
     	
-    	//Pattern p = Pattern.compile("<div.*?class=\"info\">.*?<.+?>(.+?)</.+?>.*?<div\\sclass=\"info-content\">(.+?)</div>", Pattern.DOTALL);
-    	Pattern p = Pattern.compile("<div.*?class=\"info\">.*?<.+?>(.+?)(?:\\(.*?)?</.+?>.*?<div\\sclass=\"info-content\">(.+?)</div>", Pattern.DOTALL);
-		
-    	int cur_index = 0;
-    	    	
+    	Pattern contentPattern = Pattern.compile("<div.*?class=\"info\">.*?<.+?>(.+?)(?:\\(.*?)?</.+?>.*?<div\\sclass=\"info-content\">(.+?)</div>", Pattern.DOTALL);
+		    	
+    	// Find start index of all class info, which is the conten we seek
+    	Pattern classStart = Pattern.compile("<div.*?class=\"info\">");
+    	ArrayList<Integer> infoStart = new ArrayList<Integer>();
+    	
+    	Matcher m = classStart.matcher(data);
+    	while (m.find()) {
+    		infoStart.add(m.start());
+    	}
+    	    	    	
 		try {
 			
-			while (true) {
-			
-				// Find instance of class=\"info\
-				int index_start = data.indexOf("class=\"info\"", cur_index);
+			while (!infoStart.isEmpty()) {
+												
+				// Get the next <div.*?class=\"info\">
 				
-				if (index_start < cur_index)
-					break;
-				
-				cur_index = index_start;
-				
-				// Find next instance of class=\"info\
-				int next_info = data.indexOf("class=\"info\"", cur_index+1);
-				
-				if (next_info == -1) {
-					next_info = cur_index + 500;
-				
-					if (next_info > data.length())
-						next_info = data.length();
-				}
-				
-				Matcher m = p.matcher(data.substring(cur_index, next_info));
-
+				int index_start = infoStart.remove(0);
+				int next_info = data.length();
+					
+				if (!infoStart.isEmpty())
+					next_info = infoStart.get(0);
+											
+				m = contentPattern.matcher(data.substring(index_start, next_info));
+								
 				if (m.find()) {
-
+										
 					String className = m.group(1);
 					String info = m.group(2);
 
@@ -1106,19 +1102,16 @@ public class IMDB {
 						if (className.equals("Writers:")) {
 							//System.out.println("Writers put info:" + info);
 						}
+						
 						classInfo.put(className, info);
 					}
-				}
-				else {
-					break;
 				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+				
 		return classInfo;
     }
     
