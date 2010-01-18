@@ -328,9 +328,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	int multiAddMainSliderPosition = -1;
 	int multiAddFileSliderPosition = -1;
 	int multiAddTabIndex = 0;
-	Dimension multiAddWindowSize = null;
+	Dimension multiAddWindowSize = new Dimension();
 	
-	Dimension multiAddIMDbDialogWindowSize = null;
+	Dimension multiAddIMDbDialogWindowSize = new Dimension();
 	
 	/* Import */
 	private ImportMode lastDialogImportType = ImportMode.TEXT;
