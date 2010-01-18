@@ -56,12 +56,6 @@ public class DialogAboutIMDb extends JDialog {
 	 **/
 	public DialogAboutIMDb() {
 		
-		/* Close dialog... */
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				dispose();
-			}
-		});
 		/*Enables dispose when pushing escape*/
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		Action escapeAction = new AbstractAction()  {
@@ -77,36 +71,8 @@ public class DialogAboutIMDb extends JDialog {
 		setTitle("About IMDb library");
 		setModal(true);
 		setResizable(false);
-		/* Info panel...*/
-		JPanel panelInfo = new JPanel();
-		panelInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Info "),
-				BorderFactory.createEmptyBorder(5,5,5,5)));
-		JLabel labelInfo = new JLabel("<html><center> MeD's Movie Manager IMDb library <br> version " + IMDB.version + "</center></html>", JLabel.CENTER);
-		labelInfo.setFont(new Font(labelInfo.getFont().getName(),Font.PLAIN,labelInfo.getFont().getSize()));
-		panelInfo.add(labelInfo);
-		/* Copyright panel... */
-		JPanel panelCopyright = new JPanel();
-		panelCopyright.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Copyright "),
-				BorderFactory.createEmptyBorder(5,5,5,5)));
-		JLabel labelCopyright = new JLabel("(C) 2003-2009 Bro",JLabel.CENTER);
-		labelCopyright.setFont(new Font(labelCopyright.getFont().getName(),Font.PLAIN,labelCopyright.getFont().getSize()));
-		panelCopyright.add(labelCopyright);
-
-		/* Licenses panel... */
-		JPanel panelLicenses = new JPanel();
-		panelLicenses.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Licenses "),
-				BorderFactory.createEmptyBorder(5,5,5,5)));
-		JLabel labelLicense = new JLabel("Licensed under The GNU General Public License, Version 2 or later",JLabel.CENTER);
-		labelLicense.setFont(new Font(labelLicense.getFont().getName(),Font.PLAIN,labelLicense.getFont().getSize()-2));
-		panelLicenses.add(labelLicense);		
-		
-		/* All stuff together... */
-		JPanel all = new JPanel();
-		all.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
-		all.setLayout(new BoxLayout(all,BoxLayout.Y_AXIS));
-		all.add(panelInfo);
-		all.add(panelCopyright);
-		all.add(panelLicenses);
+	
+		JPanel all = createAboutPanel();
 
 		/* Buttons panel...*/
 		JPanel panelButtons = new JPanel();
@@ -132,5 +98,42 @@ public class DialogAboutIMDb extends JDialog {
 		setLocation((int)(screenSize.getWidth() - getSize().getWidth())/2,
                     (int)(screenSize.getHeight() - getSize().getHeight())/2 - 12);
             
+	}
+	
+	
+	public static JPanel createAboutPanel() {
+		
+		/* Info panel...*/
+		JPanel panelInfo = new JPanel();
+		panelInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Info "),
+				BorderFactory.createEmptyBorder(5,5,5,5)));
+		JLabel labelInfo = new JLabel("<html><center> MeD's Movie Manager IMDb library <br> version " + IMDB.getVersion() + "</center></html>", JLabel.CENTER);
+		labelInfo.setFont(new Font(labelInfo.getFont().getName(),Font.PLAIN,labelInfo.getFont().getSize()));
+		panelInfo.add(labelInfo);
+		/* Copyright panel... */
+		JPanel panelCopyright = new JPanel();
+		panelCopyright.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Copyright "),
+				BorderFactory.createEmptyBorder(5,5,5,5)));
+		JLabel labelCopyright = new JLabel("(C) 2003-2010 Bro",JLabel.CENTER);
+		labelCopyright.setFont(new Font(labelCopyright.getFont().getName(),Font.PLAIN,labelCopyright.getFont().getSize()));
+		panelCopyright.add(labelCopyright);
+
+		/* Licenses panel... */
+		JPanel panelLicenses = new JPanel();
+		panelLicenses.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Licenses "),
+				BorderFactory.createEmptyBorder(5,5,5,5)));
+		JLabel labelLicense = new JLabel("Licensed under The GNU General Public License, Version 2 or later",JLabel.CENTER);
+		labelLicense.setFont(new Font(labelLicense.getFont().getName(),Font.PLAIN,labelLicense.getFont().getSize()-2));
+		panelLicenses.add(labelLicense);		
+
+		/* All stuff together... */
+		JPanel all = new JPanel();
+		all.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
+		all.setLayout(new BoxLayout(all,BoxLayout.Y_AXIS));
+		all.add(panelInfo);
+		all.add(panelCopyright);
+		all.add(panelLicenses);
+		
+		return all;
 	}
 }
