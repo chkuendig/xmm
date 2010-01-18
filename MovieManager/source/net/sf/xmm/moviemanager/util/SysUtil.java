@@ -517,76 +517,25 @@ public class SysUtil {
     	int totalMemory = (int) Runtime.getRuntime().totalMemory()/1024/1024;
     	int maxMemory = (int) Runtime.getRuntime().maxMemory()/1024/1024;
     	
-    	return "OS: " + System.getProperty("os.name") + 
-    		   "  version: " + System.getProperty("os.version") + 
-    		   "  Architecture: " + System.getProperty("os.arch") + 
-    		   sep +
-    		   "Java version: " + System.getProperty("java.runtime.version") +  
-    		   "  Vendor:" + System.getProperty("java.vm.specification.vendor") + 
-    		   sep + 
-    		   "Free VM memory: " + freeMemory + " MB, " + "Total VM memory: " + totalMemory + " MB" + sep +
-    		   "Max VM memory: " + maxMemory + " MB" ;
+    	StringBuffer info = new StringBuffer();
+    	info.append("Operating System: ").append(System.getProperty("os.name"));
+    	info.append(sep);
+    	info.append(System.getProperty("os.name")).append("version: " + System.getProperty("os.version"));
+    	info.append(sep);
+    	info.append("Architecture: ").append(System.getProperty("os.arch"));
+    	
+    	info.append(sep);
+    	info.append("Java version: ").append(System.getProperty("java.runtime.version"));
+    	info.append("Vendor:").append(System.getProperty("java.vm.specification.vendor"));
+    	info.append(sep);
+    	
+    	info.append("Free VM memory: ").append(freeMemory).append(" MB, ");
+    	info.append(sep);
+    	info.append("Total VM memory: ").append(totalMemory + " MB");
+    	info.append(sep);
+    	info.append("Max VM memory: ").append(maxMemory + " MB");
+    	
+    	return info.toString();
     }
-    
-    
-    /*
-    public static IMDB_if getIMDBInstance2() throws Exception {
-    
-    	JarClassLoader jcl = new JarClassLoader();
-    	jcl.add(System.getProperty("user.dir") + "/MovieManager/lib/" + "IMDB.jar"); //Load jar file   
-    	
-    	JclObjectFactory factory = JclObjectFactory.getInstance();   
-    	  
-    	//Create object of loaded class   
-    	Object obj = factory.create(jcl, "net.sf.xmm.moviemanager.http.IMDB_if");
-    	
-    	return (IMDB_if) obj;
-    }
-    
-    public static IMDB_if getIMDBInstance() throws Exception {
-    	
-    	File imdb = new File(System.getProperty("user.dir") + "/MovieManager/lib/" + "IMDB.jar");
-    	
-    	if (imdb.isFile()) {
-	
-    		try {
-    		
-    			System.out.println("new IMDB().getClass().getClassLoader():" + new IMDB().getClass().getClassLoader());
-    			
-    			File f = imdb;
-    		
-    			
-    			
-    			URLClassLoader ucl = new URLClassLoader(new URL[]{f.toURL()}, IMDB.class.getClass().getClassLoader());
-    			ZipClassLoader zl = new ZipClassLoader(ucl, f);
-    			
-    			//Class c = zl.loadClass("net.sf.xmm.moviemanager.http.IMDB", true);
-    			Class c = zl.loadClass("net.sf.xmm.moviemanager.http.IMDB");
-    			
-    			
-    			Object o = c.newInstance();
-    			
-    			//f.delete();
-    			
-    			System.out.println("getClass:" + o.getClass());
-    			
-    			System.out.println("getClass().getName():" + o.getClass().getName());
-    			
-    			return (IMDB_if) o;
-
-    		} catch(Exception e) {
-    			e.printStackTrace();
-    		}
-    	}
-    	
-    	IMDB_if i = new IMDB();
-    	
-    	System.out.println("Returning default IMDB");
-    	
-    	System.out.println("getClass:" + i.getClass());
-    	System.out.println("getClass().getName():" + i.getClass().getName());
-    	
-    	return i;
-    }
-    */
+ 
 }
