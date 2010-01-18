@@ -942,7 +942,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     }
 
     
-    public static void showDatabaseMessage(final Window parent, Database _database, String msg) {
+    public static boolean showDatabaseMessage(final Window parent, Database _database, String msg) {
     	
     	try {
 
@@ -1017,10 +1017,6 @@ public class DialogDatabase extends JDialog implements ActionListener {
     			title = Localizer.get("DialogDatabase.mysql.title.failed-to-load-hsql-driver"); //$NON-NLS-1$
     			message = "<html> The HSQL database driver should be placed in the \"lib/drivers\" directory.</html>"; //$NON-NLS-1$
     		}
-    		else if (message.equals("The database is already in use by another process")) { //$NON-NLS-1$
-    			message = "<html>The database is already in use by another process.</html>"; //$NON-NLS-1$
-    			title = Localizer.get("DialogDatabase.mysql.title.connection-attempt-failed"); //$NON-NLS-1$
-    		}
     		else if (message.indexOf("settings' doesn't exist") != -1) { //$NON-NLS-1$
     			title = Localizer.get("DialogDatabase.alert.title.database-error"); //$NON-NLS-1$
     			message = "<html>" + message + " <br> The database does not contain the necessary tables for MeD's Movie Manager to function properly." ; //$NON-NLS-1$ //$NON-NLS-2$
@@ -1029,7 +1025,21 @@ public class DialogDatabase extends JDialog implements ActionListener {
     			title = Localizer.get("DialogDatabase.alert.title.database-error"); //$NON-NLS-1$
     			message = "<html> Table creation was denied. <br>" + message; //$NON-NLS-1$
     		}
+    		else if (message.equals("The database is already in use by another process")) { //$NON-NLS-1$
+    			message = "The database is already in use by another process."; //$NON-NLS-1$
+    			title = Localizer.get("DialogDatabase.mysql.title.connection-attempt-failed"); //$NON-NLS-1$
+    		
+    			DialogQuestion question = new DialogQuestion("Database already in use!", 
+    					"<html>"+ message +"<br>"+ //$NON-NLS-1$ //$NON-NLS-2$
+    			"<center>Retry?</center></html>"); //$NON-NLS-1$
 
+    			GUIUtil.showAndWait(question, true);
+
+    			if (question.getAnswer()) {
+    				return true;
+    			}
+    			message = "";
+    		}
     		else if (message.equals("Connection reset")) { //$NON-NLS-1$
 
     			MovieManager.getDialog().getAppMenuBar().setDatabaseComponentsEnable(false);
@@ -1047,13 +1057,13 @@ public class DialogDatabase extends JDialog implements ActionListener {
     					if (db != null && _database.isSetUp()) {
     						updateProgress(progressBar, Localizer.get("DialogDatabase.progress.retrieving-movie-list")); //$NON-NLS-1$
     						MovieManager.getDatabaseHandler().setDatabase(_database, true);
-    						return;
+    						return false;
     					}
     					else {
     						//swingWorker.interrupt();
     						progressBar.close();
     						showDatabaseMessage(parent, _database, null);
-    						return;
+    						return false;
     					}
     				} catch (Exception e) {
 
@@ -1114,6 +1124,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
     		log.error("Exception:" + err.getMessage(), err); //$NON-NLS-1$
     	} catch (Exception err) {
     		log.error("Exception:" + err.getMessage(), err); //$NON-NLS-1$
-    	}    	
+    	}
+    	return false;
     }
 }

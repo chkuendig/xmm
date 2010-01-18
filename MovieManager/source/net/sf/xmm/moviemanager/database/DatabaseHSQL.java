@@ -74,7 +74,7 @@ public class DatabaseHSQL extends Database {
 
     		errorMessage = eMessage;
 
-    		for (int i = 2; i < 12; i++) {
+    		for (int i = 2; i < 3; i++) {
     			try {
     				Thread.sleep(2000);
     				if (!_initialized) {

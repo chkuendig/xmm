@@ -172,13 +172,28 @@ public class DatabaseHandler {
 	    		}
 
 	    		if (!_database.isSetUp()) {
-	    			if (!_database.setUp()) {
-	    				DialogDatabase.showDatabaseMessage(MovieManager.getDialog(), _database, null);
+	    			boolean retry;
+	    			do {
 	    				
-	    				if (!progressBean.getCancelled())
-	    					MovieManager.getDialog().resetTreeModel();
-	    				return false;
-	    			}
+	    				retry = false;
+	    				if (!_database.setUp()) {
+	    					String message = _database.getErrorMessage();
+	    					
+	    					boolean ret = DialogDatabase.showDatabaseMessage(MovieManager.getDialog(), _database, null);
+
+	    					// Check if its database already in use
+	    					if (ret && message.indexOf("The database is already in use") != -1) {
+	    						retry = true;
+	    					}
+	    					else
+	    		    			return false;
+	    				}
+	    				
+	    			} while (retry);
+
+	    			if (!progressBean.getCancelled())
+	    				MovieManager.getDialog().resetTreeModel();
+	    			
 	    		}
 
 	    		//  If database loading aborted by user
