@@ -50,7 +50,7 @@ import javax.swing.table.DefaultTableModel;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandOpenPage;
-import net.sf.xmm.moviemanager.gui.imdb.DialogAboutIMDb;
+import net.sf.xmm.moviemanager.gui.imdb.DialogAboutIMDbLib;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
@@ -74,7 +74,7 @@ public class DialogAbout extends JDialog {
 
 	
 	JPanel about = createAboutContent();
-	JPanel aboutIMdb = DialogAboutIMDb.createAboutPanel();
+	JPanel aboutIMdb = DialogAboutIMDbLib.createAboutPanel();
 	JPanel system = createSystemPanel();
 	
 	JTabbedPane aboutTabs = new JTabbedPane();
