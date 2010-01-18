@@ -67,7 +67,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		private static final String _version = " 2.8.8"; //$NON-NLS-1$
 		
 		// Increase with one for each release. Used for jupidator update library
-		private static final String numerical_version = "1";
+		private static final int numerical_version = 1;
 
 		String appTitle = " MeD's Movie Manager v" + getVersion().trim();
 		String lookAndFeelTitle = "Look & Feel";
@@ -81,7 +81,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			return _version;
 		}
 
-		public String getNumericalVersion() {
+		public int getNumericalVersion() {
 			return numerical_version;
 		}
 				
