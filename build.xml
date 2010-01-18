@@ -61,7 +61,7 @@
 	     LookAndFeels/EaSynthLookAndFeel-1.06.jar,
 	     LookAndFeels/InfoNode-1.6.1.jar,
 	 	 LookAndFeels/JGoodies-2.3.0.jar,
-	     LookAndFeels/JTattoo-1.3.2.jar,
+	     LookAndFeels/JTattoo-1.4.0.jar,
 	     LookAndFeels/kunststoff.jar,
 	     LookAndFeels/lipstikLF-1.1.jar,
 	     LookAndFeels/liquidlnf-2.9.1.jar,
@@ -70,7 +70,7 @@
 	     LookAndFeels/PgsLookAndFeel-1.1.jar,
 	     LookAndFeels/squareness.2.3.0.jar,
 	     LookAndFeels/substance-5.3.jar,
-	     LookAndFeels/synthetica-2.9.1.jar,
+	     LookAndFeels/synthetica.jar,
 	     LookAndFeels/syntheticaBlackMoon.jar,
 	     LookAndFeels/syntheticaBlackStar.jar,
 	     LookAndFeels/syntheticaBlueIce.jar,
@@ -529,67 +529,73 @@ The names may be set to whatever fit your needs.${newline}
 ${newline}
 # Name                                   Class name                                                         Java version   System${newline}
 ${newline}
-"Liquid"                                 "com.birosoft.liquid.LiquidLookAndFeel"                                "1.5"${newline}
-"JTattoo - Acryl"                        "com.jtattoo.plaf.acryl.AcrylLookAndFeel"                              "1.4"${newline}
-"JTattoo - Aero"                         "com.jtattoo.plaf.aero.AeroLookAndFeel"                                "1.4"${newline}
-"JTattoo - Aluminium"                    "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel"                      "1.4"${newline}
-"JTattoo - Bernstein"                    "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel"                      "1.4"${newline}
-"JTattoo - Fast"                         "com.jtattoo.plaf.fast.FastLookAndFeel"                                "1.4"${newline}
-"JTattoo - HiFi"                         "com.jtattoo.plaf.hifi.HiFiLookAndFeel"                                "1.4"${newline}
-"JTattoo - McWin"                        "com.jtattoo.plaf.mcwin.McWinLookAndFeel"                              "1.4"${newline}
-"JTattoo - Mint"                         "com.jtattoo.plaf.mint.MintLookAndFeel"                                "1.4"${newline}
-"JTattoo - Noire"                        "com.jtattoo.plaf.noire.NoireLookAndFeel"                              "1.4"${newline}
-"JTattoo - Smart"                        "com.jtattoo.plaf.smart.SmartLookAndFeel"                              "1.4"${newline}
-"JTattoo - Luna"                         "com.jtattoo.plaf.luna.LunaLookAndFeel"                                "1.4"${newline}
+"Liquid"                       "com.birosoft.liquid.LiquidLookAndFeel"                                "1.5"${newline}
+"JTattoo - Acryl"              "com.jtattoo.plaf.acryl.AcrylLookAndFeel"                              "1.4"${newline}
+"JTattoo - Aero"               "com.jtattoo.plaf.aero.AeroLookAndFeel"                                "1.4"${newline}
+"JTattoo - Aluminium"          "com.jtattoo.plaf.aluminium.AluminiumLookAndFeel"                      "1.4"${newline}
+"JTattoo - Bernstein"          "com.jtattoo.plaf.bernstein.BernsteinLookAndFeel"                      "1.4"${newline}
+"JTattoo - Fast"               "com.jtattoo.plaf.fast.FastLookAndFeel"                                "1.4"${newline}
+"JTattoo - Graphite"           "com.jtattoo.plaf.graphite.GraphiteLookAndFeel"                        "1.4"${newline}
+"JTattoo - HiFi"               "com.jtattoo.plaf.hifi.HiFiLookAndFeel"                                "1.4"${newline}
+"JTattoo - McWin"              "com.jtattoo.plaf.mcwin.McWinLookAndFeel"                              "1.4"${newline}
+"JTattoo - Mint"               "com.jtattoo.plaf.mint.MintLookAndFeel"                                "1.4"${newline}
+"JTattoo - Noire"              "com.jtattoo.plaf.noire.NoireLookAndFeel"                              "1.4"${newline}
+"JTattoo - Smart"              "com.jtattoo.plaf.smart.SmartLookAndFeel"                              "1.4"${newline}
+"JTattoo - Luna"               "com.jtattoo.plaf.luna.LunaLookAndFeel"                                "1.4"${newline}
 ${newline}
-"Substance - Autumn"                     "org.jvnet.substance.skin.SubstanceAutumnLookAndFeel"                  "1.6"${newline}
-"Substance - Business Black Steel"       "org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel"      "1.6"${newline}
-"Substance - Business Blue Steel"        "org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel"       "1.6"${newline}
-"Substance - Business"                   "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel"                "1.6"${newline}
-"Substance - Challenger Deep"            "org.jvnet.substance.skin.SubstanceChallengerDeepLookAndFeel"          "1.6"${newline}
-"Substance - CremeCoffee"                "org.jvnet.substance.skin.SubstanceCremeCoffeeLookAndFeel"             "1.6"${newline}
-"Substance - Creme"                      "org.jvnet.substance.skin.SubstanceCremeLookAndFeel"                   "1.6"${newline}
-"Substance - EmeraldDusk"                "org.jvnet.substance.skin.SubstanceEmeraldDuskLookAndFeel"             "1.6"${newline}
-"Substance - Magma"                      "org.jvnet.substance.skin.SubstanceMagmaLookAndFeel"                   "1.6"${newline}
-"Substance - MistAqua"                   "org.jvnet.substance.skin.SubstanceMistAquaLookAndFeel"                "1.6"${newline}
-"Substance - MistSilver"                 "org.jvnet.substance.skin.SubstanceMistSilverLookAndFeel"              "1.6"${newline}
-"Substance - Moderate"                   "org.jvnet.substance.skin.SubstanceModerateLookAndFeel"                "1.6"${newline}
-"Substance - NebulaBrickWall"            "org.jvnet.substance.skin.SubstanceNebulaBrickWallLookAndFeel"         "1.6"${newline}
-"Substance - Nebula"                     "org.jvnet.substance.skin.SubstanceNebulaLookAndFeel"                  "1.6"${newline}
-"Substance - Office Blue 2007"           "org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel"          "1.6"${newline}
-"Substance - OfficeSilver2007"           "org.jvnet.substance.skin.SubstanceOfficeSilver2007LookAndFeel"        "1.6"${newline}
-"Substance - Raven Graphite Glass"       "org.jvnet.substance.skin.SubstanceRavenGraphiteGlassLookAndFeel"      "1.6"${newline}
-"Substance - Raven Graphite"             "org.jvnet.substance.skin.SubstanceRavenGraphiteLookAndFeel"           "1.6"${newline}
-"Substance - Raven"                      "org.jvnet.substance.skin.SubstanceRavenLookAndFeel"                   "1.6"${newline}
-"Substance - Sahara"                     "org.jvnet.substance.skin.SubstanceSaharaLookAndFeel"                  "1.6"${newline}
+"Autumn"                       "org.pushingpixels.substance.api.skin.SubstanceAutumnLookAndFeel"                      "1.6"${newline}
+"Business"                     "org.pushingpixels.substance.api.skin.SubstanceBusinessLookAndFeel"                    "1.6"${newline}
+"Business Black Steel"         "org.pushingpixels.substance.api.skin.SubstanceBusinessBlackSteelLookAndFeel"          "1.6"${newline}
+"Business Blue Steel"          "org.pushingpixels.substance.api.skin.SubstanceBusinessBlueSteelLookAndFeel"           "1.6"${newline}
+"Challenger Deep"              "org.pushingpixels.substance.api.skin.SubstanceChallengerDeepLookAndFeel"              "1.6"${newline}
+"Creme"                        "org.pushingpixels.substance.api.skin.SubstanceCremeLookAndFeel"                       "1.6"${newline}
+"Creme Coffee"                 "org.pushingpixels.substance.api.skin.SubstanceCremeCoffeeLookAndFeel"                 "1.6"${newline}
+"Dust"                         "org.pushingpixels.substance.api.skin.SubstanceDustLookAndFeel"                        "1.6"${newline}
+"Dust Coffee"                  "org.pushingpixels.substance.api.skin.SubstanceDustCoffeeLookAndFeel"                  "1.6"${newline}
+"Emerald Dusk"                 "org.pushingpixels.substance.api.skin.SubstanceEmeraldDuskLookAndFeel"                 "1.6"${newline}
+"Gemini"                       "org.pushingpixels.substance.api.skin.SubstanceGeminiLookAndFeel"                      "1.6"${newline}
+"Graphite"                     "org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel"                    "1.6"${newline}
+"Graphite Aqua"                "org.pushingpixels.substance.api.skin.SubstanceGraphiteAquaLookAndFeel"                "1.6"${newline}
+"Graphite Glass"               "org.pushingpixels.substance.api.skin.SubstanceGraphiteGlassLookAndFeel"               "1.6"${newline}
+"Magellan"                     "org.pushingpixels.substance.api.skin.SubstanceMagellanLookAndFeel"                    "1.6"${newline}
+"Mist Aqua"                    "org.pushingpixels.substance.api.skin.SubstanceMistAquaLookAndFeel"                    "1.6"${newline}
+"Mist Silver"                  "org.pushingpixels.substance.api.skin.SubstanceMistSilverLookAndFeel"                  "1.6"${newline}
+"Moderate"                     "org.pushingpixels.substance.api.skin.SubstanceModerateLookAndFeel"                    "1.6"${newline}
+"Nebula"                       "org.pushingpixels.substance.api.skin.SubstanceNebulaLookAndFeel"                      "1.6"${newline}
+"Nebula Brick Wall"            "org.pushingpixels.substance.api.skin.SubstanceNebulaBrickWallLookAndFeel"             "1.6"${newline}
+"Office Blue 2007"             "org.pushingpixels.substance.api.skin.SubstanceOfficeBlue2007LookAndFeel"              "1.6"${newline}
+"Office Silver 2007"           "org.pushingpixels.substance.api.skin.SubstanceOfficeSilver2007LookAndFeel"            "1.6"${newline}
+"Raven"                        "org.pushingpixels.substance.api.skin.SubstanceRavenLookAndFeel"                       "1.6"${newline}
+"Sahara"                       "org.pushingpixels.substance.api.skin.SubstanceSaharaLookAndFeel"                      "1.6"${newline}
+"Twilight"                     "org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel"                    "1.6"${newline}
 ${newline}
-"Synthetica Default"                     "de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel"            "1.5"${newline}
-"Synthetica BlackStar"                   "de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel"           "1.5"${newline}
-"Synthetica BlueSteel"                   "de.javasoft.plaf.synthetica.SyntheticaBlueSteelLookAndFeel"           "1.5"${newline}
-"Synthetica BlackMoon"                   "de.javasoft.plaf.synthetica.SyntheticaBlackMoonLookAndFeel"           "1.5"${newline}
-"Synthetica BlueMoon"                    "de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel"            "1.5"${newline}
-"Synthetica SilverMoon"                  "de.javasoft.plaf.synthetica.SyntheticaSilverMoonLookAndFeel"          "1.5"${newline}
-"Synthetica BlueIce"                     "de.javasoft.plaf.synthetica.SyntheticaBlueIceLookAndFeel"             "1.5"${newline}
-"Synthetica GreenDream"                  "de.javasoft.plaf.synthetica.SyntheticaGreenDreamLookAndFeel"          "1.5"${newline}
+"Synthetica Default"           "de.javasoft.plaf.synthetica.SyntheticaStandardLookAndFeel"            "1.5"${newline}
+"Synthetica BlackStar"         "de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel"           "1.5"${newline}
+"Synthetica BlueSteel"         "de.javasoft.plaf.synthetica.SyntheticaBlueSteelLookAndFeel"           "1.5"${newline}
+"Synthetica BlackMoon"         "de.javasoft.plaf.synthetica.SyntheticaBlackMoonLookAndFeel"           "1.5"${newline}
+"Synthetica BlueMoon"          "de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel"            "1.5"${newline}
+"Synthetica SilverMoon"        "de.javasoft.plaf.synthetica.SyntheticaSilverMoonLookAndFeel"          "1.5"${newline}
+"Synthetica BlueIce"           "de.javasoft.plaf.synthetica.SyntheticaBlueIceLookAndFeel"             "1.5"${newline}
+"Synthetica GreenDream"        "de.javasoft.plaf.synthetica.SyntheticaGreenDreamLookAndFeel"          "1.5"${newline}
 ${newline}
-"Kunststoff"                             "com.incors.plaf.kunststoff.KunststoffLookAndFeel"                     "1.4"${newline}
+"Kunststoff"                   "com.incors.plaf.kunststoff.KunststoffLookAndFeel"                     "1.4"${newline}
 ${newline}
-"Jgoodies windows"                       "com.jgoodies.looks.windows.WindowsLookAndFeel"                        "1.4"     "Windows"${newline}
-"Jgoodies Plastic"                       "com.jgoodies.looks.plastic.PlasticLookAndFeel"                        "1.4"${newline}
-"Jgoodies Plastic 3D"                    "com.jgoodies.looks.plastic.Plastic3DLookAndFeel"                      "1.4"${newline}
-"Jgoodies PlasticXP"                     "com.jgoodies.looks.plastic.PlasticXPLookAndFeel"                      "1.4"${newline}
+"Jgoodies windows"             "com.jgoodies.looks.windows.WindowsLookAndFeel"                        "1.4"     "Windows"${newline}
+"Jgoodies Plastic"             "com.jgoodies.looks.plastic.PlasticLookAndFeel"                        "1.4"${newline}
+"Jgoodies Plastic 3D"          "com.jgoodies.looks.plastic.Plastic3DLookAndFeel"                      "1.4"${newline}
+"Jgoodies PlasticXP"           "com.jgoodies.looks.plastic.PlasticXPLookAndFeel"                      "1.4"${newline}
 ${newline}
-"Office 2003"                            "org.fife.plaf.Office2003.Office2003LookAndFeel"                       "1.4"     "Windows"${newline}
-"Office XP"                              "org.fife.plaf.OfficeXP.OfficeXPLookAndFeel"                           "1.4"     "Windows"${newline}
-"Office VisualStudio 2005"               "org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel"           "1.4"     "Windows"${newline}
+"Office 2003"                  "org.fife.plaf.Office2003.Office2003LookAndFeel"                       "1.4"     "Windows"${newline}
+"Office XP"                    "org.fife.plaf.OfficeXP.OfficeXPLookAndFeel"                           "1.4"     "Windows"${newline}
+"Office VisualStudio 2005"     "org.fife.plaf.VisualStudio2005.VisualStudio2005LookAndFeel"           "1.4"     "Windows"${newline}
 ${newline}
-"Pagosoft"                               "com.pagosoft.plaf.PgsLookAndFeel"                                     "1.4"${newline}
-"InfoNode"                               "net.infonode.gui.laf.InfoNodeLookAndFeel"                             "1.4"${newline}
-"Compiere"                               "org.compiere.plaf.CompiereLookAndFeel"                                "1.5"${newline}
-"Squareness"                             "net.beeger.squareness.SquarenessLookAndFeel"                          "1.4"${newline}
-"Lipstik"                                "com.lipstikLF.LipstikLookAndFeel"                                     "1.5"${newline}
-"eaSynth"                                "com.easynth.lookandfeel.EaSynthLookAndFeel"                           "1.5"${newline}
-"NimROD"                                 "com.nilo.plaf.nimrod.NimRODLookAndFeel"                               "1.5"${newline}
+"Pagosoft"                     "com.pagosoft.plaf.PgsLookAndFeel"                                     "1.4"${newline}
+"InfoNode"                     "net.infonode.gui.laf.InfoNodeLookAndFeel"                             "1.4"${newline}
+"Compiere"                     "org.compiere.plaf.CompiereLookAndFeel"                                "1.5"${newline}
+"Squareness"                   "net.beeger.squareness.SquarenessLookAndFeel"                          "1.4"${newline}
+"Lipstik"                      "com.lipstikLF.LipstikLookAndFeel"                                     "1.5"${newline}
+"eaSynth"                      "com.easynth.lookandfeel.EaSynthLookAndFeel"                           "1.5"${newline}
+"NimROD"                       "com.nilo.plaf.nimrod.NimRODLookAndFeel"                               "1.5"${newline}
 </echo>
 
 	</target>
