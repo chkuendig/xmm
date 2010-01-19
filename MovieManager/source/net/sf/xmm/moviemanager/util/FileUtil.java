@@ -706,6 +706,48 @@ public class FileUtil {
     	return dir.delete();
     }
 
-	
+    
+    public static boolean canWriteToProgramFiles() {
+        try {
+        	String programFiles = System.getenv("ProgramFiles");
+        
+        	if (programFiles == null) {
+                programFiles = "C:\\Program Files";
+            }
+        	return canWriteToDir(new File(programFiles));
+        	
+        } catch (Exception e) {
+			return false;
+		}
+    }
+    
+    
+    public static boolean canWriteToDir(File dir) throws Exception {
+        
+    	try {
+           
+    		if (!dir.isDirectory()) {
+    			throw new Exception("Input is not a valid directory:" + dir);
+    		}
+    		    		
+            File temp = new File(dir, "xmm.test");
+            
+            if (temp.exists())
+            	return temp.delete();
+            
+            if (temp.createNewFile()) {
+                temp.delete();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch (IOException e)
+        {
+            return false;
+        }
+    }
   
 } 

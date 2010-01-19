@@ -174,6 +174,16 @@ public class SysUtil {
 		return dir;
 	}
 	
+	public static boolean canWriteToInstallDir() {
+		try {
+			return FileUtil.canWriteToDir(new File(getUserDir()));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	
 	public static URL getConfigURL() {
 
