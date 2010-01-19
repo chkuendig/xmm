@@ -344,6 +344,33 @@ public class MovieManager {
     			Thread.currentThread().setPriority(MIN_PRIORITY);
     			
     			try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+    							
+				// Unable to write to install dir
+				if (!SysUtil.canWriteToInstallDir()) {
+					
+					String alertTitle = "Update alert";
+					String alertMessage = "<html>Application is not allowed to write to the install directory.<br> Updates will not be installed.</html>";
+					
+					if (SysUtil.isWindowsVista() || SysUtil.isWindows7()) {
+						alertMessage = "<html>Application must be run as administrator to be able to update.</html>";
+					}
+					
+					DialogAlert alert = new DialogAlert(MovieManager.getDialog(), alertTitle, alertMessage, true);
+					GUIUtil.show(alert, true);
+					return;
+				}
+				
+    			new AppUpdater();
+    			
+    			if (true)
+    				return;
+    			
+    			try {
     				HttpUtil httpUtil = new HttpUtil(getConfig().getHttpSettings());
     				
     				String buf = httpUtil.readData(new URL("http://xmm.sourceforge.net/LatestVersion.txt")).getData().toString();
@@ -653,8 +680,6 @@ public class MovieManager {
             		
             		handleVersionUpdate();
             		            		
-            		new AppUpdater();
-            		
             	} catch (Exception e) {
             		log.error("Exception occured while intializing MeD's Movie Manager", e);
             	}
