@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -91,8 +92,14 @@ public class DialogAbout extends JDialog {
 	
 	pack();
 		
-	setPreferredSize(getMinimumSize());
-	setSize(getMinimumSize());
+	Dimension min = getMinimumSize();
+	
+	// Ensure minimum size
+	min.width= (min.width < 380) ? 380 : min.width;
+	min.height= (min.height < 435) ? 380 : min.height;
+		
+	setPreferredSize(min);
+	setSize(min);
 	
 	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
 		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
