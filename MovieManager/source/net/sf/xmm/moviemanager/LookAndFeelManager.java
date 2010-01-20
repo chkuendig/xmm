@@ -27,12 +27,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JFrame;
 import javax.swing.LookAndFeel;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -54,11 +53,11 @@ public class LookAndFeelManager {
     
     static Logger log = Logger.getRootLogger();
         
-   
+    public static boolean laFSet = false;
     
     public static void setLookAndFeel() {
         
-        MovieManagerConfig config = MovieManager.getConfig();
+        final MovieManagerConfig config = MovieManager.getConfig();
                 
         if (config.getCustomLookAndFeel().equals("")) {
         	setDefaultCustomLaF();
@@ -66,12 +65,15 @@ public class LookAndFeelManager {
         
         try {
         	
-            boolean laFSet = false;
-            
-            if (config.getLookAndFeelType() == LookAndFeelType.CustomLaF && 
+        	if (config.getLookAndFeelType() == LookAndFeelType.CustomLaF && 
             		!config.getCustomLookAndFeel().equals(UIManager.getLookAndFeel().getName())) {
-            	laFSet = setCustomLaf(config.getCustomLookAndFeel());
-            }        
+            	
+            	GUIUtil.invokeAndWait(new Runnable() {
+            		public void run() {
+            			laFSet = setCustomLaf(config.getCustomLookAndFeel());
+            		}
+            	});
+        	}        
             else if (config.getLookAndFeelType() == LookAndFeelType.SkinlfLaF &&
             		getSkinlfThemepackList() != null) {
                 
@@ -96,18 +98,15 @@ public class LookAndFeelManager {
             	}
             }
             else if (config.getLookAndFeelType() == LookAndFeelType.Substance) {
-            	laFSet = setSubstanceLookAndFeel(config.getSubstanceSkin());
-            }
-
-            if (laFSet) {
-            
-            	ExtendedTreeCellRenderer.setDefaultColors();
-            	
-            	SwingUtilities.invokeLater(new Runnable() {
+            	GUIUtil.invokeAndWait(new Runnable() {
             		public void run() {
-            			SwingUtilities.updateComponentTreeUI(MovieManager.getDialog());
+            			laFSet = setSubstanceLookAndFeel(config.getSubstanceSkin());
             		}
             	});
+            }
+            
+            if (laFSet) {
+            	ExtendedTreeCellRenderer.setDefaultColors();
             }
             else {
             	config.setLookAndFeelType(LookAndFeelType.CustomLaF);
@@ -117,7 +116,7 @@ public class LookAndFeelManager {
         } catch (final Exception e) {
             log.error("Exception: " + e.getMessage());
             e.printStackTrace();
-            SwingUtilities.invokeLater(new Runnable() {
+            GUIUtil.invokeLater(new Runnable() {
             	public void run() {
             		DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Look and Feel error", "Look and feel may not be properly installed.", e.getMessage());
             		GUIUtil.showAndWait(alert, true);
@@ -149,12 +148,18 @@ public class LookAndFeelManager {
      */
     public static boolean setCustomLaf(String lafName) {
     	
+    	log.debug("Setting Custom L&F:" + lafName);
+    	
     	ArrayList<LookAndFeelInfo> lafs = getCustomLaFList();
     	    	
     	for (int i = 0; i < lafs.size(); i++) {
     		if (lafs.get(i).getName().equals(lafName)) {
-    			setLookAndFeel(lafs.get(i).getClassName());
-    			return true;
+    			boolean status = setLookAndFeel(lafs.get(i).getClassName());
+    			
+    			if (status)
+    	    		MovieManager.getConfig().setTreeMouseSelectionListenerEnabled(true);
+    			
+    			return status;
     		}
     	}
     	return false;
@@ -169,6 +174,8 @@ public class LookAndFeelManager {
      */
     public static boolean setSkinlfLookAndFeel(String skinLfSkinFile) throws MalformedURLException, Exception {
 
+    	log.debug("Setting Skinlf theme:" + skinLfSkinFile);
+    	
     	String skinlfThemePackPath = MovieManager.getConfig().getSkinlfThemePackDir() + skinLfSkinFile;
 
     	Skin skin = null;
@@ -179,11 +186,19 @@ public class LookAndFeelManager {
     		skin = SkinLookAndFeel.loadThemePack(skinlfThemePackPath);
     	}
     	SkinLookAndFeel.setSkin(skin);
-    	return setLookAndFeel(new SkinLookAndFeel());
+    	
+    	boolean status = setLookAndFeel(new SkinLookAndFeel());
+    	
+    	if (status)
+    		MovieManager.getConfig().setTreeMouseSelectionListenerEnabled(true);
+    	
+    	return status;
     }
     
     
     public static boolean setSubstanceLookAndFeel(String skinName) {
+    	
+    	log.debug("Setting Substance Skin:" + skinName);
     	
     	ArrayList<LookAndFeelInfo> list = getSubstanceSkinList();
     	
@@ -191,7 +206,13 @@ public class LookAndFeelManager {
     		
     		if (skinName.equals(laf.getName())) {
     			log.debug("Setting substance skin " + laf.getClassName());
-    			return setLookAndFeel(laf.getClassName());
+    			
+    			boolean suceess = setLookAndFeel(laf.getClassName());
+    			
+    			if (suceess)
+    				MovieManager.getConfig().setTreeMouseSelectionListenerEnabled(false);
+    				
+    			return suceess;
     		}
     	}
     	return false;
@@ -309,32 +330,26 @@ public class LookAndFeelManager {
     private static boolean setLookAndFeel(final String className) {
     	
     	error = false;
-    	
+    
     	try {
-
-    		if (SwingUtilities.isEventDispatchThread()) {
-    			System.err.println("setLookAndFeel laf:" + className);
-    			UIManager.setLookAndFeel(className);
-    		}
-    		else {
-
-    			SwingUtilities.invokeAndWait(new Runnable() {
-    				public void run() {
-    					System.err.println("setLookAndFeel invokeandwait laf:" + className);
-    					try {
-							UIManager.setLookAndFeel(className);
-    					} catch (Exception e) {
-    						error = true;
-							e.printStackTrace();
-						}
+    		    		
+    		GUIUtil.invokeAndWait(new Runnable() {
+    			public void run() {
+    				System.err.println("setLookAndFeel invokeandwait laf:" + className);
+    				try {
+    					UIManager.setLookAndFeel(className);
+    				} catch (Exception e) {
+    					error = true;
+    					e.printStackTrace();
     				}
-    			});
-    		}
+    			}
+    		});
+    		    		    		
     	} catch (Exception e) {
     		error = true;
 			e.printStackTrace();
 		}
-    
+    	   	
     	return !error;
     }
     
@@ -344,21 +359,16 @@ public class LookAndFeelManager {
     	error = false;
 
     	try {
-    		if (SwingUtilities.isEventDispatchThread()) {
-    			UIManager.setLookAndFeel(lookAndFeel);
-    		}
-    		else {
-    			SwingUtilities.invokeAndWait(new Runnable() {
-    				public void run() {
-    					try {
-    						UIManager.setLookAndFeel(lookAndFeel);
-    					} catch (UnsupportedLookAndFeelException e) {
-    						log.warn("Exception:" + e.getMessage(), e);
-    						error = true;
-    					}
+    		GUIUtil.invokeAndWait(new Runnable() {
+    			public void run() {
+    				try {
+    					UIManager.setLookAndFeel(lookAndFeel);
+    				} catch (UnsupportedLookAndFeelException e) {
+    					log.warn("Exception:" + e.getMessage(), e);
+    					error = true;
     				}
-    			});
-    		}
+    			}
+    		});
     	} catch (Exception e) {
     		error = true;
 			e.printStackTrace();
@@ -503,7 +513,7 @@ public class LookAndFeelManager {
         }
     }
     
-    public static void macOSXRegistration() {
+    public static void macOSXRegistration(JFrame dialog) {
     	
         if (SysUtil.isMac()) {
         
@@ -516,7 +526,7 @@ public class LookAndFeelManager {
                 Method registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication", defArgs);
                  
                 if (registerMethod != null) {
-                    Object[] args = { MovieManager.getDialog() };
+                    Object[] args = { dialog };
                     registerMethod.invoke(osxAdapter, args);
                 }
              
