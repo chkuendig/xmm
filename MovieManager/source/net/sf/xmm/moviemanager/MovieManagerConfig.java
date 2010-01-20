@@ -42,6 +42,7 @@ import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ExportMode;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImportMode;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
 import net.sf.xmm.moviemanager.util.FileUtil;
@@ -64,7 +65,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/**
 		 * The current version of the program.
 		 **/
-		private static final String _version = " 2.8.8"; //$NON-NLS-1$
+		private static final String _version = " 2.8.7"; //$NON-NLS-1$
 		
 		// Increase with one for each release. Used for jupidator update library
 		private static final int numerical_version = 1;
@@ -154,6 +155,22 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private int movieListRowHeight = 22;
 
+	boolean treeMouseSelectionListenerEnabled = true;
+	
+	public boolean getTreeMouseSelectionListenerEnabled() {
+		return treeMouseSelectionListenerEnabled;
+	}
+	
+	public void setTreeMouseSelectionListenerEnabled(boolean val) {
+		treeMouseSelectionListenerEnabled = val;
+		
+		if (MovieManager.getDialog() != null && MovieManager.getDialog().getMoviesList() != null && 
+				MovieManager.getDialog().getMoviesList() instanceof ExtendedJTree) {
+			((ExtendedJTree) MovieManager.getDialog().getMoviesList()).setMouseSelectionListenerEnabled(val);
+		}
+		
+	}
+	
 
 	final private int defaultFrameHeight = 635;
 	final private int defaultFrameWidth = 850;
