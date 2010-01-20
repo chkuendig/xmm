@@ -25,24 +25,19 @@ public class AppUpdater implements UpdatedApplication {
 	
     public AppUpdater(boolean forceDisplay) {
         try {
-        	
-        	System.err.println("numveric version:" + MovieManager.getConfig().sysSettings.getNumericalVersion());
-        	System.err.println("getVersion:" + MovieManager.getConfig().sysSettings.getVersion());
-        	
-        	int numericVersion = MovieManager.getConfig().sysSettings.getNumericalVersion();
+        
+        	int release = MovieManager.getConfig().sysSettings.getRelease();
         	String version = MovieManager.getConfig().sysSettings.getVersion() + " - " + IMDbLib.getVersionString();
-        	
-        	System.err.println("VersionString:" + version);
-        	
+        	        	
         	// IMDb lib is newer
-        	if (numericVersion < IMDbLib.getNumericVersion()) {
-        		numericVersion = IMDbLib.getNumericVersion();
+        	if (release < IMDbLib.getRelease()) {
+        		release = IMDbLib.getRelease();
         	}
         	
         	ApplicationInfo ap = new ApplicationInfo(
                     SysUtil.getUserDir(),
                     SysUtil.getUserDir(),
-                    "" + numericVersion,
+                    "" + release,
                     version);
         	
         	final Updater updater = new Updater("http://xmm.sourceforge.net/updates/update.xml", ap, this);
