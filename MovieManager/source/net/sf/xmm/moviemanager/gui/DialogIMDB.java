@@ -25,35 +25,42 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JToolTip;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
+import net.sf.xmm.moviemanager.imdblib.IMDb;
 import net.sf.xmm.moviemanager.models.ModelEntry;
-import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
-import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.swing.util.SwingWorker;
-import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager.KeyMapping;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.tools.BrowserOpener;
@@ -78,7 +85,7 @@ public class DialogIMDB extends JDialog {
     private JList listMovies;
 
     ModelEntry modelEntry = null;
-    IMDB imdb = null;
+    IMDb imdb = null;
     String addToThisList = null; 
         
 	int hitCount;
@@ -363,7 +370,7 @@ public class DialogIMDB extends JDialog {
     	ArrayList<ModelIMDbSearchHit> hits = null;
     	
     	try {
-    		hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchStringField.getText());
+    		hits = new IMDb(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchStringField.getText());
     		handleSearchResults(hits);
     	}
     	catch (Exception e) {
@@ -528,7 +535,7 @@ public class DialogIMDB extends JDialog {
     
     
     public static boolean getIMDbInfo(ModelEntry modelEntry, String key) {
-    	IMDB imdb;
+    	IMDb imdb;
 
     	try {
     		//net.sf.xmm.moviemanager.http.IMDB_if i = SysUtil.getIMDBInstance();
@@ -537,7 +544,7 @@ public class DialogIMDB extends JDialog {
     		
     		//net.sf.xmm.moviemanager.http.IMDB_if i = SysUtil.getIMDBInstance();
     		
-    		imdb = new IMDB(key, MovieManager.getConfig().getHttpSettings());
+    		imdb = new IMDb(key, MovieManager.getConfig().getHttpSettings());
     	} catch (Exception e) {
     		log.error(e.getMessage(), e); //$NON-NLS-1$
     		return false;

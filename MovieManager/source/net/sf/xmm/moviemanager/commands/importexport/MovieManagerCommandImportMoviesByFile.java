@@ -24,7 +24,7 @@ import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogIMDB;
 import net.sf.xmm.moviemanager.gui.DialogIMDbMultiAdd;
 import net.sf.xmm.moviemanager.gui.DialogAddMultipleMovies.Files;
-import net.sf.xmm.moviemanager.http.IMDB;
+import net.sf.xmm.moviemanager.imdblib.IMDb;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelFileImportSettings;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
@@ -321,7 +321,7 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 				}
 				else {
 					// Only pull list from imdb if not "Select FirstHit" is selected and no IMDB Id was found in an nfo/txt file
-					final ArrayList<ModelIMDbSearchHit> hits = new IMDB(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchString);
+					final ArrayList<ModelIMDbSearchHit> hits = new IMDb(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchString);
 
 					/*Number of movie hits*/
 					hitCount = hits.size();

@@ -31,8 +31,8 @@ import javax.swing.tree.DefaultTreeModel;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandDialogIMDB;
 import net.sf.xmm.moviemanager.database.Database;
-import net.sf.xmm.moviemanager.http.IMDB;
 import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
+import net.sf.xmm.moviemanager.imdblib.IMDb;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
@@ -178,9 +178,9 @@ public class IMDbInfoUpdater {
 					ModelEntry model;
 
 					ModelMovieInfo modelInfo = new ModelMovieInfo();
-					IMDB imdb;
+					IMDb imdb;
 					try {
-						imdb = new IMDB(MovieManager.getConfig().getHttpSettings());
+						imdb = new IMDb(MovieManager.getConfig().getHttpSettings());
 
 						while (enumeration.hasMoreElements()) {
 							
@@ -237,7 +237,7 @@ public class IMDbInfoUpdater {
 
 		ModelMovieInfo modelInfo;
 		ModelEntry model;
-		IMDB imdb;
+		IMDb imdb;
 
 		private final int tryTimes = 3;
 		
@@ -249,7 +249,7 @@ public class IMDbInfoUpdater {
 		boolean skippedNoIMDbID = false;
 		boolean skippedIMDbID = false;
 		
-		GetInfo(ModelMovieInfo modelInfo, ModelEntry model, IMDB imdb) {
+		GetInfo(ModelMovieInfo modelInfo, ModelEntry model, IMDb imdb) {
 			this.modelInfo = modelInfo;
 			this.model = model;
 			this.imdb = imdb;

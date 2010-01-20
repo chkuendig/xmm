@@ -21,46 +21,23 @@
 package net.sf.xmm.moviemanager.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.TimeoutException;
 
 import javax.swing.*;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandPlay;
-import net.sf.xmm.moviemanager.gui.DialogAddMultipleMovies.Files;
-import net.sf.xmm.moviemanager.http.IMDB;
-import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.models.ModelEntry;
-import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
-import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
-import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
-import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
-import net.sf.xmm.moviemanager.swing.util.SwingWorker;
-import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager.KeyMapping;
-import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.SysUtil;
-import net.sf.xmm.moviemanager.util.tools.BrowserOpener;
-
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
 
 public class DialogIMDbUpdate extends DialogIMDB {
