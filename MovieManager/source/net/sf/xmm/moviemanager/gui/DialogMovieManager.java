@@ -94,7 +94,6 @@ import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
-import net.sf.xmm.moviemanager.swing.extentions.ExtendedToolBar;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeNode;
 import net.sf.xmm.moviemanager.swing.extentions.JComboCheckBox;
@@ -123,7 +122,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
     public static MovieManagerConfig config = MovieManager.getConfig();
     
-    public ExtendedToolBar toolBar;
+    public MovieManagerToolBar toolBar;
             
     InternalConfig internalConfig = MovieManager.getConfig().getInternalConfig();
     
@@ -343,20 +342,22 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         }
         
         resetInfoFieldsDisplay();
-        
-        setVisible(true);
-        
-        // Must reset the text field borders in the EDT after it's visible for Substance L&F
-        SwingUtilities.invokeLater(new Runnable() {
-        	public void run() {
-        		resetInfoFieldsDisplay();
-        	}
-        });
+      
                         
         log.debug("MovieManager SetUp done!"); //$NON-NLS-1$
     }
     
-   
+   public void showDialog() {
+
+	   setVisible(true);
+
+	   // Must reset the text field borders in the EDT after it's visible for Substance L&F
+	   SwingUtilities.invokeLater(new Runnable() {
+		   public void run() {
+			   resetInfoFieldsDisplay();
+		   }
+	   });
+   }
     
     public DefaultTreeModel createTreeModel(ArrayList<ModelMovie> movies, ArrayList<ModelEpisode> episodes) {
         
@@ -845,10 +846,10 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
      *
      * @return The toolbar.
      **/
-    protected ExtendedToolBar createToolBar() {
+    protected MovieManagerToolBar createToolBar() {
     	log.debug("Start creation of the ToolBar."); //$NON-NLS-1$
 
-    	ExtendedToolBar toolBar = null;
+    	MovieManagerToolBar toolBar = null;
 
     	InternalConfig internalConfig = config.getInternalConfig();
     	String className =  internalConfig.getPlugin("toolBar");
@@ -857,7 +858,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 
     		try {
     			Class<?> menuBarClass = Class.forName(className);
-    			toolBar = (ExtendedToolBar) menuBarClass.newInstance();
+    			toolBar = (MovieManagerToolBar) menuBarClass.newInstance();
     		} catch (ClassNotFoundException e) {
     			log.error("ClassNotFoundException. Failed to load class " + className);
 
@@ -871,7 +872,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	}
 
     	if (toolBar == null)
-    		toolBar = new ExtendedToolBar();
+    		toolBar = new MovieManagerToolBar();
         
         toolBar.setPlayButtonLegal(!internalConfig.isPlayMovieDisabled());
         toolBar.setPrintButtonLegal(!internalConfig.isPrintFunctionDisabled());
@@ -926,8 +927,17 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         moviesList.addMouseListener(listener);
         moviesList.addKeyListener(listener);
         
-        JScrollPane scrollPane = new JScrollPane();
+        final JScrollPane scrollPane = new JScrollPane();
         scrollPane.setViewportView(moviesList);
+        
+        /*
+         // Testing purposes
+        scrollPane.getViewport().addChangeListener(new ChangeListener() {
+        	public void stateChanged(ChangeEvent e) {						
+        		ExtendedTreeCellRenderer.minViewWidth = scrollPane.getSize().width;
+        	}
+		});
+        */
         
         moviesList.setOpaque(false);
         
@@ -1852,7 +1862,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         return additionalInfoPanel;
     }
     
-    public ExtendedToolBar getToolBar() {
+    public MovieManagerToolBar getToolBar() {
         return toolBar;
     }
     
