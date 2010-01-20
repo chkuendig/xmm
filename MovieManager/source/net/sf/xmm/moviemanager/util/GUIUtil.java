@@ -143,7 +143,7 @@ public class GUIUtil {
 	public static void invokeAndWait(Runnable r) throws InterruptedException, InvocationTargetException {
 		
 		if (SwingUtilities.isEventDispatchThread())
-			SwingUtilities.invokeLater(r);
+			r.run();
 		else
 			SwingUtilities.invokeAndWait(r);
 		
