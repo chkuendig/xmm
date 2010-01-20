@@ -43,50 +43,7 @@ public class MovieManagerCommandExit implements ActionListener {
 	public static void execute() {
 
 		try {
-
-			// If any notes have been changed, they will be saved before exiting
-			MovieManagerCommandSaveChangedNotes.execute();
-
-			log.debug("Shutting down...");
-
-			// Gets config from toolbar
-			MovieManager.getConfig().setDisplayPlayButton(MovieManager.getDialog().getPLayButtonVisible());
-			MovieManager.getConfig().setDisplayPrintButton(MovieManager.getDialog().getPrintButtonVisible());
-
-			try {
-				// Saving config file
-				MovieManager.getConfig().saveConfig();
-			} catch (IOException io) {
-				DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Config error", "<html>Error occured when saving config file:<br>"+ io.getMessage() +" </html>", true);
-				GUIUtil.showAndWait(alert, true);	
-			} catch (Exception e) {
-				log.error("Exception:" + e.getMessage(), e);					
-			}
-			
-			/* Finalizes the main frame... */
-			try {
-				MovieManager.getDialog().finalize();
-			} catch (Exception e) {
-				log.debug("MovieManager.getDialog().finalize() produced errors.");
-			}
-
-			Database db = MovieManager.getIt().getDatabase();
-			String type = "";
-
-			long time = System.currentTimeMillis();
-
-			if (db != null) {
-				/* Finalizing database... */
-				db.finalizeDatabase();
-
-				type = db.getDatabaseType();
-			}
-
-			log.debug("Finalized " + type + " database in " + (System.currentTimeMillis() - time) + " ms.");
-
-			/* Writes the date. */
-			log.debug("Log End: "+new Date(System.currentTimeMillis()) + SysUtil.getLineSeparator());
-			
+			shutDown();
 		} catch (Exception e) {
 			log.debug("Exception:" + e.getMessage(), e);
 			
@@ -94,6 +51,53 @@ public class MovieManagerCommandExit implements ActionListener {
 		} finally {
 			MovieManager.exit();
 		}
+	}
+
+	
+	public static void shutDown() {
+
+		// If any notes have been changed, they will be saved before exiting
+		MovieManagerCommandSaveChangedNotes.execute();
+
+		log.debug("Shutting down...");
+
+		// Gets config from toolbar
+		MovieManager.getConfig().setDisplayPlayButton(MovieManager.getDialog().getPLayButtonVisible());
+		MovieManager.getConfig().setDisplayPrintButton(MovieManager.getDialog().getPrintButtonVisible());
+
+		try {
+			// Saving config file
+			MovieManager.getConfig().saveConfig();
+		} catch (IOException io) {
+			DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Config error", "<html>Error occured when saving config file:<br>"+ io.getMessage() +" </html>", true);
+			GUIUtil.showAndWait(alert, true);	
+		} catch (Exception e) {
+			log.error("Exception:" + e.getMessage(), e);					
+		}
+
+		/* Finalizes the main frame... */
+		try {
+			MovieManager.getDialog().finalize();
+		} catch (Exception e) {
+			log.debug("MovieManager.getDialog().finalize() produced errors.");
+		}
+
+		Database db = MovieManager.getIt().getDatabase();
+		String type = "";
+
+		long time = System.currentTimeMillis();
+
+		if (db != null) {
+			/* Finalizing database... */
+			db.finalizeDatabase();
+
+			type = db.getDatabaseType();
+		}
+
+		log.debug("Finalized " + type + " database in " + (System.currentTimeMillis() - time) + " ms.");
+
+		/* Writes the date. */
+		log.debug("Log End: "+new Date(System.currentTimeMillis()) + SysUtil.getLineSeparator());
 	}
 
 	/**
