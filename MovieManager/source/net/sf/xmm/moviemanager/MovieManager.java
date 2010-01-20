@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeModel;
 
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandExit;
@@ -108,13 +109,12 @@ public class MovieManager {
     	return sandbox;
     }
       
-    
     /**
-     * Constructor.
-     **/
-    private MovieManager() {
-        
-        dialogMovieManager = new DialogMovieManager();
+     * Creates the main movie manager dialog
+     */
+    void createDialog() {
+    	
+    	dialogMovieManager = new DialogMovieManager();
         
         dialogMovieManager.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -122,6 +122,11 @@ public class MovieManager {
             }
         });
     }
+    
+    /**
+     * Constructor.
+     **/
+    private MovieManager() {}
     
     /* Applet feature is not finished */
     MovieManager(Object applet) {
@@ -349,6 +354,10 @@ public class MovieManager {
 
 		if (!sandbox) {
 							
+			if (SysUtil.isAtLeastJRE6()) {
+				SysUtil.includeJarFilesInClasspath("lib/LookAndFeels/1.6");
+			}
+			
 			SysUtil.includeJarFilesInClasspath("lib/LookAndFeels");
 			SysUtil.includeJarFilesInClasspath("lib/drivers");
 		
@@ -357,37 +366,44 @@ public class MovieManager {
 				SysUtil.includeJarFilesInClasspath("lib/mac");
 				LookAndFeelManager.setupOSXLaF(); 
 			}
-			
 		}
+		
+		System.err.println("createDialog");
 		
 		movieManager = new MovieManager();
 		movieManager.sandbox = sandbox;
-						
-		/* Installs the Look&Feels */
-		LookAndFeelManager.instalLAFs();
-
-		if (!MovieManager.isApplet())
-        	LookAndFeelManager.setLookAndFeel();
 		
-		log.debug("Look & Feels installed.");
-    	
 //		 Loads the HTML templates
 		templateHandler.loadHTMLTemplates();
 		
-		
-        EventQueue.invokeLater(new Runnable() {
+		EventQueue.invokeLater(new Runnable() {
             public final void run() {
 
             	try {
             		
+            		System.err.println("Current LAF:" + UIManager.getLookAndFeel().getName());
+            		
+            		System.err.println("instalLAFs");
+            		/* Installs the Look&Feels */
+            		LookAndFeelManager.instalLAFs();
+
+            		if (!MovieManager.isApplet())
+                    	LookAndFeelManager.setLookAndFeel();
+            		
+            		log.debug("Look & Feels installed.");
+                	
+            		movieManager.createDialog();
+            		
+            		System.err.println("setUp");
             		/* Starts the MovieManager. */
             		MovieManager.getDialog().setUp();
-
             		log.debug("GUI - setup.");
             		
+            		MovieManager.getDialog().showDialog();
+            		            		
             		/* SetUp the Application Menu */
             		if (SysUtil.isMac()) {
-            			LookAndFeelManager.macOSXRegistration();
+            			LookAndFeelManager.macOSXRegistration(MovieManager.getDialog());
             		}   
             		
             		// Calls the plugin startup method 
@@ -403,7 +419,7 @@ public class MovieManager {
 
             		log.debug("Database loaded.");
             		
-            		AppUpdater.handleVersionUpdate();
+            		//AppUpdater.handleVersionUpdate();
             		            		
             	} catch (Exception e) {
             		log.error("Exception occured while intializing MeD's Movie Manager", e);
