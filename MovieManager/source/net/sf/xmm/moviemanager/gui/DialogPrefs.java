@@ -1925,22 +1925,11 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	void setCustomLookAndFeel(int counter) {
 
-		String selectedItem = (String) lafChooser.getSelectedItem();
-		String selectedItemClass = ""; //$NON-NLS-1$
-
+		String selectedLaf = (String) lafChooser.getSelectedItem();
+		
 		try {
-			for (int i = 0; i < installedLookAndFeels.length; i++) {
-				if (installedLookAndFeels[i].getName().equals(selectedItem)) {
-					selectedItemClass = installedLookAndFeels[i].getClassName();
-					break;
-				}
-			}
-
-			if (selectedItemClass.equals("")) { //$NON-NLS-1$
-				return;
-			}
-
-			UIManager.setLookAndFeel(selectedItemClass);
+			
+			LookAndFeelManager.setCustomLaf(selectedLaf);
 			updateLookAndFeel();
 
 		} catch (Exception e) {
@@ -1959,8 +1948,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			}
 			return;
 		}
-		config.setCustomLookAndFeel(selectedItem);
+		config.setCustomLookAndFeel(selectedLaf);
 	}
+	
 
 	void setSkinlfLookAndFeel() {
 		String selectedItem = (String) skinlfThemePackChooser.getSelectedItem() + ".zip"; //$NON-NLS-1$
@@ -1992,6 +1982,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		config.setSubstanceSkin(selectedItem);
 	}
 
+	
 	void showErrorMessage(String error, String name) {
 
 		String message = Localizer.get("DialogPrefs.alert.message.laf-improperly-installed-or-not-supported-by-jre")+  //$NON-NLS-1$
@@ -2024,8 +2015,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	}
 
 	void updateLookAndFeel() throws Exception {
-
-		final DialogPrefs pref = this;
+		updateLookAndFeel(this);
+	}
+	
+	public static void updateLookAndFeel(final DialogPrefs pref) throws Exception {
 
 		Runnable r = new Runnable() {
 
@@ -2045,9 +2038,11 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 					DialogSearch.getDialogSearch().pack();
 				}
 
-				SwingUtilities.updateComponentTreeUI(pref);
-				pack();
-				setLafChooserPreferredSize();
+				if (pref != null) {
+					SwingUtilities.updateComponentTreeUI(pref);
+					pref.pack();
+					pref.setLafChooserPreferredSize();
+				}
 			}
 		};
 		
