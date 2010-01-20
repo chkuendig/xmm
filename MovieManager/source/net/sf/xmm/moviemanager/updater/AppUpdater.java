@@ -49,7 +49,7 @@ public class AppUpdater implements UpdatedApplication {
         	
         	GUIUtil.invokeLater(new Runnable() {
         		public void run() {
-					updater.setGUI(new UpdaterGUI());
+					updater.setGUI(new DialogUpdater());
 					updater.setForceDisplay();
 					
 					try {
