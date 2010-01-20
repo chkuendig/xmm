@@ -80,6 +80,9 @@ public class MovieManager {
     
 	
 	static DatabaseHandler databaseHandler = new DatabaseHandler();
+	
+	static HTMLTemplateHandler templateHandler = new HTMLTemplateHandler();
+	
     /**
      * Reference to the only instance of MovieManagerConfig.
      **/
@@ -94,12 +97,7 @@ public class MovieManager {
      * Reference to the only instance of DialogMovieManager.
      **/
     static DialogMovieManager dialogMovieManager;
-      
-    
-    
-    
-    
-   
+     
     
     /* While multi-deleting, this is set to true */
     private boolean deleting = false;
@@ -109,13 +107,7 @@ public class MovieManager {
     public boolean isSandbox() {
     	return sandbox;
     }
-    
-    public HashMap<String, ModelHTMLTemplate> htmlTemplates = new HashMap<String, ModelHTMLTemplate>();
-    
-    public ModelHTMLTemplate getTemplate(String name) {
-    	return (ModelHTMLTemplate) htmlTemplates.get(name);
-    }
-  
+      
     
     /**
      * Constructor.
@@ -135,7 +127,7 @@ public class MovieManager {
     MovieManager(Object applet) {
         
     	
-    	getAppMode();
+    	SysUtil.getAppMode();
     		
         movieManager = this;
         dialogMovieManager = new DialogMovieManager(applet);
@@ -214,6 +206,12 @@ public class MovieManager {
         return databaseHandler;
     }
     
+    public static HTMLTemplateHandler getTemplateHandler() {
+        return templateHandler;
+    }
+    
+    
+    
     /**
      * Returns the current database.
      *
@@ -246,81 +244,15 @@ public class MovieManager {
     	return DialogMovieManager.isApplet();
     }
     
- 
-    public ModelDatabaseSearch getFilterOptions() {
-    	return getFilterOptions(getDatabase());
-    }
-    
-    
-    public ModelDatabaseSearch getFilterOptions(Database db) {
+    public void addDatabaseList(String listName) {
 
-    	ModelDatabaseSearch options = new ModelDatabaseSearch();
-
-    	options.setFilterCategory(config.getFilterCategory());
-
-    	if ("Movie Title".equals(config.getFilterCategory()) && config.getIncludeAkaTitlesInFilter()) //$NON-NLS-1$
-    		options.setIncludeAkaTitlesInFilter(true);
-    	else
-    		options.setIncludeAkaTitlesInFilter(false);
-
-    	options.setFilterString(dialogMovieManager.getFilterString());
-    	options.setOrderCategory(config.getSortOption());
-    	options.setSeen(config.getFilterSeen());
-    	
-    	if (config.getCurrentLists() == null)
-    		options.setCurrentListNames(new ArrayList<String>());
-    	else
-    		options.setCurrentListNames(new ArrayList<String>(config.getCurrentLists()));
-    	
-    	options.setShowUnlistedEntries(config.getShowUnlistedEntries());
-    	options.setListOption(0);
-    	
-    	
-    	if (db != null) {
-	
-    		// If there are no lists, or if all the lists are shown in addition to the unlisted ones, no point in enabling lists
-    		if ((options.getCurrentListNames().size() > 0 || options.getShowUnlistedEntries()) &&
-    				!(options.getShowUnlistedEntries() && options.getCurrentListNames().size() == db.getListsColumnNames().size())) {
-    			options.setListOption(1);
-    		}
-
-    		ArrayList <String> currentLists = options.getCurrentListNames();
-    		ArrayList <String> dbLists = db.getListsColumnNames();
-    		    		
-    		// Verify all lists. When changing database, this might be a problem
-    		for (int i = 0; i < currentLists.size(); i++) {
-    			String list = currentLists.get(i);
-    			
-    			if (!dbLists.contains(list)) {
-    				log.warn("Found list " + list + " in currentLists which does not exist in database.");
-    				MovieManager.getConfig().getCurrentLists().remove(list);
-    				currentLists.remove(i);
-    				i--; // Just removed the entry, must use same index again
-    			}
-    		}
-    		
-    		options.getFullGeneralInfo = !db.isMySQL();
-    	}
-    	
-    	options.setRatingOption(config.getRatingOption());
-    	options.setRating(config.getRatingValue());
-    	options.setDateOption(config.getDateOption());
-    	options.setDate(config.getDateValue());
-    	options.setSearchAlias(config.getSearchAlias());
-    	
-    	return options;
-    }
-
-    
-  public void addDatabaseList(String listName) {
-    	
 		log.info("Ceating list " + listName);
-		
-		databaseHandler.getDatabase().addListsColumn(listName);
+
+		getDatabase().addListsColumn(listName);
 		MovieManager.getConfig().addToCurrentLists(listName);
-		
-		getDialog().loadMenuLists();
-    }
+
+		MovieManager.getDialog().loadMenuLists();
+	}
 
 
     public void setDeleting(boolean deleting) {
@@ -330,191 +262,7 @@ public class MovieManager {
     public boolean isDeleting() {
     	return deleting;
     }
-
     
-    static void handleVersionUpdate() {
-	
-    	if (!config.getCheckForProgramUpdates())
-    		return;
-
-    	Thread t = new Thread() {
-
-    		public void run() { 
-	
-    			Thread.currentThread().setPriority(MIN_PRIORITY);
-    			
-    			try {
-					Thread.sleep(3000);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-    							
-				// Unable to write to install dir
-				if (!SysUtil.canWriteToInstallDir()) {
-					
-					String alertTitle = "Update alert";
-					String alertMessage = "<html>Application is not allowed to write to the install directory.<br> Updates will not be installed.</html>";
-					
-					if (SysUtil.isWindowsVista() || SysUtil.isWindows7()) {
-						alertMessage = "<html>Application must be run as administrator to be able to update.</html>";
-					}
-					
-					DialogAlert alert = new DialogAlert(MovieManager.getDialog(), alertTitle, alertMessage, true);
-					GUIUtil.show(alert, true);
-					return;
-				}
-				
-    			new AppUpdater();
-    			
-    			if (true)
-    				return;
-    			
-    			try {
-    				HttpUtil httpUtil = new HttpUtil(getConfig().getHttpSettings());
-    				
-    				String buf = httpUtil.readData(new URL("http://xmm.sourceforge.net/LatestVersion.txt")).getData().toString();
-
-    				String [] lines = buf.split("\n|\r\n?");
-
-    				if (lines == null || lines.length == 0)
-    					return;
-
-    				if (lines[1].length() > 0 && !lines[1].trim().equals(config.sysSettings.getVersion())) {
-
-    					String currentVersion = config.sysSettings.getVersion().replaceAll("\\.", "").trim();
-    					String newVersion = lines[1].replaceAll("\\.", "").trim();
-
-    					// check if only digits. If not, aborted (won't notice about betas)
-    					for (int i = 0; i < newVersion.length(); i++) {
-    						if (!Character.isDigit(newVersion.charAt(i)))
-    							log.debug("Aborting version check. New version contains non-digits:" + newVersion);
-    					}
-    					
-    					// Cut string at first non-digit character
-    					for (int i = 0; i < currentVersion.length(); i++) {
-    						if (!Character.isDigit(currentVersion.charAt(i))) {
-    							currentVersion = currentVersion.substring(0, i);
-    							break;
-    						}
-    					}
-    					    					
-    					int currentLength = currentVersion.length();
-    					int newLength = newVersion.length();
-		
-    					if (currentLength > newLength) {
-    						while (newVersion.length() < currentLength)
-    							newVersion += "0";
-    					}
-    					else if (currentLength < newLength) {
-    						while (currentVersion.length() < newLength)
-    							currentVersion += "0";
-    					}
-    				
-    					// Checks if the version on the home page is newer than the current version
-    					if (Double.parseDouble(newVersion) > Double.parseDouble(currentVersion)) {
-    						log.debug("New version available:" + lines[1]);
-    						dialogMovieManager.newVersionAvailable(lines[1], buf);
-    					}
-    				}
-    			} catch (Exception e) {
-    				log.warn("CheckForProgramUpdates aborted:" + e.getMessage());
-    			}
-    			
-    			log.debug("handleVersionUpdate finished.");
-    		}
-    	};
-    	t.start();
-    }
-
-    
-  
-
-    public HashMap<String, ModelHTMLTemplate> getHTMLTemplates() {
-    	return htmlTemplates;
-    }
-
-    void loadHTMLTemplates() {
-    	
-    	if (MovieManager.getConfig().getInternalConfig().getDisableHTMLView())
-    		return;
-    		
-    	try {
-
-        	File f = FileUtil.getFile(MovieManager.getConfig().HTMLTemplateRootDir);
-	
-    		if (f != null && f.isDirectory()) {
-
-    			File [] templateFiles = f.listFiles();
-	
-    			for (int i = 0; i < templateFiles.length; i++) {
-
-    				try {
-    					// For each template directory
-    					if (templateFiles[i].isDirectory()) {
-	
-    						// Finding template.txt
-    						File template = new File(templateFiles[i], "template.txt");
-
-    						if (!template.isFile()) {
-    							log.debug("No template.txt file found in the directory of template " + templateFiles[i] + 
-    							"\n Template not added.");
-    							continue;
-    						}
-
-    						ArrayList<String> lines = FileUtil.readFileToArrayList(template);
-    						
-    						if (lines == null) {
-    							log.error("Failed to read file "  + template);
-    							throw new Exception("Failed to read file "  + template);
-    						}
-    						
-    						ModelHTMLTemplate newTemplate = new ModelHTMLTemplate(templateFiles[i].getName(), lines);
-    						
-    						if (htmlTemplates.containsKey(newTemplate.getName())) {
-    							log.warn("A template named " + newTemplate.getName() + " already exists! \r\n" + 
-    									templateFiles[i] + " is not added.");
-    							continue;
-    						}
-    						htmlTemplates.put(newTemplate.getName(), newTemplate);
-    					
-    						// Getting the styles
-    						File styles = new File(templateFiles[i], "Styles");
-
-    						if (!styles.isDirectory()) {
-    							log.debug("No styles found for HTML template " + templateFiles[i] + 
-    							"\n No template styles added.");
-    						} else {
-
-    							File [] styleFiles = styles.listFiles();
-
-    							for (int u = 0; u < styleFiles.length; u++) {
-
-    								// Style files end with .style.txt
-    								if (!styleFiles[u].getName().endsWith(".style.txt"))
-    									continue;
-
-    								// Getting all all available styles for this template
-    								lines = FileUtil.readFileToArrayList(styleFiles[u]);
-    								ModelHTMLTemplateStyle style = new ModelHTMLTemplateStyle(newTemplate, lines);
-
-    								newTemplate.addStyle(style);
-    							}
-    						}
-    					}
-    				} catch (Exception e) {
-    					log.warn(e.getMessage()+ "\n Failed to import template " + templateFiles[i], e);
-    				}
-    			}
-    		}
-    	} catch (Exception e) {
-    		log.error("Failed to read HTML temlplate files.", e);
-    	}
-
-    	log.debug("Done loading HTML templates."); //$NON-NLS-1$
-    }
-
-
     
     public static void exit() {
         
@@ -523,29 +271,6 @@ public class MovieManager {
         else
             System.exit(0);
     }
-        
-    // 0 = Normal application, 1 = Applet, 2 = Java Web Start
-    public static int getAppMode() {
-
-    	int mode = -1;
-
-    	SecurityManager securityManager = System.getSecurityManager();
-
-    	if (securityManager == null) {
-    		mode = 0;
-		}
-    	else {
-    		String securityManagerString = securityManager.getClass().getName();
-
-    		if ("com.sun.javaws.security.JavaWebStartSecurity".equals(securityManagerString))
-    			mode = 2;
-    		else if ("sun.applet.AppletSecurity".equals(securityManagerString))
-    			mode = 1;
-    	}
-    	return mode;
-    }
-
-  
     
     
     public static void main(String args[]) {
@@ -647,7 +372,7 @@ public class MovieManager {
 		log.debug("Look & Feels installed.");
     	
 //		 Loads the HTML templates
-		MovieManager.getIt().loadHTMLTemplates();
+		templateHandler.loadHTMLTemplates();
 		
 		
         EventQueue.invokeLater(new Runnable() {
@@ -678,7 +403,7 @@ public class MovieManager {
 
             		log.debug("Database loaded.");
             		
-            		handleVersionUpdate();
+            		AppUpdater.handleVersionUpdate();
             		            		
             	} catch (Exception e) {
             		log.error("Exception occured while intializing MeD's Movie Manager", e);

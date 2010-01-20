@@ -190,7 +190,7 @@ public class SysUtil {
 		URL url = null;
 		
 		try {
-			int appMode = MovieManager.getAppMode();
+			int appMode = getAppMode();
 
 			// Applet
 			if (appMode == 1)
@@ -260,6 +260,29 @@ public class SysUtil {
 		}
 		return url;
 	}
+	
+	
+	  // 0 = Normal application, 1 = Applet, 2 = Java Web Start
+    public static int getAppMode() {
+
+    	int mode = -1;
+
+    	SecurityManager securityManager = System.getSecurityManager();
+
+    	if (securityManager == null) {
+    		mode = 0;
+		}
+    	else {
+    		String securityManagerString = securityManager.getClass().getName();
+
+    		if ("com.sun.javaws.security.JavaWebStartSecurity".equals(securityManagerString))
+    			mode = 2;
+    		else if ("sun.applet.AppletSecurity".equals(securityManagerString))
+    			mode = 1;
+    	}
+    	return mode;
+    }
+
 	
 	
 	public static String getDriveDisplayName(File path) {

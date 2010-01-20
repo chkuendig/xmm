@@ -1623,7 +1623,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public ModelHTMLTemplate getHTMLTemplate() {
 		
 		if (htmlTemplate == null) {
-			htmlTemplate = MovieManager.getIt().getTemplate(HTMLTemplateName);
+			htmlTemplate = MovieManager.getTemplateHandler().getTemplate(HTMLTemplateName);
 		
 			if (htmlTemplate == null) {
 				log.warn("Requested template does not exist:" + HTMLTemplateName);
@@ -3243,7 +3243,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 		 
 		 File config = null;
-		 int appMode = MovieManager.getAppMode();
+		 int appMode = SysUtil.getAppMode();
 
 		 // Applet
 		 if (appMode == 1)
