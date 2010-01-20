@@ -77,6 +77,7 @@ import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
 import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
 import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
+import net.sf.xmm.moviemanager.updater.AppUpdater;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
@@ -703,7 +704,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuView = new JMenu("View"); //$NON-NLS-1$
 		menuView.setMnemonic('V');
 
-		final HashMap<String, ModelHTMLTemplate> templates = MovieManager.getIt().getHTMLTemplates();
+		final HashMap<String, ModelHTMLTemplate> templates = MovieManager.getTemplateHandler().getHTMLTemplates();
 		String currentTemplateName = MovieManager.getConfig().getHTMLTemplateName();
 		String currentTemplateStyleName = MovieManager.getConfig().getHTMLTemplateStyleName();
 		
@@ -821,12 +822,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		log.debug("Start creation of the Help menu."); //$NON-NLS-1$
 		menuHelp = new JMenu(Localizer.get("DialogMovieManager.menu.help")); //$NON-NLS-1$
 		menuHelp.setMnemonic('H');
-		/* MenuItem Help. */
-		JMenuItem menuItemHelp = new JMenuItem(Localizer.get("DialogMovieManager.menu.help.help"),'H'); //$NON-NLS-1$
-		menuItemHelp.setAccelerator(KeyStroke.getKeyStroke("F1")); //$NON-NLS-1$
-		menuItemHelp.setActionCommand("Help"); //$NON-NLS-1$
-		menuItemHelp.addActionListener(new MovieManagerCommandHelp());
-		menuHelp.add(menuItemHelp);
+		
 		/* MenuItem Online Help. */
 		JMenuItem menuItemOnlineHelp = new JMenuItem(Localizer.get("DialogMovieManager.menu.help.onlinehelp"),'O'); //$NON-NLS-1$
 		menuItemOnlineHelp.setActionCommand("OpenPage (Online Help)"); //$NON-NLS-1$
@@ -834,6 +830,18 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuHelp.add(menuItemOnlineHelp);
 		/* A Separator. */
 		menuHelp.addSeparator();
+		
+		/* MenuItem HomePage. */
+		JMenuItem menuItemUpdate = new JMenuItem("Check for updates"); //$NON-NLS-1$
+		menuItemUpdate.setActionCommand("Check for updates"); //$NON-NLS-1$
+		menuItemUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AppUpdater.handleVersionUpdate();
+			}
+		});
+		menuHelp.add(menuItemUpdate);
+		
+		
 		/* MenuItem HomePage. */
 		JMenuItem menuItemHomePage = new JMenuItem(Localizer.get("DialogMovieManager.menu.help.homepage"),'P'); //$NON-NLS-1$
 		menuItemHomePage.setActionCommand("OpenPage (Home Page)"); //$NON-NLS-1$
