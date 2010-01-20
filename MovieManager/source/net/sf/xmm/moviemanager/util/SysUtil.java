@@ -570,5 +570,22 @@ public class SysUtil {
     	
     	return info.toString();
     }
+    
+
+    /**
+     * Checks if the current running JRE version is at least 1.6
+     * @return   true if JRE is at least 1.6
+     */
+    public static boolean isAtLeastJRE6() {
+
+    	double javaVersion = Double.parseDouble(System.getProperty("java.version").substring(0, 3));
+
+    	if (javaVersion >= 1.6) {
+    		return true;
+    	}
+    	return false;
+    }
+
+
  
 }
