@@ -64,22 +64,57 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 	int firstShiftRow = 0;
 	int currentRow = 0;
 	
-	void setCurrentRow(int val) {
-		currentRow = val;
-	}
-	
-	private void setLastButtonPushed(boolean shift) {
-		if (!shift) {
-			firstShiftRow = currentRow;
-		}
-	}
 	
    JTree getTree() {
 	   return this;
    }
    
+
+   /**
+    * Constructor.
+    * @param root The Root node for the JTree.
+    */
+   public ExtendedJTree() {
+	   super();
+
+	   addMouseListener(new TreeMouseListener());
+	   setDragEnabled(false);
+	   
+	   addTreeSelectionListener(new TreeSelectionListener() {
+		   public void valueChanged( TreeSelectionEvent e ) {
+			   DefaultMutableTreeNode node = ( DefaultMutableTreeNode ) getLastSelectedPathComponent();
+			   getChildren(node);
+			   
+			  // Update last selected
+			   if (getSelectionCount() == 1) {
+				   
+				   setCurrentRow(getSelectionRows()[0]);
+				   firstShiftRow = currentRow;
+			   }
+		   }
+	   });
+	   
+	   mouseSelectionListenerEnabled = MovieManager.getConfig().getTreeMouseSelectionListenerEnabled();
+   }	
+
+   /**
+    * Constructor.
+    * @param root The Root node for the JTree.
+    */
+   public ExtendedJTree(DefaultMutableTreeNode root) {
+
+	   this();
+
+	   this.root = root;
+
+	   dtModel = new DefaultTreeModel(root);
+	   setModel(dtModel);
+   }
    
+      
    // This makes sure the entire width of the tree rows is painted
+   
+   @Override
    protected void paintComponent(Graphics g) {
 	   int[] rows = getSelectionRows();
 
@@ -88,11 +123,61 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 			   Rectangle b = getRowBounds(rows[i]);
 			   g.setColor(UIManager.getColor("Tree.selectionBackground"));
 			   g.fillRect(0, b.y, getWidth(), b.height);
+
+			   /*
+			   viewPortPrefWidth = getPreferredScrollableViewportSize().width;
+			   treeWidth = getWidth();
+			   treePrefWidth = getPreferredSize().width;
+			   treeMaxWidth = getMaximumSize().width;
+			   treeMinWidth = getMinimumSize().width;
+		   	*/
 		   }
 	   }
 	   super.paintComponent(g);
    }
 
+   /*
+   protected void paintComponent1(Graphics g) {
+	  
+	   viewPortPrefWidth = getPreferredScrollableViewportSize().width;
+	   treeWidth = getWidth();
+	   treePrefWidth = getPreferredSize().width;
+	   treeMaxWidth = getMaximumSize().width;
+	   treeMinWidth = getMinimumSize().width;
+	   
+	   super.paintComponent(g);
+   }
+   
+    public int viewPortPrefWidth = -1;
+   public int treeWidth = -1;
+   public int treePrefWidth = -1;
+   public int treeMaxWidth = -1;
+   public int treeMinWidth = -1;
+   
+   */
+   
+  
+  
+   
+   boolean mouseSelectionListenerEnabled = true;
+   
+   public void setMouseSelectionListenerEnabled(boolean val) {
+	   System.err.println("setMouseSelectionListenerEnabled:" + val);
+	   mouseSelectionListenerEnabled = val;
+   }
+   
+   // Used for knowing which rows to use when selecting multiple rows with SHIFT key.
+   void setCurrentRow(int val) {
+		System.err.println("setCurrentRow:" + val);
+		currentRow = val;
+	}
+	
+	private void setLastButtonPushed(boolean shift) {
+		if (!shift) {
+			System.err.println("setLastButtonPushed:" + currentRow);
+			firstShiftRow = currentRow;
+		}
+	}
    
    class TreeMouseListener extends MouseAdapter {
 	   
@@ -100,9 +185,9 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 	    * Handles selection on nodes with CTRL + SHIFT keys + right click menu
 	    **/
 	   public void mousePressed(MouseEvent event) {
-		   
-		  // if (true)
-			//   return;
+		
+		   if (!mouseSelectionListenerEnabled)
+			   return;
 		   
 		   ExtendedJTree movieList = (ExtendedJTree) MovieManager.getDialog().getMoviesList();
 		   int rowForLocation = movieList.getRowForLocation(event.getX(), event.getY());
@@ -138,7 +223,10 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 		   else {
 
 			   if (SysUtil.isShiftPressed(event)) {
-				 				  
+				 
+				//   if (true)
+				//	   return;
+					   
 				   // if substance laf, drop this. Thats because substance already handles selecting the entire row.
 				   if (MovieManager.getConfig().getLookAndFeelType() == LookAndFeelType.Substance)
 					   return;
@@ -176,37 +264,6 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
      
 
    
-   /**
-    * Constructor.
-    * @param root The Root node for the JTree.
-    */
-   public ExtendedJTree() {
-	   super();
-
-	   addMouseListener(new TreeMouseListener());
-	   setDragEnabled(false);
-	   
-	   addTreeSelectionListener(new TreeSelectionListener() {
-		   public void valueChanged( TreeSelectionEvent e ) {
-			   DefaultMutableTreeNode node = ( DefaultMutableTreeNode ) getLastSelectedPathComponent();
-			   getChildren(node);
-		   }
-	   });
-   }	
-
-   /**
-    * Constructor.
-    * @param root The Root node for the JTree.
-    */
-   public ExtendedJTree(DefaultMutableTreeNode root) {
-
-	   this();
-
-	   this.root = root;
-
-	   dtModel = new DefaultTreeModel(root);
-	   setModel(dtModel);
-   }
    
 
    ////////////////////
