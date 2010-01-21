@@ -751,10 +751,10 @@ public class DatabaseHandler {
 
 						if (MovieManager.getIt().getDatabase() != null && MovieManager.getIt().getDatabase().isSetUp()) {
 
-							if (config.handleBackupSettings())
+							if (config.handleBackupSettings()) {
+								log.debug("Creating backup.");
 								makeDatabaseBackup(MovieManager.getIt().getDatabase());
-
-							log.debug("Backup and new version check finished.");
+							}
 						}
 					}
 
