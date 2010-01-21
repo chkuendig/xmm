@@ -70,6 +70,8 @@ import org.apache.log4j.Logger;
 
 public class DialogIMDB extends JDialog {
     
+	private static final long serialVersionUID = -1416622463608254610L;
+
 	static Logger log = Logger.getLogger(DialogIMDB.class);
 	
 	private JTextField searchStringField;
@@ -86,20 +88,13 @@ public class DialogIMDB extends JDialog {
 
     ModelEntry modelEntry = null;
     IMDb imdb = null;
-    String addToThisList = null; 
-        
-	int hitCount;
-	long time;
-            
+    
     private boolean canceled = false;    
     
     KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
     
-    /**
-     * Constructor used by UpdateIMDBInfo
-     **/
     public DialogIMDB(ModelEntry modelEntry, String alternateTitle, boolean executeSearch) {
-        /* Dialog creation...*/
+        
         super(MovieManager.getDialog());
         this.modelEntry = modelEntry;
                 
@@ -120,7 +115,6 @@ public class DialogIMDB extends JDialog {
         
         searchStringField.setText(modelEntry.getTitle());
         
-        //if (executeSearch)
         callSearch();
     }
     
@@ -420,7 +414,7 @@ public class DialogIMDB extends JDialog {
     /**
      * Takes the current selected element, retrieves the IMDb info and disposes.
      **/
-    private void executeCommandSelect() {
+    public void executeCommandSelect() {
     	
     	int index = getMoviesList().getSelectedIndex();
     	DefaultListModel listModel = (DefaultListModel) getMoviesList().getModel();
@@ -440,7 +434,7 @@ public class DialogIMDB extends JDialog {
     	dispose();
     }
     
-
+    
     public void setListModel(DefaultListModel list) {
     	listMovies.setModel(list);
     	listMovies.requestFocusInWindow();

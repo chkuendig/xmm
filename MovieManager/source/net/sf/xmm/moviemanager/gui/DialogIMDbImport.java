@@ -1,7 +1,7 @@
 /**
- * @(#)DialogIMDB.java
+ * @(#)DialogIMDbImport.java
  *
- * Copyright (2003) Mediterranean
+ * Copyright (2010) Bro
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -15,7 +15,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Boston, MA 02111.
  * 
- * Contact: mediterranean@users.sourceforge.net
+ * Contact: bro3@users.sourceforge.net
  **/
 
 package net.sf.xmm.moviemanager.gui;
@@ -52,29 +52,9 @@ public class DialogIMDbImport extends DialogIMDbUpdate {
 	static Logger log = Logger.getLogger(DialogIMDbImport.class);
 	
 	protected JButton addWithoutIMDBInfoButton;
-    
-    ImdbImportOption multiAddSelectOption = ImdbImportOption.displayList;
         
-    boolean getUrlKeyOnly = false;
-
-    String addToThisList = null; 
-    
     public boolean dropImdbInfoSet = false;
-    
-    DialogIMDbImport thisDialog = this;
-    
-    public JPanel multipleMovieButtons;
-    
-    public boolean getDropIMDbInfo() {
-    	return dropImdbInfoSet;
-    }
-    
-    public void resetFeedbackValues() {
-    	super.resetFeedbackValues();
-    	dropImdbInfoSet = false;
-    }
-        
-    
+            
     public DialogIMDbImport(ModelEntry modelEntry, String alternateTitle, ArrayList<ModelIMDbSearchHit> hits) {
     	super(modelEntry, alternateTitle, false);
     	    	
@@ -91,22 +71,21 @@ public class DialogIMDbImport extends DialogIMDbUpdate {
     		super.executeSearch();
     }
        
-    // May not want to execute method, therefore override since it'll be called by the DialogIMDb constructor, 
+    // May not want to execute method in parent, therefore override since it'll be called by the DialogIMDb constructor,
+    @Override
     public void callSearch() {
     	
     }
     
     // Override parent create component method
+    @Override
     public void createDialogUpdateComponents() {}
     
     
+    /**
+     * Creates the components for the Import dialog
+     */
     void createDialogImportComponents() {
-    	
-    	addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				dispose();
-			}
-		});    	    	
     	
     	JPanel multipleMovieButtons = new JPanel();
     	multipleMovieButtons.setLayout(new FlowLayout());
@@ -138,6 +117,8 @@ public class DialogIMDbImport extends DialogIMDbUpdate {
     	addWithoutIMDBInfo.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.add-without-web-info.tooltip")); //$NON-NLS-1$
     	addWithoutIMDBInfo.setActionCommand("GetIMDBInfo - addWithoutIMDBInfo"); //$NON-NLS-1$
 
+    	final DialogIMDbImport thisDialog = this;
+    	
     	addWithoutIMDBInfo.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent event) {
 
@@ -159,39 +140,16 @@ public class DialogIMDbImport extends DialogIMDbUpdate {
     	return addWithoutIMDBInfo;
     }
     
-           
-    
-    /**
-     * Overrides super class method
-     **/
-    /*
-    void executeCommandSelect() {
-    	    	
-    	int index = getMoviesList().getSelectedIndex();
-    	
-    	DefaultListModel listModel = (DefaultListModel) getMoviesList().getModel();
-
-    	if (index == -1 || index > listModel.size())
-    		return;
-
-    	ModelIMDbSearchHit model = ((ModelIMDbSearchHit) listModel.getElementAt(index));
-    	    	
-    	if (model.getUrlID() == null)
-    		return;
-
-    	if (getUrlKeyOnly) {
-    		modelEntry.setUrlKey(model.getUrlID());
-    		dispose();
-    		return;
-    	}
-
-    	getIMDbInfo(modelEntry, model.getUrlID());
-    	ModelMovieInfo.executeTitleModification(modelEntry);
-
-    	dispose();
+    public boolean getDropIMDbInfo() {
+    	return dropImdbInfoSet;
     }
-*/    
     
+    public void resetFeedbackValues() {
+    	super.resetFeedbackValues();
+    	dropImdbInfoSet = false;
+    }
+    
+       
     private void setHotkeyModifiers() {
     	    	    	
     	try {

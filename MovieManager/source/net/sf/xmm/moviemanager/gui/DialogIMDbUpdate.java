@@ -1,7 +1,7 @@
 /**
- * @(#)DialogIMDB.java
+ * @(#)DialogIMDbUpdate.java
  *
- * Copyright (2003) Mediterranean
+ * Copyright (2010) Bro
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -15,7 +15,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Boston, MA 02111.
  * 
- * Contact: mediterranean@users.sourceforge.net
+ * Contact: bro3@users.sourceforge.net
  **/
 
 package net.sf.xmm.moviemanager.gui;
@@ -47,30 +47,16 @@ public class DialogIMDbUpdate extends DialogIMDB {
 	static Logger log = Logger.getLogger(DialogIMDbUpdate.class);
 	
 	JButton abortButton;
-	DialogIMDbUpdate thisDialog = this;
-    public JPanel multipleMovieButtons;
-    
+	    
     boolean getUrlKeyOnly = false;
     public boolean aborted = false;
-    
-    String addToThisList = null; 
-    
-    public boolean getAborted() {
-    	return aborted;
-    }
-    
-    public void resetFeedbackValues() {
-    	setCanceled(false);
-    	aborted = false;
-    }
-    
-   
-    // Importing?
+        
+    // Used  by DialogIMDbImport and the IMDbInfoUpdater
     public DialogIMDbUpdate(ModelEntry modelEntry, String alternateTitle, boolean getUrlKeyOnly) {
     	this(modelEntry, alternateTitle, null, getUrlKeyOnly);
     }
     
-    // Multi Add
+    // Used by DialogIMDbMultiAdd
     public DialogIMDbUpdate(ModelEntry modelEntry, String alternateTitle, ArrayList<ModelIMDbSearchHit> hits, boolean getUrlKeyOnly) {
     	
     	super(modelEntry, alternateTitle, false);
@@ -87,12 +73,6 @@ public class DialogIMDbUpdate extends DialogIMDB {
         
     
     void createDialogUpdateComponents() {
-    	
-    	addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				dispose();
-			}
-		});    	    	
     	
     	JPanel multipleMovieButtons = new JPanel();
     	multipleMovieButtons.setLayout(new FlowLayout());
@@ -131,6 +111,16 @@ public class DialogIMDbUpdate extends DialogIMDB {
     	return abortButton;
     }
         
+    public boolean getAborted() {
+    	return aborted;
+    }
+    
+    public void resetFeedbackValues() {
+    	setCanceled(false);
+    	aborted = false;
+    }
+    
+    
     public void dispose() {
     	MovieManager.getConfig().setMultiAddIMDbDialogWindowSize(getSize());
     	super.dispose();
@@ -138,9 +128,10 @@ public class DialogIMDbUpdate extends DialogIMDB {
     
     
     /**
-     * Overrides super class method
+     * Overrides super class method to handel getUrlKeyOnly
      **/
-    void executeCommandSelect() {
+    @Override
+    public void executeCommandSelect() {
     	    	
     	int index = getMoviesList().getSelectedIndex();
     	

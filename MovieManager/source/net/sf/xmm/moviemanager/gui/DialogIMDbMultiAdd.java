@@ -1,7 +1,7 @@
 /**
- * @(#)DialogIMDB.java
+ * @(#)DialogIMDbMultiAdd.java
  *
- * Copyright (2003) Mediterranean
+ * Copyright (2010) Bro
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -15,7 +15,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Boston, MA 02111.
  * 
- * Contact: mediterranean@users.sourceforge.net
+ * Contact: bro3@users.sourceforge.net
  **/
 
 package net.sf.xmm.moviemanager.gui;
@@ -71,26 +71,16 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
 	JTextArea fileLocation;
 	
     boolean multiAddByFile = false;
-    
     boolean addInfoToExistingMovie = false;
+    boolean switchBetweenIMDBAndDatabase = false;
+    
+    Files multiAddFile = null;
+    String imdbId = null;
+    String addToThisList = null; 
     
     ImdbImportOption multiAddSelectOption = ImdbImportOption.displayList;
     
-    enum ShowListOption {show, no_show};
-    
-    Files multiAddFile = null;
-    
-    String filename = null;
-    
-    String imdbId = null;
-    
-    String addToThisList = null; 
-    
-    boolean switchBetweenIMDBAndDatabase = false;
-    
-    DialogIMDbMultiAdd thisDialog = this;
-    
-    
+     
     public DialogIMDbMultiAdd(ModelEntry modelEntry, String searchString, 
     		String year, String filename, Files multiAddFile, String _imdbId) {
     
@@ -100,7 +90,6 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
     	
         imdbId = (_imdbId == null || _imdbId.equals("")) ? null : null; //$NON-NLS-1$
         this.multiAddFile = multiAddFile;
-        this.filename = filename;
         this.multiAddByFile = true;
         
         setTitle(filename);
@@ -110,7 +99,10 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
         performSearch(searchString, year);
     }
 
-    // Override parent create component method
+    /**
+     *  Override parent create component method
+     */
+    @Override
     void createDialogImportComponents() {
     	
     }
@@ -130,6 +122,7 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
     	abortButton = createAbortButton();
     	playMediaFiles = createPlayButton();
     	    	
+    	JPanel multipleMovieButtons = new JPanel();
     	multipleMovieButtons.add(addWithoutIMDBInfoButton);
     	multipleMovieButtons.add(playMediaFiles);
     	multipleMovieButtons.add(abortButton);
@@ -238,7 +231,7 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
     
     
     /**
-     * Not yet implemented
+     * Not yet fully implemented
      * @param e
      */
     void handleFileLocationPopup(MouseEvent e) {
@@ -291,9 +284,9 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
      */
     void executeSearchMultipleMovies() {
 	    	
-    	if (addInfoToExistingMovie)
+    	if (addInfoToExistingMovie) {
     		executeEditExistingMovie(getSearchField().getText());
-
+    	}
     	else {
     		final DefaultListModel listModel = new DefaultListModel();
 	
@@ -350,7 +343,6 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
      * The last boolean argument states if the filter is called from the main search or the IMDB search.
      * If called from the main search, it will take in consideration all the advanced search options.
      */
-
     void executeEditExistingMovie(String searchString) {
 
     	DefaultListModel listModel;
@@ -434,9 +426,7 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
     			return;
     		}
 
-			time = System.currentTimeMillis();
-
-			if (multiAddSelectOption == ImdbImportOption.selectFirst && imdbId != null && !imdbId.equals("")) //$NON-NLS-1$
+    		if (multiAddSelectOption == ImdbImportOption.selectFirst && imdbId != null && !imdbId.equals("")) //$NON-NLS-1$
 				// Use previously fetched imdb id
 				getIMDbInfo(modelEntry, imdbId);
 			else
@@ -489,11 +479,7 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
       		fileLocation.setRows(height);
       	}
     }
-    
-    String getFilename() {
-        return filename;
-    }
-   
+       
     
     private void setHotkeyModifiers() {
     	    	
