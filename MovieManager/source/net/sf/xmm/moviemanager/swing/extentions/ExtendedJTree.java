@@ -168,7 +168,6 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
    
    // Used for knowing which rows to use when selecting multiple rows with SHIFT key.
    void setCurrentRow(int val) {
-		System.err.println("setCurrentRow:" + val);
 		currentRow = val;
 	}
 	
