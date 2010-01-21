@@ -180,7 +180,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuBar.add(createMenuTools());
 		menuBar.add(createMenuLists());
 
-		if (!SysUtil.isCurrentJRES14() && !MovieManager.isApplet())
+		if (!MovieManager.isApplet())
 			menuBar.add(createMenuView());
 
 		/* Creation of the help menu. */
@@ -836,7 +836,8 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuItemUpdate.setActionCommand("Check for updates"); //$NON-NLS-1$
 		menuItemUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				AppUpdater.handleVersionUpdate();
+				log.debug("ActionPerformed:" + e.getActionCommand());
+				AppUpdater.handleVersionUpdate(true);
 			}
 		});
 		menuHelp.add(menuItemUpdate);
