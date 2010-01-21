@@ -40,7 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-import net.sf.xmm.moviemanager.http.IMDbLib;
+import net.sf.xmm.moviemanager.imdblib.IMDbLib;
 
 public class DialogAboutIMDbLib extends JDialog {
 
@@ -106,7 +106,7 @@ public class DialogAboutIMDbLib extends JDialog {
 		JPanel panelInfo = new JPanel();
 		panelInfo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Info "),
 				BorderFactory.createEmptyBorder(5,5,5,5)));
-		JLabel labelInfo = new JLabel("<html><center> MeD's Movie Manager IMDb library <br> version " + IMDbLib.getVersion() + "</center></html>", JLabel.CENTER);
+		JLabel labelInfo = new JLabel("<html><center> MeD's Movie Manager IMDb library <br> version " + IMDbLib.getVersion() + " (Rel. "+ IMDbLib.getRelease() +")</center></html>", JLabel.CENTER);
 		labelInfo.setFont(new Font(labelInfo.getFont().getName(),Font.PLAIN,labelInfo.getFont().getSize()));
 		panelInfo.add(labelInfo);
 		/* Copyright panel... */
