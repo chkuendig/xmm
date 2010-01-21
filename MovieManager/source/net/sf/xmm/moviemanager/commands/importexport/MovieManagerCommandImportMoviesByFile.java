@@ -325,10 +325,10 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 
 					/*Number of movie hits*/
 					hitCount = hits.size();
-
+	
 					if ((hitCount > 0 && multiAddSelectOption == ImdbImportOption.selectFirst) || 
 							hitCount == 1 && multiAddSelectOption == ImdbImportOption.selectIfOnlyOneHit) {
-
+						
 						DialogIMDB.getIMDbInfo(movieInfoModel.model, hits.get(0).getUrlID());
 
 						// Insert prefix in Title to show that these movies maybe got wrong imdb infos
@@ -337,11 +337,13 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 							movieInfoModel.model.setTitle("_verify_ " + movieInfoModel.model.getTitle()); //$NON-NLS-1$
 					}
 					else {
+						
 						GUIUtil.invokeAndWait(new Runnable() {
 							public void run() {
 								DialogIMDbMultiAdd dialogIMDB = new DialogIMDbMultiAdd(movieInfoModel.model, searchString, 
 										year, filename, files, imdbId);
-								
+								GUIUtil.showAndWait(dialogIMDB, true);
+																
 								if (dialogIMDB.getCanceled()) {
 									setCancelled(true);
 								}
