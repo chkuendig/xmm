@@ -52,6 +52,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandOpenPage;
 import net.sf.xmm.moviemanager.gui.imdb.DialogAboutIMDbLib;
+import net.sf.xmm.moviemanager.imdblib.IMDbLib;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
@@ -59,51 +60,53 @@ import net.sf.xmm.moviemanager.util.SysUtil;
 
 public class DialogAbout extends JDialog {
 
-    /**
-     * The Constructor.
-     **/
-    public DialogAbout() {
-	/* Dialog creation...*/
-	super(MovieManager.getDialog());
-	
-	GUIUtil.enableDisposeOnEscapeKey(this);
+	/**
+	 * The Constructor.
+	 **/
+	public DialogAbout() {
+		/* Dialog creation...*/
+		super(MovieManager.getDialog());
 
-	/* Dialog properties...*/
-	setTitle(Localizer.get("DialogAbout.title")); //$NON-NLS-1$
-	setModal(true);
-	setResizable(false);
+		GUIUtil.enableDisposeOnEscapeKey(this);
 
-	
-	JPanel about = createAboutContent();
-	JPanel aboutIMdb = DialogAboutIMDbLib.createAboutPanel();
-	JPanel system = createSystemPanel();
-	
-	JTabbedPane aboutTabs = new JTabbedPane();
-	aboutTabs.add(about, " About ");
-	aboutTabs.add(aboutIMdb, "IMDb lib");
-	aboutTabs.add(system, "System info");
-	
-	JPanel panelButtons = createButtonsPanel();
+		/* Dialog properties...*/
+		setTitle(Localizer.get("DialogAbout.title")); //$NON-NLS-1$
+		setModal(true);
+		setResizable(false);
+
+
+		JPanel about = createAboutContent();
+		JPanel aboutIMdb = DialogAboutIMDbLib.createAboutPanel();
+		JPanel system = createSystemPanel();
+
+		JTabbedPane aboutTabs = new JTabbedPane();
+		aboutTabs.add(about, " About ");
+		aboutTabs.add(aboutIMdb, "IMDb lib");
+		aboutTabs.add(system, "System info");
+
+		JPanel panelButtons = createButtonsPanel();
+
+		/* Adds all and buttonsPanel... */
+		getContentPane().add(aboutTabs,BorderLayout.CENTER);
+		getContentPane().add(panelButtons,BorderLayout.SOUTH);
+		/* Packs and sets location... */
+
+		setPreferredSize(new Dimension(430, 435));
 		
-	/* Adds all and buttonsPanel... */
-	getContentPane().add(aboutTabs,BorderLayout.CENTER);
-	getContentPane().add(panelButtons,BorderLayout.SOUTH);
-	/* Packs and sets location... */
-	
-	pack();
-		
-	Dimension min = getMinimumSize();
-	
-	// Ensure minimum size
-	min.width= (min.width < 380) ? 380 : min.width;
-	min.height= (min.height < 435) ? 380 : min.height;
-		
-	setPreferredSize(min);
-	setSize(min);
-	
-	setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
-		    (int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
-    }
+		pack();
+
+		Dimension min = getMinimumSize();
+
+		// Ensure minimum size
+		min.width= (min.width < 400) ? 400 : min.width;
+		min.height= (min.height < 435) ? 435 : min.height;
+
+		//setPreferredSize(min);
+		//setSize(min);
+
+		setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
+				(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
+	}
 
 
     JPanel createButtonsPanel() {
@@ -198,7 +201,9 @@ public class DialogAbout extends JDialog {
     			{"Vendor:", System.getProperty("java.vm.specification.vendor")},
     			{"Free VM memory: ", freeMemory + "MB"},
     			{"Total VM memory: ", totalMemory + "MB"},
-    			{"Max VM memory: ", maxMemory + "MB"}
+    			{"Max VM memory: ", maxMemory + "MB"},
+    			{"MovieManager release:", "" + MovieManager.getConfig().sysSettings.getRelease()},
+    			{"IMDb Lib release:", "" + IMDbLib.getRelease() + " (" + IMDbLib.getVersion() + ")"}
     	    	
     	};
     	
