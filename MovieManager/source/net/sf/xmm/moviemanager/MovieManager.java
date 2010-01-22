@@ -24,48 +24,15 @@ import java.awt.EventQueue;
 import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.security.*;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.regex.Pattern;
-
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.tree.DefaultTreeModel;
 
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandExit;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.database.Database;
-import net.sf.xmm.moviemanager.database.DatabaseAccess;
-import net.sf.xmm.moviemanager.database.DatabaseHSQL;
-import net.sf.xmm.moviemanager.database.DatabaseMySQL;
-import net.sf.xmm.moviemanager.gui.DialogAlert;
-import net.sf.xmm.moviemanager.gui.DialogDatabase;
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
-import net.sf.xmm.moviemanager.gui.DialogQuestion;
-import net.sf.xmm.moviemanager.http.HttpUtil;
-import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
-import net.sf.xmm.moviemanager.models.ModelEpisode;
-import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
-import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
-import net.sf.xmm.moviemanager.models.ModelMovie;
-import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedHandler;
-import net.sf.xmm.moviemanager.swing.extentions.events.NewMovieListLoadedHandler;
-import net.sf.xmm.moviemanager.swing.progressbar.ProgressBean;
-import net.sf.xmm.moviemanager.swing.progressbar.ProgressBeanImpl;
-import net.sf.xmm.moviemanager.swing.util.SwingWorker;
+import net.sf.xmm.moviemanager.imdblib.IMDbLib;
 import net.sf.xmm.moviemanager.updater.AppUpdater;
 import net.sf.xmm.moviemanager.util.FileUtil;
-import net.sf.xmm.moviemanager.util.GUIUtil;
-import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerStartupHandler;
@@ -334,6 +301,8 @@ public class MovieManager {
 		log.debug("================================================================================"); //$NON-NLS-1$
 		log.debug("Log Start: " + new Date(System.currentTimeMillis())); //$NON-NLS-1$
 		log.debug("MeD's Movie Manager v" + config.sysSettings.getVersion()); //$NON-NLS-1$
+		log.debug("MovieManager release:" + MovieManager.getConfig().sysSettings.getRelease() + " - " +
+				"IMDb Lib release:" + IMDbLib.getRelease() + " (" + IMDbLib.getVersion() + ")");
 		log.debug(SysUtil.getSystemInfo(SysUtil.getLineSeparator())); //$NON-NLS-1$
 						
 		/* Loads the config */
@@ -367,9 +336,7 @@ public class MovieManager {
 				LookAndFeelManager.setupOSXLaF(); 
 			}
 		}
-		
-		System.err.println("createDialog");
-		
+				
 		movieManager = new MovieManager();
 		movieManager.sandbox = sandbox;
 		
@@ -381,9 +348,6 @@ public class MovieManager {
 
             	try {
             		
-            		System.err.println("Current LAF:" + UIManager.getLookAndFeel().getName());
-            		
-            		System.err.println("instalLAFs");
             		/* Installs the Look&Feels */
             		LookAndFeelManager.instalLAFs();
 
@@ -392,20 +356,20 @@ public class MovieManager {
             		
             		log.debug("Look & Feels installed.");
                 	
+            		log.debug("Creating MovieManager Dialog");
             		movieManager.createDialog();
-            		
-            		System.err.println("setUp");
+            		            		
             		/* Starts the MovieManager. */
             		MovieManager.getDialog().setUp();
-            		log.debug("GUI - setup.");
+            		log.debug("MovieManager Dialog - setup.");
             		
             		MovieManager.getDialog().showDialog();
-            		            		
-            		/* SetUp the Application Menu */
+            		
+            		/* SetUp the Application Menu for OSX */
             		if (SysUtil.isMac()) {
             			LookAndFeelManager.macOSXRegistration(MovieManager.getDialog());
             		}   
-            		
+            		            		
             		// Calls the plugin startup method 
             		MovieManagerLoginHandler loginHandler = MovieManager.getConfig().getLoginHandler();
             		
@@ -413,13 +377,14 @@ public class MovieManager {
             			loginHandler.loginStartUp();
         			}
             		
+					log.debug("Loading Database....");
             		
             		/* Loads the database. */
             		databaseHandler.loadDatabase(true);
 
             		log.debug("Database loaded.");
             		
-            		//AppUpdater.handleVersionUpdate();
+            		AppUpdater.handleVersionUpdate();
             		            		
             	} catch (Exception e) {
             		log.error("Exception occured while intializing MeD's Movie Manager", e);
