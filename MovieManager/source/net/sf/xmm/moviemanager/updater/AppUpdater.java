@@ -36,12 +36,12 @@ public class AppUpdater implements UpdatedApplication {
         	// IMDb lib is newer
         	if (release < IMDbLib.getRelease()) {
         		release = IMDbLib.getRelease();
-        		log.debug("IMDb Lib is newsest; Version " + IMDbLib.getVersion() + " (Release "+ release +")");
+        		log.debug("IMDb Lib is newest; Version " + IMDbLib.getVersion() + " (Release "+ release +")");
         	}
         	        	
         	ApplicationInfo ap = new ApplicationInfo(
                     SysUtil.getUserDir(),
-                    SysUtil.getUserDir(),
+                    SysUtil.getConfigDir().getAbsolutePath(),
                     "" + release,
                     version);
         	
@@ -75,7 +75,9 @@ public class AppUpdater implements UpdatedApplication {
         	
         } catch (UpdaterException ex) {
         	log.error("UpdaterException:" + ex.getMessage(), ex);
-        }
+        } catch (Exception e) {
+        	log.error("UpdaterException:" + e.getMessage(), e);
+		}
     }
 
     public boolean requestRestart() {
@@ -118,6 +120,7 @@ public class AppUpdater implements UpdatedApplication {
     	
 		return true;
     }
+    
     
     public void receiveMessage(String message) {
         log.debug("Update message::" + message);
