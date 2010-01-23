@@ -808,7 +808,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     					}
     					else if (!new File(coversPath).isDirectory() && !(new File(SysUtil.getUserDir(), coversPath)).isDirectory()) { //$NON-NLS-1$
     						textFieldCovers.setBackground(invalidPathColor);
-    						textFieldCovers.setToolTipText(Localizer.get("DialogFolders.alert-covers-exist")); //$NON-NLS-1$
+    						textFieldCovers.setToolTipText(Localizer.get("DialogFolders.alert.covers-doesnt-exist.message")); //$NON-NLS-1$
     					}
     					else {
     						textFieldCovers.setBackground(Color.WHITE);
@@ -920,7 +920,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 
     					if (!new File(queriesPath).isDirectory() && !(new File(SysUtil.getUserDir(), queriesPath)).isDirectory()) { //$NON-NLS-1$
     						textFieldQueries.setBackground(invalidPathColor);
-    						textFieldQueries.setToolTipText(Localizer.get("DialogFolders.alert-Queries-exist")); //$NON-NLS-1$
+    						textFieldQueries.setToolTipText(Localizer.get("DialogFolders.alert.queries-doesnt-exist.message")); //$NON-NLS-1$
     						return;
     					}
 
