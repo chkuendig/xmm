@@ -107,7 +107,7 @@ public class DialogUpdater extends JDialog implements JupidatorGUI, HyperlinkLis
 		installUpdatesButton.setEnabled(canDownload);
 		
 		InfoPane.setContentType("text/html");
-		InfoPane.setText(HTMLCreator.getList(el.getLogList(), "http://xmm.sf.net"));
+		InfoPane.setText(HTMLCreator.getList(el.getLogList(), "http://xmm.sourceforge.net/index.php?menu=download"));
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
