@@ -162,7 +162,6 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
    boolean mouseSelectionListenerEnabled = true;
    
    public void setMouseSelectionListenerEnabled(boolean val) {
-	   System.err.println("setMouseSelectionListenerEnabled:" + val);
 	   mouseSelectionListenerEnabled = val;
    }
    
@@ -173,7 +172,6 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 	
 	private void setLastButtonPushed(boolean shift) {
 		if (!shift) {
-			System.err.println("setLastButtonPushed:" + currentRow);
 			firstShiftRow = currentRow;
 		}
 	}
