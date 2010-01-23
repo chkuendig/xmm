@@ -99,11 +99,31 @@ public class AppUpdater implements UpdatedApplication {
     		return false;
     }
 
+    public boolean requestInstall() {
+    	
+    	// Unable to write to install dir
+		if (!SysUtil.canWriteToInstallDir()) {
+			
+			String alertTitle = "Update alert";
+			String alertMessage = "<html>Application is not allowed to write to the install directory.<br> Updates will not be installed.</html>";
+			
+			if (SysUtil.isWindowsVista() || SysUtil.isWindows7()) {
+				alertMessage = "<html>Application must be run as administrator to be able to update.</html>";
+			}
+			
+			DialogAlert alert = new DialogAlert(MovieManager.getDialog(), alertTitle, alertMessage, true);
+			GUIUtil.show(alert, true);
+			return false;
+		}
+    	
+		return true;
+    }
+    
     public void receiveMessage(String message) {
         log.debug("Update message::" + message);
     }
     
-    public void setCheckForUpdates(boolean checkForUpdates) {
+    public void actionCheckForUpdates(boolean checkForUpdates) {
     	MovieManager.getConfig().setCheckForProgramUpdates(checkForUpdates);
     }
     
@@ -133,22 +153,7 @@ public class AppUpdater implements UpdatedApplication {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-								
-				// Unable to write to install dir
-				if (!SysUtil.canWriteToInstallDir()) {
-					
-					String alertTitle = "Update alert";
-					String alertMessage = "<html>Application is not allowed to write to the install directory.<br> Updates will not be installed.</html>";
-					
-					if (SysUtil.isWindowsVista() || SysUtil.isWindows7()) {
-						alertMessage = "<html>Application must be run as administrator to be able to update.</html>";
-					}
-					
-					DialogAlert alert = new DialogAlert(MovieManager.getDialog(), alertTitle, alertMessage, true);
-					GUIUtil.show(alert, true);
-					return;
-				}
-
+				
 				new AppUpdater(forceDisplay);
 
 				log.debug("Version update check finished.");

@@ -343,7 +343,7 @@ public class DialogUpdater extends JDialog implements JupidatorGUI, HyperlinkLis
 		buttonPanelLeft = new JPanel();
 		buttonPanelLeft.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 8));
 		//buttonPanelLeft.setLayout(new BorderLayout());
-		buttonPanelLeft.setLayout(new GridLayout(1, 2, 4, 0));
+		//buttonPanelLeft.setLayout(new GridLayout(1, 2, 4, 0));
 				
 		skipThisVersionButton = new JButton();
 		skipThisVersionButton.setText(_("Skip this version"));
@@ -363,7 +363,7 @@ public class DialogUpdater extends JDialog implements JupidatorGUI, HyperlinkLis
 
 		buttonPanelRight = new JPanel();
 		buttonPanelRight.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 12));
-		buttonPanelRight.setLayout(new GridLayout(1, 2, 4, 0));
+		//buttonPanelRight.setLayout(new GridLayout(1, 2, 4, 0));
 
 		remindButton = new JButton();
 		remindButton.setText(_("Remind me later"));
@@ -431,10 +431,12 @@ public class DialogUpdater extends JDialog implements JupidatorGUI, HyperlinkLis
 
 	
 	private void UpdateBActionPerformed(ActionEvent evt) {//GEN-FIRST:event_UpdateBActionPerformed
-		buttonPanel.setVisible(false);
-		ProgressP.setVisible(true);
-		MainPanel.add(ProgressP, BorderLayout.SOUTH);
-		callback.actionCommit();
+		
+		if (callback.actionCommit()) { 
+			buttonPanel.setVisible(false);
+			ProgressP.setVisible(true);
+			MainPanel.add(ProgressP, BorderLayout.SOUTH);
+		}
 	}//GEN-LAST:event_UpdateBActionPerformed
 
 	private void LaterBActionPerformed(ActionEvent evt) {//GEN-FIRST:event_LaterBActionPerformed
