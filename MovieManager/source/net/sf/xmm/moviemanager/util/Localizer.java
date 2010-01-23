@@ -102,10 +102,9 @@ public class Localizer {
 
 		try {
 			temp = resource.getString(key);
-			
 			return temp;
 		} catch (MissingResourceException e) {
-			log.warn("Invalid key:" + key);
+			log.warn("Invalid key:" + key, e);
 			return '!' + key + '!';
 		}
 	}
