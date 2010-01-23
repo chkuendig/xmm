@@ -609,7 +609,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
 						/* Loads the database... */
 						updateProgress(progressBar, Localizer.get("DialogDatabase.progress.connecting-to-database")); //$NON-NLS-1$
-						MovieManager.getDatabaseHandler().setDatabase(database, true);
+						MovieManager.getDatabaseHandler().setDatabase(database, this, true);
 
 						if (database.isSetUp()) {
 							GUIUtil.invokeLater(new Runnable() {public void run() {
