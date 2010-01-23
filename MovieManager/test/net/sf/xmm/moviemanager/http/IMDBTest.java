@@ -26,6 +26,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import net.sf.xmm.moviemanager.imdblib.IMDb;
+import net.sf.xmm.moviemanager.imdblib.IMDbScraper;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import org.apache.log4j.BasicConfigurator;
@@ -57,12 +59,12 @@ public class IMDBTest  {
 	}
 
 	
-	@Test
+	//@Test
 	public void getSimpleMatchesTest() {
 
-		IMDB imdb = null;
+		IMDbScraper imdb = null;
 		try {
-			imdb = new IMDB();
+			imdb = new IMDbScraper();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -105,7 +107,7 @@ public class IMDBTest  {
 
 
 
-	//@Test
+//@Test
 	public void getMatchesTest() {
 
 		/*
@@ -126,9 +128,9 @@ public class IMDBTest  {
 		 
 		 */
 
-		IMDB imdb = null;
+		IMDbScraper imdb = null;
 		try {
-			imdb = new IMDB();
+			imdb = new IMDbScraper();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -170,12 +172,12 @@ public class IMDBTest  {
 
 	}
 	
-	//@Test
+	@Test
 	public void dataRetrievalTest() throws Exception {
 		
-		IMDB imdb = null;
+		IMDbScraper imdb = null;
 		try {
-			imdb = new IMDB();
+			imdb = new IMDbScraper();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
@@ -252,12 +254,12 @@ public class IMDBTest  {
 		assertEquals(expectedColor, movie.getColour());		
 	}
 	
-	//@Test
+	@Test
 	public void dataRetrievalSeriesTest() throws Exception {
 		
-		IMDB imdb = null;
+		IMDbScraper imdb = null;
 		try {
-			imdb = new IMDB();
+			imdb = new IMDbScraper();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -332,12 +334,12 @@ public class IMDBTest  {
 	}
 	
 	
-	//@Test
+	@Test
 	public void dataRetrievalEpisodeTest() throws Exception {
 		
-		IMDB imdb = null;
+		IMDbScraper imdb = null;
 		try {
-			imdb = new IMDB();
+			imdb = new IMDbScraper();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -389,12 +391,12 @@ public class IMDBTest  {
 		assertEquals(expectedColor, series.getColour());		
 	}
 	
-	//@Test
+	@Test
 	public void dataRetrievalMultipleDirectorsTest() throws Exception {
 		
-		IMDB imdb = null;
+		IMDbScraper imdb = null;
 		try {
-			imdb = new IMDB();
+			imdb = new IMDbScraper();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
