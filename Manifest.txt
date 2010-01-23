@@ -29,5 +29,5 @@ Class-Path: lib/drivers/hsqldb-1.7.3.3.jar
   lib/cobra/cobra-0.98.2.jar
   lib/cobra/js.jar
   lib/balloontip-1.0.jar
-  lib/jupidator-0.3.jar
+  lib/jupidator.jar
   lib/IMDb.jar
