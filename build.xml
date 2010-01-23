@@ -386,12 +386,13 @@
 				<include name="config/internalConfig.ini" />
 				<include name="config/plugins.ini" />
 			
-				<exclude name="net/sf/xmm/moviemanager/http/" />
+				<exclude name="net/sf/xmm/moviemanager/http/"/>
+				<exclude name="net/sf/xmm/moviemanager/imdblib/"/>
 				<exclude name="net/sf/xmm/moviemanager/models/imdb/" />
 				<exclude name="net/sf/xmm/moviemanager/gui/imdb/" />
 				
 			</fileset>
-			
+					
 			<manifest>
 			  <section name="MeD's Movie Manager">
 				<attribute name="Implementation-Version" value="${version}" />
@@ -414,6 +415,7 @@
 		   includes="net/sf/xmm/moviemanager/util/StringUtil.class">
 		<fileset dir="MovieManager/">
 		  <include name="net/sf/xmm/moviemanager/http/"/>
+		  <include name="net/sf/xmm/moviemanager/imdblib/"/>
 		  <include name="net/sf/xmm/moviemanager/models/imdb/"/>
 		  <include name="net/sf/xmm/moviemanager/gui/imdb/"/>
 		</fileset>
@@ -426,6 +428,16 @@
 	</target>
 
 
+	<target name="update-path">
+		
+		<echo>
+	   MovieManager/MovieManager.jar bro3,xmm@frs.sourceforge.net:/home/frs/project/x/xm/xmm/Updates/MovieManager/2.9.0/
+		</echo>	
+					
+	</target>
+	
+	
+	
 	<target name="izpack" depends="predist">
 		<ant antfile="packaging/izpack/build-izpack.xml" target="makeIzpackInstaller"
 			inheritAll="true" inheritrefs="true" />
