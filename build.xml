@@ -115,7 +115,7 @@
 		   xercesImpl.jar,
 		   xml-apis.jar,
 	       balloontip-1.0.jar,
-		   jupidator-0.3.jar,
+		   jupidator.jar,
 		   IMDb.jar
 		   " />
 	
