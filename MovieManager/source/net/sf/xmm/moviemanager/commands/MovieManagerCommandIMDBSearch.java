@@ -37,6 +37,7 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogTVSeries;
 import net.sf.xmm.moviemanager.imdblib.IMDb;
+import net.sf.xmm.moviemanager.imdblib.IMDbLib;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
@@ -74,7 +75,7 @@ public class MovieManagerCommandIMDBSearch {
 		this.movieInfoModel = movieInfoModel;
 		
 		 	try {
-	        	imdb = new IMDb(MovieManager.getConfig().getHttpSettings()); 
+	        	imdb = IMDbLib.newIMDb(MovieManager.getConfig().getHttpSettings()); 
 	        } catch (Exception e) {
 	        	log.error("Exception:" + e.getMessage());
 	        }
@@ -227,7 +228,7 @@ public class MovieManagerCommandIMDBSearch {
 				for( int i = 0; i < seasons; i++) {
 					selected = (ModelIMDbSearchHit) selectedValues[i];
 					episodesStream = imdb.getEpisodesStream(selected);
-					streamsArray.add(IMDb.getEpisodes(selected, episodesStream));
+					streamsArray.add(imdb.getEpisodes(selected, episodesStream));
 				}
 
 				DefaultListModel allEpisodes = new DefaultListModel();

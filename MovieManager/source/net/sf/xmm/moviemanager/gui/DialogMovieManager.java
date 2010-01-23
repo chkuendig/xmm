@@ -104,7 +104,6 @@ import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.SysUtil;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerPlayHandler;
 
 import org.apache.log4j.Logger;
@@ -1509,15 +1508,15 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         panelGeneralInfo.add(panelLanguage, constraints);
         
+        
         /* Adds the cover. */
-        JPanel panelCover = new JPanel();
         
         coverLabel = new JLabel(new ImageIcon(FileUtil.getImage("/images/" + config.getNoCoverFilename()).getScaledInstance(config.getCoverAreaSize().width, config.getCoverAreaSize().height,Image.SCALE_SMOOTH))); //$NON-NLS-1$
         coverLabel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,0), BorderFactory.createEtchedBorder()));
-        
         coverLabel.setPreferredSize(config.getCoverAreaSize());
         coverLabel.setMinimumSize(config.getCoverAreaSize());
-        
+                
+        JPanel panelCover = new JPanel();
         panelCover.add(coverLabel);
                 
         constraints = new GridBagConstraints();

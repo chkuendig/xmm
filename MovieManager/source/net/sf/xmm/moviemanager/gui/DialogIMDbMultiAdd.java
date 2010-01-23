@@ -48,6 +48,7 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandPlay;
 import net.sf.xmm.moviemanager.gui.DialogAddMultipleMovies.Files;
 import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.imdblib.IMDb;
+import net.sf.xmm.moviemanager.imdblib.IMDbLib;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
@@ -294,7 +295,7 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
     		
     		try {
     			    			
-    			IMDb imdb = new IMDb(MovieManager.getConfig().getHttpSettings());
+    			IMDb imdb = IMDbLib.newIMDb(MovieManager.getConfig().getHttpSettings());
     			ArrayList<ModelIMDbSearchHit> hits = imdb.getSimpleMatches(getSearchField().getText());
     			        		
     			// Error

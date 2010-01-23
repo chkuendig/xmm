@@ -54,6 +54,7 @@ import javax.swing.ToolTipManager;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.imdblib.IMDb;
+import net.sf.xmm.moviemanager.imdblib.IMDbLib;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
@@ -364,7 +365,7 @@ public class DialogIMDB extends JDialog {
     	ArrayList<ModelIMDbSearchHit> hits = null;
     	
     	try {
-    		hits = new IMDb(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchStringField.getText());
+    		hits = IMDbLib.newIMDb(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchStringField.getText());
     		handleSearchResults(hits);
     	}
     	catch (Exception e) {
@@ -538,7 +539,7 @@ public class DialogIMDB extends JDialog {
     		
     		//net.sf.xmm.moviemanager.http.IMDB_if i = SysUtil.getIMDBInstance();
     		
-    		imdb = new IMDb(key, MovieManager.getConfig().getHttpSettings());
+    		imdb = IMDbLib.newIMDb(key, MovieManager.getConfig().getHttpSettings());
     	} catch (Exception e) {
     		log.error(e.getMessage(), e); //$NON-NLS-1$
     		return false;
@@ -547,35 +548,35 @@ public class DialogIMDB extends JDialog {
     	ModelIMDbEntry dataModel = imdb.getLastDataModel();
     	   
 
-    	if (key.equals(imdb.getUrlID())) {
+    	if (key.equals(dataModel.getUrlID())) {
 
-    		modelEntry.setTitle(imdb.getTitle());
-    		modelEntry.setDate(imdb.getDate());
-    		modelEntry.setColour(imdb.getColour());
-    		modelEntry.setDirectedBy(imdb.getDirectedBy());
-    		modelEntry.setWrittenBy(imdb.getWrittenBy());
-    		modelEntry.setGenre(imdb.getGenre());
-    		modelEntry.setRating(imdb.getRating());
-    		modelEntry.setCountry(imdb.getCountry());
-    		modelEntry.setLanguage(imdb.getLanguage());
-    		modelEntry.setPlot(imdb.getPlot());
-    		modelEntry.setCast(imdb.getCast());
+    		modelEntry.setTitle(dataModel.getTitle());
+    		modelEntry.setDate(dataModel.getDate());
+    		modelEntry.setColour(dataModel.getColour());
+    		modelEntry.setDirectedBy(dataModel.getDirectedBy());
+    		modelEntry.setWrittenBy(dataModel.getWrittenBy());
+    		modelEntry.setGenre(dataModel.getGenre());
+    		modelEntry.setRating(dataModel.getRating());
+    		modelEntry.setCountry(dataModel.getCountry());
+    		modelEntry.setLanguage(dataModel.getLanguage());
+    		modelEntry.setPlot(dataModel.getPlot());
+    		modelEntry.setCast(dataModel.getCast());
 
-    		modelEntry.setWebRuntime(imdb.getRuntime());
-    		modelEntry.setWebSoundMix(imdb.getSoundMix());
-    		modelEntry.setAwards(imdb.getAwards());
-    		modelEntry.setMpaa(imdb.getMpaa());
-    		modelEntry.setAka(imdb.getAka());
-    		modelEntry.setCertification(imdb.getCertification());
+    		modelEntry.setWebRuntime(dataModel.getWebRuntime());
+    		modelEntry.setWebSoundMix(dataModel.getWebSoundMix());
+    		modelEntry.setAwards(dataModel.getAwards());
+    		modelEntry.setMpaa(dataModel.getMpaa());
+    		modelEntry.setAka(dataModel.getAka());
+    		modelEntry.setCertification(dataModel.getCertification());
 
-    		modelEntry.setUrlKey(imdb.getUrlID());
+    		modelEntry.setUrlKey(dataModel.getUrlID());
 
     		/* The cover... */
-    		byte[] coverData = imdb.getCover();
+    		byte[] coverData = dataModel.getCoverData();
 
-    		if (imdb.getCoverOK()) {
+    		if (dataModel.hasCover()) {
 
-    			modelEntry.setCover(imdb.getCoverName());
+    			modelEntry.setCover(dataModel.getCoverName());
     			modelEntry.setCoverData(coverData);
     		} else {
     			modelEntry.setCover(null);

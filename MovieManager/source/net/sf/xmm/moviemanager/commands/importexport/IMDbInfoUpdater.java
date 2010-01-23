@@ -33,6 +33,7 @@ import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandDialogIMD
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.imdblib.IMDb;
+import net.sf.xmm.moviemanager.imdblib.IMDbLib;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
@@ -180,7 +181,7 @@ public class IMDbInfoUpdater {
 					ModelMovieInfo modelInfo = new ModelMovieInfo();
 					IMDb imdb;
 					try {
-						imdb = new IMDb(MovieManager.getConfig().getHttpSettings());
+						imdb = IMDbLib.newIMDb(MovieManager.getConfig().getHttpSettings());
 
 						while (enumeration.hasMoreElements()) {
 							
