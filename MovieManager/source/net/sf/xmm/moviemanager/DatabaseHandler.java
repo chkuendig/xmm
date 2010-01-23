@@ -188,7 +188,7 @@ public class DatabaseHandler {
 
 				} while (retry);
 
-				if (!progressBean.getCancelled())
+				if (progressBean != null && !progressBean.getCancelled())
 					MovieManager.getDialog().resetTreeModel();
 
 			}
@@ -237,7 +237,7 @@ public class DatabaseHandler {
 					if (!_database.getErrorMessage().equals("")) { //$NON-NLS-1$
 						DialogDatabase.showDatabaseMessage(MovieManager.getDialog(), _database, null);
 
-						if (!progressBean.getCancelled())
+						if (progressBean != null && !progressBean.getCancelled())
 							MovieManager.getDialog().resetTreeModel();
 					}
 					return false;
