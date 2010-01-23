@@ -65,7 +65,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/**
 		 * The current version of the program.
 		 **/
-		private static final String _version = " 2.8.7"; //$NON-NLS-1$
+		private static final String _version = "2.9.0"; //$NON-NLS-1$
 		
 		// Increase with one for each release. Used for jupidator update library
 		private static final int release = 1;
@@ -3282,19 +3282,17 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 if (config == null)
 			 throw new Exception("Failed to save config file:" + config);
 
-		 /* If it exists deletes... */
-		 if (config.exists() && !config.delete()) {
-			 throw new java.io.IOException("Failed to delete old config file.");
-		 }
-
-		 /* Recreates... */
-		 if (!config.createNewFile()) {
-			 throw new java.io.IOException("Cannot create config file.");
-		 }
-
 		 log.debug("Saving configuration data: " + config);
 
+		 long modTime = config.lastModified();
+		 
 		 FileUtil.writeToFile(config.getAbsolutePath(), settings);
+		 
+		 long modTime2 = config.lastModified();
+		 
+		 if (modTime == modTime2) {
+			 log.error("Modification time didn't change. Seems the config file couldn't be written: " + config.getAbsolutePath());
+		 }
 	 }
 	 
 	
