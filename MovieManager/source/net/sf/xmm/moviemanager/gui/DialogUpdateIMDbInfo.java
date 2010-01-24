@@ -63,7 +63,7 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 
 	private JProgressBar progressBar;
 
-	public final static int milliseconds = 1;
+	public final static int milliseconds = 400;
 	private Timer timer;
 	private JButton startButton;
 	private JButton cancelButton;
@@ -75,7 +75,7 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 
 	
 	int movieCounter = 0;
-	int counter = 0;
+	int processedCounter = 0;
 	int lengthOfTask = 0;
 	long conversionStart = 0;
 	boolean canceled;
@@ -541,7 +541,7 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 	
 	class TimerListener implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
-
+			
 			if (transferred == null) {
 				transferred = imdbInfoUpdater.getTransferred();
 			}
@@ -554,20 +554,22 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 					progressBar.setMaximum(lengthOfTask);
 				}
 			}
+			
+			while (transferred != null && processedCounter < lengthOfTask && transferred.size() > 0) {
 
-			while (transferred != null && counter < lengthOfTask && transferred.size() > 0) {
-
+				System.err.println("processedCounter:" + processedCounter);
+				
 				movieCounter++;
-				int percent = ((counter+1) * 100)/lengthOfTask;
+				int percent = ((processedCounter+1) * 100)/lengthOfTask;
 
-				String msg = percent+ "%  (" + (counter+1) + " out of " + lengthOfTask+")     ";
-				progressBar.setValue(counter+1);
+				String msg = percent+ "%  (" + (processedCounter+1) + " out of " + lengthOfTask+")     ";
+				progressBar.setValue(processedCounter+1);
 				progressBar.setString(msg);
 
 				String appendText = String.format("%-3d - %s", movieCounter, ((String) transferred.remove(0)) + newline);
 				taskOutput.append(appendText);
 				taskOutput.setCaretPosition(taskOutput.getDocument().getLength());
-				counter++;
+				processedCounter++;
 			}
 
 			if (imdbInfoUpdater.isDone() || canceled) {
@@ -590,7 +592,7 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 					imdbInfoUpdater = new IMDbInfoUpdater();
 					timer = new Timer(milliseconds, new TimerListener());
 
-					counter = 0;
+					processedCounter = 0;
 					movieCounter = 0;
 					transferred = null;
 				}
@@ -826,6 +828,11 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 		imdbInfoUpdater.setThreadCount(Integer.parseInt(threadCountField.getText()));
 		
 		if (anySelectedButton) {
+		
+			timer = new Timer(milliseconds, new TimerListener());
+			processedCounter = 0;
+			movieCounter = 0;
+			
 			imdbInfoUpdater.go();
 
 			timer.start();
