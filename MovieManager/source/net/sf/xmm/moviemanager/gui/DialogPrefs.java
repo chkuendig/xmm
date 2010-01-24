@@ -711,6 +711,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 
 	JPanel createIMDbPanel() {
+		
 		/* IMDb login panel */
 		enableIMDbAuthenticationButton = new JCheckBox("Enable authentication"); //$NON-NLS-1$
 		enableIMDbAuthenticationButton.setActionCommand("Enable Authentication"); //$NON-NLS-1$
@@ -911,11 +912,13 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		titlePanel.add(akaTitlePanel);
 
-		JPanel IMDbPanel = new JPanel(new GridLayout(0, 1));
+		JPanel IMDbPanel = new JPanel();
+		IMDbPanel.setLayout(new BorderLayout());
+		
 		IMDbPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),"IMDb settings"), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
 
-		IMDbPanel.add(IMDbAuthenticationPanel);
-		IMDbPanel.add(titlePanel);
+		IMDbPanel.add(IMDbAuthenticationPanel, BorderLayout.NORTH);
+		IMDbPanel.add(titlePanel, BorderLayout.CENTER);
 
 		return IMDbPanel;
 	}
@@ -1275,15 +1278,15 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		return movieListPanel;
 	}
 
-	JPanel createExternalProgramsPanel() {
-
+	JPanel createMediaPlayerPanel() {
+		
 		/* Player panel */
 		JPanel playerPanel = new JPanel();
 		playerPanel.setLayout(new GridBagLayout());
 
 		playerPanel.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogPrefs.panel.external-programs.media-player.title")), //$NON-NLS-1$
-				BorderFactory.createEmptyBorder(0,5,5,5)));
+				BorderFactory.createEmptyBorder(0,5,0,5)));
 
 		enableUseDefaultWindowsPlayer = new JCheckBox(Localizer.get("DialogPrefs.panel.external-programs.media-player.use-default-windows-player")); //$NON-NLS-1$
 		enableUseDefaultWindowsPlayer.setSelected(config.getUseDefaultWindowsPlayer());
@@ -1378,9 +1381,11 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		// External command
 		JPanel externalCommand = new JPanel();
 
-		externalCommand.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogPrefs.panel.external-programs.media-player.execute-external-command.enable")), //$NON-NLS-1$
-				BorderFactory.createEmptyBorder(0,0,0,0)));
+		//externalCommand.setBorder(BorderFactory.createCompoundBorder(
+		//		BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogPrefs.panel.external-programs.media-player.execute-external-command.enable")), //$NON-NLS-1$
+		//		BorderFactory.createEmptyBorder(0,0,0,0)));
+		externalCommand.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogPrefs.panel.external-programs.media-player.execute-external-command.enable"))); //$NON-NLS-1$
+		
 		externalCommand.add(externalCmd);
 		externalCommand.add(externalCmdLabel);
 		externalCommand.add(externCommandInfo);
@@ -1388,17 +1393,21 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		c.gridx = 0;
 		c.gridy = 4;
 		playerPanel.add(externalCommand, c);
-
+		
+		return playerPanel;
+	}
+	
+	JPanel createBrowserPanel() {
+		
 		/* Browser Path */
 		JPanel browserPanel = new JPanel();
 		browserPanel.setLayout(new GridBagLayout());
-		c = new GridBagConstraints();
-
+		
 		browserPanel.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogPrefs.panel.external-programs.web-browser.title")), //$NON-NLS-1$
-				BorderFactory.createEmptyBorder(5,3,5,3)));
+				BorderFactory.createEmptyBorder(0,0,5,0)));
 
-		JPanel browserOptionPanel = new JPanel(new GridLayout(3, 3));
+		JPanel browserOptionPanel = new JPanel(new GridLayout(3,4));
 
 		enableUseDefaultWindowsBrowser = new JRadioButton(Localizer.get("DialogPrefs.panel.external-programs.web-browser.windows-default")); //$NON-NLS-1$
 		enableCustomBrowser =            new JRadioButton(Localizer.get("DialogPrefs.panel.external-programs.web-browser.custom-browser")); //$NON-NLS-1$
@@ -1463,6 +1472,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		enableUseDefaultWindowsBrowser.addItemListener(this);
 		browserOptionIE.addItemListener(this);
 
+		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 0;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -1505,7 +1515,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		JPanel browserFilePanel = new JPanel();
 		browserFilePanel.setLayout(new BoxLayout(browserFilePanel, BoxLayout.X_AXIS));
 		browserFilePanel.add(customBrowserPathField);
-		browserFilePanel.add(Box.createHorizontalGlue());
 		browserFilePanel.add(browserBrowse);
 
 		c.gridx = 0;
@@ -1515,22 +1524,31 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 
 		setBrowserComponentsEnabled();
+		
+		return browserPanel;
+	}
+	
+	
+	
+	JPanel createExternalProgramsPanel() {
 
+		JPanel playerPanel = createMediaPlayerPanel();
+		JPanel browserPanel = createBrowserPanel();
+		
 		/* Program Paths */
 
 		JPanel programPathsPanel = new JPanel();
-		programPathsPanel.setLayout(new BoxLayout(programPathsPanel, BoxLayout.Y_AXIS));
-
 		programPathsPanel.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), Localizer.get("DialogPrefs.panel.external-programs.title")), //$NON-NLS-1$
 				BorderFactory.createEmptyBorder(5,3,5,3)));
 
-
+		programPathsPanel.setLayout(new BoxLayout(programPathsPanel, BoxLayout.Y_AXIS));
+		
 		if (!disabledFeatures.isPreferencesExternalProgramsPlayerDisabled())
 			programPathsPanel.add(playerPanel);
-
+		
 		programPathsPanel.add(browserPanel);
-
+		
 		return programPathsPanel;
 	}
 
