@@ -195,7 +195,7 @@ public class DialogAbout extends JDialog {
     	
     	String[][] data = new String[][] {
     			{"Operating System: ",  System.getProperty("os.name")},
-    			{System.getProperty("os.name") + " version:", System.getProperty("os.version")},
+    			{"OS version:", System.getProperty("os.version")},
     			{"Architecture: ", System.getProperty("os.arch")},
     			{"Java version: ", System.getProperty("java.runtime.version")},
     			{"Vendor:", System.getProperty("java.vm.specification.vendor")},
