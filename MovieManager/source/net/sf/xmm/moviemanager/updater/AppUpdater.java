@@ -165,7 +165,6 @@ public class AppUpdater implements UpdatedApplication {
     	t.start();
     }
 
-	@Override
 	public void linkClicked(String link) {
 		BrowserOpener opener = new BrowserOpener(link);
 		opener.executeOpenBrowser(MovieManager.getConfig().getSystemWebBrowser(), MovieManager.getConfig().getBrowserPath());

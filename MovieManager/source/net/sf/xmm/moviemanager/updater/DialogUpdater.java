@@ -494,7 +494,6 @@ public class DialogUpdater extends JDialog implements JupidatorGUI, HyperlinkLis
 	private JScrollPane jScrollPane1;
 	// End of variables declaration//GEN-END:variables
 
-	@Override
 	public void setProperty(String key, String value) {		
 		
 		if (key.toLowerCase().equals("about")) {
