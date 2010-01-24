@@ -15,10 +15,10 @@ Version 2.9.0 ()
   - Added option to remove quotes ("") from series titles.
   - Updated the HSQLDB driver which will hopefully fix some stability issues with HSQL. 
   - Added right click popup when editing movie/episode to clear additional info values.
-  - Added better shortcut handling. Press ALT+k on Windows/GNU+Linux or CMD+k on OSX to see available shortcut for a window.
+  - Added better shortcut handling. Press ALT+k on Windows/GNU+Linux or ⌘+k on OSX to see available shortcuts for a window.
   - IMDb dialog now has a field for changing the search text when searching for IMDb info.
 
-  - Improvements for the Multi-Add-function:
+  - Improvements to the Multi-Add-function:
 
     - Shows the progress of the import procedure.
     - It's now possible to define custom folders as root devices in the tree.
