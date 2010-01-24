@@ -10,22 +10,22 @@
 
 	<target name="Welcome">
 <echo>
-	===========================================
-	====   MeD's Movie Manager build.xml   ====
-	===========================================
+	============================================
+	====   MeD's Movie Manager build file   ====
+	============================================
 	 Targets:
-	===========================================
+	============================================
 	 clean     - clears all generated files
 	 compile   - compiles all java files
 	 run       - runs the moviemanager
 	
 	 jar       - creates the MovieManager.jar
-	 IMDb-lib  - creates the IMDb.jar
-     jars      - runs jar and IMDb-lib  
-	 build     - calls compile, jars
-	 all       - calls clean, build, archives, izpack
+	 IMDbLib   - creates the IMDb.jar
+     jars      - calls targets jar and IMDb-lib  
+	 build     - calls targets compile and jars
+	 all       - calls targets clean, build, archives, izpack
 	 archives  - creates the zip distribution files
-	 izpack    - creates the izpack java installer
+	 izpack    - creates the IzPack java installer
 	 build-mac - create Mac Application Bundle
 	 dist-mac  - create Mac DMG file
 	 javadoc   - compiles the Javadoc
