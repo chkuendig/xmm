@@ -40,7 +40,7 @@
 	<property name="dist" location="dist" />
 	<property name="izpack.dir" location="packaging/izpack" />
 
-	<property name="version" value="2.8.8" />
+	<property name="version" value="2.9.0" />
 	<property name="versionName" value="${version}" />
 
 	<property name="base" value="MovieManager/" />
@@ -190,7 +190,7 @@
 	<target name="run" depends="compile" description="Runs the compiled moviemanager">
 		<java classname="net.sf.xmm.moviemanager.MovieManager"
 			classpathref="project.lib.path" classpath="MovieManager/" fork="true"
-			spawn="true" />
+			spawn="false" />
 	</target>
 
 
@@ -250,10 +250,6 @@
 			<!-- Files in root dir (install dir)  -->
 			<zipfileset prefix="MeDs-Movie-Manager" dir="MovieManager"
 				includes="${mainFiles}">
-
-				<!--
-					<include name="config/"/> <exclude name="config/Config.ini"/>
-				-->
 			</zipfileset>
 
 			<zipfileset prefix="MeDs-Movie-Manager/config/" dir="MovieManager/config/"
@@ -279,7 +275,6 @@
 			<!-- html template files -->
 			<zipfileset id="template_simple_virtue" prefix="MeDs-Movie-Manager/HTML_templates/"
 				dir="MovieManager/HTML_templates/" includes="${template_files}" />
-
 
 			<zipfileset prefix="MeDs-Movie-Manager" dir="" includes="${infoFiles}" />
 
@@ -395,10 +390,9 @@
 					
 			<manifest>
 			  <section name="MeD's Movie Manager">
-				<attribute name="Implementation-Version" value="${version}" />
-				<attribute name="Built-By" value="some one on ${TODAY}" />
-				<!--<attribute name="Name" value="Movie Manager version ${version}" />-->
-				
+				<attribute name="Built-By" value="${user.name} on ${TODAY}" />
+			    <attribute name="Implementation-Title" value="MeD's Movie Manager"/>
+			    <attribute name="Implementation-Version" value="${version}"/>
 			  </section>
 			</manifest>
 		</jar>
@@ -452,17 +446,7 @@
 		target="build-mac" inheritAll="true" inheritrefs="true"/> </target>
 	-->
 
-	<!--
-		removes all tabs replaces those with spaces and removes unqualified
-		EOL and replaces those with the correct EOL
-	-->
-	<target name="remove-crlf"
-		description="removes all tabs and 
-										  unqualified end of lines">
-		<fixcrlf srcdir="${source}" eol="lf" tab="remove" tablength="4"
-			javafiles="yes" includes="**/*.java" />
-	</target>
-
+	
 	<!-- generates the javadoc -->
 	<target name="javadoc" depends="compile">
 
@@ -827,25 +811,6 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
   <echo> Compiled html readme to Readme.html </echo>
 </target>
 
-	
-<!-- not functioning yet -->
-  <target name="doParams">
-    <antcall target="tokenize">
-       <param name="params" value="${jdbc.driver.properties}"/>
-    </antcall>
-  </target>
-        
-  
-  <target name="tokenize">
-        
-        <script language="beanshell" setbeans="true">
-               System.out.println("Hello world");
-                        
-        </script>
-
-  </target>
-
-
 
 
   <property name="app-name" value="MeD's MovieManager.app"/>
@@ -912,13 +877,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 		  </fileset>
 		</copy>
 		
-		<!--
-		<exec executable="/Developer/Tools/SetFile">
-			<arg line=" -a B ${tempdir}"/>
-		</exec>
-		-->
-
-		
+				
 		<move file="${tempdir}" tofile="${mac-dist}/${app-name}"/>
  </target>
     
