@@ -115,7 +115,8 @@ public class IMDbInfoUpdater {
 				current = -1;
 				done = false;
 				canceled = false;
-
+				threadHandler = new ThreadHandler();
+				
 				execute();
 				return this;
 			}
@@ -134,6 +135,7 @@ public class IMDbInfoUpdater {
 
 	/* Stops the importing process */
 	public synchronized void stop() {
+		threadHandler.stop();
 		canceled = true;
 	}
 
@@ -142,6 +144,7 @@ public class IMDbInfoUpdater {
 	}
 
 	public void setDone() {
+		threadHandler.stop();
 		done = true;
 	}
 	
@@ -151,24 +154,20 @@ public class IMDbInfoUpdater {
 	}
 
 	static boolean ready = true;
-	//static int successes = 0;
 
-	final ThreadHandler threadHandler = new ThreadHandler();
+	ThreadHandler threadHandler = new ThreadHandler();
 	
 	@SuppressWarnings("unchecked")
 	public void execute() {
-
+		
 		/* Setting the priority of the thread to 4 to give the GUI room to update more often */
 		Thread.currentThread().setPriority(4);
-
 		
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) ((DefaultTreeModel) MovieManager.getDialog().getMoviesList().getModel()).getRoot();
 		final Enumeration<DefaultMutableTreeNode> enumeration = root.children();
 				
 		lengthOfTask = root.getChildCount();
 	
-		//final long time = System.currentTimeMillis();
-
 		try {
 
 			Runnable threadRunner = new Runnable() {
@@ -182,7 +181,7 @@ public class IMDbInfoUpdater {
 					IMDb imdb;
 					try {
 						imdb = IMDbLib.newIMDb(MovieManager.getConfig().getHttpSettings());
-
+	
 						while (enumeration.hasMoreElements()) {
 							
 							if (canceled)
@@ -214,6 +213,19 @@ public class IMDbInfoUpdater {
 												
 						do {
 							threadHandler.waitForNextDecrease();
+							
+							if (threadHandler.getNoAction()) {
+								log.debug("No threads have finished within timeout of " + threadHandler.getTimeout() + "ms.");
+																
+								ArrayList<GetInfo> active = threadHandler.getActiveThreads();
+								
+								log.debug("Active threads:");
+								
+								for (GetInfo t : active) {
+									log.debug(t.getTitle());
+								}
+							}
+							
 						} while (threadHandler.getThreadCount() > 0);
 												
 						setDone();
@@ -250,6 +262,8 @@ public class IMDbInfoUpdater {
 		boolean skippedNoIMDbID = false;
 		boolean skippedIMDbID = false;
 		
+		GetInfo threadWorker = this;
+		
 		GetInfo(ModelMovieInfo modelInfo, ModelEntry model, IMDb imdb) {
 			this.modelInfo = modelInfo;
 			this.model = model;
@@ -258,6 +272,10 @@ public class IMDbInfoUpdater {
 
 		boolean changed = false;
 		ModelIMDbEntry movie = null;
+		
+		public String getTitle() {
+			return model.getTitle();
+		}
 		
 		public ModelIMDbEntry getIMDbModel(String urlKey) throws Exception {
 			
@@ -279,7 +297,7 @@ public class IMDbInfoUpdater {
 
 			try {
 
-				threadHandler.increaseThreadCount();
+				threadHandler.addThreadWorker(threadWorker);
 				
 				Thread.sleep(50);
 
@@ -354,7 +372,7 @@ public class IMDbInfoUpdater {
 			} finally {
 			
 				try {
-					threadHandler.decreaseThreadCount();
+					threadHandler.removeThreadWorker(threadWorker);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -451,9 +469,28 @@ public class IMDbInfoUpdater {
 
 			String coverPath = MovieManager.getConfig().getCoversPath(false);
 						
-			if (cover == 1 || (cover == 2 && (!new File(coverPath, model.getCover()).isFile() || 
-					(MovieManager.getIt().getDatabase().isMySQL() && model.getCoverData() == null)))) {
-			
+			boolean doCover = false;
+					
+			if (cover == 1)
+				doCover = true;
+			else if (cover == 2) {
+				
+				if (MovieManager.getIt().getDatabase().isMySQL()) {
+					
+					if (model.getCoverData() == null)
+						doCover = true;
+					else if (MovieManager.getConfig().getStoreCoversLocally() && 
+							!new File(coverPath, model.getCover()).isFile()) {
+						doCover = true;
+					}
+				}
+				else if (!new File(coverPath, model.getCover()).isFile()) {
+					doCover = true;
+				}
+			}
+						
+			if (doCover) {
+				
 				if (canceled) {
 					changed = false;
 					return;
@@ -516,37 +553,81 @@ public class IMDbInfoUpdater {
 	synchronized static void setReady(boolean rdy) {
 		ready = rdy;
 	}
-
-/*	
-	synchronized static void encreaseSuccess() {
-		successes++;
-	}*/
 	
 	public class ThreadHandler {
+				
+		ThreadHandler threadHandler = this;
+		
+		boolean noAction = false;
+		boolean stop = false;
+		
+		final int timeToWait = 5000;
+		
+		long lastActionTime = System.currentTimeMillis();
+		
+		public boolean getNoAction() {
+			return noAction;
+		}
+		
+		public void stop() {
+			stop = true;
+		}
+		
+		public int getTimeout() {
+			return timeToWait;
+		}
+		
+		
+		ThreadHandler() {
+			new Thread(new Runnable() {
+				
+				public void run() {
+					try {
+						
+						
 
-		// The number of currently active threads
-		int threadCount = 0;
+						while (!stop) {
+
+							Thread.sleep(timeToWait);
+
+							long time = System.currentTimeMillis();
+
+							if ((time - lastActionTime) > timeToWait) {
+								noAction = true;
+								
+								synchronized (threadHandler) {
+									threadHandler.notify();
+								}
+							}
+						}
+					} catch (InterruptedException e) {
+						log.warn("InterruptedException:" + e.getMessage(), e);
+					}
+				}
+			}).start();
+		}
 		
-		// The total number of threads that have been used
-		int totalThreads = 0;
+		ArrayList<GetInfo> activeThreads = new ArrayList<GetInfo>();
 		
-		synchronized public void increaseThreadCount() {
-			threadCount++;
-			totalThreads++;
+		@SuppressWarnings("unchecked")
+		ArrayList<GetInfo> getActiveThreads() {
+			return (ArrayList<GetInfo>) activeThreads.clone();
+		}
+		
+		synchronized public void addThreadWorker(GetInfo worker) {
+			activeThreads.add(worker);
+			lastActionTime = System.currentTimeMillis();
 			notify();
 		}
 		
-		synchronized public void decreaseThreadCount() throws Exception  {
-			threadCount--;
+		synchronized public void removeThreadWorker(GetInfo worker) throws Exception  {
+			activeThreads.remove(worker);
+			lastActionTime = System.currentTimeMillis();
 			notify();
 		}
 		
 		synchronized public int getThreadCount() {
-			return threadCount;
-		}
-		
-		synchronized public int getTotalThreadCount() {
-			return totalThreads;
+			return activeThreads.size();
 		}
 		
 		
