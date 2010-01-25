@@ -58,29 +58,9 @@ public class SimpleProgressBar extends JDialog implements PropertyChangeListener
 
 	public void createProgressBar(Window parent, String title) {
 
-		/* Close dialog... */
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				close();
-			}
-		    });
-		
-		
-		/*Enables dispose when pushing escape*/
-		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction()
-		    {
-			public void actionPerformed(ActionEvent e) {
-				close();
-			}
-		    };
-		
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, "ESCAPE"); //$NON-NLS-1$
-		getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
-		
-		
+		GUIUtil.enableDisposeOnEscapeKey(this);
+				
 		JPanel panel = new JPanel();
-		//panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
 		double size[][] = {{10, TableLayout.FILL, TableLayout.PREFERRED, TableLayout.FILL, 10}, {5, TableLayout.PREFERRED, 10, TableLayout.PREFERRED, 15, TableLayout.PREFERRED, 5}};
 
@@ -92,13 +72,10 @@ public class SimpleProgressBar extends JDialog implements PropertyChangeListener
 
 		label = new JLabel(title);
 		label.setPreferredSize(new Dimension(40, 35));
-
 		label.setFont(new Font(label.getFont().getName(), label.getFont().getStyle(), 20));
 
 		JButton abortButton = new JButton("Abort");
-
 		abortButton.setPreferredSize(new Dimension(150, 30));
-
 		abortButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -130,13 +107,23 @@ public class SimpleProgressBar extends JDialog implements PropertyChangeListener
 		dispose();
 	}
 
+	public void dispose() {
+	
+		System.err.println("progress dispose");
+
+		if (net.sf.xmm.moviemanager.updater.AppUpdater.getGUI() != null) {
+			System.err.println("progress dispose");
+			net.sf.xmm.moviemanager.updater.AppUpdater.getGUI().toFront();
+			net.sf.xmm.moviemanager.updater.AppUpdater.getGUI().requestFocusInWindow();
+		}
+		
+		super.dispose();
+	}
 
 	/**
 	 * @see java.beans.PropertyChangeListener
 	 */
 	public void propertyChange(final PropertyChangeEvent evt) {
-
-		//GUIUtil.isNotEDT();
 
 		if ("value".equals(evt.getPropertyName())) {
 
