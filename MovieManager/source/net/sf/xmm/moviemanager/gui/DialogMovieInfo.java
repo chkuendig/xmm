@@ -94,9 +94,6 @@ import net.sf.xmm.moviemanager.swing.extentions.CoverTransferHandler;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
 import net.sf.xmm.moviemanager.swing.extentions.SteppedComboBox;
-import net.sf.xmm.moviemanager.swing.extentions.events.ModelUpdatedEvent;
-import net.sf.xmm.moviemanager.swing.extentions.events.ModelUpdatedEventListener;
-import net.sf.xmm.moviemanager.swing.extentions.events.ModelUpdatedEvent.IllegalEventTypeException;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager.KeyMapping;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
@@ -106,6 +103,9 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
+import net.sf.xmm.moviemanager.util.events.ModelUpdatedEvent;
+import net.sf.xmm.moviemanager.util.events.ModelUpdatedEventListener;
+import net.sf.xmm.moviemanager.util.events.ModelUpdatedEvent.IllegalEventTypeException;
 
 import net.sf.xmm.moviemanager.MovieManagerConfig.MediaInfoOption;
 

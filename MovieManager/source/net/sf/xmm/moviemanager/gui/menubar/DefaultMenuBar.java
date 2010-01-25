@@ -75,12 +75,12 @@ import net.sf.xmm.moviemanager.gui.DialogNewVersionInfo;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
 import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
-import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
-import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
 import net.sf.xmm.moviemanager.updater.AppUpdater;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
+import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedEvent;
+import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedEventListener;
 
 
 public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {

@@ -47,9 +47,9 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
-import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
-import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
 import net.sf.xmm.moviemanager.util.FileUtil;
+import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedEvent;
+import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedEventListener;
 
 import org.apache.log4j.Logger;
 

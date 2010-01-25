@@ -1,5 +1,5 @@
 /**
- * @(#)NewDatabaseLoadedEventListener.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)ModelChangedEventListenener.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -18,10 +18,10 @@
  * Contact: bro3@users.sourceforge.net
  **/
 
-package net.sf.xmm.moviemanager.swing.extentions.events;
+package net.sf.xmm.moviemanager.util.events;
 
 import java.util.EventListener;
 
-public interface NewMovieListLoadedEventListener extends EventListener {
-    public void newMovieListLoaded(NewMovieListLoadedEvent evt);
+public interface ModelUpdatedEventListener extends EventListener {
+	public void modelUpdatedEvent(ModelUpdatedEvent evt);
 }

@@ -18,7 +18,7 @@
  * Contact: bro3@users.sourceforge.net
  **/
 
-package net.sf.xmm.moviemanager.swing.extentions.events;
+package net.sf.xmm.moviemanager.util.events;
 
 //Add the event registration and notification code to a class.
 public class NewMovieListLoadedHandler {

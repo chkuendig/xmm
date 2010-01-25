@@ -33,11 +33,11 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 import net.sf.xmm.moviemanager.fileproperties.FilePropertiesMovie;
-import net.sf.xmm.moviemanager.swing.extentions.events.ModelUpdatedEventListener;
-import net.sf.xmm.moviemanager.swing.extentions.events.ModelUpdatedHandler;
-import net.sf.xmm.moviemanager.swing.extentions.events.ModelUpdatedEvent.IllegalEventTypeException;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.StringUtil;
+import net.sf.xmm.moviemanager.util.events.ModelUpdatedEventListener;
+import net.sf.xmm.moviemanager.util.events.ModelUpdatedHandler;
+import net.sf.xmm.moviemanager.util.events.ModelUpdatedEvent.IllegalEventTypeException;
 
 import org.apache.log4j.Logger;
 

@@ -18,7 +18,7 @@
  * Contact: bro3@users.sourceforge.net
  **/
 
-package net.sf.xmm.moviemanager.swing.extentions;
+package net.sf.xmm.moviemanager.swing.extentions.combocheckbox;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
@@ -38,8 +38,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.swing.extentions.events.ComboCheckBoxKeyEvent;
-import net.sf.xmm.moviemanager.swing.extentions.events.ComboCheckBoxKeyEventListener;
 
 
 public class JComboCheckBox extends JComboBox {

@@ -46,8 +46,6 @@ import net.sf.xmm.moviemanager.gui.DialogQuestion;
 import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovie;
-import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedHandler;
-import net.sf.xmm.moviemanager.swing.extentions.events.NewMovieListLoadedHandler;
 import net.sf.xmm.moviemanager.swing.progressbar.ProgressBean;
 import net.sf.xmm.moviemanager.swing.progressbar.ProgressBeanImpl;
 import net.sf.xmm.moviemanager.swing.progressbar.SimpleProgressBar;
@@ -56,6 +54,8 @@ import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
+import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedHandler;
+import net.sf.xmm.moviemanager.util.events.NewMovieListLoadedHandler;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
 
 public class DatabaseHandler {

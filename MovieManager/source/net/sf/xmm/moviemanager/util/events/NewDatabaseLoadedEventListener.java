@@ -1,5 +1,5 @@
 /**
- * @(#)NewDatabaseLoadedEvent.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)NewDatabaseLoadedEventListener.java 1.0 26.09.06 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -18,12 +18,10 @@
  * Contact: bro3@users.sourceforge.net
  **/
 
-package net.sf.xmm.moviemanager.swing.extentions.events;
+package net.sf.xmm.moviemanager.util.events;
 
-import java.util.EventObject;
+import java.util.EventListener;
 
-public class NewDatabaseLoadedEvent extends EventObject {
-	public NewDatabaseLoadedEvent(Object source) {
-		super(source);
-	}
-} 
+public interface NewDatabaseLoadedEventListener extends EventListener {
+    public void newDatabaseLoaded(NewDatabaseLoadedEvent evt);
+}

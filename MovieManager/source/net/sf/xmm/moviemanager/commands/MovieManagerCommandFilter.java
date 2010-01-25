@@ -34,12 +34,12 @@ import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
-import net.sf.xmm.moviemanager.swing.extentions.events.ComboCheckBoxKeyEvent;
+import net.sf.xmm.moviemanager.swing.extentions.combocheckbox.ComboCheckBoxKeyEvent;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 
-public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.moviemanager.swing.extentions.events.ComboCheckBoxKeyEventListener {
+public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.moviemanager.swing.extentions.combocheckbox.ComboCheckBoxKeyEventListener {
 
 	Logger log = Logger.getLogger(getClass());
 

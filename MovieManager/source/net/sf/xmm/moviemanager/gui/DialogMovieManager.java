@@ -96,14 +96,14 @@ import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeNode;
-import net.sf.xmm.moviemanager.swing.extentions.JComboCheckBox;
-import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEvent;
-import net.sf.xmm.moviemanager.swing.extentions.events.NewDatabaseLoadedEventListener;
+import net.sf.xmm.moviemanager.swing.extentions.combocheckbox.JComboCheckBox;
 import net.sf.xmm.moviemanager.swing.util.FileDrop;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
+import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedEvent;
+import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedEventListener;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerPlayHandler;
 
 import org.apache.log4j.Logger;
