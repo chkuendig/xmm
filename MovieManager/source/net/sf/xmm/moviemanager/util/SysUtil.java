@@ -147,9 +147,7 @@ public class SysUtil {
 					
 				dir = new File(path, "MovieManager");
 			}
-	
-			String userDir = getUserDir();
-			
+
 			// Resetting config to local mode
 			if (MovieManager.getConfig().getLocalConfigMode()) {
 				log.debug("Using localconfigmode for config");
@@ -178,8 +176,7 @@ public class SysUtil {
 		try {
 			return FileUtil.canWriteToDir(new File(getUserDir()));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.warn("Exception:" + e.getMessage(), e);
 		}
 		return false;
 	}
