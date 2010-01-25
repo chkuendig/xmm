@@ -59,9 +59,14 @@ public class MovieManagerCommandPlay implements ActionListener {
 		SimpleMailbox<LaunchError> mailbox = new SimpleMailbox<LaunchError>();
 		
 		try {
+			
+			if (!verifyMediaPlayer())
+				return;
 						
 			execute(mailbox);
+			System.err.println("wait for message");
 			mailbox.wait_for_message();
+			System.err.println("handleReturnMessage");
 			handleReturnMessage(mailbox);
 
 		} catch (IOException e1) {
@@ -70,11 +75,28 @@ public class MovieManagerCommandPlay implements ActionListener {
 		}
 	}
 	
+	static boolean verifyMediaPlayer() throws IOException {
+		
+		String cmd = MovieManager.getConfig().getMediaPlayerPath();
+
+		if (cmd != null && "".equals(cmd)){
+
+			JFileChooser chooser = new JFileChooser();
+			int returnVal = chooser.showDialog(null, "Launch");
+			if (returnVal != JFileChooser.APPROVE_OPTION)
+				return false;
+
+			cmd = chooser.getSelectedFile().getCanonicalPath();
+			MovieManager.getConfig().setMediaPlayerPath(cmd);
+		}
+		return true;
+	}
+	
 	static void handleReturnMessage(SimpleMailbox<LaunchError> mailbox) {
 		LaunchError msg = mailbox.getMessage();
 		
 		// -1 == success
-		if (msg.errorCode != -1) {
+		if (msg != null && msg.errorCode != -1) {
 			// errorCode 2: File or dir not found
 			// errorCode 13: Permission denied
 			
@@ -83,11 +105,14 @@ public class MovieManagerCommandPlay implements ActionListener {
 		}
 	}
 	
-	public static void execute() throws IOException, InterruptedException {
+	public static void execute1() throws IOException, InterruptedException {
 		execute(null);
 	}
 	
 	public static void executePlay(String [] files) throws IOException, InterruptedException {
+		
+		if (!verifyMediaPlayer())
+			return;
 		
 		SimpleMailbox<LaunchError> mailbox = new SimpleMailbox<LaunchError>();
 		
@@ -119,23 +144,10 @@ public class MovieManagerCommandPlay implements ActionListener {
 			ArrayList<String> commandList = new ArrayList<String>();
 
 			cmd = mmc.getMediaPlayerPath();
-
-			if (cmd != null && "".equals(cmd)){
-
-				JFileChooser chooser = new JFileChooser();
-				int returnVal = chooser.showDialog(null, "Launch");
-				if (returnVal != JFileChooser.APPROVE_OPTION)
-					return;
-
-				cmd = chooser.getSelectedFile().getCanonicalPath();
-				mmc.setMediaPlayerPath(cmd);
-			}
-
+			
 			if (cmd != null && !"".equals(cmd)) {
 				commandList.add(cmd);
 			}
-
-
 
 			String playArg = mmc.getMediaPlayerCmdArgument();
 
@@ -247,6 +259,8 @@ public class MovieManagerCommandPlay implements ActionListener {
 				}
 			}
 		}
+		
+		System.err.println("executePlay");
 		executePlay(files, mailbox);
 	}
 	
