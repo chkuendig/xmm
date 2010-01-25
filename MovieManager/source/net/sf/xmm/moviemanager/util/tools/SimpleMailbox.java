@@ -45,7 +45,10 @@ public class SimpleMailbox<E> {
 	}
 	
 	synchronized public void wait_for_message() throws InterruptedException {
-		wait();
+		
+		// If no messages available, wait
+		if (msgs.size() == 0)
+			wait();
 	}
 	
 	public void notify_message() throws InterruptedException {
