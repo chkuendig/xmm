@@ -58,7 +58,6 @@
 	 <property name="libraries_look_and_feel"
 	     value="
 	     LookAndFeels/CLooks_13.jar,
-	     LookAndFeels/EaSynthLookAndFeel-1.06.jar,
 	     LookAndFeels/InfoNode-1.6.1.jar,
 	 	 LookAndFeels/JGoodies-2.3.0.jar,
 	     LookAndFeels/JTattoo-1.4.0.jar,
@@ -79,7 +78,8 @@
 	     LookAndFeels/syntheticaGreenDream.jar,
 	     LookAndFeels/syntheticaSilverMoon.jar,
 	     LookAndFeels/1.6/substance-6.0.jar,
-	 	 LookAndFeels/1.6/nimrodlf-1.1a.jar,
+	 	 LookAndFeels/1.6/trident.jar,
+	     LookAndFeels/1.6/nimrodlf-1.1a.jar,
 	 	 LookAndFeels/Skinlf_Theme_Packs/
 	 		     "/>
 	
