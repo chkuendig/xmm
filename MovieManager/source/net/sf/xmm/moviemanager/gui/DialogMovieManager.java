@@ -633,12 +633,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     }
     
     
-    
-   public void newVersionAvailable(String newVersion, String info) {
-	   menuBar.newVersionAvailable(newVersion, info);
-   }
-    
-   protected JMenuBar createMenuBar() {
+    protected JMenuBar createMenuBar() {
 	   
 	   boolean defaultMenu = true;
 	  
