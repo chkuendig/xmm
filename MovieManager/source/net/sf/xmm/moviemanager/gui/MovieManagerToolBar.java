@@ -5,10 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -39,7 +37,6 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandSearch;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAdd;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandEdit;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
-import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager.KeyMapping;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerPlayHandler;
@@ -130,31 +127,28 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
 	
 	public MovieManagerToolBar() {
 		super(SwingConstants.HORIZONTAL);
-		toolBar = this;
-		construct();
+		load();
 	}
 
 	public MovieManagerToolBar(int arg0) {
 		super(arg0);
-
-		toolBar = this;
-		construct();
+		load();
 	}
 
 	public MovieManagerToolBar(String arg0, int arg1) {
 		super(arg0, arg1);
-
-		toolBar = this;
-		construct();
+		load();
 	}
 
 	public MovieManagerToolBar(String arg0) {
 		super(arg0);
+		load();
+	}
 
+	void load() {
 		toolBar = this;
 		construct();
 	}
-
 	
 	
 	/**
