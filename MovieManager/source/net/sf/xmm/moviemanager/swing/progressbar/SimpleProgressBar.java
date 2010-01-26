@@ -107,19 +107,6 @@ public class SimpleProgressBar extends JDialog implements PropertyChangeListener
 		dispose();
 	}
 
-	public void dispose() {
-	
-		System.err.println("progress dispose");
-
-		if (net.sf.xmm.moviemanager.updater.AppUpdater.getGUI() != null) {
-			System.err.println("progress dispose");
-			net.sf.xmm.moviemanager.updater.AppUpdater.getGUI().toFront();
-			net.sf.xmm.moviemanager.updater.AppUpdater.getGUI().requestFocusInWindow();
-		}
-		
-		super.dispose();
-	}
-
 	/**
 	 * @see java.beans.PropertyChangeListener
 	 */
