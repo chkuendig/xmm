@@ -26,6 +26,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -44,6 +45,10 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToolTip;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
+import javax.swing.plaf.ColorUIResource;
 
 import org.apache.log4j.Logger;
 
@@ -61,7 +66,6 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAbout;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAdditionalInfoFields;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandFolders;
-import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandHelp;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandNew;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandOpen;
@@ -71,16 +75,16 @@ import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandReportGen
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandUpdateIMDBInfo;
 import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandExport;
 import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImport;
-import net.sf.xmm.moviemanager.gui.DialogNewVersionInfo;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
 import net.sf.xmm.moviemanager.swing.extentions.JMultiLineToolTip;
 import net.sf.xmm.moviemanager.updater.AppUpdater;
-import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
 import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedEvent;
 import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedEventListener;
+import net.sf.xmm.moviemanager.util.events.UpdatesAvailableEvent;
+import net.sf.xmm.moviemanager.util.events.UpdatesAvailableEventListener;
 
 
 public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
@@ -186,74 +190,151 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		/* Creation of the help menu. */
 		menuBar.add(createMenuHelp());
 
+		AppUpdater.updatesAvailableHandler.addUpdatesAvailableEventListener(new UpdatesAvailableEventListener() {
+			public void updatesAvailableEvent(UpdatesAvailableEvent evt) {
+				newVersionAvailable();
+			}
+		});
+		
 		log.debug("Creation of the MenuBar done."); //$NON-NLS-1$
 		return menuBar;
 	}
 
+	public void newVersionAvailable() {
+		final JMenuBar menuBar = MovieManager.getDialog().getJMenuBar();
+
+		log.debug("Updates are available!");
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				menuUpdate = createMenuUpdate();
+				menuBar.add(menuUpdate);
+				menuBar.updateUI();
+			}
+		});
+	}
+	
+	
 	/**
 	 * Creates the update menu.
 	 *
 	 * @return The update menu.
 	 **/
-	protected JMenu createMenuUpdate(final String newVersion, final String buf) {
+	protected JMenu createMenuUpdate() {
 		log.debug("Start creation of the Update menu."); //$NON-NLS-1$
 
-		JMenu menuUpdate = new JMenu("Update Available"); //$NON-NLS-1$
-
-		menuUpdate.setBackground(Color.BLACK);	
-		menuUpdate.setForeground(Color.WHITE);
-
-
+		JMenu mUpdate = new JMenu("Update Available"); //$NON-NLS-1$
+		
+		/*
+		Font f = mUpdate.getFont();
+		Map map = f.getAttributes();
+		
+		// Set bold text
+		map.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_EXTRABOLD);
+		
+		Set<TextAttribute> keys = map.keySet();
+				
+		
+		  Object o = map.get(TextAttribute.SIZE);
+		Float fontSize = 0.0f;
+		if (o instanceof Float)
+			fontSize = (Float) o;
+		
+		//fontSize = 12.0f;
+		map.put(TextAttribute.SIZE, fontSize);
+	
+		
+		mUpdate.setFont(new Font(map));
+			*/
+		Object color = UIManager.get("Menu.selectionBackground");
+		
+		Color defaultBackgroundColor = null;
+		
+		if (color != null && color instanceof ColorUIResource) {
+			defaultBackgroundColor = (ColorUIResource) color;
+		}
+				
+		final Color finalBackgroundColor = defaultBackgroundColor;
+				
+		mUpdate.setMinimumSize(new Dimension(120, MovieManager.getDialog().getSize().height));
+				
 		class MyMenuItemUI extends javax.swing.plaf.basic.BasicMenuItemUI {
 
 			public MyMenuItemUI() {
 				super();
-				selectionBackground = Color.BLACK;
-				selectionForeground = Color.WHITE;
-			}
-
+				
+				if (finalBackgroundColor != null) {
+					selectionBackground = finalBackgroundColor;
+					selectionForeground = Color.WHITE;
+				}
+			}			
+			
 			public Dimension getMaximumSize(JComponent c) {
-				return new Dimension(110, MovieManager.getDialog().getSize().height);
+				return c.getPreferredSize();
 			}
-		}
+		}	
 
-		menuUpdate.setUI(new MyMenuItemUI());
+		mUpdate.setUI(new MyMenuItemUI());
 
+		mUpdate.setBackground(finalBackgroundColor);	
+		mUpdate.setForeground(Color.WHITE);
+		
+		mUpdate.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {				
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						menuUpdate.setPopupMenuVisible(!menuUpdate.isPopupMenuVisible());
+					}
+				});				
+			}
 
+			public void mouseEntered(MouseEvent e) {
+				if (finalBackgroundColor != null) {
+					menuUpdate.setBackground(finalBackgroundColor);
+				}
+			}
+		});
+
+		mUpdate.addMenuListener(new MenuListener() {
+			
+			public void menuSelected(MenuEvent e) {
+				menuUpdate.doClick();
+			}
+			
+			public void menuDeselected(MenuEvent e) {}
+			public void menuCanceled(MenuEvent e) {}
+		});
+		
 		/* MenuItem VersionInfo. */
 		JMenuItem menuItemVersionInfo = new JMenuItem("Version Info"); //$NON-NLS-1$
-		menuUpdate.add(menuItemVersionInfo);
+		mUpdate.add(menuItemVersionInfo);
 
 		menuItemVersionInfo.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent event) {
-				DialogNewVersionInfo info = new DialogNewVersionInfo(newVersion, buf);
-				GUIUtil.showAndWait(info, true);
+				AppUpdater.showUpdateWindow();
 			}
 		});
 
 		/* MenuItem topCheck. */
 		JMenuItem menuItemStopCheck = new JMenuItem("Do not check for updates"); //$NON-NLS-1$
-		menuUpdate.add(menuItemStopCheck);
+		mUpdate.add(menuItemStopCheck);
 
 		menuItemStopCheck.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent event) {
-				config.setCheckForProgramUpdates(false);  		
+				config.setCheckForProgramUpdates(false);
+				JMenuBar menuBar = MovieManager.getDialog().getJMenuBar();
+				menuBar.remove(menuUpdate);
+				menuBar.updateUI();
 			}
 		});
 
 		/* All done. */
 		log.debug("Creation of the Help menu done."); //$NON-NLS-1$
-		return menuUpdate;
+		return mUpdate;
 	}
 
 
-	 public void newVersionAvailable(String newVersion, String info) {
-		   JMenuBar menuBar = MovieManager.getDialog().getJMenuBar();
-		   menuBar.add(createMenuUpdate(newVersion, info));
-		   MovieManager.getDialog().setJMenuBar(menuBar);
-	 }
+	
 	
 
 	/**

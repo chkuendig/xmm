@@ -1,5 +1,7 @@
 package net.sf.xmm.moviemanager.updater;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.apache.log4j.Logger;
 
 import net.sf.xmm.moviemanager.MovieManager;
@@ -10,6 +12,7 @@ import net.sf.xmm.moviemanager.gui.DialogQuestion;
 import net.sf.xmm.moviemanager.imdblib.IMDbLib;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
+import net.sf.xmm.moviemanager.util.events.UpdatesAvailableHandler;
 import net.sf.xmm.moviemanager.util.tools.BrowserOpener;
 
 import com.panayotis.jupidator.ApplicationInfo;
@@ -22,8 +25,15 @@ public class AppUpdater implements UpdatedApplication {
 
 	static Logger log = Logger.getLogger(AppUpdater.class);
 	
-    public AppUpdater(boolean forceDisplay) {
-    	
+	static private Updater updater = null;
+	
+	public static UpdatesAvailableHandler updatesAvailableHandler = new UpdatesAvailableHandler();
+	
+	private boolean forceDisplay = false;
+	private boolean showAutomatically = true;
+	
+	
+    public void runUpdate() {
     	log.debug("Loading AppUpdater - forceDisplay:" + forceDisplay);
     	
         try {
@@ -45,24 +55,44 @@ public class AppUpdater implements UpdatedApplication {
                     "" + release,
                     version);
         	
-        	if (forceDisplay)
-        		ap.setForceDisplay();
-        	
-        	final Updater updater = new Updater("http://xmm.sourceforge.net/updates/update.xml", ap, this);
-        	
-        	GUIUtil.invokeLater(new Runnable() {
-        		public void run() {
-        			log.debug("setGUI(new DialogUpdater()");
-        			JupidatorGUI gui = new DialogUpdater();
-        			gui.setProperty("about", "false");
-        			gui.setProperty("checkForUpdates", "true");
-        			gui.setProperty("checkForUpdatesSelected", Boolean.toString(MovieManager.getConfig().getCheckForProgramUpdates()));
-        			gui.setProperty("disposeonescape", "true");
-        			gui.setProperty("diposeonclose", "true");
-        			gui.setProperty("resizable", "true");
-        			gui.setProperty("modal", "true");
-        			gui.setProperty("closebutton", "true");
-        			        			
+        	ap.setForceDisplay(forceDisplay);
+        	ap.setShowAutomatically(showAutomatically);
+        	        	
+        	updater = new Updater("http://xmm.sourceforge.net/updates/update.xml", ap, this);
+        	        	
+        } catch (UpdaterException ex) {
+        	log.error("UpdaterException:" + ex.getMessage(), ex);
+        } catch (Exception e) {
+        	log.error("UpdaterException:" + e.getMessage(), e);
+		}
+    }
+
+    public static boolean updatesAvailable() {
+    	return updater.updatesAvailable();
+    }
+  
+    public void setForceDisplay(boolean forceDisplay) {
+		this.forceDisplay = forceDisplay;
+	}
+	
+	public void setShowAutomatically(boolean showAutomatically) {
+		this.showAutomatically = showAutomatically;
+	}
+    
+	public static void showUpdateWindow() {
+		try {			
+			GUIUtil.invokeAndWait(new Runnable() {
+				public void run() {
+					JupidatorGUI gui = new DialogUpdater();
+					gui.setProperty("about", "false");
+					gui.setProperty("checkForUpdates", "true");
+					gui.setProperty("checkForUpdatesSelected", Boolean.toString(MovieManager.getConfig().getCheckForProgramUpdates()));
+					gui.setProperty("disposeonescape", "true");
+					gui.setProperty("diposeonclose", "true");
+					gui.setProperty("resizable", "true");
+					gui.setProperty("modal", "true");
+					gui.setProperty("closebutton", "true");
+					        			
 					updater.setGUI(gui);
 										
 					try {
@@ -72,14 +102,13 @@ public class AppUpdater implements UpdatedApplication {
 					}
 				}
 			});
-        	
-        } catch (UpdaterException ex) {
-        	log.error("UpdaterException:" + ex.getMessage(), ex);
-        } catch (Exception e) {
-        	log.error("UpdaterException:" + e.getMessage(), e);
+		} catch (InterruptedException e) {
+			log.error("Exception:" + e.getMessage(), e);
+		} catch (InvocationTargetException e) {
+			log.error("Exception:" + e.getMessage(), e);
 		}
-    }
-
+	}
+	
     public boolean requestRestart() {
     	
     	DialogQuestion q = new DialogQuestion("Restart", "Restart necessary for changes to take effect. Restart now?");
@@ -138,12 +167,12 @@ public class AppUpdater implements UpdatedApplication {
     public static void handleVersionUpdate(final boolean forceDisplay) {
     	    	
     	final MovieManagerConfig config = MovieManager.getConfig();
-    	
-    	log.debug("CheckForProgramUpdates:" + config.getCheckForProgramUpdates());
     	    	    	
     	if (!config.getCheckForProgramUpdates() && !forceDisplay)
     		return;
 
+    	log.debug("handleVersionUpdate");
+    	    	
     	Thread t = new Thread() {
 
     		public void run() { 
@@ -157,8 +186,23 @@ public class AppUpdater implements UpdatedApplication {
 					e1.printStackTrace();
 				}
 				
-				new AppUpdater(forceDisplay);
-
+				AppUpdater appUpdater = new AppUpdater();
+				appUpdater.setForceDisplay(forceDisplay);
+				
+				appUpdater.runUpdate();
+				
+				log.debug("Updates available:" + updatesAvailable());
+				
+				if (forceDisplay) {
+					// Will have no effect if forcedisplay isn't set to true
+					showUpdateWindow();
+				}
+				
+				// Notify about updates
+				if (updater.updatesAvailable()) {
+					updatesAvailableHandler.updatesAvailable(this);
+				}
+				
 				log.debug("Version update check finished.");
     		}
     	};

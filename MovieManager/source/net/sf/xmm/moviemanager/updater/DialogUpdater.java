@@ -64,7 +64,6 @@ public class DialogUpdater extends JDialog implements JupidatorGUI, HyperlinkLis
 	/** Creates new form SwingGUI */
 	public DialogUpdater() {
 		super(MovieManager.getDialog(), false);
-		log.debug("DialogUpdater - initComponents");
 		initComponents();
 		remindButton.requestFocus();
 	}
@@ -130,7 +129,6 @@ public class DialogUpdater extends JDialog implements JupidatorGUI, HyperlinkLis
 					
 			if (icon != null) {
 				IconL.setIcon(new ImageIcon(icon));
-				System.err.println("icon size:" + IconL.getSize());
 			}
 		} catch (MalformedURLException ex) {
 			throw new UpdaterException("Unable to load  icon " + ex.getMessage());
@@ -140,9 +138,11 @@ public class DialogUpdater extends JDialog implements JupidatorGUI, HyperlinkLis
 			skipThisVersionButton.setVisible(false);
 	}
 
+	
+	
 	public void startDialog() {
 		log.debug("DialogUpdater - startDialog");
-		setLocationRelativeTo(null);
+		setLocationRelativeTo(MovieManager.getDialog());
 		setVisible(true);
 	}
 
@@ -342,8 +342,6 @@ public class DialogUpdater extends JDialog implements JupidatorGUI, HyperlinkLis
 
 		buttonPanelLeft = new JPanel();
 		buttonPanelLeft.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 8));
-		//buttonPanelLeft.setLayout(new BorderLayout());
-		//buttonPanelLeft.setLayout(new GridLayout(1, 2, 4, 0));
 				
 		skipThisVersionButton = new JButton();
 		skipThisVersionButton.setText(_("Skip this version"));
@@ -451,11 +449,9 @@ public class DialogUpdater extends JDialog implements JupidatorGUI, HyperlinkLis
 		ActionB.setEnabled(false);
 				
 		if (ActionB.getActionCommand().startsWith("c")) {
-			//System.err.println("callback.actionCancel();");
 			callback.actionCancel();
 		}
 		else {
-			//System.err.println("callback.actionRestart();;");
 			callback.actionRestart();				
 		}
 	}//GEN-LAST:event_ActionBActionPerformed

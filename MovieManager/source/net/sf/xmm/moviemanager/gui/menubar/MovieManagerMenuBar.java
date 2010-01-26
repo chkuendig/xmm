@@ -16,7 +16,7 @@ public interface MovieManagerMenuBar {
 	 **/
 	public void setDatabaseComponentsEnable(boolean enable);
 	public JMenuBar getNewInstance(InternalConfig internalConfig, MovieManagerConfig config);
-	public void newVersionAvailable(String newVersion, String info);
+	public void newVersionAvailable();
 
 	JMenu getMenuFile();
 	JMenu getMenuDatabase();
