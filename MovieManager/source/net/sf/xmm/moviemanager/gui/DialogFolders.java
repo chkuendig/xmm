@@ -93,6 +93,11 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     private JTextField textFieldDatabase;
     private JTextField textFieldConfigLocation;
     
+    JButton buttonSave;
+    JButton buttonCancel;
+    
+    JPanel panelFolders;
+    
     KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
     
     private Color invalidPathColor = new Color(233, 180, 180);
@@ -114,7 +119,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         boolean isMySQL = MovieManager.getIt().getDatabase().isMySQL();
         
         /* Folders panel...*/
-        JPanel panelFolders = new JPanel();
+        panelFolders = new JPanel();
         panelFolders.setBorder(BorderFactory.createEmptyBorder(5,-3,0,-3));
         panelFolders.setLayout(new GridBagLayout());
         GridBagConstraints constraints;
@@ -504,7 +509,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
         
-        JButton buttonSave = new JButton(Localizer.get("DialogFolders.save")); //$NON-NLS-1$
+        buttonSave = new JButton(Localizer.get("DialogFolders.save")); //$NON-NLS-1$
         buttonSave.setToolTipText(Localizer.get("DialogFolders.save-changes")); //$NON-NLS-1$
         buttonSave.setActionCommand("Folders - Save"); //$NON-NLS-1$
         buttonSave.addActionListener(new ActionListener() {
@@ -518,7 +523,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         
         panelButtons.add(buttonSave);
         
-        JButton buttonCancel = new JButton(Localizer.get("DialogFolders.cancel")); //$NON-NLS-1$
+        buttonCancel = new JButton(Localizer.get("DialogFolders.cancel")); //$NON-NLS-1$
         buttonCancel.setToolTipText(Localizer.get("DialogFolders.cancel-tooltip")); //$NON-NLS-1$
         buttonCancel.setActionCommand("Folders - Cancel"); //$NON-NLS-1$
         buttonCancel.addActionListener(new CommandDialogDispose(this));
@@ -534,6 +539,8 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
         getContentPane().add(bottomPanel, BorderLayout.SOUTH);
         
         processPathValidation("Covers&Queries", false); //$NON-NLS-1$
+        
+        setHotkeyModifiers();
         
         /* Packs and sets location... */
         pack();
@@ -1044,7 +1051,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     	fileChooser.setApproveButtonToolTipText(Localizer.get("DialogFolders.filechooser.approve.tooltip")); //$NON-NLS-1$
     	fileChooser.setAcceptAllFileFilterUsed(false);
 
-    	int returnVal = fileChooser.showOpenDialog(MovieManager.getDialog());
+    	int returnVal = fileChooser.showOpenDialog(this);
     	if (returnVal == ExtendedFileChooser.APPROVE_OPTION) {
 
     		/* Verifies that it's a directory... */
@@ -1054,4 +1061,34 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     		}
     	}
     }
+    
+    
+    void setHotkeyModifiers() {
+    	
+    	try {
+			// ALT+S for Save and close
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Save & Close", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonSave.doClick();
+				}
+			}, buttonSave);
+			
+			
+			// ALT+C for Cancel
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()), 
+					"Cancel", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonCancel.doClick();
+				}
+			}, buttonCancel);
+		
+			shortcutManager.setKeysToolTipComponent(panelFolders);
+			
+		} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
+		}
+	}
 }
