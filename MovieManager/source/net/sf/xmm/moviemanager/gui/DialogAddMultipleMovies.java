@@ -706,13 +706,6 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		Dimension minimum = new Dimension(400, 500);
 		
 		setMinimumSize(minimum);
-		
-		if (dim.height < minimum.height)
-			dim.height = minimum.height;
-		
-		if (dim.width < minimum.width)
-			dim.width = minimum.width;
-			
 		setSize(dim);
 		
 		addMultipleMoviesSplitPane.setDividerLocation(0.60);
