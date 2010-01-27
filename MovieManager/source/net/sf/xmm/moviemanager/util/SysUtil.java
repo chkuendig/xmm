@@ -27,9 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -39,12 +36,11 @@ import javax.swing.filechooser.FileSystemView;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
+import net.sf.xmm.moviemanager.mediainfodll.MediaInfo;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerConfigHandler;
 
 import org.apache.log4j.Logger;
 
-//import xeus.jcl.JarClassLoader;
-// import xeus.jcl.JclObjectFactory;
 
 public class SysUtil {
 
@@ -568,7 +564,59 @@ public class SysUtil {
     	return info.toString();
     }
     
+    static boolean mediaInfoLibLoaded = false;
+    
+    public static String getMediaInfoLibVersion() {
+    
+    	try {
+			loadMediaInfoLib();
+			String version = MediaInfo.Option_Static("Info_Version");
+			return version.split("-")[1].trim();
+    	} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage());
+		}
+    	return null;
+    }
+    
 
+	public static void loadMediaInfoLib() throws Exception {
+		
+		if (mediaInfoLibLoaded)
+			return;
+		
+		// Load library on Windows only
+		if (SysUtil.isWindows()) {
+
+			String mediaInfoDll = "lib\\MediaInfo\\x86\\MediaInfo.dll";
+			
+			if (SysUtil.isAMD64()) {
+				log.debug("Using MediaInfo library for amd64");
+				mediaInfoDll = "lib\\MediaInfo\\amd64\\MediaInfo.dll";
+			}
+			else {
+				log.debug("Using MediaInfo library for x86");
+			}
+			
+			File mediaInfo = new File((FileUtil.getFile(mediaInfoDll)).getPath());
+
+			if (mediaInfo.exists()) {
+				LibPathHacker.addDir(FileUtil.getFile("lib").getAbsolutePath());
+				System.load(mediaInfo.getAbsolutePath());
+			}
+			else {
+				String error = "";
+
+				if (!mediaInfo.exists()) {
+					error += "MediaInfo.dll";
+				}
+
+				error = "Following libraries are missing:" + error;
+				throw new Exception(error);
+			}
+		}
+	}
+	
+    
     /**
      * Checks if the current running JRE version is at least 1.6
      * @return   true if JRE is at least 1.6

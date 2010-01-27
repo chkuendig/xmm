@@ -33,46 +33,17 @@ import net.sf.xmm.moviemanager.util.SysUtil;
 
 class FilePropertiesMediaInfo extends FileProperties {
 
-	Logger log = Logger.getLogger(getClass());
+	static Logger log = Logger.getLogger(FilePropertiesMediaInfo.class);
 
 	private String filePath;
 
 	MediaInfo mi;
 	
+
 	FilePropertiesMediaInfo(String filePath) throws Exception {
 		this.filePath = filePath;
 				
-		// Load library on Windows only
-		if (SysUtil.isWindows()) {
-
-			String mediaInfoDll = "lib\\MediaInfo\\x86\\MediaInfo.dll";
-			
-			if (SysUtil.isAMD64()) {
-				log.debug("Using MediaInfo library for amd64");
-				mediaInfoDll = "lib\\MediaInfo\\amd64\\MediaInfo.dll";
-			}
-			else {
-				log.debug("Using MediaInfo library for x86");
-			}
-			
-			File mediaInfo = new File((FileUtil.getFile(mediaInfoDll)).getPath());
-
-			if (mediaInfo.exists()) {
-				LibPathHacker.addDir(FileUtil.getFile("lib").getAbsolutePath());
-				System.load(mediaInfo.getAbsolutePath());
-			}
-			else {
-				String error = "";
-
-				if (!mediaInfo.exists()) {
-					error += "MediaInfo.dll";
-				}
-
-				error = "Following libraries are missing:" + error;
-
-				throw new Exception(error);
-			}
-		}
+		SysUtil.loadMediaInfoLib();
 	
 		mi = new MediaInfo();
 		

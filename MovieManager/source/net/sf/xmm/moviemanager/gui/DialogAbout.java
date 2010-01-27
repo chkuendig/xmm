@@ -81,8 +81,8 @@ public class DialogAbout extends JDialog {
 
 		JTabbedPane aboutTabs = new JTabbedPane();
 		aboutTabs.add(about, " About ");
-		aboutTabs.add(aboutIMdb, "IMDb lib");
-		aboutTabs.add(system, "System info");
+		aboutTabs.add(aboutIMdb, "IMDb Library");
+		aboutTabs.add(system, "System Info");
 
 		JPanel panelButtons = createButtonsPanel();
 
@@ -90,19 +90,8 @@ public class DialogAbout extends JDialog {
 		getContentPane().add(aboutTabs,BorderLayout.CENTER);
 		getContentPane().add(panelButtons,BorderLayout.SOUTH);
 		/* Packs and sets location... */
-
-		setPreferredSize(new Dimension(430, 435));
 		
 		pack();
-
-		Dimension min = getMinimumSize();
-
-		// Ensure minimum size
-		min.width= (min.width < 400) ? 400 : min.width;
-		min.height= (min.height < 435) ? 435 : min.height;
-
-		//setPreferredSize(min);
-		//setSize(min);
 
 		setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
 				(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
@@ -179,8 +168,8 @@ public class DialogAbout extends JDialog {
     	JPanel panelSystem = new JPanel();
     	panelSystem.setLayout(new BorderLayout());
     	
-    	panelSystem.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(8,8,8,8), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAbout.panel-system.title")), //$NON-NLS-1$
-    			BorderFactory.createEmptyBorder(5,5,5,5))));
+    	//panelSystem.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(8,8,8,8), BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogAbout.panel-system.title")), //$NON-NLS-1$
+    	//		BorderFactory.createEmptyBorder(5,5,5,5))));
     	/*JLabel labelSystem = new JLabel("<html>" +  //$NON-NLS-1$
     			SysUtil.getSystemInfo("<br>") + //$NON-NLS-1$
     			"</html>",JLabel.CENTER); //$NON-NLS-1$
@@ -191,7 +180,7 @@ public class DialogAbout extends JDialog {
     	int totalMemory = (int) Runtime.getRuntime().totalMemory()/1024/1024;
     	int maxMemory = (int) Runtime.getRuntime().maxMemory()/1024/1024;
     	
-    	
+    	String mediaInfoLibVersion = SysUtil.getMediaInfoLibVersion();
     	
     	String[][] data = new String[][] {
     			{"Operating System: ",  System.getProperty("os.name")},
@@ -203,17 +192,19 @@ public class DialogAbout extends JDialog {
     			{"Total VM memory: ", totalMemory + "MB"},
     			{"Max VM memory: ", maxMemory + "MB"},
     			{"MovieManager release:", "" + MovieManager.getConfig().sysSettings.getRelease()},
-    			{"IMDb Lib release:", "" + IMDbLib.getRelease() + " (" + IMDbLib.getVersion() + ")"}
-    	    	
+    			{"IMDb Lib release:", "" + IMDbLib.getRelease() + " (" + IMDbLib.getVersion() + ")"},
+    			{"MediaInfoLib version:", (mediaInfoLibVersion == null ? "Not available" : mediaInfoLibVersion)}
     	};
     	
     	DefaultTableModel model = new DefaultTableModel();
     	String [] title = new String[] {"System information", ""};
     	model.setDataVector(data, title);
         JTable table = new JTable(model);	
-        JScrollPane scroll = new JScrollPane(table);
+        JPanel tablePanel = new JPanel();
+        tablePanel.setLayout(new BorderLayout());
+        tablePanel.add(table, BorderLayout.CENTER);
         
-        
+        JScrollPane scroll = new JScrollPane(tablePanel);
         panelSystem.add(scroll, BorderLayout.CENTER);
     	return panelSystem;
     }
