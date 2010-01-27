@@ -306,7 +306,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		});
 		
 		/* MenuItem VersionInfo. */
-		JMenuItem menuItemVersionInfo = new JMenuItem("Version Info"); //$NON-NLS-1$
+		JMenuItem menuItemVersionInfo = new JMenuItem("Show available updates"); //$NON-NLS-1$
 		mUpdate.add(menuItemVersionInfo);
 
 		menuItemVersionInfo.addActionListener(new ActionListener() {
