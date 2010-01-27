@@ -172,7 +172,7 @@ public class IMDBTest  {
 
 	}
 	
-	@Test
+	//@Test
 	public void dataRetrievalTest() throws Exception {
 		
 		IMDbScraper imdb = null;
@@ -254,7 +254,7 @@ public class IMDBTest  {
 		assertEquals(expectedColor, movie.getColour());		
 	}
 	
-	@Test
+	//@Test
 	public void dataRetrievalSeriesTest() throws Exception {
 		
 		IMDbScraper imdb = null;
@@ -334,7 +334,7 @@ public class IMDBTest  {
 	}
 	
 	
-	@Test
+	//@Test
 	public void dataRetrievalEpisodeTest() throws Exception {
 		
 		IMDbScraper imdb = null;
@@ -391,7 +391,7 @@ public class IMDBTest  {
 		assertEquals(expectedColor, series.getColour());		
 	}
 	
-	@Test
+	//@Test
 	public void dataRetrievalMultipleDirectorsTest() throws Exception {
 		
 		IMDbScraper imdb = null;
@@ -416,4 +416,69 @@ public class IMDBTest  {
 		assertEquals(expectedDirector, movie.getDirectedBy());
 		assertEquals(expectedWriter, movie.getWrittenBy());
 	}
+	
+	@Test
+	public void dataRetrievalTVSeriesTest() throws Exception {
+		
+		IMDbScraper imdb = null;
+		try {
+			imdb = new IMDbScraper();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+		
+		// Buffy
+		StringBuffer data = imdb.getURLData("0370053").getData();
+		
+		ModelIMDbEntry series = imdb.grabInfo("0370053", data);
+		
+		assertTrue("Not detected as a series!", series.isSeries());
+				
+		String expectedTitle = "\"Walking with Cavemen\"";
+		String expectedDate = "2003";
+		String expectedDirector = "";
+		String expectedWriter = "";
+		String expectedGenre = "Documentary, Short, History";
+		String expectedCountry = "UK";
+		String expectedLanguage = "English";
+		String expectedPlot = "The great follow-up to 'Walking with Dinosaurs' and 'Walking with Beasts', presented by Professor Robert Winston, explains the story of human evolution.";
+		String expectedCast = "Robert Winston (Himself - Presenter (4 episodes, 2003)), Alec Baldwin (Narrator (USA version) (4 episodes, 2003)), Christian Bradley (Various hominids (4 episodes, 2003)), Alex Palmer (Various hominids (4 episodes, 2003)), Oliver Parham (Various hominids (4 episodes, 2003)), David Rubin (Various hominids (4 episodes, 2003)), Florence Sparham (Various hominids (4 episodes, 2003)), Marva Alexander (Various hominids (3 episodes, 2003)), Rachel Essex (Various hominids (3 episodes, 2003)), Faroque Khan (Various hominids (3 episodes, 2003)), Suzanne Cave (Various hominids (2 episodes, 2003)), Ruth Dawes (Various hominids (2 episodes, 2003)), Anthony Taylor (Various hominids (2 episodes, 2003)), Badria Timimi (Various hominids (2 episodes, 2003))";
+		String expectedWebRuntime = "UK:30 min (4 episodes), USA:100 min";
+		String expectedWebSoundMix = "";
+		String expectedAwards = "";
+		String expectedMpaa = "";
+		String expectedAka = 
+			"Caminando entre cavernícolas (Spain) [es]\n" + 
+			"I huleboernes verden (Denmark) [da]\n" + 
+			"Luolamiesten matkassa (Finland) [fi]\n" + 
+			"Perpatontas me tous anthropous ton spilaion (Greece) [el]";
+
+	
+		String expectedCertification = "Singapore:PG";
+		String expectedColor = "Color";
+				
+		assertTrue(Double.parseDouble(series.getRating()) > 5);
+		
+		assertEquals(expectedTitle, series.getTitle());
+		assertEquals(expectedDate, series.getDate());
+		assertEquals(expectedDirector, series.getDirectedBy());
+		assertEquals(expectedWriter, series.getWrittenBy());
+		assertEquals(expectedGenre, series.getGenre());
+		assertEquals(expectedCountry, series.getCountry());
+		assertEquals(expectedLanguage, series.getLanguage());
+		assertEquals(expectedPlot, series.getPlot());
+		assertEquals(expectedCast, series.getCast());
+		assertEquals(expectedWebRuntime, series.getWebRuntime());
+		assertEquals(expectedWebSoundMix, series.getWebSoundMix());
+		assertEquals(expectedAwards, series.getAwards());
+		assertEquals(expectedMpaa, series.getMpaa());
+		assertEquals(expectedAka, series.getAka());
+		assertEquals(expectedCertification, series.getCertification());
+		assertEquals(expectedColor, series.getColour());		
+		
+		
+	}
+	
 }

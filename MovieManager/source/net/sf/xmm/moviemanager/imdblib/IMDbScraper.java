@@ -177,9 +177,7 @@ public class IMDbScraper implements IMDb {
      */
     private ModelIMDbEntry parseData(String urlID, StringBuffer data) throws Exception {
 		
-        String date = "", title = "", directedBy = "", writtenBy = "", genre = "", rating = "", colour = "", aka = "", 
-        country = "", language = "", mpaa = "", soundMix = "", runtime = "", certification = "", awards = "", plot = "", cast = "", 
-        coverURL = "", coverName = "", seasonNumber = "", episodeNumber = "";
+        String date = "", title = "", seasonNumber = "", episodeNumber = "";
     	  
     	//long time = System.currentTimeMillis();
     	
@@ -191,7 +189,7 @@ public class IMDbScraper implements IMDb {
 		boolean isEpisode = false;
 		boolean isSeries = false;
 		
-		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
+		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
 			
 		try {
 			/* Processes the data... */
@@ -246,7 +244,7 @@ public class IMDbScraper implements IMDb {
 			dataModel.setDate(date);
 			dataModel.setUrlID(urlID);
 			
-			coverURL = retrieveUrlCover(data, dataModel);
+			String coverURL = retrieveUrlCover(data, dataModel);
 	    				
 			final ReentrantLock lock = new ReentrantLock();
 						
@@ -276,7 +274,7 @@ public class IMDbScraper implements IMDb {
 
 				
 				try {
-					rating = HttpUtil.decodeHTML(data.substring(start, end));
+					String rating = HttpUtil.decodeHTML(data.substring(start, end));
 					dataModel.setRating(rating);
 				} catch (IndexOutOfBoundsException e) {
 					log.debug("No rating found for " + title  + " ("+urlID+")");
@@ -292,6 +290,8 @@ public class IMDbScraper implements IMDb {
 			
 			String tmp = "";
 			ArrayList <String> list;
+			
+			String directedBy = "";
 			
 			if (classInfo.containsKey("Director:")) {
 				directedBy = getDecodedClassInfo("Director", (String) classInfo.get("Director:"));
@@ -336,6 +336,8 @@ public class IMDbScraper implements IMDb {
 				
 				list = getLinkContentName(tmp);
 
+				String writtenBy = "";
+				
 				while (!list.isEmpty()) {
 					if (!writtenBy.equals(""))
 						writtenBy += ", ";
@@ -347,62 +349,63 @@ public class IMDbScraper implements IMDb {
 			}
 			
 			if (classInfo.containsKey("Genre:")) {
-				genre = getDecodedClassInfo("Genre:", (String) classInfo.get("Genre:"));
+				String genre = getDecodedClassInfo("Genre:", (String) classInfo.get("Genre:"));
 				genre = genre.replaceAll("(more)$", "");
 				dataModel.setGenre(genre);
 			}
+						
+			if (classInfo.containsKey("Plot:")) {
+				String plot = getDecodedClassInfo("Plot:", (String) classInfo.get("Plot:"));
+				dataModel.setPlot(plot);
+			}
 			
-			if (classInfo.containsKey("Plot:"))
-				plot = getDecodedClassInfo("Plot:", (String) classInfo.get("Plot:"));
-			          
-			
-			cast = getDecodedClassInfo("class=\"cast\">", data);
+			String cast = getDecodedClassInfo("class=\"cast\">", data);
 			cast = cast.replaceAll(" \\.\\.\\.", ",");
 			cast = HttpUtil.decodeHTML(cast);
 			
 			dataModel.setCast(cast);
 			
 			if (classInfo.containsKey("Also Known As:")) {
-				aka = getDecodedClassInfo("Also Known As:", (String) classInfo.get("Also Known As:"));
+				String aka = getDecodedClassInfo("Also Known As:", (String) classInfo.get("Also Known As:"));
 				aka = aka.trim();
 				dataModel.setAka(aka);
 			}
 			
-			mpaa = getDecodedClassInfo("<a href=\"/mpaa\">MPAA</a>:", data);
+			String mpaa = getDecodedClassInfo("<a href=\"/mpaa\">MPAA</a>:", data);
 			dataModel.setMpaa(mpaa);
 			
 			if (classInfo.containsKey("Runtime:")) {
-				runtime = getDecodedClassInfo("Runtime:", (String) classInfo.get("Runtime:"));
+				String runtime = getDecodedClassInfo("Runtime:", (String) classInfo.get("Runtime:"));
 				dataModel.setWebRuntime(runtime);
 			}
 			
 			if (classInfo.containsKey("Country:")) {
-				country = getDecodedClassInfo("Country:", (String) classInfo.get("Country:"));
+				String country = getDecodedClassInfo("Country:", (String) classInfo.get("Country:"));
 				dataModel.setCountry(country);
 			}
 			
 			if (classInfo.containsKey("Language:")) {
-				language = getDecodedClassInfo("Language:", (String) classInfo.get("Language:"));
+				String language = getDecodedClassInfo("Language:", (String) classInfo.get("Language:"));
 				dataModel.setLanguage(language);
 			}
 			
 			if (classInfo.containsKey("Color:")) {
-				colour = getDecodedClassInfo("Color:", (String) classInfo.get("Color:"));
+				String colour = getDecodedClassInfo("Color:", (String) classInfo.get("Color:"));
 				dataModel.setColour(colour);
 			}
 			
 			if (classInfo.containsKey("Sound Mix:")) {
-				soundMix = getDecodedClassInfo("Sound Mix:", (String) classInfo.get("Sound Mix:"));
+				String soundMix = getDecodedClassInfo("Sound Mix:", (String) classInfo.get("Sound Mix:"));
 				dataModel.setWebSoundMix(soundMix);
 			}
 			
 			if (classInfo.containsKey("Certification:")) {
-				certification = getDecodedClassInfo("Certification:", (String) classInfo.get("Certification:"));
+				String certification = getDecodedClassInfo("Certification:", (String) classInfo.get("Certification:"));
 				dataModel.setCertification(certification);
 			}
 			
 			if (classInfo.containsKey("Awards:")) {
-				awards = getDecodedClassInfo("Awards:", (String) classInfo.get("Awards:"));
+				String awards = getDecodedClassInfo("Awards:", (String) classInfo.get("Awards:"));
 				awards = awards.replaceAll("(more)$", "");
 				dataModel.setAwards(awards);
 			}
