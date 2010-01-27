@@ -335,7 +335,6 @@ public class LookAndFeelManager {
     		    		
     		GUIUtil.invokeAndWait(new Runnable() {
     			public void run() {
-    				System.err.println("setLookAndFeel invokeandwait laf:" + className);
     				try {
     					UIManager.setLookAndFeel(className);
     				} catch (Exception e) {
