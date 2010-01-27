@@ -199,7 +199,7 @@ public class AppUpdater implements UpdatedApplication {
 				}
 				
 				// Notify about updates
-				if (updater.updatesAvailable()) {
+				if (updater.updatesAvailable() && !forceDisplay) {
 					updatesAvailableHandler.updatesAvailable(this);
 				}
 				
