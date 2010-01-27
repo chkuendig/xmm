@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -199,8 +200,17 @@ public class DialogAbout extends JDialog {
     	DefaultTableModel model = new DefaultTableModel();
     	String [] title = new String[] {"System information", ""};
     	model.setDataVector(data, title);
-        JTable table = new JTable(model);	
+        JTable table = new JTable(model);
+        
+        // Avoid white background
+        table.setBackground(panelSystem.getBackground());
+        
         JPanel tablePanel = new JPanel();
+                
+        tablePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(8,8,8,8) , BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " System Info "), //$NON-NLS-1$
+    			BorderFactory.createEmptyBorder(5,5,5,5))));
+    	
+        
         tablePanel.setLayout(new BorderLayout());
         tablePanel.add(table, BorderLayout.CENTER);
         
