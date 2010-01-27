@@ -575,6 +575,10 @@ public class SysUtil {
     	} catch (Exception e) {
 			log.warn("Exception:" + e.getMessage());
 		}
+    	catch (UnsatisfiedLinkError e) {
+    		log.warn("UnsatisfiedLinkError:" + e.getMessage());
+    		log.debug("Failed to load MediaInfo library");
+    	}
     	return null;
     }
     
@@ -614,6 +618,37 @@ public class SysUtil {
 				throw new Exception(error);
 			}
 		}
+		
+		/*
+		if (SysUtil.isMac()) {
+
+			try {
+				System.err.println("load media info for OSX");
+				
+				String mediaInfoDll = "/Users/bro/Desktop/mediainfo/MediaInfoLib/libmediainfo.0.0.0.dylib";
+							
+				File mediaInfo = new File((FileUtil.getFile(mediaInfoDll)).getPath());
+
+				
+				
+				if (mediaInfo.exists()) {
+					System.err.println("Loading:" + mediaInfo.getAbsolutePath());
+					//LibPathHacker.addDir("/Users/bro/Desktop/mediainfo/MediaInfoLib/");
+					//System.load(mediaInfo.getAbsolutePath());
+					
+					System.err.println("libpath:" + System.getProperty("java.library.path"));
+								
+					System.loadLibrary("libmediainfo");
+				}
+				else {
+					System.err.println("File doesnt exist");
+				}
+			} catch (UnsatisfiedLinkError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		*/
 	}
 	
     
