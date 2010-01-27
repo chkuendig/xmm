@@ -2348,7 +2348,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				public void actionPerformed(ActionEvent ae) {
 					buttonSave.doClick();
 				}
-			}, buttonCancel);
+			}, buttonSave);
 					
 			
 			// ALT+D for DVD Info
@@ -2388,7 +2388,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				public void actionPerformed(ActionEvent ae) {
 					buttonCancel.doClick();
 				}
-			}, buttonSave);
+			}, buttonCancel);
 					
 			// ALT+N for Notes field 
 			shortcutManager.registerKeyboardShortcut(
