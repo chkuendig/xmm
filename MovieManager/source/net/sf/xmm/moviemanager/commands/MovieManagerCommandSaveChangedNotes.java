@@ -36,7 +36,7 @@ import net.sf.xmm.moviemanager.models.ModelMovie;
 
 public class MovieManagerCommandSaveChangedNotes implements ActionListener {
 
-	Logger log = Logger.getLogger(getClass());
+	static Logger log = Logger.getLogger(MovieManagerCommandSaveChangedNotes.class);
 	
 	/**
 	 * Executes the command.
@@ -69,8 +69,9 @@ public class MovieManagerCommandSaveChangedNotes implements ActionListener {
 
 				node = ((DefaultMutableTreeNode) enumeration.nextElement());
 				model = (ModelEntry) node.getUserObject();
-
+				
 				if (model.hasChangedNotes) {
+					log.debug("Saving changed notes for movie " + model.getTitle() + " - cover:" + model.getCover());
 					MovieManager.getIt().getDatabase().setGeneralInfo((ModelMovie) model);
 				}
 
