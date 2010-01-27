@@ -65,9 +65,9 @@ public class DialogTVSeries extends JDialog {
     
     private JList listMovies;
     private JPanel panelMoviesList;
-    public JButton buttonSelectAll;
-    public JButton buttonSelect;
-    public JButton buttonOk;
+    private JButton buttonSelectAll;
+    private JButton buttonSelect;
+    private JButton buttonCancel;
     
     KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
     
@@ -81,6 +81,7 @@ public class DialogTVSeries extends JDialog {
         GUIUtil.enableDisposeOnEscapeKey(shortcutManager);
         
         createListDialog(null);
+        setHotkeyModifiers();
     }
     
     void createListDialog(DefaultListModel list) {
@@ -165,14 +166,11 @@ public class DialogTVSeries extends JDialog {
         panelRegularButtons.add(buttonSelect);
         
         
-        buttonOk = new JButton(Localizer.get("DialogTVDOTCOM.button.cancel.text")); //$NON-NLS-1$
-        buttonOk.setToolTipText(Localizer.get("DialogTVDOTCOM.button.cancel.tooltip")); //$NON-NLS-1$
-        
-        buttonOk.setActionCommand("GetIMDBInfo - Cancel"); //$NON-NLS-1$
-        
-       
-        
-        panelRegularButtons.add(buttonOk);
+        buttonCancel = new JButton(Localizer.get("DialogTVDOTCOM.button.cancel.text")); //$NON-NLS-1$
+        buttonCancel.setToolTipText(Localizer.get("DialogTVDOTCOM.button.cancel.tooltip")); //$NON-NLS-1$
+        buttonCancel.setActionCommand("GetIMDBInfo - Cancel"); //$NON-NLS-1$
+                
+        panelRegularButtons.add(buttonCancel);
         
         all.add(panelRegularButtons,BorderLayout.SOUTH);
         
@@ -208,8 +206,12 @@ public class DialogTVSeries extends JDialog {
         return buttonSelect;
     }
  
-    public JButton getButtonOk() {
-        return buttonOk;
+    public JButton getButtonSelectAll() {
+        return buttonSelectAll;
+    }
+ 
+    public JButton getButtonCancel() {
+        return buttonCancel;
     }
  
     
@@ -233,6 +235,54 @@ public class DialogTVSeries extends JDialog {
 	   }
 	   return this;
 	  }
+	}
+    
+    
+	private void setHotkeyModifiers() {
+	
+		/*
+		te JList listMovies;
+	    private JPanel panelMoviesList;
+	    public JButton buttonSelectAll;
+	    public JButton buttonSelect;
+	    public JButton buttonOk;
+	    */
+		
+		try {
+			// ALT+C for Select
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Choose selected title(s)", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonSelect.doClick();
+				}
+			}, buttonSelect);
+				
+			// ALT+A for Select
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Select All", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonSelectAll.doClick();
+				}
+			}, buttonSelectAll);
+				
+						
+			// ALT+D for skip (Discard)
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Discard this movie", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonCancel.doClick();
+				}
+			}, buttonCancel);
+			
+			
+			
+			shortcutManager.setKeysToolTipComponent(panelMoviesList);
+		} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
+		}
 	}
 }
 

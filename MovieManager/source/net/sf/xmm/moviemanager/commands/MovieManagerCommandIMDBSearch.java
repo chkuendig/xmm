@@ -95,7 +95,7 @@ public class MovieManagerCommandIMDBSearch {
 	                executeCommandSelect();
 	            }});
 		
-		dialogTVSeries.buttonOk.addActionListener(new ActionListener() {
+		dialogTVSeries.getButtonCancel().addActionListener(new ActionListener() {
 	            public void actionPerformed(ActionEvent event) {
 	                log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
 	                dialogTVSeries.dispose();
@@ -162,7 +162,7 @@ public class MovieManagerCommandIMDBSearch {
 	public void executeSeasonSearch(JDialog parent) {
 		
 		execute(parent);
-		dialogTVSeries.buttonSelect.setEnabled(true);
+		dialogTVSeries.getButtonSelect().setEnabled(true);
 		mode = 1;
 		handleGetSeasons(new ModelIMDbSearchHit(movieInfoModel.model.getUrlKey(), movieInfoModel.model.getTitle()));
 	}
@@ -178,12 +178,12 @@ public class MovieManagerCommandIMDBSearch {
     		
 		if (seasonList.size() == 0) {
 			seasonList.addElement(new ModelIMDbSearchHit("-1", "No seasons found", 0));
-			dialogTVSeries.buttonSelect.setEnabled(false);
-			dialogTVSeries.buttonSelectAll.setEnabled(false);
+			dialogTVSeries.getButtonSelect().setEnabled(false);
+			dialogTVSeries.getButtonSelectAll().setEnabled(false);
 		}
 		else if (!movieInfoModel.isEditMode()) {
 			dialogTVSeries.getMoviesList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			dialogTVSeries.buttonSelectAll.setEnabled(true);
+			dialogTVSeries.getButtonSelectAll().setEnabled(true);
 		}
 		
 		dialogTVSeries.getMoviesList().setModel(seasonList);
@@ -253,7 +253,7 @@ public class MovieManagerCommandIMDBSearch {
 				
 				if (!movieInfoModel.isEditMode()) {
 					dialogTVSeries.getMoviesList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					dialogTVSeries.buttonSelectAll.setEnabled(true);
+					dialogTVSeries.getButtonSelectAll().setEnabled(true);
 				}
 								
 				dialogTVSeries.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -262,9 +262,9 @@ public class MovieManagerCommandIMDBSearch {
 			/* Get episode info */
 			else if (mode == 2) {
 
-				dialogTVSeries.buttonSelect.setEnabled(false);
-				dialogTVSeries.buttonSelectAll.setEnabled(false);
-				dialogTVSeries.buttonOk.setEnabled(false);
+				dialogTVSeries.getButtonSelect().setEnabled(false);
+				dialogTVSeries.getButtonSelectAll().setEnabled(false);
+				dialogTVSeries.getButtonCancel().setEnabled(false);
 								
 				final int movieKey = ((ModelEpisode) movieInfoModel.getModel()).getMovieKey();
 
@@ -378,8 +378,8 @@ public class MovieManagerCommandIMDBSearch {
 								DialogAlert alert = new DialogAlert(dialogTVSeries, "Error occured", "Failed to retrieve info for "+error+ (error == 1 ? " episode" : " episodes"));
 								GUIUtil.show(alert, true);
 								
-								dialogTVSeries.getButtonOk().setEnabled(true);
-								dialogTVSeries.getButtonOk().setText("Ok");
+								dialogTVSeries.getButtonCancel().setEnabled(true);
+								dialogTVSeries.getButtonCancel().setText("Ok");
 							}
 							else {
 								dialogTVSeries.dispose();
