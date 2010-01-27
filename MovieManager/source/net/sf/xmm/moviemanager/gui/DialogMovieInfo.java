@@ -2333,7 +2333,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		try {
 			// ALT+S for Save and close
 			shortcutManager.registerKeyboardShortcut(
-					KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask()),
 					"Save & Close", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					buttonSaveAndClose.doClick();
@@ -2343,7 +2343,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			
 			// ALT+A for Save and Clear
 			shortcutManager.registerKeyboardShortcut(
-					KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), 
+					KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyboardShortcutManager.getToolbarShortcutMask()), 
 					"Save & Clear", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					buttonSave.doClick();
@@ -2353,7 +2353,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			
 			// ALT+D for DVD Info
 			shortcutManager.registerKeyboardShortcut(
-					KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyboardShortcutManager.getToolbarShortcutMask()),
 					"Get DVD Info", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					buttonGetDVDInfo.doClick();
@@ -2363,7 +2363,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			
 			// ALT+F for File info
 			shortcutManager.registerKeyboardShortcut(
-					KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyboardShortcutManager.getToolbarShortcutMask()),
 					"Get File Info", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					buttonGetFileInfo.doClick();
@@ -2373,7 +2373,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			
 			// ALT+M for IMDb info
 			shortcutManager.registerKeyboardShortcut(
-					KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					KeyStroke.getKeyStroke(KeyEvent.VK_M, KeyboardShortcutManager.getToolbarShortcutMask()),
 					"Get IMDb Info", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					buttonGetIMDBInfo.doClick();
@@ -2383,7 +2383,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			
 			// ALT+C for Cancel
 			shortcutManager.registerKeyboardShortcut(
-					KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
 					"Cancel", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					buttonCancel.doClick();
@@ -2392,7 +2392,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 					
 			// ALT+N for Notes field 
 			shortcutManager.registerKeyboardShortcut(
-					KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyboardShortcutManager.getToolbarShortcutMask()),
 					"Give focus to Notes text area", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					textAreaNotes.requestFocusInWindow();
@@ -2401,7 +2401,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 			// ALT+I for additionalInfo combobox 
 			shortcutManager.registerKeyboardShortcut(
-					KeyStroke.getKeyStroke(KeyEvent.VK_I, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyboardShortcutManager.getToolbarShortcutMask()),
 					"Give focus to additional info dropdown", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					additionalInfoFields.requestFocusInWindow();
@@ -2411,7 +2411,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 			// ALT+V for additionalInfo value field 
 			shortcutManager.registerKeyboardShortcut(
-					KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyboardShortcutManager.getToolbarShortcutMask()),
 					"Give focus to additional info value field", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					getAdditionalInfoValuePanel().getComponent(0).requestFocusInWindow();
@@ -2420,7 +2420,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 			// ALT+T for title field 
 			shortcutManager.registerKeyboardShortcut(
-					KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
+					KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyboardShortcutManager.getToolbarShortcutMask()),
 					"Give focus to the title field", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					movieTitle.requestFocusInWindow();
