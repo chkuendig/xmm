@@ -1212,7 +1212,14 @@ public class IMDbScraper implements IMDb {
     				
     				String name = nm.get(0);
 					decoded.append(name);
-					decoded.append(" (" + character + "), ");
+					
+					if (!character.trim().equals("")) {
+						if (!(character.trim().startsWith("(") && character.trim().endsWith(")")))
+							character = "(" + character + ")";
+						decoded.append(character);
+					}
+					
+					decoded.append(", ");
 					
     				/*
     				Matcher m = p.matcher(castSplit[i]);
