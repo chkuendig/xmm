@@ -31,7 +31,7 @@ import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.LibPathHacker;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
-class FilePropertiesMediaInfo extends FileProperties {
+public class FilePropertiesMediaInfo extends FileProperties {
 
 	static Logger log = Logger.getLogger(FilePropertiesMediaInfo.class);
 
@@ -40,7 +40,7 @@ class FilePropertiesMediaInfo extends FileProperties {
 	MediaInfo mi;
 	
 
-	FilePropertiesMediaInfo(String filePath) throws Exception {
+	public FilePropertiesMediaInfo(String filePath) throws Exception {
 		this.filePath = filePath;
 				
 		SysUtil.loadMediaInfoLib();
