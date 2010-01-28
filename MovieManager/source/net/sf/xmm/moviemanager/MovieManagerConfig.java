@@ -1784,9 +1784,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		return substanceSkin;
 	}
 
-	public void setSubstanceSkin(String substanceSkin) {
-		System.err.println("setSubstanceSkin:"  + substanceSkin);
-		
+	public void setSubstanceSkin(String substanceSkin) {		
 		if (substanceSkin != null && !substanceSkin.equals(""))
 			this.substanceSkin = substanceSkin;
 	}
