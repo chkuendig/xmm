@@ -504,7 +504,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		/* MenuItem Preferences.
 	         For some reason, addMovie KeyEvent.VK_A doesn't work when focused
 	         on the selected movie or the filter*/
-
+		
 		menuItemPrefs = new JMenuItem(Localizer.get("DialogMovieManager.menu.tools.preferences"),'P'); //$NON-NLS-1$
 		menuItemPrefs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.SHIFT_DOWN_MASK));
 		menuItemPrefs.setActionCommand("Preferences"); //$NON-NLS-1$
@@ -522,6 +522,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		this.menuItemAddMultipleMovies = menuItemAddMultipleMovies;
 	
 		JMenuItem menuItemUpdateIMDbInfo = new JMenuItem(Localizer.get("DialogMovieManager.menu.tools.updateIMDbInfo"),'U'); //$NON-NLS-1$
+		menuItemUpdateIMDbInfo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		menuItemUpdateIMDbInfo.setActionCommand("Update IMDb Info"); //$NON-NLS-1$
 		menuItemUpdateIMDbInfo.addActionListener(new MovieManagerCommandUpdateIMDBInfo());
 
@@ -925,7 +926,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		
 		
 		/* MenuItem HomePage. */
-		JMenuItem menuItemHomePage = new JMenuItem(Localizer.get("DialogMovieManager.menu.help.homepage"),'P'); //$NON-NLS-1$
+		JMenuItem menuItemHomePage = new JMenuItem(Localizer.get("DialogMovieManager.menu.help.homepage")); //$NON-NLS-1$
 		menuItemHomePage.setActionCommand("OpenPage (Home Page)"); //$NON-NLS-1$
 		menuItemHomePage.addActionListener(new MovieManagerCommandOpenPage("http://xmm.sourceforge.net/")); //$NON-NLS-1$
 		menuHelp.add(menuItemHomePage);
