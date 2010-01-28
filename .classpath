@@ -31,6 +31,6 @@
 	<classpathentry kind="lib" path="MovieManager/lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/jna-3.2.4.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/balloontip-1.0.jar"/>
-	<classpathentry kind="lib" path="MovieManager/lib/jupidator-0.3.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/jupidator.jar"/>
 	<classpathentry kind="output" path="MovieManager"/>
 </classpath>
