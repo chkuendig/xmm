@@ -6,8 +6,6 @@
 		MeDs Movie Manager build file
   </description>
 
-
-
 	<target name="Welcome">
 <echo>
 	============================================
@@ -423,12 +421,10 @@
 
 
 	<target name="update-path">
-		
 		<echo>
-	   MovieManager/MovieManager.jar bro3,xmm@frs.sourceforge.net:/home/frs/project/x/xm/xmm/Updates/MovieManager/2.9.0/
+	   MovieManager/MovieManager.jar bro3,xmm@frs.sourceforge.net:/home/pfs/project/x/xm/xmm/Updates/MovieManager/2.9.0/
 		</echo>	
-					
-	</target>
+   </target>
 	
 	
 	
@@ -466,9 +462,23 @@
 
 		<mkdir dir="${dist}" />
 
+		<!-- <symlink action="delete" link="${mac-dist}/Applications/"/>  -->
+		
+		<!--  Deleting the symlink to /Applications. if this is removed first, the entire /Applications directory will be removed. -->
+		
+		
+		<!--
+		<symlink action="delete" link="${mac-dist}/Applications/"/>
+		 -->
+		
+		<exec executable="rm">
+			<arg line="${mac-dist}/Applications"/>
+		</exec>
+		 
+		
 		<!--  Delete files and directories in dist -->
 		<delete includeemptydirs="true">
-			<fileset dir="${dist}" includes="**/*" />
+			<fileset dir="${dist}" includes="**/*" followsymlinks="false"/>
 		</delete>
 
 		<delete includeemptydirs="true" quiet="true">
@@ -515,7 +525,7 @@
 	<target name="makeLookAndFeelIni"
 		description="Creates a lookAndFeels.ini file used in the distribution packages.">
 
-		<!-- Since new line is added, a carriage return i added before to be windows compatible -->
+		<!-- Since new line is added, a carriage return is added before to be windows compatible -->
 		<echo file="${dist-tmp}/lookAndFeels.ini" append="false">${newline}
 Here you can add new Look and Feels's.${line.separator}${newline}
 Make sure the look and Feel jar-file is placed in the 'LookAndFeels' directory${newline}
@@ -590,7 +600,6 @@ ${newline}
 "Compiere"                     "org.compiere.plaf.CompiereLookAndFeel"                                "1.5"${newline}
 "Squareness"                   "net.beeger.squareness.SquarenessLookAndFeel"                          "1.4"${newline}
 "Lipstik"                      "com.lipstikLF.LipstikLookAndFeel"                                     "1.5"${newline}
-"eaSynth"                      "com.easynth.lookandfeel.EaSynthLookAndFeel"                           "1.5"${newline}
 "NimROD"                       "com.nilo.plaf.nimrod.NimRODLookAndFeel"                               "1.5"${newline}
 </echo>
 
@@ -785,7 +794,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 	 
 </target>
 	
-
+	
 <!-- Readme -->
 <target name="readme" depends="find-rst2html">
 
@@ -794,8 +803,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
       <pathelement location="${ant-contrib-path}"/>
 	</classpath>
   </taskdef>
-  
-  
+    
   <fail message="rst2html was not found, readme can not be generated.">
 	<condition>
       <not>
@@ -804,7 +812,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 	</condition>
   </fail>
   
-  <exec executable="rst2html">
+  <exec executable="${rst2html-pathToUse}">
     <arg value="--stylesheet=xmm.css"/>
     <arg value="Readme.txt"/>
     <arg value="Readme.html"/>
@@ -815,7 +823,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 
 
 
-  <property name="app-name" value="MeD's MovieManager.app"/>
+  <property name="app-name" value="MeD's Movie Manager.app"/>
   <property name="dmg-file" value="MovieManager.v.${versionName}.dmg"/>
   <property name="mac-dist" value="${dist}/mac"/>
   <property name="dist-tmp" value="${dist}/tmp/"/>
@@ -903,36 +911,46 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 		   <echo>This is not OS X. Must run OS X to create dmg bundle.</echo>
 	 </target>
 	
+	
+	
   <!-- DIST Mac  -->
  <target name="dist-mac" depends="build-mac, isMacCheckAlert" if="isOSX">
    
    <echo message="dist-mac: ${ant.file}"/>
    
  	<!-- Copy license files  -->
- 	    <mkdir dir="${mac-dist}/License"/>
- 	    <copy todir="${mac-dist}/License">
- 	         <fileset dir="License"/>
- 	    </copy>
+ 	<mkdir dir="${mac-dist}/License"/>
+ 	<copy todir="${mac-dist}/License">
+ 	    <fileset dir="License"/>
+ 	</copy>
 
  	<copy file="Readme.html" todir="${mac-dist}"/>
  	<copy file="Changelog.html" todir="${mac-dist}"/>
  	 	
+ 	<!-- Create symbolic link to /Applications directory -->
+ 	<exec executable="ln" failonerror="false">
+ 		<arg value="-s"/>
+ 		<arg value="/Applications/"/>
+ 		<arg value="${mac-dist}/Applications"/>
+ 	</exec>
+ 	
+ 	
     <fileset file="*.dmg" />
  	
  	<!-- Delete old file  -->
     <delete file="${mac-dist}/${dmg-file}"/>
  	
-		<exec executable="hdiutil" failonerror="true">
-			<arg value="create"/>
-			<arg value="-srcfolder"/>
-			<arg value="${mac-dist}/"/>
-			<arg value="-fs"/>
-			<arg value="HFS+"/>
-			<arg value="-volname"/>
-			<arg value="MeD's Movie Manager"/>
-			<arg value="${mac-dist}/temp.dmg"/>
-			<arg value="-ov"/>
-		</exec>
+	<exec executable="hdiutil" failonerror="true">
+		<arg value="create"/>
+		<arg value="-srcfolder"/>
+		<arg value="${mac-dist}/"/>
+		<arg value="-fs"/>
+		<arg value="HFS+"/>
+		<arg value="-volname"/>
+		<arg value="MeD's Movie Manager"/>
+		<arg value="${mac-dist}/temp.dmg"/>
+		<arg value="-ov"/>
+	</exec>
     	
     	<exec executable="hdiutil" failonerror="true">
     		<arg line="convert ${mac-dist}/temp.dmg -format UDZO -imagekey zlib-level=-9 -o ${mac-dist}/${dmg-file} -ov"/>
