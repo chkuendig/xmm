@@ -705,6 +705,8 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 	&lt;classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/&gt;
 	&lt;classpathentry kind="lib" path="MovieManager/lib/skinlf.jar"/&gt;
 	&lt;classpathentry kind="lib" path="MovieManager/lib/jna-3.2.4.jar"/&gt;
+	&lt;classpathentry kind="lib" path="MovieManager/lib/balloontip-1.0.jar"/&gt;
+	&lt;classpathentry kind="lib" path="MovieManager/lib/jupidator.jar"/&gt;
 	&lt;classpathentry kind="output" path="MovieManager"/&gt;
 &lt;/classpath&gt;
 </echo>
