@@ -154,7 +154,7 @@
 		   "/>
 
 
-	<!--	   log4j.properties, -->
+	
 	<property name="config_file_list"
 		value="castor.properties,
 		   mapping.xml,
@@ -162,7 +162,6 @@
 		   Temp.mdb
 		   " />
 
-	<!-- <property name="$(base)/base.dir"  location=""/> -->
 	<property name="source" value="${base}/source/" />
 
 	<path id="izpack.claspath">
@@ -232,6 +231,7 @@
 
 	<target name="predist" description="Execute before using the dist directory" depends="build">
 	  <mkdir dir="${dist}" />
+	  <mkdir dir="${dist-tmp}" />
 	  <antcall target="makeLookAndFeelIni" />
 	  <antcall target="makeLog4jProperties" />
 	  <antcall target="makeEclipseProjectFiles" />
@@ -256,7 +256,7 @@
 				includes="${config_file_list}" />
 
 			<!-- Config file for log4j  -->
-			<zipfileset prefix="MeDs-Movie-Manager/config/" dir="${dist}"
+			<zipfileset prefix="MeDs-Movie-Manager/config/" dir="${dist-tmp}"
 				includes="log4j.properties">
 			</zipfileset>
 
@@ -269,7 +269,7 @@
 				includes="${library_file_list_all}" />
 
 			<zipfileset prefix="MeDs-Movie-Manager/lib/LookAndFeels/"
-				dir="${dist}" includes="lookAndFeels.ini">
+				dir="${dist-tmp}" includes="lookAndFeels.ini">
 			</zipfileset>
 
 			<!-- html template files -->
@@ -304,7 +304,7 @@
 
 			<!-- Config file for log4j  -->
 			<zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/config/"
-				dir="${dist}" includes="log4j.properties" />
+				dir="${dist-tmp}" includes="log4j.properties" />
 
 			<!-- Config file for Eclipse project file  -->
 			<zipfileset prefix="MeDs-Movie-Manager-Source/"
@@ -320,7 +320,7 @@
 			
 			<zipfileset
 				prefix="MeDs-Movie-Manager-Source/MovieManager/lib/LookAndFeels/"
-				dir="${dist}" includes="lookAndFeels.ini">
+				dir="${dist-tmp}" includes="lookAndFeels.ini">
 			</zipfileset>
 
 
@@ -516,7 +516,7 @@
 		description="Creates a lookAndFeels.ini file used in the distribution packages.">
 
 		<!-- Since new line is added, a carriage return i added before to be windows compatible -->
-		<echo file="${dist}/lookAndFeels.ini" append="false">${newline}
+		<echo file="${dist-tmp}/lookAndFeels.ini" append="false">${newline}
 Here you can add new Look and Feels's.${line.separator}${newline}
 Make sure the look and Feel jar-file is placed in the 'LookAndFeels' directory${newline}
 and that the correct class is given below.${newline}
@@ -600,7 +600,7 @@ ${newline}
 	<target name="makeLog4jProperties"
 		description="Creates a log4j.properties to be used in the binary package where only warnings/error are printed to log.">
 
-	  <echo file="${dist}/log4j.properties" append="false">
+	  <echo file="${dist-tmp}/log4j.properties" append="false">
 #### Using two appenders, one to log to console, another to log to a file.
 log4j.rootCategory=ALL, stdout, FileAppender
 
@@ -654,7 +654,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 <target name="makeEclipseProjectFiles"
 		description="Creates a eclipse project file to be used in the source package.">
 	
-	<echo file="${dist}/.project" append="false">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+	<echo file="${dist-tmp}/.project" append="false">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;projectDescription&gt;
 	&lt;name&gt;MovieManager&lt;/name&gt;
 	&lt;comment&gt;&lt;/comment&gt;
@@ -673,7 +673,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 &lt;/projectDescription&gt;
     </echo>
 
-<echo file="${dist}/.classpath" append="false">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+<echo file="${dist-tmp}/.classpath" append="false">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;classpath&gt;
 	&lt;classpathentry kind="src" path="MovieManager/source"/&gt;
 	&lt;classpathentry kind="src" path="MovieManager/test"/&gt;
@@ -818,12 +818,13 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
   <property name="app-name" value="MeD's MovieManager.app"/>
   <property name="dmg-file" value="MovieManager.v.${versionName}.dmg"/>
   <property name="mac-dist" value="${dist}/mac"/>
+  <property name="dist-tmp" value="${dist}/tmp/"/>
 
 	
 	
 
  <!-- BUILD Mac  -->
- <target name="build-mac" depends="predist">
+ <target name="build-mac" depends="predist, create-info-plist">
 
 	  <echo message="build-mac: ${ant.file}"/>
 
@@ -838,10 +839,8 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 	    <mkdir dir="${tempdir}/Contents/Resources/Java"/>
 		<mkdir dir="${tempdir}/Contents/Resources/Java/config"/>
 
-   		<copy file="packaging/mac/resources/JavaApplicationStub" todir="${tempdir}/Contents/MacOS"/>
-
-		<copy file="${dist}/log4j.properties" todir="${tempdir}/Contents/Resources/Java/config"/>
- 		<copy file="${dist}/lookAndFeels.ini" todir="${tempdir}/Contents/Resources/Java/lib/LookAndFeels/"/>
+   		<copy file="${dist-tmp}/log4j.properties" todir="${tempdir}/Contents/Resources/Java/config"/>
+ 		<copy file="${dist-tmp}/lookAndFeels.ini" todir="${tempdir}/Contents/Resources/Java/lib/LookAndFeels/"/>
  		 	
 		<copy file="MovieManager/config/MovieManager.tmx" todir="${tempdir}/Contents/Resources/Java/config"/>
     	<copy file="MovieManager/config/castor.properties" todir="${tempdir}/Contents/Resources/Java/config"/>
@@ -861,13 +860,16 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 				   includes="${template_files}"/>
 		</copy>
 		
-
+		<copy file="packaging/mac/resources/JavaApplicationStub" todir="${tempdir}/Contents/MacOS"/>
+ 	
 		<exec executable="chmod">
 			<arg line="755 ${tempdir}/Contents/MacOS/JavaApplicationStub"/>
 		</exec>
 
+ 	
 
- 		<copy file="packaging/mac/resources/Info.plist" todir="${tempdir}/Contents"/>
+ 	<!--	<copy file="packaging/mac/resources/Info.plist" todir="${tempdir}/Contents"/> -->
+ 	    <copy file="${dist-tmp}/Info.plist" todir="${tempdir}/Contents"/>
  		<copy file="packaging/mac/resources/PkgInfo" todir="${tempdir}/Contents"/>
 		<copy file="packaging/mac/resources/MovieManager.icns" todir="${tempdir}/Contents/Resources"/>
 		<copy file="MovieManager/MovieManager.jar" todir="${tempdir}/Contents/Resources/Java"/>
@@ -947,7 +949,51 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 	  </exec>
 	</target>
 
-
+	
+	<target name="create-info-plist">
+		
+		 <!-- Delete old file  -->
+		<delete file="${dist-tmp}/Info.plist"/>
+		
+<echo file="${dist-tmp}/Info.plist" encoding="UTF-8" append="false">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd"&gt;
+&lt;plist version="0.9"&gt;
+&lt;dict&gt;
+	&lt;key&gt;CFBundleName&lt;/key&gt;
+	&lt;string&gt;MeD's Movie Manager&lt;/string&gt;
+	&lt;key&gt;CFBundleVersion&lt;/key&gt;
+	&lt;string&gt;${version}&lt;/string&gt;
+	&lt;key&gt;CFBundleShortVersionString&lt;/key&gt;
+	&lt;string&gt;${version}&lt;/string&gt;
+	&lt;key&gt;CFBundleAllowMixedLocalizations&lt;/key&gt;
+	&lt;string&gt;true&lt;/string&gt;
+	&lt;key&gt;CFBundleExecutable&lt;/key&gt;
+	&lt;string&gt;JavaApplicationStub&lt;/string&gt;
+	&lt;key&gt;CFBundleDevelopmentRegion&lt;/key&gt;
+	&lt;string&gt;English&lt;/string&gt;
+	&lt;key&gt;CFBundlePackageType&lt;/key&gt;
+	&lt;string&gt;APPL&lt;/string&gt;
+	&lt;key&gt;CFBundleSignature&lt;/key&gt;
+	&lt;string&gt;????&lt;/string&gt;
+	&lt;key&gt;CFBundleInfoDictionaryVersion&lt;/key&gt;
+	&lt;string&gt;6.0&lt;/string&gt;
+	&lt;key&gt;CFBundleIconFile&lt;/key&gt;
+	&lt;string&gt;MovieManager.icns&lt;/string&gt;
+	&lt;key&gt;Java&lt;/key&gt;
+	&lt;dict&gt;
+		&lt;key&gt;MainClass&lt;/key&gt;
+		&lt;string&gt;net.sf.xmm.moviemanager.MovieManager&lt;/string&gt;
+		&lt;key&gt;JVMVersion&lt;/key&gt;
+		&lt;string&gt;1.5+&lt;/string&gt;
+		&lt;key&gt;ClassPath&lt;/key&gt;
+		&lt;string&gt;$JAVAROOT/MovieManager.jar&lt;/string&gt;
+		&lt;key&gt;WorkingDirectory&lt;/key&gt;
+		&lt;string&gt;$JAVAROOT&lt;/string&gt;
+	&lt;/dict&gt;
+&lt;/dict&gt;
+&lt;/plist&gt;
+	</echo>
+	</target>
 
 </project>
 
