@@ -6,7 +6,7 @@ MeD's Movie Manager Readme
 
 ::
 
-	Copyright (2003-2009) Mediterranean, Bro3
+	Copyright (2003-2010) Mediterranean, Bro3
 
 	This program is free software; you can redistribute it and/or modify it 
 	under the terms of the GNU General Public License as published by the 
@@ -55,7 +55,7 @@ Windows:
 			   Double click the *MovieManager.exe* or *MovieManager.jar*. If using the *MovieManager.jar*, the *jar* extension must be associated with *javaw.exe*.
 
 GNU + Linux:   
-	  		   **java –jar MovieManager.jar**
+	  		   **java –jar MovieManager.jar** or if use the shortcuts if installed with cross platform installer.
 
 OS X:          
    			   Using the *Application Bundle* from the *DMG* file just double click like any other program. Using the cross-platform installer or ZIP file, start by double clicking the *MovieManager.jar*.
@@ -107,7 +107,11 @@ Links:
 * `IzPack			  <http://izpack.org>`_ - IzPack Java Installer
 * `Lobo				  <http://lobobrowser.org/java-browser.jsp>`_ - Java Web Browser: Pure Java browser
 * `Cobra Toolkit	  <http://lobobrowser.org/cobra.jsp>`_ - Cobra: Java HTML Renderer & Parser
-* `The Castor Project <http://www.castor.org/>`_ - Data binding framework for Java
+* `The Castor Project <http://www.castor.org>`_ - Data binding framework for Java
+* `Balloontip 		  <https://balloontip.dev.java.net>`_ - Balloon tips for Java
+* `Jupidator          <https://sourceforge.net/projects/jupidator>`_ - Java library for automatic updating
+
+
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Here are some nice Look & Feels for Java:
