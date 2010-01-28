@@ -1,5 +1,5 @@
 /**
- * @(#)DialogUpdateIMDbInfo.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)DialogUpdateIMDbInfo.java
  *
  * Copyright (2003) Bro3
  * 
@@ -31,8 +31,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -45,6 +47,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
@@ -52,6 +55,7 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandUpdateIMDBInfo;
 import net.sf.xmm.moviemanager.commands.importexport.IMDbInfoUpdater;
 import net.sf.xmm.moviemanager.swing.extentions.ButtonGroupNoSelection;
+import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
@@ -130,6 +134,8 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 	
 	JDialog dialog;
 
+	KeyboardShortcutManager shortcutManager;
+	
 	public DialogUpdateIMDbInfo(final MovieManagerCommandUpdateIMDBInfo parent, JDialog dialog) {
 		super(new BorderLayout());
 		this.parent = parent;
@@ -137,6 +143,15 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 
 		imdbInfoUpdater = new IMDbInfoUpdater();
 
+		createComponents();
+		
+		shortcutManager = new KeyboardShortcutManager(dialog);
+		setHotkeyModifiers();
+	}
+	
+	
+	void createComponents() {
+		
 		startButton = new JButton("Start");
 		startButton.setActionCommand("Start");
 		startButton.addActionListener(this);
@@ -556,8 +571,6 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 			}
 			
 			while (transferred != null && processedCounter < lengthOfTask && transferred.size() > 0) {
-
-				System.err.println("processedCounter:" + processedCounter);
 				
 				movieCounter++;
 				int percent = ((processedCounter+1) * 100)/lengthOfTask;
@@ -916,6 +929,54 @@ public class DialogUpdateIMDbInfo extends JPanel implements ActionListener, Item
 		finalString += secondsStr+"."+millisecondsStr + " seconds.";
 
 		return new String(finalString);
+	}
+	
+	void setHotkeyModifiers() {
+		
+		try {			
+						
+			GUIUtil.enableDisposeOnEscapeKey(shortcutManager, "Close Window", new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					
+				}
+			});		
+			
+			shortcutManager.registerShowKeysKey();
+			
+			// ALT+S for Start
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Start", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					startButton.doClick();
+				}
+			}, startButton);
+			
+			
+			// ALT+A for Abort
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyboardShortcutManager.getToolbarShortcutMask()), 
+					"Abort", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					cancelButton.doClick();
+				}
+			}, cancelButton);
+					
+			
+			// ALT+C for Close
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Close", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					closeButton.doClick();
+				}
+			}, closeButton);
+					
+			shortcutManager.setKeysToolTipComponent(taskOutput);
+			
+		} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
+		}
 	}
 }
 

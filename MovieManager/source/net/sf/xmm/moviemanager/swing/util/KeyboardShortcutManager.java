@@ -48,25 +48,45 @@ public class KeyboardShortcutManager {
 	public KeyboardShortcutManager(JDialog window) {
 		jDialog = window;
 		rootPane = window.getRootPane();
-		registerShowKeysKey();
 	}
 	
 	public KeyboardShortcutManager(JFrame window) {
 		jFrame = window;
 		rootPane = window.getRootPane();
-		registerShowKeysKey();
 	}
 	
 	public boolean isJDialog() {
 		return jDialog != null;
 	}
 	
+	public boolean isJFrame() {
+		return jFrame != null;
+	}
+	
 	public JDialog getJDialog() {
 		return jDialog;
 	}
 	
+	public JFrame getJFrame() {
+		return jFrame;
+	}
+	
 	public void setKeysToolTipComponent(JComponent c) {
 		tooltipAreaComponent = c;
+	}
+	
+	public boolean isShortCutPanelVisible() {
+		
+		if (bTip == null)
+			return false;
+			
+		return bTip.isVisible();
+	}
+	
+	public void hideShortCutPanel() {
+		
+		if (bTip != null)
+			bTip.setVisible(false);
 	}
 	
 	public static int getToolbarShortcutMask() {
@@ -79,7 +99,7 @@ public class KeyboardShortcutManager {
 		return value;
 	}
 	
-	void registerShowKeysKey() {
+	public void registerShowKeysKey() {
 		//System.err.println("getMenuShortcutKeyMask:" + Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 		//System.err.println("getToolbarShortcutMask:" + getToolbarShortcutMask());
 		//System.err.println("CTRL_MASK:" + InputEvent.CTRL_MASK);
@@ -132,6 +152,8 @@ public class KeyboardShortcutManager {
 			else
 				tooltip += " - " + mapping.getDisplayName();
 
+			tooltip = "<html>" + tooltip + "</html>";
+			
 			tooltipComponent.setToolTipText(tooltip); //$NON-NLS-1$
 		}
 		
@@ -228,9 +250,7 @@ public class KeyboardShortcutManager {
 		
 		for (KeyMapping k : c) {
 			text += "<tr>";
-			//text += "<td>" + k.actionName + "</td><td>-</td><td>" + k.shortcutString + "</td>";
 			text += "<td>" + k.getDisplayName() + "</td><td>-</td><td>" + k.shortcutString + "</td>";
-						
 			text += "</tr>";
 		}
 		

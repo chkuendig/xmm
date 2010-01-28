@@ -77,7 +77,7 @@ public class DialogIMDB extends JDialog {
 	
 	private JTextField searchStringField;
 	
-    private JButton buttonChoose;
+    private JButton buttonSelect;
 	private JButton buttonCancel;
 	private JButton buttonSearch;
 	
@@ -104,12 +104,6 @@ public class DialogIMDB extends JDialog {
         else
         	setTitle(alternateTitle);
        	         
-        GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction() {
-    		public void actionPerformed(ActionEvent arg0) {
-				setCanceled(true);
-			}
-		}, "Close window (and discard)");
-        
         createListDialog();
         
         setHotkeyModifiers();
@@ -183,7 +177,7 @@ public class DialogIMDB extends JDialog {
     				}
     			}
     			else if (SwingUtilities.isLeftMouseButton(event) && event.getClickCount() >= 2) {
-    				buttonChoose.doClick();
+    				buttonSelect.doClick();
     			}
     		}
     	});
@@ -192,7 +186,7 @@ public class DialogIMDB extends JDialog {
     	ActionListener listKeyBoardActionListener = new ActionListener() {
     		public void actionPerformed(ActionEvent ae) {    			
     			log.debug("ActionPerformed: " + "Movielist - ENTER pressed."); //$NON-NLS-1$
-    			buttonChoose.doClick();
+    			buttonSelect.doClick();
     		}
     	};
     	listMovies.registerKeyboardAction(listKeyBoardActionListener, enterKeyStroke, JComponent.WHEN_FOCUSED);
@@ -252,7 +246,7 @@ public class DialogIMDB extends JDialog {
     }
     
     private JPanel createButtonsPanel() {
-    	
+    	    	
     	JPanel panelButtons = new JPanel();
     	panelButtons.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(5,5,0,5), null));
     	panelButtons.setLayout(new BorderLayout());
@@ -262,10 +256,10 @@ public class DialogIMDB extends JDialog {
     	panelRegularButtons.setBorder(BorderFactory.createEmptyBorder(0,0,4,0));
     	panelRegularButtons.setLayout(new FlowLayout());
     	
-    	buttonChoose = new JButton(Localizer.get("DialogIMDB.button.choose.text")); //$NON-NLS-1$
-    	buttonChoose.setToolTipText(Localizer.get("DialogIMDB.button.choose.tooltip")); //$NON-NLS-1$
-    	buttonChoose.setActionCommand("GetIMDBInfo - Select"); //$NON-NLS-1$
-    	buttonChoose.addActionListener(new ActionListener() {
+    	buttonSelect = new JButton(Localizer.get("DialogIMDB.button.choose.text")); //$NON-NLS-1$
+    	buttonSelect.setToolTipText(Localizer.get("DialogIMDB.button.choose.tooltip")); //$NON-NLS-1$
+    	buttonSelect.setActionCommand("GetIMDBInfo - Select"); //$NON-NLS-1$
+    	buttonSelect.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent event) {
     			log.debug("ActionPerformed: "+ event.getActionCommand()); //$NON-NLS-1$
 
@@ -273,13 +267,10 @@ public class DialogIMDB extends JDialog {
     				executeCommandSelect();
     		}});
 
-    	panelRegularButtons.add(buttonChoose);
+    	panelRegularButtons.add(buttonSelect);
 
     	// Search button
-    	/*This button is used to search for on IMDB and for movies in the Database
-        Where to search is decided in the executeSearchMultipleMovies method
-    	 */
-    	JButton buttonSearch = new JButton(Localizer.get("DialogIMDbMultiAdd.button.search.text")); //$NON-NLS-1$
+    	buttonSearch = new JButton(Localizer.get("DialogIMDbMultiAdd.button.search.text")); //$NON-NLS-1$
     	buttonSearch.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.search.tooltip")); //$NON-NLS-1$
     	buttonSearch.setActionCommand("GetIMDBInfo - Search again"); //$NON-NLS-1$
     	buttonSearch.addActionListener(new ActionListener() {
@@ -407,7 +398,7 @@ public class DialogIMDB extends JDialog {
 			public void run() {
 				setListModel(list);
 				listMovies.setSelectedIndex(0);
-				getButtonChoose().setEnabled(setButtonChooseEnabled);
+				getButtonSelect().setEnabled(setButtonChooseEnabled);
 			}
 		});
     }
@@ -472,8 +463,8 @@ public class DialogIMDB extends JDialog {
     /**
      * Returns the JButton select.
      **/
-    protected JButton getButtonChoose() {
-        return buttonChoose;
+    protected JButton getButtonSelect() {
+        return buttonSelect;
     }
    
     
@@ -624,28 +615,38 @@ public class DialogIMDB extends JDialog {
 	private void setHotkeyModifiers() {
 		
 		try {
-			// ALT+C for Select
+
+			GUIUtil.enableDisposeOnEscapeKey(shortcutManager, "Close window (and discard)", new AbstractAction() {
+				public void actionPerformed(ActionEvent arg0) {
+					setCanceled(true);
+				}
+			});
+			
+			// ALT+K to show the shortcut map
+    		shortcutManager.registerShowKeysKey();
+			
+			// ALT+S for Select
+			shortcutManager.registerKeyboardShortcut(
+					KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Select/Save selected title", new AbstractAction() {
+				public void actionPerformed(ActionEvent ae) {
+					buttonSelect.doClick();
+				}
+			}, buttonSelect);
+				
+			// ALT+C for Cancel
 			shortcutManager.registerKeyboardShortcut(
 					KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
-					"Choose selected title", new AbstractAction() {
-				public void actionPerformed(ActionEvent ae) {
-					buttonChoose.doClick();
-				}
-			}, buttonChoose);
-				
-			// ALT+D for skip (Discard)
-			shortcutManager.registerKeyboardShortcut(
-					KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyboardShortcutManager.getToolbarShortcutMask()),
-					"Discard this movie", new AbstractAction() {
+					"Cancel (Discard) this movie", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					buttonCancel.doClick();
 				}
 			}, buttonCancel);
 			
-			// ALT+S for search field focus
+			// ALT+F for search field focus
 			shortcutManager.registerKeyboardShortcut(
-					KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask()),
-					"Give search field focus or perform search", new AbstractAction() {
+					KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyboardShortcutManager.getToolbarShortcutMask()),
+					"Give search field focus or perform search if already focused.", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 									
 					if (!searchStringField.hasFocus()) {

@@ -253,14 +253,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		fontSize = MovieManager.getIt().getFontSize();
 		
 		setUpGUI();
-		
+				
 		setHotkeyModifiers();
-		
-		GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				saveWindowSize();
-			}
-		});
 	}
 		
 	private void setUpGUI() {
@@ -2330,7 +2324,16 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	
 	void setHotkeyModifiers() {
 			
-		try {
+		try {			
+			
+			GUIUtil.enableDisposeOnEscapeKey(shortcutManager, "Close Window", new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					saveWindowSize();
+				}
+			});		
+			
+			shortcutManager.registerShowKeysKey();
+			
 			// ALT+S for Save and close
 			shortcutManager.registerKeyboardShortcut(
 					KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyboardShortcutManager.getToolbarShortcutMask()),

@@ -119,15 +119,7 @@ public class DialogImport extends JDialog implements ActionListener {
 		/* Close dialog... */
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				cancelAll = true;
-				MovieManager.getConfig().setLastDialogImportType(getImportMode());
-			}
-		});
-
-		GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction()	{
-			public void actionPerformed(ActionEvent e) {
-				cancelAll = true;
-				MovieManager.getConfig().setLastDialogImportType(getImportMode());
+				closeWindow();
 			}
 		});
 
@@ -136,6 +128,13 @@ public class DialogImport extends JDialog implements ActionListener {
 		setResizable(false);
 	
 		createGUI();
+	
+		setHotkeyModifiers();
+	}
+	
+	void closeWindow() {
+		cancelAll = true;
+		MovieManager.getConfig().setLastDialogImportType(getImportMode());
 	}
 
 	void createGUI() {
@@ -623,8 +622,6 @@ public class DialogImport extends JDialog implements ActionListener {
 
 		String title = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
 
-		System.err.println("title:" + title);
-
 		if (title.equals(ImportMode.TEXT.getTitle()))
 			return ImportMode.TEXT;
 		else if (title.equals(ImportMode.EXCEL.getTitle()))
@@ -797,6 +794,25 @@ public class DialogImport extends JDialog implements ActionListener {
 				listChooser.setEnabled(true);
 			else
 				listChooser.setEnabled(false);
+		}
+	}
+	
+	void setHotkeyModifiers() {
+		
+		try {			
+			
+			GUIUtil.enableDisposeOnEscapeKey(shortcutManager, "Close Window", new AbstractAction()	{
+				public void actionPerformed(ActionEvent e) {
+					closeWindow();
+				}
+			});
+					
+			shortcutManager.registerShowKeysKey();
+			
+			shortcutManager.setKeysToolTipComponent(tabbedPane);
+			
+		} catch (Exception e) {
+			log.warn("Exception:" + e.getMessage(), e);
 		}
 	}
 }

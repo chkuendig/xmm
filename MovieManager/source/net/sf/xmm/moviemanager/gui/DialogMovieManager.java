@@ -46,6 +46,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -59,6 +60,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -112,7 +114,6 @@ import org.dotuseful.ui.tree.AutomatedTreeNode;
 import org.lobobrowser.html.gui.HtmlPanel;
 import org.lobobrowser.html.test.SimpleHtmlRendererContext;
 import org.w3c.dom.Document;
-
 
 
 public class DialogMovieManager extends JFrame implements ComponentListener {
@@ -2004,6 +2005,10 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     void setHotkeyModifiers() {
 
     	try {
+    		
+    		// ALT+K to show the shortcut map
+    		shortcutManager.registerShowKeysKey();
+    		
     		// ALT+T to choose vwitch view 
     		shortcutManager.registerKeyboardShortcut(
     				KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
@@ -2042,6 +2047,15 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     					}
     				});
 
+    		// Make sure the shortcut panel disposes when pressing Escape
+    		
+    		KeyboardShortcutManager.registerKeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false)
+    				,new AbstractAction() {
+    			public void actionPerformed(ActionEvent ae) {
+    				shortcutManager.hideShortCutPanel();
+    			}
+    		}, shortcutManager.getJFrame().getRootPane());
+   		
     		shortcutManager.setKeysToolTipComponent(toolBar);
 
     	} catch (Exception e) {

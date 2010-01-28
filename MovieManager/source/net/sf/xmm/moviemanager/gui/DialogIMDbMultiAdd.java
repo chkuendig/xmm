@@ -136,7 +136,7 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
     	subclassButtons.setLayout(new BorderLayout());
     	subclassButtons.add(multiAddButtonsPanel, BorderLayout.CENTER);
 
-    	getButtonChoose().setEnabled(false);
+    	getButtonSelect().setEnabled(false);
     	getButtonCancel().setText(Localizer.get("DialogIMDB.button.cancel.text.skip-movie")); //$NON-NLS-1$
 
     	pack();

@@ -186,32 +186,30 @@ public class GUIUtil {
 		return event.getButton() == MouseEvent.BUTTON1;
 	}
 	
+	
+	
 	public static void enableDisposeOnEscapeKey(KeyboardShortcutManager shortcutManager) {
 		enableDisposeOnEscapeKey(shortcutManager, null);
 	}
 	
 	public static void enableDisposeOnEscapeKey(KeyboardShortcutManager shortcutManager, Action escapeAction) {
-		enableDisposeOnEscapeKey(shortcutManager, escapeAction, null);
+		enableDisposeOnEscapeKey(shortcutManager, null, escapeAction);
 	}
 	
-	public static void enableDisposeOnEscapeKey(final KeyboardShortcutManager shortcutManager, final Action escapeAction, String actionDescription) {
+	public static void enableDisposeOnEscapeKey(final KeyboardShortcutManager shortcutManager, String actionDescription, final Action escapeAction) {
 
-		KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		
-		Action defaultAction = new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				if (escapeAction != null) {
-					escapeAction.actionPerformed(e);
-				}
-				shortcutManager.getJDialog().dispose();
-			}
-		};
-		
 		if (actionDescription == null)
 			actionDescription = "Close window";
 		
+		Action disposeAction = enableDisposeOnAction(shortcutManager, escapeAction);
+		enableActionOnEscapeKey(shortcutManager, actionDescription, disposeAction);
+	}
+	
+	public static void enableActionOnEscapeKey(final KeyboardShortcutManager shortcutManager, String actionDescription, final Action escapeAction) {
+		KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+
 		try {
-			shortcutManager.registerKeyboardShortcut(key, actionDescription, defaultAction);
+			shortcutManager.registerKeyboardShortcut(key, actionDescription, escapeAction);
 		} catch (Exception e) {
 			log.warn("Exception:" + e.getMessage(), e);
 		}
@@ -223,17 +221,44 @@ public class GUIUtil {
 	}
 	
 	public static void enableDisposeOnEscapeKey(final JDialog dialog, final Action escapeAction) {
-
+		Action disposeAction = enableDisposeOnAction(dialog, escapeAction);
+		enableActionOnEscapeKey(dialog.getRootPane(), disposeAction);
+	}
+	
+	public static void enableActionOnEscapeKey(JRootPane rootPane, final Action escapeAction) {
 		KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		
-		Action defaultAction = new AbstractAction() {
+		KeyboardShortcutManager.registerKeyboardShortcut(key, escapeAction, rootPane);
+	}
+	
+	public static Action enableDisposeOnAction(final JDialog dialog, final Action escapeAction) {
+		return enableDisposeOnAction(null, dialog, escapeAction);
+	}
+	
+	
+	public static Action enableDisposeOnAction(KeyboardShortcutManager shortcutManager, final Action escapeAction) {
+		return enableDisposeOnAction(shortcutManager, null, escapeAction);
+	}
+	
+	public static Action enableDisposeOnAction(final KeyboardShortcutManager shortcutManager, final JDialog dialog, final Action escapeAction) {
+
+		Action disposeAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
+				
 				if (escapeAction != null) {
 					escapeAction.actionPerformed(e);
 				}
-				dialog.dispose();
+								
+				// Hide shortcut panel if it's visible
+				if (shortcutManager != null) {
+					if (shortcutManager.isShortCutPanelVisible())
+						shortcutManager.hideShortCutPanel();
+					else
+						shortcutManager.getJDialog().dispose();
+				}
+				else 
+					dialog.dispose();
 			}
 		};
-		KeyboardShortcutManager.registerKeyboardShortcut(key, defaultAction, dialog.getRootPane());
+		return disposeAction;
 	}
-} 
+}

@@ -1,5 +1,5 @@
 /**
- * @(#)DialogPrefs.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)DialogPrefs.java
  *
  * Copyright (2003) Mediterranean
  *
@@ -238,12 +238,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		/* Dialog creation...*/
 		super(MovieManager.getDialog());
 
-		GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				config.setLastPreferencesTabIndex(tabbedPane.getSelectedIndex());
-			}
-		});
-		
 		setTitle(Localizer.get("DialogPrefs.title")); //$NON-NLS-1$
 		setModal(true);
 		setResizable(false);
@@ -295,12 +289,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		if (tabbedPane.getComponentCount() > 0)
 			tabbedPane.setSelectedIndex(selectTab);
-
-
-		// Disable some panels in applet mode
-		//all.setEnabledAt(all.indexOfComponent(proxyPanel), false);
-		//all.setEnabledAt(all.indexOfComponent(IMDbPanel), false);
-		//all.setEnabledAt(all.indexOfComponent(backupPanel), false);
 
 		contentPane = getContentPane();
 		contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.Y_AXIS));
@@ -2386,6 +2374,15 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	void setHotkeyModifiers() {
 
 		try {
+			
+			GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					config.setLastPreferencesTabIndex(tabbedPane.getSelectedIndex());
+				}
+			});
+			
+			shortcutManager.registerShowKeysKey();
+			
 			shortcutManager.setKeysToolTipComponent(tabbedPane);
 
 			// ALT+S

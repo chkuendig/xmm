@@ -1,5 +1,5 @@
 /**
- * @(#)DialogAddMultipleMovies.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)DialogAddMultipleMovies.java
  *
  * Copyright (2003) Bro3
  * 
@@ -197,17 +197,19 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				dispose();
 			}
 		});
-
-		GUIUtil.enableDisposeOnEscapeKey(this, new AbstractAction() {
-			public void actionPerformed(ActionEvent arg0) {
-				executeSave();
-			}
-		});
 		
 		setTitle(Localizer.get("DialogAddMultipleMovies.title")); //$NON-NLS-1$
 		setModal(false);
 		setResizable(true);
 
+		createComponents();
+		
+		setHotkeyModifiers();
+		
+		loadConfigSettings();
+	}
+	
+	void createComponents() {
 		
 		/*Radio buttons, choses if the list of hits should apear or not*/
 		askButton = new JRadioButton(Localizer.get("DialogAddMultipleMovies.panel-hits.option-display-list-of-hits.text")); //$NON-NLS-1$
@@ -389,14 +391,13 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		extensionPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,3,0,3), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), " File extensions ")), BorderFactory.createEmptyBorder(0,4,4,4))); //$NON-NLS-1$
 		extensionPanel.add(validExtension, BorderLayout.NORTH);
 		extensionPanel.add(customExtension, BorderLayout.CENTER);
-		
-		//extensionPanel
-		
+				
 		/* Add to list */
 
 		listPanel = makeListPanel();
 		
 		buttonUpdateFileList = new JButton("Find matching files"); //$NON-NLS-1$
+		buttonUpdateFileList.setToolTipText("Search the file tree for matching files"); //$NON-NLS-1$
 		buttonUpdateFileList.setActionCommand("DialogAddMultipleMovies - Update file list"); //$NON-NLS-1$
 		buttonUpdateFileList.addActionListener(this);
 
@@ -686,23 +687,16 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		all.setLayout(new BorderLayout());
 		
 		all.add(addMultipleMoviesSplitPane, BorderLayout.CENTER);
-		
-		
+				
 		getContentPane().add(all, BorderLayout.CENTER);
 				
-		setHotkeyModifiersMultiAdd();
-		
 		/* Packs and sets location... */
 		pack();
 
 		// Reduce height by 100
 		Dimension dim = getSize();
 		dim.height = dim.height - 150;
-		
-		// Ensure a minimum size
-		
-		System.err.println("dim:" + dim);
-		
+				
 		Dimension minimum = new Dimension(400, 500);
 		
 		setMinimumSize(minimum);
@@ -712,9 +706,6 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		
 		setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
 				(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
-
-		loadConfigSettings();
-
 	}
 
 	void updateRegexPattern() {
@@ -1791,10 +1782,19 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		popupMenu.show(filesToAddList, x, y);
 	}
 	
-	void setHotkeyModifiersMultiAdd() {
+	void setHotkeyModifiers() {
 
-		// ALT+C for Close
 		try {
+			
+			GUIUtil.enableDisposeOnEscapeKey(shortcutManager, new AbstractAction() {
+				public void actionPerformed(ActionEvent arg0) {
+					executeSave();
+				}
+			});
+			
+			shortcutManager.registerShowKeysKey();
+			
+			// ALT+C for Close
 			shortcutManager.registerKeyboardShortcut(
 					KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
 					"Close Window", new AbstractAction() {
@@ -1806,7 +1806,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			// ALT+A for add movies
 			shortcutManager.registerKeyboardShortcut(
 					KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyboardShortcutManager.getToolbarShortcutMask()),
-					"Abort", new AbstractAction() {
+					"Add Movies", new AbstractAction() {
 						public void actionPerformed(ActionEvent ae) {
 							buttonAddMovies.doClick();
 						}
@@ -1815,7 +1815,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			// ALT+F for add movies
 			shortcutManager.registerKeyboardShortcut(
 					KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyboardShortcutManager.getToolbarShortcutMask()),
-					"Abort", new AbstractAction() {
+					"Find matching files", new AbstractAction() {
 						public void actionPerformed(ActionEvent ae) {
 							buttonUpdateFileList.doClick();
 						}
@@ -1824,8 +1824,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			shortcutManager.setKeysToolTipComponent(filterPanel);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.warn("Exception:" + e.getMessage(), e);
 		}
 	}
 }
