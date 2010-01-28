@@ -4,7 +4,7 @@
    Changelog - MeD's Movie Manager
 ========================================
 
-Version 2.9.0 ()
+Version 2.9.0 (28-January-2010)
 
 - New in this version:
 
@@ -12,11 +12,11 @@ Version 2.9.0 ()
 
 - General improvements:
 
-  - Added option to remove quotes ("") from series titles.
+  - Added better shortcut handling. Press ALT+k on Windows/GNU+Linux or ⌘+k on OSX to see available shortcuts for a window.
   - Updated the HSQLDB driver which will hopefully fix some stability issues with HSQL. 
   - Added right click popup when editing movie/episode to clear additional info values.
-  - Added better shortcut handling. Press ALT+k on Windows/GNU+Linux or ⌘+k on OSX to see available shortcuts for a window.
   - IMDb dialog now has a field for changing the search text when searching for IMDb info.
+  - Added option to remove quotes ("") from series titles.
 
   - Improvements to the Multi-Add-function:
 
@@ -34,10 +34,11 @@ Version 2.9.0 ()
   - After editing a movie, the lists it is a member of was not shown in the right click popup in the movie list. (Bug ID:2879774)
   - Database converter was unable to convert MySQL or HSQL database to MS Access database.
   - Fixed an issue with selecting multiple entries in the movie list with the SHIFT key.
+  - Application would hang if pressing cancel when choosing player after pressing the play button.
   - IMDb scraper would get the episode number and series wrong in some situations.
   - IMDb scraper did not retrieved cast on series.
   - IMDb scraper did not retrieve rating.
-  - IMDb scraper could hang (seemingly) indefinitely in some situations.
+  - IMDb scraper could hang (seemingly) indefinitely in some situations (some rare movies).
   
 
 Version 2.8.7 (13-December-2009)
