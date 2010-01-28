@@ -248,7 +248,7 @@ public class FilePropertiesMovie {
 
 					if (fileProperties != null) {
 
-						System.err.println("fileProperties:" + fileProperties);
+						log.debug(fileProperties + " processing file " + filePath);
 						
 						time = System.currentTimeMillis();
 						
