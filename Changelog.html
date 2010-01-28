@@ -357,6 +357,51 @@ ul.auto-toc {
 <h1 class="title">Changelog - MeD's Movie Manager</h1>
 
 <!-- This document is written in reStructuredText format -->
+<p>Version 2.9.0 (28-January-2010)</p>
+<ul class="simple">
+<li>New in this version:<ul>
+<li>New update notification and automatic download system.</li>
+</ul>
+</li>
+<li>General improvements:<ul>
+<li>Added better shortcut handling. Press ALT+k on Windows/GNU+Linux or ⌘+k on OSX to see available shortcuts for a window.</li>
+<li>Updated the HSQLDB driver which will hopefully fix some stability issues with HSQL.</li>
+<li>Added right click popup when editing movie/episode to clear additional info values.</li>
+<li>IMDb dialog now has a field for changing the search text when searching for IMDb info.</li>
+<li>Added option to remove quotes (&quot;&quot;) from series titles.</li>
+<li>Improvements to the Multi-Add-function:<ul>
+<li>Shows the progress of the import procedure.</li>
+<li>It's now possible to define custom folders as root devices in the tree.</li>
+<li>Hardcoded codec info has been replaced with user defined text.</li>
+<li>Search nfo/txt files for IMDb URL when adding movies.</li>
+<li>Improved &quot;use folder instead of file name&quot; option to use parent folder if the current folder is named CD1/CD2 etc.</li>
+<li>New option to prefix movie titles with &quot;_verify_&quot; when using the option &quot;Select First Hit&quot;.</li>
+<li>Added progress bar if expanding a directory takes more than a second.</li>
+<li>Changed directory separator from '\' to system file separator in a few places in add multiple movies function.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Bug fixes:<ul>
+<li>After editing a movie, the lists it is a member of was not shown in the right click popup in the movie list. (Bug ID:2879774)</li>
+<li>Database converter was unable to convert MySQL or HSQL database to MS Access database.</li>
+<li>Fixed an issue with selecting multiple entries in the movie list with the SHIFT key.</li>
+<li>Application would hang if pressing cancel when choosing player after pressing the play button.</li>
+<li>IMDb scraper would get the episode number and series wrong in some situations.</li>
+<li>IMDb scraper did not retrieved cast on series.</li>
+<li>IMDb scraper did not retrieve rating.</li>
+<li>IMDb scraper could hang (seemingly) indefinitely in some situations (some rare movies).</li>
+</ul>
+</li>
+</ul>
+<p>Version 2.8.7 (13-December-2009)</p>
+<ul class="simple">
+<li>Bug fixes:<ul>
+<li>Cast was no longer retrieved due to changes in HTML on IMDb.</li>
+<li>Notes were not saved when editing in main window.</li>
+</ul>
+</li>
+</ul>
 <p>Version 2.8.6 (16-July-2009)</p>
 <ul class="simple">
 <li>General improvements:<ul>
