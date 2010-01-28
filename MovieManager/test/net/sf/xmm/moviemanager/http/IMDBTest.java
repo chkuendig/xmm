@@ -417,7 +417,7 @@ public class IMDBTest  {
 		assertEquals(expectedWriter, movie.getWrittenBy());
 	}
 	
-	@Test
+	//@Test
 	public void dataRetrievalTVSeriesTest() throws Exception {
 		
 		IMDbScraper imdb = null;
@@ -429,7 +429,7 @@ public class IMDBTest  {
 			return;
 		}
 		
-		// Buffy
+		
 		StringBuffer data = imdb.getURLData("0370053").getData();
 		
 		ModelIMDbEntry series = imdb.grabInfo("0370053", data);
@@ -479,6 +479,23 @@ public class IMDBTest  {
 		assertEquals(expectedColor, series.getColour());		
 		
 		
+	}
+	
+	
+	
+	//@Test
+	public void authenticatedTest() throws Exception {
+		
+		String userName = "";
+		String password = "";
+		
+		HttpSettings settings = new HttpSettings();
+		settings.setIMDbAuthenticationEnabled(true);
+		settings.setIMDbAuthenticationUser(userName);
+		settings.setIMDbAuthenticationPassword(password);
+		
+		IMDbScraper imdb = new IMDbScraper(settings);
+				
 	}
 	
 }
