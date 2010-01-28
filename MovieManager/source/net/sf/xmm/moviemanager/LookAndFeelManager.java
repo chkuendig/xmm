@@ -463,7 +463,7 @@ public class LookAndFeelManager {
 						Class.forName(m.group(2));
 						UIManager.installLookAndFeel(new UIManager.LookAndFeelInfo(m.group(1), m.group(2)));
 					} catch (ClassNotFoundException e) {
-						log.warn("Failed to locate L&F class " + m.group(2));
+						log.debug("Failed to locate L&F class " + m.group(2) + " on classpath.");
 					} catch(Exception e) {
 						log.warn("Exception:" + e .getMessage());
 					}										
