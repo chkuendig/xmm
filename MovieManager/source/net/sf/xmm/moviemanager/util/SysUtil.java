@@ -576,7 +576,7 @@ public class SysUtil {
 			log.warn("Exception:" + e.getMessage());
 		}
     	catch (UnsatisfiedLinkError e) {
-    		log.warn("UnsatisfiedLinkError:" + e.getMessage());
+    		log.debug("UnsatisfiedLinkError:" + e.getMessage());
     		log.debug("Failed to load MediaInfo library");
     	}
     	return null;
