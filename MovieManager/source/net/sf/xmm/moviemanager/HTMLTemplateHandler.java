@@ -16,8 +16,41 @@ public class HTMLTemplateHandler {
 	
 	public HashMap<String, ModelHTMLTemplate> htmlTemplates = new HashMap<String, ModelHTMLTemplate>();
 
+	public final String HTMLTemplateRoot = "HTML_templates/";
+	
+	ModelHTMLTemplate htmlTemplate = null;
+	ModelHTMLTemplateStyle htmlTemplateStyle = null;
+	
+	public final String HTMLTemplateRootDir = "HTML_templates/";
+	
+	private String DefaultHTMLTemplateName = "Simple Virtue";
+	private String DefaultHTMLTemplateStyleName = "A Touch of Blue";
+	
+	private String HTMLTemplateName = DefaultHTMLTemplateName;
+	private String HTMLTemplateStyleName = DefaultHTMLTemplateStyleName;
+
+	public void setHTMLTemplateStyleName(String HTMLTemplateStyleName) {
+		
+		if (HTMLTemplateStyleName == null)
+			return;
+		
+		this.HTMLTemplateStyleName = HTMLTemplateStyleName;
+	}
+	
+	public void setHTMLTemplateName(String HTMLTemplateName) {
+		
+		if (HTMLTemplateName == null)
+			return;
+			
+		this.HTMLTemplateName = HTMLTemplateName;
+	}
 
 	public ModelHTMLTemplate getTemplate(String name) {
+		
+		if (!htmlTemplates.containsKey(name)) {
+			return null;
+		}
+		
 		return (ModelHTMLTemplate) htmlTemplates.get(name);
 	}
 
@@ -34,7 +67,7 @@ public class HTMLTemplateHandler {
 
 		try {
 
-			File f = FileUtil.getFile(MovieManager.getConfig().HTMLTemplateRootDir);
+			File f = FileUtil.getFile(HTMLTemplateRootDir);
 
 			if (f != null && f.isDirectory()) {
 
@@ -105,5 +138,111 @@ public class HTMLTemplateHandler {
 		}
 
 		log.debug("Done loading HTML templates."); //$NON-NLS-1$
+	}
+	
+	
+	/********************************
+	 * HTML templates
+	 ********************************/
+	
+	public ModelHTMLTemplate getHTMLTemplate() {
+		
+		if (htmlTemplate == null) {
+			htmlTemplate = MovieManager.getTemplateHandler().getTemplate(HTMLTemplateName);
+		
+			if (htmlTemplate == null) {
+				log.warn("Requested template does not exist:" + HTMLTemplateName);
+				return null;
+			}
+		}
+		return htmlTemplate;
+	}
+	
+	public void setHTMLTemplate(ModelHTMLTemplate htmlTemplate, ModelHTMLTemplateStyle htmlTemplateStyle) {
+		this.htmlTemplate = htmlTemplate;
+		this.htmlTemplateStyle = htmlTemplateStyle;
+		
+		if (htmlTemplateStyle == null)
+			setHTMLTemplateStyleName(null);
+	}
+			
+
+	public void setHTMLTemplate(ModelHTMLTemplate t) {
+		htmlTemplate = t;
+	}
+	
+	public void setHTMLTemplateStyle(ModelHTMLTemplateStyle s) {
+		htmlTemplateStyle = s;
+		
+		if (s == null)
+			setHTMLTemplateStyleName(null);
+	}
+	
+//	 Returns the template dir, e.g. "HTML_templates/Simple Virtue/" 
+	public File getHTMLTemplateDir() {
+		
+		if (getHTMLTemplate() != null)
+			return FileUtil.getFile("HTML_templates/" + getHTMLTemplate().getDirName());
+
+		return null;
+	}
+	
+//	 Returns the template name, e.g. "Simple Virtue" 
+	public String getHTMLTemplateName() {
+		
+		if (htmlTemplate == null) {
+			if (getHTMLTemplate() == null)
+				return HTMLTemplateName;
+		}
+		return getHTMLTemplate().getName();
+	}
+
+		
+//	Returns the template html file e.g. "HTML_templates/Simple Virtue/Simple_Virtue.html"
+	public File getHTMLTemplateFile() {
+		if (getHTMLTemplate() != null)
+			return new File(getHTMLTemplateDir(), getHTMLTemplate().getHTMLTemplateFileName());
+
+		return null;
+	}
+
+	public File getHTMLTemplateCssFile() {
+		if (getHTMLTemplate() != null)
+			return new File(getHTMLTemplateDir(), getHTMLTemplate().getHTMLTemplateCssFileName());  
+
+		return null;
+	}
+	
+	public ModelHTMLTemplateStyle getHTMLTemplateStyle() {
+		
+		if (htmlTemplateStyle == null && HTMLTemplateStyleName != null) {
+						
+			ModelHTMLTemplate tmpTemplate = getHTMLTemplate();
+			
+			if (tmpTemplate == null || (htmlTemplateStyle = getHTMLTemplate().getStyle(HTMLTemplateStyleName)) == null) {
+				log.debug("Requested template style does not exist:" + HTMLTemplateStyleName);
+				return null;
+			}
+		}
+		return htmlTemplateStyle;
+	}
+	
+	public String getHTMLTemplateStyleName() {
+		
+		if (htmlTemplateStyle == null) {
+			if (getHTMLTemplateStyle() == null) {
+				return HTMLTemplateStyleName; // Update style
+			}
+		}
+		
+		return htmlTemplateStyle.getName();
+	}
+	
+	public File getHTMLTemplateCssStyleFile() {
+		return new File(getHTMLTemplateDir(), "Styles/" + htmlTemplateStyle.getCssFileName());  
+	}
+	
+	public String getHTMLTemplateCssStyleFileName() {
+		return htmlTemplateStyle.getCssFileName();
 	}
 }

@@ -787,8 +787,8 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuView.setMnemonic('V');
 
 		final HashMap<String, ModelHTMLTemplate> templates = MovieManager.getTemplateHandler().getHTMLTemplates();
-		String currentTemplateName = MovieManager.getConfig().getHTMLTemplateName();
-		String currentTemplateStyleName = MovieManager.getConfig().getHTMLTemplateStyleName();
+		String currentTemplateName = MovieManager.getConfig().getHTMLTemplateHandler().getHTMLTemplateName();
+		String currentTemplateStyleName = MovieManager.getConfig().getHTMLTemplateHandler().getHTMLTemplateStyleName();
 		
 		try {
 			ButtonGroup buttonGroup = new ButtonGroup();
@@ -835,7 +835,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 							String command = m.getActionCommand();
 							ModelHTMLTemplate t = (ModelHTMLTemplate) templates.get(command);
 
-							MovieManager.getConfig().setHTMLTemplate(t, t.getStyle(styleName));
+							MovieManager.getConfig().getHTMLTemplateHandler().setHTMLTemplate(t, t.getStyle(styleName));
 							MovieManager.getDialog().setTabbedMovieInfoTitle();
 
 							MovieManagerCommandSelect.execute();
@@ -868,14 +868,14 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 							String command = e.getActionCommand();
 							ModelHTMLTemplate t = (ModelHTMLTemplate) templates.get(command);
 
-							MovieManager.getConfig().setHTMLTemplate(t, t.getStyle(styleName));
+							MovieManager.getConfig().getHTMLTemplateHandler().setHTMLTemplate(t, t.getStyle(styleName));
 
 							String tabName;
 
-							if (MovieManager.getConfig().getHTMLTemplate().hasStyles())
-								tabName = MovieManager.getConfig().getHTMLTemplateStyleName();
+							if (MovieManager.getConfig().getHTMLTemplateHandler().getHTMLTemplate().hasStyles())
+								tabName = MovieManager.getConfig().getHTMLTemplateHandler().getHTMLTemplateStyleName();
 							else
-								tabName = MovieManager.getConfig().getHTMLTemplate().getName();
+								tabName = MovieManager.getConfig().getHTMLTemplateHandler().getHTMLTemplate().getName();
 
 							// Setting the style name as title of tab bar.
 							MovieManager.getDialog().setTabbedMovieInfoTitle(1, tabName);

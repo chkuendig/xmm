@@ -700,7 +700,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		
 		try {
 						
-			File templateFile = MovieManager.getConfig().getHTMLTemplateFile();
+			File templateFile = MovieManager.getConfig().getHTMLTemplateHandler().getHTMLTemplateFile();
 			
 			if (templateFile == null || !templateFile.isFile()) {
 				log.warn("Current template file is missing:" + templateFile);
@@ -819,10 +819,10 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	 */
 	public static void processTemplateCssStyle(StringBuffer data) throws FileNotFoundException, IOException {
 				
-		ModelHTMLTemplateStyle style = MovieManager.getConfig().getHTMLTemplateStyle();
+		ModelHTMLTemplateStyle style = MovieManager.getConfig().getHTMLTemplateHandler().getHTMLTemplateStyle();
 		
 		if (style == null) {
-			log.debug("No style for template " + MovieManager.getConfig().getHTMLTemplate());
+			log.debug("No style for template " + MovieManager.getConfig().getHTMLTemplateHandler().getHTMLTemplate());
 			return;
 		}
 		

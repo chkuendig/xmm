@@ -694,7 +694,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
    
     public void setTabbedMovieInfoTitle() {
     	String tabName;
-    	ModelHTMLTemplate template = config.getHTMLTemplate();
+    	ModelHTMLTemplate template = config.getHTMLTemplateHandler().getHTMLTemplate();
     	
     	if (template == null) {
     		tabbedMovieInfo.setTitleAt(1, "No Templates available");
@@ -703,7 +703,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     
     	if (template.hasStyles()) {
 						
-			String styleName = config.getHTMLTemplateStyleName();
+			String styleName = config.getHTMLTemplateHandler().getHTMLTemplateStyleName();
 			tabName = template.getName() + " -> " + template.getStyle(styleName);
 		}
 		else

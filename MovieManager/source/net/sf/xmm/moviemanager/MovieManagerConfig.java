@@ -106,6 +106,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 	
 	public final SystemSettings sysSettings = new SystemSettings();
+		
+	HTMLTemplateHandler htmlTemplateHandler = new HTMLTemplateHandler();
+	
+	public HTMLTemplateHandler getHTMLTemplateHandler() {
+		return htmlTemplateHandler;
+	}
 	
 	private boolean localConfigMode = false;
 	
@@ -413,27 +419,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	int plotCastMiscellaneousIndex = 0;
 	
-	public final String HTMLTemplateRoot = "HTML_templates/";
-			
-	
-	ModelHTMLTemplate htmlTemplate = null;
-	ModelHTMLTemplateStyle htmlTemplateStyle = null;
-	
-	public final String HTMLTemplateRootDir = "HTML_templates/";
-	
-	private String DefaultHTMLTemplateName = "Simple Virtue";
-	private String DefaultHTMLTemplateStyleName = "A Touch of Blue";
-	
-	private String HTMLTemplateName = DefaultHTMLTemplateName;
-	private String HTMLTemplateStyleName = DefaultHTMLTemplateStyleName;
-
-	public void setHTMLTemplateStyleName(String HTMLTemplateStyleName) {
-		this.HTMLTemplateStyleName = HTMLTemplateStyleName;
-	}
-	
-	public void setHTMLTemplateName(String HTMLTemplateName) {
-		this.HTMLTemplateName = HTMLTemplateName;
-	}
 	
 	private String lookAndFeel = "Metal";
 
@@ -1633,110 +1618,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 	
 	
-	/********************************
-	 * HTML templates
-	 ********************************/
-	
-	public ModelHTMLTemplate getHTMLTemplate() {
-		
-		if (htmlTemplate == null) {
-			htmlTemplate = MovieManager.getTemplateHandler().getTemplate(HTMLTemplateName);
-		
-			if (htmlTemplate == null) {
-				log.warn("Requested template does not exist:" + HTMLTemplateName);
-				return null;
-			}
-		}
-		return htmlTemplate;
-	}
-	
-	public void setHTMLTemplate(ModelHTMLTemplate htmlTemplate, ModelHTMLTemplateStyle htmlTemplateStyle) {
-		this.htmlTemplate = htmlTemplate;
-		this.htmlTemplateStyle = htmlTemplateStyle;
-		
-		if (htmlTemplateStyle == null)
-			setHTMLTemplateStyleName(null);
-	}
-			
 
-	public void setHTMLTemplate(ModelHTMLTemplate t) {
-		htmlTemplate = t;
-	}
-	
-	public void setHTMLTemplateStyle(ModelHTMLTemplateStyle s) {
-		htmlTemplateStyle = s;
-		
-		if (s == null)
-			setHTMLTemplateStyleName(null);
-	}
-	
-//	 Returns the template name, e.g. "Simple Virtue" 
-	public File getHTMLTemplateDir() {
-		
-		if (getHTMLTemplate() != null)
-			return FileUtil.getFile("HTML_templates/" + getHTMLTemplate().getDirName());
-
-		return null;
-	}
-	
-//	 Returns the template name, e.g. "Simple Virtue" 
-	public String getHTMLTemplateName() {
-		
-		if (htmlTemplate == null) {
-			if (getHTMLTemplate() == null)
-				return HTMLTemplateName;
-		}
-		return getHTMLTemplate().getName();
-	}
-
-		
-//	Returns the template html file e.g. "HTML_templates/Simple Virtue/Simple_Virtue.html"
-	public File getHTMLTemplateFile() {
-		if (getHTMLTemplate() != null)
-			return new File(getHTMLTemplateDir(), getHTMLTemplate().getHTMLTemplateFileName());
-
-		return null;
-	}
-
-	public File getHTMLTemplateCssFile() {
-		if (getHTMLTemplate() != null)
-			return new File(getHTMLTemplateDir(), getHTMLTemplate().getHTMLTemplateCssFileName());  
-
-		return null;
-	}
-	
-	public ModelHTMLTemplateStyle getHTMLTemplateStyle() {
-		
-		if (htmlTemplateStyle == null && HTMLTemplateStyleName != null) {
-						
-			ModelHTMLTemplate tmpTemplate = getHTMLTemplate();
-			
-			if (tmpTemplate == null || (htmlTemplateStyle = getHTMLTemplate().getStyle(HTMLTemplateStyleName)) == null) {
-				log.debug("Requested template style does not exist:" + HTMLTemplateStyleName);
-				return null;
-			}
-		}
-		return htmlTemplateStyle;
-	}
-	
-	public String getHTMLTemplateStyleName() {
-		
-		if (htmlTemplateStyle == null) {
-			if (getHTMLTemplateStyle() == null) {
-				return HTMLTemplateStyleName; // Update style
-			}
-		}
-		
-		return htmlTemplateStyle.getName();
-	}
-	
-	public File getHTMLTemplateCssStyleFile() {
-		return new File(getHTMLTemplateDir(), "Styles/" + htmlTemplateStyle.getCssFileName());  
-	}
-	
-	public String getHTMLTemplateCssStyleFileName() {
-		return htmlTemplateStyle.getCssFileName();
-	}
 	
 	
 	public int getPlotCastMiscellaneousIndex() {
@@ -2563,8 +2445,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			setDefaultLookAndFeelDecorated(getBooleanValue("defaultLookAndFeelDecorated:", config, getDefaultLookAndFeelDecorated()));
 			setPlotCastMiscellaneousIndex(getIntValue("plotCastMiscellaneousIndex:", config, getPlotCastMiscellaneousIndex()));
 									
-			setHTMLTemplateName(getStringValue("HTMLTemplateName:", config));
-			setHTMLTemplateStyleName(getStringValue("HTMLTemplateStyleName:", config));
+			htmlTemplateHandler.setHTMLTemplateName(getStringValue("HTMLTemplateName:", config));
+			htmlTemplateHandler.setHTMLTemplateStyleName(getStringValue("HTMLTemplateStyleName:", config));
 			setLocale(getStringValue("locale:", config, getLocale()));
 			setFilterCategory(getStringValue("filterOption:", config, getFilterCategory()));
 			setSortOption(getStringValue("sortOption:", config, getSortOption()));
@@ -3085,8 +2967,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("multiAddIMDbDialogWindowHeight:", getMultiAddIMDbDialogWindowSize().height, settings);
 		 		 
 		 // The current template
-		 appendToConfig("HTMLTemplateName:", getHTMLTemplateName(), settings);
-		 appendToConfig("HTMLTemplateStyleName:", getHTMLTemplateStyleName(), settings);
+		 appendToConfig("HTMLTemplateName:", htmlTemplateHandler.getHTMLTemplateName(), settings);
+		 appendToConfig("HTMLTemplateStyleName:", htmlTemplateHandler.getHTMLTemplateStyleName(), settings);
 		 
 		 // Search options
 		 appendToConfig("filterOption:", getFilterCategory(), settings);

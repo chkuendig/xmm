@@ -85,12 +85,12 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 		// Copies the css files
 		try {
 			File exportDirectory = htmlOutputFile.getParentFile();
-			FileUtil.copyToDir(MovieManager.getConfig().getHTMLTemplateCssFile(), exportDirectory);
-			File cssStyleDir = MovieManager.getConfig().getHTMLTemplateCssStyleFile().getParentFile();
+			FileUtil.copyToDir(MovieManager.getConfig().getHTMLTemplateHandler().getHTMLTemplateCssFile(), exportDirectory);
+			File cssStyleDir = MovieManager.getConfig().getHTMLTemplateHandler().getHTMLTemplateCssStyleFile().getParentFile();
 
 			// Copy css style and image if it exists
 			File [] files = cssStyleDir.listFiles();
-			String cssStyle = MovieManager.getConfig().getHTMLTemplateCssStyleFileName().substring(0, MovieManager.getConfig().getHTMLTemplateCssStyleFileName().lastIndexOf("."));
+			String cssStyle = MovieManager.getConfig().getHTMLTemplateHandler().getHTMLTemplateCssStyleFileName().substring(0, MovieManager.getConfig().getHTMLTemplateHandler().getHTMLTemplateCssStyleFileName().lastIndexOf("."));
 
 			for (int i = 0; i < files.length; i++) {
 
@@ -229,7 +229,7 @@ public class MovieManagerCommandExportToFullHTML extends MovieManagerCommandExpo
 
 		try {
 
-			File f = MovieManager.getConfig().getHTMLTemplateFile();
+			File f = MovieManager.getConfig().getHTMLTemplateHandler().getHTMLTemplateFile();
 
 			template = FileUtil.readFileToStringBuffer(f);
 
