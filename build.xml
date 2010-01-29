@@ -34,7 +34,7 @@
 
 	<!-- set global properties for this build -->
 
-	<property name="build" location="MovieManager/" />
+	<property name="build" location="MovieManager" />
 	<property name="dist" location="dist" />
 	<property name="izpack.dir" location="packaging/izpack" />
 
@@ -300,9 +300,9 @@
 			<zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/config/"
 				dir="MovieManager/config/" includes="${config_file_list}" />
 
-			<!-- Config file for log4j  -->
+			<!-- Config file for log4j - get directly from config dir  -->
 			<zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/config/"
-				dir="${dist-tmp}" includes="log4j.properties" />
+				dir="MovieManger/config/" includes="log4j.properties" />
 
 			<!-- Config file for Eclipse project file  -->
 			<zipfileset prefix="MeDs-Movie-Manager-Source/"
@@ -310,7 +310,7 @@
 			
 			<!-- libraries -->
 			<zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/lib/"
-				dir="MovieManager/lib/" includes="${library_file_list_all}" />
+				dir="MovieManger/lib/" includes="${library_file_list_all}" />
 
 			<!-- ant-contrib only needed for source distribution -->
 			<zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/lib/" dir="MovieManager/lib/"
