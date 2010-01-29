@@ -157,7 +157,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private boolean useJTreeIcons = true;
 
-	private boolean useJTreeCovers = false;
+	private boolean useJTreeCovers = true;
 
 	private int movieListRowHeight = 22;
 
