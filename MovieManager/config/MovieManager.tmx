@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tmx version="1.2">
-    <header adminlang="en-us" creationdate="20100115T192511Z"
+    <header adminlang="en-us" creationdate="20100130T002010Z"
         creationtool="RBManager" creationtoolversion="0.7.2"
         datatype="PlainText" o-tmf="none" segtype="sentance" srclang="EN">
         <note>This document was created automatically by RBManager</note>
@@ -803,7 +803,7 @@
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-options.enable-Folder-Naming-tooltip">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
-            <tuv changedate="20100115T035119Z" changeid="Unknown"
+            <tuv changedate="20100115T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
@@ -833,7 +833,7 @@
         </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-options.enable-Folder-Nfo-scanning-tooltip">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
-            <tuv changedate="20100115T035051Z" changeid="Unknown"
+            <tuv changedate="20100115T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
@@ -2751,49 +2751,49 @@
                 <seg>Title</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogFolders.alert-covers-relative-database">
+        <tu datatype="Text" tuid="DialogFolders.alert.folder-relative-database">
             <prop type="x-Group">DialogFolders</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Current options demand that the covers directory must be located relative to the database</seg>
+                <seg>Current options demand that the directory must be located relative to the database</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Current options demand that the covers directory must be located relative to the database</seg>
+                <seg>Current options demand that the directory must be located relative to the database</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogFolders.alert.covers-doesnt-exist.message">
+        <tu datatype="Text" tuid="DialogFolders.alert.folder-doesnt-exist.message">
             <prop type="x-Group">DialogFolders</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Covers directory does not exist</seg>
+                <seg>Directory does not exist</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Covers directory does not exist</seg>
+                <seg>Directory does not exist</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogFolders.alert.covers-inside-install.message">
+        <tu datatype="Text" tuid="DialogFolders.alert.folder-inside-install.message">
             <prop type="x-Group">DialogFolders</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Current options demand that the covers directory must be located inside the install directory when using relative path.</seg>
+                <seg>Current options demand that the directory must be located inside the install directory when using relative path.</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Current options demand that the covers directory must be located inside the install directory when using relative path.</seg>
+                <seg>Current options demand that the directory must be located inside the install directory when using relative path.</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogFolders.alert.database-relative-install.message">
@@ -2809,36 +2809,6 @@
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
                 <seg>Database must be located inside the install directory when using relative path</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="DialogFolders.alert.queries-doesnt-exist.message">
-            <prop type="x-Group">DialogFolders</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Queries directory does not exist</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Queries directory does not exist</seg>
-            </tuv>
-        </tu>
-        <tu datatype="Text" tuid="DialogFolders.alert.queries-inside-install.message">
-            <prop type="x-Group">DialogFolders</prop>
-            <tuv changedate="20070121T000000Z" changeid=""
-                creationdate="20070121T000000Z" creationid="" lang="en-US">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Queries directory must be located inside the install directory when using relative path</seg>
-            </tuv>
-            <tuv changedate="20100104T000000Z" changeid=""
-                creationdate="20100104T000000Z" creationid="" lang="no-NO">
-                <prop type="x-Comment"/>
-                <prop type="x-Translated">false</prop>
-                <seg>Queries directory must be located inside the install directory when using relative path</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogFolders.alert.title">
@@ -3413,7 +3383,7 @@
         </tu>
         <tu datatype="Text" tuid="DialogIMDB.button.cancel.tooltip.cancel">
             <prop type="x-Group">DialogIMDB</prop>
-            <tuv changedate="20100115T035112Z" changeid="Unknown"
+            <tuv changedate="20100115T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
@@ -3488,7 +3458,7 @@
         </tu>
         <tu datatype="Text" tuid="DialogIMDB.panel-movie-list.title">
             <prop type="x-Group">DialogIMDB</prop>
-            <tuv changedate="20100115T035041Z" changeid="Unknown"
+            <tuv changedate="20100115T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
@@ -3668,7 +3638,7 @@
         </tu>
         <tu datatype="Text" tuid="DialogIMDbMultiAdd.button.add-without-web-info.tooltip">
             <prop type="x-Group">DialogIMDbMultiAdd</prop>
-            <tuv changedate="20100115T035124Z" changeid="Unknown"
+            <tuv changedate="20100115T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
@@ -3683,7 +3653,7 @@
         </tu>
         <tu datatype="Text" tuid="DialogIMDbMultiAdd.button.search-on-IMDb.text">
             <prop type="x-Group">DialogIMDbMultiAdd</prop>
-            <tuv changedate="20100115T035025Z" changeid="Unknown"
+            <tuv changedate="20100115T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
@@ -3698,7 +3668,7 @@
         </tu>
         <tu datatype="Text" tuid="DialogIMDbMultiAdd.button.search-on-IMDb.tooltip">
             <prop type="x-Group">DialogIMDbMultiAdd</prop>
-            <tuv changedate="20100115T035019Z" changeid="Unknown"
+            <tuv changedate="20100115T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">true</prop>
@@ -4088,7 +4058,7 @@
         </tu>
         <tu datatype="Text" tuid="DialogMovieInfo.button-get-web-info.text.get-imdb-info">
             <prop type="x-Group">DialogMovieInfo</prop>
-            <tuv changedate="20100115T035104Z" changeid="Unknown"
+            <tuv changedate="20100115T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
@@ -4103,7 +4073,7 @@
         </tu>
         <tu datatype="Text" tuid="DialogMovieInfo.button-get-web-info.tooltip.get-imdb-info">
             <prop type="x-Group">DialogMovieInfo</prop>
-            <tuv changedate="20100115T035057Z" changeid="Unknown"
+            <tuv changedate="20100115T000000Z" changeid="Unknown"
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>

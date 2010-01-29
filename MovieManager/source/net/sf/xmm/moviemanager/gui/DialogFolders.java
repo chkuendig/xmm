@@ -810,243 +810,6 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 	}
 
     
-   /*
-    public void processPathValidation(String option, boolean buttonEnabledChanged) {
-
-    	File coversFolder;
-    	File queriesFolder;
-    	String coversPath = getCoversPath();
-    	String queriesPath = getQueriesPath();
-	
-    	try {
-    		
-    		if (option.indexOf("Covers") != -1) { //$NON-NLS-1$
-
-    			// Relative covers path enabled 
-    			if (relativeCoversEnabled.isSelected()) {
-
-    				String newPath = null;
-    				
-    				// Relative to program location
-    				if (relativeCoversProgram.isSelected()) {
-
-    					if (new File(coversPath).isDirectory() && (new File(coversPath).getAbsolutePath().indexOf(SysUtil.getUserDir()) == -1)) {
-    						textFieldCovers.setBackground(invalidPathColor);
-    						textFieldCovers.setToolTipText(Localizer.get("DialogFolders.alert.covers-inside-install.message")); //$NON-NLS-1$
-    					}
-    					else if (!new File(coversPath).isDirectory() && !(new File(SysUtil.getUserDir(), coversPath)).isDirectory()) { //$NON-NLS-1$
-    						textFieldCovers.setBackground(invalidPathColor);
-    						textFieldCovers.setToolTipText(Localizer.get("DialogFolders.alert.covers-doesnt-exist.message")); //$NON-NLS-1$
-    					}
-    					else {
-    						textFieldCovers.setBackground(Color.WHITE);
-    						textFieldCovers.setToolTipText("Full path: " + new File(SysUtil.getUserDir(), coversPath).getAbsolutePath());
-    					}
-    					    					
-    					if (buttonEnabledChanged && coversPath.startsWith(SysUtil.getUserDir())) {
-    						newPath = coversPath.substring(SysUtil.getUserDir().length(), coversPath.length());
-    						System.err.println("created new path without userdir:" + newPath);
-    					}
-    					
-    				}
-    				// Relative to database
-    				else {
-    					String dbPath = MovieManager.getConfig().getDatabaseFolder(true);
-		    					
-    					if ((new File(coversPath)).isDirectory()) {
-	
-    						if (coversPath.indexOf(dbPath) == -1) {
-    							textFieldCovers.setBackground(invalidPathColor);
-    							textFieldCovers.setToolTipText(Localizer.get("DialogFolders.alert-covers-relative-database")); //$NON-NLS-1$
-    						}
-    						else {
-    							textFieldCovers.setBackground(Color.WHITE);
-        						textFieldCovers.setToolTipText("Full path: " + coversPath);
-    						}
-    					}
-    					else if (!(new File(dbPath, coversPath)).isDirectory()) {
-    						textFieldCovers.setBackground(invalidPathColor);
-    						textFieldCovers.setToolTipText(Localizer.get("DialogFolders.alert.covers-doesnt-exist.message")); //$NON-NLS-1$
-    					}
-    					else {
-    						textFieldCovers.setBackground(Color.WHITE);
-    						textFieldCovers.setToolTipText("Full path: " + new File(dbPath, coversPath).getAbsolutePath());
-    					}
-    					
-    					if (buttonEnabledChanged && coversPath.startsWith(dbPath)) {
-    						newPath = coversPath.substring(dbPath.length(), coversPath.length());
-    						System.err.println("created new path without dbPath:" + newPath);
-    					}
-    				}
-
-    				// Modifying the text. When covers enable is selected/deselected the text is modified if possible.
-    				   				
-    				if (buttonEnabledChanged && newPath != null) {
-    					textFieldCovers.setText(newPath);
-    				}
-    			}
-    			// relativeCoversEnabled is deSelected
-    			else {
-    				coversFolder = new File(coversPath);
-
-    				System.err.println("relativeCoversEnabled deselected");
-    				System.err.println("coversPath:" + coversPath);
-    				System.err.println("coversFolder:" + coversFolder);
-    				System.err.println("buttonEnabledChanged:" + buttonEnabledChanged);
-    				
-    				if (buttonEnabledChanged) {
-
-    					String prePath;
-
-    					if (relativeCoversProgram.isSelected())
-    						prePath = SysUtil.getUserDir();
-    					else
-    						prePath = MovieManager.getConfig().getDatabaseFolder(true);
-
-    					if (!coversPath.startsWith(prePath)) {
-
-    						File f = new File(prePath, coversPath);
-
-    						if (f.isDirectory()) {
-    							coversFolder = f;
-
-    							final String t = f.getAbsolutePath();
-
-    							Runnable runnable = new Runnable() {
-    								public void run() {
-    									textFieldCovers.setText(t);
-    								}
-    							};
-    							SwingUtilities.invokeLater(runnable);
-    						}
-    					}
-    				}
-
-    				if (!coversFolder.isDirectory()) {
-    					textFieldCovers.setBackground(invalidPathColor);
-    					textFieldCovers.setToolTipText(Localizer.get("DialogFolders.alert.covers-doesnt-exist.message")); //$NON-NLS-1$
-    				}
-    				else {
-    					textFieldCovers.setBackground(Color.WHITE);
-    					textFieldCovers.setToolTipText(null);
-    				}
-    			}
-    		}
-
-    		if (option.indexOf("Queries") != -1) { //$NON-NLS-1$
-	
-    			// Relative Queries path enabled 
-    			if (relativeQueriesEnabled.isSelected()) {
-
-    				// Relative to program location
-    				if (relativeQueriesProgram.isSelected()) {
-
-    					if (new File(queriesPath).isDirectory() && (new File(queriesPath).getAbsolutePath().indexOf(SysUtil.getUserDir()) == -1)) {
-    						textFieldQueries.setBackground(invalidPathColor);
-    						textFieldQueries.setToolTipText(Localizer.get("DialogFolders.alert.queries-inside-install.message")); //$NON-NLS-1$
-    						return;
-    					}
-
-    					if (!new File(queriesPath).isDirectory() && !(new File(SysUtil.getUserDir(), queriesPath)).isDirectory()) { //$NON-NLS-1$
-    						textFieldQueries.setBackground(invalidPathColor);
-    						textFieldQueries.setToolTipText(Localizer.get("DialogFolders.alert.queries-doesnt-exist.message")); //$NON-NLS-1$
-    						return;
-    					}
-
-    					textFieldQueries.setBackground(Color.WHITE);
-    					textFieldQueries.setToolTipText(null);
-    				}
-    				// Relative to database
-    				else {
-    					String dbPath = MovieManager.getConfig().getDatabaseFolder(true);
-
-    					if ((new File(queriesPath)).isDirectory()) {
-
-    						if (queriesPath.indexOf(dbPath) == -1) {
-    							textFieldQueries.setBackground(invalidPathColor);
-    							textFieldQueries.setToolTipText(Localizer.get("DialogFolders.alert-queries-relative-database")); //$NON-NLS-1$
-    							return;
-    						}
-    					}
-    					else if (!(new File(dbPath, queriesPath)).isDirectory()) {
-    						textFieldQueries.setBackground(invalidPathColor);
-    						textFieldQueries.setToolTipText(Localizer.get("DialogFolders.alert.queries-doesnt-exist.message")); //$NON-NLS-1$
-    						return;
-    					}
-
-    					textFieldQueries.setBackground(Color.WHITE);
-    					textFieldQueries.setToolTipText(null);
-    				}
-
-    				// Modifying the text. When Queries enable is selected/deselected the text is modified if possible.
-
-    				if (buttonEnabledChanged && queriesPath.startsWith(SysUtil.getUserDir())) {
-
-    					String prePath;
-
-    					if (relativeQueriesProgram.isSelected())
-    						prePath = SysUtil.getUserDir();
-    					else
-    						prePath = MovieManager.getConfig().getDatabaseFolder(true);
-
-    					final String t = queriesPath.substring(prePath.length(), queriesPath.length());
-
-    					Runnable runnable = new Runnable() {
-    						public void run() {
-    							textFieldQueries.setText(t);
-    						}
-    					};
-    					SwingUtilities.invokeLater(runnable);
-    				}
-    			}
-    			// relativeQueriesEnabled is deSelected
-    			else {
-    				queriesFolder = new File(queriesPath);
-
-    				if (buttonEnabledChanged) {
-
-    					String prePath;
-
-    					if (relativeQueriesProgram.isSelected())
-    						prePath = SysUtil.getUserDir();
-    					else
-    						prePath = MovieManager.getConfig().getDatabaseFolder(true);
-
-    					if (!queriesPath.startsWith(prePath)) {
-
-    						File f = new File(prePath, queriesPath);
-
-    						if (f.isDirectory()) {
-    							queriesFolder = f;
-
-    							final String t = f.getAbsolutePath();
-
-    							Runnable runnable = new Runnable() {
-    								public void run() {
-    									textFieldQueries.setText(t);
-    								}
-    							};
-    							SwingUtilities.invokeLater(runnable);
-    						}
-    					}
-    				}
-
-
-    				if (!queriesFolder.isDirectory()) {
-    					textFieldQueries.setBackground(invalidPathColor);
-    					textFieldQueries.setToolTipText(Localizer.get("DialogFolders.alert.queries-doesnt-exist.message")); //$NON-NLS-1$
-    					return;
-    				}
-
-    				textFieldQueries.setBackground(Color.WHITE);
-    				textFieldQueries.setToolTipText(null);
-    			}
-    		}
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
-    }
-*/
 
     void pathValidation(JTextField textField, JCheckBox relativePathEnabled, JRadioButton pathRelativeToProgram, String path, boolean buttonEnabledChanged) {
     			
@@ -1060,11 +823,11 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 
 				if (new File(path).isDirectory() && (new File(path).getAbsolutePath().indexOf(SysUtil.getUserDir()) == -1)) {
 					textField.setBackground(invalidPathColor);
-					textField.setToolTipText(Localizer.get("DialogFolders.alert.covers-inside-install.message")); //$NON-NLS-1$
+					textField.setToolTipText(Localizer.get("DialogFolders.alert.folder-inside-install.message")); //$NON-NLS-1$
 				}
 				else if (!new File(path).isDirectory() && !(new File(SysUtil.getUserDir(), path)).isDirectory()) { //$NON-NLS-1$
 					textField.setBackground(invalidPathColor);
-					textField.setToolTipText(Localizer.get("DialogFolders.alert.covers-doesnt-exist.message")); //$NON-NLS-1$
+					textField.setToolTipText(Localizer.get("DialogFolders.alert.folder-doesnt-exist.message")); //$NON-NLS-1$
 				}
 				else {
 					textField.setBackground(Color.WHITE);
@@ -1085,7 +848,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 
 					if (path.indexOf(dbPath) == -1) {
 						textField.setBackground(invalidPathColor);
-						textField.setToolTipText(Localizer.get("DialogFolders.alert-covers-relative-database")); //$NON-NLS-1$
+						textField.setToolTipText(Localizer.get("DialogFolders.alert.folder-relative-database")); //$NON-NLS-1$
 					}
 					else {
 						textField.setBackground(Color.WHITE);
@@ -1094,7 +857,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 				}
 				else if (!(new File(dbPath, path)).isDirectory()) {
 					textField.setBackground(invalidPathColor);
-					textField.setToolTipText(Localizer.get("DialogFolders.alert.covers-doesnt-exist.message")); //$NON-NLS-1$
+					textField.setToolTipText(Localizer.get("DialogFolders.alert.folder-doesnt-exist.message")); //$NON-NLS-1$
 				}
 				else {
 					textField.setBackground(Color.WHITE);
@@ -1137,7 +900,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 
 			if (!folder.isDirectory()) {
 				textField.setBackground(invalidPathColor);
-				textField.setToolTipText(Localizer.get("DialogFolders.alert.covers-doesnt-exist.message")); //$NON-NLS-1$
+				textField.setToolTipText(Localizer.get("DialogFolders.alert.folder-doesnt-exist.message")); //$NON-NLS-1$
 			}
 			else {
 				textField.setBackground(Color.WHITE);
