@@ -129,9 +129,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	private JComboBox substanceChooser;
 	private JCheckBox enableSubstanceChooser;
 	
-	
-	private UIManager.LookAndFeelInfo[] installedLookAndFeels;
-
 	private JRadioButton regularToolBarButtons;
 	private JRadioButton currentLookAndFeelButtons;
 
@@ -399,8 +396,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		lafPanel.add(buttonOptions, BorderLayout.NORTH);
 
 		/* Laf choosers */
-
-		installedLookAndFeels = UIManager.getInstalledLookAndFeels();
 
 		JPanel lafChooserPanel = new JPanel(new GridLayout(0, 1));
 
