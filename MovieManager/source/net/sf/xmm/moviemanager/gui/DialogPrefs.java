@@ -473,32 +473,31 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		String [] substanceSkins = LookAndFeelManager.getSubstanceSkinListArray();
 
+		substanceChooser = new JComboBox(substanceSkins);
+		enableSubstanceChooser = new JCheckBox("Substance"); //$NON-NLS-1$
+		enableSubstanceChooser.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
+		lafGroup.add(enableSubstanceChooser);
+
+		String currentSubstance = config.getSubstanceSkin();
+
+		substanceChooser.setSelectedItem(currentSubstance);
+		substanceChooser.setEnabled(false);
+		substanceChooser.addActionListener(this);
+		enableSubstanceChooser.addActionListener(this);
+
+		substanceChooser.setPreferredSize(new Dimension(250, (int) lafChooser.getPreferredSize().getHeight()));
+
+
+		JPanel substanceLafChooserPanel = new JPanel(new BorderLayout());
+		substanceLafChooserPanel.setBorder(BorderFactory.createEmptyBorder(4,20,4,20));
+
+		substanceLafChooserPanel.add(enableSubstanceChooser, BorderLayout.WEST);
+		substanceLafChooserPanel.add(substanceChooser, BorderLayout.EAST);
+
+		substanceLafChooserPanel.setMaximumSize(new Dimension(250,30));
+		substanceLafChooserPanel.setPreferredSize(new Dimension(250,30));
+
 		if (substanceSkins.length > 0) {
-
-			substanceChooser = new JComboBox(substanceSkins);
-			enableSubstanceChooser = new JCheckBox("Substance"); //$NON-NLS-1$
-			enableSubstanceChooser.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
-			lafGroup.add(enableSubstanceChooser);
-
-			String currentSubstance = config.getSubstanceSkin();
-
-			substanceChooser.setSelectedItem(currentSubstance);
-			substanceChooser.setEnabled(false);
-			substanceChooser.addActionListener(this);
-			enableSubstanceChooser.addActionListener(this);
-
-			substanceChooser.setPreferredSize(new Dimension(250, (int) lafChooser.getPreferredSize().getHeight()));
-
-
-			JPanel substanceLafChooserPanel = new JPanel(new BorderLayout());
-			substanceLafChooserPanel.setBorder(BorderFactory.createEmptyBorder(4,20,4,20));
-
-			substanceLafChooserPanel.add(enableSubstanceChooser, BorderLayout.WEST);
-			substanceLafChooserPanel.add(substanceChooser, BorderLayout.EAST);
-
-			substanceLafChooserPanel.setMaximumSize(new Dimension(250,30));
-			substanceLafChooserPanel.setPreferredSize(new Dimension(250,30));
-
 			lafChooserPanel.add(substanceLafChooserPanel, BorderLayout.SOUTH);
 		}
 		
