@@ -94,7 +94,7 @@ public class MovieManagerCommandImport implements ActionListener{
 			if (importer != null && !importer.isCancelled()) {
 				SwingUtilities.invokeAndWait(new Runnable() {
 					public void run() {
-						final JDialog dialog = new DialogDatabaseImporterExporter(finalImporter, importSettings);
+						final JDialog dialog = new DialogDatabaseImporterExporter(MovieManager.getDialog(), finalImporter, importSettings);
 						GUIUtil.show(dialog, true);
 					}
 				});

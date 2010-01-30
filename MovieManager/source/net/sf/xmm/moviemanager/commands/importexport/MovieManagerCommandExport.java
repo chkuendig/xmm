@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
+import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSaveChangedNotes;
 import net.sf.xmm.moviemanager.gui.DialogDatabaseImporterExporter;
 import net.sf.xmm.moviemanager.gui.DialogExport;
@@ -90,7 +91,7 @@ public class MovieManagerCommandExport implements ActionListener{
 					
 					Runnable createAndShow = new Runnable() {
 						public void run() {
-							final JDialog dialogExorter = new DialogDatabaseImporterExporter(finalExporter, exportSettings);
+							final JDialog dialogExorter = new DialogDatabaseImporterExporter(MovieManager.getDialog(), finalExporter, exportSettings);
 							dialogExorter.setTitle("Exporter");
 							GUIUtil.show(dialogExorter, true);
 						}

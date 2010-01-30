@@ -156,7 +156,13 @@ public abstract class MovieManagerCommandImportHandler implements MovieManagerCo
 
 				SwingUtilities.invokeAndWait(new Runnable() {
 					public void run() {
-						DialogIMDbImport dialogIMDB = new DialogIMDbImport(model, searchString, hits);
+						DialogIMDbImport dialogIMDB;
+						
+						if (settings.getParent() == null)
+							dialogIMDB = new DialogIMDbImport(model, searchString, hits);
+						else
+							dialogIMDB = new DialogIMDbImport(settings.getParent(), model, searchString, hits);
+						
 						GUIUtil.showAndWait(dialogIMDB, true);
 						
 						if (dialogIMDB.getCanceled()) {
