@@ -23,6 +23,8 @@ package net.sf.xmm.moviemanager.models;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.JDialog;
+
 
 import net.sf.xmm.moviemanager.util.Localizer;
 
@@ -119,6 +121,16 @@ public class ModelImportExportSettings {
     public String htmlTitle = null;
     public boolean htmlAlphabeticSplit = false;
     public boolean htmlSimpleMode = false;
+    
+    JDialog parent = null;
+    
+    public JDialog getParent() {
+    	return parent;
+    }
+    
+    public void setParent(JDialog parent) {
+    	this.parent = parent;
+    }
     
     public String getFilePath() {
     	return filePath;	
