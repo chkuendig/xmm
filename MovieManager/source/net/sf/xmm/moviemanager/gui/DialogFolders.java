@@ -225,6 +225,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
             public void actionPerformed(ActionEvent event) {
                 log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
                 executeCommandBrowse(Localizer.get("DialogFolders.selectCoversDir")); //$NON-NLS-1$
+                processPathValidation("Covers", relativeCoversEnabled.isSelected());
             }});
                  
         constraints = new GridBagConstraints();
@@ -259,6 +260,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
             public void actionPerformed(ActionEvent event) {
                 log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
                 executeCommandBrowse(Localizer.get("DialogFolders.selectQueriesDir")); //$NON-NLS-1$
+                processPathValidation("Queries", relativeQueriesEnabled.isSelected());
             }});
                 
         constraints = new GridBagConstraints();
@@ -811,8 +813,31 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 
     
 
+   
+    
+    
+    public void processPathValidation(String option, boolean buttonEnabledChanged) {
+
+    	String coversPath = getCoversPath();
+    	String queriesPath = getQueriesPath();
+	
+    	try {
+    		    		
+    		if (option.indexOf("Covers") != -1) { //$NON-NLS-1$
+    			pathValidation(textFieldCovers, relativeCoversEnabled, relativeCoversProgram, coversPath, buttonEnabledChanged);
+    		}
+
+    		if (option.indexOf("Queries") != -1) { //$NON-NLS-1$
+    			pathValidation(textFieldQueries, relativeQueriesEnabled, relativeQueriesProgram, queriesPath, buttonEnabledChanged);
+    		}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    
     void pathValidation(JTextField textField, JCheckBox relativePathEnabled, JRadioButton pathRelativeToProgram, String path, boolean buttonEnabledChanged) {
-    			
+		
 		/* Relative covers path enabled */
 		if (relativePathEnabled.isSelected()) {
 
@@ -908,26 +933,6 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 			}
 		}
 	}
-    
-    
-    public void processPathValidation(String option, boolean buttonEnabledChanged) {
-
-    	String coversPath = getCoversPath();
-    	String queriesPath = getQueriesPath();
-	
-    	try {
-    		    		
-    		if (option.indexOf("Covers") != -1) { //$NON-NLS-1$
-    			pathValidation(textFieldCovers, relativeCoversEnabled, relativeCoversProgram, coversPath, buttonEnabledChanged);
-    		}
-
-    		if (option.indexOf("Queries") != -1) { //$NON-NLS-1$
-    			pathValidation(textFieldQueries, relativeQueriesEnabled, relativeQueriesProgram, queriesPath, buttonEnabledChanged);
-    		}
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
-    }
     
     
     /**
