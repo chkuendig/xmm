@@ -351,9 +351,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	int multiAddMainSliderPosition = -1;
 	int multiAddFileSliderPosition = -1;
 	int multiAddTabIndex = 0;
-	Dimension multiAddWindowSize = new Dimension();
 	
-	Dimension multiAddIMDbDialogWindowSize = new Dimension();
+	Dimension defaultMultiAddWindowSize = new Dimension(800,600);
+	Dimension multiAddWindowSize = new Dimension(defaultMultiAddWindowSize);
+	
+	Dimension defaultMultiAddIMDbDialogWindowSize = new Dimension(400, 300);
+	Dimension multiAddIMDbDialogWindowSize = new Dimension(defaultMultiAddIMDbDialogWindowSize);
 	
 	/* Import */
 	private ImportMode lastDialogImportType = ImportMode.TEXT;
@@ -2224,6 +2227,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 	
 	public void setMultiAddWindowSize(Dimension value) {
+		
+		System.err.println("setMultiAddWindowSize:" + value);
+		
+		if (value.width < defaultMultiAddWindowSize.width || 
+				value.height < defaultMultiAddWindowSize.height) {
+			log.debug("setMultiAddWindowSize ignoring:" + value);
+			return;
+		}
 		multiAddWindowSize = value;
 	}
 	
