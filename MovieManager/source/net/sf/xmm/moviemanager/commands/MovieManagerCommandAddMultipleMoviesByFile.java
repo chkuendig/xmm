@@ -82,13 +82,16 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		});
 
 		GUIUtil.showAndWait(damm, true);
+		
+		damm.initializeTree();
 	}
 
 	void startAddMovies() {
 		ModelImportExportSettings importSettings = getSettings();
 		MovieManagerCommandImportMoviesByFile importByFile = new MovieManagerCommandImportMoviesByFile(importSettings);
 
-		final JDialog dialog = new DialogDatabaseImporterExporter(importByFile, importSettings, true);
+		final JDialog dialog = new DialogDatabaseImporterExporter(damm, importByFile, importSettings, true);
+		importSettings.setParent(dialog);
 		GUIUtil.show(dialog, true);
 	}
 	
