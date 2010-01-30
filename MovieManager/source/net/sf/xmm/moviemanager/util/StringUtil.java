@@ -293,17 +293,29 @@ public class StringUtil {
 		return searchString;
 	}
 
+	public static String removeExtension(String searchString, String ... extensions) {
+		
+		/*Removes extension*/
+		if (searchString.lastIndexOf('.') > -1) {
+		
+			String extension = searchString.substring(searchString.lastIndexOf('.') +1, searchString.length());
+			
+			for (String ext : extensions) {
+				if (extension.equals(ext)) {
+					return searchString.substring(0, searchString.lastIndexOf('.'));
+				}
+			}
+		}
+		
+		return searchString;
+	}
+	
 	/**
 	 * Removes the extension of a file name and dot, comma, underscore and equal sign and double spaces
 	 * @param searchString  the string to be modified
 	 * @return
 	 */
 	public static String removeVarious(String searchString) {
-
-		/*Removes extension*/
-		if (searchString.lastIndexOf('.') > -1) {
-			searchString = searchString.substring(0, searchString.lastIndexOf('.'));
-		}
 
 		/*Removes various*/
 		searchString = searchString.replace('.', ' ');

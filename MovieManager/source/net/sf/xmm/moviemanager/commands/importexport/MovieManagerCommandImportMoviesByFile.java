@@ -182,7 +182,11 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 		}
 
 		String year = null;
-		
+				
+		String [] extensions = new String[] {"avi", "mkv", "mpg", "mpeg", "mpe", "divx", "mp4", "ogm", "ogv", "ogg", "flv", "rm", "swf", "vob", "wmv", "asf"};
+				
+		// Remove file extension
+		searchString = StringUtil.removeExtension(searchString, extensions);
 		
 		if (fileSettings.enableExludeYear) {
 			String [] year2 = new String[1];
@@ -229,10 +233,10 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 		
 		if (fileSettings.enableSearchNfoForImdb)
 			imdbId = searchNfoForImdb(path);
-
+				
 		//removes dots, double spaces, underscore...
 		searchString = StringUtil.removeVarious(searchString);
-		
+				
 		ImportExportReturn ret = executeCommandGetIMDBInfoMultiMovies(imdbId, searchString, searchTitle, year, fileList.get(i), fileSettings.multiAddSelectOption, fileSettings.addToThisList);
 		
 		if (ret == ImportExportReturn.success) {
@@ -341,7 +345,8 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 						
 						GUIUtil.invokeAndWait(new Runnable() {
 							public void run() {
-								DialogIMDbMultiAdd dialogIMDB = new DialogIMDbMultiAdd(movieInfoModel.model, searchString, 
+								DialogIMDbMultiAdd dialogIMDB = new DialogIMDbMultiAdd(fileSettings.getParent(), 
+										movieInfoModel.model, searchString, 
 										year, filename, files, imdbId);
 								GUIUtil.showAndWait(dialogIMDB, true);
 																
