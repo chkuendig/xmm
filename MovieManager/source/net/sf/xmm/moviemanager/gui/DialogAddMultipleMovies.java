@@ -180,7 +180,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	DialogAddMultipleMovies thisDialog = this;
 	MultiAddProgressBar progressBar;
 	    
-	int fileTreeThreadsWorking = 0;
+	int fileTreeSearchingThreadsWorking = 0;
+	int fileTreeBuildingThreadsWorking = 0;
+	
 	
 	private ImdbImportOption multiAddSelectOption;
 
@@ -201,12 +203,17 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		setTitle(Localizer.get("DialogAddMultipleMovies.title")); //$NON-NLS-1$
 		setModal(false);
 		setResizable(true);
-
+		
 		createComponents();
 		
 		setHotkeyModifiers();
-		
 		loadConfigSettings();
+	}
+	
+	public void initializeTree() {
+		updateFilterOutDuplicates();
+		updateRegexPattern();
+		updateExtensionoOnTree();
 	}
 	
 	void createComponents() {
@@ -494,8 +501,21 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 
 			public void fileTreeIsWorkingEvent(final FileTreeEvent evt) {
 
-				fileTreeThreadsWorking++;
-				
+				if (evt.isSearching()) {
+					fileTreeSearchingThreadsWorking++;
+										
+					if (fileTreeSearchingThreadsWorking != 1) {
+						return;
+					}
+				}
+				else if (evt.isBuildingTree()) {
+					fileTreeBuildingThreadsWorking++;
+					
+					if (fileTreeBuildingThreadsWorking != 1) {
+						return;
+					}
+				}
+								
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						
@@ -508,6 +528,10 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 								
 				if (evt.isSearching() || evt.isBuildingTree()) {
 
+					if ((fileTreeSearchingThreadsWorking + fileTreeBuildingThreadsWorking) != 1) {
+						return;
+					}
+										
 					// Shows the progress bar after some time has passed
 					SwingUtilities.invokeLater(new Runnable() {
 
@@ -528,6 +552,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 									progressBar.showAbortButton(false);
 									progressBar.setString("Retrieving file list...");
 								}
+								
 								GUIUtil.show(progressBar, true);
 							}					
 						}
@@ -536,22 +561,38 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			}
 
 			public void fileTreeIsReadyEvent(final FileTreeEvent evt) {
-				
-				fileTreeThreadsWorking--;
-								
-				if (fileTreeThreadsWorking == 0) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							
-							if (evt.isSearching())
-								setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-							else
-								fileTree.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-						}
-					});					
+												
+				if (evt.isSearching()) {
+					fileTreeSearchingThreadsWorking--;
+										
+					if (fileTreeSearchingThreadsWorking > 0) {
+						return;
+					}
+				}
+				else if (evt.isBuildingTree()) {
+					fileTreeBuildingThreadsWorking--;
+					
+					if (fileTreeBuildingThreadsWorking > 0) {
+						return;
+					}
 				}
 				
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+
+						if (evt.isSearching())
+							setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+						else
+							fileTree.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+					}
+				});	
+								
 				if (evt.isSearching() || evt.isBuildingTree()) {
+					
+					if ((fileTreeSearchingThreadsWorking + fileTreeBuildingThreadsWorking) != 0) {
+						return;
+					}
+					
 					GUIUtil.show(progressBar, false);
 				}
 			}
@@ -691,8 +732,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		getContentPane().add(all, BorderLayout.CENTER);
 				
 		/* Packs and sets location... */
-		pack();
-
+		
 		// Reduce height by 100
 		Dimension dim = getSize();
 		dim.height = dim.height - 150;
@@ -703,6 +743,8 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		setSize(dim);
 		
 		addMultipleMoviesSplitPane.setDividerLocation(0.60);
+		
+		pack();
 		
 		setLocation((int)MovieManager.getIt().getLocation().getX()+(MovieManager.getIt().getWidth()-getWidth())/2,
 				(int)MovieManager.getIt().getLocation().getY()+(MovieManager.getIt().getHeight()-getHeight())/2);
@@ -901,9 +943,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		enableAutomaticCombine.setSelected(config.getMultiAddEnableAutomaticCombine());
 
 		filterOutDuplicates.setSelected(config.getMultiAddFilterOutDuplicates());
-		
-		updateFilterOutDuplicates();
-		
+				
 		if (!filterOutDuplicates.isSelected())
 			filterOutDuplicatesEntireFilePath.setEnabled(false);
 		
@@ -955,10 +995,6 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		
 		userDefinedInfo.setCaretPosition(0);
 	
-		
-		updateRegexPattern();
-		updateExtensionoOnTree();
-		
 		loadWindowSettings();
 	}
 	
@@ -1774,6 +1810,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				
 				for (int i = 0; i < selectedValues.length; i++) {
 					model.removeElement(selectedValues[i]);
+					nodesInFileLists.remove(((Files) selectedValues[i]).getFile().getAbsolutePath());
 				}
 			}
 		});
