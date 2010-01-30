@@ -35,6 +35,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -86,9 +87,29 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 
 	boolean done = false;
 	
+	public DialogDatabaseImporterExporter(JFrame parent, MovieManagerCommandImportExportHandler handler, 
+			ModelImportExportSettings importSettings) {
+		super(parent, Localizer.get("MovieManagerCommandImport.dialog-importer.title"), true); //$NON-NLS-1$
+		setup(handler, importSettings);
+	}		
 	
-	public DialogDatabaseImporterExporter(final MovieManagerCommandImportExportHandler handler, ModelImportExportSettings importSettings) {
-		super(MovieManager.getDialog(), Localizer.get("MovieManagerCommandImport.dialog-importer.title"), true); //$NON-NLS-1$
+	public DialogDatabaseImporterExporter(JDialog parent, MovieManagerCommandImportExportHandler handler, 
+			ModelImportExportSettings importSettings) {
+		super(parent, Localizer.get("MovieManagerCommandImport.dialog-importer.title"), true); //$NON-NLS-1$
+		setup(handler, importSettings);
+	}
+	
+	public DialogDatabaseImporterExporter(JDialog parent, 
+			final MovieManagerCommandImportExportHandler handler, 
+			ModelImportExportSettings importSettings, boolean startprocess) {
+		
+		this(parent, handler, importSettings);
+		
+		if (startprocess)
+			startProcess();
+	}
+	
+	void setup(final MovieManagerCommandImportExportHandler handler, ModelImportExportSettings importSettings) {
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		this.handler = handler;
@@ -173,15 +194,6 @@ public class DialogDatabaseImporterExporter extends JDialog implements ActionLis
 		timer = new Timer(milliseconds, new TimerListener());
 	}
 	
-	
-	public DialogDatabaseImporterExporter(final MovieManagerCommandImportExportHandler handler, 
-			ModelImportExportSettings importSettings, boolean startprocess) {
-		
-		this(handler, importSettings);
-		
-		if (startprocess)
-			startProcess();
-	}
 	
 
 	class TimerListener implements ActionListener {

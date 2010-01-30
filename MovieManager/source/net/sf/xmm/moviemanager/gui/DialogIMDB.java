@@ -94,23 +94,31 @@ public class DialogIMDB extends JDialog {
     
     KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
     
+    public DialogIMDB(JDialog parent, ModelEntry modelEntry, String alternateTitle, boolean executeSearch) {
+    	super(parent);
+    	setup(modelEntry, alternateTitle, executeSearch);
+    }
+    
     public DialogIMDB(ModelEntry modelEntry, String alternateTitle, boolean executeSearch) {
-        
-        super(MovieManager.getDialog());
-        this.modelEntry = modelEntry;
-                
-        if (alternateTitle == null)
-        	setTitle(Localizer.get("DialogIMDB.title")); //$NON-NLS-1$
-        else
-        	setTitle(alternateTitle);
-       	         
-        createListDialog();
-        
-        setHotkeyModifiers();
-        
-        searchStringField.setText(modelEntry.getTitle());
-        
-        callSearch();
+    	super(MovieManager.getDialog());
+    	setup(modelEntry, alternateTitle, executeSearch);
+    }
+    
+    void setup(ModelEntry modelEntry, String alternateTitle, boolean executeSearch) {
+    	 this.modelEntry = modelEntry;
+         
+         if (alternateTitle == null)
+         	setTitle(Localizer.get("DialogIMDB.title")); //$NON-NLS-1$
+         else
+         	setTitle(alternateTitle);
+        	         
+         createListDialog();
+         
+         setHotkeyModifiers();
+         
+         searchStringField.setText(modelEntry.getTitle());
+         
+         callSearch();
     }
     
     JPanel createMoviehitsList()  {

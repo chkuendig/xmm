@@ -51,16 +51,30 @@ public class DialogIMDbUpdate extends DialogIMDB {
     boolean getUrlKeyOnly = false;
     public boolean aborted = false;
         
-    // Used  by DialogIMDbImport and the IMDbInfoUpdater
+    
+    public DialogIMDbUpdate(JDialog parent, ModelEntry modelEntry, String alternateTitle, boolean getUrlKeyOnly) {
+    	this(parent, modelEntry, alternateTitle, null, getUrlKeyOnly);
+    }
+    
+    
     public DialogIMDbUpdate(ModelEntry modelEntry, String alternateTitle, boolean getUrlKeyOnly) {
     	this(modelEntry, alternateTitle, null, getUrlKeyOnly);
     }
     
     // Used by DialogIMDbMultiAdd
+    public DialogIMDbUpdate(JDialog parent, ModelEntry modelEntry, String alternateTitle, ArrayList<ModelIMDbSearchHit> hits, boolean getUrlKeyOnly) {
+    	super(parent, modelEntry, alternateTitle, false);
+    	setup(modelEntry, alternateTitle, hits, getUrlKeyOnly);
+    }
+    
+    // Used by DialogIMDbMultiAdd
     public DialogIMDbUpdate(ModelEntry modelEntry, String alternateTitle, ArrayList<ModelIMDbSearchHit> hits, boolean getUrlKeyOnly) {
-    	
     	super(modelEntry, alternateTitle, false);
-    	    	
+    	setup(modelEntry, alternateTitle, hits, getUrlKeyOnly);
+    }
+        
+    void setup(ModelEntry modelEntry, String alternateTitle, ArrayList<ModelIMDbSearchHit> hits, boolean getUrlKeyOnly) {
+    	
     	if (alternateTitle != null)
     		setTitle(alternateTitle);
 
@@ -70,7 +84,7 @@ public class DialogIMDbUpdate extends DialogIMDB {
 
     	getSearchField().setText(alternateTitle);
     }
-        
+    
     
     void createDialogUpdateComponents() {
     	

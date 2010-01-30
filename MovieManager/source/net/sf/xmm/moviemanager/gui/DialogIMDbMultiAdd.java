@@ -35,6 +35,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -82,10 +83,10 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
     ImdbImportOption multiAddSelectOption = ImdbImportOption.displayList;
     
      
-    public DialogIMDbMultiAdd(ModelEntry modelEntry, String searchString, 
+    public DialogIMDbMultiAdd(JDialog parent, ModelEntry modelEntry, String searchString, 
     		String year, String filename, Files multiAddFile, String _imdbId) {
     
-    	super(modelEntry, searchString, null);
+    	super(parent, modelEntry, searchString, null);
     	
     	createMultiAddComponents();
     	

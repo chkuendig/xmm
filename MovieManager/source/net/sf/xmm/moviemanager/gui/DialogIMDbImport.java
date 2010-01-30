@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
@@ -55,9 +56,18 @@ public class DialogIMDbImport extends DialogIMDbUpdate {
         
     public boolean dropImdbInfoSet = false;
             
+    public DialogIMDbImport(JDialog parent, ModelEntry modelEntry, String alternateTitle, ArrayList<ModelIMDbSearchHit> hits) {
+    	super(parent, modelEntry, alternateTitle, false);
+    	setup(modelEntry, alternateTitle, hits);
+    }
+      
     public DialogIMDbImport(ModelEntry modelEntry, String alternateTitle, ArrayList<ModelIMDbSearchHit> hits) {
     	super(modelEntry, alternateTitle, false);
-    	    	
+    	setup(modelEntry, alternateTitle, hits);
+    }
+    
+    void setup(ModelEntry modelEntry, String alternateTitle, ArrayList<ModelIMDbSearchHit> hits) {
+    	
     	if (alternateTitle != null)
     		setTitle(alternateTitle);
 
@@ -70,7 +80,7 @@ public class DialogIMDbImport extends DialogIMDbUpdate {
     	else
     		super.executeSearch();
     }
-       
+    
     // May not want to execute method in parent, therefore override since it'll be called by the DialogIMDb constructor,
     @Override
     public void callSearch() {
