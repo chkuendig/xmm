@@ -2227,12 +2227,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 	
 	public void setMultiAddWindowSize(Dimension value) {
-		
-		System.err.println("setMultiAddWindowSize:" + value);
-		
+				
 		if (value.width < defaultMultiAddWindowSize.width || 
 				value.height < defaultMultiAddWindowSize.height) {
-			log.debug("setMultiAddWindowSize ignoring:" + value);
+			log.debug("setMultiAddWindowSize ignore too small window:" + value + " - Using default value instead:" + defaultMultiAddWindowSize);
+			multiAddWindowSize = new Dimension(defaultMultiAddWindowSize);
 			return;
 		}
 		multiAddWindowSize = value;
