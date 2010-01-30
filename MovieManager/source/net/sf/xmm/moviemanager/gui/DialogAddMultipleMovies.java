@@ -41,7 +41,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -50,7 +49,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -59,7 +57,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -85,21 +82,18 @@ import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
-import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTreeEvent;
-import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTreeEventListener;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileNode;
 import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTree;
+import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTreeEvent;
+import net.sf.xmm.moviemanager.swing.extentions.filetree.FileTreeEventListener;
 import net.sf.xmm.moviemanager.swing.progressbar.MultiAddProgressBar;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
-import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager.KeyMapping;
-import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.StringUtil.FilenameCloseness;
 
 import org.apache.log4j.Logger;
-
 
 public class DialogAddMultipleMovies extends JDialog implements ActionListener  {
 
@@ -989,7 +983,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		
 		// Custom exclude string
 		if (MovieManager.getConfig().getMultiAddExcludeUserDefinedString().equals(""))
-			userDefinedInfo.setText("divx,xvid,dvdrip,ac3,mp3,uncut,recut,dl,bluray,x264,720p,1080p");
+			userDefinedInfo.setText("dvdrip,bdrip,bluray,bdre,uncut,recut,unrated,extended,xvid,divx,div3,x264,h264,ac3,mp3,aac,480p,576p,720p,1080p,extended cut,directors cut");
 		else
 			userDefinedInfo.setText(MovieManager.getConfig().getMultiAddExcludeUserDefinedString());
 		
