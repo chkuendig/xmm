@@ -206,6 +206,9 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 		Thread t = new Thread(new Runnable() {
 
 			public void run() {
+
+				Thread.currentThread().setPriority(Thread.NORM_PRIORITY - 1);
+								
 				eventHandler.fireFileTreeWorkingEvent(new FileTreeEvent(false));
 				
 				Iterator<FileNode> it = expandedNodes.keySet().iterator();
@@ -213,6 +216,7 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 				
 				while (it.hasNext()) {
 					list.add(it.next());
+					System.err.println("added:" + list.get(list.size()-1));
 				}
 				
 				for (int i = 0; i < list.size(); i++) {
@@ -220,6 +224,8 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 					FileNode fileNode = list.get(i);
 					TreePath path = new TreePath(fileNode.getNode().getPath());
 
+					System.err.println("collapsed:" + fileTree.isCollapsed(path));
+					
 					// if it's not collapsed
 					if (!fileTree.isCollapsed(path)) {
 					
@@ -236,6 +242,7 @@ public class FileTree extends JPanel implements ProgressBean, Runnable {
 			}
 		});
 		t.start();
+		System.err.println("updateNodes thread created");
 	}
 	
 	public ArrayList<String> getValidExtension() {
