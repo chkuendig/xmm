@@ -302,7 +302,7 @@
 
 			<!-- Config file for log4j - get directly from config dir  -->
 			<zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/config/"
-				dir="MovieManger/config/" includes="log4j.properties" />
+				dir="MovieManager/config/" includes="log4j.properties" />
 
 			<!-- Config file for Eclipse project file  -->
 			<zipfileset prefix="MeDs-Movie-Manager-Source/"
@@ -310,7 +310,7 @@
 			
 			<!-- libraries -->
 			<zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/lib/"
-				dir="MovieManger/lib/" includes="${library_file_list_all}" />
+				dir="MovieManager/lib/" includes="${library_file_list_all}" />
 
 			<!-- ant-contrib only needed for source distribution -->
 			<zipfileset prefix="MeDs-Movie-Manager-Source/MovieManager/lib/" dir="MovieManager/lib/"
@@ -472,6 +472,7 @@
 		 -->
 		
 		<exec executable="rm">
+			<arg line="-f"/>
 			<arg line="${mac-dist}/Applications"/>
 		</exec>
 		 
