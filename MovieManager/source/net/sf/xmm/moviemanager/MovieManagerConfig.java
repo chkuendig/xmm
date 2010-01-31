@@ -1612,6 +1612,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	
 	public void parseMultiAddRootDevices(String str) {
 		
+		if (str == null)
+			return;
+			
 		String [] split = str.split("\\|");
 				
 		for (String elem : split) {				
@@ -1619,8 +1622,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				addMultiAddRootDevice(elem);
 		}		
 	}
-	
-	
 
 	
 	
@@ -2843,8 +2844,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			mainFilterSearchValues = mainFilterDefaults;
 			
 		} catch (Exception e) {
-			log.warn("Cannot find config file. " + e.getMessage());
-			e.printStackTrace();
+			log.warn("Error occured when loadig config file:" + e.getMessage(), e);
 		}
 	 }
 
