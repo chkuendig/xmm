@@ -161,9 +161,7 @@ public class DatabaseImporterExporter {
 						}
 												
 						ImportExportReturn ret = handler.addMovie(i);
-						
-						System.err.println("handler ret:" + ret);
-						
+												
 						if (ret == ImportExportReturn.error)
 							addNewTransferred("Failed to " + (handler.isImporter() ? "import " : "export ") + title);
 						else if (ret == ImportExportReturn.cancelled)
