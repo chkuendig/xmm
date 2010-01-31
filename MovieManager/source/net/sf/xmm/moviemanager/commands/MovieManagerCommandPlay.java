@@ -64,9 +64,7 @@ public class MovieManagerCommandPlay implements ActionListener {
 				return;
 						
 			execute(mailbox);
-			System.err.println("wait for message");
 			mailbox.wait_for_message();
-			System.err.println("handleReturnMessage");
 			handleReturnMessage(mailbox);
 
 		} catch (IOException e1) {
@@ -260,7 +258,6 @@ public class MovieManagerCommandPlay implements ActionListener {
 			}
 		}
 		
-		System.err.println("executePlay");
 		executePlay(files, mailbox);
 	}
 	
