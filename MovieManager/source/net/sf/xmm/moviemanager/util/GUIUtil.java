@@ -100,7 +100,7 @@ public class GUIUtil {
 		Dimension size = container.getSize();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-		int wisthLocation = (int) (p.getX() + size.getWidth());
+		int widthLocation = (int) (p.getX() + size.getWidth());
 		int heightLocation = (int ) (p.getY() + size.getHeight());	
 
 		if (appearOnLeftSide != null) {
@@ -111,8 +111,8 @@ public class GUIUtil {
 			p.setLocation(appearLeft.getX()- wSize, p.getY());
 		}
 		
-		if (wisthLocation > screenSize.getWidth()) {
-			int diff = (int) (wisthLocation - screenSize.getWidth());
+		if (widthLocation > screenSize.getWidth()) {
+			int diff = (int) (widthLocation - screenSize.getWidth());
 			p.setLocation((p.getX() - diff), p.getY());
 		}
 
@@ -125,8 +125,8 @@ public class GUIUtil {
 			p.setLocation(0.0, p.getY());
 		}
 
-		if (p.getY() < 0) {
-			p.setLocation(p.getX(), 0.0);
+		if (p.getY() < 10) {
+			p.setLocation(p.getX(), 15.0);
 		}
 
 		container.setLocation(p);
