@@ -38,7 +38,7 @@
 	<property name="dist" location="dist" />
 	<property name="izpack.dir" location="packaging/izpack" />
 
-	<property name="version" value="2.9.0" />
+	<property name="version" value="2.9.0.1" />
 	<property name="versionName" value="${version}" />
 
 	<property name="base" value="MovieManager/" />
@@ -335,7 +335,6 @@
 			    <include name="Readme.txt" />
 				<include name="Changelog.txt" />
 				<include name="xmm.css" />
-				<include name="packaging/" />
 				<include name="makejar.bat" />
 				<include name="compile.bat" />
 				<include name="run.bat" />
@@ -346,6 +345,11 @@
 				<exclude name="dist/" />
 			</zipfileset>
 			
+			<zipfileset prefix="MeDs-Movie-Manager-Source/packaging" dir="packaging/">
+				<include name="izpack/" />
+				<include name="mac/" />
+			</zipfileset>
+						
 			<zipfileset prefix="MeDs-Movie-Manager-Source" dir="" filemode="755">
 							<include name="makejar.sh" />
 							<include name="compile.sh" />
