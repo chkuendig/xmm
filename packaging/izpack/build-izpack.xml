@@ -107,7 +107,7 @@
 			   />
 	  
 	   <!-- Config file for log4j  -->
-	  <fileset dir="dist" targetdir="$INSTALL_PATH/config">
+	  <fileset dir="@{dist-tmp}" targetdir="$INSTALL_PATH/config">
 	      <include name="log4j.properties" />
 	  </fileset>
 
@@ -139,7 +139,7 @@
 	  
 	  
 	  <!-- Adding the lookAndFeels.ini file -->
-	  <fileset dir="dist" targetdir="$INSTALL_PATH/lib/LookAndFeels">
+	  <fileset dir="@{dist-tmp}" targetdir="$INSTALL_PATH/lib/LookAndFeels">
 	      <include name="lookAndFeels.ini" />
 	  </fileset>
 				  	  
