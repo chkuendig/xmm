@@ -8,7 +8,7 @@ Version 2.9.0.1 (01-February-2010)
 
 - Bug fixes:
   
-  - Config file loaded from v2.8.7 failed to load correctly.
+  - Config file from v2.8.7 failed to load correctly.
 
 
 Version 2.9.0 (28-January-2010)
