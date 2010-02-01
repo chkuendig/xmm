@@ -918,17 +918,18 @@ public class DatabaseHandler {
 
 				if (!tmp.isFile())
 					throw new Exception("HSQLDB script file does not exist.");
-				else
+				else {
 					FileUtil.copyToDir(tmp, dbBackup);
-
+					log.debug("Created backup of file " + tmp + " to " + dbBackup);
+				}
 				tmp = new File(dbPath + ".properties");
 
 				if (!tmp.isFile())
 					throw new Exception("HSQLDB properties file does not exist.");
-				else
+				else {
 					FileUtil.copyToDir(tmp, dbBackup);
-
-				log.debug("Created backup of database to " + tmp);
+					log.debug("Created backup of file " + tmp + " to " + dbBackup);
+				}
 			}
 			else if (db.isMSAccess()) {
 				File tmp;
