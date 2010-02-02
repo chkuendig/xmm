@@ -337,6 +337,7 @@ public class LookAndFeelManager {
     			public void run() {
     				try {
     					UIManager.setLookAndFeel(className);
+    					DialogMovieManager.setDefaultLookAndFeelDecorated(MovieManager.getConfig().getDefaultLookAndFeelDecorated());
     				} catch (Exception e) {
     					error = true;
     					e.printStackTrace();

@@ -316,11 +316,6 @@ public class MovieManager {
 			startupHandler.startUp();
 		}
 				
-		/* Must be executed before the JFrame (DialogMovieManager) object is created. */
-		if (config.getDefaultLookAndFeelDecorated()) {
-			DialogMovieManager.setDefaultLookAndFeelDecorated(true);
-		}
-
 		if (!sandbox) {
 							
 			if (SysUtil.isAtLeastJRE6()) {
