@@ -1639,6 +1639,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 
 	public void setDefaultLookAndFeelDecorated(boolean defaultLookAndFeelDecorated) {
+		System.err.println("setDefaultLookAndFeelDecorated:" + defaultLookAndFeelDecorated);
 		this.defaultLookAndFeelDecorated = defaultLookAndFeelDecorated;
 	}
 
@@ -2874,7 +2875,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void saveConfig() throws Exception {
 
 		 StringBuffer settings = new StringBuffer(1500);
-		 String lineSeparator = SysUtil.getLineSeparator();
 		 Database database = MovieManager.getIt().getDatabase();
 
 		 /* Absort if Applet */
@@ -2924,7 +2924,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("lookAndFeelType:", getLookAndFeelType().toString(), settings);
 		 appendToConfig("regularToolButtonsUsed:", isRegularToolButtonsUsed(), settings);
 		 appendToConfig("useRegularSeenIcon:", getUseRegularSeenIcon(), settings);
-		 appendToConfig("getUseRegularSeenIcon:", getDefaultLookAndFeelDecorated(), settings);
+		 appendToConfig("defaultLookAndFeelDecorated:", getDefaultLookAndFeelDecorated(), settings);
 		 appendToConfig("plotCastMiscellaneousIndex:", getPlotCastMiscellaneousIndex(), settings);
 		 appendToConfig("seenEditableInMainWindow:", getSeenEditable(), settings);
 		 appendToConfig("displayPlayButton:", getDisplayPlayButton(), settings);
