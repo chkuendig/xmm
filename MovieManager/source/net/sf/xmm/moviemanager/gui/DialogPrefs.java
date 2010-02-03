@@ -122,12 +122,15 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	JButton buttonSave;
 	JButton buttonCancel;
 	
-	private JComboBox lafChooser;
 	private JCheckBox enableLafChooser;
-	private JComboBox skinlfThemePackChooser;
 	private JCheckBox enableSkinlf;
-	private JComboBox substanceChooser;
 	private JCheckBox enableSubstanceChooser;
+	private JCheckBox enableNimrodChooser;
+	
+	private JComboBox lafChooser;
+	private JComboBox skinlfThemePackChooser;
+	private JComboBox substanceChooser;
+	private JComboBox nimrodChooser;
 	
 	private JRadioButton regularToolBarButtons;
 	private JRadioButton currentLookAndFeelButtons;
@@ -397,7 +400,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		/* Laf choosers */
 
-		JPanel lafChooserPanel = new JPanel(new GridLayout(0, 1));
+		JPanel lafChooserPanel = new JPanel(new GridLayout(4, 1));
 
 		/* Group the radio buttons. */
 		ButtonGroup lafGroup = new ButtonGroup();
@@ -428,7 +431,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		customLafChooserPanel.setMaximumSize(new Dimension(250,30));
 		customLafChooserPanel.setPreferredSize(new Dimension(250,30));
 
-		lafChooserPanel.add(customLafChooserPanel, BorderLayout.SOUTH);
+		lafChooserPanel.add(customLafChooserPanel);
 
 
 
@@ -498,8 +501,44 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		substanceLafChooserPanel.setPreferredSize(new Dimension(250,30));
 
 		if (substanceSkins.length > 0) {
-			lafChooserPanel.add(substanceLafChooserPanel, BorderLayout.SOUTH);
+			lafChooserPanel.add(substanceLafChooserPanel);
 		}
+		
+		
+		// Nimrod
+		/*
+		String [] nimrodThemes = LookAndFeelManager.getSubstanceSkinListArray();
+
+		nimrodChooser = new JComboBox(nimrodThemes);
+		enableNimrodChooser = new JCheckBox("NimRod"); //$NON-NLS-1$
+		enableNimrodChooser.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
+		lafGroup.add(enableNimrodChooser);
+
+		String currentNimrod = config.getSubstanceSkin();
+
+		nimrodChooser.setSelectedItem(currentNimrod);
+		nimrodChooser.setEnabled(false);
+		nimrodChooser.addActionListener(this);
+		enableNimrodChooser.addActionListener(this);
+
+		nimrodChooser.setPreferredSize(new Dimension(250, (int) lafChooser.getPreferredSize().getHeight()));
+
+
+		JPanel nimrodLafChooserPanel = new JPanel(new BorderLayout());
+		nimrodLafChooserPanel.setBorder(BorderFactory.createEmptyBorder(4,20,4,20));
+
+		nimrodLafChooserPanel.add(enableNimrodChooser, BorderLayout.WEST);
+		nimrodLafChooserPanel.add(nimrodChooser, BorderLayout.EAST);
+
+		nimrodLafChooserPanel.setMaximumSize(new Dimension(250,30));
+		nimrodLafChooserPanel.setPreferredSize(new Dimension(250,30));
+
+		if (nimrodThemes.length > 0) {
+			lafChooserPanel.add(nimrodLafChooserPanel);
+		}
+		
+		*/
+		
 		
 		setLafChooserPreferredSize();
 
@@ -1729,14 +1768,37 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		/* Save proxy settings */
 		config.setProxyType((String) proxyType.getSelectedItem());
-		config.setProxyHost(hostTextField.getText());
-		config.setProxyPort(portTextField.getText());
-		config.setProxyUser(userNameTextField.getText());
-		config.setProxyPassword(new String(passwordTextField.getPassword()));
-
+		
+		
+		
+		if (enableProxyButton.isSelected()) {
+			
+			if (hostTextField.getText().trim().equals("")) {
+				showAlert("Missing host", "Proxy host cannot be empty!");
+				return false;
+			}
+			else if (portTextField.getText().trim().equals("")) {
+				showAlert("Missing port", "Proxy port cannot be empty!");
+				return false;
+			}
+		
+			config.setProxyHost(hostTextField.getText());
+			config.setProxyPort(portTextField.getText());
+						
+			if (enableAuthenticationButton.isSelected()) {
+			
+				if (userNameTextField.getText().trim().equals("")) {
+					showAlert("Missing user", "Proxy user name cannot be empty!");
+					return false;
+				}
+				
+				config.setProxyUser(userNameTextField.getText());
+				config.setProxyPassword(new String(passwordTextField.getPassword()));
+			}
+			config.setProxyAuthenticationEnabled(enableAuthenticationButton.isSelected());
+		}
 		config.setProxyEnabled(enableProxyButton.isSelected());
-		config.setProxyAuthenticationEnabled(enableAuthenticationButton.isSelected());
-
+		
 		if (config.getIMDbAuthenticationEnabled() != enableIMDbAuthenticationButton.isSelected() ||
 				!config.getIMDbAuthenticationUser().equals(IMDbUserNameTextField.getText()) ||
 				!config.getIMDbAuthenticationPassword().equals(new String(IMDbPasswordTextField.getPassword()))) {
@@ -1902,6 +1964,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		return true;
 	}
 
+	void showAlert(String title, String message) {
+		DialogAlert alert = new DialogAlert(this, title, message); //$NON-NLS-1$ //$NON-NLS-2$ 
+		GUIUtil.showAndWait(alert, true);
+	}
 
 	void setLookAndFeel(final LookAndFeelType type) {
 
