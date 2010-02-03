@@ -219,6 +219,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String databaseBackupDeleteOldest = "20";
 	private String databaseBackupLaunchCount = "0";
 	private String databaseBackupDirectory = "";
+	private boolean databaseBackupWarnInvalidDir = true;
 	
 	private int lastMovieInfoTabIndex = 0;
 	private int lastPreferencesTabIndex = 0;
@@ -1639,7 +1640,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 
 	public void setDefaultLookAndFeelDecorated(boolean defaultLookAndFeelDecorated) {
-		System.err.println("setDefaultLookAndFeelDecorated:" + defaultLookAndFeelDecorated);
 		this.defaultLookAndFeelDecorated = defaultLookAndFeelDecorated;
 	}
 
@@ -2145,8 +2145,15 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	public void setDatabaseBackupDirectory(String backupDirectory) {
 		this.databaseBackupDirectory = backupDirectory;
 	}
-    
-	
+
+	public boolean getDatabaseBackupWarnInvalidDir() {
+		return databaseBackupWarnInvalidDir;
+	}
+
+	public void setDatabaseBackupWarnInvalidDir(boolean warn) {
+		this.databaseBackupWarnInvalidDir = warn;
+	}
+
 	// DialogMovieManager window values
 	
 	public int getMainWindowSliderPosition() {
@@ -2759,7 +2766,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			setDatabaseBackupDeleteOldest(getStringValue("databaseBackupDeleteOldest:", config, getDatabaseBackupDeleteOldest()));
 			setDatabaseBackupLaunchCount(getStringValue("databaseBackupLaunchCount:", config, getDatabaseBackupLaunchCount()));
 			setDatabaseBackupDirectory(getStringValue("databaseBackupDirectory:", config, getDatabaseBackupDirectory()));
-												
+			setDatabaseBackupWarnInvalidDir(getBooleanValue("databaseBackupWarnInvalidDir:", config, getDatabaseBackupWarnInvalidDir()));
+					
 			setDisplayPlayButton(getBooleanValue("displayPlayButton:", config, getDisplayPlayButton()));
 			setDisplayPrintButton(getBooleanValue("displayPrintButton:", config));
 			setCheckForProgramUpdates(getBooleanValue("checkForProgramUpdates:", config));
@@ -3092,6 +3100,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("databaseBackupDeleteOldest:", getDatabaseBackupDeleteOldest(), settings);
 		 appendToConfig("databaseBackupLaunchCount:", getDatabaseBackupLaunchCount(), settings);
 		 appendToConfig("databaseBackupDirectory:", getDatabaseBackupDirectory(), settings);
+		 appendToConfig("databaseBackupWarnInvalidDir:", getDatabaseBackupWarnInvalidDir(), settings);
 		 
 		 // Import/Export settings
 		 appendToConfig("htmlExportType:", getHTMLExportType(), settings);

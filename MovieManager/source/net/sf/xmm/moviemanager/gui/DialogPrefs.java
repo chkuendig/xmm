@@ -204,7 +204,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	private JTextField makeBackupEveryLaunchField;
 	private JTextField deleteOldestWhenSizeExcedesMBField;
 	private JTextField backupDirField;
-
+	private JCheckBox warnAboutInvalidBackupDir;
+	
 	private JComboBox langauges;
 
 	private JButton browserBrowse;
@@ -1667,8 +1668,13 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		deleteOldestWhenSizeExcedesMBField.setText(config.getDatabaseBackupDeleteOldest());
 		backupDirField.setText(config.getDatabaseBackupDirectory());
 
-
-
+		warnAboutInvalidBackupDir = new JCheckBox("Warn me about invalid backup dir");
+		warnAboutInvalidBackupDir.setSelected(config.getDatabaseBackupWarnInvalidDir());
+		
+		c.gridx = 0;
+		c.gridy = 5;
+		backupSettingsPanel.add(warnAboutInvalidBackupDir, c);
+		
 		/* Backup settings */
 
 		JPanel backupPanel = new JPanel();
@@ -1768,9 +1774,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		/* Save proxy settings */
 		config.setProxyType((String) proxyType.getSelectedItem());
-		
-		
-		
+				
 		if (enableProxyButton.isSelected()) {
 			
 			if (hostTextField.getText().trim().equals("")) {
@@ -1863,7 +1867,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		config.setDatabaseBackupDeleteOldest(tmp);
 
 		config.setDatabaseBackupDirectory(backupDirField.getText());
-
+		config.setDatabaseBackupWarnInvalidDir(warnAboutInvalidBackupDir.isSelected());
+		
+		
 		config.setRemoveQuotesOnSeriesTitle(removeQuotesFromSeriesTitle.isSelected());
 
 		/* automatic move of 'The' */
