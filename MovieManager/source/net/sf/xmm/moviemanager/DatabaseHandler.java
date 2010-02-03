@@ -41,6 +41,7 @@ import net.sf.xmm.moviemanager.database.DatabaseAccess;
 import net.sf.xmm.moviemanager.database.DatabaseHSQL;
 import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
+import net.sf.xmm.moviemanager.gui.DialogAlertCheckBox;
 import net.sf.xmm.moviemanager.gui.DialogDatabase;
 import net.sf.xmm.moviemanager.gui.DialogQuestion;
 import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
@@ -946,13 +947,17 @@ public class DatabaseHandler {
 			e.printStackTrace();
 
 			try {
-				GUIUtil.invokeAndWait(new Runnable() {
+				if (MovieManager.getConfig().getDatabaseBackupWarnInvalidDir()) {
 
-					public void run() {
-						DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "Backup error", "<html>Failed to create database backup:<br>" + e.getMessage() + "</html>", true);
-						GUIUtil.show(alert, true);
-					}
-				});
+					GUIUtil.invokeAndWait(new Runnable() {
+
+						public void run() {
+							DialogAlertCheckBox alert = new DialogAlertCheckBox(MovieManager.getDialog(), "Backup error", "<html>Failed to create database backup:<br>" + e.getMessage() + "</html>", "Do not warn me again");
+							GUIUtil.show(alert, true);
+							MovieManager.getConfig().setDatabaseBackupWarnInvalidDir(alert.isButtonChecked());
+						}
+					});
+				}
 			} catch (InterruptedException e1) {
 				log.error("Exception:" + e.getMessage(), e);
 			} catch (InvocationTargetException e1) {
