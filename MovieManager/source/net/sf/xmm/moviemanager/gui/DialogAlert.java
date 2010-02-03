@@ -217,7 +217,8 @@ public class DialogAlert extends JDialog {
 		makeRest(MovieManager.getDialog(), panelAlert);
 	}
 
-
+	JPanel panelButtons;
+	
 	void makeRest(Window parent, JComponent panelAlert) {
 		/* Dialog properties...*/
 
@@ -227,9 +228,11 @@ public class DialogAlert extends JDialog {
 		GUIUtil.enableDisposeOnEscapeKey(this);
 
 		/* Buttons panel...*/
-		JPanel panelButtons = new JPanel();
+		panelButtons = new JPanel();
 		panelButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-		panelButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
+		//panelButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
+		panelButtons.setLayout(new BorderLayout());
+		
 		JButton buttonOk = new JButton(Localizer.get("DialogAlert.button-ok.text")); //$NON-NLS-1$
 		buttonOk.setActionCommand("Alert - OK"); //$NON-NLS-1$
 		buttonOk.addActionListener(new CommandDialogDispose(this));
@@ -241,7 +244,7 @@ public class DialogAlert extends JDialog {
 		});
 		
 		
-		panelButtons.add(buttonOk);
+		panelButtons.add(buttonOk, BorderLayout.EAST);
 		
 		/* Adds all and buttonsPanel... */    
 		getContentPane().add(panelAlert, BorderLayout.NORTH);
