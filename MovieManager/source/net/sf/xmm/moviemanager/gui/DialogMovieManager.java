@@ -1468,9 +1468,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         else { 
         	
         	if (config.getUseRegularSeenIcon()) {
-        		System.err.println("getImage:" + FileUtil.getImage("/images/unseen.png"));
-        		System.err.println("getScaledInstance:" + FileUtil.getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH));
-        		
         		seenCheckBox.setIcon(new ImageIcon(FileUtil.getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
         		seenCheckBox.setSelectedIcon(new ImageIcon(FileUtil.getImage("/images/seen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
         	}
