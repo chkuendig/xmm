@@ -43,6 +43,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -395,10 +396,21 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	setTreeModel(null, null, null);
     }
     
-    public void setTreeModel(DefaultTreeModel model, ArrayList<ModelMovie> movieList, ArrayList<ModelEpisode> episodeList) {
-    	moviesList.setModel(model);
-    	setCurrentLists(movieList, episodeList);
-    	MovieManager.getDatabaseHandler().getNewMovieListLoadedHandler().newMovieListLoaded(this);
+    public void setTreeModel(final DefaultTreeModel model, final ArrayList<ModelMovie> movieList, final ArrayList<ModelEpisode> episodeList) {
+    	
+    	try {
+    		GUIUtil.invokeAndWait(new Runnable() {
+    			public void run() {
+    				moviesList.setModel(model);
+    				setCurrentLists(movieList, episodeList);
+    				MovieManager.getDatabaseHandler().getNewMovieListLoadedHandler().newMovieListLoaded(this);
+    			}
+			});
+		} catch (InterruptedException e) {
+			log.warn("Exception:" + e.getMessage(), e);
+		} catch (InvocationTargetException e) {
+			log.warn("Exception:" + e.getMessage(), e);
+		}
     }
        
     
@@ -1456,6 +1468,9 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         else { 
         	
         	if (config.getUseRegularSeenIcon()) {
+        		System.err.println("getImage:" + FileUtil.getImage("/images/unseen.png"));
+        		System.err.println("getScaledInstance:" + FileUtil.getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH));
+        		
         		seenCheckBox.setIcon(new ImageIcon(FileUtil.getImage("/images/unseen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
         		seenCheckBox.setSelectedIcon(new ImageIcon(FileUtil.getImage("/images/seen.png").getScaledInstance(18,18,Image.SCALE_SMOOTH))); //$NON-NLS-1$
         	}
