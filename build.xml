@@ -38,7 +38,7 @@
 	<property name="dist" location="dist" />
 	<property name="izpack.dir" location="packaging/izpack" />
 
-	<property name="version" value="2.9.0.1" />
+	<property name="version" value="2.9.1" />
 	<property name="versionName" value="${version}" />
 
 	<property name="base" value="MovieManager/" />
@@ -62,7 +62,6 @@
 	     LookAndFeels/kunststoff.jar,
 	     LookAndFeels/lipstikLF-1.1.jar,
 	     LookAndFeels/liquidlnf-2.9.1.jar,
-	     LookAndFeels/nimrodlf-1.1a.jar,
 	     LookAndFeels/OfficeLnFs_2.7.jar,
 	     LookAndFeels/PgsLookAndFeel-1.1.jar,
 	     LookAndFeels/squareness.2.3.0.jar,
@@ -77,9 +76,9 @@
 	     LookAndFeels/syntheticaSilverMoon.jar,
 	     LookAndFeels/1.6/substance-6.0.jar,
 	 	 LookAndFeels/1.6/trident.jar,
-	     LookAndFeels/1.6/nimrodlf-1.1a.jar,
-	 	 LookAndFeels/Skinlf_Theme_Packs/
-	 		     "/>
+	 	 LookAndFeels/Skinlf_Theme_Packs/,
+	 	 LookAndFeels/NimROD_Themes/
+	  "/>
 	
 	<property name="libraries"
 		value="cobra/cobra-0.98.2.jar,
@@ -108,6 +107,7 @@
 		   ProportionLayout.jar,
 		   Required-libraries.txt,
 		   skinlf.jar,
+		   nimrodlf-1.1a.jar,
 		   TableLayout.jar,
 		   useful.jar,
 		   xercesImpl.jar,
@@ -595,7 +595,6 @@ ${newline}
 "Compiere"                     "org.compiere.plaf.CompiereLookAndFeel"                                "1.5"${newline}
 "Squareness"                   "net.beeger.squareness.SquarenessLookAndFeel"                          "1.4"${newline}
 "Lipstik"                      "com.lipstikLF.LipstikLookAndFeel"                                     "1.5"${newline}
-"NimROD"                       "com.nilo.plaf.nimrod.NimRODLookAndFeel"                               "1.5"${newline}
 </echo>
 
 	</target>
@@ -708,6 +707,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 	&lt;classpathentry kind="lib" path="MovieManager/lib/mac/AppleJavaExtensions.jar"/&gt;
 	&lt;classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/&gt;
 	&lt;classpathentry kind="lib" path="MovieManager/lib/skinlf.jar"/&gt;
+	&lt;classpathentry kind="lib" path="MovieManager/lib/nimrodlf-1.1a.jar"/&gt;
 	&lt;classpathentry kind="lib" path="MovieManager/lib/jna-3.2.4.jar"/&gt;
 	&lt;classpathentry kind="lib" path="MovieManager/lib/balloontip-1.0.jar"/&gt;
 	&lt;classpathentry kind="lib" path="MovieManager/lib/jupidator.jar"/&gt;
