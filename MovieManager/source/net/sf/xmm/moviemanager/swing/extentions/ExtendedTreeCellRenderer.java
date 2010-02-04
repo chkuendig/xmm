@@ -134,138 +134,7 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 		setDefaultColors();	
 	}
 
-
-	public static int minViewWidth = -1;
 	
-	int treeMinWidth = -1;
-	int treePrefWidth = -1;
-	
-	// @Override
-	/*	 
-	 
-	  	 public java.awt.Dimension getPreferredSize1() {
-	 
-		 java.awt.Dimension size = super.getPreferredSize();
-		// System.err.println("\nsize:" + size);
-		 
-		 //size.width = Short.MAX_VALUE;
-		 	
-		 if (tree instanceof ExtendedJTree) {
-	
-			 if (((ExtendedJTree) tree).viewPortPrefWidth != -1) {
-				 //size.width = ((ExtendedJTree) tree).viewPortPrefWidth;
-		
-				 int viewPortPrefWidth = ((ExtendedJTree) tree).viewPortPrefWidth;
-				 int treeWidth = ((ExtendedJTree) tree).treeWidth;
-				 treePrefWidth = ((ExtendedJTree) tree).treePrefWidth;
-				 int treeMaxWidth = ((ExtendedJTree) tree).treeMaxWidth;
-				 treeMinWidth = ((ExtendedJTree) tree).treeMinWidth;
-				
-				 
-				 //size.width += 20 + 17;
-				 //size.width += 17 + 20;
-				 
-				 System.err.println("size.width:" + size.width);
-				 
-				 //System.err.println("size.width("+size.width+") < minViewWidth("+minViewWidth+"):" + (size.width < minViewWidth));
-				 
-				 if (size.width < (minViewWidth- (30))) {
-					 System.err.println("size.width("+size.width+") < minViewWidth("+minViewWidth+")");
-					 //	 size.width = minViewWidth - 17;
-					 //size.width = minViewWidth - (17 + 20);
-					 size.width = minViewWidth - (19 + 20);
-				 }
-				 else {
-					 System.err.println("not less ----------------------------------------");
-				 }
-				 
-				 //if (size.width < treePrefWidth)
-				//	 size.width = treePrefWidth - 20;
-					 
-				 System.err.println("getIconTextGap:" + getIconTextGap());
-				 
-				 if (getIcon() != null)
-					 System.err.println("getIconWidth:" + getIcon().getIconWidth());
-				 
-				// else {
-				//	 size.width += 17;
-				 //}
-				 //System.err.println("size.width:" + size.width);
-				 
-				//System.err.println("Title:" + getText());
-				 
-				 
-//				    System.err.println();
-//				 System.err.println("viewPortPrefWidth:" + viewPortPrefWidth);
-//				 System.err.println("tree      Width:" + treeWidth);
-//				 System.err.println("tree pref Width:" + treePrefWidth);
-//				 System.err.println("tree max  Width:" + treeMaxWidth);
-//				 System.err.println("tree min  Width:" + treeMinWidth);
-//				 				 
-//				 System.err.println("Label Preferred:" + size.width);
-//				 							 				
-//				 System.err.println("getIconTextGap:" + getIconTextGap());
-//				 
-//				
-//				 
-//				 if (getIcon() != null)
-//					 System.err.println("getIconWidth:" + getIcon().getIconWidth());
-//				 
-				  
-								 
-				 //int calculatedwidth = javax.swing.SwingUtilities.computeStringWidth(getFontMetrics(getFont()), getText());
-				 //System.err.println("computeStringWidth:" + calculatedwidth);
-
-//				 System.err.println("getIconTextGap:" + getIconTextGap());
-//
-//				 if (getIcon() != null) {
-//					 System.err.println("getIconWidth:" + getIcon().getIconWidth());
-//					 //size.width -= getIcon().getIconWidth();
-//					// size.width -= 17;
-//					 }
-	
-				 
-				 setBackground(Color.red);
-			 }
-			// System.err.println("getPrefe + rredSize" + ((ExtendedJTree) tree).viewPortPrefWidth);
-		 }
-		 
-		 return size;
-	 }
-
-	
-	 
-	// @Override
-	 public void setBounds1(final int x, final int y, int width, final int height) {
-		 //System.err.println("tree.getWidth():" + tree.getWidth());
-		 //System.err.println("x:" + x);
-		 
-		 width += 20 + 17;
-		 
-		 if (width < minViewWidth) {
-			 //System.err.println("size.width("+size.width+") < minViewWidth("+minViewWidth+")");
-			 //	 size.width = minViewWidth - 17;
-			 //size.width = minViewWidth - (17 + 20);
-			 System.err.println("setBounds set from "+width+ " to width:" + minViewWidth);
-			width = minViewWidth + 17 +20;
-		 }
-		 
-		 System.err.println("width:" + width);
-		 System.err.println("treePrefWidth:" + treePrefWidth);
-		 
-		 if (width < treePrefWidth)
-			 width = treePrefWidth + 20 + 170;
-		 
-		 System.err.println("width:" + width); 
-		 
-		// else
-		//	 width += 17;
-		 
-		 super.setBounds(x, y, width, height);
-		 //super.setBounds(x, y, Math.min(tree.getWidth() - x, width), height);
-	 }
-	*/
-	 
 	public void newDatabaseLoaded(NewDatabaseLoadedEvent evt) {
 		folder = null;
 		clearCoverCache();
@@ -386,8 +255,6 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 		}
 
 		javax.swing.JPanel p = new javax.swing.JPanel();
-		//p.setPreferredSize(new java.awt.Dimension(tree.getWidth(), tree.getRowHeight()));
-		//System.err.println("size:" + new java.awt.Dimension(tree.getWidth(), tree.getRowHeight()));
 		p.setLayout(new java.awt.BorderLayout());
 		p.add(this, BorderLayout.CENTER);
 		

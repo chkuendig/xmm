@@ -39,9 +39,12 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import net.sf.xmm.moviemanager.LookAndFeelManager;
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.MovieManagerConfig.LookAndFeelType;
+import net.sf.xmm.moviemanager.LookAndFeelManager.LookAndFeelType;
 import net.sf.xmm.moviemanager.util.SysUtil;
+import net.sf.xmm.moviemanager.util.events.NewLookAndFeelLoadedEvent;
+import net.sf.xmm.moviemanager.util.events.NewLookAndFeelLoadedEventListener;
 
 import org.apache.log4j.Logger;
 
@@ -60,41 +63,31 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 	public static final boolean displayFilesInTree = false;
 	
 	ExtendedJTree extendedTree = this;
-	
-	int firstShiftRow = 0;
-	int currentRow = 0;
-	
-	
-   JTree getTree() {
-	   return this;
-   }
-   
 
+	JTree getTree() {
+		return this;
+	}
+	
    /**
     * Constructor.
     * @param root The Root node for the JTree.
     */
    public ExtendedJTree() {
 	   super();
-
-	   addMouseListener(new TreeMouseListener());
+	   
 	   setDragEnabled(false);
-	   
-	   addTreeSelectionListener(new TreeSelectionListener() {
-		   public void valueChanged( TreeSelectionEvent e ) {
-			   DefaultMutableTreeNode node = ( DefaultMutableTreeNode ) getLastSelectedPathComponent();
-			   getChildren(node);
-			   
-			  // Update last selected
-			   if (getSelectionCount() == 1) {
-				   
-				   setCurrentRow(getSelectionRows()[0]);
-				   firstShiftRow = currentRow;
-			   }
-		   }
-	   });
-	   
-	   mouseSelectionListenerEnabled = MovieManager.getConfig().getTreeMouseSelectionListenerEnabled();
+	   setUI(new ExtendedJTreeUI(this));
+
+	   /*
+	   LookAndFeelManager.newLookAndFeelLoadedHandler.addNewLookAndFeelLoadedEventListener(
+			   new NewLookAndFeelLoadedEventListener() {
+				   public void newLookAndFeelLoaded(NewLookAndFeelLoadedEvent evt) {
+					   System.err.println("newLookAndFeelLoaded");
+					   setUI(new ExtendedJTreeUI(getTree()));
+					   ((ExtendedJTreeUI) getUI()).installDefaults();
+				   }
+			   });
+   */
    }	
 
    /**
@@ -111,157 +104,7 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 	   setModel(dtModel);
    }
    
-      
-   // This makes sure the entire width of the tree rows is painted
-   
-   @Override
-   protected void paintComponent(Graphics g) {
-	   int[] rows = getSelectionRows();
 
-	   if (rows != null && rows.length > 0) {
-		   for (int i = 0; i < rows.length; i++) {
-			   Rectangle b = getRowBounds(rows[i]);
-			   g.setColor(UIManager.getColor("Tree.selectionBackground"));
-			   g.fillRect(0, b.y, getWidth(), b.height);
-
-			   /*
-			   viewPortPrefWidth = getPreferredScrollableViewportSize().width;
-			   treeWidth = getWidth();
-			   treePrefWidth = getPreferredSize().width;
-			   treeMaxWidth = getMaximumSize().width;
-			   treeMinWidth = getMinimumSize().width;
-		   	*/
-		   }
-	   }
-	   super.paintComponent(g);
-   }
-
-   /*
-   protected void paintComponent1(Graphics g) {
-	  
-	   viewPortPrefWidth = getPreferredScrollableViewportSize().width;
-	   treeWidth = getWidth();
-	   treePrefWidth = getPreferredSize().width;
-	   treeMaxWidth = getMaximumSize().width;
-	   treeMinWidth = getMinimumSize().width;
-	   
-	   super.paintComponent(g);
-   }
-   
-    public int viewPortPrefWidth = -1;
-   public int treeWidth = -1;
-   public int treePrefWidth = -1;
-   public int treeMaxWidth = -1;
-   public int treeMinWidth = -1;
-   
-   */
-   
-  
-  
-   
-   boolean mouseSelectionListenerEnabled = true;
-   
-   public void setMouseSelectionListenerEnabled(boolean val) {
-	   mouseSelectionListenerEnabled = val;
-   }
-   
-   // Used for knowing which rows to use when selecting multiple rows with SHIFT key.
-   void setCurrentRow(int val) {
-		currentRow = val;
-	}
-	
-	private void setLastButtonPushed(boolean shift) {
-		if (!shift) {
-			firstShiftRow = currentRow;
-		}
-	}
-   
-   class TreeMouseListener extends MouseAdapter {
-	   
-	   /**
-	    * Handles selection on nodes with CTRL + SHIFT keys + right click menu
-	    **/
-	   public void mousePressed(MouseEvent event) {
-		
-		   if (!mouseSelectionListenerEnabled)
-			   return;
-		   
-		   ExtendedJTree movieList = (ExtendedJTree) MovieManager.getDialog().getMoviesList();
-		   int rowForLocation = movieList.getRowForLocation(event.getX(), event.getY());
-		   boolean outsideOfText = false;
-		   
-		   if (rowForLocation == -1) {
-			   int width = movieList.getWidth();
-			   outsideOfText = true;
-			   // In JTree, the "row" stops where the text of the entry ends. Therefore we have to ignore the x value.
-			   // Since the roothandle and the icon also disturbs the getRowForLocation method we have to try different values of X.
-			   for (int i = 0; rowForLocation == -1 && i < width; i++)
-				   rowForLocation = movieList.getRowForLocation(i, event.getY());
-		   }
- 		   
-		   if (rowForLocation == -1) {
-			   return;
-		   }
-		   
-		   setCurrentRow(rowForLocation);
-		   
-		   // If right clicking an already selected row, no changes are done.
-		   if (getTree().isRowSelected(rowForLocation) && SwingUtilities.isRightMouseButton(event) && 
-				   !SysUtil.isCtrlPressed(event) && !SysUtil.isShiftPressed(event)) {
-			   return;
-		   }
-		   		   		   
-		   if (MovieManager.getConfig().getEnableCtrlMouseRightClick() && SysUtil.isCtrlPressed(event)) {
-			   
-			   if (!getTree().isRowSelected(rowForLocation)) {
-				   getTree().addSelectionRow(rowForLocation);
-			   }
-		   }      
-		   else {
-
-			   if (SysUtil.isShiftPressed(event)) {
-				 
-				//   if (true)
-				//	   return;
-					   
-				   // if substance laf, drop this. Thats because substance already handles selecting the entire row.
-				   if (MovieManager.getConfig().getLookAndFeelType() == LookAndFeelType.Substance)
-					   return;
-
-				   // Cannot use setSelectionInterval if both are equal, see setSelectionInterval
-				   if (rowForLocation == firstShiftRow) {
-					   movieList.setSelectionRow(rowForLocation);
-				   }
-				   else
-					   movieList.setSelectionInterval(rowForLocation, firstShiftRow);
-			   }
-			   else if (SysUtil.isCtrlPressed(event)) {
-
-				   if (movieList.isRowSelected(rowForLocation)) {
-					   
-					   if (SwingUtilities.isLeftMouseButton(event)) {
-						   if (outsideOfText)
-							   movieList.removeSelectionRow(rowForLocation);
-					   }
-				   }
-				   else {
-					   if (outsideOfText || SwingUtilities.isRightMouseButton(event)) {
-						   movieList.addSelectionRow(rowForLocation);
-					   }
-				   }
-			   }
-			   else {
-				   movieList.setSelectionRow(rowForLocation);
-			   }
-		   }
-		   setLastButtonPushed(SysUtil.isShiftPressed(event));
-	   }
-   }
-   
-     
-
-   
-   
 
    ////////////////////
    // AUTO SCROLLING //
@@ -325,52 +168,7 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 		return null;
 	}
 
-	/**
-	 * Gets all children for a parent node.
-	 * @param parent The parent node.
-	 */
-	public void getChildren( DefaultMutableTreeNode parent ) {
-
-
-		// // Get parent if it exists
-		//     if( parent != null )
-		//     {
-		// 	DiskObject parentObj = ( DiskObject ) parent.getUserObject();
-
-		//       // If parent can contain children (i.e. A drive or folder)
-		//       if( parentObj.isDirectory() || parentObj.isDrive() )
-		//       {
-		//         // Remove all the parents' children ( Parent will grab new 'refreshed' view of its children below )
-		//         int count = parent.getChildCount() - 1;
-		//         for( int k = count; k >= 0; k-- )
-		//         {
-		//           dtModel.removeNodeFromParent( ( DefaultMutableTreeNode ) parent.getChildAt( k ) );
-		//         }
-
-		//         // Convert parent to a File and get all it's children  ( i.e. Will refresh view with most current children )
-		//         File parentDir = new File( parentObj.getPath() );
-		//         JExplorer.selectedDiskObjectName = parentDir.getAbsolutePath();
-		//         File[] childFiles = parentDir.listFiles();
-
-		//         // If parent has any children
-		//         if( childFiles != null )
-		//         {
-		//           // If children are directories, add them to JTree
-		//           int childCount = childFiles.length;
-		//           for( int i = 0; i < childCount; i++ )
-		//           {
-		//             File child = childFiles[i];
-		//             if( child.isDirectory() )
-		//             {
-		//               //log.debug( "ADD: " +child.getName()+" to "+parentObj.getPath() );
-		//               addObject(  parent, new Local( DiskObject.DIRECTORY, child.getName(), child.getAbsolutePath() ) );
-		//             }
-		//           }
-		//         }
-		//      }
-		//   }
-	}
-
+	
 	////////////////////////////////////////////////////////////////////////////
 	// Add/Remove Nodes
 	////////////////////////////////////////////////////////////////////////////
@@ -454,23 +252,28 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 
 
 	/* Resets the value of the X- coordinate */
-	public void scrollPathToVisible2(TreePath path, int xCoordinate) {
+	public void scrollPathToVisible2(final TreePath path, final int xCoordinate) {
 
 		if(path != null) {
-			makeVisible(path);
-			Rectangle bounds = getPathBounds(path);
+			SwingUtilities.invokeLater(new Runnable() {
 
-			if(bounds != null) {
+				public void run() {
+					makeVisible(path);
+					Rectangle bounds = getPathBounds(path);
 
-				if (xCoordinate != -1)
-					bounds.setRect(xCoordinate, bounds.getY(), bounds.getWidth(), bounds.getHeight());
+					if(bounds != null) {
 
-				scrollRectToVisible(bounds);
+						if (xCoordinate != -1)
+							bounds.setRect(xCoordinate, bounds.getY(), bounds.getWidth(), bounds.getHeight());
 
-				if (accessibleContext != null) {
-					((AccessibleJTree)accessibleContext).fireVisibleDataPropertyChange();
+						scrollRectToVisible(bounds);
+
+						if (accessibleContext != null) {
+							((AccessibleJTree)accessibleContext).fireVisibleDataPropertyChange();
+						}
+					}
 				}
-			}
+			});
 		}
 	}
 }
