@@ -861,7 +861,6 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
 				    					
 				if (buttonEnabledChanged && path.startsWith(SysUtil.getUserDir())) {
 					newPath = path.substring(SysUtil.getUserDir().length(), path.length());
-					System.err.println("created new path without userdir:" + newPath);
 				}
 				
 			}
