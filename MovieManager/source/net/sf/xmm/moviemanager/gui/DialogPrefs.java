@@ -86,6 +86,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import net.sf.xmm.moviemanager.LookAndFeelManager;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
+import net.sf.xmm.moviemanager.LookAndFeelManager.LookAndFeelType;
 import net.sf.xmm.moviemanager.MovieManagerConfig.InternalConfig;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.models.ModelMovie;
@@ -98,7 +99,6 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
-import static net.sf.xmm.moviemanager.MovieManagerConfig.LookAndFeelType;
 import static net.sf.xmm.moviemanager.MovieManagerConfig.NoCoverType;
 
 import org.apache.log4j.Logger;
@@ -235,6 +235,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
 
+	LookAndFeelManager lafManager = MovieManager.getLookAndFeelManager();
+	
 	public DialogPrefs() {
 		/* Dialog creation...*/
 		super(MovieManager.getDialog());
@@ -385,7 +387,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		regularDecoratedButton.addActionListener(this);
 		defaultLafDecoratedButton.addActionListener(this);
 
-		if (config.getDefaultLookAndFeelDecorated())
+		if (lafManager.getDefaultLookAndFeelDecorated())
 			defaultLafDecoratedButton.setSelected(true);
 		else
 			regularDecoratedButton.setSelected(true);
@@ -407,14 +409,15 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		ButtonGroup lafGroup = new ButtonGroup();
 
 
-		String [] lookAndFeelStrings = LookAndFeelManager.getLaFListArray();
+		
+		String [] lookAndFeelStrings = lafManager.getLaFListArray();
 		
 		lafChooser = new JComboBox(lookAndFeelStrings);
 		enableLafChooser = new JCheckBox(Localizer.get("DialogPrefs.panel.look-and-feel.enable-custom-laf.text")); //$NON-NLS-1$
 		enableLafChooser.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
 		lafGroup.add(enableLafChooser);
 
-		String currentLookAndFeel = config.getCustomLookAndFeel();
+		String currentLookAndFeel = lafManager.getCustomLookAndFeel();
 
 		lafChooser.setSelectedItem(currentLookAndFeel);
 		lafChooser.setEnabled(false);
@@ -438,7 +441,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		/* Skinlf */
 
-		String [] skinlfThemePackList = LookAndFeelManager.getSkinlfThemepackList();
+		String [] skinlfThemePackList = lafManager.getSkinlfThemepackList();
 
 		if (skinlfThemePackList != null) {
 			enableSkinlf = new JCheckBox(Localizer.get("DialogPrefs.panel.look-and-feel.enable-skinlf.text")); //$NON-NLS-1$
@@ -455,7 +458,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			skinlfThemePackChooser = new JComboBox(skinlfThemePackList);
 			skinlfThemePackChooser.setEnabled(false);
 
-			String currentSkinlfThemePack = config.getSkinlfThemePack().replace(".zip", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			String currentSkinlfThemePack = lafManager.getSkinlfThemePack().replace(".zip", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			skinlfThemePackChooser.setSelectedItem(currentSkinlfThemePack);
 
 			if (skinlfThemePackChooser.getSelectedIndex() == -1)
@@ -475,14 +478,14 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		// Add substance
 
-		String [] substanceSkins = LookAndFeelManager.getSubstanceSkinListArray();
+		String [] substanceSkins = lafManager.getSubstanceSkinListArray();
 
 		substanceChooser = new JComboBox(substanceSkins);
 		enableSubstanceChooser = new JCheckBox("Substance"); //$NON-NLS-1$
 		enableSubstanceChooser.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
 		lafGroup.add(enableSubstanceChooser);
 
-		String currentSubstance = config.getSubstanceSkin();
+		String currentSubstance = lafManager.getSubstanceSkin();
 
 		substanceChooser.setSelectedItem(currentSubstance);
 		substanceChooser.setEnabled(false);
@@ -507,16 +510,18 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		
 		
 		// Nimrod
-		/*
-		String [] nimrodThemes = LookAndFeelManager.getSubstanceSkinListArray();
+		
+		String [] nimrodThemes = lafManager.getNimrodThemeList();
 
 		nimrodChooser = new JComboBox(nimrodThemes);
 		enableNimrodChooser = new JCheckBox("NimRod"); //$NON-NLS-1$
 		enableNimrodChooser.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
 		lafGroup.add(enableNimrodChooser);
 
-		String currentNimrod = config.getSubstanceSkin();
+		String currentNimrod = lafManager.getNimRODTheme();
 
+		System.err.println("setselected:" + currentNimrod);
+		
 		nimrodChooser.setSelectedItem(currentNimrod);
 		nimrodChooser.setEnabled(false);
 		nimrodChooser.addActionListener(this);
@@ -537,20 +542,22 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		if (nimrodThemes.length > 0) {
 			lafChooserPanel.add(nimrodLafChooserPanel);
 		}
-		
-		*/
-		
+				
 		
 		setLafChooserPreferredSize();
 
 		
-		if ((skinlfThemePackList != null) && (config.getLookAndFeelType() == LookAndFeelType.SkinlfLaF)) {
+		if ((skinlfThemePackList != null) && (lafManager.getLookAndFeelType() == LookAndFeelType.SkinlfLaF)) {
 			enableSkinlf.setSelected(true);
 			skinlfThemePackChooser.setEnabled(true);
 		}
-		else if (config.getLookAndFeelType() == LookAndFeelType.Substance && substanceChooser != null) {
+		else if (lafManager.getLookAndFeelType() == LookAndFeelType.Substance && substanceChooser != null) {
 			enableSubstanceChooser.setSelected(true);
 			substanceChooser.setEnabled(true);
+		}
+		else if (lafManager.getLookAndFeelType() == LookAndFeelType.NimROD && nimrodChooser != null) {
+			enableNimrodChooser.setSelected(true);
+			nimrodChooser.setEnabled(true);
 		}
 		else {
 			enableLafChooser.setSelected(true);
@@ -1987,6 +1994,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				case CustomLaF: {setCustomLookAndFeel(0); break;}
 				case SkinlfLaF: {setSkinlfLookAndFeel(); break;}
 				case Substance: {setSubstanceLookAndFeel(); break;}
+				case NimROD:    {setNimRODLookAndFeel(); break;}
 				}
 				MovieManager.getDialog().updateLookAndFeelValues();
 				prefs.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -2001,14 +2009,14 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		
 		try {
 			
-			LookAndFeelManager.setCustomLaf(selectedLaf);
+			lafManager.setCustomLaf(selectedLaf);
 			updateLookAndFeel();
 
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e); //$NON-NLS-1$
 
 			String lafName = (String) lafChooser.getSelectedItem();
-			lafChooser.setSelectedItem(config.getCustomLookAndFeel());
+			lafChooser.setSelectedItem(lafManager.getCustomLookAndFeel());
 
 			/* Calls itself recursively to restore the old look and feel */
 			if (counter < 1) {
@@ -2020,7 +2028,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			}
 			return;
 		}
-		config.setCustomLookAndFeel(selectedLaf);
+		lafManager.setCustomLookAndFeel(selectedLaf);
 	}
 	
 
@@ -2028,14 +2036,28 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		String selectedItem = (String) skinlfThemePackChooser.getSelectedItem() + ".zip"; //$NON-NLS-1$
 	
 		try {
-			LookAndFeelManager.setSkinlfLookAndFeel(selectedItem);
+			lafManager.setSkinlfLookAndFeel(selectedItem);
 			updateLookAndFeel();
 		} catch (Exception e) {
 			log.error("Exception: "+ e.getMessage()); //$NON-NLS-1$
 			showErrorMessage(e.getMessage(), "SkinLF"); //$NON-NLS-1$
 			return;
 		}
-		config.setSkinlfThemePack(selectedItem);
+		lafManager.setSkinlfThemePack(selectedItem);
+	}
+
+	void setNimRODLookAndFeel() {
+		String selectedItem = (String) nimrodChooser.getSelectedItem(); //$NON-NLS-1$
+	
+		try {
+			lafManager.setNimRODLookAndFeel(selectedItem);
+			updateLookAndFeel();
+		} catch (Exception e) {
+			log.error("Exception: "+ e.getMessage()); //$NON-NLS-1$
+			showErrorMessage(e.getMessage(), "NimROD"); //$NON-NLS-1$
+			return;
+		}
+		lafManager.setNimRODTheme(selectedItem);
 	}
 
 	
@@ -2043,7 +2065,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		String selectedItem = (String) substanceChooser.getSelectedItem(); //$NON-NLS-1$
 	
 		try {
-			LookAndFeelManager.setSubstanceLookAndFeel(selectedItem);
+			lafManager.setSubstanceLookAndFeel(selectedItem);
 			updateLookAndFeel();
 
 		} catch (Exception e) {
@@ -2051,7 +2073,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			showErrorMessage(e.getMessage(), "Substance"); //$NON-NLS-1$
 			return;
 		}
-		config.setSubstanceSkin(selectedItem);
+		lafManager.setSubstanceSkin(selectedItem);
 	}
 
 	
@@ -2128,7 +2150,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	void setDefaultLookAndFeelDecoration(boolean decorated) {
 
 		if (decorated) {
-			config.setDefaultLookAndFeelDecorated(true);
+			lafManager.setDefaultLookAndFeelDecorated(true);
 
 			javax.swing.JFrame.setDefaultLookAndFeelDecorated(true);
 			javax.swing.JDialog.setDefaultLookAndFeelDecorated(true);
@@ -2156,7 +2178,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			GUIUtil.show(this, true);
 		}
 		else {
-			config.setDefaultLookAndFeelDecorated(false);
+			lafManager.setDefaultLookAndFeelDecorated(false);
 
 			javax.swing.JFrame.setDefaultLookAndFeelDecorated(false);
 			javax.swing.JDialog.setDefaultLookAndFeelDecorated(false);
@@ -2232,8 +2254,9 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				skinlfThemePackChooser.setEnabled(true);
 				lafChooser.setEnabled(false);
 				substanceChooser.setEnabled(false);
+				nimrodChooser.setEnabled(false);
 				
-				config.setLookAndFeelType(LookAndFeelType.SkinlfLaF);
+				lafManager.setLookAndFeelType(LookAndFeelType.SkinlfLaF);
 				setLookAndFeel(LookAndFeelType.SkinlfLaF);
 
 			}
@@ -2241,11 +2264,22 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				substanceChooser.setEnabled(true);
 				lafChooser.setEnabled(false);
 				skinlfThemePackChooser.setEnabled(false);
+				nimrodChooser.setEnabled(false);
 				
-				config.setLookAndFeelType(LookAndFeelType.Substance);
+				lafManager.setLookAndFeelType(LookAndFeelType.Substance);
 				setLookAndFeel(LookAndFeelType.Substance);
 			}
+			else if (enableNimrodChooser.isSelected()) {
+				substanceChooser.setEnabled(false);
+				nimrodChooser.setEnabled(true);
+				lafChooser.setEnabled(false);
+				skinlfThemePackChooser.setEnabled(false);
+				
+				lafManager.setLookAndFeelType(LookAndFeelType.NimROD);
+				setLookAndFeel(LookAndFeelType.NimROD);
+			}
 			else {
+				
 				lafChooser.setEnabled(true);
 
 				substanceChooser.setEnabled(false);
@@ -2253,7 +2287,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				if (skinlfThemePackChooser != null)
 					skinlfThemePackChooser.setEnabled(false);
 
-				config.setLookAndFeelType(LookAndFeelType.CustomLaF);
+				lafManager.setLookAndFeelType(LookAndFeelType.CustomLaF);
 				setLookAndFeel(LookAndFeelType.CustomLaF);
 			}
 		}
@@ -2314,7 +2348,10 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			setLookAndFeel(LookAndFeelType.Substance);
 		}
 		
-
+		if (event.getSource().equals(nimrodChooser)) {
+			setLookAndFeel(LookAndFeelType.NimROD);
+		}
+		
 		MovieManager.getDialog().getMoviesList().requestFocus(true);
 	}
 

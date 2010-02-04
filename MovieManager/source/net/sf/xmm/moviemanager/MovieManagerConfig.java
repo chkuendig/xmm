@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
+import net.sf.xmm.moviemanager.LookAndFeelManager.LookAndFeelType;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
 import net.sf.xmm.moviemanager.http.HttpSettings;
@@ -65,7 +66,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/**
 		 * The current version of the program.
 		 **/
-		private static final String _version = "2.9.0.1"; //$NON-NLS-1$
+		private static final String _version = "2.9.1"; //$NON-NLS-1$
 		
 		// Increase with one for each release. Used for jupidator update library
 		private static final int release = 2;
@@ -161,23 +162,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private int movieListRowHeight = 22;
 
-	boolean treeMouseSelectionListenerEnabled = true;
 	
-	public boolean getTreeMouseSelectionListenerEnabled() {
-		return treeMouseSelectionListenerEnabled;
-	}
-	
-	public void setTreeMouseSelectionListenerEnabled(boolean val) {
-		treeMouseSelectionListenerEnabled = val;
-		
-		if (MovieManager.getDialog() != null && MovieManager.getDialog().getMoviesList() != null && 
-				MovieManager.getDialog().getMoviesList() instanceof ExtendedJTree) {
-			((ExtendedJTree) MovieManager.getDialog().getMoviesList()).setMouseSelectionListenerEnabled(val);
-		}
-		
-	}
-	
-
 	final private int defaultFrameHeight = 635;
 	final private int defaultFrameWidth = 850;
 
@@ -423,20 +408,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	int plotCastMiscellaneousIndex = 0;
 	
-	
-	private String lookAndFeel = "Metal";
-
-	private String skinlfThemePack = "";
-
-	private String skinlfThemePackDir;
-
-	private String substanceSkin = "Sahara";
-	
-	public enum LookAndFeelType {CustomLaF, SkinlfLaF, Substance}
-	
-	private LookAndFeelType lookAndFeelType = LookAndFeelType.CustomLaF;
-
-	private boolean defaultLookAndFeelDecorated = false;
 
 	private boolean checkForProgramUpdates = true;
 	
@@ -1635,54 +1606,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	}
 	
 	
-	public boolean getDefaultLookAndFeelDecorated() {
-		return defaultLookAndFeelDecorated;
-	}
-
-	public void setDefaultLookAndFeelDecorated(boolean defaultLookAndFeelDecorated) {
-		this.defaultLookAndFeelDecorated = defaultLookAndFeelDecorated;
-	}
-
-	public String getCustomLookAndFeel() {
-		return lookAndFeel;
-	}
-
-	public void setCustomLookAndFeel(String lookAndFeel) {
-		this.lookAndFeel = lookAndFeel;
-	}
-
-	public String getSkinlfThemePack() {
-		return skinlfThemePack;
-	}
-
-	public void setSkinlfThemePack(String skinlfThemePack) {
-		this.skinlfThemePack = skinlfThemePack;
-	}
-
-	public String getSkinlfThemePackDir() {
-		return skinlfThemePackDir;
-	}
-
-	public void setSkinlfThemePackDir(String skinlfThemePackDir) {
-		this.skinlfThemePackDir = skinlfThemePackDir;
-	}
-
-	public String getSubstanceSkin() {
-		return substanceSkin;
-	}
-
-	public void setSubstanceSkin(String substanceSkin) {		
-		if (substanceSkin != null && !substanceSkin.equals(""))
-			this.substanceSkin = substanceSkin;
-	}
 	
-	public LookAndFeelType getLookAndFeelType() {
-		return lookAndFeelType;
-	}
-
-	public void setLookAndFeelType(LookAndFeelType lafType) {
-		this.lookAndFeelType = lafType;
-	}
 
 
 	public void setDisplayPlayButton(boolean displayPlayButton) {
@@ -2434,16 +2358,20 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			setDatabasePathPermanent(getBooleanValue("databasePathPermanent:", config, getDatabasePathPermanent()));
 			setUseDisplayQueriesInTree(getBooleanValue("useDisplayQueriesInTree:", config, getUseDisplayQueriesInTree()));
 
-			setCustomLookAndFeel(getStringValue("lookAndFeel:", config, getCustomLookAndFeel()));
-			setSkinlfThemePack(getStringValue("skinlfTheme:", config, getSkinlfThemePack()));
-			setSubstanceSkin(getStringValue("substanceSkin:", config, getSubstanceSkin()));
+			LookAndFeelManager lafManager =  MovieManager.getLookAndFeelManager();
 			
+			lafManager.setCustomLookAndFeel(getStringValue("lookAndFeel:", config, lafManager.getCustomLookAndFeel()));
+			lafManager.setSkinlfThemePack(getStringValue("skinlfTheme:", config, lafManager.getSkinlfThemePack()));
+			lafManager.setSubstanceSkin(getStringValue("substanceSkin:", config, lafManager.getSubstanceSkin()));
+			lafManager.setNimRODTheme(getStringValue("nimRODTheme:", config, lafManager.getNimRODTheme()));
+						
 			value = (String) config.get("lookAndFeelType:");
 
 			if (value != null) {
 
 				LookAndFeelType laf = null;
 
+				// Old setting using ints
 				try {
 					int val = Integer.parseInt(value);
 					laf = val == 1 ? LookAndFeelType.SkinlfLaF : LookAndFeelType.CustomLaF;
@@ -2456,12 +2384,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 				}
 
 				if (laf != null)
-					setLookAndFeelType(laf);
+					MovieManager.getLookAndFeelManager().setLookAndFeelType(laf);
 			}
 
 			setRegularToolButtonsUsed(getBooleanValue("regularToolButtonsUsed:", config, isRegularToolButtonsUsed()));
 			setUseRegularSeenIcon(getBooleanValue("useRegularSeenIcon:", config, getUseRegularSeenIcon()));
-			setDefaultLookAndFeelDecorated(getBooleanValue("defaultLookAndFeelDecorated:", config, getDefaultLookAndFeelDecorated()));
+			lafManager.setDefaultLookAndFeelDecorated(getBooleanValue("defaultLookAndFeelDecorated:", config, lafManager.getDefaultLookAndFeelDecorated()));
 			setPlotCastMiscellaneousIndex(getIntValue("plotCastMiscellaneousIndex:", config, getPlotCastMiscellaneousIndex()));
 									
 			htmlTemplateHandler.setHTMLTemplateName(getStringValue("HTMLTemplateName:", config));
@@ -2925,14 +2853,17 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("useDisplayQueriesInTree:", getUseDisplayQueriesInTree(), settings);
 		 appendToConfig("locale:", getLocale(), settings);
 		 
+		 LookAndFeelManager lafManager =  MovieManager.getLookAndFeelManager();
+		 
 		 // GUI/L&F settings
-		 appendToConfig("lookAndFeel:", getCustomLookAndFeel(), settings);
-		 appendToConfig("skinlfTheme:", getSkinlfThemePack(), settings);
-		 appendToConfig("substanceSkin:", getSubstanceSkin(), settings);
-		 appendToConfig("lookAndFeelType:", getLookAndFeelType().toString(), settings);
+		 appendToConfig("lookAndFeel:", lafManager.getCustomLookAndFeel(), settings);
+		 appendToConfig("skinlfTheme:", lafManager.getSkinlfThemePack(), settings);
+		 appendToConfig("substanceSkin:", lafManager.getSubstanceSkin(), settings);
+		 appendToConfig("nimRODTheme:", lafManager.getNimRODTheme(), settings);
+		 appendToConfig("lookAndFeelType:", lafManager.getLookAndFeelType().toString(), settings);
+		 appendToConfig("defaultLookAndFeelDecorated:", lafManager.getDefaultLookAndFeelDecorated(), settings);
 		 appendToConfig("regularToolButtonsUsed:", isRegularToolButtonsUsed(), settings);
 		 appendToConfig("useRegularSeenIcon:", getUseRegularSeenIcon(), settings);
-		 appendToConfig("defaultLookAndFeelDecorated:", getDefaultLookAndFeelDecorated(), settings);
 		 appendToConfig("plotCastMiscellaneousIndex:", getPlotCastMiscellaneousIndex(), settings);
 		 appendToConfig("seenEditableInMainWindow:", getSeenEditable(), settings);
 		 appendToConfig("displayPlayButton:", getDisplayPlayButton(), settings);
