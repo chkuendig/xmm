@@ -66,7 +66,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.MovieManagerConfig.LookAndFeelType;
+import net.sf.xmm.moviemanager.LookAndFeelManager.LookAndFeelType;
 import net.sf.xmm.moviemanager.MovieManagerConfig.NoCoverType;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAddEpisode;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandEdit;
@@ -111,7 +111,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	static File lastTemplateFile = null;
 	static StringBuffer lastTemplate = null;
 	
-	//static String nocoverName = null;
 	static NoCoverType noCoverType = null;
 	static byte [] nocoverData = null;
 	
@@ -571,9 +570,9 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 			String fontSize = "3";
 			
-			if (MovieManager.getConfig().getLookAndFeelType() == LookAndFeelType.CustomLaF &&
-							("Nimbus".equals(MovieManager.getConfig().getCustomLookAndFeel()) ||
-									(MovieManager.getConfig().getCustomLookAndFeel().indexOf("Synthetica") != -1)))
+			if (MovieManager.getLookAndFeelManager().getLookAndFeelType() == LookAndFeelType.CustomLaF &&
+							("Nimbus".equals(MovieManager.getLookAndFeelManager().getCustomLookAndFeel()) ||
+									(MovieManager.getLookAndFeelManager().getCustomLookAndFeel().indexOf("Synthetica") != -1)))
 				fontSize = "4";
 			
 				
@@ -1048,7 +1047,6 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			temp = (ModelEntry) ((DefaultMutableTreeNode) selectedPaths[i].getLastPathComponent()).getUserObject();
 
 			if (temp.isMovie()) {
-				System.err.println(temp.getTitle() + " setList("+apply+"):" + columnName);
 				MovieManager.getIt().getDatabase().setLists(temp.getKey(), columnName, new Boolean(apply));
 				
 				if (apply)
