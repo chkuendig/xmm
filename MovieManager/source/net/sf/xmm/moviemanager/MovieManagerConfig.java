@@ -152,15 +152,13 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean displayPlayButton = true;
 	private boolean displayPrintButton = false;
 	
-	private boolean regularToolBarButtons = true;
-
 	private boolean useRegularSeenIcon = true;
 
 	private boolean useJTreeIcons = true;
 
 	private boolean useJTreeCovers = true;
 
-	private int movieListRowHeight = 22;
+	private int movieListRowHeight = 45;
 
 	
 	final private int defaultFrameHeight = 635;
@@ -1641,15 +1639,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		return htmlViewDebugMode;
 	}
 	
-	
-	public void setRegularToolButtonsUsed(boolean regularToolBarButtons) {
-		this.regularToolBarButtons = regularToolBarButtons;
-	}
-
-	public boolean isRegularToolButtonsUsed() {
-		return regularToolBarButtons;
-	}
-
 	public void setUseRegularSeenIcon(boolean useRegularSeenIcon) {
 		this.useRegularSeenIcon = useRegularSeenIcon;
 	}
@@ -2387,7 +2376,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 					MovieManager.getLookAndFeelManager().setLookAndFeelType(laf);
 			}
 
-			setRegularToolButtonsUsed(getBooleanValue("regularToolButtonsUsed:", config, isRegularToolButtonsUsed()));
 			setUseRegularSeenIcon(getBooleanValue("useRegularSeenIcon:", config, getUseRegularSeenIcon()));
 			lafManager.setDefaultLookAndFeelDecorated(getBooleanValue("defaultLookAndFeelDecorated:", config, lafManager.getDefaultLookAndFeelDecorated()));
 			setPlotCastMiscellaneousIndex(getIntValue("plotCastMiscellaneousIndex:", config, getPlotCastMiscellaneousIndex()));
@@ -2862,7 +2850,6 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("nimRODTheme:", lafManager.getNimRODTheme(), settings);
 		 appendToConfig("lookAndFeelType:", lafManager.getLookAndFeelType().toString(), settings);
 		 appendToConfig("defaultLookAndFeelDecorated:", lafManager.getDefaultLookAndFeelDecorated(), settings);
-		 appendToConfig("regularToolButtonsUsed:", isRegularToolButtonsUsed(), settings);
 		 appendToConfig("useRegularSeenIcon:", getUseRegularSeenIcon(), settings);
 		 appendToConfig("plotCastMiscellaneousIndex:", getPlotCastMiscellaneousIndex(), settings);
 		 appendToConfig("seenEditableInMainWindow:", getSeenEditable(), settings);
