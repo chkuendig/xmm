@@ -68,9 +68,7 @@ public class ExtendedJTreeUI extends BasicTreeUI {
 		 */
 		@Override
 		public void mousePressed(MouseEvent e) {
-			
-			System.err.println("mousePressed");
-			
+						
 			if (!tree.isEnabled())
 				return;
 			
