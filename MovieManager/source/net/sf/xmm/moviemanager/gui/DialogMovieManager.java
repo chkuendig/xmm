@@ -285,7 +285,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         /* All done, pack. */
         pack();
-        updateToolButtonBorder();
         
         setSize(config.mainSize);
         if (config.getMainMaximized())
@@ -484,7 +483,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
 
     
     public void updateLookAndFeelValues() {
-    	updateToolButtonBorder();
         updateJTreeIcons();
         
         ExtendedTreeCellRenderer.setDefaultColors();
@@ -543,14 +541,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         getMoviesList().setShowsRootHandles(config.getUseJTreeCovers() || !config.getUseJTreeIcons());
     }
     
-    
-    public void updateToolButtonBorder() {
-    	if (config.isRegularToolButtonsUsed())
-    		toolBar.updateToolButtonBorderToRegular();
-    	else
-    		toolBar.updateToolButtonBorderToCurrentLaf();
-    }
-
     
     
     /* mode = 0 (invert), 1 (all to seen), 2(all to unseen). */

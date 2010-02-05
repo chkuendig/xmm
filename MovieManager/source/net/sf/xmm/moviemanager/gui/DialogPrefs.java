@@ -132,9 +132,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 	private JComboBox substanceChooser;
 	private JComboBox nimrodChooser;
 	
-	private JRadioButton regularToolBarButtons;
-	private JRadioButton currentLookAndFeelButtons;
-
 	private JRadioButton regularSeenIcon;
 	private JRadioButton currentLookAndFeelIcon;
 
@@ -338,39 +335,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		seenIconPanel.setBorder(BorderFactory.createEmptyBorder(0,20,7,20));
 
 
-		JPanel buttonOptions = new JPanel(new GridLayout(3, 3));
+		JPanel buttonOptions = new JPanel(new GridLayout(2, 3));
 		buttonOptions.setBorder(BorderFactory.createEmptyBorder(0,30,50,20));
 
 		buttonOptions.add(seenIconLabel);
 		buttonOptions.add(regularSeenIcon);
 		buttonOptions.add(currentLookAndFeelIcon);
-
-
-		/* Toolbar button */
-		JLabel toolBarButtonLabel = new JLabel(Localizer.get("DialogPrefs.panel.look-and-feel.toolbar-buttons-look")); //$NON-NLS-1$
-		regularToolBarButtons = new JRadioButton(Localizer.get("DialogPrefs.panel.look-and-feel.toolbar-buttons-look.regular")); //$NON-NLS-1$
-		currentLookAndFeelButtons = new JRadioButton(Localizer.get("DialogPrefs.panel.look-and-feel.toolbar-buttons-look.look-and-feel") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
-		regularToolBarButtons.setActionCommand("ToolBarButton"); //$NON-NLS-1$
-		currentLookAndFeelButtons.setActionCommand("ToolBarButton"); //$NON-NLS-1$
-
-		ButtonGroup toolBarButtonGroup = new ButtonGroup();
-		toolBarButtonGroup.add(regularToolBarButtons);
-		toolBarButtonGroup.add(currentLookAndFeelButtons);
-
-		regularToolBarButtons.addActionListener(this);
-		currentLookAndFeelButtons.addActionListener(this);
-
-		if (config.isRegularToolButtonsUsed())
-			regularToolBarButtons.setSelected(true);
-		else
-			currentLookAndFeelButtons.setSelected(true);
-
-		JPanel toolBarButtonPanel = new JPanel(new BorderLayout());
-		toolBarButtonPanel.setBorder(BorderFactory.createEmptyBorder(0,20,7,20));
-
-		buttonOptions.add(toolBarButtonLabel);
-		buttonOptions.add(regularToolBarButtons);
-		buttonOptions.add(currentLookAndFeelButtons);
 
 
 		/* DefaultLookAndFeelDecorated */
@@ -404,19 +374,13 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		/* Laf choosers */
 
 		JPanel lafChooserPanel = new JPanel(new GridLayout(4, 1));
-
-		/* Group the radio buttons. */
-		ButtonGroup lafGroup = new ButtonGroup();
-
-
 		
 		String [] lookAndFeelStrings = lafManager.getLaFListArray();
 		
 		lafChooser = new JComboBox(lookAndFeelStrings);
 		enableLafChooser = new JCheckBox(Localizer.get("DialogPrefs.panel.look-and-feel.enable-custom-laf.text")); //$NON-NLS-1$
 		enableLafChooser.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
-		lafGroup.add(enableLafChooser);
-
+		
 		String currentLookAndFeel = lafManager.getCustomLookAndFeel();
 
 		lafChooser.setSelectedItem(currentLookAndFeel);
@@ -438,7 +402,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		lafChooserPanel.add(customLafChooserPanel);
 
 
-
 		/* Skinlf */
 
 		String [] skinlfThemePackList = lafManager.getSkinlfThemepackList();
@@ -446,8 +409,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		if (skinlfThemePackList != null) {
 			enableSkinlf = new JCheckBox(Localizer.get("DialogPrefs.panel.look-and-feel.enable-skinlf.text")); //$NON-NLS-1$
 			enableSkinlf.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
-			lafGroup.add(enableSkinlf);
-
+			
 			// Prettify the names by removing zip
 			for (int i = 0; i < skinlfThemePackList.length; i++) {
 				skinlfThemePackList[i] = skinlfThemePackList[i].replace(".zip", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -483,7 +445,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		substanceChooser = new JComboBox(substanceSkins);
 		enableSubstanceChooser = new JCheckBox("Substance"); //$NON-NLS-1$
 		enableSubstanceChooser.setActionCommand("Enable LookAndFeel"); //$NON-NLS-1$
-		lafGroup.add(enableSubstanceChooser);
+		
 
 		String currentSubstance = lafManager.getSubstanceSkin();
 
@@ -494,6 +456,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		substanceChooser.setPreferredSize(new Dimension(250, (int) lafChooser.getPreferredSize().getHeight()));
 
+		/* Group the radio buttons. */
+		ButtonGroup lafGroup = new ButtonGroup();
+		lafGroup.add(enableSubstanceChooser);
+		lafGroup.add(enableSkinlf);
+		lafGroup.add(enableLafChooser);
+		
 
 		JPanel substanceLafChooserPanel = new JPanel(new BorderLayout());
 		substanceLafChooserPanel.setBorder(BorderFactory.createEmptyBorder(4,20,4,20));
@@ -2117,13 +2085,11 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		Runnable r = new Runnable() {
 
 			public void run() {
-				MovieManager.getDialog().updateToolButtonBorder();
 				MovieManager.getDialog().updateLookAndFeelValues();
 
 				SwingUtilities.updateComponentTreeUI(MovieManager.getDialog());
 
 				MovieManager.getDialog().resetInfoFieldsDisplay();
-				MovieManager.getDialog().updateToolButtonBorder();
 				MovieManager.getDialog().validate();
 
 				/*If the search dialog is opened it will be updated*/
@@ -2303,17 +2269,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 			"is found, the media player will be executed instead."+"</html>"); //$NON-NLS-1$ //$NON-NLS-2$
 			GUIUtil.showAndWait(info, true);
 		}
-
-		if (event.getActionCommand().equals("ToolBarButton")) { //$NON-NLS-1$
-
-			if (regularToolBarButtons.isSelected())
-				config.setRegularToolButtonsUsed(true);
-			else
-				config.setRegularToolButtonsUsed(false);
-
-			MovieManager.getDialog().updateToolButtonBorder();
-		}
-
+		
 
 		if (event.getActionCommand().equals("SeenIcon")) { //$NON-NLS-1$
 

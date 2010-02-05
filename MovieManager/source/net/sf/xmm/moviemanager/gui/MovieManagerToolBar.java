@@ -57,7 +57,7 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
 
 	private JButton buttonPlay = null;
 	private JButton buttonPrint = null;
-
+	
 	private JPanel panelEntries = null;
 	
 	private boolean addButtonlegal = true;
@@ -484,12 +484,10 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
 			toolBar.addMouseMotionListener((MovieManagerToolBar) toolBar);
 
 			/* The Add button. */
-			buttonAdd = new JButton(new ImageIcon(FileUtil.getImage("/images/add.png").getScaledInstance(27, 27, Image.SCALE_SMOOTH))); //$NON-NLS-1$
+			buttonAdd = new JButton(new ImageIcon(FileUtil.getImage("/images/add.png").getScaledInstance(30, 30, Image.SCALE_SMOOTH))); //$NON-NLS-1$
 			buttonAdd.setToolTipText(Localizer.get("DialogMovieManager.toolbar-add")); //$NON-NLS-1$
-			buttonAdd.setPreferredSize(new Dimension(45, 45));
-			buttonAdd.setMinimumSize(new Dimension(45, 45));
-			buttonAdd.setMaximumSize(new Dimension(45, 45));
-			buttonAdd.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
+			buttonAdd.setPreferredSize(new Dimension(48, 48));
+			buttonAdd.setMaximumSize(new Dimension(48, 48));
 			buttonAdd.setActionCommand("Add"); //$NON-NLS-1$
 			buttonAdd.addActionListener(new MovieManagerCommandAdd());
 			
@@ -499,9 +497,9 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
 			addSeparator(separatorDim);
 
 			/* The Remove button. */
-			buttonRemove = new JButton(new ImageIcon(FileUtil.getImage("/images/remove.png").getScaledInstance(27,27,Image.SCALE_SMOOTH))); //$NON-NLS-1$
-			buttonRemove.setPreferredSize(new Dimension(40, 40));
-			buttonRemove.setMaximumSize(new Dimension(44, 45));
+			buttonRemove = new JButton(new ImageIcon(FileUtil.getImage("/images/remove.png").getScaledInstance(28,28,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+			buttonRemove.setPreferredSize(new Dimension(48, 48));
+			buttonRemove.setMaximumSize(new Dimension(48, 48));
 			buttonRemove.setToolTipText(Localizer.get("DialogMovieManager.toolbar-remove")); //$NON-NLS-1$
 			buttonRemove.setActionCommand("Remove"); //$NON-NLS-1$
 			buttonRemove.addActionListener(new MovieManagerCommandRemove());
@@ -512,10 +510,10 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
 			addSeparator(separatorDim);
 
 			/* The Edit button. */
-			buttonEdit = new JButton(new ImageIcon(FileUtil.getImage("/images/edit.png").getScaledInstance(26,26,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+			buttonEdit = new JButton(new ImageIcon(FileUtil.getImage("/images/edit.png").getScaledInstance(27,27,Image.SCALE_SMOOTH))); //$NON-NLS-1$
 			buttonEdit.setMargin(new Insets(0,10,0,10));
-			buttonEdit.setPreferredSize(new Dimension(40, 40));
-			buttonEdit.setMaximumSize(new Dimension(44, 45));
+			buttonEdit.setPreferredSize(new Dimension(48, 48));
+			buttonEdit.setMaximumSize(new Dimension(48, 48));
 			buttonEdit.setToolTipText(Localizer.get("DialogMovieManager.toolbar-edit")); //$NON-NLS-1$
 			buttonEdit.setActionCommand("Edit"); //$NON-NLS-1$
 			buttonEdit.addActionListener(new MovieManagerCommandEdit());
@@ -526,31 +524,25 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
 			addSeparator(separatorDim);
 
 			/* The Search button. */
-			buttonSearch = new JButton(new ImageIcon(FileUtil.getImage("/images/search.png").getScaledInstance(28,28,Image.SCALE_SMOOTH))); //$NON-NLS-1$
-			buttonSearch.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,10), buttonSearch.getBorder()));
-			buttonSearch.setPreferredSize(new Dimension(40, 40));
-			buttonSearch.setMaximumSize(new Dimension(45, 45));
+			buttonSearch = new JButton(new ImageIcon(FileUtil.getImage("/images/search.png").getScaledInstance(30,30,Image.SCALE_SMOOTH))); //$NON-NLS-1$
+			buttonSearch.setPreferredSize(new Dimension(48, 48));
+			buttonSearch.setMaximumSize(new Dimension(48, 48));
 			buttonSearch.setToolTipText(Localizer.get("DialogMovieManager.toolbar-search")); //$NON-NLS-1$
 			buttonSearch.setActionCommand("Search"); //$NON-NLS-1$
 			buttonSearch.addActionListener(new MovieManagerCommandSearch());
 			
 			add(buttonSearch);
-			
-			
+						
 			buttonPlay = constructPlayButton();
 			buttonPlay.setVisible(false);
 			
 			buttonPrint = constructPrintButton();
 			buttonPrint.setVisible(false);
 			
-			
 			/* Panel entries */
-			
 			panelEntries = new JPanel();
 			panelEntries.setLayout(new BoxLayout(panelEntries, BoxLayout.X_AXIS));
-
 			panelEntries.setBorder(new CompoundBorder(new EmptyBorder(0,0,0,0)	, new CompoundBorder(new EtchedBorder(EtchedBorder.RAISED), new EmptyBorder(6,4,5,5))));
-
 			panelEntries.setMaximumSize(new Dimension(56, 33));
 			panelEntries.setPreferredSize(new Dimension(56, 33));
 			
@@ -576,14 +568,10 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
 		final JButton buttonPlay = new JButton( 
 				new ImageIcon(
 						FileUtil.getImage("/images/play.png").
-						getScaledInstance(25,25,Image.SCALE_SMOOTH)));
+						getScaledInstance(27,27,Image.SCALE_SMOOTH)));
 
-		buttonPlay.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createEmptyBorder(0,10,0,10),
-				buttonPlay.getBorder()));
-
-		buttonPlay.setPreferredSize(new Dimension(39, 39));
-		buttonPlay.setMaximumSize(new Dimension(45, 45));
+		buttonPlay.setPreferredSize(new Dimension(48, 48));
+		buttonPlay.setMaximumSize(new Dimension(48, 48));
 		buttonPlay.setActionCommand("Play");
 		
 		// Uses plugin playhandler is it exists
@@ -602,14 +590,10 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
     	JButton buttonPrint = new JButton( 
     			new ImageIcon(
     					FileUtil.getImage("/images/printer.png").
-    					getScaledInstance(25,25,Image.SCALE_SMOOTH)));
+    					getScaledInstance(28,28,Image.SCALE_SMOOTH)));
 
-    	buttonPrint.setBorder(BorderFactory.createCompoundBorder(
-    			BorderFactory.createEmptyBorder(0,10,0,10),
-    			buttonPrint.getBorder()));
-
-    	buttonPrint.setPreferredSize(new Dimension(39, 39));
-    	buttonPrint.setMaximumSize(new Dimension(45, 45));
+    	buttonPrint.setPreferredSize(new Dimension(48, 48));
+    	buttonPrint.setMaximumSize(new Dimension(48, 48));
     	buttonPrint.setToolTipText("Print");
     	buttonPrint.setActionCommand("Print");
     	buttonPrint.setMnemonic('P');
@@ -624,8 +608,8 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
 
     	JPopupMenu popupMenu = new JPopupMenu();
 
-    	final JCheckBoxMenuItem playButtonItem = new JCheckBoxMenuItem(Localizer.get("DialogMovieManager.listpanel-toolbar-play"));
-    	final JCheckBoxMenuItem printButtonItem = new JCheckBoxMenuItem(Localizer.get("DialogMovieManager.listpanel-toolbar-print"));
+    	final JCheckBoxMenuItem playButtonItem = new JCheckBoxMenuItem(Localizer.get("DialogMovieManager.toolbar-play"));
+    	final JCheckBoxMenuItem printButtonItem = new JCheckBoxMenuItem(Localizer.get("DialogMovieManager.toolbar-print"));
 
     	popupMenu.add(playButtonItem);
     	popupMenu.add(printButtonItem);
@@ -675,73 +659,6 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
 
     public void mouseMoved(MouseEvent event) {}
 
-
-    public void updateToolButtonBorderToCurrentLaf() {
-
-    	lookAndFeelMode = true;
-    	
-    	getAddButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,15,3,15), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-    	getRemoveButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,15,3,15), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-    	getEditButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,13,3,13), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-    	getSearchButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,13,3,13), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-
-    	buttonPlay.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,13,3,13), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-    	buttonPrint.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,13,3,13), BorderFactory.createEmptyBorder(-1,-5,-1,-5)));
-
-    	Dimension dim = new Dimension(45, 45);
-
-    	getAddButton().setMaximumSize(dim);
-    	getRemoveButton().setMaximumSize(dim);
-    	getEditButton().setMaximumSize(dim);
-    	getSearchButton().setMaximumSize(dim);
-
-    	buttonPlay.setMaximumSize(dim);
-    	buttonPrint.setMaximumSize(dim);
-
-    	getAddButton().setPreferredSize(dim);
-    	getRemoveButton().setPreferredSize(dim);
-    	getEditButton().setPreferredSize(dim);
-    	getSearchButton().setPreferredSize(dim);
-
-    	buttonPlay.setPreferredSize(dim);
-    	buttonPrint.setPreferredSize(dim);
-
-    }
-
-    public void updateToolButtonBorderToRegular() {
-
-    	lookAndFeelMode = false;
-
-    	setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,10,0,0), BorderFactory.createEmptyBorder(0,0,0,0)));
-
-    	getAddButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
-    	getRemoveButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
-    	getEditButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
-    	getSearchButton().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
-
-    	buttonPlay.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
-    	buttonPrint.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(), BorderFactory.createEmptyBorder(3,3,3,3)));
-
-
-    	Dimension dim = new Dimension(40, 40);
-
-    	getAddButton().setPreferredSize(dim);
-    	getRemoveButton().setPreferredSize(dim);
-    	getEditButton().setPreferredSize(dim);
-    	getSearchButton().setPreferredSize(dim);
-
-    	buttonPlay.setPreferredSize(dim);
-    	buttonPrint.setPreferredSize(dim);
-
-    	getAddButton().setMaximumSize(dim);
-    	getRemoveButton().setMaximumSize(dim);
-    	getEditButton().setMaximumSize(dim);
-    	getSearchButton().setMaximumSize(dim);
-
-    	buttonPlay.setMaximumSize(dim);
-    	buttonPrint.setMaximumSize(dim);
-    }
-    
     
     void setShortcuts() {
     	    	
