@@ -545,13 +545,13 @@ public class SysUtil {
     	
     	StringBuffer info = new StringBuffer();
     	info.append("Operating System: ").append(System.getProperty("os.name"));
-    	info.append(sep);
-    	info.append(System.getProperty("os.name")).append("version: " + System.getProperty("os.version"));
+    	info.append(" version: " + System.getProperty("os.version"));
     	info.append(sep);
     	info.append("Architecture: ").append(System.getProperty("os.arch"));
     	
     	info.append(sep);
     	info.append("Java version: ").append(System.getProperty("java.runtime.version"));
+    	info.append(sep);
     	info.append("Vendor:").append(System.getProperty("java.vm.specification.vendor"));
     	info.append(sep);
     	
