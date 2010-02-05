@@ -215,6 +215,60 @@ public class FileUtil {
         return null;
     }
     
+    
+    /**
+     * Returns a file in a byte[] or null if not found.
+     *
+     * @param name A resource name.
+     **/
+    public static byte[] readFromFile(File file) {
+        
+        try {
+            InputStream inputStream;
+            
+            if (file.exists()) {
+                inputStream = new FileInputStream(file);
+            }
+            else 
+            	throw new FileNotFoundException();
+                        
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+            ByteArrayOutputStream byteStream = readFromStream(bufferedInputStream);
+            
+            return byteStream.toByteArray();
+            
+        } catch (Exception e) {
+            log.error("Exception: " + e.getMessage(), e); //$NON-NLS-1$
+        }
+        return null;
+    }
+    
+    /**
+     * Returns a file in a ByteArrayOutputStream or null if not found.
+     *
+     * @param name A resource name.
+     **/
+    public static ByteArrayOutputStream readFromStream(BufferedInputStream inputStream) {
+        
+        try {
+        	ByteArrayOutputStream byteStream = new ByteArrayOutputStream(inputStream.available());
+            
+            int buffer;
+            while ((buffer = inputStream.read()) != -1)
+                byteStream.write(buffer);
+            
+            inputStream.close();
+            byteStream.close();
+            
+            return byteStream;
+            
+        } catch (Exception e) {
+            log.error("Exception: " + e.getMessage(), e); //$NON-NLS-1$
+        }
+        return null;
+    }
+    
+    
     public static String getAsString(InputStream s) {
 
     	String str = "";
