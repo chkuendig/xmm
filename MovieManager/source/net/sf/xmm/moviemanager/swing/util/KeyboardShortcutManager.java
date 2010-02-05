@@ -240,22 +240,30 @@ public class KeyboardShortcutManager {
 		if (map.size() == 1)
 			return null;
 			
-		String text = "<html><table>";
+		StringBuffer text = new StringBuffer();
+		
+		text.append("<html>");
 				
-		text += "<tr>";
-		text += "<th colspan=3>" + "<font size=4>Keyboard shortcuts</font>" + "</th>";
-		text += "</tr>";
+		text.append("<head><style type='text/css'>");
+		text.append("body {color:#444444;}");
+		text.append("</style></head>");
+                
+        text.append("<table>");
+        
+		text.append("<tr>");
+		text.append("<th colspan=3>").append("<font size=4>Keyboard shortcuts</font>").append("</th>");
+		text.append("</tr>");
 				
 		Collection<KeyMapping> c = map.values();
 		
 		for (KeyMapping k : c) {
-			text += "<tr>";
-			text += "<td>" + k.getDisplayName() + "</td><td>-</td><td>" + k.shortcutString + "</td>";
-			text += "</tr>";
+			text.append("<tr>");
+			text.append("<td>").append(k.getDisplayName()).append("</td><td>-</td><td>").append(k.shortcutString).append("</td>");
+			text.append("</tr>");
 		}
 		
-		text += "</table></html>";
+		text.append("</table></html>");
 		
-		return text;
+		return text.toString();
 	}
 }
