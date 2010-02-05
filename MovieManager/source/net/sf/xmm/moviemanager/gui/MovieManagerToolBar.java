@@ -152,32 +152,16 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
 	
 	
 	/**
-     * Sets the entries variable and uppdates the showEntries Label with the new number
+     * Updates the showEntries Label with the new number
      **/
-    public void setAndShowEntries(int entries) {
+    public void setAndShowEntries(final int entries) {
          
-        String value;;
-        
-        if (entries < 10)
-            value = "    "; //$NON-NLS-1$
-        else if (entries < 100)
-            value = "  "; //$NON-NLS-1$
-        else
-            value = " "; //$NON-NLS-1$
-        
-        if (entries != -1) {
-            value += String.valueOf(entries);
-        }
-        
-        final String finalValue = value;
-        
-        SwingUtilities.invokeLater(new Runnable() {
+    	SwingUtilities.invokeLater(new Runnable() {
         	public void run() {
-        		 entriesCount.setText(finalValue);
+        		String value = "<html><center>" + entries + "</center></html>";
+        		entriesCount.setText(value);
         	}
         });
-       
-        //entriesCount.updateUI();
     }
     
 
@@ -477,7 +461,7 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
 
 			toolBar.setRollover(true);
 			toolBar.putClientProperty(new String("JToolBar.isRollover"), Boolean.TRUE);
-			toolBar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,0), BorderFactory.createEmptyBorder(0,10,0,10)));
+			//toolBar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(0,0,0,0), BorderFactory.createEmptyBorder(0,10,0,10)));
 			toolBar.setFloatable(false);
 			
 			toolBar.addMouseListener((MovieManagerToolBar) toolBar);
@@ -542,19 +526,20 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
 			/* Panel entries */
 			panelEntries = new JPanel();
 			panelEntries.setLayout(new BoxLayout(panelEntries, BoxLayout.X_AXIS));
-			panelEntries.setBorder(new CompoundBorder(new EmptyBorder(0,0,0,0)	, new CompoundBorder(new EtchedBorder(EtchedBorder.RAISED), new EmptyBorder(6,4,5,5))));
+			//panelEntries.setBorder(new CompoundBorder(new EmptyBorder(0,0,0,0)	, new CompoundBorder(new EtchedBorder(EtchedBorder.RAISED), new EmptyBorder(6,4,5,5))));
+			panelEntries.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 			panelEntries.setMaximumSize(new Dimension(56, 33));
 			panelEntries.setPreferredSize(new Dimension(56, 33));
 			
-			entriesCount = new JLabel("    "); //$NON-NLS-1$
+			entriesCount = new JLabel("    ", SwingConstants.CENTER); //$NON-NLS-1$
 			entriesCount.setFont(new Font(entriesCount.getFont().getName(), Font.PLAIN, MovieManager.getIt().getFontSize() + 1));
 
 			panelEntries.add(entriesCount);
 		
 			if (!MovieManager.getConfig().getInternalConfig().isEntriesCountDisabled()) {
-				addSeparator(new Dimension(20, 3));
+				addSeparator(new Dimension(15, 3));
 				add(panelEntries);
-				toolBarWidth -= 10;
+				toolBarWidth -= 15;
 			}
 		
 			setShortcuts();
