@@ -1572,11 +1572,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 					throw new Exception("Image file not found."); //$NON-NLS-1$
 				}
 				/* Saves info... */
-				InputStream inputStream = new FileInputStream(coverFolder + cover);
-				byte[] _coverData = new byte[inputStream.available()];
-				inputStream.read(_coverData);
-				inputStream.close();
-
+								
+				byte[] _coverData = FileUtil.readFromFile(new File(coverFolder, cover));
 				setCover(cover, _coverData);
 
 				/* Sets the last path... */
@@ -1641,18 +1638,20 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				movieInfoModel.getFieldValues().set(activeAdditionalInfoFields[getLastFieldIndex()], value);
 
 				AdditionalInfoFieldDefaultValues valuesObj = (AdditionalInfoFieldDefaultValues) 
-					MovieManager.getConfig().getAdditionalInfoDefaultValues().get(movieInfoModel.getFieldNames().get(getLastFieldIndex()));
+					MovieManager.getConfig().getAdditionalInfoDefaultValues().get(movieInfoModel.getFieldNames().get(activeAdditionalInfoFields[getLastFieldIndex()]));
 
 				/* Creating a new entry in the values hashmap */
 				if (valuesObj == null) {
-					valuesObj = new AdditionalInfoFieldDefaultValues((String) movieInfoModel.getFieldNames().get(getLastFieldIndex()));
+					valuesObj = new AdditionalInfoFieldDefaultValues((String) movieInfoModel.getFieldNames().get(activeAdditionalInfoFields[getLastFieldIndex()]));
 					
 					valuesObj.addValue(oldValue);
-					MovieManager.getConfig().getAdditionalInfoDefaultValues().put(movieInfoModel.getFieldNames().get(getLastFieldIndex()), valuesObj);
+					MovieManager.getConfig().getAdditionalInfoDefaultValues().put(movieInfoModel.getFieldNames().get(activeAdditionalInfoFields[getLastFieldIndex()]), valuesObj);
 				}
 
-				valuesObj.insertValue(value);
-
+				if (!value.trim().equals("")) {
+					valuesObj.insertValue(value);
+				}
+				
 				/* Recreates the JPanel... */
 				getAdditionalInfoValuePanel().removeAll();
 				JTextField textfield = new JTextField(14);
@@ -1660,6 +1659,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				font = new Font(font.getName(), font.getStyle(), 11);
 				textfield.setFont(font);
 				getAdditionalInfoValuePanel().add(textfield);
+				
 			} else {
 				
 				/* Saves the field... */
@@ -1749,10 +1749,10 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 				fields.setPreferredSize(new Dimension(valueComboBoxWidth, valueComboBoxHeight));
 
 				DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
-
+	
 				/* Getting the stored additional info values */
 				AdditionalInfoFieldDefaultValues valuesObj = (AdditionalInfoFieldDefaultValues) 
-				MovieManager.getConfig().getAdditionalInfoDefaultValues().get(movieInfoModel.getFieldNames().get(currentFieldIndex));
+				MovieManager.getConfig().getAdditionalInfoDefaultValues().get(movieInfoModel.getFieldNames().get(activeAdditionalInfoFields[currentFieldIndex]));
 
 				comboBoxModel.addElement(currentFieldIndexValue);
 
