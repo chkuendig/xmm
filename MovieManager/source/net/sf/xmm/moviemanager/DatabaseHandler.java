@@ -134,7 +134,7 @@ public class DatabaseHandler {
 			}
 
 			/* Check if script file needs update (v2.1) */
-			if (_database instanceof DatabaseHSQL) {
+			if (_database.isHSQL()) {
 				boolean scriptOutdated = ((DatabaseHSQL) _database).isScriptOutOfDate();
 				boolean driverOld = ((DatabaseHSQL) _database).isDriverOld();
 
