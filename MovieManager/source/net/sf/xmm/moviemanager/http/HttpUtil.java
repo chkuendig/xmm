@@ -147,12 +147,18 @@ public class HttpUtil {
 
 	public class HTTPResult {
 		
+		URL url;
 		StringBuffer data = null;
 		StatusLine statusLine = null;
 		
-		HTTPResult(StringBuffer data, StatusLine statusLine) {
+		HTTPResult(URL url, StringBuffer data, StatusLine statusLine) {
+			this.url = url;
 			this.data = data;
 			this.statusLine = statusLine;
+		}
+		
+		public URL getUrl() {
+			return url;
 		}
 		
 		public StringBuffer getData() {
@@ -194,7 +200,7 @@ public class HttpUtil {
 		
 		stream.close();
 		
-		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
+		return new HTTPResult(url, statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
 	}
 	
 
@@ -223,7 +229,7 @@ public class HttpUtil {
 
 		stream.close();
 
-		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
+		return new HTTPResult(url, statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
 	}
 
 	
@@ -263,7 +269,7 @@ public class HttpUtil {
 		temp.close();
 		data.append(new String(buff, chrSet));
 
-		return new HTTPResult(statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
+		return new HTTPResult(url, statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
 	}
 	
 	
