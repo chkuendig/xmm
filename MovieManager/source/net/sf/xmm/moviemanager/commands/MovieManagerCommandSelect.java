@@ -558,7 +558,12 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			MovieManager.getDialog().getGenreField().setText(model.getGenre());
 			MovieManager.getDialog().getGenreField().setCaretPosition(0);
 
-			MovieManager.getDialog().getRatingField().setText(model.getRating());
+			String rating = model.getRating();
+						
+			if (model.getPersonalRating() != null && !model.getPersonalRating().equals(""))
+				rating += " ("+model.getPersonalRating()+")";
+				
+			MovieManager.getDialog().getRatingField().setText(rating);
 
 			StringBuffer misc = new StringBuffer();
 
