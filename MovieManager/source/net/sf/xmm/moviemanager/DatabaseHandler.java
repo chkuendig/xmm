@@ -140,12 +140,16 @@ public class DatabaseHandler {
 
 				if (scriptOutdated || driverOld) {
 
-					if (scriptOutdated && !allowDatabaseUpdate(_database.getPath())) {
+					log.error("Updates must be done to the database");
+					
+					if (!allowDatabaseUpdate(_database.getPath())) {
 						return false;
 					}
 					
 					if (driverOld) {
+						log.error("HSQLDb driver is old");
 						if (!makeDatabaseBackup(_database, "Update_from_HSQL_1.7_to_1.8")) {
+							log.error("Failed to create database backup!");
 							showDatabaseUpdateMessage("Backup failed"); //$NON-NLS-1$
 							return false;
 						}
@@ -156,7 +160,7 @@ public class DatabaseHandler {
 					}
 
 					/* updates the script if audio channel type is INTEGER (HSQLDB)*/
-					if (!((DatabaseHSQL) _database).updateScriptFile()) {
+					if (scriptOutdated && !((DatabaseHSQL) _database).updateScriptFile()) {
 						showDatabaseUpdateMessage("Script update error"); //$NON-NLS-1$
 						return false;
 					}
@@ -210,6 +214,7 @@ public class DatabaseHandler {
 							return false;
 						}
 						if (!makeDatabaseBackup(_database)) {
+							log.error("Failed to create database backup!");
 							showDatabaseUpdateMessage("Backup failed"); //$NON-NLS-1$
 							return false;
 						}
