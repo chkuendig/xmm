@@ -417,7 +417,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 
 		/* MenuItem Queries. */
 		menuItemQueries = new JMenuItem(Localizer.get("DialogMovieManager.menu.database.queries"),'Q'); //$NON-NLS-1$
-		menuItemQueries.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, java.awt.event.InputEvent.SHIFT_MASK));
+		menuItemQueries.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
 		menuItemQueries.setActionCommand("Queries"); //$NON-NLS-1$
 		menuItemQueries.addActionListener(new MovieManagerCommandQueries());
 		menuDatabase.add(menuItemQueries);
@@ -506,7 +506,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 	         on the selected movie or the filter*/
 		
 		menuItemPrefs = new JMenuItem(Localizer.get("DialogMovieManager.menu.tools.preferences"),'P'); //$NON-NLS-1$
-		menuItemPrefs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.SHIFT_DOWN_MASK));
+		menuItemPrefs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
 		menuItemPrefs.setActionCommand("Preferences"); //$NON-NLS-1$
 		menuItemPrefs.addActionListener(new MovieManagerCommandPrefs());
 	
