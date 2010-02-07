@@ -1,5 +1,5 @@
 /**
- * @(#)DocumentRegExp.java 1.0 23.03.05 (dd.mm.yy)
+ * @(#)DocumentRegExp.java
  *
  * Copyright (2003) Mediterranean
  * 
@@ -27,31 +27,36 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 final public class DocumentRegExp extends PlainDocument {
-  
-  private int _length = 0;
 
-  private Pattern _pattern;
+	private int _length = 0;
 
-  public DocumentRegExp(String regExp) {
-    _pattern = Pattern.compile(regExp);
-  }
+	private Pattern _pattern;
 
-  public DocumentRegExp(String regExp, int length) {
-    _pattern = Pattern.compile(regExp);
-    _length = length;
-  }
+	public DocumentRegExp(String regExp) {
+		_pattern = Pattern.compile(regExp);
+	}
 
-  public void insertString(int offset, String string, AttributeSet a) throws BadLocationException {
-    if (string==null) {
-      return;
-    }
-    if (_length>0 && string.length()+getLength()>_length) {
-      string = string.substring(0,_length-getLength());
-    }
-    /* Checks for the structure... */
-    if (_pattern.matcher(string + getText(0,getLength())).matches()) {
-      super.insertString(offset, string, a);
-    }
-  }
+	public DocumentRegExp(String regExp, int length) {
+		_pattern = Pattern.compile(regExp);
+		_length = length;
+	}
 
+	public void insertString(int offset, String string, AttributeSet a) throws BadLocationException {
+		
+		if (string == null) {
+			return;
+		}
+				
+		if (_length > 0 && string.length() + getLength() > _length) {
+			string = string.substring(0, _length - getLength());
+		}
+				
+		StringBuffer str = new StringBuffer(getText(0, getLength()));
+		str.insert(offset, string);
+				
+		/* Checks for the structure... */
+		if (_pattern.matcher(str.toString()).matches()) {
+			super.insertString(offset, string, a);
+		}
+	}
 } 
