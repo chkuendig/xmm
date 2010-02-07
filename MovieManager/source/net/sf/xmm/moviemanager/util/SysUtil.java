@@ -623,7 +623,7 @@ public class SysUtil {
 		if (SysUtil.isMac()) {
 
 			try {
-				System.err.println("load media info for OSX");
+				System.out.println("load media info for OSX");
 				
 				String mediaInfoDll = "/Users/bro/Desktop/mediainfo/MediaInfoLib/libmediainfo.0.0.0.dylib";
 							
@@ -632,16 +632,16 @@ public class SysUtil {
 				
 				
 				if (mediaInfo.exists()) {
-					System.err.println("Loading:" + mediaInfo.getAbsolutePath());
+					System.out.println("Loading:" + mediaInfo.getAbsolutePath());
 					//LibPathHacker.addDir("/Users/bro/Desktop/mediainfo/MediaInfoLib/");
 					//System.load(mediaInfo.getAbsolutePath());
 					
-					System.err.println("libpath:" + System.getProperty("java.library.path"));
+					System.out.println("libpath:" + System.getProperty("java.library.path"));
 								
 					System.loadLibrary("libmediainfo");
 				}
 				else {
-					System.err.println("File doesnt exist");
+					System.out.println("File doesnt exist");
 				}
 			} catch (UnsatisfiedLinkError e) {
 				// TODO Auto-generated catch block
