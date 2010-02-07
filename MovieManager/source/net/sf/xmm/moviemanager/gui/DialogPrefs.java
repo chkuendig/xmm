@@ -487,8 +487,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		lafGroup.add(enableNimrodChooser);
 
 		String currentNimrod = lafManager.getNimRODTheme();
-
-		System.err.println("setselected:" + currentNimrod);
 		
 		nimrodChooser.setSelectedItem(currentNimrod);
 		nimrodChooser.setEnabled(false);
@@ -496,7 +494,6 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		enableNimrodChooser.addActionListener(this);
 
 		nimrodChooser.setPreferredSize(new Dimension(250, (int) lafChooser.getPreferredSize().getHeight()));
-
 
 		JPanel nimrodLafChooserPanel = new JPanel(new BorderLayout());
 		nimrodLafChooserPanel.setBorder(BorderFactory.createEmptyBorder(4,20,4,20));
