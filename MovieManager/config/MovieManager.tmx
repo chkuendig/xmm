@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tmx version="1.2">
-    <header adminlang="en-us" creationdate="20100130T002010Z"
+    <header adminlang="en-us" creationdate="20100206T174743Z"
         creationtool="RBManager" creationtoolversion="0.7.2"
         datatype="PlainText" o-tmf="none" segtype="sentance" srclang="EN">
         <note>This document was created automatically by RBManager</note>
@@ -2751,19 +2751,19 @@
                 <seg>Title</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogFolders.alert.folder-relative-database">
+        <tu datatype="Text" tuid="DialogFolders.alert.database-relative-install.message">
             <prop type="x-Group">DialogFolders</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Current options demand that the directory must be located relative to the database</seg>
+                <seg>Database must be located inside the install directory when using relative path</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Current options demand that the directory must be located relative to the database</seg>
+                <seg>Database must be located inside the install directory when using relative path</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogFolders.alert.folder-doesnt-exist.message">
@@ -2796,19 +2796,19 @@
                 <seg>Current options demand that the directory must be located inside the install directory when using relative path.</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogFolders.alert.database-relative-install.message">
+        <tu datatype="Text" tuid="DialogFolders.alert.folder-relative-database">
             <prop type="x-Group">DialogFolders</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Database must be located inside the install directory when using relative path</seg>
+                <seg>Current options demand that the directory must be located relative to the database</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Database must be located inside the install directory when using relative path</seg>
+                <seg>Current options demand that the directory must be located relative to the database</seg>
             </tuv>
         </tu>
         <tu datatype="Text" tuid="DialogFolders.alert.title">
@@ -3396,22 +3396,22 @@
                 <seg>Close the Get IMDB Info dialog</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogIMDB.button.choose.text">
+        <tu datatype="Text" tuid="DialogIMDB.button.select.text">
             <prop type="x-Group">DialogIMDB</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Choose</seg>
+                <seg>Select</seg>
             </tuv>
             <tuv changedate="20100104T000000Z" changeid=""
                 creationdate="20100104T000000Z" creationid="" lang="no-NO">
                 <prop type="x-Comment"/>
                 <prop type="x-Translated">false</prop>
-                <seg>Choose</seg>
+                <seg>Select</seg>
             </tuv>
         </tu>
-        <tu datatype="Text" tuid="DialogIMDB.button.choose.tooltip">
+        <tu datatype="Text" tuid="DialogIMDB.button.select.tooltip">
             <prop type="x-Group">DialogIMDB</prop>
             <tuv changedate="20070121T000000Z" changeid=""
                 creationdate="20070121T000000Z" creationid="" lang="en-US">
