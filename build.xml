@@ -240,8 +240,8 @@
 	<target name="archives" description="Creates the ZIP archives."
 		depends="predist">
 	  
-		<!-- Creating Binary zip MovieManager.v.version.bin.zip  Mirror  -->
-		<zip destfile="${dist}/MovieManager.v.${versionName}.bin.zip"
+		<!-- Creating Binary zip MovieManager.v.version.zip  Mirror  -->
+		<zip destfile="${dist}/MovieManager.v.${versionName}.zip"
 			update="false" compress="true">
 
 

@@ -13,7 +13,7 @@
     </taskdef>
 
 	<izpack input="${izpack.dir}/izpack-installer-config.xml"
-			output="${dist}/MovieManager.v.${versionName}.bin.installer.jar"
+			output="${dist}/MovieManager.v.${versionName}.installer.jar"
 			installerType="standard" basedir="."
 			izpackdir="${izpack.dir}"  
 			inheritAll="true"
