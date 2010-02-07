@@ -4,6 +4,23 @@
    Changelog - MeD's Movie Manager
 ========================================
 
+
+Version 2.9.1 (07-February-2010)
+
+- New in this version:
+
+  - Added personal rating. This can also be retrieved from IMDb when supplying username and password.
+  - Added new Look & Feels (NimROD_).
+
+- Bug fixes:
+
+  - Default values for the additional info fields were saved for the wrong fields when they were rearranged.
+
+- Notes:
+
+  - Because of bugs with additional info default values, the current values may be wrong when imported from old config file.
+
+
 Version 2.9.0.1 (01-February-2010)
 
 - Bug fixes:
@@ -911,3 +928,4 @@ Version 0.7 beta (13-March-2003)
 
 .. _MediaInfo: http://mediainfo.sourceforge.net
 .. _duplicates: http://xmm.sourceforge.net/index.php?menu=help#duplicates
+.. _NimROD: http://personales.ya.com/nimrod/index-en.html
