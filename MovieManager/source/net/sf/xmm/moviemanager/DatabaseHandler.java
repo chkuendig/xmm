@@ -140,10 +140,10 @@ public class DatabaseHandler {
 
 				if (scriptOutdated || driverOld) {
 
-					if (!allowDatabaseUpdate(_database.getPath())) {
+					if (scriptOutdated && !allowDatabaseUpdate(_database.getPath())) {
 						return false;
 					}
-
+					
 					if (driverOld) {
 						if (!makeDatabaseBackup(_database, "Update_from_HSQL_1.7_to_1.8")) {
 							showDatabaseUpdateMessage("Backup failed"); //$NON-NLS-1$
