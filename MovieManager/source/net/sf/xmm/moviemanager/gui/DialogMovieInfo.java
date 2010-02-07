@@ -142,6 +142,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	JTextField written;
 	JTextField genre;
 	JTextField rating;
+	JTextField personalRating;
 	JTextField country;
 	JTextField language;
 	JCheckBox seenBox;
@@ -267,31 +268,17 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		/* Creates the general info... */
 		JPanel panelGeneralInfo = new JPanel();
 		panelGeneralInfo.setLayout(new GridBagLayout());
-
+		
 		GridBagConstraints constraints;
 		int textFieldInsets = 4;
 		int insetsTopBottom = 2;
 
 		JLabel dateID = new JLabel(Localizer.get("DialogMovieInfo.field.date") + ": "); //$NON-NLS-1$
 		dateID.setFont((new Font(dateID.getFont().getName(), 1, fontSize)));
-		constraints = new GridBagConstraints();
-		constraints.gridx = 0;
-		constraints.gridy = 0;
-		constraints.gridwidth = 1;
-		constraints.insets = new Insets(2, 5, 2, 5);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(dateID, constraints);
-
+		
 		// YYYYMMDD, or YYYY/MM/DD or even YYYY-MM-DD, YYYY.MM.DD
 		date = new JTextField(6);
-		constraints = new GridBagConstraints();
-		constraints.gridx = 1;
-		constraints.gridy = 0;
-		constraints.gridwidth = 1;
-		constraints.insets = new Insets(2, textFieldInsets, 2, 0);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(date, constraints);
-
+		
 		/* IMDb */
 		JLabel imdbID = new JLabel("IMDb id: "); //$NON-NLS-1$
 		imdbID.setFont((new Font(imdbID.getFont().getName(), 1, fontSize)));
@@ -328,27 +315,10 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		colourPanel.add(colour);
 
 		imdbAndColour.add(colourPanel, BorderLayout.EAST);
-
-		constraints = new GridBagConstraints();
-		constraints.gridx = 2;
-		constraints.gridy = 0;
-		constraints.gridwidth = 7;
-		constraints.insets = new Insets(0, 0, 0, 0);
-		constraints.anchor = GridBagConstraints.EAST;
-		constraints.fill = GridBagConstraints.HORIZONTAL;
-
-		panelGeneralInfo.add(imdbAndColour, constraints);
-
+		
 		JLabel movieTitleID = new JLabel(Localizer.get("DialogMovieInfo.field.title") + ": "); //$NON-NLS-1$
 		movieTitleID.setFont((new Font(movieTitleID.getFont().getName(), 1, fontSize)));
-		constraints = new GridBagConstraints();
-		constraints.gridx = 0;
-		constraints.gridy = 1;
-		constraints.gridwidth = 1;
-		constraints.insets = new Insets(insetsTopBottom, 5, insetsTopBottom, textFieldInsets);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(movieTitleID, constraints);
-
+		
 		movieTitle = new JTextField(28);
 		final JTextField movieTitle2 = movieTitle;
 
@@ -384,120 +354,29 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			}
 		});
 
-		constraints = new GridBagConstraints();
-		constraints.gridx = 1;
-		constraints.gridy = 1;
-		constraints.gridwidth = 7;
-		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, insetsTopBottom, 5);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(movieTitle, constraints);
-
+		directed = new JTextField(28);
+		written = new JTextField(28);
+		genre = new JTextField(28);
+		language = new JTextField(2);
+		
 		JLabel directedID = new JLabel(Localizer.get("DialogMovieInfo.field.directed-by") + ": "); //$NON-NLS-1$
 		directedID.setFont((new Font(directedID.getFont().getName(), 1, fontSize)));
-		constraints = new GridBagConstraints();
-		constraints.gridx = 0;
-		constraints.gridy = 2;
-		constraints.gridwidth = 1;
-		constraints.insets = new Insets(insetsTopBottom, 5, insetsTopBottom, textFieldInsets);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(directedID, constraints);
-
-		directed = new JTextField(28);
-		constraints = new GridBagConstraints();
-		constraints.gridx = 1;
-		constraints.gridy = 2;
-		constraints.gridwidth = 7;
-		constraints.insets = new Insets(1, textFieldInsets, 1, 5);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(directed, constraints);
-
+				
 		JLabel writtenID = new JLabel(Localizer.get("DialogMovieInfo.field.written-by") + ": "); //$NON-NLS-1$
 		writtenID.setFont((new Font(writtenID.getFont().getName(), 1, fontSize)));
-		constraints = new GridBagConstraints();
-		constraints.gridx = 0;
-		constraints.gridy = 3;
-		constraints.gridwidth = 1;
-		constraints.insets = new Insets(insetsTopBottom, 5, insetsTopBottom, textFieldInsets);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(writtenID, constraints);
-
-		written = new JTextField(28);
-		constraints = new GridBagConstraints();
-		constraints.gridx = 1;
-		constraints.gridy = 3;
-		constraints.gridwidth = 7;
-		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, insetsTopBottom, 5);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(written, constraints);
-
+				
 		JLabel genreID = new JLabel(Localizer.get("DialogMovieInfo.field.genre") + ": "); //$NON-NLS-1$
 		genreID.setFont((new Font(genreID.getFont().getName(), 1, fontSize)));
-
-		constraints = new GridBagConstraints();
-		constraints.gridx = 0;
-		constraints.gridy = 4;
-		constraints.gridwidth = 1;
-		constraints.insets = new Insets(insetsTopBottom, 5, insetsTopBottom, textFieldInsets);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(genreID, constraints);
-
-		genre = new JTextField(28);
-		constraints = new GridBagConstraints();
-		constraints.gridx = 1;
-		constraints.gridy = 4;
-		constraints.gridwidth = 7;
-		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, insetsTopBottom, 5);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(genre, constraints);
-
-		JLabel ratingID = new JLabel(Localizer.get("DialogMovieInfo.field.rating") + ": "); //$NON-NLS-1$
-		ratingID.setFont((new Font(ratingID.getFont().getName(), 1, fontSize)));
-		constraints = new GridBagConstraints();
-		constraints.gridx = 0;
-		constraints.gridy = 5;
-		constraints.gridwidth = 1;
-		constraints.insets = new Insets(insetsTopBottom, 5, insetsTopBottom, textFieldInsets);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(ratingID, constraints);
-
-		rating = new JTextField(3);
-		rating.setDocument(new DocumentRegExp("(\\d)*(\\.)?(\\d)*", 4)); //$NON-NLS-1$
-		constraints = new GridBagConstraints();
-		constraints.gridx = 1;
-		constraints.gridy = 5;
-		constraints.gridwidth = 1;
-		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, insetsTopBottom, 5);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(rating, constraints);
-
+				
 		JLabel countryID = new JLabel(Localizer.get("DialogMovieInfo.field.country") + ": "); //$NON-NLS-1$
 		countryID.setFont((new Font(countryID.getFont().getName(), 1, fontSize)));
-		constraints = new GridBagConstraints();
-		constraints.gridx = 2;
-		constraints.gridy = 5;
-		constraints.gridwidth = 2;
-		constraints.insets = new Insets(insetsTopBottom, 5, insetsTopBottom, textFieldInsets);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(countryID, constraints);
-
-		country = new JTextField(15);
-		constraints = new GridBagConstraints();
-		constraints.gridx = 4;
-		constraints.gridy = 5;
-		constraints.gridwidth = 4;
-		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, insetsTopBottom, 5);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(country, constraints);
-
+		
+		JLabel languageID = new JLabel(Localizer.get("DialogMovieInfo.field.language") + ":"); //$NON-NLS-1$
+		languageID.setFont((new Font(languageID.getFont().getName(), 1,	fontSize)));
+				
 		JLabel seenID = new JLabel(Localizer.get("DialogMovieInfo.field.seen") + ": "); //$NON-NLS-1$
 		seenID.setFont((new Font(seenID.getFont().getName(), 1, fontSize)));
-		constraints = new GridBagConstraints();
-		constraints.gridx = 0;
-		constraints.gridy = 6;
-		constraints.insets = new Insets(insetsTopBottom, 5, 0, textFieldInsets);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(seenID, constraints);
-
+		
 		/* Will only change value if seen option is set to editable */
 		seenBox = new JCheckBox() {
 			protected void processMouseEvent(MouseEvent event) {
@@ -516,34 +395,20 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			seenBox.setSelectedIcon(new ImageIcon(FileUtil.getImage("/images/seen.png").getScaledInstance(18, 18, Image.SCALE_SMOOTH))); //$NON-NLS-1$
 		}
 
-		constraints = new GridBagConstraints();
-		constraints.gridx = 1;
-		constraints.gridy = 6;
-		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, 0, 5);
-		constraints.anchor = GridBagConstraints.WEST;
-		constraints.fill = GridBagConstraints.HORIZONTAL;
+		// Rating
+		JLabel ratingID = new JLabel(Localizer.get("DialogMovieInfo.field.rating") + ": "); //$NON-NLS-1$
+		ratingID.setFont((new Font(ratingID.getFont().getName(), 1, fontSize)));
 		
-		panelGeneralInfo.add(seenBox, constraints);
-
-		JLabel languageID = new JLabel(Localizer.get("DialogMovieInfo.field.language") + ": "); //$NON-NLS-1$
-		languageID.setFont((new Font(languageID.getFont().getName(), 1,	fontSize)));
-		constraints = new GridBagConstraints();
-		constraints.gridx = 2;
-		constraints.gridy = 6;
-		constraints.gridwidth = 2;
-		constraints.insets = new Insets(insetsTopBottom, 5, 0, textFieldInsets);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(languageID, constraints);
-
-		language = new JTextField(15);
-		constraints = new GridBagConstraints();
-		constraints.gridx = 4;
-		constraints.gridy = 6;
-		constraints.gridwidth = 4;
-		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, 0, 5);
-		constraints.anchor = GridBagConstraints.WEST;
-		panelGeneralInfo.add(language, constraints);
-
+		rating = new JTextField(3);
+		rating.setDocument(new DocumentRegExp("(10|([1-9])|([1-9]\\.(\\d{1})?))", 3)); //$NON-NLS-1$
+		
+		// Personal rating
+		JLabel personalRatingID = new JLabel("Personal rating" + ": "); //$NON-NLS-1$
+		personalRatingID.setFont((new Font(personalRatingID.getFont().getName(), 1, fontSize)));
+		
+		personalRating = new JTextField(3);
+		personalRating.setDocument(new DocumentRegExp("(10|([1-9])|([1-9]\\.(\\d{1})?))", 3)); //$NON-NLS-1$
+		
 		cover = new JLabel();
 		cover.setBorder(BorderFactory.createEtchedBorder());
 		cover.setPreferredSize(new Dimension(97, 145));
@@ -555,6 +420,197 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		});
 		cover.setTransferHandler(new CoverTransferHandler(this));
 
+		
+		// Add components to panelGeneralInfo
+		
+		// Date
+		constraints = new GridBagConstraints();
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.gridwidth = 1;
+		constraints.insets = new Insets(2, 5, 2, 5);
+		constraints.anchor = GridBagConstraints.WEST;
+		panelGeneralInfo.add(dateID, constraints);
+		
+		constraints = new GridBagConstraints();
+		constraints.gridx = 1;
+		constraints.gridy = 0;
+		constraints.gridwidth = 1;
+		constraints.insets = new Insets(2, textFieldInsets, 2, 0);
+		constraints.anchor = GridBagConstraints.WEST;
+		panelGeneralInfo.add(date, constraints);
+		
+		// Imdb and color
+		constraints = new GridBagConstraints();
+		constraints.gridx = 2;
+		constraints.gridy = 0;
+		constraints.gridwidth = 7;
+		constraints.insets = new Insets(0, 0, 0, 0);
+		constraints.anchor = GridBagConstraints.EAST;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		panelGeneralInfo.add(imdbAndColour, constraints);
+		
+		// Title
+		constraints = new GridBagConstraints();
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		constraints.gridwidth = 1;
+		constraints.insets = new Insets(insetsTopBottom, 5, insetsTopBottom, textFieldInsets);
+		constraints.anchor = GridBagConstraints.WEST;
+		panelGeneralInfo.add(movieTitleID, constraints);
+				
+		constraints = new GridBagConstraints();
+		constraints.gridx = 1;
+		constraints.gridy = 1;
+		constraints.gridwidth = 7;
+		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, insetsTopBottom, 5);
+		//constraints.anchor = GridBagConstraints.WEST;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		panelGeneralInfo.add(movieTitle, constraints);
+		
+		// Directed by
+		constraints = new GridBagConstraints();
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+		constraints.gridwidth = 1;
+		constraints.insets = new Insets(insetsTopBottom, 5, insetsTopBottom, textFieldInsets);
+		constraints.anchor = GridBagConstraints.WEST;
+		panelGeneralInfo.add(directedID, constraints);
+		
+		constraints = new GridBagConstraints();
+		constraints.gridx = 1;
+		constraints.gridy = 2;
+		constraints.gridwidth = 7;
+		constraints.insets = new Insets(1, textFieldInsets, 1, 5);
+		//constraints.anchor = GridBagConstraints.WEST;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		panelGeneralInfo.add(directed, constraints);
+		
+		// Written by
+		constraints = new GridBagConstraints();
+		constraints.gridx = 0;
+		constraints.gridy = 3;
+		constraints.gridwidth = 1;
+		constraints.insets = new Insets(insetsTopBottom, 5, insetsTopBottom, textFieldInsets);
+		constraints.anchor = GridBagConstraints.WEST;
+		panelGeneralInfo.add(writtenID, constraints);
+		
+		constraints = new GridBagConstraints();
+		constraints.gridx = 1;
+		constraints.gridy = 3;
+		constraints.gridwidth = 7;
+		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, insetsTopBottom, 5);
+		//constraints.anchor = GridBagConstraints.WEST;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		panelGeneralInfo.add(written, constraints);
+		
+		// Genre
+		constraints = new GridBagConstraints();
+		constraints.gridx = 0;
+		constraints.gridy = 4;
+		constraints.gridwidth = 1;
+		constraints.insets = new Insets(insetsTopBottom, 5, insetsTopBottom, textFieldInsets);
+		constraints.anchor = GridBagConstraints.WEST;
+		panelGeneralInfo.add(genreID, constraints);
+		
+		constraints = new GridBagConstraints();
+		constraints.gridx = 1;
+		constraints.gridy = 4;
+		constraints.gridwidth = 7;
+		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, insetsTopBottom, 5);
+		//constraints.anchor = GridBagConstraints.WEST;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		panelGeneralInfo.add(genre, constraints);
+		
+		
+		// Country
+		constraints = new GridBagConstraints();
+		constraints.gridx = 0;
+		constraints.gridy = 5;
+		constraints.gridwidth = 1;
+		constraints.insets = new Insets(insetsTopBottom, 5, insetsTopBottom, textFieldInsets);
+		constraints.anchor = GridBagConstraints.WEST;
+		panelGeneralInfo.add(countryID, constraints);
+
+		country = new JTextField(2);
+		constraints = new GridBagConstraints();
+		constraints.gridx = 1;
+		constraints.gridy = 5;
+		constraints.gridwidth = 2;
+		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, insetsTopBottom, 5);
+		//constraints.anchor = GridBagConstraints.WEST;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		panelGeneralInfo.add(country, constraints);
+		
+		// Language
+		constraints = new GridBagConstraints();
+		constraints.gridx = 3;
+		constraints.gridy = 5;
+		constraints.gridwidth = 1;
+		constraints.insets = new Insets(insetsTopBottom, 5, 0, textFieldInsets);
+		constraints.anchor = GridBagConstraints.WEST;
+		panelGeneralInfo.add(languageID, constraints);
+		
+		constraints = new GridBagConstraints();
+		constraints.gridx = 4;
+		constraints.gridy = 5;
+		constraints.gridwidth = 2;
+		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, 0, 5);
+		//constraints.anchor = GridBagConstraints.WEST;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		panelGeneralInfo.add(language, constraints);
+		
+		// Seen
+		constraints = new GridBagConstraints();
+		constraints.gridx = 0;
+		constraints.gridy = 6;
+		constraints.insets = new Insets(insetsTopBottom, 5, 0, textFieldInsets);
+		constraints.anchor = GridBagConstraints.WEST;
+		panelGeneralInfo.add(seenID, constraints);
+				
+		constraints = new GridBagConstraints();
+		constraints.gridx = 1;
+		constraints.gridy = 6;
+		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, 0, 5);
+		constraints.anchor = GridBagConstraints.WEST;
+		//constraints.fill = GridBagConstraints.HORIZONTAL;
+		panelGeneralInfo.add(seenBox, constraints);
+		
+		// Rating
+		constraints = new GridBagConstraints();
+		constraints.gridx = 2;
+		constraints.gridy = 6;
+		constraints.gridwidth = 1;
+		constraints.insets = new Insets(insetsTopBottom, 5, insetsTopBottom, textFieldInsets);
+		constraints.anchor = GridBagConstraints.WEST;
+		panelGeneralInfo.add(ratingID, constraints);
+		
+		constraints = new GridBagConstraints();
+		constraints.gridx = 3;
+		constraints.gridy = 6;
+		constraints.gridwidth = 1;
+		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, insetsTopBottom, 5);
+		constraints.anchor = GridBagConstraints.WEST;
+		panelGeneralInfo.add(rating, constraints);
+		
+		// Personal rating
+		constraints = new GridBagConstraints();
+		constraints.gridx = 4;
+		constraints.gridy = 6;
+		constraints.gridwidth = 1;
+		constraints.insets = new Insets(insetsTopBottom, 5, insetsTopBottom, textFieldInsets);
+		constraints.anchor = GridBagConstraints.WEST;
+		panelGeneralInfo.add(personalRatingID, constraints);
+		
+		constraints = new GridBagConstraints();
+		constraints.gridx = 5;
+		constraints.gridy = 6;
+		constraints.gridwidth = 1;
+		constraints.insets = new Insets(insetsTopBottom, textFieldInsets, insetsTopBottom, 5);
+		constraints.anchor = GridBagConstraints.WEST;
+		panelGeneralInfo.add(personalRating, constraints);
+		
+		// Cover
 		constraints = new GridBagConstraints();
 		constraints.gridx = 8;
 		constraints.gridy = 1;
@@ -562,15 +618,20 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.insets = new Insets(0, 5, 0, 5);
 		constraints.anchor = GridBagConstraints.CENTER;
 		panelGeneralInfo.add(cover, constraints);
-
+				
+		
+		// Adding panelGeneralInfo
 		constraints = new GridBagConstraints();
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.gridwidth = 2;
 		constraints.insets = new Insets(0, -1, 0, -1);
-		constraints.anchor = GridBagConstraints.CENTER;
+		//constraints.anchor = GridBagConstraints.CENTER;
+		constraints.fill = GridBagConstraints.BOTH;
 		panelMovieInfo.add(panelGeneralInfo, constraints);
 
+				
+		
 		/* Creates the plot... */
 		JPanel panelPlot = new JPanel();
 		panelPlot.setLayout(new GridLayout(1,1));
@@ -631,7 +692,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.gridy = 0;
 		constraints.gridwidth = 1;
 		// constraints.insets = new Insets(1,5,1,5);
-		// constraints.fill = GridBagConstraints.BOTH;
+		//constraints.fill = GridBagConstraints.BOTH;
 		constraints.anchor = GridBagConstraints.WEST;
 		panelMisc.add(webRuntimeID, constraints);
 
@@ -656,7 +717,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.gridy = 1;
 		constraints.gridwidth = 1;
 		// constraints.insets = new Insets(1,5,1,5);
-		constraints.fill = GridBagConstraints.BOTH;
+		//constraints.fill = GridBagConstraints.BOTH;
 		constraints.anchor = GridBagConstraints.WEST;
 		panelMisc.add(soundMixID, constraints);
 
@@ -797,8 +858,8 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		constraints.gridy = 2;
 		constraints.gridwidth = 2;
 		constraints.insets = new Insets(0, -1, 5, -1);
-		constraints.anchor = GridBagConstraints.CENTER;
-	
+		//constraints.anchor = GridBagConstraints.CENTER;
+		constraints.fill = GridBagConstraints.BOTH;
 		panelMovieInfo.add(allTabbedInfo, constraints);
 
 		/* Creates the Additional Info... */
@@ -1249,6 +1310,10 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	 */
 	public JTextField getRating() {
 		return rating;
+	}
+	
+	public JTextField getPersonalRating() {
+		return personalRating;
 	}
 
 	/**
@@ -1918,6 +1983,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		movieInfoModel.model.setWrittenBy(getWrittenBy().getText());
 		movieInfoModel.model.setGenre(getGenre().getText());
 		movieInfoModel.model.setRating(getRating().getText());
+		movieInfoModel.model.setPersonalRating(getPersonalRating().getText());
 		movieInfoModel.model.setPlot(getPlot().getText());
 		movieInfoModel.model.setCast(getCast().getText());
 		movieInfoModel.model.setNotes(getNotes().getText());
@@ -2277,6 +2343,9 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 
 		getRating().setText(movieInfoModel.model.getRating());
 		getRating().setCaretPosition(0);
+		
+		getPersonalRating().setText(movieInfoModel.model.getPersonalRating());
+		getPersonalRating().setCaretPosition(0);
 
 		getCountry().setText(movieInfoModel.model.getCountry());
 		getCountry().setCaretPosition(0);
