@@ -82,7 +82,7 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 	   LookAndFeelManager.newLookAndFeelLoadedHandler.addNewLookAndFeelLoadedEventListener(
 			   new NewLookAndFeelLoadedEventListener() {
 				   public void newLookAndFeelLoaded(NewLookAndFeelLoadedEvent evt) {
-					   System.err.println("newLookAndFeelLoaded");
+					   System.out.println("newLookAndFeelLoaded");
 					   setUI(new ExtendedJTreeUI(getTree()));
 					   ((ExtendedJTreeUI) getUI()).installDefaults();
 				   }
