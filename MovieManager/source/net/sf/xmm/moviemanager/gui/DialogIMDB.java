@@ -264,8 +264,8 @@ public class DialogIMDB extends JDialog {
     	panelRegularButtons.setBorder(BorderFactory.createEmptyBorder(0,0,4,0));
     	panelRegularButtons.setLayout(new FlowLayout());
     	
-    	buttonSelect = new JButton(Localizer.get("DialogIMDB.button.choose.text")); //$NON-NLS-1$
-    	buttonSelect.setToolTipText(Localizer.get("DialogIMDB.button.choose.tooltip")); //$NON-NLS-1$
+    	buttonSelect = new JButton(Localizer.get("DialogIMDB.button.select.text")); //$NON-NLS-1$
+    	buttonSelect.setToolTipText(Localizer.get("DialogIMDB.button.select.tooltip")); //$NON-NLS-1$
     	buttonSelect.setActionCommand("GetIMDBInfo - Select"); //$NON-NLS-1$
     	buttonSelect.addActionListener(new ActionListener() {
     		public void actionPerformed(ActionEvent event) {
@@ -556,6 +556,7 @@ public class DialogIMDB extends JDialog {
     		modelEntry.setWrittenBy(dataModel.getWrittenBy());
     		modelEntry.setGenre(dataModel.getGenre());
     		modelEntry.setRating(dataModel.getRating());
+    		modelEntry.setPersonalRating(dataModel.getPersonalRating());
     		modelEntry.setCountry(dataModel.getCountry());
     		modelEntry.setLanguage(dataModel.getLanguage());
     		modelEntry.setPlot(dataModel.getPlot());
