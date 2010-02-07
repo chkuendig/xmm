@@ -20,6 +20,7 @@
 
 package net.sf.xmm.moviemanager.commands;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -66,7 +67,13 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 	 **/
 	public void execute() {
 
-		// If any notes have been changed, they will be saved before seaching
+		// Settings busy cursor
+		
+		MovieManager.getDialog().getMoviesList().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+		
+		try {
+		
+		// If any notes have been changed, they will be saved before searching
 		MovieManagerCommandSaveChangedNotes.execute();
 
 		//DefaultListModel listModel;
@@ -113,7 +120,7 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 
 		if (movieList.size() == 0 && addEmptyEntry) {
 
-			movieList.add(new ModelMovie(-1, "", "", "", noHitsMessage, "", "", "", "", "", "", "", false, "", "", "", "", "", "", "", "", ""));
+			movieList.add(new ModelMovie(-1, noHitsMessage));
 
 			if (mainFilter) 
 				MovieManager.getDialog().setAndShowEntries(0);
@@ -141,7 +148,10 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 			((JList) movieListComponent).setModel(listModel);
 			((JList) movieListComponent).setSelectedIndex(0);
 		}
-
+		}
+		 finally {
+			 MovieManager.getDialog().getMoviesList().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		 }
 		log.debug("It took:" + (System.currentTimeMillis() - filterStart)+" ms to process the filter.");
 	}
 
@@ -156,7 +166,8 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 		if (event.getSource().equals(MovieManager.getDialog().getFilter())) {
 			mainFilter = true;
 		}
-			
+		
+		
 		execute();
 	}
 	
