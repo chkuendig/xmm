@@ -280,6 +280,7 @@ public class ModelMovieInfo {
         model.setWrittenBy("");
         model.setGenre("");
         model.setRating("");
+        model.setPersonalRating("");
         model.setPlot("");
         model.setCast("");
         model.setNotes("");
