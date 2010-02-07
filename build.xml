@@ -98,7 +98,7 @@
 	       commons-codec-1.3.jar,
 		   gettext-commons-0.9.jar,
 		   itext-1.4.5.jar ,
-		   jasperreports-3.0.0.jar,
+		   jasperreports-3.7.1.jar,
 		   jna-3.2.4.jar,
 		   jxl.jar,
 		   log4j-1.2.15.jar,
@@ -693,7 +693,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 	&lt;classpathentry kind="lib" path="MovieManager/lib/commons-logging-1.1.jar"/&gt;
 	&lt;classpathentry kind="lib" path="MovieManager/lib/gettext-commons-0.9.jar"/&gt;
 	&lt;classpathentry kind="lib" path="MovieManager/lib/itext-1.4.5.jar"/&gt;
-	&lt;classpathentry kind="lib" path="MovieManager/lib/jasperreports-3.0.0.jar"/&gt;
+	&lt;classpathentry kind="lib" path="MovieManager/lib/jasperreports-3.7.1.jar"/&gt;
 	&lt;classpathentry kind="lib" path="MovieManager/lib/jxl.jar"/&gt;
 	&lt;classpathentry kind="lib" path="MovieManager/lib/log4j-1.2.15.jar"/&gt;
 	&lt;classpathentry kind="lib" path="MovieManager/lib/ostermillerutils_1_05_00_for_java_1_4.jar"/&gt;
