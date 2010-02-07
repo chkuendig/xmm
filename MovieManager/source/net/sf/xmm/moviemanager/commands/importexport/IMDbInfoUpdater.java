@@ -424,6 +424,12 @@ public class IMDbInfoUpdater {
 
 			if (rating == 1 || (rating == 2 && model.getRating().equals(""))) {							
 				model.setRating(getIMDbModel(model.getUrlKey()).getRating());
+				
+				String personalRating = getIMDbModel(model.getUrlKey()).getRating();
+				
+				if (!personalRating.equals(""))
+					model.setPersonalRating(getIMDbModel(model.getUrlKey()).getPersonalRating());
+				
 			}
 
 			if (country == 1 || (country == 2 && model.getCountry().equals(""))) {
