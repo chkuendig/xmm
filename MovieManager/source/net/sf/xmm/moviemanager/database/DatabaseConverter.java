@@ -1,5 +1,5 @@
 /**
- * @(#)DatabaseConverter.java 1.0 26.01.06 (dd.mm.yy)
+ * @(#)DatabaseConverter.java
  *
  * Copyright (2003) Bro3
  * 
@@ -35,180 +35,180 @@ import org.apache.log4j.Logger;
 
 
 public class DatabaseConverter {
-    
+
 	Logger log = Logger.getLogger(getClass());
-    
-    private int lengthOfTask;
-    private int current = -1;
-    private boolean done = false;
-    private boolean canceled = false;
-    private String [] transferred;
-    
-    public DatabaseConverter(int length) {
-	lengthOfTask = length;
-    }
-    
-    public void go(final Database newDatabase, final ListModel movieListModel, final ArrayList<ModelEpisode> episodeList) {
-        final SwingWorker worker = new SwingWorker() {
-		public Object construct() {
-		    current = -1;
-		    done = false;
-		    canceled = false;
-		    transferred = new String[getLengthOfTask()];
-		   
-		    return new Converter(newDatabase, movieListModel, episodeList);
-		}
-	    };
-	worker.start();
-    }
 
-    public int getLengthOfTask() {
-        return lengthOfTask;
-    }
-    
-    /*Returns the current position in the array*/
-    public int getCurrent() {
-        return current;
-    }
-    
-    /*Stops the converting process*/
-    public void stop() {
-    	canceled = true;
-    }
-    
-    public boolean isDone() {
-        return done;
-    }
-    
-    /*Returns the array transferred which contains all the finished database entries*/
-    public String[] getTransferred() {
-	return transferred;
-    }
-    
-    /**
-     * The actual database "conversion" task.
-     * This runs in a SwingWorker thread.
-     */
-    class Converter {
-        Converter(Database newDatabase, ListModel movieListModel,  ArrayList<ModelEpisode> episodeList) {
-	    
-	    /* Setting the priority of the thrad to 4 to give the GUI room to update more often */
-	    Thread.currentThread().setPriority(4);
-	    
-	    /* current database */
-	    Database cDb = MovieManager.getIt().getDatabase();
-	    ModelEntry model;
-	    ModelAdditionalInfo addInfo;
-	    int movieListSize = movieListModel.getSize();
-		
-	    try {
-		
-		newDatabase.setFolders(cDb.getCoversFolder(), cDb.getQueriesFolder());
-		newDatabase.setActiveAdditionalInfoFields(cDb.getActiveAdditionalInfoFields());
-		
-		ArrayList<String> extraFieldNamesList = cDb.getExtraInfoFieldNames(true);
-		ArrayList<String> extraFieldValuesList;
-		
-		ArrayList<String> listsColumnNamesList = cDb.getListsColumnNames();
-		ArrayList<Boolean> listsRecordValueList;
-		
-		
-		/* Transferring movie entries */
-		for (int i = 0; i < movieListSize; i++) {
-		    
-		    while (!done && !canceled) {
-			
-			model = (ModelMovie) movieListModel.getElementAt(i);
-			int key = model.getKey();
-			int index = newDatabase.addGeneralInfo(model.getKey(), model.getTitle(), /*cDb.getCover(key)*/ model.getCover(), null,
-							       /*cDb.getUrlKey(key)*/ model.getUrlKey(), model.getDate(), 
-							       model.getDirectedBy(), model.getWrittenBy(),
-							       model.getGenre(), model.getRating(), model.getSeen(), 
-							       model.getAka(), model.getCountry(), model.getLanguage(), 
-							       model.getColour(), model.getPlot(), 
-							       model.getCast(), model.getNotes(), model.getCertification(), model.getMpaa(), model.getWebSoundMix(), model.getWebRuntime(), model.getAwards());
-			if (index != -1) {
-			    
-			    addInfo = cDb.getAdditionalInfo(key, false);
-			    
-			    if (addInfo != null) {
-				
-				newDatabase.addAdditionalInfo(index, addInfo);
-				
-				/* Copies the data in the extra info fields */
-				extraFieldValuesList = new ArrayList<String>();
-				
-				for (int u = 0; u < extraFieldNamesList.size(); u++)
-				    extraFieldValuesList.add(cDb.getExtraInfoMovieField(key, (String) extraFieldNamesList.get(u)));
-				
-				newDatabase.addExtraInfoMovie(index, extraFieldNamesList, extraFieldValuesList);
-				
-				
-				/* Copies the data in the lists fields */
-				listsRecordValueList = new ArrayList<Boolean>();
-				
-				for (int u = 0; u < listsColumnNamesList.size(); u++)
-				    listsRecordValueList.add(new Boolean(cDb.getList(key, (String) listsColumnNamesList.get(u))));
-				
-				newDatabase.addLists(index, listsColumnNamesList, listsRecordValueList);
-			    }
-			    else
-				log.warn("newDatabase.addAdditionalInfo("+ index +", addInfo): returned null");
-			}
-			
-			current = i;
-			transferred[i] = model.getTitle()+" ("+model.getDate()+")";
-			break;
-		    }
-		    
-		    if (canceled) {
-			break;
-		    }		
-		}
-		
-		extraFieldNamesList = cDb.getExtraInfoFieldNames(true);
-		
-		/* Transferring episode entries */
-		for (int i = movieListSize; i < lengthOfTask; i++) {
-		    
-		    while (!done && !canceled) {
-			
-			model = (ModelEpisode) episodeList.get(i- movieListSize);
-			int key = model.getKey();
-			
-			model = cDb.getEpisode(key);
+	private int lengthOfTask;
+	private int current = -1;
+	private boolean done = false;
+	private boolean canceled = false;
+	private String [] transferred;
 
-			int index = newDatabase.addGeneralInfoEpisode((ModelEpisode) model);
-			
-			if (index != -1) {
-			    
-			    ModelAdditionalInfo additionalModel = cDb.getAdditionalInfo(key, true);
-			    
-			    newDatabase.addAdditionalInfoEpisode(index, additionalModel);
-			    
-			    //extraFieldValuesList = new ArrayList();
-			    
-			    // for (int u = 0; u < extraFieldNamesList.size(); u++) {
-// 				extraFieldValuesList.add(cDb.getExtraInfoMovieField(key, (String) extraFieldNamesList.get(u)));
-// 			    }
-			    newDatabase.addExtraInfoEpisode(index, extraFieldNamesList, additionalModel.getExtraInfoFieldValues());
-			}
-			
-			current = i;
-			transferred[i] = model.getTitle()+" ("+model.getDate()+")";
-			break;
-		    }
-		    
-		    if (canceled) {
-			break;
-		    }		
-		}
-		
-		done = true;
-		
-	    } catch (Exception e) {
-		log.error("Converter process interrupted:" + e);
-	    }
+	public DatabaseConverter(int length) {
+		lengthOfTask = length;
 	}
-    }
+
+	public void go(final Database newDatabase, final ListModel movieListModel, final ArrayList<ModelEpisode> episodeList) {
+		final SwingWorker worker = new SwingWorker() {
+			public Object construct() {
+				current = -1;
+				done = false;
+				canceled = false;
+				transferred = new String[getLengthOfTask()];
+
+				return new Converter(newDatabase, movieListModel, episodeList);
+			}
+		};
+		worker.start();
+	}
+
+	public int getLengthOfTask() {
+		return lengthOfTask;
+	}
+
+	/*Returns the current position in the array*/
+	public int getCurrent() {
+		return current;
+	}
+
+	/*Stops the converting process*/
+	public void stop() {
+		canceled = true;
+	}
+
+	public boolean isDone() {
+		return done;
+	}
+
+	/*Returns the array transferred which contains all the finished database entries*/
+	public String[] getTransferred() {
+		return transferred;
+	}
+
+	/**
+	 * The actual database "conversion" task.
+	 * This runs in a SwingWorker thread.
+	 */
+	class Converter {
+		Converter(Database newDatabase, ListModel movieListModel,  ArrayList<ModelEpisode> episodeList) {
+
+			/* Setting the priority of the thrad to 4 to give the GUI room to update more often */
+			Thread.currentThread().setPriority(4);
+
+			/* current database */
+			Database cDb = MovieManager.getIt().getDatabase();
+			ModelEntry model;
+			ModelAdditionalInfo addInfo;
+			int movieListSize = movieListModel.getSize();
+
+			try {
+
+				newDatabase.setFolders(cDb.getCoversFolder(), cDb.getQueriesFolder());
+				newDatabase.setActiveAdditionalInfoFields(cDb.getActiveAdditionalInfoFields());
+
+				ArrayList<String> extraFieldNamesList = cDb.getExtraInfoFieldNames(true);
+				ArrayList<String> extraFieldValuesList;
+
+				ArrayList<String> listsColumnNamesList = cDb.getListsColumnNames();
+				ArrayList<Boolean> listsRecordValueList;
+
+
+				/* Transferring movie entries */
+				for (int i = 0; i < movieListSize; i++) {
+
+					while (!done && !canceled) {
+
+						model = (ModelMovie) movieListModel.getElementAt(i);
+						int key = model.getKey();
+						int index = newDatabase.addGeneralInfo(model.getKey(), model.getTitle(), model.getCover(), null,
+								model.getUrlKey(), model.getDate(), 
+								model.getDirectedBy(), model.getWrittenBy(),
+								model.getGenre(), model.getRating(), model.getPersonalRating(), model.getSeen(), 
+								model.getAka(), model.getCountry(), model.getLanguage(), 
+								model.getColour(), model.getPlot(), 
+								model.getCast(), model.getNotes(), model.getCertification(), model.getMpaa(), model.getWebSoundMix(), model.getWebRuntime(), model.getAwards());
+						if (index != -1) {
+
+							addInfo = cDb.getAdditionalInfo(key, false);
+
+							if (addInfo != null) {
+
+								newDatabase.addAdditionalInfo(index, addInfo);
+
+								/* Copies the data in the extra info fields */
+								extraFieldValuesList = new ArrayList<String>();
+
+								for (int u = 0; u < extraFieldNamesList.size(); u++)
+									extraFieldValuesList.add(cDb.getExtraInfoMovieField(key, (String) extraFieldNamesList.get(u)));
+
+								newDatabase.addExtraInfoMovie(index, extraFieldNamesList, extraFieldValuesList);
+
+
+								/* Copies the data in the lists fields */
+								listsRecordValueList = new ArrayList<Boolean>();
+
+								for (int u = 0; u < listsColumnNamesList.size(); u++)
+									listsRecordValueList.add(new Boolean(cDb.getList(key, (String) listsColumnNamesList.get(u))));
+
+								newDatabase.addLists(index, listsColumnNamesList, listsRecordValueList);
+							}
+							else
+								log.warn("newDatabase.addAdditionalInfo("+ index +", addInfo): returned null");
+						}
+
+						current = i;
+						transferred[i] = model.getTitle()+" ("+model.getDate()+")";
+						break;
+					}
+
+					if (canceled) {
+						break;
+					}		
+				}
+
+				extraFieldNamesList = cDb.getExtraInfoFieldNames(true);
+
+				/* Transferring episode entries */
+				for (int i = movieListSize; i < lengthOfTask; i++) {
+
+					while (!done && !canceled) {
+
+						model = (ModelEpisode) episodeList.get(i- movieListSize);
+						int key = model.getKey();
+
+						model = cDb.getEpisode(key);
+
+						int index = newDatabase.addGeneralInfoEpisode((ModelEpisode) model);
+
+						if (index != -1) {
+
+							ModelAdditionalInfo additionalModel = cDb.getAdditionalInfo(key, true);
+
+							newDatabase.addAdditionalInfoEpisode(index, additionalModel);
+
+							//extraFieldValuesList = new ArrayList();
+
+							// for (int u = 0; u < extraFieldNamesList.size(); u++) {
+							// 				extraFieldValuesList.add(cDb.getExtraInfoMovieField(key, (String) extraFieldNamesList.get(u)));
+							// 			    }
+							newDatabase.addExtraInfoEpisode(index, extraFieldNamesList, additionalModel.getExtraInfoFieldValues());
+						}
+
+						current = i;
+						transferred[i] = model.getTitle()+" ("+model.getDate()+")";
+						break;
+					}
+
+					if (canceled) {
+						break;
+					}		
+				}
+
+				done = true;
+
+			} catch (Exception e) {
+				log.error("Converter process interrupted:" + e);
+			}
+		}
+	}
 }

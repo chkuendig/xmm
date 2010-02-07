@@ -1023,11 +1023,7 @@ abstract public class Database {
 
 			for (int i = 1; i <= metaData.getColumnCount(); i++) {
 				if (!metaData.getColumnName(i).equalsIgnoreCase("ID")) {
-
-					/* Personal rating not yet implemented */
-					if (metaData.getColumnName(i).indexOf("ersonal") == -1) {
-						list.add(metaData.getColumnName(i));
-					}
+					list.add(metaData.getColumnName(i));
 				}
 			}
 		} catch (Exception e) {
@@ -1097,7 +1093,7 @@ abstract public class Database {
 
 			PreparedStatement statement;
 
-			if (databaseType.equals("MySQL")) {
+			if (isMySQL()) {
 				statement = _sql.prepareStatement("INSERT INTO Additional_Info "+
 						"(ID,Subtitles,Duration,File_Size,CDs,CD_Cases,"+
 						"Resolution,Video_Codec,Video_Rate,"+
@@ -1190,7 +1186,7 @@ abstract public class Database {
 		try {
 			PreparedStatement statement;
 
-			if (databaseType.equals("MySQL")) {
+			if (isMySQL()) {
 				statement = _sql.prepareStatement("INSERT INTO Additional_Info_Episodes "+
 						"(ID, Subtitles,Duration,File_Size,CDs, "+
 						"CD_Cases,Resolution,Video_Codec,"+
@@ -1281,7 +1277,7 @@ abstract public class Database {
 
 			PreparedStatement statement;
 
-			if (databaseType.equals("MySQL")) {
+			if (isMySQL()) {
 
 				statement = _sql.prepareStatement("UPDATE Additional_Info "+
 						"SET Additional_Info.Subtitles=?, "+
@@ -1395,7 +1391,7 @@ abstract public class Database {
 		try {
 			PreparedStatement statement;
 
-			if (databaseType.equals("MySQL")) {
+			if (isMySQL()) {
 				statement = _sql.prepareStatement("UPDATE Additional_Info_Episodes "+
 						"SET Additional_Info_Episodes.Subtitles=?, "+
 						"Additional_Info_Episodes.Duration=?, "+
@@ -1528,7 +1524,7 @@ abstract public class Database {
 	 **/
 	protected synchronized int addGeneralInfo(int index, String title, String cover, byte [] coverData, String IMDB,
 			String date, String directedBy, String writtenBy,
-			String genre, String rating, boolean seen, String aka,
+			String genre, String rating, String personalRating, boolean seen, String aka,
 			String country, String language, String colour,
 			String plot, String cast, String notes, String certification,
 			String mpaa, String webSoundMix, String webRuntime, String awards) {
@@ -1542,8 +1538,8 @@ abstract public class Database {
 
 				PreparedStatement statement;
 				statement = _sql.prepareStatement("INSERT INTO \"General Info\" "+
-						"(\"ID\",\"Title\",\"Cover\",\"Imdb\",\"Date\",\"Directed By\",\"Written By\",\"Genre\",\"Rating\",\"Seen\",\"Aka\",\"Country\",\"Language\",\"Colour\",\"Plot\",\"Cast\",\"Notes\",\"Certification\",\"Mpaa\",\"Sound Mix\",\"Web Runtime\",\"Awards\") "+
-				"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+						"(\"ID\",\"Title\",\"Cover\",\"Imdb\",\"Date\",\"Directed By\",\"Written By\",\"Genre\",\"Rating\",\"Personal Rating\",\"Seen\",\"Aka\",\"Country\",\"Language\",\"Colour\",\"Plot\",\"Cast\",\"Notes\",\"Certification\",\"Mpaa\",\"Sound Mix\",\"Web Runtime\",\"Awards\") "+
+				"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 
 				statement.setInt(1,index);
 				statement.setString(2,title);
@@ -1554,8 +1550,10 @@ abstract public class Database {
 				statement.setString(7,writtenBy);
 				statement.setString(8,genre);
 
-				if (this instanceof DatabaseAccess)
+				if (isMSAccess()) {
 					statement.setString(9, rating);
+					statement.setString(10, personalRating);
+				}
 				else {
 					try {
 						statement.setDouble(9,Double.parseDouble(rating));
@@ -1563,21 +1561,28 @@ abstract public class Database {
 					catch (NumberFormatException e) {
 						statement.setDouble(9,-1);
 					}
+					
+					try {
+						statement.setDouble(10, Double.parseDouble(personalRating));
+					}
+					catch (NumberFormatException e) {
+						statement.setDouble(10, -1);
+					}
 				}
 
-				statement.setBoolean(10,seen);
-				statement.setString(11,aka);
-				statement.setString(12,country);
-				statement.setString(13,language);
-				statement.setString(14,colour);
-				statement.setString(15,plot);
-				statement.setString(16,cast);
-				statement.setString(17,notes);
-				statement.setString(18,certification);
-				statement.setString(19,mpaa);
-				statement.setString(20,webSoundMix);
-				statement.setString(21,webRuntime);
-				statement.setString(22,awards);
+				statement.setBoolean(11,seen);
+				statement.setString(12,aka);
+				statement.setString(13,country);
+				statement.setString(14,language);
+				statement.setString(15,colour);
+				statement.setString(16,plot);
+				statement.setString(17,cast);
+				statement.setString(18,notes);
+				statement.setString(19,certification);
+				statement.setString(20,mpaa);
+				statement.setString(21,webSoundMix);
+				statement.setString(22,webRuntime);
+				statement.setString(23,awards);
 				statement.executeUpdate();
 			}
 
@@ -1621,8 +1626,8 @@ abstract public class Database {
 
 				PreparedStatement statement;
 				statement = _sql.prepareStatement("INSERT INTO \"General Info\" "+
-						"(\"ID\",\"Title\",\"Cover\",\"Imdb\",\"Date\",\"Directed By\",\"Written By\",\"Genre\",\"Rating\",\"Seen\",\"Aka\",\"Country\",\"Language\",\"Colour\",\"Plot\",\"Cast\",\"Notes\",\"Certification\",\"Mpaa\",\"Sound Mix\",\"Web Runtime\",\"Awards\") "+
-				"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+						"(\"ID\",\"Title\",\"Cover\",\"Imdb\",\"Date\",\"Directed By\",\"Written By\",\"Genre\",\"Rating\",\"Personal Rating\",\"Seen\",\"Aka\",\"Country\",\"Language\",\"Colour\",\"Plot\",\"Cast\",\"Notes\",\"Certification\",\"Mpaa\",\"Sound Mix\",\"Web Runtime\",\"Awards\") "+
+				"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 
 				statement.setInt(1, index);
 				statement.setString(2, model.getTitle());
@@ -1633,8 +1638,10 @@ abstract public class Database {
 				statement.setString(7, model.getWrittenBy());
 				statement.setString(8, model.getGenre());
 
-				if (this instanceof DatabaseAccess)
+				if (isMSAccess()) {
 					statement.setString(9, model.getRating());
+					statement.setString(10, model.getPersonalRating());
+				}
 				else {
 
 					try {
@@ -1643,21 +1650,28 @@ abstract public class Database {
 					catch (NumberFormatException e) {
 						statement.setDouble(9, -1);
 					}
+					
+					try {
+						statement.setDouble(10, Double.parseDouble(model.getPersonalRating()));
+					}
+					catch (NumberFormatException e) {
+						statement.setDouble(10, -1);
+					}
 				}
 
-				statement.setBoolean(10, model.getSeen());
-				statement.setString(11, model.getAka());
-				statement.setString(12, model.getCountry());
-				statement.setString(13, model.getLanguage());
-				statement.setString(14, model.getColour());
-				statement.setString(15, model.getPlot());
-				statement.setString(16, model.getCast());
-				statement.setString(17, model.getNotes());
-				statement.setString(18, model.getCertification());
-				statement.setString(19, model.getMpaa());
-				statement.setString(20, model.getWebSoundMix());
-				statement.setString(21, model.getWebRuntime());
-				statement.setString(22, model.getAwards());
+				statement.setBoolean(11, model.getSeen());
+				statement.setString(12, model.getAka());
+				statement.setString(13, model.getCountry());
+				statement.setString(14, model.getLanguage());
+				statement.setString(15, model.getColour());
+				statement.setString(16, model.getPlot());
+				statement.setString(17, model.getCast());
+				statement.setString(18, model.getNotes());
+				statement.setString(19, model.getCertification());
+				statement.setString(20, model.getMpaa());
+				statement.setString(21, model.getWebSoundMix());
+				statement.setString(22, model.getWebRuntime());
+				statement.setString(23, model.getAwards());
 				statement.executeUpdate();
 			}
 
@@ -1701,8 +1715,8 @@ abstract public class Database {
 
 				PreparedStatement statement;
 				statement = _sql.prepareStatement("INSERT INTO \"General Info Episodes\" "+
-						"(\"ID\",\"Title\",\"Cover\",\"UrlKey\",\"Date\",\"Directed By\",\"Written By\",\"Genre\",\"Rating\",\"Seen\",\"Aka\",\"Country\",\"Language\",\"Colour\",\"Plot\",\"Cast\",\"Notes\",\"movieID\",\"episodeNr\",\"Certification\",\"Sound Mix\",\"Web Runtime\",\"Awards\") "+
-				"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+						"(\"ID\",\"Title\",\"Cover\",\"UrlKey\",\"Date\",\"Directed By\",\"Written By\",\"Genre\",\"Rating\",\"Personal Rating\",\"Seen\",\"Aka\",\"Country\",\"Language\",\"Colour\",\"Plot\",\"Cast\",\"Notes\",\"movieID\",\"episodeNr\",\"Certification\",\"Sound Mix\",\"Web Runtime\",\"Awards\") "+
+				"VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 
 				statement.setInt(1, index);
 				statement.setString(2, model.getTitle());
@@ -1713,32 +1727,41 @@ abstract public class Database {
 				statement.setString(7, model.getWrittenBy());
 				statement.setString(8, model.getGenre());
 
-				if (this instanceof DatabaseAccess)
+				if (isMSAccess()) {
 					statement.setString(9, model.getRating());
+					statement.setString(10, model.getPersonalRating());
+				}
 				else {
 
 					try {
-						statement.setDouble(9,Double.parseDouble(model.getRating()));
+						statement.setDouble(9, Double.parseDouble(model.getRating()));
 					}
 					catch (NumberFormatException e) {
 						statement.setDouble(9, -1);
 					}
+					
+					try {
+						statement.setDouble(10, Double.parseDouble(model.getPersonalRating()));
+					}
+					catch (NumberFormatException e) {
+						statement.setDouble(10, -1);
+					}
 				}
 
-				statement.setBoolean(10, model.getSeen());
-				statement.setString(11, model.getAka());
-				statement.setString(12, model.getCountry());
-				statement.setString(13, model.getLanguage());
-				statement.setString(14, model.getColour());
-				statement.setString(15, model.getPlot());
-				statement.setString(16, model.getCast());
-				statement.setString(17, model.getNotes());
-				statement.setInt(18, model.getMovieKey());
-				statement.setInt(19, model.getEpisodeKey());
-				statement.setString(20, model.getCertification());
-				statement.setString(21, model.getWebSoundMix());
-				statement.setString(22, model.getWebRuntime());
-				statement.setString(23, model.getAwards());
+				statement.setBoolean(11, model.getSeen());
+				statement.setString(12, model.getAka());
+				statement.setString(13, model.getCountry());
+				statement.setString(14, model.getLanguage());
+				statement.setString(15, model.getColour());
+				statement.setString(16, model.getPlot());
+				statement.setString(17, model.getCast());
+				statement.setString(18, model.getNotes());
+				statement.setInt(19, model.getMovieKey());
+				statement.setInt(20, model.getEpisodeKey());
+				statement.setString(21, model.getCertification());
+				statement.setString(22, model.getWebSoundMix());
+				statement.setString(23, model.getWebRuntime());
+				statement.setString(24, model.getAwards());
 				statement.executeUpdate();
 			}
 
@@ -1783,6 +1806,7 @@ abstract public class Database {
 					"\"General Info\".\"Written By\"=?, "+
 					"\"General Info\".\"Genre\"=?, "+
 					"\"General Info\".\"Rating\"=?, "+
+					"\"General Info\".\"Personal Rating\"=?, "+
 					"\"General Info\".\"Seen\"=?, "+
 					"\"General Info\".\"Aka\"=?, "+
 					"\"General Info\".\"Country\"=?, "+
@@ -1806,8 +1830,10 @@ abstract public class Database {
 			statement.setString(6, model.getWrittenBy());
 			statement.setString(7, model.getGenre());
 
-			if (this instanceof DatabaseAccess)
+			if (isMSAccess()) {
 				statement.setString(8,  model.getRating());
+				statement.setString(9,  model.getPersonalRating());
+			}
 			else {
 
 				try {
@@ -1816,22 +1842,29 @@ abstract public class Database {
 				catch (NumberFormatException e) {
 					statement.setDouble(8,-1);
 				}
+				
+				try {
+					statement.setDouble(9,Double.parseDouble(model.getPersonalRating()));
+				}
+				catch (NumberFormatException e) {
+					statement.setDouble(9,-1);
+				}
 			}
 
-			statement.setBoolean(9, model.getSeen());
-			statement.setString(10, model.getAka());
-			statement.setString(11, model.getCountry());
-			statement.setString(12, model.getLanguage());
-			statement.setString(13, model.getColour());
-			statement.setString(14, model.getPlot());
-			statement.setString(15, model.getCast());
-			statement.setString(16, model.getNotes());
-			statement.setString(17, model.getCertification());
-			statement.setString(18, model.getMpaa());
-			statement.setString(19, model.getWebSoundMix());
-			statement.setString(20, model.getWebRuntime());
-			statement.setString(21, model.getAwards());
-			statement.setInt(22, index);
+			statement.setBoolean(10, model.getSeen());
+			statement.setString(11, model.getAka());
+			statement.setString(12, model.getCountry());
+			statement.setString(13, model.getLanguage());
+			statement.setString(14, model.getColour());
+			statement.setString(15, model.getPlot());
+			statement.setString(16, model.getCast());
+			statement.setString(17, model.getNotes());
+			statement.setString(18, model.getCertification());
+			statement.setString(19, model.getMpaa());
+			statement.setString(20, model.getWebSoundMix());
+			statement.setString(21, model.getWebRuntime());
+			statement.setString(22, model.getAwards());
+			statement.setInt(23, index);
 
 			value = statement.executeUpdate();
 		} catch (Exception e) {
@@ -1874,6 +1907,7 @@ abstract public class Database {
 					"\"General Info Episodes\".\"Written By\"=?, "+
 					"\"General Info Episodes\".\"Genre\"=?, "+
 					"\"General Info Episodes\".\"Rating\"=?, "+
+					"\"General Info Episodes\".\"Personal Rating\"=?, "+
 					"\"General Info Episodes\".\"Seen\"=?, "+
 					"\"General Info Episodes\".\"Aka\"=?, "+
 					"\"General Info Episodes\".\"Country\"=?, "+
@@ -1898,8 +1932,10 @@ abstract public class Database {
 			statement.setString(6, model.getWrittenBy());
 			statement.setString(7, model.getGenre());
 
-			if (this instanceof DatabaseAccess)
-				statement.setString(8, model.getRating());
+			if (isMSAccess()) {
+				statement.setString(8,  model.getRating());
+				statement.setString(9,  model.getPersonalRating());
+			}
 			else {
 
 				try {
@@ -1908,23 +1944,30 @@ abstract public class Database {
 				catch (NumberFormatException e) {
 					statement.setDouble(8,-1);
 				}
+				
+				try {
+					statement.setDouble(9,Double.parseDouble(model.getPersonalRating()));
+				}
+				catch (NumberFormatException e) {
+					statement.setDouble(9,-1);
+				}
 			}
 
-			statement.setBoolean(9, model.getSeen());
-			statement.setString(10, model.getAka());
-			statement.setString(11, model.getCountry());
-			statement.setString(12, model.getLanguage());
-			statement.setString(13, model.getColour());
-			statement.setString(14, model.getPlot());
-			statement.setString(15, model.getCast());
-			statement.setString(16, model.getNotes());
-			statement.setInt(17, model.getMovieKey());
-			statement.setInt(18, model.getEpisodeKey());
-			statement.setString(19, model.getCertification());
-			statement.setString(20, model.getWebSoundMix());
-			statement.setString(21, model.getWebRuntime());
-			statement.setString(22, model.getAwards());
-			statement.setInt(23, index);
+			statement.setBoolean(10, model.getSeen());
+			statement.setString(11, model.getAka());
+			statement.setString(12, model.getCountry());
+			statement.setString(13, model.getLanguage());
+			statement.setString(14, model.getColour());
+			statement.setString(15, model.getPlot());
+			statement.setString(16, model.getCast());
+			statement.setString(17, model.getNotes());
+			statement.setInt(18, model.getMovieKey());
+			statement.setInt(19, model.getEpisodeKey());
+			statement.setString(20, model.getCertification());
+			statement.setString(21, model.getWebSoundMix());
+			statement.setString(22, model.getWebRuntime());
+			statement.setString(23, model.getAwards());
+			statement.setInt(24, index);
 
 			value = statement.executeUpdate();
 		} catch (Exception e) {
@@ -2608,6 +2651,7 @@ abstract public class Database {
 					quotedGeneralInfoString + ".\"Written By\", "+
 					quotedGeneralInfoString + ".\"Genre\", "+
 					quotedGeneralInfoString + ".\"Rating\", "+
+					quotedGeneralInfoString + ".\"Personal Rating\", "+
 					quotedGeneralInfoString + ".\"Plot\", "+
 					quotedGeneralInfoString + ".\"Cast\", "+
 					quotedGeneralInfoString + ".\"Notes\", "+
@@ -2834,7 +2878,7 @@ abstract public class Database {
 								else if (table2.replaceAll("_", " ").equalsIgnoreCase("Extra Info"))
 									table2 = extraInfoString;
 
-								if (databaseType.equals("MySQL")) {
+								if (isMySQL()) {
 
 									if (!table2.equals("Extra_Info"))
 										column2 = column2.replaceAll(" ", "_");
@@ -2918,7 +2962,7 @@ abstract public class Database {
 					}
 					queryTemp += ") ";
 				}
-				else if (caseinsensitive && databaseType.equals("HSQL")) {
+				else if (caseinsensitive && isHSQL()) {
 					/* Edit */
 					queryTemp += "(UPPER("+ table + "." + filterColumn + ") LIKE ? ";
 
@@ -3056,7 +3100,7 @@ abstract public class Database {
 		String orderBy = options.getOrderCategory();
 		String joinTemp = "";
 
-		if (databaseType.equals("MSAccess") && 
+		if (isMSAccess() && 
 				((options.getListOption() == 1) || orderBy.equals("Duration") || 
 						(filter.indexOf(additionalInfoString) != -1) || (filter.indexOf(extraInfoString) != -1))) {
 			
@@ -3195,7 +3239,7 @@ abstract public class Database {
 				sqlQuery += "WHERE (";
 
 			/* if MSAccess, have to convert rating with the Val function */
-			if (databaseType.equals("MSAccess")) {
+			if (isMSAccess()) {
 
 				if (option == 2)
 					sqlQuery += "(Val(Rating) >= "+rating+") ";
@@ -3225,7 +3269,7 @@ abstract public class Database {
 					sqlQuery += "WHERE (";
 
 				/* if MSAccess, have to convert date with the Val function */
-				if (databaseType.equals("MSAccess")) {
+				if (isMSAccess()) {
 					if (option == 2)
 						sqlQuery += "(Val(Date) >= "+ date +") ";
 					else
@@ -3338,6 +3382,7 @@ abstract public class Database {
 							resultSet.getString("Date"), resultSet.getString("Title"), 
 							resultSet.getString("Directed By"), resultSet.getString("Written By"), 
 							resultSet.getString("Genre"), resultSet.getString("Rating"), 
+							resultSet.getString("Personal Rating"), 
 							resultSet.getString("Plot"), resultSet.getString("Cast"),
 							resultSet.getString("Notes"), resultSet.getBoolean("Seen"), 
 							resultSet.getString("Aka"), resultSet.getString("Country"),
@@ -3488,6 +3533,7 @@ order by "Title"
 					"\"General Info Episodes\".\"Written By\","+
 					"\"General Info Episodes\".\"Genre\","+
 					"\"General Info Episodes\".\"Rating\","+
+					"\"General Info Episodes\".\"Personal Rating\","+
 					"\"General Info Episodes\".\"Plot\","+
 					"\"General Info Episodes\".\"Cast\","+
 					"\"General Info Episodes\".\"Notes\","+
@@ -3512,7 +3558,8 @@ order by "Title"
 						resultSet.getString("Cover"), resultSet.getString("Date"), 
 						resultSet.getString("Title"), resultSet.getString("Directed By"), 
 						resultSet.getString("Written By"), resultSet.getString("Genre"), 
-						resultSet.getString("Rating"), resultSet.getString("Plot"), 
+						resultSet.getString("Rating"), resultSet.getString("Personal Rating"), 
+						resultSet.getString("Plot"), 
 						resultSet.getString("Cast"), resultSet.getString("Notes"), 
 						resultSet.getBoolean("Seen"), resultSet.getString("Aka"), 
 						resultSet.getString("Country"), resultSet.getString("Language"), 
@@ -3541,7 +3588,7 @@ order by "Title"
 	 **/
 	public synchronized ModelMovie getMovie(int index) {
 		ModelMovie movie = null;
-
+		
 		try {
 		
 			ModelDatabaseSearch options = new ModelDatabaseSearch();
@@ -3561,7 +3608,8 @@ order by "Title"
 						resultSet.getString("Cover"), resultSet.getString("Date"), 
 						resultSet.getString("Title"), resultSet.getString("Directed By"), 
 						resultSet.getString("Written By"), resultSet.getString("Genre"), 
-						resultSet.getString("Rating"), resultSet.getString("Plot"),
+						resultSet.getString("Rating"), resultSet.getString("Personal Rating"), 
+						resultSet.getString("Plot"),
 						resultSet.getString("Cast"), resultSet.getString("Notes"), 
 						resultSet.getBoolean("Seen"), resultSet.getString("Aka"), 
 						resultSet.getString("Country"), resultSet.getString("Language"),
@@ -3617,6 +3665,7 @@ order by "Title"
 					"\"General Info Episodes\".\"Written By\","+
 					"\"General Info Episodes\".\"Genre\","+
 					"\"General Info Episodes\".\"Rating\","+
+					"\"General Info Episodes\".\"Personal Rating\","+
 					"\"General Info Episodes\".\"Plot\","+
 					"\"General Info Episodes\".\"Cast\","+
 					"\"General Info Episodes\".\"Notes\","+
@@ -3634,7 +3683,19 @@ order by "Title"
 
 			/* Processes the result set till the end... */
 			if (resultSet.next()) {
-				episode = new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), resultSet.getString("Cover"), resultSet.getString("Date"), resultSet.getString("Title"), resultSet.getString("Directed By"), resultSet.getString("Written By"), resultSet.getString("Genre"), resultSet.getString("Rating"), resultSet.getString("Plot"), resultSet.getString("Cast"), resultSet.getString("Notes"), resultSet.getBoolean("Seen"), ""/*("Aka")*/, resultSet.getString("Country"), resultSet.getString("Language"), resultSet.getString("Colour"), resultSet.getString("Certification"), /*resultSet.getString("Mpaa"), */resultSet.getString("Sound Mix"), resultSet.getString("Web Runtime"), resultSet.getString("Awards"));
+				episode = new ModelEpisode(resultSet.getInt("ID"), resultSet.getInt("movieID"), 
+						resultSet.getInt("episodeNr"), resultSet.getString("UrlKey"), 
+						resultSet.getString("Cover"), resultSet.getString("Date"), 
+						resultSet.getString("Title"), resultSet.getString("Directed By"), 
+						resultSet.getString("Written By"), resultSet.getString("Genre"), 
+						resultSet.getString("Rating"), resultSet.getString("Personal Rating"), 
+						resultSet.getString("Plot"), resultSet.getString("Cast"), 
+						resultSet.getString("Notes"), resultSet.getBoolean("Seen"), 
+						resultSet.getString("Aka"), resultSet.getString("Country"), 
+						resultSet.getString("Language"), resultSet.getString("Colour"), 
+						resultSet.getString("Certification"), 
+						/*resultSet.getString("Mpaa"), */resultSet.getString("Sound Mix"), 
+						resultSet.getString("Web Runtime"), resultSet.getString("Awards"));
 			}
 		} catch (Exception e) {
 			log.error("Exception: ", e);
