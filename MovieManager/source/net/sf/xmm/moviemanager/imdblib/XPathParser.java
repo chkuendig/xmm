@@ -1,7 +1,9 @@
 package net.sf.xmm.moviemanager.imdblib;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,36 +22,52 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class XPathParser {
 
+	
+	static Document parseXPath(StringBuffer data, String uri) throws SAXException, IOException, XPathExpressionException {
+		SimpleUserAgentContext context = new SimpleUserAgentContext();
+		context.setScriptingEnabled(false);
+		context.setExternalCSSEnabled(false);
+		
+		DocumentBuilderImpl dbi = new DocumentBuilderImpl(context);
+		//Document document = dbi.parse(new StringReader(data.toString()));
+		
+		//Document document = dbi.parse(new InputSourceImpl(in, url, "ISO-8859-1")) ;
+		Document document = dbi.parse(new InputSourceImpl(new StringReader(data.toString()), "http://akas.imdb.com/title/tt" + uri)) ;
+		
+		return document;
+	}
+	
+	static ArrayList<Element> evaluateDocument(Document document, String expression) throws SAXException, IOException, XPathExpressionException {
+		
+		XPath xpath = XPathFactory.newInstance().newXPath();
+		ArrayList<Element> res = getElements(xpath, document, expression);
+		return res;
+	}
+	
+	static ArrayList<Element> parseXPath(StringBuffer data, String uri, String expression) throws SAXException, IOException, XPathExpressionException {
+		
+		Document document = parseXPath(data, uri);
+				
+			//eval = "html//div[@class='info-offset']/table[@class='cast']";
+			//eval = "html//table[@class='cast']";
 
+		return evaluateDocument(document, expression);
+	}
+	
     static void parseDataUsingXPath(ModelIMDbEntry dataModel, StringBuffer data, String uri) {
 
     	try {
-    		SimpleUserAgentContext context = new SimpleUserAgentContext();
-    		context.setScriptingEnabled(false);
-    		context.setExternalCSSEnabled(false);
+    		Document document = parseXPath(data, "http://akas.imdb.com/title/tt" + uri);
+    		String eval = "html//div[@class='info']|html//div[@class='info stars']";	
     		
-			DocumentBuilderImpl dbi = new DocumentBuilderImpl(context);
-    		//Document document = dbi.parse(new StringReader(data.toString()));
+    		ArrayList<Element> res = evaluateDocument(document, eval);
     		
-    		//Document document = dbi.parse(new InputSourceImpl(in, url, "ISO-8859-1")) ;
-    		Document document = dbi.parse(new InputSourceImpl(new StringReader(data.toString()), "http://akas.imdb.com/title/tt" + uri)) ;
-    		
-    		if (true) {
-    			XPath xpath = XPathFactory.newInstance().newXPath();
-    			String eval;
-    			
-    			//eval = "html//div[@class='info-offset']/table[@class='cast']";
-    			//eval = "html//table[@class='cast']";
-
-    			eval = "html//div[@class='info']|html//div[@class='info stars']";
-    			ArrayList<Element> res = getElements(xpath, document, eval);
-
-    			for (Element e : res) {
-    				parseXPathResult(dataModel, e);
-    			}
+    		for (Element e : res) {
+    			parseXPathResult(dataModel, e);
     		}
     	}
     	catch(Exception e) {
@@ -96,9 +114,7 @@ public class XPathParser {
     	
  	   Pattern p = Pattern.compile("\\s*(.+?):\\s*(.+)");
  	   Matcher m = p.matcher(e.getTextContent());
- 	   
- 	   //System.err.println("content:" + e.getTextContent());
- 	   
+ 	    	   
  	   if (m.find()) {
 
  		   int gCount = m.groupCount();
@@ -321,14 +337,8 @@ public class XPathParser {
     }
      
 
-    static void printNodeTree1(Element e) {
-    	
-    	System.err.println("tagname:" + e.getNodeName());
-    	    	
-    	//doTree(e);
-    }
-    
     static void printNodeTree(Node node) {
+    	    	
     	if(node instanceof Element) {
     		Element element = (Element) node ;
 
@@ -360,8 +370,25 @@ public class XPathParser {
     	return buf.toString();
     }
 
+    static LinkedList<String> elemList = new LinkedList<String>();
+    
+    public static void printList(LinkedList<String> elemList) {
+    	
+    	System.out.print("<");
+    	for (String e : elemList) {
+    		System.out.print(e + ".");
+    	}
+    	System.out.println(">");
+    }
+    
     public static void doElement(Element element) {
     	indent++;
+    	elemList.add(element.getTagName());
+    	
+    	//printList(elemList);
+    	
+    	
+    	
     	System.out.println(getIndent() + "<" + element.getTagName() + ">") ;
     	System.out.println( element.getTextContent());
 
@@ -371,7 +398,21 @@ public class XPathParser {
     public static void doTagEnd(Element element) {
     	indent--;
     	System.out.println(getIndent() + "</" + element.getTagName() + ">") ;      
+    
+    	elemList.removeLast();
     }
 
-	
+    
+    public static void printPath(Node n) {
+
+    	String str = n.toString();
+    	
+    	do {
+    		n = n.getParentNode();
+    		str += "." + n.toString();
+
+    	} while (n.getParentNode() != null);
+    	
+    	System.out.println(str);
+    }
 }

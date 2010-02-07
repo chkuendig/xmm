@@ -20,6 +20,7 @@
 
 package net.sf.xmm.moviemanager.imdblib;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -33,6 +34,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.xpath.XPathExpressionException;
+
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.http.HttpSettings;
 import net.sf.xmm.moviemanager.http.HttpUtil;
@@ -40,6 +43,11 @@ import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.models.imdb.*;
 
 import org.apache.log4j.Logger;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 public class IMDbScraper implements IMDb {
   
@@ -87,7 +95,22 @@ public class IMDbScraper implements IMDb {
 		if (urlID != null || data != null)
 			grabInfo(urlID, data);
     }
-      
+    
+    public String getVotrUrl(String urlID, int vote, String urlVoteID) {
+    	
+    	String voteUrlPrefix = "http://www.imdb.com/title/tt";
+    	voteUrlPrefix += urlID + "/vote?v=" + vote + ";k=" + urlVoteID;
+    	
+    	return voteUrlPrefix;
+    	// http://www.imdb.com/title/tt0093773/vote?v=8;k=k6HOfCDHhmP2.KdTU
+    }
+
+    public String getVotrUrl(ModelIMDbEntry model, int vote) {
+    	return getVotrUrl(model.getUrlID(), vote, model.getVoteUrlID());
+    }
+    
+   
+    
     public ModelIMDbEntry grabInfo(String urlID) throws Exception {
     	return grabInfo(urlID, null);	
     }
@@ -172,10 +195,14 @@ public class IMDbScraper implements IMDb {
     	return coverURL;
     }
     
+    private ModelIMDbEntry parseData(String urlID, StringBuffer data) throws Exception {
+    	return parseData(urlID, data, true);
+    }
+    
     /*
      * If urlID is null, no extra plot will be retrieved
      */
-    private ModelIMDbEntry parseData(String urlID, StringBuffer data) throws Exception {
+    private ModelIMDbEntry parseData(String urlID, StringBuffer data, boolean getCover) throws Exception {
 		
         String date = "", title = "", seasonNumber = "", episodeNumber = "";
     	  
@@ -188,15 +215,29 @@ public class IMDbScraper implements IMDb {
 	
 		boolean isEpisode = false;
 		boolean isSeries = false;
-		
+		boolean loggedIn = false;
 		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
 			
 		try {
 			/* Processes the data... */
-
-			if (data.indexOf("Full Episode List") != -1)
-				isEpisode = true;
 			
+			int endIndex = data.indexOf("Genre:");
+			
+			if (endIndex == -1)
+				endIndex = 1000;
+			
+			String beginning = data.substring(0, endIndex);
+						
+			if (beginning.indexOf("TV Series:") != -1)
+				isEpisode = true;
+			else if (beginning.indexOf("Seasons:") != -1)
+				isSeries = true;
+			
+			
+			if ((start = data.indexOf("\"/register/logout\"", start)) != -1) {
+				loggedIn = true;	
+			}
+						
 			/* Gets the title... */
 			if ((start = data.indexOf("<div id=\"tn15title\">", start)) != -1 &&
 					(end = data.indexOf("</div>", start)) != -1) {
@@ -226,15 +267,15 @@ public class IMDbScraper implements IMDb {
 			
 			if (isSeries)
 				tmpModel = new ModelIMDbSeries();
-			
 			else if (isEpisode)
 				tmpModel = new ModelIMDbEpisode();
-			
 			else
 				tmpModel = new ModelIMDbMovie();
 			
 			// Must be accessible from within inner class
 			final ModelIMDbEntry dataModel = tmpModel;
+						
+			dataModel.setLoggedIn(loggedIn);
 			
 			// Original title from IMDb
 			dataModel.setIMDbTitle(title);
@@ -244,23 +285,25 @@ public class IMDbScraper implements IMDb {
 			dataModel.setDate(date);
 			dataModel.setUrlID(urlID);
 			
-			String coverURL = retrieveUrlCover(data, dataModel);
-	    				
 			final ReentrantLock lock = new ReentrantLock();
-						
-			if (coverURL != null) {
-								
-				Thread t = new Thread(new Runnable() {
-					public void run() {
-						try {
-							lock.lock();
-							retrieveCover(dataModel);
-						} finally {
-							lock.unlock();
+			
+			if (getCover) {
+				String coverURL = retrieveUrlCover(data, dataModel);
+				
+				if (coverURL != null) {
+
+					Thread t = new Thread(new Runnable() {
+						public void run() {
+							try {
+								lock.lock();
+								retrieveCover(dataModel);
+							} finally {
+								lock.unlock();
+							}
 						}
-					}
-				});
-				t.start();
+					});
+					t.start();
+				}
 			}
 			
 			start = 0;
@@ -280,10 +323,42 @@ public class IMDbScraper implements IMDb {
 					log.debug("No rating found for " + title  + " ("+urlID+")");
 				}
 			}
-	     
-			start = 0;
-			end = 0;
-						
+			
+			// Get personal rating
+			if ((start = data.indexOf("Your Rating:", start)) != -1) {
+
+				Pattern p;
+				Matcher m;
+				
+				//  <a title="10" href="vote?v=10;k=6ypj9zBHdet.9LkyB-xTpgas13Wl.1QDVa.EQFYMQCQWrNd0FZ-kc1X.lBAGD8RANqzAM.Uv52NV79RQNjuAQHas11P2.KdTU_" onclick="return vote
+
+				//Get the vote url
+				p = Pattern.compile("<a title=\"10\" href=\"vote\\?v=10;k=(.+?)\" onclick");
+				m = p.matcher(data);
+				
+				if (m.find()) {
+					String voteID = m.group(1);
+					dataModel.setVoteUrlID(voteID);
+				}
+									 
+				if ((start = data.indexOf("voteuser", start)) != -1) {
+
+					String voteData = data.substring(start, start + 30);
+
+					//	<span id="voteuser">9</span>/10
+					p = Pattern.compile("voteuser\">(\\d+)</span>/10");
+					m = p.matcher(voteData);
+
+					if (m.find()) {
+						String rating = m.group(1);
+
+						if (!rating.equals("10"))
+							rating += ".0";
+
+						dataModel.setPersonalRating(rating);
+					}
+				}
+			}				
 			// Gets the directed by... 
 			
 			HashMap<String, String> classInfo = decodeClassInfo(data);
@@ -1215,7 +1290,7 @@ public class IMDbScraper implements IMDb {
 					
 					if (!character.trim().equals("")) {
 						if (!(character.trim().startsWith("(") && character.trim().endsWith(")")))
-							character = "(" + character + ")";
+							character = " (" + character + ")";
 						decoded.append(character);
 					}
 					
@@ -1487,5 +1562,170 @@ public class IMDbScraper implements IMDb {
     	+               }
     	+           }
 */
+  
     
+    
+    public HTTPResult getVoteHistory() throws Exception {
+   	
+    	URL url = new URL("http://www.imdb.com/mymovies/list?votehistory");
+    	lastHTTPResult = httpUtil.readData(url);
+    	return lastHTTPResult;
+    }
+    
+    
+    public ArrayList<ModelIMDbListHit> getVotedMovies() throws Exception {
+    	
+    	ArrayList<ModelIMDbListHit> movies = new ArrayList<ModelIMDbListHit>();
+    	
+    	HTTPResult res = getVoteHistory();
+    	
+    	ArrayList<URL> pages = getListPages(res.getData());
+    	
+    	// All hits are on one page
+    	if (pages.size() == 0) {
+    		Document doc = XPathParser.parseXPath(res.getData(), res.getUrl().toString());
+    		ArrayList<ModelIMDbListHit> list = parseList(doc);
+    		movies.addAll(list);
+    	}
+    	else {
+    		
+    		for (URL page : pages) {
+
+    			res = httpUtil.readData(page);
+
+    			Document doc = XPathParser.parseXPath(res.getData(), page.toString());
+
+    			ArrayList<ModelIMDbListHit> list = parseList(doc);
+
+    			movies.addAll(list);
+    		}
+    	}
+    	
+    	return movies;
+    }
+    
+    ArrayList<URL> getListPages(StringBuffer data) throws XPathExpressionException, SAXException, IOException {
+    	
+    	ArrayList<URL> ret = new ArrayList<URL>();
+    	
+    	Pattern p;
+		Matcher m;
+    	
+    	Document document = XPathParser.parseXPath(data, "");
+    	
+    	// Get total list size
+    	String expression = "html//table/tr/td/table/tr/td/table/tr/td[@class='standard' and @colspan='2']";
+    	expression = "html//td[@class='standard' and @colspan='2']";
+    	 	
+    	ArrayList<Element> elements = XPathParser.evaluateDocument(document, expression);
+		    	
+    	int size = -1;
+    	String listID = null;
+		int listSize = -1;
+    	
+    	for (Element e : elements) {
+    		//XPathParser.printNodeTree(e);
+    		
+    		p = Pattern.compile(".*?Titles in total:.*?(\\d+).*");
+    		m = p.matcher(e.getTextContent());
+    		    		
+    		if (m.find()) {
+    			size = Integer.parseInt(m.group(1));
+    		}
+    	}
+				
+    	expression = "html//table/tr/td[@align='right' and @class='standard']/a";
+    	    		
+    	elements = XPathParser.evaluateDocument(document, expression);
+    	
+    	for (Element e : elements) {
+    		//XPathParser.printNodeTree(e);
+    		    		
+    		String link = e.getAttribute("href");
+    		
+    		// on the form "list?l=6308135&o=10"
+    		p = Pattern.compile("list\\?l=(\\d+)&o=(\\d+)");
+    		m = p.matcher(link);
+    		
+    		if (m.find()) {
+    			listID = m.group(1);
+    			listSize = Integer.parseInt(m.group(2));
+    			break;
+    		}
+    	}    	
+    	    	
+    	String url = "http://www.imdb.com/mymovies/list?l={listID}&o={listSize}";
+    	
+    	int pageCount = size/listSize;
+    	    	
+    	for (int i = 0; i <= pageCount; i++) {
+    		ret.add(new URL(url.replace("{listID}", listID).replace("{listSize}", "" + (listSize*i))));
+    	}
+    	
+    	return ret;
+    }
+    
+    public ArrayList<ModelIMDbListHit> parseList(Document document) throws XPathExpressionException, SAXException, IOException {
+    	
+    	ArrayList<ModelIMDbListHit> ret = new ArrayList<ModelIMDbListHit>();
+    	    	
+    	//eval = "html//div[@class='info']|html//div[@class='info stars']";
+    	//ArrayList<Element> elements = parser.parseXPath(data, "", "html//table/tr/form[name='list']/*");
+    	
+    	String expression = "html//form[@name='list']/tr/td/a";
+    	
+    	ArrayList<Element> elements = XPathParser.evaluateDocument(document, expression);
+    	
+    	//ArrayList<Element> elements = parser.parseXPath(data, "", expression);
+    	
+    	// /title/tt0118636/
+    	Pattern p;
+    	
+    	for (Element e : elements) {
+    		//XPathParser.printNodeTree(e);
+    	
+    		String urlID = null;
+    		String link = e.getAttribute("href");
+    		String title = e.getTextContent();
+    		    		
+    		p = Pattern.compile("/title/tt(\\d+)/");
+    		Matcher m = p.matcher(link);
+
+			if (m.find()) {
+				urlID = m.group(1);
+			}
+
+			// On the form "Once Were Warriors (1994)"
+    		String date = e.getParentNode().getTextContent();
+    		date = date.substring(title.length() +1);
+    		
+    		p = Pattern.compile(".+?(\\d+).+");
+    		m = p.matcher(date);
+			
+    		if (m.find()) {
+    			date = m.group(1);
+			}
+    		
+    		ModelIMDbListHit hit = new ModelIMDbListHit(urlID, title, date);
+    		
+    		
+    		try {
+				// get personal vote
+				Node n = e.getParentNode().getNextSibling().getNextSibling();
+				
+				if (n != null) {
+					hit.setVote("" + Integer.parseInt(n.getTextContent()));
+				}
+			} catch (Exception e1) {
+				log.warn("Rating not found for " + title);
+			}
+    		
+    		
+			if (urlID != null) {
+				ret.add(hit);
+			}
+    	}
+    	    	
+    	return ret;
+    }
 }
