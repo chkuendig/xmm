@@ -37,6 +37,7 @@ abstract public class ModelEntry {
 	private String writtenBy = "";
 	private String genre = "";
 	private String rating = "";
+	private String personalRating = "";
 	private String plot = "";
 	private String cast = "";
 	private String notes = "";
@@ -268,13 +269,22 @@ abstract public class ModelEntry {
 	public void setRating(String rating) {
 		this.rating = rating;
 	}
+	
+	
+	public String getPersonalRating() {
+		return personalRating;
+	}
+	
+	public void setPersonalRating(String personalRating) {
+		this.personalRating = personalRating;
+	}
 
 	public String getPlot() {
 		if (plot == null)
 			return "";
 		return plot;
 	}
-
+	
 	public void setPlot(String plot) {
 		this.plot = plot;
 	}
@@ -516,6 +526,7 @@ abstract public class ModelEntry {
 		setWrittenBy(model.getWrittenBy());
 		setGenre(model.getGenre());
 		setRating(model.getRating());
+		setPersonalRating(model.getPersonalRating());
 		setPlot(model.getPlot());
 		setCast(model.getCast());
 		setNotes(model.getNotes());
@@ -528,7 +539,6 @@ abstract public class ModelEntry {
 		setWebSoundMix(model.getWebSoundMix());
 		setWebRuntime(model.getWebRuntime());
 		setAwards(model.getAwards());
-
 		setMpaa(model.getMpaa());
 		
 		if (model.getCoverData() != null)

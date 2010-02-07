@@ -41,7 +41,11 @@ public class ModelMovie extends ModelEntry {
 	/**
 	 * The constructor.
 	 **/
-	public ModelMovie(int key, String urlKey, String cover, String date, String title, String directedBy, String writtenBy, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String mpaa, String webSoundMix, String webRuntime, String awards) {
+	public ModelMovie(int key, String urlKey, String cover, String date, String title, 
+			String directedBy, String writtenBy, String genre, String rating, String personalRating, 
+			String plot, String cast, String notes, boolean seen, String aka, 
+			String country, String language, String colour, String certification, 
+			String mpaa, String webSoundMix, String webRuntime, String awards) {
 
 		setKey(key);
 		setUrlKey(urlKey);
@@ -52,6 +56,7 @@ public class ModelMovie extends ModelEntry {
 		setWrittenBy(writtenBy);
 		setGenre(genre);
 		setRating(rating);
+		setPersonalRating(personalRating);
 		setPlot(plot);
 		setCast(cast);
 		setNotes(notes);

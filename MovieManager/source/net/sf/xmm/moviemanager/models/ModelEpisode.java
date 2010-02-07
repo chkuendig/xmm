@@ -59,7 +59,12 @@ public class ModelEpisode extends ModelEntry {
 	/**
 	 * The constructor.
 	 **/
-	public ModelEpisode(int key, int movieKey, int episodeKey, String urlKey, String cover, String date, String title, String directedBy, String writtenBy, String genre, String rating, String plot, String cast, String notes, boolean seen, String aka, String country, String language, String colour, String certification, String webSoundMix, String webRuntime, String awards) {
+	public ModelEpisode(int key, int movieKey, int episodeKey, String urlKey, 
+			String cover, String date, String title, String directedBy, 
+			String writtenBy, String genre, String rating, String personalRating, String plot, 
+			String cast, String notes, boolean seen, String aka, String country, 
+			String language, String colour, String certification, 
+			String webSoundMix, String webRuntime, String awards) {
 
 		setKey(key);
 		this.movieKey = movieKey;
@@ -72,6 +77,7 @@ public class ModelEpisode extends ModelEntry {
 		setWrittenBy(writtenBy);
 		setGenre(genre);
 		setRating(rating);
+		setPersonalRating(personalRating);
 		setPlot(plot);
 		setCast(cast);
 		setNotes(notes);
