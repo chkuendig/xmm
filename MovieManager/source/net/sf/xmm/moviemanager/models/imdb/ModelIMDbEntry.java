@@ -22,6 +22,8 @@ package net.sf.xmm.moviemanager.models.imdb;
 
 abstract public class ModelIMDbEntry {
 
+	boolean loggedIn = false;
+	
 	private String urlID = ""; 
 	private String coverName = "";
 	private String title = "";
@@ -34,6 +36,10 @@ abstract public class ModelIMDbEntry {
 	private String plot = "";
 	private String cast = "";
 
+	private String personalRating = "";
+	
+	private String voteUrlID = null;
+	
 	/* Aka - Also known as */
 	private String aka = "";
 	private String country = "";
@@ -93,7 +99,24 @@ abstract public class ModelIMDbEntry {
 	public boolean isMovie() {
 		return false;
 	}
+	
+	public String getVoteUrlID() {
+		return voteUrlID;
+	}
 
+	public void setVoteUrlID(String voteUrlID) {
+		this.voteUrlID = voteUrlID;
+	}
+	
+	
+	public boolean isLoggedIn() {
+		return loggedIn;
+	}
+	
+	public void setLoggedIn(boolean loggedIn) {	
+		this.loggedIn = loggedIn;
+	}
+	
 	public String getUrlID() {
 		if (urlID == null)
 			return "";
@@ -220,6 +243,15 @@ abstract public class ModelIMDbEntry {
 		this.rating = rating;
 	}
 
+	public String getPersonalRating() {
+		return personalRating;
+	}
+	
+	public void setPersonalRating(String personalRating) {
+		this.personalRating = personalRating;
+	}
+	
+	
 	public String getPlot() {
 		if (plot == null)
 			return "";

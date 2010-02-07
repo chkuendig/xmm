@@ -89,6 +89,10 @@ public class ModelIMDbSearchHit {
 		this(null, title, null, null);
 	}
 	
+	public ModelIMDbSearchHit(String key, String title, String date) {
+		this(key, title, date, null, null);
+	}
+		
 	public ModelIMDbSearchHit(String key, String title, String date, String aka) {
 		this(key, title, date, aka, null);
 	}
@@ -106,8 +110,8 @@ public class ModelIMDbSearchHit {
 	/**
 	 * The constructor.
 	 **/
-	public ModelIMDbSearchHit(String showKey, String title) {
-		this.urlID = showKey; 
+	public ModelIMDbSearchHit(String urlID, String title) {
+		this.urlID = urlID; 
 		this.title = title;
 	}
 
