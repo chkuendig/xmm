@@ -361,7 +361,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     
     public DefaultTreeModel createTreeModel(ArrayList<ModelMovie> movies, ArrayList<ModelEpisode> episodes) {
         
-    	ExtendedTreeNode root = new ExtendedTreeNode(new ModelMovie(-1, null, null, null, "Loading Database", null, null, null, null, null, null, null, false, null, null, null, null, null, null, null, null, null)); //$NON-NLS-1$
+    	ExtendedTreeNode root = new ExtendedTreeNode(new ModelMovie(-1, "Loading Database")); //$NON-NLS-1$
         
         DefaultTreeModel model = new AutomatedTreeModel(root, false);
         
