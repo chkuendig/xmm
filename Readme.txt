@@ -100,10 +100,9 @@ Links:
 * `Dotuseful 		  <http://dotuseful.sourceforge.net>`_ - Java library with Swing Tree classes extension
 * `Tablelayout 		  <https://tablelayout.dev.java.net>`_ - TableLayout is a powerful and free layout manager
 * `HttpClient		  <http://jakarta.apache.org/commons/httpclient>`_ - HTTP java library
-* `JNative 			  <http://jnative.free.fr>`_ - Enables easy access to native libraries (DLL and lib.so) from Java
-* `Retroweaver		  <http://retroweaver.sourceforge.net>`_ - Java bytecode weaver
+* `JNA 			      <https://jna.dev.java.net/>`_ - Dynamically access native libraries from Java without JNI.
 * `MediaInfo.dll	  <http://mediainfo.sourceforge.net/en>`_ - Media file parser
-* `JasperReports	  <http://jasperforge.org/sf/projects/jasperreports>`_ - Report creation utility
+* `JasperReports	  <http://jasperforge.org/projects/jasperreports>`_ - Report creation utility
 * `IzPack			  <http://izpack.org>`_ - IzPack Java Installer
 * `Lobo				  <http://lobobrowser.org/java-browser.jsp>`_ - Java Web Browser: Pure Java browser
 * `Cobra Toolkit	  <http://lobobrowser.org/cobra.jsp>`_ - Cobra: Java HTML Renderer & Parser
