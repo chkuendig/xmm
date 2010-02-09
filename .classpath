@@ -15,7 +15,6 @@
 	<classpathentry kind="lib" path="MovieManager/lib/commons-logging-1.1.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/gettext-commons-0.9.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/itext-1.4.5.jar"/>
-	<classpathentry kind="lib" path="MovieManager/lib/jasperreports-3.0.0.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/jxl.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/ostermillerutils_1_05_00_for_java_1_4.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/poi-2.5.1-final-20040804.jar"/>
@@ -32,5 +31,7 @@
 	<classpathentry kind="lib" path="MovieManager/lib/jna-3.2.4.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/balloontip-1.0.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/jupidator.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/jasperreports-3.7.1.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/nimrodlf-1.1a.jar"/>
 	<classpathentry kind="output" path="MovieManager"/>
 </classpath>
