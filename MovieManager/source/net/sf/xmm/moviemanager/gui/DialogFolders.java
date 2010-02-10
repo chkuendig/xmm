@@ -101,7 +101,7 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     
     KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
     
-    private Color invalidPathColor = new Color(233, 180, 180);
+    private Color invalidPathColor = MovieManager.getConfig().getInvalidPathColor();
     
   
     /**

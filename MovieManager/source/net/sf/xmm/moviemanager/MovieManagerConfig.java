@@ -20,6 +20,7 @@
 
 package net.sf.xmm.moviemanager;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.BufferedReader;
@@ -149,6 +150,12 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 
 	private String queriesFolder = "";
 
+	private Color invalidPathColor = new Color(233, 180, 180);
+	
+	public Color getInvalidPathColor() {
+		return invalidPathColor;
+	}
+	
 	private boolean displayPlayButton = true;
 	private boolean displayPrintButton = false;
 	
