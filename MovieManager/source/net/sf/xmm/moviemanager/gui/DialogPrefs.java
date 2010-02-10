@@ -21,6 +21,7 @@
 package net.sf.xmm.moviemanager.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -37,7 +38,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
@@ -116,6 +119,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	InternalConfig disabledFeatures = MovieManager.getConfig().getInternalConfig();
 
+	Color invalidPathColor = MovieManager.getConfig().getInvalidPathColor();
+		
 	private Container contentPane;
 	private JTabbedPane tabbedPane;
 
@@ -1591,8 +1596,21 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
 		backupSettingsPanel.add(directoryLabel, c);
 
-		backupDirField = new JTextField(32);
-
+		backupDirField = new JTextField(32) {
+			
+			@Override
+			public void setText(String text) {
+				super.setText(text);
+				validateBackupDir();
+			}			
+		};		
+		
+		backupDirField.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				validateBackupDir();
+			}
+		});
+		
 		JButton backupDirBrowse = new JButton(Localizer.get("common.button.browse")); //$NON-NLS-1$
 
 		backupDirBrowse.setActionCommand("Browse Back Directory"); //$NON-NLS-1$
@@ -1639,7 +1657,8 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		makeBackupEveryLaunchField.setText(config.getDatabaseBackupEveryLaunch());  
 		deleteOldestWhenSizeExcedesMBField.setText(config.getDatabaseBackupDeleteOldest());
 		backupDirField.setText(config.getDatabaseBackupDirectory());
-
+		validateBackupDir();
+				
 		warnAboutInvalidBackupDir = new JCheckBox("Warn me about invalid backup dir");
 		warnAboutInvalidBackupDir.setSelected(config.getDatabaseBackupWarnInvalidDir());
 		
@@ -1661,7 +1680,17 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		return backupPanel;
 	}
 
-
+	void validateBackupDir() {
+		File f = new File(backupDirField.getText());
+		
+		System.err.println("validateBackupDir:" + f.getAbsolutePath());
+		
+		if (f.isDirectory())
+			backupDirField.setBackground(Color.white);
+		else
+			backupDirField.setBackground(invalidPathColor);
+	}
+	
 	JPanel createButtonPanel() {
 
 		JPanel buttonPanel = new JPanel();
