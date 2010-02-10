@@ -95,6 +95,9 @@ public class ModelAdditionalInfo {
 	
 	public String getExtraInfoFieldName(int index) {
 
+		if (MovieManager.getIt().getDatabase() == null)
+			return "";
+			
 		ArrayList<String> extraInfoFieldNames = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
 		
 		if (index >= extraInfoFieldNames.size())
