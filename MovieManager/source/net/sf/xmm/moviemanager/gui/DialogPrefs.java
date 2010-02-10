@@ -1682,9 +1682,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 	void validateBackupDir() {
 		File f = new File(backupDirField.getText());
-		
-		System.err.println("validateBackupDir:" + f.getAbsolutePath());
-		
+				
 		if (f.isDirectory())
 			backupDirField.setBackground(Color.white);
 		else
