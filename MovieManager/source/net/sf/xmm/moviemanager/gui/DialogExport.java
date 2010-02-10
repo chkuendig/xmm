@@ -32,6 +32,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -55,6 +56,7 @@ import javax.swing.border.TitledBorder;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
+import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ExportMode;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.GUIUtil;
@@ -99,6 +101,19 @@ public class DialogExport extends JDialog implements ActionListener {
     ModelImportExportSettings settings = new ModelImportExportSettings();
         
     JTabbedPane tabs = null;
+    
+    boolean verifyMoviesAvailable() {
+    	
+    	ArrayList<ModelMovie> movies = MovieManager.getDialog().getCurrentMoviesList();
+    	    	
+    	if (movies.size() == 0) {
+    		
+    		DialogAlert alert = new DialogAlert(MovieManager.getDialog(), "No titles", "There are no titles to export!");
+    		GUIUtil.show(alert, true);
+    		return false;
+    	}
+    	return true;
+    }
     
     public DialogExport() {
         /* Dialog creation...*/
@@ -148,6 +163,10 @@ public class DialogExport extends JDialog implements ActionListener {
         setModal(true);
         
         createGUI();
+        
+        if (!verifyMoviesAvailable()) {
+        	exportButton.setEnabled(false);
+        }
     }
     
     void createGUI() {

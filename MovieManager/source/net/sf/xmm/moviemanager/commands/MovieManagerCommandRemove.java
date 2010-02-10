@@ -96,7 +96,7 @@ public class MovieManagerCommandRemove implements ActionListener {
 					ModelEntry entry =  (ModelEntry) selected.getUserObject();
 
 					/* If episode */
-					if (entry instanceof ModelEpisode) {
+					if (entry.isEpisode()) {
 
 						/* Removes episode from database */
 						if ((ret = MovieManager.getIt().getDatabase().removeEpisode(entry.getKey())) == 0) {
@@ -116,6 +116,9 @@ public class MovieManagerCommandRemove implements ActionListener {
 
 							/* Removes from the list... */
 							parent.remove(selected);
+							
+							MovieManager.getDialog().getCurrentEpisodesList().remove(entry);
+							
 							
 							// Removing the chached info for the node
 							MovieManager.getDialog().getTreeCellRenderer().removeNode(selected);
@@ -145,6 +148,7 @@ public class MovieManagerCommandRemove implements ActionListener {
 									selected.remove(child[u]);
 //									Removing the chached info for the node
 									MovieManager.getDialog().getTreeCellRenderer().removeNode(selected);
+									MovieManager.getDialog().getCurrentEpisodesList().remove(child[u].getUserObject());
 								}
 								else
 									log.warn("Error deleting episode with key:"+ ((ModelEpisode) child[u].getUserObject()).getKey());
@@ -169,6 +173,9 @@ public class MovieManagerCommandRemove implements ActionListener {
 							}
 							/* Removes from the list... */
 							parent.remove(selected);
+							
+							MovieManager.getDialog().getCurrentMoviesList().remove(entry);
+							
 							//Removing the chached info for the node
 							MovieManager.getDialog().getTreeCellRenderer().removeNode(selected);
 							

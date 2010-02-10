@@ -190,13 +190,17 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 				if (root.getChildCount() == 1 && ((ModelEntry) ((ExtendedTreeNode) root.getFirstChild()).getUserObject()).getKey() == -1)
 					root.removeAllChildren();
 
-				ExtendedTreeNode newNode = new ExtendedTreeNode(new ModelMovie((ModelMovie) reloadEntry));
+
+				ModelMovie newMovie = new ModelMovie((ModelMovie) reloadEntry);
+				ExtendedTreeNode newNode = new ExtendedTreeNode(newMovie);
 				root.addNode(newNode);
 
 				TreePath newTreePath = new TreePath(newNode.getPath());
 				
 				movieList.scrollPathToVisible(newTreePath);
 				movieList.setSelectionPath(newTreePath);
+				
+				MovieManager.getDialog().getCurrentMoviesList().add(newMovie);
 			}
 			else {
 				/* If adding episode */
