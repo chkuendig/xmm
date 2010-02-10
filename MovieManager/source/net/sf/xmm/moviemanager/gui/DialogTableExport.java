@@ -60,7 +60,7 @@ public class DialogTableExport extends DialogTableData {
 		
 		setTitle("Export " + settings.exportMode);
 		setModal(true);
-		table.getTableHeader().setReorderingAllowed(true);
+		//table.getTableHeader().setReorderingAllowed(true);
 		
 		JPanel content = new JPanel();
 		content.setLayout(new BorderLayout());        
