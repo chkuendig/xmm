@@ -1565,7 +1565,7 @@ abstract public class Database {
 					try {
 						statement.setDouble(10, Double.parseDouble(personalRating));
 					}
-					catch (NumberFormatException e) {
+					catch (Exception e) {
 						statement.setDouble(10, -1);
 					}
 				}
@@ -1654,7 +1654,7 @@ abstract public class Database {
 					try {
 						statement.setDouble(10, Double.parseDouble(model.getPersonalRating()));
 					}
-					catch (NumberFormatException e) {
+					catch (Exception e) {
 						statement.setDouble(10, -1);
 					}
 				}
@@ -1743,7 +1743,7 @@ abstract public class Database {
 					try {
 						statement.setDouble(10, Double.parseDouble(model.getPersonalRating()));
 					}
-					catch (NumberFormatException e) {
+					catch (Exception e) {
 						statement.setDouble(10, -1);
 					}
 				}
@@ -1846,7 +1846,7 @@ abstract public class Database {
 				try {
 					statement.setDouble(9,Double.parseDouble(model.getPersonalRating()));
 				}
-				catch (NumberFormatException e) {
+				catch (Exception e) {
 					statement.setDouble(9,-1);
 				}
 			}
@@ -1948,7 +1948,7 @@ abstract public class Database {
 				try {
 					statement.setDouble(9,Double.parseDouble(model.getPersonalRating()));
 				}
-				catch (NumberFormatException e) {
+				catch (Exception e) {
 					statement.setDouble(9,-1);
 				}
 			}
