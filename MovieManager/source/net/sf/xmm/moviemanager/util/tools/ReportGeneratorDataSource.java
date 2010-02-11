@@ -39,6 +39,8 @@ public class ReportGeneratorDataSource implements JRDataSource {
     private boolean testmode;
     private boolean interrupt = false;
 
+    private String reportTitle = "Movielist";
+    
     /**
      * Constructor
      *
@@ -52,13 +54,16 @@ public class ReportGeneratorDataSource implements JRDataSource {
      * @param defaultCoverImageURL URL - default image for movies without cover
      * @param testmode boolean - if true only dummydata is returned
      */
-    public ReportGeneratorDataSource(final List<ModelEntry> movies, String sortField, final JProgressBar progressBar, URL defaultCoverImageURL, boolean testmode) {
+    public ReportGeneratorDataSource(final List<ModelEntry> movies, String reportTitle, String sortField, final JProgressBar progressBar, URL defaultCoverImageURL, boolean testmode) {
         this.progressBar = progressBar;
         this.defaultCoverImageURL = defaultCoverImageURL;
         this.testmode = testmode;
-        this.mySQL = MovieManager.getIt().getDatabase() instanceof DatabaseMySQL;
+        this.mySQL = MovieManager.getIt().getDatabase().isMySQL();
         this.coversFolder = MovieManager.getConfig().getCoversPath();
 
+        if (reportTitle != null)
+        	this.reportTitle = reportTitle;
+        	
         if (sortField != null && sortField.length() > 0 && !sortField.equalsIgnoreCase("none")) {
             Collections.sort(movies, new MovieComparator(sortField));
         }
@@ -118,11 +123,14 @@ public class ReportGeneratorDataSource implements JRDataSource {
      * @throws JRException
      */
     public Object getFieldValue(JRField jRField) throws JRException {
-        String name = jRField.getName();
-       Object ret = null;
-        // General fields
-               
-        if (name.equalsIgnoreCase("Cover")) {
+    	String name = jRField.getName();
+    	Object ret = null;
+    	// General fields
+    	
+    	if (name.equalsIgnoreCase("ReportTitle")) {
+    		ret = reportTitle;
+    	}
+    	else if (name.equalsIgnoreCase("Cover")) {
         		
             if (!testmode && entry.getCover() != null && entry.getCover().length() > 0) {
             	String filename = coversFolder + "/" + entry.getCover();
@@ -172,6 +180,9 @@ public class ReportGeneratorDataSource implements JRDataSource {
         else if (name.equalsIgnoreCase("IMDB")) {
         	ret = entry.getUrlKey();
         }
+        else if (name.equalsIgnoreCase("imdb-link")) {
+        	ret = entry.getCompleteUrl();
+        }
         else if (name.equalsIgnoreCase("DirectedBy")) {
         	ret = entry.getDirectedBy();
         }
@@ -202,6 +213,13 @@ public class ReportGeneratorDataSource implements JRDataSource {
         else if (name.equalsIgnoreCase("Title")) {
         	ret = testmode ? "Movie title " + count : entry.getTitle();
         }
+        else if (name.equalsIgnoreCase("Title+Date")) {
+        	ret = testmode ? "Movie title " + count : entry.getTitle();
+        	
+        	if (!entry.getDate().equals(""))
+        		ret = ret + " (" + entry.getDate() + ")";
+        		
+        }
         else if (name.equalsIgnoreCase("Aka")) {
         	ret = testmode ? "Aka " + count : entry.getAka();
         }
@@ -210,6 +228,16 @@ public class ReportGeneratorDataSource implements JRDataSource {
         }
         else if (name.equalsIgnoreCase("Rating")) {
         	ret = entry.getRating();
+        }
+        else if (name.equalsIgnoreCase("PersonalRating")) {
+        	ret = entry.getPersonalRating();
+        }
+        else if (name.equalsIgnoreCase("Rating+PersonalRating")) {
+        	ret = entry.getRating();
+        	        	
+        	if (!entry.getPersonalRating().equals(""))
+        		ret = ret + " (" + entry.getPersonalRating() + ")";
+        	
         }
         else if (name.equalsIgnoreCase("Certification")) {
         	ret = entry.getCertification();

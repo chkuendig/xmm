@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,6 +38,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -87,6 +89,7 @@ public class DialogReportGenerator extends JFrame implements ActionListener, Win
     private JPanel jPanel4 = new JPanel();
     private JPanel jPanel5 = new JPanel();
     private JPanel jPanel6 = new JPanel();
+    private JPanel jPanelReportTitle = new JPanel();
     private JPanel panelOptions = new JPanel();
     private JPanel panelProgress = new JPanel();
     private JPanel panelReport = new JPanel();
@@ -123,9 +126,28 @@ public class DialogReportGenerator extends JFrame implements ActionListener, Win
         TitledBorder.DEFAULT_POSITION,
         new Font(layoutList.getFont().getName(), Font.BOLD, layoutList.getFont().getSize())),
         BorderFactory.createEmptyBorder(0, 5, 5, 5));
+    
+    
+    private Border reportTitleBorder = BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+            " Report Title ",
+            TitledBorder.DEFAULT_JUSTIFICATION,
+            TitledBorder.DEFAULT_POSITION,
+            new Font(layoutList.getFont().getName(), Font.BOLD, layoutList.getFont().getSize())),
+            BorderFactory.createEmptyBorder(0, 5, 5, 5));
+        
+    
     private Border border4 = BorderFactory.createEmptyBorder(0, 5, 0, 3);
 
     private static String reportsDir = getReportsDir();
+    
+    JTextField reportTitleField = new JTextField();
+    
+    public String getReportTitle() {
+    	if (reportTitleField.getText().trim().equals(""))
+    		return null;
+    	else
+    		return reportTitleField.getText();
+    }
     
     public DialogReportGenerator() {
         this(null);
@@ -199,6 +221,10 @@ public class DialogReportGenerator extends JFrame implements ActionListener, Win
         labelDescription.setText(" ");
         jPanel5.setBorder(border2);
         jPanel5.setLayout(gridLayout1);
+        
+        jPanelReportTitle.setBorder(reportTitleBorder);
+        
+        
         radioButtonCurrentList.setText("Current movielist");
         radioButtonSelectedMovies.setText("Selected movies");
         radioButtonAllMovies.setText("All movies");
@@ -229,11 +255,25 @@ public class DialogReportGenerator extends JFrame implements ActionListener, Win
             , GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 30, 10, 30), 0, 0));
         jPanel2.add(labelExample, java.awt.BorderLayout.CENTER);
         jPanel2.add(labelDescription, java.awt.BorderLayout.SOUTH);
-        jPanel3.add(jPanel5, java.awt.BorderLayout.SOUTH);
+        
+              
+        
         jPanel5.add(radioButtonCurrentList);
         jPanel5.add(radioButtonSelectedMovies);
         jPanel5.add(radioButtonAllMovies);
         jPanel5.add(checkBoxEpisodes);
+        
+        jPanelReportTitle.setLayout(new BorderLayout());
+        reportTitleField = new JTextField();
+        jPanelReportTitle.add(reportTitleField, BorderLayout.CENTER);
+        
+        JPanel listOptions = new JPanel();
+        listOptions.setLayout(new BoxLayout(listOptions, BoxLayout.Y_AXIS));
+        listOptions.add(jPanel5);
+        listOptions.add(jPanelReportTitle);
+        
+        jPanel3.add(listOptions, java.awt.BorderLayout.SOUTH);
+        
         scrollPaneList.getViewport().add(layoutList);
         jPanel6.add(scrollPaneList, java.awt.BorderLayout.CENTER);
         jPanel3.add(jPanel6, java.awt.BorderLayout.CENTER);
@@ -330,7 +370,7 @@ public class DialogReportGenerator extends JFrame implements ActionListener, Win
             HashMap<String, String> parms = new HashMap<String, String>();
             parms.put("logo", FileUtil.getImageURL("/images/filmFolder.png").toString());
             
-            ds = new ReportGeneratorDataSource(movies, selectedLayout.sortField, progressBar, FileUtil.getImageURL("/images/movie.png"), false);
+            ds = new ReportGeneratorDataSource(movies, getReportTitle(), selectedLayout.sortField, progressBar, FileUtil.getImageURL("/images/movie.png"), false);
             
             final JasperPrint print = JasperFillManager.fillReport(new File(reportsDir, selectedLayout.filename).getAbsolutePath(), parms, ds);
           
@@ -605,7 +645,7 @@ public class DialogReportGenerator extends JFrame implements ActionListener, Win
             try {
                 HashMap<String, String> parms = new HashMap<String, String>();
                 parms.put("logo", FileUtil.getImageURL("/images/filmFolder.png").toString());
-                ReportGeneratorDataSource ds = new ReportGeneratorDataSource(movies, "none", null, FileUtil.getImageURL("/images/movie.png"), false);
+                ReportGeneratorDataSource ds = new ReportGeneratorDataSource(movies, null, "none", null, FileUtil.getImageURL("/images/movie.png"), false);
                 JasperPrint print = JasperFillManager.fillReport(reportsDir + "movie_details.jasper", parms, ds);
                 JasperPrintManager.printReport(print, true);
             }
