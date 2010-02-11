@@ -322,6 +322,19 @@ public abstract class DialogTableData extends JDialog {
 			this.table = table;
 			this.field = field;
 			this.columnIndex = columnIndex;
+			
+			if (field == null) {
+				log.debug("FieldModel created with field == null");
+				log.debug("table:" + table + " columnIndex:" + columnIndex);
+				
+				try {
+					throw new Exception("FieldModel created with field == null");
+				} catch (Exception e) {
+					log.debug(e);
+				}
+				
+				field = "";
+			}
 		}
 
 		public String getTable() {
