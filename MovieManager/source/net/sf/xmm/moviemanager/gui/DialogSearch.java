@@ -1167,9 +1167,8 @@ public class DialogSearch extends JDialog implements ActionListener, ItemListene
 		}
 
 		if (apply) {
-			//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ /* Applying the new setting to the movielist */
-			new MovieManagerCommandFilter("", null, true, true).execute();;
-			//MovieManagerCommandFilter.execute();
+			/* Applying the new setting to the movielist */
+			new MovieManagerCommandFilter(null, true, true).execute();
 		}
 		else {
 			dialogSearch = null;

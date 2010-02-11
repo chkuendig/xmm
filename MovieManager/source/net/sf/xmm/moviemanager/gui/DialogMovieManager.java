@@ -1065,7 +1065,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	comboBoxFilter = new JComboCheckBox(items); //$NON-NLS-1$ //$NON-NLS-2$
     	comboBoxFilter.setActionCommand("Filter"); //$NON-NLS-1$
     	
-    	((JComboCheckBox.JComboCheckBoxEditor) comboBoxFilter.getEditor()).addComboCheckBoxKeyEventListener(new MovieManagerCommandFilter("", null, true, true));
+    	((JComboCheckBox.JComboCheckBoxEditor) comboBoxFilter.getEditor()).addComboCheckBoxKeyEventListener(new MovieManagerCommandFilter(null, true, true));
     	comboBoxFilter.setFont(new Font(comboBoxFilter.getFont().getName(), Font.PLAIN,	fontSize));
 
     	filter.add(comboBoxFilter, BorderLayout.CENTER);

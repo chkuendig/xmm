@@ -50,13 +50,13 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 	private static boolean addEmptyEntry = false;
 	private static String noHitsMessage = "Empty Database";
 	
-	public MovieManagerCommandFilter(String _filterString, javax.swing.JComponent _movieList, boolean _mainFilter, boolean _addEmptyEntry) {
+	public MovieManagerCommandFilter(javax.swing.JComponent _movieList, boolean _mainFilter, boolean _addEmptyEntry) {
 		movieListComponent = _movieList;
 		mainFilter = _mainFilter;
 		addEmptyEntry = _addEmptyEntry;
 	}
 
-	MovieManagerCommandFilter(String _filterString, boolean _mainFilter, boolean _addEmptyEntry, String _filterCategory) {
+	MovieManagerCommandFilter(boolean _mainFilter, boolean _addEmptyEntry) {
 		mainFilter = _mainFilter;
 		addEmptyEntry = _addEmptyEntry;
 	}
@@ -87,8 +87,22 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 		noHitsMessage = "Empty Database";
 		addEmptyEntry = false;
 		
+		System.err.println("mainFilter:" + mainFilter);
+		
 		if (mainFilter) {
 			ModelDatabaseSearch options = MovieManager.getDatabaseHandler().getFilterOptions();
+			
+			ArrayList<String> names = options.getCurrentListNames();
+			
+			System.err.println("names.size:" +names.size());
+			
+			for (String n : names) {
+				System.err.println("name:" + n);
+			}
+			
+			System.err.println("getShowUnlistedEntries:" + options.getShowUnlistedEntries());
+				
+			
 			movieList = database.getMoviesList(options);
 			
 			movieListComponent = MovieManager.getDialog().getMoviesList();
@@ -96,6 +110,12 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 		else {
 			ModelDatabaseSearch options = MovieManager.getDatabaseHandler().getFilterOptions();
 
+			ArrayList<String> names = options.getCurrentListNames();
+			
+			for (String n : names) {
+				System.err.println("name:" + n);
+			}
+			
 			if (options.getCurrentListNames() != null && options.getCurrentListNames().size() > 0 || 
 					MovieManager.getConfig().getShowUnlistedEntries())
 				movieList = database.getMoviesList("Title", options.getCurrentListNames(),
