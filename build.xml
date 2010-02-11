@@ -34,12 +34,12 @@
 
 	<!-- set global properties for this build -->
 
+	<property name="version" value="2.9.1.2" />	
+	<property name="versionName" value="${version}" />
+	
 	<property name="build" location="MovieManager" />
 	<property name="dist" location="dist" />
 	<property name="izpack.dir" location="packaging/izpack" />
-
-	<property name="version" value="2.9.1.1" />
-	<property name="versionName" value="${version}" />
 
 	<property name="base" value="MovieManager/" />
 
