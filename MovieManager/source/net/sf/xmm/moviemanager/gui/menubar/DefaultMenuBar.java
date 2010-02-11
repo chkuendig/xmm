@@ -61,7 +61,6 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandConvertDatabase;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandExit;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandFilter;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandOpenPage;
-import net.sf.xmm.moviemanager.commands.MovieManagerCommandSaveChangedNotes;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAbout;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandAdditionalInfoFields;
@@ -606,18 +605,19 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 					return;	
 				}
 
-				boolean setPressedNoMatter = false;
+				boolean enableAllLists = false;
 				
-				// Everything is deselected is the same everything selected
+				// Cannot have everything deselected, therefore enable all
 				if (currentLists.size() == 0 && !config.getShowUnlistedEntries()) {
-					setPressedNoMatter = true;
+					enableAllLists = true;
+					config.setShowUnlistedEntries(true);
 				}
 				
 				int indexCounter = 0;
 				
 				while (!listColumns.isEmpty()) {
 
-					menuItem = new JCheckBoxMenuItem((String) listColumns.get(0));
+					menuItem = new JCheckBoxMenuItem(listColumns.get(0));
 					menuItem.setActionCommand((String) listColumns.get(0));
 					menuItem.setToolTipText("Right click to uniquely select");
 					
@@ -625,7 +625,11 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 					menuItem.addMouseListener(this);
 					menuLists.add(menuItem);
 
-					if (currentLists.contains(listColumns.get(0)) || setPressedNoMatter)
+					if (enableAllLists) {
+						config.addToCurrentLists(listColumns.get(0));
+					}
+					
+					if (currentLists.contains(listColumns.get(0)))
 						menuItem.setSelected(true);
 
 					listColumns.remove(0);
@@ -643,8 +647,8 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 				showUnlisted.addActionListener(this);
 				showUnlisted.addMouseListener(this);
 				menuLists.add(showUnlisted);
-
-				showUnlisted.setSelected(config.getShowUnlistedEntries() || setPressedNoMatter);
+	
+				showUnlisted.setSelected(config.getShowUnlistedEntries());
 				
 				menuLists.addSeparator();
 
@@ -653,31 +657,27 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 				showAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 				showAll.setActionCommand("Show All"); //$NON-NLS-1$
 				showAll.addActionListener(this);
-			
+				
 				menuLists.add(showAll);
 			}
 		}
 		
 		
 		public void setMenuItemEnabled(JCheckBoxMenuItem checkBox, boolean b) {
-			
+						
 			checkBox.setSelected(b);
 			
 			if (checkBox.isSelected())
 				config.addToCurrentLists(checkBox.getText());
 			else
 				config.getCurrentLists().remove(checkBox.getText());
-		
 		}
 		
 		
 		void execute(JMenuItem source, boolean exclusive) {
-
+			
 			String column = source.getText();
-			
-			// If any notes have been changed, they will be saved before loading list
-			MovieManagerCommandSaveChangedNotes.execute();
-			
+						
 			// Either "show all" or "Show Unlisted"
 			if (!menuItemsList.contains(source)) {
 				
@@ -748,32 +748,45 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 			
 			MovieManager.getDialog().setListTitle();
 				
-			new MovieManagerCommandFilter("", null, true, true).execute();
+			new MovieManagerCommandFilter(null, true, true).execute();
 		}
 
 		
-		public void actionPerformed(ActionEvent event) {
-			
+		/*
+		 * For some reason, KeyListener doesn't seem to work on the JMenuItems
+		 */
+		public void actionPerformed(final ActionEvent event) {
+						
 			if (event.getSource() instanceof JMenuItem) {
-				execute(((JMenuItem) event.getSource()), false);
+			
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						
+						// Use global exclusive variable
+						execute(((JMenuItem) event.getSource()), exclusive);
+						exclusive = false;
+					}
+				});
 			}
 		}
 		
+		boolean exclusive = false;
+		
 		public void mouseReleased(MouseEvent event) {
-			boolean exclusive = SwingUtilities.isRightMouseButton(event);
 						
 			if (event.getSource() instanceof JMenuItem) {
-				execute(((JMenuItem) event.getSource()), exclusive);
+				exclusive = SwingUtilities.isRightMouseButton(event);
 			}
 		}
 
 		public void mouseClicked(MouseEvent event) {}
 		public void mouseEntered(MouseEvent arg0) {}
 		public void mouseExited(MouseEvent arg0) {}
-		public void mousePressed(MouseEvent arg0) {}
-				
+		public void mousePressed(MouseEvent arg0) {}		
 	}
 
+	
+	
 	
 	/**
 	 * Creates the views menu.
@@ -910,10 +923,17 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuItemOnlineHelp.setActionCommand("OpenPage (Online Help)"); //$NON-NLS-1$
 		menuItemOnlineHelp.addActionListener(new MovieManagerCommandOpenPage("http://xmm.sourceforge.net/help.html")); //$NON-NLS-1$
 		menuHelp.add(menuItemOnlineHelp);
+		
+		/* MenuItem HomePage. */
+		JMenuItem menuItemHomePage = new JMenuItem(Localizer.get("DialogMovieManager.menu.help.homepage")); //$NON-NLS-1$
+		menuItemHomePage.setActionCommand("OpenPage (Home Page)"); //$NON-NLS-1$
+		menuItemHomePage.addActionListener(new MovieManagerCommandOpenPage("http://xmm.sourceforge.net/")); //$NON-NLS-1$
+		menuHelp.add(menuItemHomePage);
+		
 		/* A Separator. */
 		menuHelp.addSeparator();
 		
-		/* MenuItem HomePage. */
+		/* check for updates. */
 		JMenuItem menuItemUpdate = new JMenuItem("Check for updates"); //$NON-NLS-1$
 		menuItemUpdate.setActionCommand("Check for updates"); //$NON-NLS-1$
 		menuItemUpdate.addActionListener(new ActionListener() {
@@ -925,11 +945,7 @@ public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {
 		menuHelp.add(menuItemUpdate);
 		
 		
-		/* MenuItem HomePage. */
-		JMenuItem menuItemHomePage = new JMenuItem(Localizer.get("DialogMovieManager.menu.help.homepage")); //$NON-NLS-1$
-		menuItemHomePage.setActionCommand("OpenPage (Home Page)"); //$NON-NLS-1$
-		menuItemHomePage.addActionListener(new MovieManagerCommandOpenPage("http://xmm.sourceforge.net/")); //$NON-NLS-1$
-		menuHelp.add(menuItemHomePage);
+		
 		/* A Separator. */
 		menuHelp.addSeparator();
 		/* MenuItem About. */
