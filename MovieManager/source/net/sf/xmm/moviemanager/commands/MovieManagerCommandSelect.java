@@ -159,7 +159,7 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 
 
 	/**
-	 * Executes the command, and reloads the list (mantaining the current selected
+	 * Executes the command, and reloads the list (maintaining the current selected
 	 * index visible).
 	 **/
 	public static void executeAndReload(ModelEntry reloadEntry, boolean edit, boolean isEpisode, boolean execute) {
@@ -846,7 +846,14 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 		StringUtil.replaceAll(template, "$DirectedBy$", model.getDirectedBy());
 		StringUtil.replaceAll(template, "$WrittenBy$", model.getWrittenBy());
 		StringUtil.replaceAll(template, "$Genre$", model.getGenre());
-		StringUtil.replaceAll(template, "$Rating$", model.getRating());
+		
+		String rating = model.getRating();
+		
+		if (model.getPersonalRating() != null && !model.getPersonalRating().equals(""))
+			rating += " ("+model.getPersonalRating()+")";
+		
+		StringUtil.replaceAll(template, "$Rating$", rating);
+		
 		StringUtil.replaceAll(template, "$Seen$", model.getSeen() ? "Yes" : "No");
 		StringUtil.replaceAll(template, "$Country$", model.getCountry());
 		StringUtil.replaceAll(template , "$Language$", model.getLanguage());
