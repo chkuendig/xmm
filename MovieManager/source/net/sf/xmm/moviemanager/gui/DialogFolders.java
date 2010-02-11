@@ -950,9 +950,9 @@ public class DialogFolders extends JDialog implements ItemListener, DocumentList
     	ExtendedFileChooser fileChooser;
 
     	if (title.equals(Localizer.get("DialogFolders.selectCoversDir"))) //$NON-NLS-1$
-    		fileChooser = new ExtendedFileChooser(MovieManager.getConfig().getCoversFolder(), ExtendedFileChooser.DIRECTORIES_ONLY);
+    		fileChooser = new ExtendedFileChooser(textField.getText(), ExtendedFileChooser.DIRECTORIES_ONLY);
     	else
-    		fileChooser = new ExtendedFileChooser(MovieManager.getConfig().getQueriesFolder(), ExtendedFileChooser.DIRECTORIES_ONLY);
+    		fileChooser = new ExtendedFileChooser(textField.getText(), ExtendedFileChooser.DIRECTORIES_ONLY);
 
     	fileChooser.setDialogTitle(title);
     	fileChooser.setApproveButtonText(Localizer.get("DialogFolders.fileChooser.approve.text")); //$NON-NLS-1$
