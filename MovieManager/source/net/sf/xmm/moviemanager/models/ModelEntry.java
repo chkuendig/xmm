@@ -255,20 +255,22 @@ abstract public class ModelEntry {
 	}
 
 	public String getRating() {
-		if (rating == null || rating.equals("-1.0"))
-			return "";
 		return rating;
 	}
 
 	public String getSortRating() {
-		if (rating == null || rating.equals("-1.0"))
+		if (rating.equals(""))
 			return "0";
 		return rating;
 	}
 
 	public void setRating(String rating) {
+		
+		if (rating == null || rating.equals("-1.0"))
+			rating = "";
+		
 		this.rating = rating;
-	}
+	}	
 	
 	
 	public String getPersonalRating() {
@@ -276,6 +278,10 @@ abstract public class ModelEntry {
 	}
 	
 	public void setPersonalRating(String personalRating) {
+		
+		if (personalRating == null || personalRating.equals("-1.0"))
+			personalRating = "";
+		
 		this.personalRating = personalRating;
 	}
 
