@@ -22,6 +22,9 @@ package net.sf.xmm.moviemanager.commands.importexport;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+
+import javax.swing.SwingUtilities;
 
 import jxl.Workbook;
 import jxl.write.Label;
@@ -73,11 +76,20 @@ public class MovieManagerCommandExportExcel extends MovieManagerCommandExportHan
 			
 		data = getDatabaseData();
 		
-		dialogExportTable = new DialogTableExport(MovieManager.getDialog(), data, settings);
-		GUIUtil.showAndWait(dialogExportTable, true);
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				
+				public void run() {
+					dialogExportTable = new DialogTableExport(MovieManager.getDialog(), data, settings);
+					GUIUtil.showAndWait(dialogExportTable, true);
 
-		if (dialogExportTable.cancelled)
-			setCancelled(true);
+					if (dialogExportTable.cancelled)
+						setCancelled(true);
+				}
+			});
+		} catch (Exception e) {
+			log.error("Exception:" + e.getMessage(), e);
+		}
 	}
 
 

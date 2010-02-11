@@ -22,6 +22,8 @@ package net.sf.xmm.moviemanager.commands.importexport;
 
 import java.util.ArrayList;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.log4j.Logger;
 
 import jxl.Cell;
@@ -29,6 +31,7 @@ import jxl.Sheet;
 import jxl.Workbook;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
+import net.sf.xmm.moviemanager.gui.DialogTableExport;
 import net.sf.xmm.moviemanager.gui.DialogTableImport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
@@ -54,13 +57,22 @@ public class MovieManagerCommandImportExcel extends MovieManagerCommandImportHan
 
 	public void execute() {
 
-		Object [][] data = readData();
+		final Object [][] data = readData();
 
-		dialogImportTable = new DialogTableImport(MovieManager.getDialog(), data, settings);
-		GUIUtil.showAndWait(dialogImportTable, true);
-		
-		if (dialogImportTable.cancelled)
-			setCancelled(true);
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				
+				public void run() {
+					dialogImportTable = new DialogTableImport(MovieManager.getDialog(), data, settings);
+					GUIUtil.showAndWait(dialogImportTable, true);
+					
+					if (dialogImportTable.cancelled)
+						setCancelled(true);
+				}
+			});
+		} catch (Exception e) {
+			log.error("Exception:" + e.getMessage(), e);
+		}		
 	}
 
 

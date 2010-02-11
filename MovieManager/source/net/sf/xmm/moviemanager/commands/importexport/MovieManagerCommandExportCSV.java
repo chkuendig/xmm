@@ -68,15 +68,18 @@ public class MovieManagerCommandExportCSV extends MovieManagerCommandExportHandl
 		data = getDatabaseData();
 		
 		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				
+				public void run() {
+					dialogExportTable = new DialogTableExport(MovieManager.getDialog(), data, settings);
+					GUIUtil.showAndWait(dialogExportTable, true);
 
-			dialogExportTable = new DialogTableExport(MovieManager.getDialog(), data, settings);
-			GUIUtil.showAndWait(dialogExportTable, true);
-
-			if (dialogExportTable.cancelled)
-				setCancelled(true);
-		
+					if (dialogExportTable.cancelled)
+						setCancelled(true);
+				}
+			});
 		} catch (Exception e) {
-			log.error("InvocationTargetException:" + e.getMessage(), e);
+			log.error("Exception:" + e.getMessage(), e);
 		}
 	}
 	
