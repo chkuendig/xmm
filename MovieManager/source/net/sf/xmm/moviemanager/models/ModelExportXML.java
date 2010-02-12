@@ -1,5 +1,5 @@
 /**
- * @(#)ModelEntry.java 29.01.06 (dd.mm.yy)
+ * @(#)ModelExportXML.java
  *
  * Copyright (2003) Bro3
  * 
@@ -222,4 +222,18 @@ public class ModelExportXML implements XMLClassDescriptor {
 	        	
 	    	StringUtil.removeInvalidXMLCharacters(add.getAdditionalInfoString());
 	    }
+
+	public Object getProperty(String arg0) {
+		return null;
+	}
+
+	public void setProperty(String arg0, Object arg1) {
+	}
+
+	public void addNature(String arg0) {
+	}
+
+	public boolean hasNature(String arg0) {
+		return false;
+	}
 }
