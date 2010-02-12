@@ -36,6 +36,7 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.plaf.FileChooserUI;
 import javax.swing.plaf.basic.BasicFileChooserUI;
@@ -60,7 +61,12 @@ public class ExtendedFileChooser extends JFileChooser {
 	private File selectedFile;
 
 	boolean textFieldAction = false;
-
+	boolean approveFileSelection = true;
+	
+	public void setApproveFileSelection(boolean approveFileSelection) {
+		this.approveFileSelection = approveFileSelection;
+	}
+	
 	public ExtendedFileChooser() {
 		super();
 		fileChooser = this;
@@ -144,12 +150,8 @@ public class ExtendedFileChooser extends JFileChooser {
 				approveSelection();
 				textFieldAction = false;
 			}
-
 		});
-
-
 	}
-
 
 
 	public void approveSelection() {
@@ -160,14 +162,16 @@ public class ExtendedFileChooser extends JFileChooser {
 				getDialogType() == JFileChooser.CUSTOM_DIALOG) {
 
 			File selectedFile = getSelectedFile();
-			CustomFileFilter fileFilter = (CustomFileFilter) getFileFilter();
+			FileFilter fileFilter = getFileFilter();
 			
-			if (fileFilter == null) {
+			if (fileFilter == null || !approveFileSelection) {
 				super.approveSelection();
 				return;
 			}
 			
-			String [] extenstions = fileFilter.getExtensions();
+			CustomFileFilter customFilter = (CustomFileFilter) fileFilter;
+			
+			String [] extenstions = customFilter.getExtensions();
 			boolean exists = false;
 			File file = null;
 
