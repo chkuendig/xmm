@@ -103,7 +103,7 @@
 		lib/cobra/cobra-0.98.2.jar,
 		lib/cobra/js.jar,
 		lib/drivers/hsqldb_1.8.1.1.jar,
-		lib/drivers/mysql-connector-java-5.1.11-bin,
+		lib/drivers/mysql-connector-java-5.1.11-bin.jar,
 		lib/mac/AppleJavaExtensions.jar,
 		lib/mac/quaqua.jar,
 		lib/BrowserLauncher2-1_3.jar,
