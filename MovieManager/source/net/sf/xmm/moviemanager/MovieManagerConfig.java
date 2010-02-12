@@ -366,6 +366,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		
 	private String exportTextFilePath = "";
 	private String exportExcelFilePath = "";
+	private String exportXMLDbFilePath = "";
 	private String exportXMLFilePath = "";
 	private String exportCSVFilePath = "";
 	private String exportCSVseparator = ",";
@@ -1269,11 +1270,11 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		
 	// XML database 
 	public String getExportXMLDbFilePath() {
-		return exportXMLFilePath;
+		return exportXMLDbFilePath;
 	}
 	
 	public void setExportXMLDbFilePath(String value) {
-		exportXMLFilePath = value;
+		exportXMLDbFilePath = value;
 	}
 	
 	// XML 
