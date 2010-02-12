@@ -1,5 +1,5 @@
 /**
- * @(#)DialogExport.java 1.0
+ * @(#)DialogExport.java
  *
  * Copyright (2003) Mediterranean
  * 
@@ -86,7 +86,6 @@ public class DialogExport extends JDialog implements ActionListener {
     JButton browseForCSVFile;
     
     JTextField xmlDbFilePath;
-    JComboBox xmlDbEncoding;
     JButton browseForXMLDbFile;
     
     JTextField xmlFilePath;
@@ -289,36 +288,10 @@ public class DialogExport extends JDialog implements ActionListener {
     JPanel createXMLDatabasePanel() {
     	// XML database panel
 
-    	/*
-    	JPanel xmlDatabasePanel = new JPanel();
-    	xmlDatabasePanel.setLayout(new BoxLayout(xmlDatabasePanel, BoxLayout.PAGE_AXIS));
-
-    	xmlDatabasePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,3,3,3), BorderFactory.createTitledBorder(
-    			BorderFactory.createEtchedBorder(), " XML Database " , TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font(xmlDatabasePanel.getFont().getName(),Font.BOLD, xmlDatabasePanel.getFont().getSize()) //$NON-NLS-1$
-    	)), BorderFactory.createEmptyBorder(0,2,2,2)));
-
-    	JLabel xmlDblabelInfo = new JLabel("Export current movie list to XML Database");
-    	xmlDatabasePanel.add(xmlDblabelInfo);
-		*/
-
     	// XML panel
-    	JLabel xmlDbLabel = new JLabel("Export current movie list to XML ");
+    	JLabel xmlDbLabel = new JLabel("Export current movie list to XML Database");
     	JPanel xmlDbLabelPanel = new JPanel();
     	xmlDbLabelPanel.add(xmlDbLabel);
-
-    	JLabel xmlDbEncodingLabel = new JLabel("File encoding:");
-    	xmlDbEncoding = new JComboBox(new DefaultComboBoxModel(ModelImportExportSettings.encodings));
-    	xmlDbEncoding.setSelectedItem("UTF-8");
-
-    	JPanel xmlDbOpt = new JPanel();
-    	xmlDbOpt.add(xmlDbEncodingLabel);
-    	xmlDbOpt.add(xmlDbEncoding);
-
-
-    	// XML option panel 
-    	JPanel xmlDbOptionPanel = new JPanel();
-    	xmlDbOptionPanel.setLayout(new BoxLayout(xmlDbOptionPanel, BoxLayout.Y_AXIS));
-    	xmlDbOptionPanel.add(xmlDbOpt);
 
     	xmlDbFilePath = new JTextField(27);
     	xmlDbFilePath.setText(MovieManager.getConfig().getExportXMLDbFilePath());
@@ -341,7 +314,6 @@ public class DialogExport extends JDialog implements ActionListener {
     	)), BorderFactory.createEmptyBorder(0,2,2,2)));
 
     	xmlDbPanel.add(xmlDbLabelPanel, BorderLayout.NORTH);
-    	xmlDbPanel.add(xmlDbOptionPanel, BorderLayout.CENTER);
     	xmlDbPanel.add(xmlDbPathPanel, BorderLayout.SOUTH);
 
     	return xmlDbPanel;
@@ -544,8 +516,6 @@ public class DialogExport extends JDialog implements ActionListener {
     	MovieManager.getConfig().setExportExcelFilePath(excelFilePath.getText());
     	MovieManager.getConfig().setExportXMLDbFilePath(xmlDbFilePath.getText());
     	MovieManager.getConfig().setExportXMLFilePath(xmlFilePath.getText());
-
-    	System.err.println("save xml db path:" + xmlDbFilePath.getText());
     	
     	// Save CSV separator
     	if (csvSeparator.getText().trim().length() > 0)
@@ -569,7 +539,6 @@ public class DialogExport extends JDialog implements ActionListener {
     	}
     	case XML_DATABASE: {
     		settings.filePath = xmlDbFilePath.getText();
-    		settings.textEncoding = (String) xmlDbEncoding.getSelectedItem();
     		break;
     	}
     	case XML: {
