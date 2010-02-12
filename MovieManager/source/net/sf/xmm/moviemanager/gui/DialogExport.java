@@ -1,5 +1,5 @@
 /**
- * @(#)DialogExport.java 1.0 28.01.06 (dd.mm.yy)
+ * @(#)DialogExport.java 1.0
  *
  * Copyright (2003) Mediterranean
  * 
@@ -58,7 +58,9 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ExportMode;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
+import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 
@@ -543,6 +545,8 @@ public class DialogExport extends JDialog implements ActionListener {
     	MovieManager.getConfig().setExportXMLDbFilePath(xmlDbFilePath.getText());
     	MovieManager.getConfig().setExportXMLFilePath(xmlFilePath.getText());
 
+    	System.err.println("save xml db path:" + xmlDbFilePath.getText());
+    	
     	// Save CSV separator
     	if (csvSeparator.getText().trim().length() > 0)
     		settings.csvSeparator = csvSeparator.getText().trim().charAt(0);
@@ -683,24 +687,59 @@ public class DialogExport extends JDialog implements ActionListener {
 
     	if (saveExportFile != null) {
 
-    		JFileChooser chooser = new JFileChooser();
     		String path = getPath();
-    		chooser.setCurrentDirectory(new File(path));
+    		
+    		ExtendedFileChooser fileChooser = new ExtendedFileChooser();
+    		fileChooser.setFileSelectionMode(ExtendedFileChooser.FILES_ONLY);
 
-    		int returnVal = chooser.showDialog(null, "Save output file");
+			if (!path.equals("") && new File(path).isFile() && !new File(path).isDirectory()) {
+				path = new File(path).getParent();
+			}
+
+			fileChooser.setCurrentDirectory(new File(path));
+
+			String title = "";
+
+			if (saveExportFile == ExportMode.CSV) {
+				title = "Save CSV file";
+				fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[] {
+						"csv"
+				}, new String("Exported CSV file (*.csv)")));
+			}
+			else if (saveExportFile == ExportMode.EXCEL) {
+				title = "Save excel file";
+				fileChooser.setFileFilter(new CustomFileFilter(new String[]{"*.*"}, new String("All Files (*.*)")));
+				fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"xls"},new String("Excel spreadsheet (*.xls)")));
+			}
+			else if (saveExportFile == ExportMode.XML_DATABASE) {
+				title = "Save XML file";
+				fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"xml"},new String("XML Database file (*.xml)")));
+			}
+			else if (saveExportFile == ExportMode.XML) {
+				title = "Save XML file";
+				fileChooser.addChoosableFileFilter(new CustomFileFilter(new String[]{"xml"},new String("XML file (*.xml)")));
+			}
+			
+			fileChooser.setDialogTitle(title);
+			fileChooser.setApproveButtonText("Select");
+			fileChooser.setApproveButtonToolTipText("Select file");
+			fileChooser.setAcceptAllFileFilterUsed(false);
+			fileChooser.setApproveFileSelection(false);    		
+			
+    		int returnVal = fileChooser.showDialog(this, "Save output file");
 
     		if (returnVal != JFileChooser.APPROVE_OPTION) {
     			log.warn("Failed to retrieve output file");
     		}
     		else {
     			try {
-    				String outputFile = chooser.getSelectedFile().getCanonicalPath();
-
+    				String outputFile = fileChooser.getSelectedFile().getCanonicalPath();
+    				    				
     				if (!outputFile.toLowerCase().endsWith(extension))
     					outputFile += extension;
 
     				settings.filePath = outputFile;
-
+    				    				
     				if (saveExportFile == ExportMode.CSV)
     					csvFilePath.setText(outputFile);
     				else if (saveExportFile == ExportMode.EXCEL)
@@ -709,7 +748,7 @@ public class DialogExport extends JDialog implements ActionListener {
     					xmlDbFilePath.setText(outputFile);
     				else if (saveExportFile == ExportMode.XML)
     					xmlFilePath.setText(outputFile);
-
+    				
     				return;
     			} catch (IOException e) {
     				log.warn("Failed to retrieve output file");
