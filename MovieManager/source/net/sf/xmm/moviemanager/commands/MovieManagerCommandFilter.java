@@ -86,43 +86,21 @@ public class MovieManagerCommandFilter implements ActionListener, net.sf.xmm.mov
 		filterStart = System.currentTimeMillis();
 		noHitsMessage = "Empty Database";
 		addEmptyEntry = false;
-		
-		System.err.println("mainFilter:" + mainFilter);
-		
+				
 		if (mainFilter) {
 			ModelDatabaseSearch options = MovieManager.getDatabaseHandler().getFilterOptions();
-			
-			ArrayList<String> names = options.getCurrentListNames();
-			
-			System.err.println("names.size:" +names.size());
-			
-			for (String n : names) {
-				System.err.println("name:" + n);
-			}
-			
-			System.err.println("getShowUnlistedEntries:" + options.getShowUnlistedEntries());
-				
-			
 			movieList = database.getMoviesList(options);
-			
 			movieListComponent = MovieManager.getDialog().getMoviesList();
 		}
 		else {
 			ModelDatabaseSearch options = MovieManager.getDatabaseHandler().getFilterOptions();
-
-			ArrayList<String> names = options.getCurrentListNames();
-			
-			for (String n : names) {
-				System.err.println("name:" + n);
-			}
-			
+						
 			if (options.getCurrentListNames() != null && options.getCurrentListNames().size() > 0 || 
 					MovieManager.getConfig().getShowUnlistedEntries())
 				movieList = database.getMoviesList("Title", options.getCurrentListNames(),
 						MovieManager.getConfig().getShowUnlistedEntries());
 			else
 				movieList = database.getMoviesList();
-			
 		}
 
 		if (movieList.isEmpty()) {
