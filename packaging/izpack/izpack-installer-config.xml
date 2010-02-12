@@ -37,7 +37,7 @@
 	  	
 </resources>
 	  	
-  <guiprefs height="340" resizable="yes" width="450"/>
+  <guiprefs height="360" resizable="yes" width="450"/>
   
   <locale> 
 	<langpack iso3="eng"/>
@@ -73,6 +73,7 @@
 	  <fileset targetdir="$INSTALL_PATH/config/" 
 			   dir="MovieManager/config/" 
 			   includes="@{config_file_list}"
+			   exclude="MovieManager.tmx"
 			   />
 	  
 	   <!-- Config file for log4j  -->
@@ -92,15 +93,15 @@
 			   />
 	  
 	  <!-- libraries -->
-	  <fileset targetdir="$INSTALL_PATH/lib/" 
-			   dir="MovieManager/lib/" 
+	  <fileset targetdir="$INSTALL_PATH/" 
+			   dir="MovieManager/" 
 			   includes="@{library_file_list_all}"
 			   />
 		  
 	  <!--html template files-->
 	  <fileset targetdir="$INSTALL_PATH/HTML_templates/" 
 			   dir="MovieManager/HTML_templates/" 
-			   includes="@{template_files}"
+			   includes="@{html_template_files}"
 			   />
 		  
 	  <!-- Adding the lookAndFeels.ini file -->
