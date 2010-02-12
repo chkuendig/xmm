@@ -5,6 +5,27 @@
 ========================================
 
 
+Version 2.9.1.2 (12-February-2010)
+
+- General improvements:
+
+  - Reports for the report generator have been improved and a couple of extra reports were added. 
+
+- Bug fixes:
+
+  - Personal rating was sometimes shown as -1.0 if it hadn't been set.
+  - Some strange behaviour with the lists on startup was fixed.
+  - Export and Import would fail when using Substance Look and Feel.
+  - Report Generator did not function properly.
+  
+
+Version 2.9.1.1 (10-February-2010)
+
+- Bug fixes:
+
+  - Export to CSV and Excel was broken.
+
+
 Version 2.9.1 (07-February-2010)
 
 - New in this version:
