@@ -7,7 +7,7 @@ BrowserLauncher2-1_3.jar		- Browser launcher java library
 castor-1.3.1-core.jar			- Object-XML binding utility.
 castor-1.3.1.jar
 
-commons-httpclient-3.0.1.jar	- HTTP java library
+commons-httpclient-3.1.jar   	- HTTP java library
 commons-logging-1.1.1.jar		- Logging library required by other libraries (castor, httpclient).
 
 
@@ -46,7 +46,7 @@ commons-codec-1.3.jar			- Needed for jasperreports...maybe..
 
 jexcelapi_2_6_12.jar			- Required by jasperreports and the excel export function.
 
-jupidator.jar					- Library for updating application.
+jupidator-3.0.1.jar				- Library for updating application.
 ant-contrib-0.6.jar				- Easier ant build script.
 
 In applet mode, these are the only required libraries:
@@ -55,4 +55,4 @@ TableLayout.jar						  	   Layout of the main window
 useful.jar								   JTree extension
 BrowserLauncher2-1_3.jar				   Launching web browser when clicking cover 
 log4j-1.2.15.jar						   Logging library
-mysql-connector-java-3.1.12-bin.jar		   MySQL driver
+mysql-connector-java-5.1.7-bin.jar		   MySQL driver
