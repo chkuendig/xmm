@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandExportCSV.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandExportCSV.java
  *
  * Copyright (2003) Bro3
  * 
@@ -24,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -32,23 +31,22 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.gui.DialogTableExport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
-import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
-import org.apache.xerces.dom.DocumentImpl;
 
 //DOM classes.
 import org.w3c.dom.*;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
+
+import com.sun.org.apache.xerces.internal.dom.DocumentImpl;
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 //JAXP 1.1
 import javax.xml.parsers.*;
@@ -146,20 +144,15 @@ public class MovieManagerCommandExportXML extends MovieManagerCommandExportHandl
 			hd.startElement("","","Movies", atts);
 
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.warn("Exception:" + e.getMessage(), e);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.warn("Exception:" + e.getMessage(), e);
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.warn("Exception:" + e.getMessage(), e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.warn("Exception:" + e.getMessage(), e);
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.warn("Exception:" + e.getMessage(), e);
 		}
 	}
 	
@@ -312,9 +305,6 @@ public class MovieManagerCommandExportXML extends MovieManagerCommandExportHandl
 			e.appendChild(n);
 			root.appendChild(e);
 			
-//			 Write to the printer
-		
-			  
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
 			return -1;
