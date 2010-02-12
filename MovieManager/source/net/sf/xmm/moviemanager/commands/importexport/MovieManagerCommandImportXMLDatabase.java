@@ -197,7 +197,7 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 		}
 
 		Mapping mapping = new Mapping();
-		mapping.loadMapping(FileUtil.getFileURL("config/mapping.xml"));
+		mapping.loadMapping(FileUtil.getFileURL(MovieManager.getConfig().getCastorMappingFile()));
 
 		String encoding = "UTF-8";
 

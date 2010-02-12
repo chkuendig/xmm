@@ -371,6 +371,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private String exportCSVFilePath = "";
 	private String exportCSVseparator = ",";
 			
+	private String castorMappingFile = "config/Castor-mapping.xml";
+		
 	private String lastFileFilterMovieInfoUsed = "";
 
 	private HttpSettings httpSettings = new HttpSettings();
@@ -1296,6 +1298,10 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		exportTextFilePath = value;
 	}
 
+
+	public String getCastorMappingFile() {
+		return castorMappingFile;
+	}
 	
 	public boolean getImportIMDbInfoEnabled() {
 		return importIMDbInfoEnabled;

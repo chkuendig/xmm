@@ -1,5 +1,5 @@
 /**
- * @(#)MovieManagerCommandExportXMLDatabase.java 1.0 26.09.05 (dd.mm.yy)
+ * @(#)MovieManagerCommandExportXMLDatabase.java
  *
  * Copyright (2003) Bro3
  * 
@@ -29,7 +29,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelExportXML;
@@ -119,14 +118,14 @@ public class MovieManagerCommandExportXMLDatabase extends MovieManagerCommandExp
 		try {
 
 			Mapping mapping = new Mapping(new ModelMovie().getClass().getClassLoader());
-			URL mappingFile = FileUtil.getFileURL("config/mapping.xml");
+			URL mappingFile = FileUtil.getFileURL(MovieManager.getConfig().getCastorMappingFile());
 
 			exportXMLDatabase = new ModelExportXML(movieList.getChildCount());
 
 			// 1. Load the mapping information from the file
 			mapping.loadMapping(mappingFile);
 
-			String encoding = exportSettings.textEncoding;
+			String encoding = "UTF-8";
 			
 			marshaller = new Marshaller(new OutputStreamWriter(new FileOutputStream(exportSettings.getFilePath()), encoding));
 			marshaller.setEncoding(encoding);
