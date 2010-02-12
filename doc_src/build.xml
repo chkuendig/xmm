@@ -4,7 +4,7 @@
 	
 	<description>Creation fo Readme and Changelog</description>
 			
-	<property name="ant-contrib-path" value="../MovieManager/lib/ant-contrib-0.6.jar" />
+	<property name="ant-contrib-path" value="MovieManager/lib/ant-contrib-0.6.jar" />
 	
 	<!-- Import the ant contrib library -->
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
@@ -17,7 +17,7 @@
 	</target>
 
 	
-	<!-- Finds the path to rst2html which generates te restructed text version of changelog and readme  -->
+	<!-- Finds the path to rst2html which generates the HTML version of changelog and readme  -->
 	<target name="find-rst2html">
   
    		<!-- docutils can be installed both with and without py extension  -->
@@ -67,9 +67,9 @@
   		</fail>
   	
   		<exec executable="${rst2html-pathToUse}">
-			<arg value="--stylesheet=xmm.css"/>
-			<arg value="Changelog.rst"/>
-			<arg value="../Changelog.html"/>
+			<arg value="--stylesheet=${doc-src}/xmm.css"/>
+			<arg value="${doc-src}/Changelog.rst"/>
+			<arg value="Changelog.html"/>
   		</exec>
   
   		<echo> Compiled changelog to Changelog.html </echo>
@@ -88,9 +88,9 @@
   		</fail>
   
 		<exec executable="${rst2html-pathToUse}">
-    		<arg value="--stylesheet=xmm.css"/>
-    		<arg value="Readme.rst"/>
-   			<arg value="../Readme.html"/>
+    		<arg value="--stylesheet=${doc-src}/xmm.css"/>
+    		<arg value="${doc-src}/Readme.rst"/>
+   			<arg value="Readme.html"/>
   		</exec>
         
   		<echo> Compiled readme to Readme.html </echo>

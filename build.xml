@@ -768,9 +768,11 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 	
 </target>
 	
+	<property name="doc-src" value="doc_src"/>
+	
 	<!-- Changelog -->
 	<target name="changelog">
-		<ant antfile="build.xml" target="changelog" dir="doc_src"/>
+		<ant antfile="doc_src/build.xml" target="changelog" inheritAll="true" dir=""/>
 	</target>
 		
 	<!-- Readme -->
