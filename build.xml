@@ -398,6 +398,7 @@
 					<include name="xmm.css"/>
 					<include name="SignJar.bat"/>
 					<include name="build.xml"/>
+					<include name="update.xml"/>
 					<include name="localizing/"/>
 					<include name="doc_src/"/>
 					<include name="So how do I get this thing running.txt" />
