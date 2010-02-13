@@ -191,6 +191,11 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
 		JLabel databaseNameLabel = new JLabel(Localizer.get("DialogDatabase.mysql.schema-name") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
 		databaseNameField = new JTextField(10);
+		
+		// If creating new database, limit the allowed characters
+		if (newDatabase)
+			databaseNameField.setDocument(new DocumentRegExp("[a-z][a-z0-9]*")); //$NON-NLS-1$
+		
 		databaseNameField.setText(""); //$NON-NLS-1$
 
 		JPanel databaseNamePanel = new JPanel();
