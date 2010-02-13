@@ -194,7 +194,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 		
 		// If creating new database, limit the allowed characters
 		if (newDatabase)
-			databaseNameField.setDocument(new DocumentRegExp("[a-z][a-z0-9]*")); //$NON-NLS-1$
+			databaseNameField.setDocument(new DocumentRegExp("[a-z][a-z0-9\\_]*")); //$NON-NLS-1$
 		
 		databaseNameField.setText(""); //$NON-NLS-1$
 
