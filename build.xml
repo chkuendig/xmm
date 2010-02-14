@@ -798,14 +798,8 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 
     	<property name="tempdir" value="${mac-dist}/temp.app"/>
 
-	 <!--	<delete verbose="true" dir="${mac-dist}/${app-name}"/> -->
-
-	    <mkdir dir="${tempdir}"/>
-	    <mkdir dir="${tempdir}/Contents"/>
 	    <mkdir dir="${tempdir}/Contents/MacOS"/>
-	    <mkdir dir="${tempdir}/Contents/Resources"/>
-	    <mkdir dir="${tempdir}/Contents/Resources/Java"/>
-		<mkdir dir="${tempdir}/Contents/Resources/Java/config"/>
+	    <mkdir dir="${tempdir}/Contents/Resources/Java/config"/>
 
    		<copy file="${dist-tmp}/log4j.properties" todir="${tempdir}/Contents/Resources/Java/config"/>
  		<copy file="${dist-tmp}/lookAndFeels.ini" todir="${tempdir}/Contents/Resources/Java/lib/LookAndFeels/"/>
@@ -833,14 +827,12 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 			<arg line="755 ${tempdir}/Contents/MacOS/JavaApplicationStub"/>
 		</exec>
 
- 	
-
  	<!--	<copy file="packaging/mac/resources/Info.plist" todir="${tempdir}/Contents"/> -->
  	    <copy file="${dist-tmp}/Info.plist" todir="${tempdir}/Contents"/>
  		<copy file="packaging/mac/resources/PkgInfo" todir="${tempdir}/Contents"/>
 		<copy file="packaging/mac/resources/MovieManager.icns" todir="${tempdir}/Contents/Resources"/>
 		<copy file="MovieManager/MovieManager.jar" todir="${tempdir}/Contents/Resources/Java"/>
-		
+		 	
 		<copy todir="${tempdir}/Contents/Resources/Java/">
 		  <fileset dir="MovieManager/"
 				   includes="${library_file_list_mac}"
