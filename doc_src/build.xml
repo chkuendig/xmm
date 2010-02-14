@@ -4,7 +4,6 @@
 	
 	<description>Creation fo Readme and Changelog</description>
 			
-	<property name="ant-contrib-path" value="MovieManager/lib/ant-contrib-0.6.jar" />
 	
 	<!-- Import the ant contrib library -->
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
