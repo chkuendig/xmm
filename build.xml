@@ -841,8 +841,8 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 		<copy file="packaging/mac/resources/MovieManager.icns" todir="${tempdir}/Contents/Resources"/>
 		<copy file="MovieManager/MovieManager.jar" todir="${tempdir}/Contents/Resources/Java"/>
 		
-		<copy todir="${tempdir}/Contents/Resources/Java/lib">
-		  <fileset dir="MovieManager/lib"
+		<copy todir="${tempdir}/Contents/Resources/Java/">
+		  <fileset dir="MovieManager/"
 				   includes="${library_file_list_mac}"
 				   >
 		  </fileset>
