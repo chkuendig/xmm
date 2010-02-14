@@ -778,7 +778,7 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
 		
 	<!-- Readme -->
 	<target name="readme">
-		<ant antfile="build.xml" target="readme" dir="doc_src"/>
+		<ant antfile="doc_src/build.xml" target="readme" inheritAll="true" dir=""/>
 	</target>
 
 
@@ -810,9 +810,8 @@ log4j.appender.FileAppender.layout.FatalPattern = %-5p %l%n %m%n
    		<copy file="${dist-tmp}/log4j.properties" todir="${tempdir}/Contents/Resources/Java/config"/>
  		<copy file="${dist-tmp}/lookAndFeels.ini" todir="${tempdir}/Contents/Resources/Java/lib/LookAndFeels/"/>
  		 	
-		<copy file="MovieManager/config/MovieManager.tmx" todir="${tempdir}/Contents/Resources/Java/config"/>
-    	<copy file="MovieManager/config/castor.properties" todir="${tempdir}/Contents/Resources/Java/config"/>
-    	<copy file="MovieManager/config/mapping.xml" todir="${tempdir}/Contents/Resources/Java/config"/>
+		<copy file="MovieManager/config/castor.properties" todir="${tempdir}/Contents/Resources/Java/config"/>
+    	<copy file="MovieManager/config/Castor-mapping.xml" todir="${tempdir}/Contents/Resources/Java/config"/>
     	
 
 		<copy todir="${tempdir}/Contents/Resources/Java/reports">
