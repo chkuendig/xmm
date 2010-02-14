@@ -118,8 +118,9 @@ Here are some nice Look & Feels for Java:
 
 * `LaF list at javootoo.com:  <http://javootoo.l2fprod.com>`_
 * `Skinlf 		  <http://www.L2FProd.com>`_ - Skin Look & Feel
-* `JTatto   	  <http://www.jtattoo.net>`_ - JTattoo Look & Feel
+* `NimROD 		  <http://personales.ya.com/nimrod/index-en.html>`_ - NimROD Look & Feel
 * `Substance 	  <https://substance.dev.java.net>`_ - Substance Look & Feel
+* `JTatto   	  <http://www.jtattoo.net>`_ - JTattoo Look & Feel
 * `Office LaF 	  <http://officelnfs.sourceforge.net>`_ - Office Look & Feel
 * `JGoodies LaF   <http://www.jgoodies.com>`_ - JGoodies Look & Feel
 * `Kunstoff laf   <http://www.incors.org>`_ - Kunstoff Look & Feel
