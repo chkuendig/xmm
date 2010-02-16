@@ -58,6 +58,8 @@ public class AppUpdater implements UpdatedApplication {
         	ap.setForceDisplay(forceDisplay);
         	ap.setShowAutomatically(showAutomatically);
         	        	
+        	log.debug("Loading updater config from " + ap.getUpdaterConfigFile());
+        	
         	updater = new Updater("http://xmm.sourceforge.net/updates/update.xml", ap, this);
         	        	
         } catch (UpdaterException ex) {
