@@ -666,6 +666,9 @@ public class SysUtil {
     	return false;
     }
 
-
+	
+	public static String colourToString(java.awt.Color c) {
+	    return Integer.toHexString(0xFF000000 | c.getRGB()).substring(2);
+	}
  
 }
