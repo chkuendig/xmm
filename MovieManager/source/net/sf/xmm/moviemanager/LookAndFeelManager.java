@@ -38,6 +38,8 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
+import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTreeUI;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
@@ -73,6 +75,12 @@ public class LookAndFeelManager {
 
 	private boolean defaultLookAndFeelDecorated = false;
     
+	static {
+		// Enable anti-aliasing for Java 1.5
+		System.setProperty("swing.aatext","true");
+		System.setProperty("awt.useSystemAAFontSettings", "on");
+	}
+	
     public boolean getDefaultLookAndFeelDecorated() {
 		return defaultLookAndFeelDecorated;
 	}
@@ -202,6 +210,10 @@ public class LookAndFeelManager {
         	
             if (laFSet) {
             	ExtendedTreeCellRenderer.setDefaultColors();
+            	
+            	if (MovieManager.getDialog() != null && 
+            			MovieManager.getDialog().getMoviesList() instanceof ExtendedJTree)
+            		((ExtendedJTree) MovieManager.getDialog().getMoviesList()).resetUI();
             }
             else {
             	setLookAndFeelType(LookAndFeelType.CustomLaF);
