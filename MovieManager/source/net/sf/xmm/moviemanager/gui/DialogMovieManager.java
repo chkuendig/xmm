@@ -25,6 +25,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
@@ -32,6 +33,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -142,15 +144,9 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     	return menuBar;
     }
 
-
     JPanel filterPanel;
     JPanel movieListPanel;
     
-    JPanel movieInfoPanel;
-    JPanel generalInfoPanel;
-    JPanel plotPanel;
-    JPanel castPanel;
-    JPanel miscellaneousPanel;
     JPanel additionalInfoPanel;
     JPanel notesPanel;
     JPanel panelMovieInfo;
@@ -158,7 +154,6 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
     JScrollPane movieListScrollPane;
     JScrollPane plotScrollPane;
     JScrollPane castScrollPane;
-    JScrollPane miscellaneousScrollPane;
     JScrollPane additionalInfoScrollPane;
 
     JTabbedPane tabbedPlotCastMiscellaneous;
@@ -1265,7 +1260,7 @@ public class DialogMovieManager extends JFrame implements ComponentListener {
         
         
         titleField = new JTextField();
-        titleField.setFont(new Font("Dialog", Font.BOLD, fontSize +3)); //$NON-NLS-1$
+        titleField.setFont(new Font("Dialog", Font.BOLD, fontSize + 5)); //$NON-NLS-1$
         titleField.setEditable(false);
         
         panelDateAndTitle.add(titleField, BorderLayout.CENTER);
