@@ -68,6 +68,10 @@ public class ExtendedJTree extends JTree implements Autoscroll /*, DragGestureLi
 		return this;
 	}
 	
+	public void resetUI() {
+		 setUI(new ExtendedJTreeUI(this));
+	}
+	
    /**
     * Constructor.
     * @param root The Root node for the JTree.
