@@ -376,6 +376,14 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		lafPanel.add(buttonOptions, BorderLayout.NORTH);
 
+		
+		JLabel noteLabel = new JLabel();
+		noteLabel.setText("<html><center><p>After changing the Look & Feel, the user interface might<br> not look exactly as it will after restarting the application.</p></center></html>");
+		JPanel noteLabelPanel = new JPanel();
+		noteLabelPanel.add(noteLabel);
+		
+		lafPanel.add(noteLabelPanel, BorderLayout.CENTER);
+		
 		/* Laf choosers */
 
 		JPanel lafChooserPanel = new JPanel(new GridLayout(4, 1));
@@ -2220,7 +2228,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 				MovieManager.getDialog().updateJTreeIcons();
 
 				/* Necessary to update the icons in the movielist */
-				MovieManager.getDialog().getMoviesList().updateUI();
+				//MovieManager.getDialog().getMoviesList().updateUI();
 				MovieManagerCommandSelect.execute();
 
 				return;
