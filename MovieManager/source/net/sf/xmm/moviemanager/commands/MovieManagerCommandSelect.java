@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
@@ -513,7 +514,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 	}
 
 
-			
+	static java.awt.Color textfieldForegroundColor = null;		
+	
 	/**
 	 * Updates the standard panel with the movie info of the current model
 	 * 
@@ -584,8 +586,31 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 									(MovieManager.getLookAndFeelManager().getCustomLookAndFeel().indexOf("Synthetica") != -1)))
 				fontSize = "4";
 			
-				
-			misc.append("<html><font size="+fontSize+" face=\""+ fontname +"\">"); //$NON-NLS-1$ //$NON-NLS-2$
+			/*
+			java.util.Map<java.awt.font.TextAttribute, ?> m = new javax.swing.JTextArea().getFont().getAttributes();
+			
+			java.util.Set<java.awt.font.TextAttribute> keys = m.keySet();
+			
+			for (java.awt.font.TextAttribute key : keys) {
+				System.err.println(m.get(key));
+			}
+			*/
+			
+			if (textfieldForegroundColor == null) {
+
+				try {
+					GUIUtil.invokeAndWait(new Runnable() {
+
+						public void run() {
+							textfieldForegroundColor = new javax.swing.JTextArea().getForeground();
+						}
+					});
+				} catch (Exception e) {
+					log.warn("Exception:" + e.getMessage());
+				}
+			}
+						
+			misc.append("<html><font size="+fontSize+" face=\""+ fontname + "\" color=\"#"+ SysUtil.colourToString(textfieldForegroundColor) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (!model.getWebSoundMix().equals("")) //$NON-NLS-1$
 				misc.append("<b>" + Localizer.get("MovieManagerCommandSelect.miscellaneous-panel.field.sound-mix.title") + "</b><br>" + model.getWebSoundMix() + "<br><br>"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -605,8 +630,8 @@ public class MovieManagerCommandSelect extends KeyAdapter implements TreeSelecti
 			if (!model.getAka().equals("")) //$NON-NLS-1$
 				misc.append("<b>" + Localizer.get("MovieManagerCommandSelect.miscellaneous-panel.field.also-known-as.title") + ":</b><br>"  + model.getAka().replaceAll("\r\n|\n", "<br>") ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
-			misc.append("</FONT></html>"); //$NON-NLS-1$
-
+			misc.append("</font></html>"); //$NON-NLS-1$
+			
 			MovieManager.getDialog().getMiscellaneous().setText(misc.toString());
 			MovieManager.getDialog().getMiscellaneous().setCaretPosition(0);
 
