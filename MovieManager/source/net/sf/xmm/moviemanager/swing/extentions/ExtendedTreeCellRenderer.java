@@ -24,7 +24,10 @@ package net.sf.xmm.moviemanager.swing.extentions;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.io.File;
 import java.util.HashMap;
@@ -52,6 +55,8 @@ import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedEvent;
 import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedEventListener;
 
 import org.apache.log4j.Logger;
+
+import sun.swing.SwingUtilities2;
 
 public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer, NewDatabaseLoadedEventListener {
 
@@ -130,10 +135,21 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 		movieImage = FileUtil.getImage("/images/movie.png");
 		serieImage = FileUtil.getImage("/images/serie.png");
 		setOpaque(true);
-
+	
 		setDefaultColors();	
 	}
 
+	
+	/**
+	 * Enable anti-aliasing on movie list text in Java 1.6
+	 */
+	@Override
+	public void paintComponent(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint (RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        super.paintComponent(g2);
+    }
 	
 	public void newDatabaseLoaded(NewDatabaseLoadedEvent evt) {
 		folder = null;
@@ -214,6 +230,8 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 
 				setIcon(icon);
 
+				useCovers = true;
+				
 				if (useCovers) {
 
 					Object view = views.get(entry);
@@ -225,19 +243,33 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 
 						int fontSize = 3 + h / 40;
 
-						//coverTitleBuf.setLength(0);
-						coverTitleBuf = new StringBuffer();
-						coverTitleBuf.append("<html><font size='");
-						coverTitleBuf.append(fontSize);
-						coverTitleBuf.append("'><b>");
-						coverTitleBuf.append(entry.isEpisode() ? ((ModelEpisode) entry).getEpisodeTitle() : entry.getTitle());
-						coverTitleBuf.append("</b></font><br><font size='");
-						coverTitleBuf.append((fontSize - 1));
-						coverTitleBuf.append("'>");
-						coverTitleBuf.append(entry.getDate());
-						coverTitleBuf.append("</font></html>");
+						String coverTitle = null;
+												
+						// No date
+						if (fontSize < 4) {
+														
+							if (noDatePrefix == null || lastFontSize != fontSize) {
+								noDatePrefix = "<html><font size='" + fontSize + "'><b>";
+								noDatepostfix = "</b></font></html>";
+							}
+							
+							coverTitle = noDatePrefix + 
+											(entry.isEpisode() ? ((ModelEpisode) entry).getEpisodeTitle() : entry.getTitle()) + 
+											noDatepostfix;
+						}
+						else {
+														
+							if (withDatePrefix == null || lastFontSize != fontSize) {
+								withDatePrefix = "<html><font size='" + fontSize + "'><b>";
+								withDatepostfix = "</b></font><br><font size='" + (fontSize - 1) + "'>";
+							}
+							
+							coverTitle = withDatePrefix + 
+											(entry.isEpisode() ? ((ModelEpisode) entry).getEpisodeTitle() : entry.getTitle()) + 
+											withDatepostfix + entry.getDate() + "</font></html>";
+						}
 						
-						setText(coverTitleBuf.toString());
+						setText(coverTitle);
 						views.put(entry, getClientProperty("html"));
 					}
 				}
@@ -261,7 +293,13 @@ public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer
 		return p;
 	}
 
-		
+	String noDatePrefix = null;
+	String noDatepostfix = null;
+	
+	String withDatePrefix = null;
+	String withDatepostfix = null;
+	
+	int lastFontSize = 0;
 	
 	public static void setDefaultColors() {
 			
