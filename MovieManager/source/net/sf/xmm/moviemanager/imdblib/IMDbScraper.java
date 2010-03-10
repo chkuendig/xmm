@@ -1068,7 +1068,7 @@ public class IMDbScraper implements IMDb {
     		
     	HashMap<String, String> classInfo = new HashMap<String, String>();
     	
-    	Pattern contentPattern = Pattern.compile("<div.*?class=\"info\">.*?<.+?>(.+?)(?:\\(.*?)?</.+?>.*?<div\\sclass=\"info-content\">(.+?)</div>", Pattern.DOTALL);
+    	Pattern contentPattern = Pattern.compile("<div.*?class=\"info\">.*?<.+?>(.+?)(?:\\(.*?)?</.+?>.*?<div\\sclass=\"info-content.*?\">(.+?)</div>", Pattern.DOTALL);
 		    	
     	// Find start index of all class info, which is the conten we seek
     	Pattern classStart = Pattern.compile("<div.*?class=\"info\">");
