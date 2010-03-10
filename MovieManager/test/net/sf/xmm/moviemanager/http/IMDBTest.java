@@ -22,17 +22,25 @@ package net.sf.xmm.moviemanager.http;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import javax.xml.xpath.XPathExpressionException;
+
+import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.imdblib.IMDb;
 import net.sf.xmm.moviemanager.imdblib.IMDbScraper;
+import net.sf.xmm.moviemanager.imdblib.XPathParser;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbListHit;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 
 public class IMDBTest  {
@@ -59,7 +67,7 @@ public class IMDBTest  {
 	}
 
 	
-	//@Test
+	@Test
 	public void getSimpleMatchesTest() {
 
 		IMDbScraper imdb = null;
@@ -107,7 +115,7 @@ public class IMDBTest  {
 
 
 
-//@Test
+	@Test
 	public void getMatchesTest() {
 
 		/*
@@ -172,7 +180,7 @@ public class IMDBTest  {
 
 	}
 	
-	//@Test
+	@Test
 	public void dataRetrievalTest() throws Exception {
 		
 		IMDbScraper imdb = null;
@@ -186,7 +194,9 @@ public class IMDBTest  {
 		// Terminator 2
 		StringBuffer data = imdb.getURLData("0103064").getData();
 		
+		System.err.println("grabInfo");
 		ModelIMDbEntry movie = imdb.grabInfo("0103064", data);
+		System.err.println("done grabInfo");
 		
 		String expectedTitle = "Terminator 2: Judgment Day";
 		String expectedDate = "1991";
@@ -251,10 +261,12 @@ public class IMDBTest  {
 		assertEquals(expectedMpaa, movie.getMpaa());
 		assertEquals(expectedAka, movie.getAka());
 		assertEquals(expectedCertification, movie.getCertification());
-		assertEquals(expectedColor, movie.getColour());		
+		assertEquals(expectedColor, movie.getColour());
+		
+		assertNotNull("No cover available!", movie.getCoverData());
 	}
 	
-	//@Test
+	@Test
 	public void dataRetrievalSeriesTest() throws Exception {
 		
 		IMDbScraper imdb = null;
@@ -308,7 +320,7 @@ public class IMDBTest  {
 "Nightfall (Japan: English title) [en]";
 	
 	
-		String expectedCertification = "UK:12 (some episodes), UK:15 (some episodes), Australia:PG (some episodes), Portugal:M/12, New Zealand:M, USA:TV-14, Australia:M, Israel:PG, Singapore:M18 (DVD rating) (season 7), Singapore:PG, USA:TV-14 (some episodes), USA:TV-PG (some episodes)";
+		String expectedCertification = "UK:12 (some episodes), UK:15 (some episodes), Australia:PG (some episodes), Portugal:M/12, New Zealand:M, USA:TV-14, Australia:M, Israel:PG, Singapore:M18 (DVD rating) (season 6) (season 7), Singapore:PG (season 1 to 5), USA:TV-14 (some episodes), USA:TV-PG (some episodes)";
 		String expectedColor = "Color";
 				
 		assertTrue(Double.parseDouble(series.getRating()) > 5);
@@ -330,11 +342,11 @@ public class IMDBTest  {
 		assertEquals(expectedCertification, series.getCertification());
 		assertEquals(expectedColor, series.getColour());		
 		
-		
+		assertNotNull("No cover available!", series.getCoverData());
 	}
 	
 	
-	//@Test
+	@Test
 	public void dataRetrievalEpisodeTest() throws Exception {
 		
 		IMDbScraper imdb = null;
@@ -388,10 +400,12 @@ public class IMDBTest  {
 		assertEquals(expectedMpaa, series.getMpaa());
 		assertEquals(expectedAka, series.getAka());
 		assertEquals(expectedCertification, series.getCertification());
-		assertEquals(expectedColor, series.getColour());		
+		assertEquals(expectedColor, series.getColour());
+		
+		assertNull("No cover available!", series.getCoverData());
 	}
 	
-	//@Test
+	@Test
 	public void dataRetrievalMultipleDirectorsTest() throws Exception {
 		
 		IMDbScraper imdb = null;
@@ -417,7 +431,7 @@ public class IMDBTest  {
 		assertEquals(expectedWriter, movie.getWrittenBy());
 	}
 	
-	//@Test
+	@Test
 	public void dataRetrievalTVSeriesTest() throws Exception {
 		
 		IMDbScraper imdb = null;
@@ -478,6 +492,7 @@ public class IMDBTest  {
 		assertEquals(expectedCertification, series.getCertification());
 		assertEquals(expectedColor, series.getColour());		
 		
+		assertNotNull("No cover available!", series.getCoverData());
 		
 	}
 	
@@ -495,7 +510,35 @@ public class IMDBTest  {
 		settings.setIMDbAuthenticationPassword(password);
 		
 		IMDbScraper imdb = new IMDbScraper(settings);
-				
+		
+		//http://www.imdb.com/mymovies/list?votehistory
+		
+		HTTPResult result = imdb.getVoteHistory();
+	
+		String urlID = "0093773";
+		
+		StringBuffer data = imdb.getURLData(urlID).getData();
+		//ModelIMDbEntry model = imdb.grabInfo(urlID, data);		
+		
+		ArrayList<ModelIMDbListHit> hits = imdb.getVotedMovies();
+		
+		System.err.println("hit size:" + hits.size());
+		
+		for (ModelIMDbListHit hit : hits) {
+			System.err.println(hit);
+		}
+		
+		//ArrayList<ModelIMDbSearchHit> hits = imdb.parseList(result.getData());
+		
+		
+		
+		//String imdb.getPersonalVote(urlID);
+		
+		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/votehistory.html", result.getData());
+	
+		//http://www.imdb.com/title/tt0875034/vote?v=6;k=7UE2s2Mrm.4oT0CLp7.ojwas13Wlr-QjVa9UEAYMQCQWrNd0Fa-k81X.5OBmD8RANqzAM.Uv52NV79RQNjuAQHas11P2.KdTU_
+		//http://www.imdb.com/title/tt0093773/vote?v=6;k=YVEc2cVFCmaakIjYv-3ASwas13Wl36RTVa.U8GYMQCQWrNd0Fb-081X.5OB2D8RANqzAM.Uv52NV79RQNjuAQHas11P2.KdTU_
 	}
+	
 	
 }
