@@ -11,6 +11,7 @@ Version 2.9.1.3 (20-March-2010)
 
   - Enabled anti-aliasing in Swing GUI providing smoother text.
   - When not showing icons in the movie list, the text size is now automatically increased when increasing the list height.
+  - The reports in the report generator were showing incorrect page count.
   
 - IMDb Library:
   
