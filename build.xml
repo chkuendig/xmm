@@ -34,7 +34,7 @@
 
 	<!-- set global properties for this build -->
 
-	<property name="version" value="2.9.1.2" />
+	<property name="version" value="2.9.1.3" />
 	
 	<property name="versionName" value="${version}" />
 	
