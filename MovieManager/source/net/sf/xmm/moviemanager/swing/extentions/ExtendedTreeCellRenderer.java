@@ -56,8 +56,6 @@ import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedEventListener;
 
 import org.apache.log4j.Logger;
 
-import sun.swing.SwingUtilities2;
-
 public class ExtendedTreeCellRenderer extends JLabel implements TreeCellRenderer, NewDatabaseLoadedEventListener {
 
 	Logger log = Logger.getLogger(getClass());
