@@ -5,6 +5,18 @@
 ========================================
 
 
+Version 2.9.1.3 (20-March-2010)
+
+- General improvements:
+
+  - Enabled anti-aliasing in Swing GUI providing smoother text.
+  - When not showing icons in the movie list, the text size is now automatically increased when increasing the list height.
+  
+- IMDb Library:
+  
+  - IMDb parser would hang. (Fixed 10.03.2010)
+
+
 Version 2.9.1.2 (13-February-2010)
 
 - General improvements:
