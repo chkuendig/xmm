@@ -287,6 +287,7 @@ public class DialogReportGenerator extends JFrame implements ActionListener, Win
         File reportDir = new File(reportsDir);
         
         String[] files = reportDir.list(this);
+        
         if (files.length > 0) {
             LayoutItem[] layouts = new LayoutItem[files.length];
             for (int i = 0; i < files.length; i++) {
@@ -533,37 +534,18 @@ public class DialogReportGenerator extends JFrame implements ActionListener, Win
         boolean episodes;
 
         public LayoutItem(String filename) {
-            this.filename = filename;
-            String prefix = filename.substring(0, filename.length() - 7);
-            displayname = mixCase(prefix.replaceAll("_", " "));
-            examplename = prefix + ".png";
-            sourcename = prefix + ".jrxml";
+        	this.filename = filename;
+
+        	if (filename.indexOf(".") != -1) {
+        		String prefix = filename.substring(0, filename.lastIndexOf("."));
+        		displayname = prefix.replaceAll("_", " ");
+        		examplename = prefix + ".png";
+        		sourcename = prefix + ".jrxml";
+        	}
         }
 
         public String toString() {
             return displayname;
-        }
-
-        public String mixCase(String text) {
-            StringBuffer buf = new StringBuffer();
-            int len = text.length();
-            boolean blank = true;
-            for (int i = 0; i < len; i++) {
-                char c = text.charAt(i);
-                if (c == ' ' || c == ',') {
-                    blank = true;
-                    buf.append(c);
-                }
-                else
-                if (blank) {
-                    buf.append(Character.toUpperCase(c));
-                    blank = false;
-                }
-                else {
-                    buf.append(Character.toLowerCase(c));
-                }
-            }
-            return new String(buf);
         }
 
         public void fetchInfo() {
@@ -580,12 +562,9 @@ public class DialogReportGenerator extends JFrame implements ActionListener, Win
                 filename = reportsDir + sourcename;
                 
                 if (new File(filename).exists()) {
-                    try {
-                        FileInputStream fis = new FileInputStream(filename);
-                        byte[] buffer = new byte[5000]; // 5000 is a safe margin since custom fields are placed first
-                        fis.read(buffer, 0, buffer.length);
-                        fis.close();
-                        String bufferText = new String(buffer);
+                    
+                	try {
+                		String bufferText = FileUtil.readFileToStringBuffer(filename).toString();
                         description = getCustomPropertyValue(bufferText, "xmm.description");
                         sortField = getCustomPropertyValue(bufferText, "xmm.sortfield");
                         String s = getCustomPropertyValue(bufferText, "xmm.episodes");
@@ -594,7 +573,6 @@ public class DialogReportGenerator extends JFrame implements ActionListener, Win
                     catch (Exception ex) {
                     }
                 }
-
                 infoFetched = true;
             }
         }
