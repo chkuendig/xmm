@@ -118,6 +118,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 	public JCheckBox enableExludeUserdefinedInfo;
 	public JCheckBox enableExludeAllAfterMatchOnUserDefinedInfo;
 	public JCheckBox enableSearchNfoForImdb;
+	public JCheckBox enableCombineSameFolderOnly;
 	public JCheckBox enableSkipHiddenDirectories;
 	public JCheckBox enableUseFolderName;
 	public JCheckBox enablePrefixMovieTitle;
@@ -333,6 +334,12 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		
 		miscOptionsPanel.add(enableSearchNfoForImdb);
 			
+		enableCombineSameFolderOnly = new JCheckBox(Localizer.get("DialogAddMultipleMovies.panel-options.enable-combine-same-folder-only.text")); //$NON-NLS-1$
+		enableCombineSameFolderOnly.setActionCommand("enableSearchSameFolderOnly"); //$NON-NLS-1$
+		enableCombineSameFolderOnly.setToolTipText(Localizer.get("DialogAddMultipleMovies.panel-options.enable-combine-same-folder-only-tooltip")); //$NON-NLS-1$
+		
+		miscOptionsPanel.add(enableCombineSameFolderOnly);
+		
 		enableSkipHiddenDirectories = new JCheckBox("Skip hidden directories");
 		enableSkipHiddenDirectories.setActionCommand("enableSkipHiddenDirectories"); //$NON-NLS-1$
 		enableSkipHiddenDirectories.addActionListener(new ActionListener() {
@@ -930,6 +937,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		enableExludeParantheses.setSelected(config.getMultiAddEnableExludeParantheses());
 		enableUseParentFolderIfCD.setSelected(config.getMultiAddTitleOptionNoCd());
 		enableSearchNfoForImdb.setSelected(config.getMultiAddSearchNfoForImdb());
+		enableCombineSameFolderOnly.setSelected(config.getMultiAddCombineSameFolderOnly());
 		
 		
 		enablePrefixMovieTitle.setSelected(config.getMultiAddPrefixMovieTitle());
@@ -1019,6 +1027,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		config.setMultiAddFilterOutDuplicatesByAbsolutePath(filterOutDuplicatesEntireFilePath.isSelected());
 				
 		config.setMultiAddSearchNfoForImdb(enableSearchNfoForImdb.isSelected());
+		config.setMultiAddCombineSameFolderOnly(enableCombineSameFolderOnly.isSelected());
 		config.setMultiAddSkipHiddenDirectories(enableSkipHiddenDirectories.isSelected());
 		config.setMultiAddPrefixMovieTitle(enablePrefixMovieTitle.isSelected());
 		config.setMultiAddEnableExludeUserdefinedInfo(enableExludeUserdefinedInfo.isSelected());
@@ -1424,7 +1433,9 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 		for (int i = 0; i <fileToAddListModel.getSize(); i++) {
 			list.add((Files) fileToAddListModel.get(i));
 		}
-	
+
+		boolean check_only_same_folder = enableCombineSameFolderOnly.isSelected();
+		
 		for (int i = 0; i < list.size(); i++) {
 			
 			Files f1 = list.get(i);
@@ -1436,12 +1447,35 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 			
 			if (f1Name == null)
 				continue;
+
+			String f1Dir = "";
+			String f1DirParent = "";
+			boolean only_in_same_dir = true;
+			if (check_only_same_folder) {
+				// Search only within movie directory or parent directory if it starts with "CD"
+				File f1DirFile = f1.getParentFile();
+				f1Dir = f1DirFile.getAbsolutePath();
+				if (f1DirFile.getName().toUpperCase().startsWith("CD")) {
+					f1DirParent = f1DirFile.getParent();
+					only_in_same_dir = false;
+				}
+			}
 			
 			ArrayList<Files> toRemove = new ArrayList<Files>();
 			for (int j = i+1; j < list.size(); j++) {
 				
 				Files f2 = list.get(j);
 				String f2Name = f2.getName();
+
+				if (check_only_same_folder) {
+					String f2Dir = f2.getParent();
+					if (only_in_same_dir && !f2Dir.startsWith(f1Dir))
+						// Only search for equal files within same directory
+						continue;
+					else if (!only_in_same_dir && !f2Dir.startsWith(f1DirParent))
+						// Only search for equal files within same parent (and sub) directory
+						continue;
+				}
 								
 				if (f2Name == null)
 					continue;

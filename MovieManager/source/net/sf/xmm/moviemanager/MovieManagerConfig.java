@@ -330,6 +330,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	private boolean multiAddEnableExludeUserdefinedInfo;
 	private boolean multiAddTitleOptionNoCd;
 	private boolean multiAddAddSearchNfoForImdb;
+	private boolean multiAddAddCombineSameFolderOnly;
 	private boolean multiAddSkipHiddenDirectories = true;
 	private boolean multiAddPrefixMovieTitle;
 	private boolean multiAddEnableAutomaticCombine = true;
@@ -1526,6 +1527,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		multiAddAddSearchNfoForImdb = val;
 	}
 	
+	public boolean getMultiAddCombineSameFolderOnly() {
+		return multiAddAddCombineSameFolderOnly;
+	}
+	
+	public void setMultiAddCombineSameFolderOnly(boolean val) {
+		multiAddAddCombineSameFolderOnly = val;
+	}
+	
 	public boolean getMultiAddSkipHiddenDirectories() {
 		return multiAddSkipHiddenDirectories;
 	}
@@ -2452,6 +2461,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 						
 			setMultiAddTitleOptionNoCd(getBooleanValue("multiAddTitleOptionNoCd:", config, getMultiAddTitleOptionNoCd()));
 			setMultiAddSearchNfoForImdb(getBooleanValue("multiAddSearchNfoForImdb:", config, getMultiAddSearchNfoForImdb()));
+			setMultiAddCombineSameFolderOnly(getBooleanValue("multiAddCombineSameFolderOnly:", config, getMultiAddCombineSameFolderOnly()));
 			setMultiAddSkipHiddenDirectories(getBooleanValue("multiAddSkipHiddenDirectories:", config, getMultiAddSkipHiddenDirectories()));
 			setMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo(getBooleanValue("multiAddEnableExludeAllAfterMatchOnUserDefinedInfo:", config, getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo()));
 			setMultiAddEnableSearchInSubdirectories(getBooleanValue("multiAddEnableSearchInSubdirectories:", config, getMultiAddEnableSearchInSubdirectories()));
@@ -2951,6 +2961,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("multiAddTitleOption:", getMultiAddTitleOption(), settings);
 		 appendToConfig("multiAddTitleOptionNoCd:", getMultiAddTitleOptionNoCd(), settings);
 		 appendToConfig("multiAddSearchNfoForImdb:", getMultiAddSearchNfoForImdb(), settings);
+		 appendToConfig("multiAddCombineSameFolderOnly:", getMultiAddCombineSameFolderOnly(), settings);
 		 appendToConfig("multiAddSkipHiddenDirectories:", getMultiAddSkipHiddenDirectories(), settings);
 		 appendToConfig("multiAddEnableExludeAllAfterMatchOnUserDefinedInfo:", getMultiAddEnableExludeAllAfterMatchOnUserDefinedInfo(), settings);
 		 appendToConfig("multiAddEnableSearchInSubdirectories:", getMultiAddEnableSearchInSubdirectories(), settings);

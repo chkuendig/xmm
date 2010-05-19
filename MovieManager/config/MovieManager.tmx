@@ -861,6 +861,36 @@
                 <seg>Scan folder for nfo or txt files</seg>
             </tuv>
         </tu>
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-options.enable-combine-same-folder-only-tooltip">
+            <prop type="x-Group">DialogAddMultipleMovies</prop>
+            <tuv changedate="20100115T000000Z" changeid="Unknown"
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Combine only movies in the same folder or parent folder if it starts with "CD"</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Combine only movies in the same folder or parent folder if it starts with "CD"</seg>
+            </tuv>
+        </tu>
+        <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-options.enable-combine-same-folder-only.text">
+            <prop type="x-Group">DialogAddMultipleMovies</prop>
+            <tuv changedate="20070121T000000Z" changeid=""
+                creationdate="20070121T000000Z" creationid="" lang="en-US">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Combine only movies in the same folder</seg>
+            </tuv>
+            <tuv changedate="20100104T000000Z" changeid=""
+                creationdate="20100104T000000Z" creationid="" lang="no-NO">
+                <prop type="x-Comment"/>
+                <prop type="x-Translated">false</prop>
+                <seg>Combine only movies in the same folder</seg>
+            </tuv>
+        </tu>
         <tu datatype="Text" tuid="DialogAddMultipleMovies.panel-subdirs.search-through-subdirs.text">
             <prop type="x-Group">DialogAddMultipleMovies</prop>
             <tuv changedate="20070121T000000Z" changeid=""
