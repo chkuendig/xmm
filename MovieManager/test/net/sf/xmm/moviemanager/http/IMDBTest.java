@@ -67,7 +67,7 @@ public class IMDBTest  {
 	}
 
 	
-	@Test
+	//@Test
 	public void getSimpleMatchesTest() {
 
 		IMDbScraper imdb = null;
@@ -115,7 +115,7 @@ public class IMDBTest  {
 
 
 
-	@Test
+	//@Test
 	public void getMatchesTest() {
 
 		/*
@@ -194,9 +194,7 @@ public class IMDBTest  {
 		// Terminator 2
 		StringBuffer data = imdb.getURLData("0103064").getData();
 		
-		System.err.println("grabInfo");
 		ModelIMDbEntry movie = imdb.grabInfo("0103064", data);
-		System.err.println("done grabInfo");
 		
 		String expectedTitle = "Terminator 2: Judgment Day";
 		String expectedDate = "1991";
@@ -212,36 +210,41 @@ public class IMDBTest  {
 		String expectedAwards = "Won 4 Oscars. Another 20 wins & 18 nominations";
 		String expectedMpaa = "Rated R for strong sci-fi action and violence, and for language.";
 		String expectedAka = 
-"El Exterminator 2 (USA: Spanish title)\n" +
-"T2 (USA) (promotional abbreviation)\n" +
-"T2 - Terminator 2: Judgment Day\n" +
-"T2: Extreme Edition (USA) (video box title)\n" +
-"T2: Ultimate Edition (USA) (video box title)\n" +
-"Terminator 2 - Le jugement dernier (France)\n" +
-"Terminator 2: el juicio final (Argentina) (Peru) (Spain) [es]\n" +
-"Терминатор 2: Судный день (Russia) [ru]\n" +
-"Exterminador Implacável 2: O Dia do Julgamento (Portugal) [pt]\n" +
-"O Exterminador do Futuro 2: O Julgamento Final (Brazil) [pt]\n" +
-"Terminátor 2. - Az ítélet napja (Hungary) [hu]\n" +
-"Terminátor 2: Den zúctování (Czechoslovakia: Czech title) [cs]\n" +
-"Terminátor 2: Den zúctovania (Czechoslovakia: Slovak title) [sk]\n" +
-"Terminateur 2: Le jugement dernier (Canada: French title) [fr]\n" +
-"Terminator 2 (Poland) (TV title) [pl]\n" +
-"Terminator 2 - Mahser günü (Turkey: Turkish title) [tr]\n" +
-"Terminator 2 - Sodni dan (Slovenia) [sl]\n" +
-"Terminator 2 - Sudnji dan (Serbia) [sr]\n" +
-"Terminator 2 - Tag der Abrechnung (Germany) [de]\n" +
-"Terminator 2 - domedagen (Sweden) [sv]\n" +
-"Terminator 2 - domens dag (Finland: Swedish title) [sv]\n" +
-"Terminator 2 - il giorno del giudizio (Italy) [it]\n" +
-"Terminator 2 - tuomion päivä (Finland) [fi]\n" +
-"Terminator 2: Dommedag (Denmark) [da]\n" +
-"Terminator 2: Dzien sadu (Poland) [pl]\n" +
-"Terminator 2: Sudnji dan (Croatia) [hr]\n" +
-"Terminator 2: Sudnyi den' (Soviet Union: Russian title) [ru]";
+		
+		"\"El Exterminator 2\" - USA (Spanish title)\n" +
+		"\"T2\" - USA (promotional abbreviation)\n" + 
+		"\"T2 - Terminator 2: Judgment Day\" -\n" + 
+		"\"T2: Extreme Edition\" - USA (video box title)\n" + 
+		"\"T2: Ultimate Edition\" - USA (video box title)\n" + 
+		"\"Terminator 2 - Le jugement dernier\" - France\n" + 
+		"\"Terminator 2: el juicio final\" - Argentina, Peru, Spain\n" + 
+		"\"Терминатор 2: Судный день\" - Russia\n" + 
+		"\"Exolothreftis 2 - Mera krisis\" - Greece\n" + 
+		"\"Exterminador Implacável 2: O Dia do Julgamento\" - Portugal\n" + 
+		"\"O Exterminador do Futuro 2: O Julgamento Final\" - Brazil\n" + 
+		"\"Terminátor 2. - Az ítélet napja\" - Hungary\n" + 
+		"\"Terminátor 2: Den zúctování\" - Czechoslovakia (Czech title)\n" + 
+		"\"Terminátor 2: Den zúctovania\" - Czechoslovakia (Slovak title)\n" + 
+		"\"Terminateur 2: Le jugement dernier\" - Canada (French title)\n" + 
+		"\"Terminator 2\" - Japan (English title)\n" + 
+		"\"Terminator 2\" - Poland (TV title)\n" + 
+		"\"Terminator 2 - El día del juicio\" - Mexico\n" + 
+		"\"Terminator 2 - Mahser günü\" - Turkey (Turkish title)\n" + 
+		"\"Terminator 2 - Sodni dan\" - Slovenia\n" + 
+		"\"Terminator 2 - Sudnji dan\" - Serbia\n" + 
+		"\"Terminator 2 - Tag der Abrechnung\" - Germany\n" + 
+		"\"Terminator 2 - domedagen\" - Sweden\n" + 
+		"\"Terminator 2 - domens dag\" - Finland (Swedish title)\n" + 
+		"\"Terminator 2 - il giorno del giudizio\" - Italy\n" + 
+		"\"Terminator 2 - tuomion päivä\" - Finland\n" + 
+		"\"Terminator 2: Dommedag\" - Denmark\n" + 
+		"\"Terminator 2: Dzien sadu\" - Poland\n" + 
+		"\"Terminator 2: Sudnji dan\" - Croatia\n" + 
+		"\"Terminator 2: Sudnyi den'\" - Soviet Union (Russian title)";
+		
 		
 	
-		String expectedCertification = "Canada:18 (Nova Scotia) (DVD rating), Canada:A (Nova Scotia) (original cut), Canada:AA (Ontario) (original cut), Canada:PA (Manitoba) (original cut), Finland:K-18 (original rating) (1991), Italy:T, USA:R (certificate #31159), Iceland:16, South Korea:15, Brazil:12, Malaysia:18SG, New Zealand:M, Netherlands:12 (edited TV version), Portugal:M/12, Argentina:16, Australia:M, Canada:13+ (Quebec), Canada:18A (Alberta) (re-rating) (1999), Canada:18A (Manitoba/Ontario) (DVD rating), Chile:14, Finland:K-16 (re-rating) (1991), France:-12, Germany:16, Ireland:15, Israel:PG, Japan:R-15, Netherlands:16, Norway:15 (video rating) (director's cut), Norway:18 (original rating), Peru:14, Singapore:NC-16, Singapore:PG (cut), Spain:18, Sweden:15, UK:15 (original rating) (cut), UK:15 (video rating) (1992) (cut), UK:15 (video re-rating) (2001) (uncut), UK:18 (laserdisc rating) (1992) (uncut), Iran:18+";
+		String expectedCertification = "Canada:18 (Nova Scotia) (DVD rating), Canada:A (Nova Scotia) (original cut), Canada:AA (Ontario) (original cut), Canada:PA (Manitoba) (original cut), Finland:K-18 (original rating) (1991), Italy:T, USA:R (certificate #31159), Iceland:16, South Korea:15, Brazil:12, Malaysia:18SG, New Zealand:M, Netherlands:12 (edited TV version), Portugal:M/12, Argentina:13 (re-rating), Argentina:16 (original rating), Australia:M, Canada:13+ (Quebec), Canada:18A (Alberta) (re-rating) (1999), Canada:18A (Manitoba/Ontario) (DVD rating), Chile:14, Finland:K-16 (re-rating) (1991), France:-12, Germany:16, Ireland:15, Israel:PG, Japan:R-15, Netherlands:16, Norway:15 (video rating) (director's cut), Norway:18 (original rating), Peru:14, Singapore:NC-16, Singapore:PG (cut), Spain:18, Sweden:15, UK:15 (original rating) (cut), UK:15 (video rating) (1992) (cut), UK:15 (video re-rating) (2001) (uncut), UK:18 (laserdisc rating) (1992) (uncut), Iran:18+";
 		String expectedColor = "Color";
 		
 		assertTrue(Double.parseDouble(movie.getRating()) > 5);
@@ -299,25 +302,26 @@ public class IMDBTest  {
 		String expectedAwards = "Nominated for Golden Globe. Another 34 wins & 99 nominations";
 		String expectedMpaa = "";
 		String expectedAka = 
-"BtVS (USA) (promotional abbreviation)\n" +
-"Buffy (USA) (short title)\n" +
-"Buffy, the Vampire Slayer: The Series (USA) (long title)\n" +
-"Buffy, la cazavampiros (Argentina) (Spain) (Venezuela) [es]\n" +
-"Бъфи - убийцата на вампири (Bulgaria: Bulgarian title) [bg]\n" +
-"Bafi, ubica vampira (Serbia) [sr]\n" +
-"Buffy - Im Bann der Dämonen (Germany) [de]\n" +
-"Buffy - Vampyrdræberen (Denmark) [da]\n" +
-"Buffy - Vampyrenes skrekk (Norway) [no]\n" +
-"Buffy - Vampyrernes skræk (Denmark) [da]\n" +
-"Buffy contre les vampires (France) (dubbed version) [fr]\n" +
-"Buffy i vampirofonissa (Greece) [el]\n" +
-"Buffy och vampyrerna (Sweden) (cable TV title) [sv]\n" +
-"Buffy vampyrdödaren (Sweden) [sv]\n" +
-"Buffy, Caçadora de Vampiros (Portugal) [pt]\n" +
-"Buffy, a vámpírok réme (Hungary) [hu]\n" +
-"Buffy, l'ammazzavampiri (Italy) [it]\n" +
-"Buffy, vampyyrintappaja (Finland) [fi]\n" +
-"Nightfall (Japan: English title) [en]";
+			"\"BtVS\" - USA (promotional abbreviation)\n" +
+			"\"Buffy\" - USA (short title)\n" + 
+			"\"Buffy, the Vampire Slayer: The Series\" - USA (long title)\n" + 
+			"\"Buffy, la cazavampiros\" - Argentina, Mexico, Spain, Venezuela\n" + 
+			"\"Бъфи - убийцата на вампири\" - Bulgaria (Bulgarian title)\n" + 
+			"\"Bafi, ubica vampira\" - Serbia\n" + 
+			"\"Buffy - Im Bann der Dämonen\" - Germany\n" + 
+			"\"Buffy - Vampyrdræberen\" - Denmark\n" + 
+			"\"Buffy - Vampyrenes skrekk\" - Norway\n" + 
+			"\"Buffy - Vampyrernes skræk\" - Denmark\n" + 
+			"\"Buffy contre les vampires\" - France\n" + 
+			"\"Buffy i vampirofonissa\" - Greece\n" + 
+			"\"Buffy och vampyrerna\" - Sweden (cable TV title)\n" + 
+			"\"Buffy vampyrdödaren\" - Sweden\n" + 
+			"\"Buffy, Caçadora de Vampiros\" - Portugal\n" + 
+			"\"Buffy, a vámpírok réme\" - Hungary\n" + 
+			"\"Buffy, l'ammazzavampiri\" - Italy\n" + 
+			"\"Buffy, vampyyrintappaja\" - Finland\n" + 
+			"\"Nightfall\" - Japan (English title)";
+			
 	
 	
 		String expectedCertification = "UK:12 (some episodes), UK:15 (some episodes), Australia:PG (some episodes), Portugal:M/12, New Zealand:M, USA:TV-14, Australia:M, Israel:PG, Singapore:M18 (DVD rating) (season 6) (season 7), Singapore:PG (season 1 to 5), USA:TV-14 (some episodes), USA:TV-PG (some episodes)";
@@ -373,7 +377,7 @@ public class IMDBTest  {
 		String expectedCountry = "USA";
 		String expectedLanguage = "English";
 		String expectedPlot = "In this hour-long episode, Jerry performs the biggest show of his life in Atlantic City. He receives a rather generous pay check for the event, and decides to buy his father a Cadillac. Unfortunately, doing so puts Morty in the hot seat with the condo board of directors, where he serves as president. Morty is accused of stealing money from the board, and ultimately gets removed from his post as president and kicked out of the condo. Meanwhile, thanks to Elaine, George can score a date with \"My Cousin Vinnie\" star Marisa Tomei but Elaine objects because of George's engagement with Susan. Kramer turns the tables on the cable company when they want to disconnect his service.";
-		String expectedCast = "Jerry Seinfeld (Jerry Seinfeld (also archive footage)), Julia Louis-Dreyfus (Elaine Benes), Michael Richards (Cosmo Kramer), Jason Alexander (George), Marisa Tomei (Herself (also archive footage)), Liz Sheridan (Helen), Barney Martin (Morty), Heidi Swedberg (Susan), Walter Olkewicz (Nick), Annabelle Gurwitch (Katy), Sandy Baron (Jack), Ann Morgan Guilbert (Evelyn (as Ann Guilbert)), Frances Bay (Mrs. Choate (also archive footage)), Bill Macy (Herb), Jesse White (Ralph)";
+		String expectedCast = "Jerry Seinfeld (Jerry Seinfeld (also archive footage)), Julia Louis-Dreyfus (Elaine Benes), Michael Richards (Cosmo Kramer), Jason Alexander (George), Marisa Tomei (Marisa Tomei (also archive footage)), Liz Sheridan (Helen Seinfeld), Barney Martin (Morty Seinfeld), Heidi Swedberg (Susan), Walter Olkewicz (Nick), Annabelle Gurwitch (Katy), Sandy Baron (Jack), Ann Morgan Guilbert (Evelyn (as Ann Guilbert)), Frances Bay (Mrs. Choate (also archive footage)), Bill Macy (Herb), Jesse White (Ralph)";
 		String expectedWebRuntime = "60 min";
 		String expectedWebSoundMix = "Stereo";
 		String expectedAwards = "";
@@ -464,10 +468,10 @@ public class IMDBTest  {
 		String expectedAwards = "";
 		String expectedMpaa = "";
 		String expectedAka = 
-			"Caminando entre cavernícolas (Spain) [es]\n" + 
-			"I huleboernes verden (Denmark) [da]\n" + 
-			"Luolamiesten matkassa (Finland) [fi]\n" + 
-			"Perpatontas me tous anthropous ton spilaion (Greece) [el]";
+			"\"Caminando entre cavernícolas\" - Spain\n" + 
+			"\"I huleboernes verden\" - Denmark\n" + 
+			"\"Luolamiesten matkassa\" - Finland\n" + 
+			"\"Perpatontas me tous anthropous ton spilaion\" - Greece";
 
 	
 		String expectedCertification = "Singapore:PG";
