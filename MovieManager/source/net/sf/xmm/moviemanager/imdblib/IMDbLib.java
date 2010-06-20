@@ -4,10 +4,10 @@ import net.sf.xmm.moviemanager.http.HttpSettings;
 
 public class IMDbLib {
 	
-	final static String version = "10.03.2010";
+	final static String version = "20.06.2010";
 	final static String name = "IMDb lib";
 	
-	final static int release = 6;
+	final static int release = 8;
 	
 	public static int getRelease() {
 		return release;
