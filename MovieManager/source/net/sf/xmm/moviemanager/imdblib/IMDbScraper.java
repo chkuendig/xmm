@@ -216,7 +216,7 @@ public class IMDbScraper implements IMDb {
 		boolean isEpisode = false;
 		boolean isSeries = false;
 		boolean loggedIn = false;
-		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
+		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
 			
 		try {
 			/* Processes the data... */
@@ -1064,14 +1064,14 @@ public class IMDbScraper implements IMDb {
   
    // <div.*?class=\"info.+?<.+?>(.*?)(\(?:.*?\))?<.+?>(.+?)</div>
    // <div.*?class="info">.*?<.+?>(.+?)</.+?>.*?<
-    protected HashMap<String, String> decodeClassInfo(StringBuffer data) {
+    public HashMap<String, String> decodeClassInfo(StringBuffer data) {
     		
     	HashMap<String, String> classInfo = new HashMap<String, String>();
     	
     	Pattern contentPattern = Pattern.compile("<div.*?class=\"info\">.*?<.+?>(.+?)(?:\\(.*?)?</.+?>.*?<div\\sclass=\"info-content.*?\">(.+?)</div>", Pattern.DOTALL);
 		    	
-    	// Find start index of all class info, which is the conten we seek
-    	Pattern classStart = Pattern.compile("<div.*?class=\"info\">");
+    	// Find start index of all class info, which is the content we seek
+    	Pattern classStart = Pattern.compile("<div.{0,25}?class=\"info\">");
     	ArrayList<Integer> infoStart = new ArrayList<Integer>();
     	
     	Matcher m = classStart.matcher(data);
@@ -1090,7 +1090,7 @@ public class IMDbScraper implements IMDb {
 					
 				if (!infoStart.isEmpty())
 					next_info = infoStart.get(0);
-											
+								
 				m = contentPattern.matcher(data.substring(index_start, next_info));
 								
 				if (m.find()) {
