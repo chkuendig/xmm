@@ -157,7 +157,7 @@ public class IMDbScraper implements IMDb {
     	
 			String tmp = data.substring(start, end);
 			
-			if (tmp.indexOf("Poster Not Submitted") == -1) {
+			if (tmp.indexOf("title=\"Add Poster\"") == -1) {
     	
 				if ((start = data.indexOf("src=\"", start) +5) !=4 &&
 					(end = data.indexOf("\"", start)) != -1) {
@@ -340,11 +340,12 @@ public class IMDbScraper implements IMDb {
 					String voteID = m.group(1);
 					dataModel.setVoteUrlID(voteID);
 				}
-									 
+								
 				if ((start = data.indexOf("voteuser", start)) != -1) {
 
 					String voteData = data.substring(start, start + 30);
-
+					System.err.println("voteData:" + voteData);
+					
 					//	<span id="voteuser">9</span>/10
 					p = Pattern.compile("voteuser\">(\\d+)</span>/10");
 					m = p.matcher(voteData);
