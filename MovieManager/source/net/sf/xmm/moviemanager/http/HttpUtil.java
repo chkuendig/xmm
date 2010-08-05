@@ -117,7 +117,7 @@ public class HttpUtil {
 					 imdbAuthenticationSetUp = false;
  
 			} catch (Exception e) {
-				log.warn("error:" + e.getMessage());
+				log.warn("error:" + e.getMessage(), e);
 			}
 		}
 		else
