@@ -526,6 +526,7 @@ public class LookAndFeelManager {
     			public void run() {
     				try {
     					UIManager.setLookAndFeel(lookAndFeel);
+    					DialogMovieManager.setDefaultLookAndFeelDecorated(getDefaultLookAndFeelDecorated());
     				} catch (UnsupportedLookAndFeelException e) {
     					log.warn("Exception:" + e.getMessage(), e);
     					error = true;
