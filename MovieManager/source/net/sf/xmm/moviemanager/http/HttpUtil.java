@@ -344,11 +344,12 @@ public class HttpUtil {
 				}
 			}
 
-			// replacing html code "&quot;", "&amp;" and "&nbsp;"
+			// replacing html code "&quot;", "&amp;", &ndash; and "&nbsp;"
 			decoded = decoded.replaceAll("&amp;", "&");
 			decoded = decoded.replaceAll("&quot;", "\"");
 			decoded = decoded.replaceAll("&nbsp;", " ");
-
+			decoded = decoded.replaceAll("&ndash;", "-");
+			
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
 			log.debug("Input:" + toDecode);
