@@ -1,5 +1,5 @@
 /**
- * @(#)DialogTVDOTCOM.java 1.0 26.09.06 (dd.mm.yy)
+ * @(#)DialogTVSeries.java
  *
  * Copyright (2003) Bro3
  * 
@@ -161,7 +161,7 @@ public class DialogTVSeries extends JDialog {
         buttonSelect = new JButton(Localizer.get("DialogTVDOTCOM.button.select.text")); //$NON-NLS-1$
         buttonSelect.setToolTipText(Localizer.get("DialogTVDOTCOM.button.select.tooltip")); //$NON-NLS-1$
         buttonSelect.setEnabled(false);
-        buttonSelect.setActionCommand("GetTVDOTCOMInfo - Select"); //$NON-NLS-1$
+        buttonSelect.setActionCommand("GetTVSeriesInfo - Select"); //$NON-NLS-1$
                
         panelRegularButtons.add(buttonSelect);
         
