@@ -120,7 +120,9 @@ public class IMDbScraper implements IMDb {
     	if (urlID == null)
     		throw new Exception("Movie ID is empty");
     
-    	URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/");
+    	//URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/");
+    	URL url = new URL("http://akas.imdb.com/title/tt"+ urlID +"/combined");
+    	    	
     	lastHTTPResult = httpUtil.readData(url);
 		return lastHTTPResult;
     }
@@ -211,8 +213,6 @@ public class IMDbScraper implements IMDb {
 		int start = 0;
 		int end = 0;
 	
-		Object [] tmpArray;
-	
 		boolean isEpisode = false;
 		boolean isSeries = false;
 		boolean loggedIn = false;
@@ -232,39 +232,50 @@ public class IMDbScraper implements IMDb {
 				isEpisode = true;
 			else if (beginning.indexOf("Seasons:") != -1)
 				isSeries = true;
-			
-			
-			if ((start = data.indexOf("\"/register/logout\"", start)) != -1) {
+						
+			if ((data.indexOf("\"/register/logout\"", start)) != -1) {
 				loggedIn = true;	
 			}
-						
+					
+			
+			//System.err.println("tn15title:" + data.indexOf("<div id=\"tn15title\">", start));
+			//System.err.println("tn15title:" + data.indexOf("<div id=\"tn15title\">", start));
+			
 			/* Gets the title... */
-			if ((start = data.indexOf("<div id=\"tn15title\">", start)) != -1 &&
-					(end = data.indexOf("</div>", start)) != -1) {
+			if ((start = data.indexOf("<title>", start)) != -1 &&
+					(end = data.indexOf("</title>", start)) != -1) {
 
-				tmpArray = HttpUtil.decodeHTMLtoArray(data.substring(start, end));
-
-				if (isEpisode) {
-					title = (String) tmpArray[1];
-					date = (String) tmpArray[2];
-					
-					if (date.startsWith("(") && date.endsWith(")"))
-						date = date.substring(1, date.length() -1);
-					
+				String decoded = HttpUtil.decodeHTML(data.substring(start, end));
+				
+				// "<title>Terminator 2: Judgment Day (1991) - IMDb</title>"
+								
+				//Pattern p_movie = Pattern.compile("<title>(.+?)\\((\\d+)\\)");
+				//Pattern p_series = Pattern.compile("<title>(.+?)\\(TV Series (\\d+).*?\\)");
+				Pattern p = Pattern.compile("(.+?)\\((?:TV\\sSeries\\s)?(\\d+).*?\\)");
+				 				 
+				Matcher m = p.matcher(decoded);
+				//Matcher m_seriees = p_movie.matcher(data.substring(start, end));
+				
+				if (m.find()) {
+					title = m.group(1).trim();
+					date = m.group(2);
 				}
-				else { 
-					title = (String) tmpArray[0];
-					date = (String) tmpArray[2];
+				else {
+					System.err.println("No title match found on " + decoded);
 				}
 				
 				if (!isEpisode && title.startsWith("\""))
 					isSeries = true;
+			
+				if (isEpisode) {
+					title = title.replaceAll("\".+\" ", "");
+				}
 			}	
 			else
-				throw new Exception("Title could not be found");
+				throw new Exception("Title could not be found on imdb id " + urlID);
 	    
 			ModelIMDbEntry tmpModel = null;
-			
+						
 			if (isSeries)
 				tmpModel = new ModelIMDbSeries();
 			else if (isEpisode)
@@ -344,7 +355,6 @@ public class IMDbScraper implements IMDb {
 				if ((start = data.indexOf("voteuser", start)) != -1) {
 
 					String voteData = data.substring(start, start + 30);
-					System.err.println("voteData:" + voteData);
 					
 					//	<span id="voteuser">9</span>/10
 					p = Pattern.compile("voteuser\">(\\d+)</span>/10");
@@ -420,13 +430,14 @@ public class IMDbScraper implements IMDb {
 
 					writtenBy += list.remove(0);
 				}
-
+				
+				writtenBy = trimAndCleanInfo(writtenBy);
 				dataModel.setWrittenBy(writtenBy);
 			}
 			
 			if (classInfo.containsKey("Genre:")) {
 				String genre = getDecodedClassInfo("Genre:", (String) classInfo.get("Genre:"));
-				genre = genre.replaceAll("(more)$", "");
+				genre = trimAndCleanInfo(genre);
 				dataModel.setGenre(genre);
 			}
 						
@@ -482,7 +493,7 @@ public class IMDbScraper implements IMDb {
 			
 			if (classInfo.containsKey("Awards:")) {
 				String awards = getDecodedClassInfo("Awards:", (String) classInfo.get("Awards:"));
-				awards = awards.replaceAll("(more)$", "");
+				awards = trimAndCleanInfo(awards);
 				dataModel.setAwards(awards);
 			}
 						
@@ -535,7 +546,12 @@ public class IMDbScraper implements IMDb {
     }
 
     
-
+    String trimAndCleanInfo(String info) {
+    	info = info.trim();
+    	info = info.replaceAll(", \\(more\\)$", "");
+    	return info;
+    }
+    
     void retrieveBiggerPlot(StringBuffer data, ModelIMDbEntry dataModel) throws TimeoutException, Exception {
     	
     	URL url = new URL("http://akas.imdb.com/title/tt"+ dataModel.getUrlID() +"/plotsummary");
