@@ -204,7 +204,7 @@ public class IMDBTest  {
 		String expectedCountry = "USA, France";
 		String expectedLanguage = "English, Spanish";
 		String expectedPlot = "Nearly 10 years have passed since Sarah Connor was targeted for termination by a cyborg from the future. Now her son, John, the future leader of the resistance, is the target for a newer, more deadly terminator. Once again, the resistance has managed to send a protector back to attempt to save John and his mother Sarah.";
-		String expectedCast = "Arnold Schwarzenegger (The Terminator), Linda Hamilton (Sarah Connor), Edward Furlong (John Connor), Robert Patrick (T-1000), Earl Boen (Dr. Silberman), Joe Morton (Miles Dyson), S. Epatha Merkerson (Tarissa Dyson), Castulo Guerra (Enrique Salceda), Danny Cooksey (Tim), Jenette Goldstein (Janelle Voight), Xander Berkeley (Todd Voight), Leslie Hamilton Gearren (Twin Sarah), Ken Gibbel (Douglas), Robert Winley (Cigar Biker), Peter Schrum (Lloyd (as Pete Schrum))";
+		String expectedCast = "Arnold Schwarzenegger (The Terminator), Linda Hamilton (Sarah Connor), Edward Furlong (John Connor), Robert Patrick (T-1000), Earl Boen (Dr. Silberman), Joe Morton (Miles Dyson), S. Epatha Merkerson (Tarissa Dyson), Castulo Guerra (Enrique Salceda), Danny Cooksey (Tim), Jenette Goldstein (Janelle Voight), Xander Berkeley (Todd Voight), Leslie Hamilton Gearren (Twin Sarah), Ken Gibbel (Douglas), Robert Winley (Cigar Biker), Peter Schrum (Lloyd (as Pete Schrum)), Shane Wilder (Trucker), Michael Edwards (Old John Connor), Jared Lounsbery (Kid), Casey Chavez (Kid), Ennalls Berl (Bryant), Don Lake (Mossberg), Richard Vidan (Weatherby), Tom McDonald (Cop), Jim Palmer (Jock), Gerard G. Williams (Jock), Gwenda Deacon (Night Nurse), Don Stanton (Lewis the Guard), Dan Stanton (Lewis as T-1000), Colin Patrick Lynch (Attendant), Noel Evangelisti (Hospital Guard), Nikki Cox (Girl), Lisa Brinegar (Girl), DeVaughn Nixon (Danny Dyson (as De Vaughn Nixon)), Tony Simotes (Vault Guard), Diane Rodriguez (Jolanda Salceda), Dalton Abbott (Infant John Connor), Ron Young (Pool Cue Biker), Charles Robert Brown (Tattoo Biker), Abdul Salaam El Razzac (Gibbons), Mike Muscat (Moshier), Dean Norris (SWAT Team Leader), Charles A. Tamburro (Police Chopper Pilot (as Charles Tamburro)), J. Rob Jordan (Pickup Truck Driver), Terrence Evans (Tanker Truck Driver), Denney Pierce (Burly Attendant), Mark Christopher Lawrence (Burly Attendant), Pat Kouri (SWAT Leader), Van Ling (Cyberdyne Tech), Michael Biehn (Kyle Reese (scenes deleted)), Michael Albanese (SWAT Officer (uncredited)), Ed Arneson (SWAT Officer (uncredited)), Bret A. Arnold (Future Coda Man (uncredited)), Debra Casey (Mohawk Girl at Biker Bar (uncredited)), Jim Dahl (SWAT Officer (uncredited)), Takao Komine (Tourist Shot by T-1000 (uncredited)), Joel Kramer (Male Nurse (uncredited)), Anne Merrem (Psychiatric (uncredited)), Scott Shaw (Cyberdyne Tech (uncredited)), Steven Stear (SWAT Officer (uncredited)), Randy Walker (SWAT Officer (uncredited)), William Wisher Jr. (Galleria Photographer / Cop (uncredited))";
 		String expectedWebRuntime = "137 min, USA:152 min (special edition), USA:154 min (extended special edition)";
 		String expectedWebSoundMix = "70 mm 6-Track (analog 70 mm prints), CDS (digital 35 mm and 70 mm prints), Dolby SR (analog 35 mm prints)";
 		String expectedAwards = "Won 4 Oscars. Another 20 wins & 18 nominations";
@@ -229,19 +229,21 @@ public class IMDBTest  {
 		"\"Terminator 2\" - Japan (English title)\n" + 
 		"\"Terminator 2\" - Poland (TV title)\n" + 
 		"\"Terminator 2 - El día del juicio\" - Mexico\n" + 
+		"\"Terminator 2 - Il giorno del giudizio\" - Italy (imdb display title)\n" +
 		"\"Terminator 2 - Mahser günü\" - Turkey (Turkish title)\n" + 
 		"\"Terminator 2 - Sodni dan\" - Slovenia\n" + 
 		"\"Terminator 2 - Sudnji dan\" - Serbia\n" + 
 		"\"Terminator 2 - Tag der Abrechnung\" - Germany\n" + 
 		"\"Terminator 2 - domedagen\" - Sweden\n" + 
 		"\"Terminator 2 - domens dag\" - Finland (Swedish title)\n" + 
-		"\"Terminator 2 - il giorno del giudizio\" - Italy\n" + 
 		"\"Terminator 2 - tuomion päivä\" - Finland\n" + 
 		"\"Terminator 2: Dommedag\" - Denmark\n" + 
 		"\"Terminator 2: Dzien sadu\" - Poland\n" + 
 		"\"Terminator 2: Sudnji dan\" - Croatia\n" + 
-		"\"Terminator 2: Sudnyi den'\" - Soviet Union (Russian title)";
-		
+		"\"Terminator 2: Sudnyi den'\" - Soviet Union (Russian title)\n" + 
+		"\"Terminator 2: Ziua judecatii\" - Romania (imdb display title)\n" + 
+		"\"Tortímandinn 2: Dómsdagur\" - Iceland (imdb display title)"; 
+			
 		
 	
 		String expectedCertification = "Canada:18 (Nova Scotia) (DVD rating), Canada:A (Nova Scotia) (original cut), Canada:AA (Ontario) (original cut), Canada:PA (Manitoba) (original cut), Finland:K-18 (original rating) (1991), Italy:T, USA:R (certificate #31159), Iceland:16, South Korea:15, Brazil:12, Malaysia:18SG, New Zealand:M, Netherlands:12 (edited TV version), Portugal:M/12, Argentina:13 (re-rating), Argentina:16 (original rating), Australia:M, Canada:13+ (Quebec), Canada:18A (Alberta) (re-rating) (1999), Canada:18A (Manitoba/Ontario) (DVD rating), Chile:14, Finland:K-16 (re-rating) (1991), France:-12, Germany:16, Ireland:15, Israel:PG, Japan:R-15, Netherlands:16, Norway:15 (video rating) (director's cut), Norway:18 (original rating), Peru:14, Singapore:NC-16, Singapore:PG (cut), Spain:18, Sweden:15, UK:15 (original rating) (cut), UK:15 (video rating) (1992) (cut), UK:15 (video re-rating) (2001) (uncut), UK:18 (laserdisc rating) (1992) (uncut), Iran:18+";
@@ -295,7 +297,7 @@ public class IMDBTest  {
 		String expectedGenre = "Action, Drama, Fantasy";
 		String expectedCountry = "USA";
 		String expectedLanguage = "English";
-		String expectedPlot = "At the young age of 16, Buffy was chosen to hunt vampires, demons, and the forces of darkness. After the ordeal at Hemery High Buffy Summers wound up at Sunnydale High. Joined with Willow Rosenberg and Alexander \"Xander\" Harris, and her watcher Giles, Buffy fights the challenges of High School and saves the world...a lot.";
+		String expectedPlot = "At the young age of 15, Buffy was chosen to hunt vampires, demons, and the forces of darkness. After the ordeal at Hemery High Buffy Summers wound up at Sunnydale High. Joined with Willow Rosenberg and Alexander \"Xander\" Harris, and her watcher Giles, Buffy fights the challenges of High School and saves the world...a lot.";
 		String expectedCast = "Sarah Michelle Gellar (Buffy Summers /, (145 episodes, 1997-2003)), Nicholas Brendon (Xander Harris (145 episodes, 1997-2003)), Alyson Hannigan (Willow Rosenberg (144 episodes, 1997-2003)), Anthony Head (Rupert Giles (123 episodes, 1997-2003)), James Marsters (Spike (97 episodes, 1997-2003)), Emma Caulfield (Anya (85 episodes, 1998-2003)), Michelle Trachtenberg (Dawn Summers (66 episodes, 2000-2003))";
 		String expectedWebRuntime = "44 min (144 episodes)";
 		String expectedWebSoundMix = "Dolby";
@@ -377,7 +379,7 @@ public class IMDBTest  {
 		String expectedCountry = "USA";
 		String expectedLanguage = "English";
 		String expectedPlot = "In this hour-long episode, Jerry performs the biggest show of his life in Atlantic City. He receives a rather generous pay check for the event, and decides to buy his father a Cadillac. Unfortunately, doing so puts Morty in the hot seat with the condo board of directors, where he serves as president. Morty is accused of stealing money from the board, and ultimately gets removed from his post as president and kicked out of the condo. Meanwhile, thanks to Elaine, George can score a date with \"My Cousin Vinnie\" star Marisa Tomei but Elaine objects because of George's engagement with Susan. Kramer turns the tables on the cable company when they want to disconnect his service.";
-		String expectedCast = "Jerry Seinfeld (Jerry Seinfeld (also archive footage)), Julia Louis-Dreyfus (Elaine Benes), Michael Richards (Cosmo Kramer), Jason Alexander (George), Marisa Tomei (Marisa Tomei (also archive footage)), Liz Sheridan (Helen Seinfeld), Barney Martin (Morty Seinfeld), Heidi Swedberg (Susan), Walter Olkewicz (Nick), Annabelle Gurwitch (Katy), Sandy Baron (Jack), Ann Morgan Guilbert (Evelyn (as Ann Guilbert)), Frances Bay (Mrs. Choate (also archive footage)), Bill Macy (Herb), Jesse White (Ralph)";
+		String expectedCast = "Jerry Seinfeld (Jerry Seinfeld (also archive footage)), Julia Louis-Dreyfus (Elaine Benes), Michael Richards (Cosmo Kramer), Jason Alexander (George), Marisa Tomei (Marisa Tomei (also archive footage)), Liz Sheridan (Helen Seinfeld), Barney Martin (Morty Seinfeld), Heidi Swedberg (Susan), Walter Olkewicz (Nick), Annabelle Gurwitch (Katy), Sandy Baron (Jack), Ann Morgan Guilbert (Evelyn (as Ann Guilbert)), Frances Bay (Mrs. Choate (also archive footage)), Bill Macy (Herb), Jesse White (Ralph), Annie Korzen (Doris), Daniel Zacapa (Power Guy), Golde Starger (Building 'A' Rep.), Janice Davies (Building 'B' Rep.), Art Frankel (Building 'C' Rep (as Art Frankle)), Ruth Cohen (Ruthie Cohen (uncredited))";
 		String expectedWebRuntime = "60 min";
 		String expectedWebSoundMix = "Stereo";
 		String expectedAwards = "";
@@ -501,6 +503,30 @@ public class IMDBTest  {
 	}
 	
 	
+	@Test
+	public void authenticatedPersonVoteTest() throws Exception {
+		
+		String userName = "";
+		String password = "";
+		
+		HttpSettings settings = new HttpSettings();
+		settings.setIMDbAuthenticationEnabled(true);
+		settings.setIMDbAuthenticationUser(userName);
+		settings.setIMDbAuthenticationPassword(password);
+		
+		IMDbScraper imdb = new IMDbScraper(settings);
+		
+		String urlID = "0093773"; // Predator
+		urlID = "0468569"; // The Dark Knight
+		
+		StringBuffer data = imdb.getURLData(urlID).getData();
+		ModelIMDbEntry movie = imdb.grabInfo(urlID, data);
+				
+		System.err.println("movie:" + movie);
+		
+		System.err.println("logged in:" + movie.isLoggedIn());
+		System.err.println("pers:" + movie.getPersonalRating());
+	}
 	
 	//@Test
 	public void authenticatedTest() throws Exception {
