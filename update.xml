@@ -21,32 +21,46 @@
         </launcher>
     </architect>
 	
-	
+	<version release="8" minrelease="5" version="20.06.2010" name="IMDb Lib">
+      <description>
+		&lt;ul&gt;
+		&lt;li&gt;IMDb scraper was broken.&lt;/li&gt;
+		&lt;/ul&gt;
+	  </description>
+      
+	  <arch name="all" gui="true">
+        <file name="IMDb.jar" sourcedir="IMDbLib/20.06.2010/" destdir="${APPHOME}/lib" size="61606" compress="none" />
+      </arch>
+	</version>
+
+
+	<version release="6" minrelease="5" version="10.03.2010" name="IMDb Lib">
+      <description>
+		&lt;ul&gt;
+		&lt;li&gt;Retrieving movie info from IMDb would hang.&lt;/li&gt;
+		&lt;/ul&gt;
+	  </description>
+      
+	  <arch name="all" gui="true">
+        <file name="IMDb.jar" sourcedir="IMDbLib/10.03.2010/" destdir="${APPHOME}/lib" size="36162" compress="none" />
+      </arch>
+	</version>
+
+
 	<version release="5" minrelease="5" version="2.9.1.2" name="MovieManager">
       <description>
 		&lt;ul&gt;
-		&lt;li&gt;Reports for the report generator have been improved and a couple of extra reports were added.&lt;/li&gt;
 		&lt;li&gt;Personal rating was sometimes shown as -1.0 if it hadn't been set.&lt;/li&gt;
 		&lt;li&gt;Some strange behaviour with the lists on startup was fixed.&lt;/li&gt;
-		&lt;li&gt;Export and Import would fail when using Substance Look and Feel.&lt;/li&gt;
+		&lt;li&gt;Export and Import would fail when using Substance Look &amp; Feel.&lt;/li&gt;
 		&lt;li&gt;Report Generator did not function properly.&lt;/li&gt;
 		&lt;/ul&gt;
 	  </description>
-	 </version>
     
-	
-	<version release="4" minrelease="3" version="2.9.1.1" name="MovieManager">
-      <description>
-		&lt;ul&gt;
-		&lt;li&gt;Export to CSV and Excel was broken.&lt;/li&gt;
-		&lt;/ul&gt;
-	  </description>
-	  
-	  <arch name="all" gui="true">
-        <file name="MovieManager.jar" sourcedir="MovieManager/2.9.1.1/" destdir="${APPHOME}" size="1535580" compress="none" />
-      </arch>
-	  
-    </version>
+	  <arch name="all" gui="true"/>
+
+	</version>
+
 
 	<version release="3" minrelease="3" version="2.9.1" name="MovieManager">
         <description>
@@ -56,6 +70,8 @@
 			&lt;li&gt;Fixed bug in additional info fields.&lt;/li&gt;
 			&lt;/ul&gt;
 		</description>
+
+		<arch name="all" gui="true"/>
     </version>
 
     <version release="1" version="2.9.0" name="MovieManager">
