@@ -1603,7 +1603,7 @@ public class DialogAddMultipleMovies extends JDialog implements ActionListener  
 				
 				for (int i = 0; i < elems.length; i++) {
 					if (elems[i].getClass() == Files.class) {
-						// check wheter the element is of type "Files" because it could also be a String in some situations
+						// check whether the element is of type "Files" because it could also be a String in some situations
 						ArrayList<Files> files = ((Files)elems[i]).getFiles();
 						
 						for (Files f : files)
