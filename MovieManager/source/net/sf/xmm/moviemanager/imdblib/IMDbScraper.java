@@ -216,7 +216,7 @@ public class IMDbScraper implements IMDb {
 		boolean isEpisode = false;
 		boolean isSeries = false;
 		boolean loggedIn = false;
-		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
+		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
 			
 		try {
 			/* Processes the data... */
@@ -237,10 +237,6 @@ public class IMDbScraper implements IMDb {
 				loggedIn = true;	
 			}
 					
-			
-			//System.err.println("tn15title:" + data.indexOf("<div id=\"tn15title\">", start));
-			//System.err.println("tn15title:" + data.indexOf("<div id=\"tn15title\">", start));
-			
 			/* Gets the title... */
 			if ((start = data.indexOf("<title>", start)) != -1 &&
 					(end = data.indexOf("</title>", start)) != -1) {
@@ -261,7 +257,7 @@ public class IMDbScraper implements IMDb {
 					date = m.group(2);
 				}
 				else {
-					System.err.println("No title match found on " + decoded);
+					log.debug("No title match found on " + decoded);
 				}
 				
 				if (!isEpisode && title.startsWith("\""))
@@ -271,9 +267,11 @@ public class IMDbScraper implements IMDb {
 					title = title.replaceAll("\".+\" ", "");
 				}
 			}	
-			else
+			else {
+				log.debug("Title could not be found on imdb id " + urlID);
 				throw new Exception("Title could not be found on imdb id " + urlID);
-	    
+			}
+			
 			ModelIMDbEntry tmpModel = null;
 						
 			if (isSeries)
@@ -597,7 +595,7 @@ public class IMDbScraper implements IMDb {
 		boolean isEpisode = false;
 		boolean isSeries = false;
 		
-		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
+		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
 			
 		try {
 			/* Processes the data... */
@@ -810,11 +808,11 @@ public class IMDbScraper implements IMDb {
 			HTTPResult res = httpUtil.readData(url);
 			StringBuffer data = res.getData();
 
-			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("seasonsOutput.html", data);
-
+			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/seasonsOutput.html", data);
+			
 			String title = "";
 
-			int start = data.indexOf("Seasons:");
+			int start = data.indexOf("Season:");
 			
 			/* No season....?. */
 			if (start != -1) {

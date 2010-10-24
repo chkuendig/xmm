@@ -26,12 +26,4 @@ public interface IMDb {
 	
 	public StringBuffer getEpisodesStream(ModelIMDbSearchHit modelSeason);
 	
-	
-	
-	
-	
-	
-	
-	
-	
 }
