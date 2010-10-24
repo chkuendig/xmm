@@ -67,7 +67,7 @@ public class IMDBTest  {
 	}
 
 	
-	//@Test
+	@Test
 	public void getSimpleMatchesTest() {
 
 		IMDbScraper imdb = null;
@@ -115,7 +115,37 @@ public class IMDBTest  {
 
 
 
-	//@Test
+	@Test
+	public void seriesSimpleMatchesTest() {
+
+		IMDbScraper imdb = null;
+		try {
+			imdb = new IMDbScraper();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+
+		String input = "Buffy the Vampire Slayer";
+
+		ArrayList<ModelIMDbSearchHit> matches = null;
+		try {
+			matches = imdb.getSimpleMatches(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		/*
+		for (int i = 0; i < matches.size(); i++)
+			System.out.println("matches.get("+i+"):" + matches.get(i));
+		*/
+		
+		assertEquals("The number of results does not match the expected for input " + input, 14, matches.size());
+		
+	}
+	
+	
+	@Test
 	public void getMatchesTest() {
 
 		/*
@@ -174,10 +204,37 @@ public class IMDBTest  {
 		
 		assertTrue("The number of results does not match the expected", matches.size() ==  6);
 		
-
+		/*
 		for (int i = 0; i < matches.size(); i++)
 			System.out.println("matches.get("+i+"):" + matches.get(i));
+*/
+	}
+	
+	
+	@Test
+	public void getSeasonsTest() {
 
+	
+		IMDbScraper imdb = null;
+		try {
+			imdb = new IMDbScraper();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String urlKey = "0118276"; //Buffy the Vampire Slayer (TV Series 1997–2003)
+		
+		ModelIMDbSearchHit seriesHit = new ModelIMDbSearchHit(urlKey, "Buffy");
+		ArrayList<ModelIMDbSearchHit> matches = imdb.getSeasons(seriesHit);
+			
+		/*
+		for (int i = 0; i < matches.size(); i++)
+			System.out.println("matches.get("+i+"):" + matches.get(i));
+		 */
+		
+		assertTrue("The number of results does not match the expected", matches.size() ==  7);
+		
 	}
 	
 	@Test
@@ -219,12 +276,13 @@ public class IMDBTest  {
 		"\"Terminator 2 - Le jugement dernier\" - France\n" + 
 		"\"Terminator 2: el juicio final\" - Argentina, Peru, Spain\n" + 
 		"\"Терминатор 2: Судный день\" - Russia\n" + 
-		"\"Exolothreftis 2 - Mera krisis\" - Greece\n" + 
+		"\"Exolothreftis 2 - Mera krisis\" - Greece (transliterated ISO-LATIN-1 title)\n" + 
 		"\"Exterminador Implacável 2: O Dia do Julgamento\" - Portugal\n" + 
 		"\"O Exterminador do Futuro 2: O Julgamento Final\" - Brazil\n" + 
 		"\"Terminátor 2. - Az ítélet napja\" - Hungary\n" + 
 		"\"Terminátor 2: Den zúctování\" - Czechoslovakia (Czech title)\n" + 
 		"\"Terminátor 2: Den zúctovania\" - Czechoslovakia (Slovak title)\n" + 
+		"\"Terminaator 2: Kohtupäev\" - Estonia (promotional title)\n" + 
 		"\"Terminateur 2: Le jugement dernier\" - Canada (French title)\n" + 
 		"\"Terminator 2\" - Japan (English title)\n" + 
 		"\"Terminator 2\" - Poland (TV title)\n" + 
@@ -244,8 +302,7 @@ public class IMDBTest  {
 		"\"Terminator 2: Ziua judecatii\" - Romania (imdb display title)\n" + 
 		"\"Tortímandinn 2: Dómsdagur\" - Iceland (imdb display title)"; 
 			
-		
-	
+			
 		String expectedCertification = "Canada:18 (Nova Scotia) (DVD rating), Canada:A (Nova Scotia) (original cut), Canada:AA (Ontario) (original cut), Canada:PA (Manitoba) (original cut), Finland:K-18 (original rating) (1991), Italy:T, USA:R (certificate #31159), Iceland:16, South Korea:15, Brazil:12, Malaysia:18SG, New Zealand:M, Netherlands:12 (edited TV version), Portugal:M/12, Argentina:13 (re-rating), Argentina:16 (original rating), Australia:M, Canada:13+ (Quebec), Canada:18A (Alberta) (re-rating) (1999), Canada:18A (Manitoba/Ontario) (DVD rating), Chile:14, Finland:K-16 (re-rating) (1991), France:-12, Germany:16, Ireland:15, Israel:PG, Japan:R-15, Netherlands:16, Norway:15 (video rating) (director's cut), Norway:18 (original rating), Peru:14, Singapore:NC-16, Singapore:PG (cut), Spain:18, Sweden:15, UK:15 (original rating) (cut), UK:15 (video rating) (1992) (cut), UK:15 (video re-rating) (2001) (uncut), UK:18 (laserdisc rating) (1992) (uncut), Iran:18+";
 		String expectedColor = "Color";
 		
@@ -315,7 +372,7 @@ public class IMDBTest  {
 			"\"Buffy - Vampyrenes skrekk\" - Norway\n" + 
 			"\"Buffy - Vampyrernes skræk\" - Denmark\n" + 
 			"\"Buffy contre les vampires\" - France\n" + 
-			"\"Buffy i vampirofonissa\" - Greece\n" + 
+			"\"Buffy i vampirofonissa\" - Greece (transliterated ISO-LATIN-1 title)\n" + 
 			"\"Buffy och vampyrerna\" - Sweden (cable TV title)\n" + 
 			"\"Buffy vampyrdödaren\" - Sweden\n" + 
 			"\"Buffy, Caçadora de Vampiros\" - Portugal\n" + 
@@ -473,7 +530,7 @@ public class IMDBTest  {
 			"\"Caminando entre cavernícolas\" - Spain\n" + 
 			"\"I huleboernes verden\" - Denmark\n" + 
 			"\"Luolamiesten matkassa\" - Finland\n" + 
-			"\"Perpatontas me tous anthropous ton spilaion\" - Greece";
+			"\"Perpatontas me tous anthropous ton spilaion\" - Greece (transliterated ISO-LATIN-1 title)";
 
 	
 		String expectedCertification = "Singapore:PG";
@@ -521,11 +578,6 @@ public class IMDBTest  {
 		
 		StringBuffer data = imdb.getURLData(urlID).getData();
 		ModelIMDbEntry movie = imdb.grabInfo(urlID, data);
-				
-		System.err.println("movie:" + movie);
-		
-		System.err.println("logged in:" + movie.isLoggedIn());
-		System.err.println("pers:" + movie.getPersonalRating());
 	}
 	
 	//@Test
