@@ -275,11 +275,10 @@ public class MovieManagerCommandIMDBSearch {
 
 				final boolean multipleEpisodes = multipleEpisodesAdded;
 									
-				final AdvancedMailbox mailbox = new AdvancedMailbox();
+				final AdvancedMailbox<ModelIMDbSearchHit> mailbox = new AdvancedMailbox<ModelIMDbSearchHit>();
 
 				for (int i = 0; i < selectedValues.length; i++)
-					mailbox.addElement(selectedValues[i]);
-
+					mailbox.addElement((ModelIMDbSearchHit) selectedValues[i]);
 				
 				final Thread adder = new Thread(new Runnable() {
 
@@ -288,7 +287,6 @@ public class MovieManagerCommandIMDBSearch {
 						dialogTVSeries.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 						
 						try {
-
 							int mailbox_size = mailbox.getSize();
 							
 							while (mailbox_size-- > 0) {
@@ -299,7 +297,6 @@ public class MovieManagerCommandIMDBSearch {
 								Thread oneEpisode = new Thread(new Runnable() {
 
 									public void run() {	
-
 										Thread.currentThread().setPriority(4);
 										
 										ModelIMDbSearchHit searchHit = null;
@@ -307,11 +304,10 @@ public class MovieManagerCommandIMDBSearch {
 										int tryCount = 4;
 										
 										do {
-
 											try {
 
 												if (searchHit == null)
-													searchHit = (ModelIMDbSearchHit) mailbox.pop();
+													searchHit = mailbox.pop();
 												
 												ModelIMDbEntry entry = imdb.getEpisodeInfo(searchHit);
 
@@ -401,8 +397,6 @@ public class MovieManagerCommandIMDBSearch {
 				adder.start();
 			}
 			mode++;
-
-			
 			
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
@@ -417,9 +411,14 @@ public class MovieManagerCommandIMDBSearch {
 		copyData(entry, episode);
 		episode.setMovieKey(movieKey); 
 		
+		// If adding only one episode, keep the additional info already added in the GUI
+		if (!multipleEpisodes) {
+			episode.setAdditionalInfo(movieInfoModel.model.getAdditionalInfo());
+		}
+		
 		// Copy the database key if editing
 		movieInfoModel.setModel(episode, movieInfoModel.isEditMode(), false);
-			
+		
 		// The cover... 
 		if (episode.getCoverData() != null) {
 			movieInfoModel.setCover(entry.getCoverName(), episode.getCoverData(), !multipleEpisodes);
@@ -434,7 +433,7 @@ public class MovieManagerCommandIMDBSearch {
 			ModelEntry tmpEntry = null;
 
 			try {
-				tmpEntry = movieInfoModel.saveToDatabase(null);
+				tmpEntry = movieInfoModel.saveToDatabase();
 			} catch (Exception e) {
 				log.error("Saving to database failed.", e);
 			}
