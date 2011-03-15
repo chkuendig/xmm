@@ -31,8 +31,6 @@ import javax.swing.JDialog;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogTVSeries;
@@ -49,6 +47,8 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.events.ModelUpdatedEvent.IllegalEventTypeException;
 import net.sf.xmm.moviemanager.util.tools.AdvancedMailbox;
+
+import org.apache.log4j.Logger;
 
 public class MovieManagerCommandIMDBSearch {
 

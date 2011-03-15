@@ -9,13 +9,13 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
+
 import javax.swing.JComponent;
+import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTableHeaderUI;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-
-import javax.swing.plaf.ComponentUI;
 
 /**
  * This class paints groupable header cells. These can be a combination of

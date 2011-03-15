@@ -26,10 +26,10 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.gui.DialogLists;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+
+import org.apache.log4j.Logger;
 
 public class MovieManagerCommandLists implements ActionListener {
 

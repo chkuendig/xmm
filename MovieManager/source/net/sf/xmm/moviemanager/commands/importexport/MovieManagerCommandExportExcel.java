@@ -22,7 +22,6 @@ package net.sf.xmm.moviemanager.commands.importexport;
 
 import java.io.File;
 import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
 
@@ -31,7 +30,6 @@ import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.gui.DialogTableExport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;

@@ -33,8 +33,6 @@ import java.util.regex.Pattern;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.database.DatabaseAccess;
@@ -58,6 +56,8 @@ import net.sf.xmm.moviemanager.util.SysUtil;
 import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedHandler;
 import net.sf.xmm.moviemanager.util.events.NewMovieListLoadedHandler;
 import net.sf.xmm.moviemanager.util.plugins.MovieManagerLoginHandler;
+
+import org.apache.log4j.Logger;
 
 public class DatabaseHandler {
 

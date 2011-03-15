@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;

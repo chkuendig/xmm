@@ -21,12 +21,10 @@
 package net.sf.xmm.moviemanager.commands.importexport;
 
 import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.gui.DialogTableExport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;

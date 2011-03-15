@@ -18,7 +18,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;

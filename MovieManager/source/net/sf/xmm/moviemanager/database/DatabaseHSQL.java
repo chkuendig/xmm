@@ -25,10 +25,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
-
-import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.util.FileUtil;
+
+import org.apache.log4j.Logger;
 
 
 public class DatabaseHSQL extends Database {

@@ -20,16 +20,14 @@
 
 package net.sf.xmm.moviemanager.fileproperties;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.mediainfodll.MediaInfo;
 import net.sf.xmm.moviemanager.util.FileUtil;
-import net.sf.xmm.moviemanager.util.LibPathHacker;
 import net.sf.xmm.moviemanager.util.SysUtil;
+
+import org.apache.log4j.Logger;
 
 public class FilePropertiesMediaInfo extends FileProperties {
 

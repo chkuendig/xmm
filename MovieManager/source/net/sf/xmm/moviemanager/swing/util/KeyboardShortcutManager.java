@@ -6,9 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import javax.swing.AbstractAction;
@@ -19,13 +17,13 @@ import javax.swing.JFrame;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
-import org.apache.log4j.Logger;
-
 import net.java.balloontip.BalloonTip;
 import net.java.balloontip.BalloonTip.AttachLocation;
 import net.java.balloontip.BalloonTip.Orientation;
 import net.java.balloontip.styles.ModernBalloonStyle;
 import net.sf.xmm.moviemanager.util.SysUtil;
+
+import org.apache.log4j.Logger;
 
 public class KeyboardShortcutManager {
 

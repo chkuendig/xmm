@@ -28,14 +28,11 @@ import java.awt.FontMetrics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -44,16 +41,10 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
@@ -61,7 +52,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -81,6 +71,7 @@ import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.MovieManagerConfig.MediaInfoOption;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandIMDBSearch;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.fileproperties.FilePropertiesMovie;
@@ -95,7 +86,6 @@ import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
 import net.sf.xmm.moviemanager.swing.extentions.SteppedComboBox;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
-import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager.KeyMapping;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.FileUtil;
@@ -107,27 +97,20 @@ import net.sf.xmm.moviemanager.util.events.ModelUpdatedEvent;
 import net.sf.xmm.moviemanager.util.events.ModelUpdatedEventListener;
 import net.sf.xmm.moviemanager.util.events.ModelUpdatedEvent.IllegalEventTypeException;
 
-import net.sf.xmm.moviemanager.MovieManagerConfig.MediaInfoOption;
-
 import org.apache.log4j.Logger;
 
 public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListener {
 
 	Logger log = Logger.getLogger(getClass());
 	
-	private int fontSize = 12;
-
 	private int valueComboBoxWidth = -1;
-
 	private int valueComboBoxHeight = -1;
-
+	private int fontSize = 12;
 	private int EXTRA_START = 17;
 
 	public List<PlainDocument> _fieldDocuments = new ArrayList<PlainDocument>();
 	public List<String> _fieldUnits = new ArrayList<String>();
-
 	KeyboardShortcutManager shortcutManager = new KeyboardShortcutManager(this);
-	
 	public ModelMovieInfo movieInfoModel;
 
 	DialogMovieInfo dialogMovieInfo = this;
@@ -380,7 +363,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		/* Will only change value if seen option is set to editable */
 		seenBox = new JCheckBox() {
 			protected void processMouseEvent(MouseEvent event) {
-
 				if (event.getID() == MouseEvent.MOUSE_CLICKED)
 					executeCommandSeen();
 			}
@@ -389,7 +371,6 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 		seenBox.setMinimumSize(new Dimension(21, 21));
 
 		// ImageIcon
-
 		if (MovieManager.getConfig().getUseRegularSeenIcon()) {
 			seenBox.setIcon(new ImageIcon(FileUtil.getImage("/images/unseen.png").getScaledInstance(18, 18, Image.SCALE_SMOOTH))); //$NON-NLS-1$
 			seenBox.setSelectedIcon(new ImageIcon(FileUtil.getImage("/images/seen.png").getScaledInstance(18, 18, Image.SCALE_SMOOTH))); //$NON-NLS-1$
@@ -2319,7 +2300,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 	}
 
 	public void updateGeneralInfoFromModel() {
-	
+			
 		getMovieTitle().setText(movieInfoModel.model.getTitle());
 		getMovieTitle().setCaretPosition(0);
 

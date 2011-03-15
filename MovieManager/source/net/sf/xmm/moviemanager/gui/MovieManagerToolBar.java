@@ -13,7 +13,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -25,8 +24,6 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import net.sf.xmm.moviemanager.MovieManager;

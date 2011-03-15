@@ -24,9 +24,9 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.util.FileUtil;
+
+import org.apache.log4j.Logger;
 
 class FilePropertiesRIFF extends FileProperties {
 

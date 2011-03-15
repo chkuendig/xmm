@@ -35,12 +35,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
@@ -48,7 +45,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.Action;
-import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -71,11 +67,9 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.swing.progressbar.ProgressBean;
 import net.sf.xmm.moviemanager.util.FileUtil;
-import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
 import org.apache.log4j.Logger;

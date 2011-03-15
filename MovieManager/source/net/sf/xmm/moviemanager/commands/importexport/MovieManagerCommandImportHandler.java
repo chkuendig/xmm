@@ -25,14 +25,9 @@ import java.util.ArrayList;
 import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogIMDB;
 import net.sf.xmm.moviemanager.gui.DialogIMDbImport;
-import net.sf.xmm.moviemanager.gui.DialogIMDbUpdate;
-import net.sf.xmm.moviemanager.gui.DialogIMDbMultiAdd;
-import net.sf.xmm.moviemanager.gui.DialogAddMultipleMovies.Files;
-import net.sf.xmm.moviemanager.imdblib.IMDb;
 import net.sf.xmm.moviemanager.imdblib.IMDbLib;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;

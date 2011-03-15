@@ -6,15 +6,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
-import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -35,14 +30,12 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.MovieManager;
+
+import org.apache.log4j.Logger;
 
 import com.panayotis.jupidator.ApplicationInfo;
 import com.panayotis.jupidator.Updater;

@@ -17,10 +17,18 @@
  */
 
 package net.sf.xmm.moviemanager.util.tools;
-import com.Ostermiller.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Vector;
 
-import java.io.*;
-import java.util.*;
+import com.Ostermiller.util.BadDelimiterException;
+import com.Ostermiller.util.BadQuoteException;
+import com.Ostermiller.util.CSVLexer;
+import com.Ostermiller.util.CSVParse;
 
 /**
  * Read files in comma separated value format.

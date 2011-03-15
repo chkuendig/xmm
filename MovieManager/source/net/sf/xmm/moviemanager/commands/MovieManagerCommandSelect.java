@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.ArrayList;

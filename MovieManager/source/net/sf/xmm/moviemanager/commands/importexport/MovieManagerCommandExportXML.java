@@ -29,6 +29,9 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogTableExport;
@@ -40,15 +43,13 @@ import org.apache.log4j.Logger;
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
-
-//DOM classes.
-import org.w3c.dom.*;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
-
-//JAXP 1.1
-import javax.xml.parsers.*;
 
 
 public class MovieManagerCommandExportXML extends MovieManagerCommandExportHandler {

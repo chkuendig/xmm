@@ -27,7 +27,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelExportXML;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
@@ -170,7 +169,7 @@ public class MovieManagerCommandImportXMLDatabase extends MovieManagerCommandImp
 				modelMovieInfo.setModel(episodeTmp, false, false);
 
 				try {
-					key = (modelMovieInfo.saveToDatabase(null)).getKey();
+					key = (modelMovieInfo.saveToDatabase()).getKey();
 					
 					if (key == -1)
 						return ImportExportReturn.error;

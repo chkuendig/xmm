@@ -2,8 +2,6 @@ package net.sf.xmm.moviemanager.updater;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandExit;
@@ -14,6 +12,8 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 import net.sf.xmm.moviemanager.util.events.UpdatesAvailableHandler;
 import net.sf.xmm.moviemanager.util.tools.BrowserOpener;
+
+import org.apache.log4j.Logger;
 
 import com.panayotis.jupidator.ApplicationInfo;
 import com.panayotis.jupidator.UpdatedApplication;

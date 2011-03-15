@@ -28,19 +28,28 @@ Contact info: lobochief@users.sourceforge.net
 
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.io.*;
-import java.net.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.EventObject;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.lobobrowser.html.*;
-import org.lobobrowser.util.*;
+import org.apache.log4j.Logger;
+import org.lobobrowser.html.HttpRequest;
+import org.lobobrowser.html.ReadyStateChangeListener;
+import org.lobobrowser.html.UserAgentContext;
+import org.lobobrowser.util.EventDispatch;
+import org.lobobrowser.util.GenericEventListener;
+import org.lobobrowser.util.Urls;
 import org.lobobrowser.util.io.IORoutines;
 import org.w3c.dom.Document;
-
-import org.apache.log4j.Logger;
 
 /**
 * The <code>SimpleHttpRequest</code> class implements

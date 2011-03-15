@@ -25,13 +25,13 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
+
+import org.apache.log4j.Logger;
 
 public class MovieManagerCommandExit implements ActionListener {
 

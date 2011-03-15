@@ -21,30 +21,17 @@
 package net.sf.xmm.moviemanager.swing.extentions;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.dnd.Autoscroll;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
-
-import net.sf.xmm.moviemanager.LookAndFeelManager;
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.LookAndFeelManager.LookAndFeelType;
-import net.sf.xmm.moviemanager.util.SysUtil;
-import net.sf.xmm.moviemanager.util.events.NewLookAndFeelLoadedEvent;
-import net.sf.xmm.moviemanager.util.events.NewLookAndFeelLoadedEventListener;
 
 import org.apache.log4j.Logger;
 

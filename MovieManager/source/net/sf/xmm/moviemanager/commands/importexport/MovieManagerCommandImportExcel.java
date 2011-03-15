@@ -24,19 +24,17 @@ import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
-
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
-import net.sf.xmm.moviemanager.gui.DialogTableExport;
 import net.sf.xmm.moviemanager.gui.DialogTableImport;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+
+import org.apache.log4j.Logger;
 
 public class MovieManagerCommandImportExcel extends MovieManagerCommandImportHandler {
 

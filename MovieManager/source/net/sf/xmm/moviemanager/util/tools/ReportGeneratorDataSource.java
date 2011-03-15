@@ -16,7 +16,6 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.database.DatabaseMySQL;
 import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelMovie;

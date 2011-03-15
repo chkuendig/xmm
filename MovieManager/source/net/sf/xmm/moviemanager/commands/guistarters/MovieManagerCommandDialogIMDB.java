@@ -4,14 +4,11 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
-
-import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.gui.DialogIMDB;
 import net.sf.xmm.moviemanager.gui.DialogIMDbUpdate;
-import net.sf.xmm.moviemanager.gui.DialogIMDbMultiAdd;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+
+import org.apache.log4j.Logger;
 
 public class MovieManagerCommandDialogIMDB {
 

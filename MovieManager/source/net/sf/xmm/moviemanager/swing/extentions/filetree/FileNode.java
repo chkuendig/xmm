@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import net.sf.xmm.moviemanager.util.FileUtil;

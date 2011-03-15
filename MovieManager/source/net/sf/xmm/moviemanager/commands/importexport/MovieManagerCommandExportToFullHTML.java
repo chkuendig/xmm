@@ -21,18 +21,11 @@
 package net.sf.xmm.moviemanager.commands.importexport;
 
 import java.awt.Dimension;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
-
-import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogQuestion;
 import net.sf.xmm.moviemanager.models.ModelEntry;

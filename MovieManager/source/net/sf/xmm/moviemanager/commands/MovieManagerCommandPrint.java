@@ -24,10 +24,10 @@ import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogReportGenerator;
+
+import org.apache.log4j.Logger;
 
 public class MovieManagerCommandPrint implements ActionListener {
 

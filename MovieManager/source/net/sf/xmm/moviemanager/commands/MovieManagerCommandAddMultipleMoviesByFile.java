@@ -33,22 +33,12 @@ import java.util.regex.Pattern;
 
 import javax.swing.JDialog;
 
-import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportMoviesByFile;
 import net.sf.xmm.moviemanager.gui.DialogAddMultipleMovies;
-import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogDatabaseImporterExporter;
-import net.sf.xmm.moviemanager.gui.DialogIMDB;
-import net.sf.xmm.moviemanager.gui.DialogIMDbMultiAdd;
-import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelFileImportSettings;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
-import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
-import net.sf.xmm.moviemanager.models.ModelMovieInfo;
-import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
-import net.sf.xmm.moviemanager.util.Localizer;
-import net.sf.xmm.moviemanager.util.StringUtil;
 
 import org.apache.log4j.Logger;
 

@@ -23,10 +23,10 @@ package net.sf.xmm.moviemanager.commands.guistarters;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.gui.DialogQueries;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+
+import org.apache.log4j.Logger;
 
 public class MovieManagerCommandQueries implements ActionListener {
 

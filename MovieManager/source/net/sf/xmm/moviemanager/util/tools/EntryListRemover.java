@@ -33,9 +33,7 @@ import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.database.Database;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovie;
-import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
-import net.sf.xmm.moviemanager.util.GUIUtil;
 
 import org.apache.log4j.Logger;
 

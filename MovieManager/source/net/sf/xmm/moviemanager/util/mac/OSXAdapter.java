@@ -1,12 +1,13 @@
 package net.sf.xmm.moviemanager.util.mac;
 
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
 import net.sf.xmm.moviemanager.gui.menubar.MovieManagerMenuBar;
 
-import com.apple.eawt.*;
+import org.apache.log4j.Logger;
+
+import com.apple.eawt.ApplicationAdapter;
+import com.apple.eawt.ApplicationEvent;
 
 public class OSXAdapter extends ApplicationAdapter {
 

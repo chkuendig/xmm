@@ -22,19 +22,14 @@ package net.sf.xmm.moviemanager.commands.guistarters;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
-
-import org.apache.log4j.Logger;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSaveChangedNotes;
@@ -43,6 +38,8 @@ import net.sf.xmm.moviemanager.gui.DialogUpdateIMDbInfo;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
+
+import org.apache.log4j.Logger;
 
 
 public class MovieManagerCommandUpdateIMDBInfo extends JPanel implements ActionListener{

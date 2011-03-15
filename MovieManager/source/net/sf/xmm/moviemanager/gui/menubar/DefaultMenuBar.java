@@ -50,8 +50,6 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.plaf.ColorUIResource;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
 import net.sf.xmm.moviemanager.MovieManagerConfig.InternalConfig;
@@ -84,6 +82,8 @@ import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedEvent;
 import net.sf.xmm.moviemanager.util.events.NewDatabaseLoadedEventListener;
 import net.sf.xmm.moviemanager.util.events.UpdatesAvailableEvent;
 import net.sf.xmm.moviemanager.util.events.UpdatesAvailableEventListener;
+
+import org.apache.log4j.Logger;
 
 
 public class DefaultMenuBar extends JMenuBar implements MovieManagerMenuBar {

@@ -26,11 +26,14 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelEntry;
@@ -38,6 +41,7 @@ import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.Localizer;
+
 import org.apache.log4j.Logger;
 
 public class DialogIMDbUpdate extends DialogIMDB {

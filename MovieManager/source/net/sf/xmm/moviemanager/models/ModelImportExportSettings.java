@@ -25,9 +25,6 @@ import java.util.ArrayList;
 
 import javax.swing.JDialog;
 
-
-import net.sf.xmm.moviemanager.util.Localizer;
-
 public class ModelImportExportSettings {
 	
 	public static enum ImportMode {

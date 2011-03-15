@@ -33,18 +33,14 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -55,7 +51,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -64,7 +59,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -77,7 +71,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
-import javax.swing.LookAndFeel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -91,23 +84,18 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.MovieManagerConfig;
 import net.sf.xmm.moviemanager.LookAndFeelManager.LookAndFeelType;
 import net.sf.xmm.moviemanager.MovieManagerConfig.InternalConfig;
+import net.sf.xmm.moviemanager.MovieManagerConfig.NoCoverType;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedTreeCellRenderer;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
-import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager.KeyMapping;
 import net.sf.xmm.moviemanager.util.DocumentRegExp;
 import net.sf.xmm.moviemanager.util.FileUtil;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
-import static net.sf.xmm.moviemanager.MovieManagerConfig.NoCoverType;
-
 import org.apache.log4j.Logger;
-
-import com.l2fprod.gui.plaf.skin.Skin;
-import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 
 
 

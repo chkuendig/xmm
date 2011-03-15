@@ -4,6 +4,7 @@ package net.sf.xmm.moviemanager.swing.util.table;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
+
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 

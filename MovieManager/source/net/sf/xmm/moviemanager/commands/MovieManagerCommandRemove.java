@@ -32,7 +32,6 @@ import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogQuestion;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
-import net.sf.xmm.moviemanager.swing.extentions.ExtendedJTree;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.tools.EntryListRemover;
 

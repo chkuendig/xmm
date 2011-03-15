@@ -24,13 +24,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelAdditionalInfo;
 import net.sf.xmm.moviemanager.models.ModelDatabaseSearch;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovie;
+
+import org.apache.log4j.Logger;
 
 public class DatabaseMySQL extends Database {
 

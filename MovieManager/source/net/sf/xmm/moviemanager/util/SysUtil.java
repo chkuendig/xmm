@@ -33,7 +33,6 @@ import java.security.PrivilegedAction;
 
 import javax.swing.filechooser.FileSystemView;
 
-
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogMovieManager;
 import net.sf.xmm.moviemanager.mediainfodll.MediaInfo;

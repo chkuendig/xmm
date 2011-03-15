@@ -25,7 +25,6 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -54,14 +53,12 @@ import net.sf.networktools.proportionlayout.ProportionLayout;
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.guistarters.MovieManagerCommandLists;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
-import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ExportMode;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImportMode;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.CustomFileFilter;
 import net.sf.xmm.moviemanager.util.GUIUtil;
-import net.sf.xmm.moviemanager.util.SysUtil;
 
 import org.apache.log4j.Logger;
 

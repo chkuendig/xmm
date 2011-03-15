@@ -28,13 +28,7 @@ import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -44,7 +38,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
-import javax.swing.KeyStroke;
 
 import net.sf.xmm.moviemanager.commands.CommandDialogDispose;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;

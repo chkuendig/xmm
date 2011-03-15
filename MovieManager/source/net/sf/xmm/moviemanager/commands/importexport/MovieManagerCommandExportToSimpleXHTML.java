@@ -28,7 +28,6 @@ import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
 import net.sf.xmm.moviemanager.MovieManager;
-import net.sf.xmm.moviemanager.commands.importexport.MovieManagerCommandImportExportHandler.ImportExportReturn;
 import net.sf.xmm.moviemanager.gui.DialogQuestion;
 import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.swing.extentions.ExtendedFileChooser;

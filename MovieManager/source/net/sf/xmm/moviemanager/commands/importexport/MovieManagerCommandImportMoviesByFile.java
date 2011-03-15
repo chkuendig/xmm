@@ -1,21 +1,16 @@
 package net.sf.xmm.moviemanager.commands.importexport;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.SwingUtilities;
-
-import org.apache.log4j.Logger;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.commands.MovieManagerCommandSelect;
@@ -24,12 +19,10 @@ import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogIMDB;
 import net.sf.xmm.moviemanager.gui.DialogIMDbMultiAdd;
 import net.sf.xmm.moviemanager.gui.DialogAddMultipleMovies.Files;
-import net.sf.xmm.moviemanager.imdblib.IMDb;
 import net.sf.xmm.moviemanager.imdblib.IMDbLib;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelFileImportSettings;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
-import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
@@ -37,6 +30,8 @@ import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.Localizer;
 import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
+
+import org.apache.log4j.Logger;
 
 public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandImportHandler {
 

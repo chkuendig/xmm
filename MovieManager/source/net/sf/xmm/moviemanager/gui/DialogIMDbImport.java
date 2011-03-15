@@ -26,8 +26,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -38,7 +36,6 @@ import javax.swing.KeyStroke;
 
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelEntry;
-import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
 import net.sf.xmm.moviemanager.swing.util.KeyboardShortcutManager;
 import net.sf.xmm.moviemanager.util.GUIUtil;

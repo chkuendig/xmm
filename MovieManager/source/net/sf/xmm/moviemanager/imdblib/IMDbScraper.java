@@ -22,7 +22,6 @@ package net.sf.xmm.moviemanager.imdblib;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -36,14 +35,18 @@ import java.util.regex.Pattern;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import net.sf.xmm.moviemanager.util.StringUtil;
 import net.sf.xmm.moviemanager.http.HttpSettings;
 import net.sf.xmm.moviemanager.http.HttpUtil;
 import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
-import net.sf.xmm.moviemanager.models.imdb.*;
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEpisode;
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbListHit;
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbMovie;
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
+import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSeries;
+import net.sf.xmm.moviemanager.util.StringUtil;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

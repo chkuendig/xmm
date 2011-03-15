@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplate;
 import net.sf.xmm.moviemanager.models.ModelHTMLTemplateStyle;
 import net.sf.xmm.moviemanager.util.FileUtil;
+
+import org.apache.log4j.Logger;
 
 public class HTMLTemplateHandler {
 

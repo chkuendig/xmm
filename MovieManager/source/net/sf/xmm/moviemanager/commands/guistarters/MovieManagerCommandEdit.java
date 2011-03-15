@@ -25,12 +25,12 @@ import java.awt.event.ActionListener;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.gui.DialogMovieInfo;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.util.GUIUtil;
+
+import org.apache.log4j.Logger;
 
 public class MovieManagerCommandEdit implements ActionListener {
 

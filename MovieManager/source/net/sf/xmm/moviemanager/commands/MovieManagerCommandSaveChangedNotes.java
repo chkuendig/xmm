@@ -27,12 +27,12 @@ import java.util.Enumeration;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
-import org.apache.log4j.Logger;
-
 import net.sf.xmm.moviemanager.MovieManager;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelEpisode;
 import net.sf.xmm.moviemanager.models.ModelMovie;
+
+import org.apache.log4j.Logger;
 
 public class MovieManagerCommandSaveChangedNotes implements ActionListener {
 

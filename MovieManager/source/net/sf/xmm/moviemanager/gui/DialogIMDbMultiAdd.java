@@ -408,7 +408,7 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
 			}
 
     		try {
-    			modelInfoTmp.saveToDatabase(null);
+    			modelInfoTmp.saveToDatabase();
     		} catch (Exception e) {
     			log.error("Saving to database failed.", e); //$NON-NLS-1$
     		}

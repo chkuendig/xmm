@@ -22,17 +22,15 @@ package net.sf.xmm.moviemanager.fileproperties;
 
 import java.io.File;
 import java.io.RandomAccessFile;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import net.sf.xmm.moviemanager.MovieManager;
+import net.sf.xmm.moviemanager.MovieManagerConfig.MediaInfoOption;
 import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.util.GUIUtil;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
-import net.sf.xmm.moviemanager.MovieManagerConfig.MediaInfoOption;
 import org.apache.log4j.Logger;
 
 /**
