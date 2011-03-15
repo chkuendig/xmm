@@ -1,5 +1,5 @@
 /**
- * @(#)SimpleMailbox.java 1.0 23.03.05 (dd.mm.yy)
+ * @(#)AdvancedMailbox.java 1.0 23.03.05 (dd.mm.yy)
  *
  * Copyright (2003) Bro3
  * 
@@ -23,9 +23,9 @@ package net.sf.xmm.moviemanager.util.tools;
 
 import java.util.ArrayList;
 
-public class AdvancedMailbox {
+public class AdvancedMailbox<E> {
 
-	ArrayList<Object> list = new ArrayList<Object>();
+	ArrayList<E> list = new ArrayList<E>();
 	
 	// The number of currently active threads
 	int threadCount = 0;
@@ -53,7 +53,7 @@ public class AdvancedMailbox {
 		return totalThreads;
 	}
 		
-	synchronized public void removeElement(Object obj) throws Exception {
+	synchronized public void removeElement(E obj) throws Exception {
 		
 		if (!list.contains(obj))
 			throw new Exception("Mailbox does not contain object " + obj);
@@ -63,7 +63,7 @@ public class AdvancedMailbox {
 		list.remove(index);
 	}
 	
-	synchronized public Object pop() throws Exception {
+	synchronized public E pop() throws Exception {
 		
 		if (list.size() == 0)
 			throw new Exception("Mailbox is empty");
@@ -71,7 +71,7 @@ public class AdvancedMailbox {
 		return list.remove(0);
 	}
 	
-	synchronized public void addElement(Object obj) throws Exception {
+	synchronized public void addElement(E obj) throws Exception {
 		
 		if (list.contains(obj))
 			throw new Exception("Mailbox already contains object " + obj);
