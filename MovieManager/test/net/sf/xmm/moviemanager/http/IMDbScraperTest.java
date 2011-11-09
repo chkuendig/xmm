@@ -20,28 +20,12 @@
 
 package net.sf.xmm.moviemanager.http;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.xml.xpath.XPathExpressionException;
-
-import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
-import net.sf.xmm.moviemanager.imdblib.IMDb;
 import net.sf.xmm.moviemanager.imdblib.IMDbScraper;
-import net.sf.xmm.moviemanager.imdblib.XPathParser;
-import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
-import net.sf.xmm.moviemanager.models.imdb.ModelIMDbListHit;
-import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
+
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
-import org.junit.Test;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 /*
  * Used for simple testing of methods in IMDbScraper

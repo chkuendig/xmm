@@ -20,27 +20,22 @@
 
 package net.sf.xmm.moviemanager.http;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import javax.xml.xpath.XPathExpressionException;
-
 import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
-import net.sf.xmm.moviemanager.imdblib.IMDb;
 import net.sf.xmm.moviemanager.imdblib.IMDbScraper;
-import net.sf.xmm.moviemanager.imdblib.XPathParser;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbListHit;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
+
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 
 public class IMDBTest  {
@@ -140,7 +135,7 @@ public class IMDBTest  {
 			System.out.println("matches.get("+i+"):" + matches.get(i));
 		*/
 		
-		assertEquals("The number of results does not match the expected for input " + input, 14, matches.size());
+		assertEquals("The number of results does not match the expected for input " + input, 13, matches.size());
 		
 	}
 	
@@ -261,11 +256,11 @@ public class IMDBTest  {
 		String expectedCountry = "USA, France";
 		String expectedLanguage = "English, Spanish";
 		String expectedPlot = "Nearly 10 years have passed since Sarah Connor was targeted for termination by a cyborg from the future. Now her son, John, the future leader of the resistance, is the target for a newer, more deadly terminator. Once again, the resistance has managed to send a protector back to attempt to save John and his mother Sarah.";
-		String expectedCast = "Arnold Schwarzenegger (The Terminator), Linda Hamilton (Sarah Connor), Edward Furlong (John Connor), Robert Patrick (T-1000), Earl Boen (Dr. Silberman), Joe Morton (Miles Dyson), S. Epatha Merkerson (Tarissa Dyson), Castulo Guerra (Enrique Salceda), Danny Cooksey (Tim), Jenette Goldstein (Janelle Voight), Xander Berkeley (Todd Voight), Leslie Hamilton Gearren (Twin Sarah), Ken Gibbel (Douglas), Robert Winley (Cigar Biker), Peter Schrum (Lloyd (as Pete Schrum)), Shane Wilder (Trucker), Michael Edwards (Old John Connor), Jared Lounsbery (Kid), Casey Chavez (Kid), Ennalls Berl (Bryant), Don Lake (Mossberg), Richard Vidan (Weatherby), Tom McDonald (Cop), Jim Palmer (Jock), Gerard G. Williams (Jock), Gwenda Deacon (Night Nurse), Don Stanton (Lewis the Guard), Dan Stanton (Lewis as T-1000), Colin Patrick Lynch (Attendant), Noel Evangelisti (Hospital Guard), Nikki Cox (Girl), Lisa Brinegar (Girl), DeVaughn Nixon (Danny Dyson (as De Vaughn Nixon)), Tony Simotes (Vault Guard), Diane Rodriguez (Jolanda Salceda), Dalton Abbott (Infant John Connor), Ron Young (Pool Cue Biker), Charles Robert Brown (Tattoo Biker), Abdul Salaam El Razzac (Gibbons), Mike Muscat (Moshier), Dean Norris (SWAT Team Leader), Charles A. Tamburro (Police Chopper Pilot (as Charles Tamburro)), J. Rob Jordan (Pickup Truck Driver), Terrence Evans (Tanker Truck Driver), Denney Pierce (Burly Attendant), Mark Christopher Lawrence (Burly Attendant), Pat Kouri (SWAT Leader), Van Ling (Cyberdyne Tech), Michael Biehn (Kyle Reese (scenes deleted)), Michael Albanese (SWAT Officer (uncredited)), Ed Arneson (SWAT Officer (uncredited)), Bret A. Arnold (Future Coda Man (uncredited)), Debra Casey (Mohawk Girl at Biker Bar (uncredited)), Jim Dahl (SWAT Officer (uncredited)), Takao Komine (Tourist Shot by T-1000 (uncredited)), Joel Kramer (Male Nurse (uncredited)), Anne Merrem (Psychiatric (uncredited)), Scott Shaw (Cyberdyne Tech (uncredited)), Steven Stear (SWAT Officer (uncredited)), Randy Walker (SWAT Officer (uncredited)), William Wisher Jr. (Galleria Photographer / Cop (uncredited))";
+		String expectedCast = "Arnold Schwarzenegger (The Terminator), Linda Hamilton (Sarah Connor), Edward Furlong (John Connor), Robert Patrick (T-1000), Earl Boen (Dr. Silberman), Joe Morton (Miles Dyson), S. Epatha Merkerson (Tarissa Dyson), Castulo Guerra (Enrique Salceda), Danny Cooksey (Tim), Jenette Goldstein (Janelle Voight), Xander Berkeley (Todd Voight), Leslie Hamilton Gearren (Twin Sarah), Ken Gibbel (Douglas), Robert Winley (Cigar Biker), Peter Schrum (Lloyd (as Pete Schrum)), Shane Wilder (Trucker), Michael Edwards (Old John Connor), Jared Lounsbery (Kid), Casey Chavez (Kid), Ennalls Berl (Bryant), Don Lake (Mossberg), Richard Vidan (Weatherby), Tom McDonald (Cop), Jim Palmer (Jock), Gerard G. Williams (Jock), Gwenda Deacon (Night Nurse), Don Stanton (Lewis the Guard), Dan Stanton (Lewis as T-1000), Colin Patrick Lynch (Attendant), Noel Evangelisti (Hospital Guard), Nikki Cox (Girl), Lisa Brinegar (Girl), DeVaughn Nixon (Danny Dyson (as De Vaughn Nixon)), Tony Simotes (Vault Guard), Diane Rodriguez (Jolanda Salceda), Dalton Abbott (Infant John Connor), Ron Young (Pool Cue Biker), Charles Robert Brown (Tattoo Biker), Abdul Salaam El Razzac (Gibbons), Mike Muscat (Moshier), Dean Norris (SWAT Team Leader), Charles A. Tamburro (Police Chopper Pilot (as Charles Tamburro)), J. Rob Jordan (Pickup Truck Driver), Terrence Evans (Tanker Truck Driver), Denney Pierce (Burly Attendant), Mark Christopher Lawrence (Burly Attendant), Pat Kouri (SWAT Leader), Van Ling (Cyberdyne Tech), Michael Albanese (SWAT Officer (uncredited)), Ed Arneson (SWAT Officer (uncredited)), Bret A. Arnold (Future Coda Man (uncredited)), Debra Casey (Mohawk Girl at Biker Bar (uncredited)), Jim Dahl (SWAT Officer (uncredited)), Takao Komine (Tourist Shot by T-1000 (uncredited)), Joel Kramer (Male Nurse (uncredited)), Anne Merrem (Psychiatric (uncredited)), Scott Shaw (Cyberdyne Tech (uncredited)), Steven Stear (SWAT Officer (uncredited)), Randy Walker (SWAT Officer (uncredited)), William Wisher Jr. (Galleria Photographer / Cop (uncredited))";
 		String expectedWebRuntime = "137 min, USA:152 min (special edition), USA:154 min (extended special edition)";
 		String expectedWebSoundMix = "70 mm 6-Track (analog 70 mm prints), CDS (digital 35 mm and 70 mm prints), Dolby SR (analog 35 mm prints)";
-		String expectedAwards = "Won 4 Oscars. Another 20 wins & 18 nominations";
-		String expectedMpaa = "Rated R for strong sci-fi action and violence, and for language.";
+		String expectedAwards = "Won 4 Oscars. Another 20 wins & 19 nominations";
+		String expectedMpaa = "Rated R for strong sci-fi action and violence, and for language";
 		String expectedAka = 
 		
 		"\"El Exterminator 2\" - USA (Spanish title)\n" +
@@ -281,27 +276,29 @@ public class IMDBTest  {
 		"\"O Exterminador do Futuro 2: O Julgamento Final\" - Brazil\n" + 
 		"\"Terminátor 2. - Az ítélet napja\" - Hungary\n" + 
 		"\"Terminátor 2: Den zúctování\" - Czechoslovakia (Czech title)\n" + 
-		"\"Terminátor 2: Den zúctovania\" - Czechoslovakia (Slovak title)\n" + 
+		"\"Terminátor 2: Den zúctovania\" - Czechoslovakia (Slovak title)\n" +
+		"\"Terminátor 2: Soudný den\" - Czechoslovakia (imdb display title)\n" + 
 		"\"Terminaator 2: Kohtupäev\" - Estonia (promotional title)\n" + 
 		"\"Terminateur 2: Le jugement dernier\" - Canada (French title)\n" + 
 		"\"Terminator 2\" - Japan (English title)\n" + 
 		"\"Terminator 2\" - Poland (TV title)\n" + 
+		"\"Terminator 2 - Domedagen\" - Sweden (imdb display title)\n" + 
 		"\"Terminator 2 - El día del juicio\" - Mexico\n" + 
-		"\"Terminator 2 - Il giorno del giudizio\" - Italy (imdb display title)\n" +
+		"\"Terminator 2 - Il giorno del giudizio\" - Italy (imdb display title)\n" + 
+		"\"Terminator 2 - Judgment Day\" - Sweden (DVD title)\n" + 
 		"\"Terminator 2 - Mahser günü\" - Turkey (Turkish title)\n" + 
 		"\"Terminator 2 - Sodni dan\" - Slovenia\n" + 
 		"\"Terminator 2 - Sudnji dan\" - Serbia\n" + 
 		"\"Terminator 2 - Tag der Abrechnung\" - Germany\n" + 
-		"\"Terminator 2 - domedagen\" - Sweden\n" + 
+		"\"Terminator 2 - Tuomion päivä\" - Finland (imdb display title)\n" + 
 		"\"Terminator 2 - domens dag\" - Finland (Swedish title)\n" + 
-		"\"Terminator 2 - tuomion päivä\" - Finland\n" + 
 		"\"Terminator 2: Dommedag\" - Denmark\n" + 
+		"\"Terminator 2: Dommens Dag\" - Norway (imdb display title)\n" + 
 		"\"Terminator 2: Dzien sadu\" - Poland\n" + 
+		"\"Terminator 2: Juicio Final\" - Mexico (imdb display title)\n" + 
 		"\"Terminator 2: Sudnji dan\" - Croatia\n" + 
 		"\"Terminator 2: Sudnyi den'\" - Soviet Union (Russian title)\n" + 
-		"\"Terminator 2: Ziua judecatii\" - Romania (imdb display title)\n" + 
-		"\"Tortímandinn 2: Dómsdagur\" - Iceland (imdb display title)"; 
-			
+		"\"Terminator 2: Ziua judecatii\" - Romania (imdb display title)";
 			
 		String expectedCertification = "Canada:18 (Nova Scotia) (DVD rating), Canada:A (Nova Scotia) (original cut), Canada:AA (Ontario) (original cut), Canada:PA (Manitoba) (original cut), Finland:K-18 (original rating) (1991), Italy:T, USA:R (certificate #31159), Iceland:16, South Korea:15, Brazil:12, Malaysia:18SG, New Zealand:M, Netherlands:12 (edited TV version), Portugal:M/12, Argentina:13 (re-rating), Argentina:16 (original rating), Australia:M, Canada:13+ (Quebec), Canada:18A (Alberta) (re-rating) (1999), Canada:18A (Manitoba/Ontario) (DVD rating), Chile:14, Finland:K-16 (re-rating) (1991), France:-12, Germany:16, Ireland:15, Israel:PG, Japan:R-15, Netherlands:16, Norway:15 (video rating) (director's cut), Norway:18 (original rating), Peru:14, Singapore:NC-16, Singapore:PG (cut), Spain:18, Sweden:15, UK:15 (original rating) (cut), UK:15 (video rating) (1992) (cut), UK:15 (video re-rating) (2001) (uncut), UK:18 (laserdisc rating) (1992) (uncut), Iran:18+";
 		String expectedColor = "Color";
@@ -355,33 +352,33 @@ public class IMDBTest  {
 		String expectedCountry = "USA";
 		String expectedLanguage = "English";
 		String expectedPlot = "At the young age of 15, Buffy was chosen to hunt vampires, demons, and the forces of darkness. After the ordeal at Hemery High Buffy Summers wound up at Sunnydale High. Joined with Willow Rosenberg and Alexander \"Xander\" Harris, and her watcher Giles, Buffy fights the challenges of High School and saves the world...a lot.";
-		String expectedCast = "Sarah Michelle Gellar (Buffy Summers /, (145 episodes, 1997-2003)), Nicholas Brendon (Xander Harris (145 episodes, 1997-2003)), Alyson Hannigan (Willow Rosenberg (144 episodes, 1997-2003)), Anthony Head (Rupert Giles (123 episodes, 1997-2003)), James Marsters (Spike (97 episodes, 1997-2003)), Emma Caulfield (Anya (85 episodes, 1998-2003)), Michelle Trachtenberg (Dawn Summers (66 episodes, 2000-2003))";
+		String expectedCast = "Sarah Michelle Gellar (Buffy Summers /, (145 episodes, 1996-2003)), Nicholas Brendon (Xander Harris (145 episodes, 1996-2003)), Alyson Hannigan (Willow Rosenberg (144 episodes, 1997-2003)), Anthony Head (Rupert Giles (123 episodes, 1996-2003)), James Marsters (Spike (97 episodes, 1997-2003)), Emma Caulfield (Anya (85 episodes, 1998-2003)), Michelle Trachtenberg (Dawn Summers (66 episodes, 2000-2003))";
 		String expectedWebRuntime = "44 min (144 episodes)";
 		String expectedWebSoundMix = "Dolby";
-		String expectedAwards = "Nominated for Golden Globe. Another 34 wins & 99 nominations";
+		String expectedAwards = "Nominated for Golden Globe. Another 39 wins & 99 nominations";
 		String expectedMpaa = "";
 		String expectedAka = 
 			"\"BtVS\" - USA (promotional abbreviation)\n" +
-			"\"Buffy\" - USA (short title)\n" + 
-			"\"Buffy, the Vampire Slayer: The Series\" - USA (long title)\n" + 
-			"\"Buffy, la cazavampiros\" - Argentina, Mexico, Spain, Venezuela\n" + 
-			"\"Бъфи - убийцата на вампири\" - Bulgaria (Bulgarian title)\n" + 
-			"\"Bafi, ubica vampira\" - Serbia\n" + 
-			"\"Buffy - Im Bann der Dämonen\" - Germany\n" + 
-			"\"Buffy - Vampyrdræberen\" - Denmark\n" + 
-			"\"Buffy - Vampyrenes skrekk\" - Norway\n" + 
-			"\"Buffy - Vampyrernes skræk\" - Denmark\n" + 
-			"\"Buffy contre les vampires\" - France\n" + 
-			"\"Buffy i vampirofonissa\" - Greece (transliterated ISO-LATIN-1 title)\n" + 
-			"\"Buffy och vampyrerna\" - Sweden (cable TV title)\n" + 
-			"\"Buffy vampyrdödaren\" - Sweden\n" + 
-			"\"Buffy, Caçadora de Vampiros\" - Portugal\n" + 
-			"\"Buffy, a vámpírok réme\" - Hungary\n" + 
-			"\"Buffy, l'ammazzavampiri\" - Italy\n" + 
-			"\"Buffy, vampyyrintappaja\" - Finland\n" + 
-			"\"Nightfall\" - Japan (English title)";
-			
-	
+			"\"Buffy\" - USA (short title)\n" +
+			"\"Buffy, the Vampire Slayer: The Series\" - USA (long title)\n" +
+			"\"Buffy, la cazavampiros\" - Argentina, Mexico, Spain, Venezuela\n" +
+			"\"Бъфи - убийцата на вампири\" - Bulgaria (Bulgarian title)\n" +
+			"\"Bafi, ubica vampira\" - Serbia\n" +
+			"\"Buffy - Im Bann der Dämonen\" - Germany\n" +
+			"\"Buffy - Izganjalka vampirjev\" - Slovenia\n" +
+			"\"Buffy - Vampyrenes skrekk\" - Norway\n" +
+			"\"Buffy - Vampyrernes skræk\" - Denmark\n" +
+			"\"Buffy contre les vampires\" - France\n" +
+			"\"Buffy i vampirofonissa\" - Greece (transliterated ISO-LATIN-1 title)\n" +
+			"\"Buffy och vampyrerna\" - Sweden (cable TV title)\n" +
+			"\"Buffy vampyrdödaren\" - Sweden\n" +
+			"\"Buffy, Caçadora de Vampiros\" - Portugal\n" +
+			"\"Buffy, a vámpírok réme\" - Hungary\n" +
+			"\"Buffy, l'ammazzavampiri\" - Italy\n" +
+			"\"Buffy, vampyyrintappaja\" - Finland\n" +
+			"\"Buffy: A Caça-Vampiros\" - Brazil (imdb display title)\n" +
+			"\"Buffy: Postrach wampirów\" - Poland (imdb display title)\n" +
+			"\"Nightfall\" - Japan (English title)";	
 	
 		String expectedCertification = "UK:12 (some episodes), UK:15 (some episodes), Australia:PG (some episodes), Portugal:M/12, New Zealand:M, USA:TV-14, Australia:M, Israel:PG, Singapore:M18 (DVD rating) (season 6) (season 7), Singapore:PG (season 1 to 5), USA:TV-14 (some episodes), USA:TV-PG (some episodes)";
 		String expectedColor = "Color";
@@ -436,8 +433,8 @@ public class IMDBTest  {
 		String expectedCountry = "USA";
 		String expectedLanguage = "English";
 		String expectedPlot = "In this hour-long episode, Jerry performs the biggest show of his life in Atlantic City. He receives a rather generous pay check for the event, and decides to buy his father a Cadillac. Unfortunately, doing so puts Morty in the hot seat with the condo board of directors, where he serves as president. Morty is accused of stealing money from the board, and ultimately gets removed from his post as president and kicked out of the condo. Meanwhile, thanks to Elaine, George can score a date with \"My Cousin Vinnie\" star Marisa Tomei but Elaine objects because of George's engagement with Susan. Kramer turns the tables on the cable company when they want to disconnect his service.";
-		String expectedCast = "Jerry Seinfeld (Jerry Seinfeld (also archive footage)), Julia Louis-Dreyfus (Elaine Benes), Michael Richards (Cosmo Kramer), Jason Alexander (George), Marisa Tomei (Marisa Tomei (also archive footage)), Liz Sheridan (Helen Seinfeld), Barney Martin (Morty Seinfeld), Heidi Swedberg (Susan), Walter Olkewicz (Nick), Annabelle Gurwitch (Katy), Sandy Baron (Jack), Ann Morgan Guilbert (Evelyn (as Ann Guilbert)), Frances Bay (Mrs. Choate (also archive footage)), Bill Macy (Herb), Jesse White (Ralph), Annie Korzen (Doris), Daniel Zacapa (Power Guy), Golde Starger (Building 'A' Rep.), Janice Davies (Building 'B' Rep.), Art Frankel (Building 'C' Rep (as Art Frankle)), Ruth Cohen (Ruthie Cohen (uncredited))";
-		String expectedWebRuntime = "60 min";
+		String expectedCast = "Jerry Seinfeld (Jerry Seinfeld), Julia Louis-Dreyfus (Elaine Benes), Michael Richards (Cosmo Kramer), Jason Alexander (George Costanza), Marisa Tomei (Herself), Liz Sheridan (Helen), Barney Martin (Morty), Heidi Swedberg (Susan), Walter Olkewicz (Nick), Annabelle Gurwitch (Katy), Sandy Baron (Jack Klompus), Ann Morgan Guilbert (Evelyn (as Ann Guilbert)), Frances Bay (Mrs. Choate), Bill Macy (Herb), Jesse White (Ralph), Annie Korzen (Doris), Daniel Zacapa (Power Guy), Golde Starger (Bldg 'A'), Janice Davies (Bldg 'B'), Art Frankel (Bldg 'C' (as Art Frankle)), Ruth Cohen (Ruthie Cohen (uncredited))";
+		String expectedWebRuntime = "44 min";
 		String expectedWebSoundMix = "Stereo";
 		String expectedAwards = "";
 		String expectedMpaa = "";
@@ -520,7 +517,7 @@ public class IMDBTest  {
 		String expectedGenre = "Documentary, Short, History";
 		String expectedCountry = "UK";
 		String expectedLanguage = "English";
-		String expectedPlot = "The great follow-up to 'Walking with Dinosaurs' and 'Walking with Beasts', presented by Professor Robert Winston, explains the story of human evolution.";
+		String expectedPlot = "The story of human evolution is told through the stories of representative members of the various species leading up to modern homo sapiens. It is ongoing climate changes that force human ancestors to develop, one by one, the unique characteristics of the modern humans. Though earlier species were superbly successful in their environments they were unsustainable when the environment changes.";
 		String expectedCast = "Robert Winston (Himself - Presenter (4 episodes, 2003)), Alec Baldwin (Narrator (USA version) (4 episodes, 2003)), Christian Bradley (Various hominids (4 episodes, 2003)), Alex Palmer (Various hominids (4 episodes, 2003)), Oliver Parham (Various hominids (4 episodes, 2003)), David Rubin (Various hominids (4 episodes, 2003)), Florence Sparham (Various hominids (4 episodes, 2003)), Marva Alexander (Various hominids (3 episodes, 2003)), Rachel Essex (Various hominids (3 episodes, 2003)), Faroque Khan (Various hominids (3 episodes, 2003)), Suzanne Cave (Various hominids (2 episodes, 2003)), Ruth Dawes (Various hominids (2 episodes, 2003)), Anthony Taylor (Various hominids (2 episodes, 2003)), Badria Timimi (Various hominids (2 episodes, 2003))";
 		String expectedWebRuntime = "UK:30 min (4 episodes), USA:100 min";
 		String expectedWebSoundMix = "";
