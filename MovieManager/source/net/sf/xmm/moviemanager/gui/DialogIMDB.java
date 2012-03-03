@@ -364,7 +364,8 @@ public class DialogIMDB extends JDialog {
     	ArrayList<ModelIMDbSearchHit> hits = null;
     	
     	try {
-    		hits = IMDbLib.newIMDb(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchStringField.getText());
+    		imdb = IMDbLib.newIMDb(MovieManager.getConfig().getHttpSettings());
+    		hits = imdb.getSimpleMatches(searchStringField.getText());
     		handleSearchResults(hits);
     	}
     	catch (Exception e) {
@@ -485,7 +486,9 @@ public class DialogIMDB extends JDialog {
     }
     
     
-    /*ALerts the user of different error messages from proxy servers*/
+    /**
+     * ALerts the user of different error messages from proxy servers
+     */
     void executeErrorMessage(Exception e) {
         
     	String message = e.getMessage();
@@ -531,22 +534,15 @@ public class DialogIMDB extends JDialog {
     public static boolean getIMDbInfo(ModelEntry modelEntry, String key) {
     	IMDb imdb;
 
-    	try {
-    		//net.sf.xmm.moviemanager.http.IMDB_if i = SysUtil.getIMDBInstance();
-    		
-    		//imdb = i.getIMDB(key, MovieManager.getConfig().getHttpSettings());
-    		
-    		//net.sf.xmm.moviemanager.http.IMDB_if i = SysUtil.getIMDBInstance();
-    		
+    	try {    		
     		imdb = IMDbLib.newIMDb(key, MovieManager.getConfig().getHttpSettings());
     	} catch (Exception e) {
-    		log.error(e.getMessage(), e); //$NON-NLS-1$
+    		log.error("Exception:" + e.getMessage(), e); //$NON-NLS-1$
     		return false;
     	}
     	
     	ModelIMDbEntry dataModel = imdb.getLastDataModel();
-    	   
-
+    	
     	if (key.equals(dataModel.getUrlID())) {
 
     		modelEntry.setTitle(dataModel.getTitle());
