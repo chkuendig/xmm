@@ -584,6 +584,7 @@ public class IMDbScraper implements IMDb {
 		}
     }
     
+    // Not used
     private ModelIMDbEntry parseData2(String urlID, StringBuffer data) throws Exception {
 		
         String date = "", title = "", plot = "", coverURL = "", coverName = "";
@@ -728,8 +729,8 @@ public class IMDbScraper implements IMDb {
 	
 		StringBuffer data = null;
 		
-		String urlType = "http://akas.imdb.com/title/tt"+ modelSeason.getUrlID() +"/episodes";
-	
+		String urlType = "http://akas.imdb.com/title/tt" + modelSeason.getUrlID() + "/episodes?season=" + modelSeason.getSeasonNumber();
+				
 		try {
 
 			URL url = new URL(urlType);
@@ -742,11 +743,9 @@ public class IMDbScraper implements IMDb {
 				data = null;
 			}
 
-			if (data == null) {
-				return null;
+			if (data != null) {
+				//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/episodeStream.html", data);
 			}
-
-			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/episodeStream.html", data);
 			
 		} catch (Exception e) {
 			log.error("Exception:" + e.getMessage(), e);
@@ -763,35 +762,35 @@ public class IMDbScraper implements IMDb {
 		
 		try {
 
-			String classContent = getDivClass("season-filter-all filter-season-" + modelSeason.getSeasonNumber(), stream);
+			String classContent = getDivClass("list detail eplist", stream);
 			
 			StringBuffer data = new StringBuffer(classContent);
 			
-			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/episodeStream"+modelSeason.getSeasonNumber()+".html", data);
+			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/episodeStream" + modelSeason.getSeasonNumber() + ".html", data);
 						
-			Pattern p = Pattern.compile("<h3>(.+)\\s?<a href=\"/title/tt(\\d+)/\">(.+?)</a>");
+			Pattern p = Pattern.compile("<div class=\"info\" itemprop=\"episodes\".+?content=\"(\\d+)\".+?href=\"/title/tt(\\d+)/\".*?title=\"(.*?)\"", 
+					Pattern.DOTALL);
 			Matcher m = p.matcher(data);
-							
+			
 			while (m.find()) {
 
 				int gCount = m.groupCount();
-
+				
 				if (gCount == 3) {
 					
-					String episode = m.group(1);
+					int episode = Integer.parseInt(m.group(1));
 					String key = m.group(2);
 					String title = m.group(3);
 
 					title = HttpUtil.decodeHTML(title);
-					
-					title = episode + title;
+					title = String.format("S%dE%02d - %s", modelSeason.getSeasonNumber(), episode, title);
 					
 					hits.add(new ModelIMDbSearchHit(key, title, modelSeason.getSeasonNumber()));
 				}
 			}
 
 		} catch (Exception e) {
-			log.error("", e);
+			log.error("Exception:", e);
 		}
 	
 		return hits;
@@ -825,7 +824,7 @@ public class IMDbScraper implements IMDb {
 				String seasons = data.substring(start, end);
 				
 				int seasonCount = 1;
-				String season = "episodes#season-";
+				String season = "episodes?season=";
 				
 				while (seasons.indexOf(season + seasonCount) != -1) {
 					title = modelSeries.getTitle()+ " - Season "+ seasonCount;
@@ -923,22 +922,21 @@ public class IMDbScraper implements IMDb {
 
     	try {
 
-    		//new java.io.File("HTML-debug").mkdir();
     		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
 
     		int start = 0;
 			String key = "";
 			String movieTitle = "", year = null, aka = "";
-			int titleSTart, titleEnd;
+			int titleStart, titleEnd;
 			int movieCount = 0;
 			
 			/* If there's only one movie for that title it goes directly to that site...  */
 			if (!data.substring(data.indexOf("<title>")+7, data.indexOf("<title>")+11).equals("IMDb")) {
 			
 				/* Gets the title... */
-				titleSTart = data.indexOf("<title>", start)+7;
-				titleEnd = data.indexOf("</title>", titleSTart);
-				movieTitle = HttpUtil.decodeHTML(data.substring(titleSTart, titleEnd));
+				titleStart = data.indexOf("<title>", start)+7;
+				titleEnd = data.indexOf("</title>", titleStart);
+				movieTitle = HttpUtil.decodeHTML(data.substring(titleStart, titleEnd));
 				
 				// get date
 				String [] year2 = new String[1];
@@ -951,7 +949,7 @@ public class IMDbScraper implements IMDb {
 					movieTitle = movieTitle.replaceFirst("\\("+year+"\\)", "");
 				}
 				
-				if ((start=data.indexOf("title/tt",start) + 8) != 7) {
+				if ((start = data.indexOf("title/tt",start) + 8) != 7) {
 					key = HttpUtil.decodeHTML(data.substring(start, start + 7));
 				}
 				
@@ -1511,7 +1509,7 @@ public class IMDbScraper implements IMDb {
     	try {
     		url = new URL("http://akas.imdb.com/media/" + dataModel.bigCoverUrlId);
     		
-    		System.out.println("url:" + url);
+    		//System.out.println("url:" + url);
     		
     		HTTPResult res = httpUtil.readData(url);
     		StringBuffer data = res.getData();
