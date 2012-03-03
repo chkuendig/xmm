@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 
@@ -63,33 +64,21 @@ public class IMDBTest  {
 
 	
 	@Test
-	public void getSimpleMatchesTest() {
-
-		IMDbScraper imdb = null;
-		try {
-			imdb = new IMDbScraper();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void getSimpleMatchesTest() throws Exception {
+		
+		IMDbScraper imdb = new IMDbScraper();
 
 		String input = "La fille sur le pon";
 
 		ArrayList<ModelIMDbSearchHit> matches = null;
-		try {
-			matches = imdb.getSimpleMatches(input);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		matches = imdb.getSimpleMatches(input);
+		
 		assertTrue("The number of results does not match the expected for input " + input, matches.size() ==  20);
 
 
 		input = "Marly & Me";
-
-		try {
-			matches = imdb.getSimpleMatches(input);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		matches = imdb.getSimpleMatches(input);
+		
 		assertTrue("The number of results does not match the expected for input " + input, matches.size() ==  20);
 
 
@@ -111,24 +100,14 @@ public class IMDBTest  {
 
 
 	@Test
-	public void seriesSimpleMatchesTest() {
+	public void seriesSimpleMatchesTest() throws Exception {
 
-		IMDbScraper imdb = null;
-		try {
-			imdb = new IMDbScraper();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
+		IMDbScraper imdb = new IMDbScraper();
 
 		String input = "Buffy the Vampire Slayer";
 
 		ArrayList<ModelIMDbSearchHit> matches = null;
-		try {
-			matches = imdb.getSimpleMatches(input);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		matches = imdb.getSimpleMatches(input);
 		
 		/*
 		for (int i = 0; i < matches.size(); i++)
@@ -141,7 +120,7 @@ public class IMDBTest  {
 	
 	
 	@Test
-	public void getMatchesTest() {
+	public void getMatchesTest() throws Exception {
 
 		/*
 		 Troublesome titles:
@@ -161,13 +140,7 @@ public class IMDBTest  {
 		 
 		 */
 
-		IMDbScraper imdb = null;
-		try {
-			imdb = new IMDbScraper();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		IMDbScraper imdb = new IMDbScraper();
 
 		StringBuffer testData = new StringBuffer();
 
@@ -180,7 +153,7 @@ public class IMDBTest  {
 		
 		testData.append(imdb.movieHitCategory[1]);
 		
-		// Troublesome because two movies with the same name was created than year (1998/I)
+		// Troublesome because two movies with the same name was created that year (1998/I)
 		testData.append("<a href=\"/title/tt0120744/\">The Man in the Iron Mask</a> (1998/I)</td></tr>");
 		testData.append("<a href=\"/title/tt0103064/\">Terminator 2: Judgment Day</a> (1991)<br>&#160;aka <em>\"Terminator 2 - Le jugement dernier\"</em> - France<br>&#160;aka <em>\"T2 - Terminator 2: Judgment Day\"</em></td></tr>");
 	
@@ -196,27 +169,55 @@ public class IMDBTest  {
 		testData.append("<a href=\"/title/tt0311669/\" onclick=\"(new Image()).src='/rg/find-title-2/title_exact/images/b.gif?link=/title/tt0311669/';\">Predator</a> (1989) (VG)     </td></tr></table>");
 		
 		ArrayList<ModelIMDbSearchHit> matches = imdb.getMatches(testData);
-		
-		assertTrue("The number of results does not match the expected", matches.size() ==  6);
+		assertEquals("The number of results does not match the expected", matches.size(), 6);
 		
 		/*
 		for (int i = 0; i < matches.size(); i++)
 			System.out.println("matches.get("+i+"):" + matches.get(i));
 */
+						
+		// "30 Rock" (2006) 
+		matches = imdb.getSimpleMatches("30 Rock");
+		assertTrue("Movie search result did not include the expected title", hasUrlKey(matches, "0496424"));
+		
+		// The Man in the Iron Mask</a> (1977) (TV)
+		matches = imdb.getSimpleMatches("The Man in the Iron Mask");
+		assertTrue("Movie search result did not include the expected title", hasUrlKey(matches, "0074853"));
+		
+		// The Man in the Iron Mask</a> (1998/I)
+		matches = imdb.getSimpleMatches("The Man in the Iron Mask");
+		assertTrue("Movie search result did not include the expected title", hasUrlKey(matches, "0120744"));
+		
+		// Terminator 2: Judgment Day
+		matches = imdb.getSimpleMatches("Terminator 2: Judgment Day");
+		assertTrue("Movie search result did not include the expected title", hasUrlKey(matches, "0103064"));
+
+		// "Marley & Me" - troublesome because if &
+		matches = imdb.getSimpleMatches("Marley & Me");
+		assertTrue("Movie search result did not include the expected title", hasUrlKey(matches, "0822832"));
+
+		// "You Don't Mess with the Zohan"
+		matches = imdb.getSimpleMatches("You Don't Mess with the Zohan");
+		assertTrue("Movie search result did not include the expected title", hasUrlKey(matches, "0960144"));
+
+		// Predator (1989) (VG) (Should NOT match because of (VG) which means Video Game)
+		matches = imdb.getSimpleMatches("Predator");
+		assertFalse("Movie search result did not include the expected title", hasUrlKey(matches, "0311669"));
+				
 	}
 	
+	boolean hasUrlKey(ArrayList<ModelIMDbSearchHit> matches, String urlID) {
+		for (int i = 0; i < matches.size(); i++) {
+			if (matches.get(i).getUrlID().equals(urlID))
+				return true;
+		}
+		return false;
+	}
 	
 	@Test
-	public void getSeasonsTest() {
+	public void getSeasonsTest() throws Exception {
 
-	
-		IMDbScraper imdb = null;
-		try {
-			imdb = new IMDbScraper();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		IMDbScraper imdb = new IMDbScraper();
 
 		String urlKey = "0118276"; //Buffy the Vampire Slayer (TV Series 1997–2003)
 		
@@ -226,7 +227,7 @@ public class IMDBTest  {
 		/*
 		for (int i = 0; i < matches.size(); i++)
 			System.out.println("matches.get("+i+"):" + matches.get(i));
-		 */
+		 */		
 		
 		assertTrue("The number of results does not match the expected", matches.size() ==  7);
 		
@@ -235,14 +236,8 @@ public class IMDBTest  {
 	@Test
 	public void dataRetrievalTest() throws Exception {
 		
-		IMDbScraper imdb = null;
-		try {
-			imdb = new IMDbScraper();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-		
+		IMDbScraper imdb = new IMDbScraper();
+				
 		// Terminator 2
 		StringBuffer data = imdb.getURLData("0103064").getData();
 		
@@ -328,14 +323,7 @@ public class IMDBTest  {
 	@Test
 	public void dataRetrievalSeriesTest() throws Exception {
 		
-		IMDbScraper imdb = null;
-		try {
-			imdb = new IMDbScraper();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
+		IMDbScraper imdb = new IMDbScraper();
 		
 		// Buffy
 		StringBuffer data = imdb.getURLData("0118276").getData();
@@ -355,7 +343,7 @@ public class IMDBTest  {
 		String expectedCast = "Sarah Michelle Gellar (Buffy Summers /, (145 episodes, 1996-2003)), Nicholas Brendon (Xander Harris (145 episodes, 1996-2003)), Alyson Hannigan (Willow Rosenberg (144 episodes, 1997-2003)), Anthony Head (Rupert Giles (123 episodes, 1996-2003)), James Marsters (Spike (97 episodes, 1997-2003)), Emma Caulfield (Anya (85 episodes, 1998-2003)), Michelle Trachtenberg (Dawn Summers (66 episodes, 2000-2003))";
 		String expectedWebRuntime = "44 min (144 episodes)";
 		String expectedWebSoundMix = "Dolby";
-		String expectedAwards = "Nominated for Golden Globe. Another 39 wins & 99 nominations";
+		String expectedAwards = "Nominated for Golden Globe. Another 37 wins & 99 nominations";
 		String expectedMpaa = "";
 		String expectedAka = 
 			"\"BtVS\" - USA (promotional abbreviation)\n" +
@@ -407,16 +395,26 @@ public class IMDBTest  {
 	
 	
 	@Test
+	public void getEpisodesTest() throws Exception {
+	
+		IMDbScraper imdb = new IMDbScraper();
+		
+		// Grey's Anatomy, season 1
+		ModelIMDbSearchHit hit = new ModelIMDbSearchHit("0413573", null, 1);
+				
+		StringBuffer episodesStream = imdb.getEpisodesStream(hit);
+		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/episodesStream.html", episodesStream);
+		
+		ArrayList<ModelIMDbSearchHit> hits = imdb.getEpisodes(hit, episodesStream);
+		
+		assertEquals(hits.size(), 9);
+	}
+	
+	
+	@Test
 	public void dataRetrievalEpisodeTest() throws Exception {
 		
-		IMDbScraper imdb = null;
-		try {
-			imdb = new IMDbScraper();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
+		IMDbScraper imdb = new IMDbScraper();
 		
 		// Seinfeld - The Cadillac (Season 7, Episode 14)
 		StringBuffer data = imdb.getURLData("0697667").getData();
@@ -433,7 +431,7 @@ public class IMDBTest  {
 		String expectedCountry = "USA";
 		String expectedLanguage = "English";
 		String expectedPlot = "In this hour-long episode, Jerry performs the biggest show of his life in Atlantic City. He receives a rather generous pay check for the event, and decides to buy his father a Cadillac. Unfortunately, doing so puts Morty in the hot seat with the condo board of directors, where he serves as president. Morty is accused of stealing money from the board, and ultimately gets removed from his post as president and kicked out of the condo. Meanwhile, thanks to Elaine, George can score a date with \"My Cousin Vinnie\" star Marisa Tomei but Elaine objects because of George's engagement with Susan. Kramer turns the tables on the cable company when they want to disconnect his service.";
-		String expectedCast = "Jerry Seinfeld (Jerry Seinfeld), Julia Louis-Dreyfus (Elaine Benes), Michael Richards (Cosmo Kramer), Jason Alexander (George Costanza), Marisa Tomei (Herself), Liz Sheridan (Helen), Barney Martin (Morty), Heidi Swedberg (Susan), Walter Olkewicz (Nick), Annabelle Gurwitch (Katy), Sandy Baron (Jack Klompus), Ann Morgan Guilbert (Evelyn (as Ann Guilbert)), Frances Bay (Mrs. Choate), Bill Macy (Herb), Jesse White (Ralph), Annie Korzen (Doris), Daniel Zacapa (Power Guy), Golde Starger (Bldg 'A'), Janice Davies (Bldg 'B'), Art Frankel (Bldg 'C' (as Art Frankle)), Ruth Cohen (Ruthie Cohen (uncredited))";
+		String expectedCast = "Jerry Seinfeld (Jerry Seinfeld), Julia Louis-Dreyfus (Elaine Benes), Michael Richards (Cosmo Kramer), Jason Alexander (George Costanza), Marisa Tomei (Herself), Liz Sheridan (Helen), Barney Martin (Morty), Heidi Swedberg (Susan Ross), Walter Olkewicz (Nick), Annabelle Gurwitch (Katy), Sandy Baron (Jack Klompus), Ann Morgan Guilbert (Evelyn (as Ann Guilbert)), Frances Bay (Mrs. Choate), Bill Macy (Herb), Jesse White (Ralph), Annie Korzen (Doris), Daniel Zacapa (Power Guy), Golde Starger (Bldg 'A'), Janice Davies (Bldg 'B'), Art Frankel (Bldg 'C' (as Art Frankle)), Ruth Cohen (Ruthie Cohen (uncredited))";
 		String expectedWebRuntime = "44 min";
 		String expectedWebSoundMix = "Stereo";
 		String expectedAwards = "";
@@ -468,14 +466,7 @@ public class IMDBTest  {
 	@Test
 	public void dataRetrievalMultipleDirectorsTest() throws Exception {
 		
-		IMDbScraper imdb = null;
-		try {
-			imdb = new IMDbScraper();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
+		IMDbScraper imdb = new IMDbScraper();
 		
 		// The Ladykillers
 		StringBuffer data = imdb.getURLData("0335245").getData();
@@ -494,15 +485,7 @@ public class IMDBTest  {
 	@Test
 	public void dataRetrievalTVSeriesTest() throws Exception {
 		
-		IMDbScraper imdb = null;
-		try {
-			imdb = new IMDbScraper();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
-		
+		IMDbScraper imdb = new IMDbScraper();		
 		
 		StringBuffer data = imdb.getURLData("0370053").getData();
 		
@@ -600,13 +583,12 @@ public class IMDBTest  {
 		//ModelIMDbEntry model = imdb.grabInfo(urlID, data);		
 		
 		ArrayList<ModelIMDbListHit> hits = imdb.getVotedMovies();
-		
-		System.err.println("hit size:" + hits.size());
-		
+				
+		/*
 		for (ModelIMDbListHit hit : hits) {
 			System.err.println(hit);
 		}
-		
+		*/
 		//ArrayList<ModelIMDbSearchHit> hits = imdb.parseList(result.getData());
 		
 		
