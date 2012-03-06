@@ -113,7 +113,7 @@ public class DialogAboutIMDbLib extends JDialog {
 		JPanel panelCopyright = new JPanel();
 		panelCopyright.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder()," Copyright "),
 				BorderFactory.createEmptyBorder(5,5,5,5)));
-		JLabel labelCopyright = new JLabel("(C) 2003-2010 Bro",JLabel.CENTER);
+		JLabel labelCopyright = new JLabel("(C) 2003-2012 Bro",JLabel.CENTER);
 		labelCopyright.setFont(new Font(labelCopyright.getFont().getName(),Font.PLAIN,labelCopyright.getFont().getSize()));
 		panelCopyright.add(labelCopyright);
 
