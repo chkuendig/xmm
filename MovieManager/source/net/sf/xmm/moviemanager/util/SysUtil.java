@@ -307,7 +307,6 @@ public class SysUtil {
 			try {
 				Class<?> classForName = Class.forName(className);
 				Object classInstance = classForName.newInstance();
-				log.debug("Successfully loaded LoginHandler");
 				return classInstance;
 
 			} catch (ClassNotFoundException e) {
@@ -358,7 +357,7 @@ public class SysUtil {
     }
     
     
-    public static void cleaStreams(Process p) {
+    public static void clearStreams(Process p) {
     	
     	if (p == null)
     		return;

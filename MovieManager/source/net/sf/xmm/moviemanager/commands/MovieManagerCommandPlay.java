@@ -422,7 +422,7 @@ class LaunchPlayer extends Thread {
 			return;
 		
 		// Clear input/error streams to avoid dead lock in subprocess
-		SysUtil.cleaStreams(p);
+		SysUtil.clearStreams(p);
 	}
 	
 	public static void printCommand(String intro, String [] args) {
