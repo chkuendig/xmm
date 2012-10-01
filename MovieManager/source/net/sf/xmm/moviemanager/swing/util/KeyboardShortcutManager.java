@@ -3,7 +3,6 @@ package net.sf.xmm.moviemanager.swing.util;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
@@ -14,12 +13,15 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
 import net.java.balloontip.BalloonTip;
 import net.java.balloontip.BalloonTip.AttachLocation;
 import net.java.balloontip.BalloonTip.Orientation;
+import net.java.balloontip.positioners.BasicBalloonTipPositioner;
+import net.java.balloontip.positioners.LeftAbovePositioner;
 import net.java.balloontip.styles.ModernBalloonStyle;
 import net.sf.xmm.moviemanager.util.SysUtil;
 
@@ -113,12 +115,8 @@ public class KeyboardShortcutManager {
 											
 						if (bTip == null) {
 							toolTipLook = new ModernBalloonStyle(13, 13, new Color(153, 153, 255), new Color(255, 255, 255), new Color(102, 102, 255));
-							bTip = new BalloonTip(tooltipAreaComponent, getShortCutsString(), toolTipLook, Orientation.LEFT_ABOVE, AttachLocation.NORTHWEST, 0, 0, true);
-							bTip.setCloseButtonActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent e) {
-									bTip.setVisible(false);
-								}
-							});
+							bTip = new BalloonTip(tooltipAreaComponent, new JLabel(getShortCutsString()), toolTipLook, 
+		                    		 	Orientation.LEFT_ABOVE, AttachLocation.NORTHWEST, 0, 0, true);
 							bTip.setVisible(false);
 						}
 						
