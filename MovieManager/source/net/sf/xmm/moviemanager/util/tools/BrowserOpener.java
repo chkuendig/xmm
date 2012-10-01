@@ -119,7 +119,7 @@ public class BrowserOpener {
                                 }
                             }
                          // Clear input/error streams to avoid dead lock in subprocess
-            				SysUtil.cleaStreams(p);
+            				SysUtil.clearStreams(p);
                         }
                     } catch (Exception e) {
                     	System.out.println("Exception: "+  e.getMessage());
