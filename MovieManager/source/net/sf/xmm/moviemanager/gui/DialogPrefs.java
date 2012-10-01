@@ -695,15 +695,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 		if (config.getProxyEnabled())
 			enableProxyButton.setSelected(true);
-
-		if (config.getIMDbAuthenticationEnabled())
+		
+		if (config.getProxyAuthenticationEnabled())
 			enableAuthenticationButton.setSelected(true);
-
+		
 		return proxyPanel;
 	}
-
-
-
 
 	JPanel createIMDbPanel() {
 		
@@ -838,7 +835,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		
 		
 		ArrayList<String> langCodesList = new ArrayList<String>(150);
-		int index = 0;
+	/*	int index = 0;
 
 		try {
 
@@ -871,12 +868,12 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 		} catch (IOException e) {
 			log.warn("Exception:" + e.getMessage(), e);
 		}
-
+*/
 		akaTitlePanel.add(storeAllAvailableAkaTitles);
 		akaTitlePanel.add(includeAkaLanguageCodes);
-		akaTitlePanel.add(useLanguageSpecificTitle);
+		//akaTitlePanel.add(useLanguageSpecificTitle);
 
-		Object [] languageCodes = langCodesList.toArray();
+		/*	Object [] languageCodes = langCodesList.toArray();
 	
 		if (languageCodes.length > 0) {
 
@@ -904,7 +901,7 @@ public class DialogPrefs extends JDialog implements ActionListener, ItemListener
 
 			akaTitlePanel.add(languageCodeSelector);
 		}
-
+*/
 		titlePanel.add(akaTitlePanel);
 
 		JPanel IMDbPanel = new JPanel();
