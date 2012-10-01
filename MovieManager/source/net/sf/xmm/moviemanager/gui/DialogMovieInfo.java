@@ -33,6 +33,7 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -2435,18 +2436,28 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			
 			
 			// ALT+C for Cancel
-			shortcutManager.registerKeyboardShortcut(
-					KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
-					"Cancel", new AbstractAction() {
-				public void actionPerformed(ActionEvent ae) {
-					buttonCancel.doClick();
-				}
-			}, buttonCancel);
-					
+			if (SysUtil.isMac()) {
+				shortcutManager.registerKeyboardShortcut(
+						KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),
+						"Cancel", new AbstractAction() {
+							public void actionPerformed(ActionEvent ae) {
+								buttonCancel.doClick();
+							}
+						}, buttonCancel);
+			} else {
+				shortcutManager.registerKeyboardShortcut(
+						KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyboardShortcutManager.getToolbarShortcutMask()),
+						"Cancel", new AbstractAction() {
+							public void actionPerformed(ActionEvent ae) {
+								buttonCancel.doClick();
+							}
+						}, buttonCancel);
+			}
+			
 			// ALT+N for Notes field 
 			shortcutManager.registerKeyboardShortcut(
 					KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyboardShortcutManager.getToolbarShortcutMask()),
-					"Give focus to Notes text area", new AbstractAction() {
+					"Give focus to the Notes text area", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					textAreaNotes.requestFocusInWindow();
 				}
@@ -2455,7 +2466,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			// ALT+I for additionalInfo combobox 
 			shortcutManager.registerKeyboardShortcut(
 					KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyboardShortcutManager.getToolbarShortcutMask()),
-					"Give focus to additional info dropdown", new AbstractAction() {
+					"Give focus to the additional info dropdown", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					additionalInfoFields.requestFocusInWindow();
 				}
@@ -2465,7 +2476,7 @@ public class DialogMovieInfo extends JDialog implements ModelUpdatedEventListene
 			// ALT+V for additionalInfo value field 
 			shortcutManager.registerKeyboardShortcut(
 					KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyboardShortcutManager.getToolbarShortcutMask()),
-					"Give focus to additional info value field", new AbstractAction() {
+					"Give focus to the additional info value field", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					getAdditionalInfoValuePanel().getComponent(0).requestFocusInWindow();
 				}
