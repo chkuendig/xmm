@@ -1,4 +1,3 @@
-package net.sf.xmm.moviemanager.mediainfodll;
 /**
  * MediaInfoDLL - All info about media files, for DLL (JNA version)
  *
@@ -19,7 +18,9 @@ package net.sf.xmm.moviemanager.mediainfodll;
  *
  **/
 
-// Note: the original stuff was well packaged with Java style, 
+package net.sf.xmm.moviemanager.mediainfodll;
+
+// Note: the original stuff was well packaged with Java style,
 // but I (the main developer) prefer to keep an easiest for me
 // way to have all sources and example in the same place
 // Removed stuff:
@@ -30,6 +31,10 @@ import static java.util.Collections.singletonMap;
 
 import java.lang.reflect.Method;
 
+import net.sf.xmm.moviemanager.util.SysUtil;
+
+import org.apache.log4j.Logger;
+
 import com.sun.jna.FunctionMapper;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -39,6 +44,25 @@ import com.sun.jna.WString;
 
 public class MediaInfo
 {
+	static Logger log = Logger.getLogger(SysUtil.class);
+	
+    static
+    {
+        // libmediainfo for linux depends on libzen
+        try
+        {
+            // We need to load dependencies first, because we know where our native libs are (e.g. Java Web Start Cache).
+            // If we do not, the system will look for dependencies, but only in the library path.
+            String os = System.getProperty("os.name");
+            if (os != null && !os.toLowerCase().startsWith("windows") && !os.toLowerCase().startsWith("mac"))
+                NativeLibrary.getInstance("zen");
+        }
+        catch (LinkageError  e)
+        {
+        	log.warn("Failed to preload libzen");
+        }
+    }
+
     //Internal stuff
     interface MediaInfoDLL_Internal extends Library
     {
@@ -46,6 +70,7 @@ public class MediaInfo
         MediaInfoDLL_Internal INSTANCE = (MediaInfoDLL_Internal) Native.loadLibrary("mediainfo", MediaInfoDLL_Internal.class, singletonMap(OPTION_FUNCTION_MAPPER, new FunctionMapper()
             {
 
+                //@Override
                 public String getFunctionName(NativeLibrary lib, Method method)
                 {
                     // MediaInfo_New(), MediaInfo_Open() ...
@@ -64,7 +89,7 @@ public class MediaInfo
         void Close(Pointer Handle);
 
         //Infos
-        WString Inform(Pointer Handle);
+        WString Inform(Pointer Handle, int Reserved);
         WString Get(Pointer Handle, int StreamKind, int StreamNumber, WString parameter, int infoKind, int searchKind);
         WString GetI(Pointer Handle, int StreamKind, int StreamNumber, int parameterIndex, int infoKind);
         int     Count_Get(Pointer Handle, int StreamKind, int StreamNumber);
@@ -90,40 +115,40 @@ public class MediaInfo
          * Unique name of parameter.
          */
         Name,
-    
+
         /**
          * Value of parameter.
          */
         Text,
-    
+
         /**
          * Unique name of measure unit of parameter.
          */
         Measure,
-    
+
         Options,
-    
+
         /**
          * Translated name of parameter.
          */
         Name_Text,
-    
+
         /**
          * Translated name of measure unit.
          */
         Measure_Text,
-    
+
         /**
          * More information about the parameter.
          */
         Info,
-    
+
         /**
          * How this parameter is supported, could be N (No), B (Beta), R (Read only), W
          * (Read/Write).
          */
         HowTo,
-    
+
         /**
          * Domain of this piece of information.
          */
@@ -140,7 +165,7 @@ public class MediaInfo
     {
         if (Handle == null)
             throw new IllegalStateException();
-    
+
         MediaInfoDLL_Internal.INSTANCE.Delete(Handle);
         Handle = null;
     }
@@ -155,7 +180,7 @@ public class MediaInfo
     //File
     /**
      * Open a file and collect information about it (technical information and tags).
-     * 
+     *
      * @param file full name of the file to open
      * @return 1 if file was opened, 0 if file was not not opened
      */
@@ -166,7 +191,7 @@ public class MediaInfo
 
     /**
      * Close a file opened before with Open().
-     * 
+     *
      */
     public void Close()
     {
@@ -176,17 +201,17 @@ public class MediaInfo
     //Information
     /**
      * Get all details about a file.
-     * 
+     *
      * @return All details about a file in one string
      */
     public String Inform()
     {
-        return MediaInfoDLL_Internal.INSTANCE.Inform(Handle).toString();
+        return MediaInfoDLL_Internal.INSTANCE.Inform(Handle, 0).toString();
     }
 
     /**
      * Get a piece of information about a file (parameter is a string).
-     * 
+     *
      * @param StreamKind Kind of Stream (general, video, audio...)
      * @param StreamNumber Stream number in Kind of Stream (first, second...)
      * @param parameter Parameter you are looking for in the Stream (Codec, width, bitrate...),
@@ -201,7 +226,7 @@ public class MediaInfo
 
     /**
      * Get a piece of information about a file (parameter is a string).
-     * 
+     *
      * @param StreamKind Kind of Stream (general, video, audio...)
      * @param StreamNumber Stream number in Kind of Stream (first, second...)
      * @param parameter Parameter you are looking for in the Stream (Codec, width, bitrate...),
@@ -218,7 +243,7 @@ public class MediaInfo
 
     /**
      * Get a piece of information about a file (parameter is a string).
-     * 
+     *
      * @param StreamKind Kind of Stream (general, video, audio...)
      * @param StreamNumber Stream number in Kind of Stream (first, second...)
      * @param parameter Parameter you are looking for in the Stream (Codec, width, bitrate...),
@@ -236,7 +261,7 @@ public class MediaInfo
 
     /**
      * Get a piece of information about a file (parameter is an integer).
-     * 
+     *
 
      * @param StreamKind Kind of Stream (general, video, audio...)
      * @param StreamNumber Stream number in Kind of Stream (first, second...)
@@ -252,7 +277,7 @@ public class MediaInfo
 
     /**
      * Get a piece of information about a file (parameter is an integer).
-     * 
+     *
 
      * @param StreamKind Kind of Stream (general, video, audio...)
      * @param StreamNumber Stream number in Kind of Stream (first, second...)
@@ -270,7 +295,7 @@ public class MediaInfo
     /**
      * Count of Streams of a Stream kind (StreamNumber not filled), or count of piece of
      * information in this Stream.
-     * 
+     *
 
      * @param StreamKind Kind of Stream (general, video, audio...)
      * @return number of Streams of the given Stream kind
@@ -284,7 +309,7 @@ public class MediaInfo
     /**
      * Count of Streams of a Stream kind (StreamNumber not filled), or count of piece of
      * information in this Stream.
-     * 
+     *
      * @param StreamKind Kind of Stream (general, video, audio...)
      * @param StreamNumber Stream number in this kind of Stream (first, second...)
      * @return number of Streams of the given Stream kind
@@ -299,7 +324,7 @@ public class MediaInfo
     //Options
     /**
      * Configure or get information about MediaInfo.
-     * 
+     *
      * @param Option The name of option
      * @return Depends on the option: by default "" (nothing) means No, other means Yes
      */
@@ -310,7 +335,7 @@ public class MediaInfo
 
     /**
      * Configure or get information about MediaInfo.
-     * 
+     *
      * @param Option The name of option
      * @param Value The value of option
      * @return Depends on the option: by default "" (nothing) means No, other means Yes
@@ -322,7 +347,7 @@ public class MediaInfo
 
     /**
      * Configure or get information about MediaInfo (Static version).
-     * 
+     *
      * @param Option The name of option
      * @return Depends on the option: by default "" (nothing) means No, other means Yes
      */
@@ -333,7 +358,7 @@ public class MediaInfo
 
     /**
      * Configure or get information about MediaInfo(Static version).
-     * 
+     *
      * @param Option The name of option
      * @param Value The value of option
      * @return Depends on the option: by default "" (nothing) means No, other means Yes
