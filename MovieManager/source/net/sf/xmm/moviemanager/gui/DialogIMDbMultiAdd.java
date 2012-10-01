@@ -100,6 +100,28 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
         
         performSearch(searchString, year);
     }
+    
+    public DialogIMDbMultiAdd(JDialog parent, ModelEntry modelEntry, String searchString, 
+    		String year, String filename, Files multiAddFile, String _imdbId, ArrayList<ModelIMDbSearchHit> hits, IMDb imdb) {
+    
+    	super(parent, modelEntry, searchString, null);
+    	super.imdb = imdb;
+    	
+    	createMultiAddComponents();
+    	
+        imdbId = (_imdbId == null || _imdbId.equals("")) ? null : null; //$NON-NLS-1$
+        this.multiAddFile = multiAddFile;
+        this.multiAddByFile = true;
+        
+        setTitle(filename);
+          
+        setFileLocationContent();
+        
+        handleSearchResults(hits);
+        
+        if (modelEntry.getDate() != null)
+        	setSelectedAccordingToYear(hits, modelEntry.getDate());
+    }
 
     /**
      *  Override parent create component method
@@ -110,16 +132,7 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
     }
     
     void createMultiAddComponents() {
-
-    	/*
-    	if (switchBetweenIMDBAndDatabase) {
-
-    		if (multiAddFile != null) {
-    			JButton chooseBetweenImdbAndLocalDatabase = createChooseBetweenImdbAndLocalDatabaseButton();
-    			multipleMovieButtons.add(chooseBetweenImdbAndLocalDatabase);
-    		}
-    	}
-*/
+    	
     	addWithoutIMDBInfoButton = createAddWithoutIMDBInfoButton();
     	abortButton = createAbortButton();
     	playMediaFiles = createPlayButton();
@@ -150,39 +163,7 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
 
     	setHotkeyModifiers();
     }
-    
-       
-    JButton createChooseBetweenImdbAndLocalDatabaseButton() {
-    	
-    	/*This button choses between IMDB and local movie database*/
-		final JButton chooseBetweenImdbAndLocalDatabase  = new JButton(Localizer.get("DialogIMDbMultiAdd.button.add-to-existing-movie.text")); //$NON-NLS-1$
-		chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.add-to-existing-movie.tooltip")); //$NON-NLS-1$
-		chooseBetweenImdbAndLocalDatabase.setActionCommand("GetIMDBInfo - chooseBetweenImdbAndLocalDatabase"); //$NON-NLS-1$
-		chooseBetweenImdbAndLocalDatabase.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				log.debug("ActionPerformed: " + event.getActionCommand()); //$NON-NLS-1$
-
-				if (addInfoToExistingMovie) {
-					getPanelMoviesList().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogIMDB.panel-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
-					chooseBetweenImdbAndLocalDatabase.setText(Localizer.get("DialogIMDbMultiAdd.button.add-to-existing-movie.text")); //$NON-NLS-1$
-					chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.add-to-existing-movie.tooltip")); //$NON-NLS-1$
-					addInfoToExistingMovie = false;
-					executeSearchMultipleMovies();
-				}
-
-				else {
-					executeEditExistingMovie(""); //$NON-NLS-1$
-					chooseBetweenImdbAndLocalDatabase.setText(Localizer.get("DialogIMDbMultiAdd.button.search-on-IMDb.text")); //$NON-NLS-1$
-					chooseBetweenImdbAndLocalDatabase.setToolTipText(Localizer.get("DialogIMDbMultiAdd.button.search-on-IMDb.tooltip")); //$NON-NLS-1$
-					addInfoToExistingMovie = true;
-
-					getPanelMoviesList().setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),Localizer.get("DialogIMDB.panel-your-movie-list.title")), BorderFactory.createEmptyBorder(5,5,5,5))); //$NON-NLS-1$
-				}
-			}});
-		
-		return chooseBetweenImdbAndLocalDatabase;
-    }
-    
+        
     
     JButton createPlayButton() {
     	
@@ -207,7 +188,6 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
     			}
     		}
     	});
-    	
     	return playMediaFiles;
     }
     
@@ -247,39 +227,37 @@ public class DialogIMDbMultiAdd extends DialogIMDbImport {
     	
     	fileLocationPopup.show(fileLocation, e.getX(), e.getY());
     }
-    
-    
-    
+        
     void performSearch(String searchString, String year) {
 		    	
     	try {
-    		
     		getSearchField().setText(searchString);
-    		    		
     		ArrayList<ModelIMDbSearchHit> hits = performSearch();
-    		
-    		int hitCount = hits.size();
-    		int pos = -1;
-    		
-    		for (int i = 0; i < hitCount; i++) {
-
-    			// Use the first hit with the matching date
-    			if (pos == -1 && year != null && year.equals(hits.get(i).getDate())) {
-    				pos = i;
-    			}
-    		}
-    		    		
-    		if (pos == -1)
-    			pos = 0;
-    		    		
-    		getMoviesList().setSelectedIndex(pos);
-    		    		
+    		setSelectedAccordingToYear(hits, year);
     	} catch (Exception e) {
     		executeErrorMessage(e);
     		setListModel(null);
     	}
     }
+    
+    void setSelectedAccordingToYear(ArrayList<ModelIMDbSearchHit> hits, String year) {
+    	int hitCount = hits.size();
+    	int pos = -1;
 
+    	for (int i = 0; i < hitCount; i++) {
+
+    		// Use the first hit with the matching date
+    		if (pos == -1 && year != null && year.equals(hits.get(i).getDate())) {
+    			pos = i;
+    		}
+    	}
+
+    	if (pos == -1)
+    		pos = 0;
+
+    	getMoviesList().setSelectedIndex(pos);
+    }
+    
 
     /**
      * Checks if the movie list should be retrived from IMDB or the local movie Database
