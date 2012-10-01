@@ -43,6 +43,7 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+
 import org.apache.log4j.Logger;
 
 public class HttpUtil {
@@ -51,10 +52,9 @@ public class HttpUtil {
 
 	public boolean imdbAuthenticationSetUp = false;
 	public boolean setUp = false;
-	
 	private HttpClient client = null;
 	private HttpSettings httpSettings = new HttpSettings();
-		
+	
 	public HttpUtil() {setup();}
 		
 	public HttpUtil(HttpSettings httpSettings) {
@@ -64,15 +64,12 @@ public class HttpUtil {
 		
 		setup();
 		setProxySettings();
-		
 		setUpIMDbAuthentication();			
 	}
-	
 	
 	public boolean isSetup() {
 		return setUp;
 	}
-	
 	
 	public void setup() {
 		client = new HttpClient(new MultiThreadedHttpConnectionManager());
@@ -80,42 +77,83 @@ public class HttpUtil {
 		setUp = true;
 	}
 	
-	
 	public boolean isIMDbAuthSetup() {
 		return imdbAuthenticationSetUp;
 	}
 	
 	public boolean setUpIMDbAuthentication() {
-	
+		
 		if (httpSettings == null) {
-			log.warn("Authentication could not be set. Missing authentication settings.");
 			return false;
 		}
 
+		if (!httpSettings.getIMDbAuthenticationEnabled()) {
+			return false;
+		}
+		
+		if (!isSetup())
+			setup();
+		
+		String [] hiddenValues = fetchHiddenFormValues();
+		return performIMDbLogin(hiddenValues);
+	}
+	
+	public String [] fetchHiddenFormValues() {
+
+		String loginURL = "https://secure.imdb.com/register-imdb/login";
+		try {
+
+			HTTPResult result = readData(new URL(loginURL));
+			
+			StringBuffer data = result.getData();
+
+    		if (data == null) {
+    			log.warn("Failed to retrieve data from :" + loginURL);
+    			return null;
+    		}
+    		
+			Pattern p = Pattern.compile("<input type=\"hidden\" name=\"(.*?)\" value=\"(.*?)\" />");
+			Matcher m = p.matcher(data);
+
+			if (m.find()) {
+				String g = m.group();
+				//System.out.println("g:" + m.group(0));
+				//System.out.println("g1:" + m.group(1));
+				//System.out.println("g2:" + m.group(2));
+
+				String hiddenName = m.group(1);
+				String hiddenValue = m.group(2);
+				return new String[] {hiddenName, hiddenValue};
+			}
+		} catch (Exception e) {
+			log.warn("error:" + e.getMessage(), e);
+		}
+		return null;
+	}
+	
+	
+	public boolean performIMDbLogin(String [] hiddenFromValues) {
+		
 		if (httpSettings.getIMDbAuthenticationEnabled()) {
-
 			try {
-
-				if (!isSetup())
-					setup();
-
 				client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+				PostMethod postMethod = new PostMethod(("https://secure.imdb.com/register-imdb/login#")); 
 
-				PostMethod postMethod = new PostMethod(("https://secure.imdb.com/register-imdb/login")); 
-
-				NameValuePair[] postData = new NameValuePair[2];
-				postData[0] = new NameValuePair("login", httpSettings.getIMDbAuthenticationUser());
-				postData[1] = new NameValuePair("password", httpSettings.getIMDbAuthenticationPassword());
+				NameValuePair[] postData = new NameValuePair[3];
+				postData[0] = new NameValuePair(hiddenFromValues[0], hiddenFromValues[1]);
+				postData[1] = new NameValuePair("login", httpSettings.getIMDbAuthenticationUser());
+				postData[2] = new NameValuePair("password", httpSettings.getIMDbAuthenticationPassword());
 
 				postMethod.setRequestBody(postData);
-				
 				int statusCode = client.executeMethod(postMethod);
-
+				System.out.println("statusCode:" + statusCode);
+				
 				 if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_MOVED_TEMPORARILY) 
 					 imdbAuthenticationSetUp = true;
-				 else
+				 else {
 					 imdbAuthenticationSetUp = false;
- 
+					 log.warn("Failed to log in to IMDb.");
+				 }							
 			} catch (Exception e) {
 				log.warn("error:" + e.getMessage(), e);
 			}
@@ -125,7 +163,6 @@ public class HttpUtil {
 
 		return imdbAuthenticationSetUp;
 	}
-	
 	
 	
 	protected void setProxySettings() {
@@ -174,7 +211,7 @@ public class HttpUtil {
 		}
 	}
 	
-	
+	/*
 	public HTTPResult readData1(URL url) throws Exception {
 		
 		if (!isSetup())
@@ -231,7 +268,7 @@ public class HttpUtil {
 
 		return new HTTPResult(url, statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
 	}
-
+*/
 	
 	public HTTPResult readData(URL url) throws TimeoutException, Exception {
 
@@ -240,7 +277,7 @@ public class HttpUtil {
 
 		GetMethod method = new GetMethod(url.toString());
 		int statusCode = client.executeMethod(method);
-
+		
 		if (statusCode != HttpStatus.SC_OK) {
 			log.debug("HTTP StatusCode not HttpStatus.SC_OK:" + method.getStatusLine());
 			log.debug("For url:" + url.toString());
@@ -271,7 +308,6 @@ public class HttpUtil {
 
 		return new HTTPResult(url, statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
 	}
-	
 	
 	public byte [] readDataToByteArray(URL url) throws Exception {
 	
@@ -315,9 +351,6 @@ public class HttpUtil {
 		return data;
 	}
 
-
-	
-
 	/**
 	 * Decodes a html string and returns its unicode string.
 	 **/
@@ -343,7 +376,6 @@ public class HttpUtil {
 					decoded += toDecode.charAt(i);
 				}
 			}
-
 			// replacing html code "&quot;", "&amp;", &ndash; and "&nbsp;"
 			decoded = decoded.replaceAll("&amp;", "&");
 			decoded = decoded.replaceAll("&quot;", "\"");
@@ -358,7 +390,6 @@ public class HttpUtil {
 		/* Returns the decoded string... */
 		return StringUtil.removeDoubleSpace(decoded);
 	}
-
 
 	/**
 	 * Decodes a html string 
@@ -400,11 +431,8 @@ public class HttpUtil {
 		 Matcher m = p.matcher(buffer);
 
 		 while (m.find(index)) {
-
 			 index = m.start();
-
 			 int index2 = buffer.indexOf(">", index) + 1;
-
 			 buffer.insert(index2, SysUtil.getLineSeparator());
 			 index++;
 		 }

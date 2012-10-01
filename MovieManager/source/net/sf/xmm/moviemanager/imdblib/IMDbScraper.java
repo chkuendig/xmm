@@ -55,14 +55,16 @@ import org.xml.sax.SAXException;
 public class IMDbScraper implements IMDb {
   
 	static Logger log = Logger.getLogger(IMDb.class);
-    	
-    private HttpUtil httpUtil = new HttpUtil();
-    
+	private HttpUtil httpUtil = new HttpUtil();
     private HttpSettings settings = null;
-    
     private HTTPResult lastHTTPResult = null;
-    
     private ModelIMDbEntry lastDataModel;
+    
+    private boolean isLoggedIn = false;
+    
+    public boolean isLoggedIn() {
+    	return isLoggedIn;
+    }
     
     public final String [] movieHitCategory = {"Popular Titles", "Titles (Exact Matches)", "Titles (Partial Matches)", "Titles (Approx Matches)"};
 	
@@ -218,8 +220,9 @@ public class IMDbScraper implements IMDb {
 	
 		boolean isEpisode = false;
 		boolean isSeries = false;
-		boolean loggedIn = false;
-		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
+		isLoggedIn = false;
+		
+		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
 			
 		try {
 			/* Processes the data... */
@@ -237,7 +240,7 @@ public class IMDbScraper implements IMDb {
 				isSeries = true;
 						
 			if ((data.indexOf("\"/register/logout\"", start)) != -1) {
-				loggedIn = true;	
+				isLoggedIn = true;	
 			}
 					
 			/* Gets the title... */
@@ -287,7 +290,7 @@ public class IMDbScraper implements IMDb {
 			// Must be accessible from within inner class
 			final ModelIMDbEntry dataModel = tmpModel;
 						
-			dataModel.setLoggedIn(loggedIn);
+			dataModel.setLoggedIn(isLoggedIn);
 			
 			// Original title from IMDb
 			dataModel.setIMDbTitle(title);
@@ -802,8 +805,9 @@ public class IMDbScraper implements IMDb {
 
 		ArrayList<ModelIMDbSearchHit> hits = new ArrayList<ModelIMDbSearchHit>();
 				
-		String urlString = "http://akas.imdb.com/title/tt" + modelSeries.getUrlID();
-				
+		//String urlString = "http://akas.imdb.com/title/tt" + modelSeries.getUrlID();
+		String urlString = "http://akas.imdb.com/title/tt" + modelSeries.getUrlID() + "/combined";
+			
 		try {
 
 			URL url = new URL(urlString);
@@ -813,20 +817,18 @@ public class IMDbScraper implements IMDb {
 			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/seasonsOutput.html", data);
 			
 			String title = "";
-
-			int start = data.indexOf("Season:");
-			
+			int start = data.indexOf("Seasons:");
+						
 			/* No season....?. */
 			if (start != -1) {
 				
 				int end = data.indexOf("</div>", start);
-				
 				String seasons = data.substring(start, end);
-				
 				int seasonCount = 1;
 				String season = "episodes?season=";
+				int lastIndex = 0;
 				
-				while (seasons.indexOf(season + seasonCount) != -1) {
+				while ((lastIndex = seasons.indexOf(season, lastIndex + 1)) != -1) {
 					title = modelSeries.getTitle()+ " - Season "+ seasonCount;
 					hits.add(new ModelIMDbSearchHit(modelSeries.getUrlID(), title, seasonCount));
 					seasonCount++;
@@ -881,9 +883,7 @@ public class IMDbScraper implements IMDb {
 		//System.out.println("UTF-8:" + java.net.URLEncoder.encode(title, "UTF-8"));
 		//System.out.println("US-ASCII:" + java.net.URLEncoder.encode(title, "US-ASCII"));
 		//System.out.println("ISO-8859-1:" + java.net.URLEncoder.encode(title, "ISO-8859-1"));
-		
-		log.debug("getSimpleMatches:" + title);
-		
+				
 		return getMatches("http://akas.imdb.com/find?s=tt&q="+ java.net.URLEncoder.encode(title, "ISO-8859-1"));
 	}
 
@@ -952,7 +952,7 @@ public class IMDbScraper implements IMDb {
 				if ((start = data.indexOf("title/tt",start) + 8) != 7) {
 					key = HttpUtil.decodeHTML(data.substring(start, start + 7));
 				}
-				
+								
 				aka = getDecodedClassInfo("Also Known As:", data);
 				aka = aka.trim();
 				
@@ -1189,7 +1189,7 @@ public class IMDbScraper implements IMDb {
     		int end = 0;
     		
     		//tmp = getClassInfo(data, className);
-    		    		    		
+    		
     		end = tmp.indexOf("<a class=\"tn15more");
     			
     		// Link to "more" will be removed
@@ -1259,10 +1259,15 @@ public class IMDbScraper implements IMDb {
     protected static String decodeAka(String toDecode) {
 		String decoded = " ";
 		
+		//System.out.println("decodeAka:" + toDecode);
+		
 		try {
 			String [] akaTitles = toDecode.split("<br>");
 		
 			for (int i = 0; i < akaTitles.length; i++) {
+				
+				//System.out.println("akaTitles[i].trim():" + akaTitles[i].trim());
+				
 				
 				if (!decoded.equals(" "))
 					decoded += System.getProperty("line.separator");
@@ -1494,13 +1499,6 @@ public class IMDbScraper implements IMDb {
     	// Disable method for now
     	if (true)
     		return false;
-    	
-    	try {
-			throw new Exception();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
     	
     	URL url;
 

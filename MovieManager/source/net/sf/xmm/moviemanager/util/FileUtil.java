@@ -59,11 +59,8 @@ import org.apache.log4j.Logger;
 public class FileUtil {
     
 	static Logger log = Logger.getLogger(FileUtil.class); 
- 
-	
 	
     public static StringBuffer readFileToStringBuffer(String filePath) throws FileNotFoundException, IOException {
-
     	File file = new File(filePath);
     	
     	if (!file.isFile()) {
@@ -72,9 +69,7 @@ public class FileUtil {
 
    			file = FileUtil.getFile(filePath);
     	}
-
     	StringBuffer buf = new StringBuffer();
-
     	BufferedReader reader = new BufferedReader(new FileReader(file));
     	String tmp;
 
@@ -82,12 +77,9 @@ public class FileUtil {
     		buf.append(tmp);
 
     	reader.close();
-    			
     	return buf;
     }
-    
-    
-    
+        
     public static StringBuffer readFileToStringBuffer(File file) throws FileNotFoundException, IOException {
 
     	if (!file.isFile()) {
@@ -96,7 +88,6 @@ public class FileUtil {
  
    			file = FileUtil.getFile(file.toString());
     	}
-
     	StringBuffer buf = new StringBuffer();
 
     	BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -106,12 +97,9 @@ public class FileUtil {
     		buf.append(tmp);
 
     	reader.close();
-    			
     	return buf;
     }
-    
-    
-   
+       
     public static ArrayList<String> readFileToArrayList(File file) throws FileNotFoundException, IOException {
 
     	if (!file.isFile()) {
@@ -126,8 +114,6 @@ public class FileUtil {
     	
     	return null;
     }
-
-    	
     	
     public static ArrayList<String> readArrayList(Reader input) throws FileNotFoundException, IOException {
     	ArrayList<String> ret = new ArrayList<String>();
@@ -141,11 +127,7 @@ public class FileUtil {
     	reader.close();
     			
     	return ret;
-    }
-    
-    
-  
-    
+    }    
     
     public static InputStream getResourceAsStream(String name) {
     	return getResourceAsStream(name, null);
@@ -173,8 +155,7 @@ public class FileUtil {
         }
         return null;
     }
-    
-    
+        
     public static byte[] getResourceAsByteArray(File file) {
     	return getResourceAsByteArray(file.getAbsolutePath());
     }
@@ -213,7 +194,6 @@ public class FileUtil {
         }
         return null;
     }
-    
     
     /**
      * Returns a file in a byte[] or null if not found.
@@ -266,11 +246,10 @@ public class FileUtil {
         }
         return null;
     }
-    
-    
-    public static String getAsString(InputStream s) {
+        
+    public static StringBuffer getStreamAsStringBuffer(InputStream s) {
 
-    	String str = "";
+    	StringBuffer buf = new StringBuffer();
 
     	try {
     		InputStreamReader inpStrd = new InputStreamReader(s);
@@ -278,19 +257,16 @@ public class FileUtil {
     		String line = null;
 
     		while((line = buffRd.readLine()) != null) {
-    			str += line;
+    			buf.append(line);
     		}
-
-    		log.debug(line);  
     		buffRd.close();
 
     	} catch (Exception e) {
     		log.warn("Exception:" + e.getMessage(), e);
     	}
-    	return str;	
+    	return buf;	
     }
-    
-    
+        
     public static File getFile(String fileName) {
         try {
             return new File(new URI(getFileURL(fileName).toString()));
@@ -300,12 +276,10 @@ public class FileUtil {
        return null;
     }
     
-
     public static URL getFileURL(String fileName) {
     	return getFileURL(fileName, null);
     }
     
-
     public static URL getFileURL(String fileName, JApplet applet) {
 
     	URL url = null;
@@ -355,7 +329,7 @@ public class FileUtil {
     			log.debug("fileName:" + fileName);
 
     			url = new URL(applet.getCodeBase(), fileName);
-    			log.debug("url:" + url);
+    			//log.debug("url:" + url);
     			//log.debug("URL:"+ url.toString());
     			//log.debug("url.getFile():" + url.getFile());
     			//log.debug("getPath():" + url.getPath());
@@ -369,8 +343,6 @@ public class FileUtil {
     	}
     	return url;
     }
-
-
     
    public static URL getImageURL(String imageName) {
 	   return FileUtil.class.getResource(imageName);
@@ -434,8 +406,7 @@ public class FileUtil {
 		}
 		return image;
     }
-    
-    
+        
     public static String getPath(String fileName) {
         String path = ""; //$NON-NLS-1$
         try {
@@ -446,8 +417,7 @@ public class FileUtil {
         }
         return path;
     }
-    
-    
+        
     // Not used
     public static File getAppletFile(String fileName, JApplet applet) {
         
@@ -479,8 +449,7 @@ public class FileUtil {
         }
         return null;
     }
-    
-    
+        
     public static void writeToFile(File file, String dataString) {
     	writeToFile(file.getAbsolutePath(), dataString, null);
     }
@@ -489,19 +458,16 @@ public class FileUtil {
     	StringBuffer data = new StringBuffer(dataString);
     	writeToFile(fileName, data, null);
     }
-    
-   
+       
     public static void writeToFile(String fileName, String dataString, String encoding) {
     	StringBuffer data = new StringBuffer(dataString);
     	writeToFile(fileName, data, encoding);
     }
-    
-   
+       
     public static void writeToFile(String fileName, StringBuffer data) {
     	writeToFile(fileName, data, null);
     }
-    
-    
+        
     public static void writeToFile(String fileName, StringBuffer data, String encoding) {
         try {
         	File outputFile = new File(fileName);
@@ -529,8 +495,7 @@ public class FileUtil {
         } catch (Exception e) {
             log.error("Exception:"+ e.getMessage());
         }
-    }
-    
+    }    
    
     public static boolean writeToFile(File original, File file) throws Exception {
     	return writeToFile(new FileInputStream(original), file);
@@ -549,7 +514,6 @@ public class FileUtil {
         			return false;
         		}
         	}
-            
         	int bufferSize = 8192;
         	
         	BufferedInputStream inputStream = new BufferedInputStream(data);
@@ -573,7 +537,6 @@ public class FileUtil {
         return true;
     }
     
-
     public static boolean unzip(File zipFile, File dir) {
 
     	boolean success = true;
@@ -606,17 +569,15 @@ public class FileUtil {
     		log.debug("An error occured while unzipping file " + zipFile.getName());
     	
     	return success;
-    }
-    
+    }    
 
     /**
-     * Creates a copy the original file in the destionation directory which is deleted on program exit
+     * Creates a copy the original file in the destination directory which is deleted on program exit
      * @param original
      * @param destination
      * @return
      */
     public static File createTempCopy(File original, File destination) {
-
     	File tempFile = null;
 
     	try {
@@ -643,8 +604,7 @@ public class FileUtil {
 
     	return tempFile;
     }
-    
-    
+        
     public static String getExtension(File file) {
     	if (file == null)
     		return null;
@@ -662,30 +622,11 @@ public class FileUtil {
     	}
     	return null;
     }
-    
-    public static boolean setExecute(File f, boolean b) {
-    	
-    	try {
-    		Process p = null;
-    		String cmd = null;
-    		
-    		cmd = "chmod " + "u+x" + " " + f.getAbsolutePath();
-    		p = Runtime.getRuntime().exec(cmd);
-    	}
-    	catch (Exception e) {
-    		e.printStackTrace();
-    		return false;
-    	}
-    		
-    	return true;
-    }
-    
-    
+        
     public static void copyToDir(File file, File dir) throws Exception {
     	copyToDir(file, dir, null);
     }
-   
-    
+       
     public static void copyToDir(File file, File dir, String fileName) throws Exception {
     	
     	if (!file.isFile())
@@ -740,7 +681,6 @@ public class FileUtil {
     	return size;
     }
 
-    
     public static boolean deleteDirectoryStructure(File dir) {
 
     	if (dir.isDirectory()) {
@@ -759,7 +699,6 @@ public class FileUtil {
     	return dir.delete();
     }
 
-    
     public static boolean canWriteToProgramFiles() {
         try {
         	String programFiles = System.getenv("ProgramFiles");
@@ -773,10 +712,8 @@ public class FileUtil {
 			return false;
 		}
     }
-    
-    
-    public static boolean canWriteToDir(File dir) throws Exception {
         
+    public static boolean canWriteToDir(File dir) throws Exception {
     	try {
            
     		if (!dir.isDirectory()) {
@@ -801,6 +738,5 @@ public class FileUtil {
         {
             return false;
         }
-    }
-  
+    }  
 } 
