@@ -104,6 +104,9 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportHandl
 
 		String title = ((ModelMovie) movieList.get(i)).getTitle();
 
+		if (title == null || title.equals("")) {
+			title = "IMDb ID:" + ((ModelMovie) movieList.get(i)).getUrlKey();
+		}
 		return title;
 	}
 
@@ -116,11 +119,8 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportHandl
 		String title = movie.getTitle();
 
 		if (title != null && !title.equals("")) {
-
 			/* First resetting the info already present */
-
 			if (settings.multiAddIMDbSelectOption != ImdbImportOption.off) {
-				
 				ImportExportReturn ret = executeCommandGetIMDBInfoMultiMovies(title, settings, movie);
 
 				if (ret == ImportExportReturn.cancelled || ret == ImportExportReturn.aborted) {
@@ -128,7 +128,6 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportHandl
 				}
 			}
 		}
-		
 		modelMovieInfo.setModel(movie, false, false);
 	
 		try {
@@ -138,7 +137,6 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportHandl
 			log.error("Saving to database failed.", e);
 			return ImportExportReturn.error;
 		}
-		
 		if (key == -1)
 			return ImportExportReturn.error;
 		         
@@ -146,7 +144,7 @@ public class MovieManagerCommandImportCSV extends MovieManagerCommandImportHandl
 	}
 	
 	public void done() throws Exception {
-		log.debug("CSV import completetd");
+		log.debug("CSV import completed");
 	}
 
 	public void retrieveMovieList() {
