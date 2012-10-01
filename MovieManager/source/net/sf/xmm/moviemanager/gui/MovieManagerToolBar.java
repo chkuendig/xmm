@@ -684,7 +684,7 @@ public class MovieManagerToolBar extends JToolBar implements MouseListener, Mous
 			// Play button
 			keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyboardShortcutManager.getToolbarShortcutMask());
 			MovieManager.getDialog().shortcutManager.registerKeyboardShortcut(keyStroke,
-					"PLay", new AbstractAction() {
+					"Play", new AbstractAction() {
 				public void actionPerformed(ActionEvent ae) {
 					buttonPlay.doClick();
 				}
