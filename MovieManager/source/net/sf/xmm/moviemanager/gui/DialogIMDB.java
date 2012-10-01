@@ -543,6 +543,9 @@ public class DialogIMDB extends JDialog {
     	
     	ModelIMDbEntry dataModel = imdb.getLastDataModel();
     	
+    	if (dataModel == null)
+    		return false;
+    	
     	if (key.equals(dataModel.getUrlID())) {
 
     		modelEntry.setTitle(dataModel.getTitle());
