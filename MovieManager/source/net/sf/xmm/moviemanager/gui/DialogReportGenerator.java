@@ -22,6 +22,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -367,9 +368,10 @@ public class DialogReportGenerator extends JFrame implements ActionListener, Win
 
         try {
             labelProgress.setText("Generating report... Please wait");
-            HashMap<String, String> parms = new HashMap<String, String>();
+            Map<String, Object> parms = new HashMap<String, Object>();
             parms.put("logo", FileUtil.getImageURL("/images/filmFolder.png").toString());
             
+            System.out.println("selectedLayout.sortField:" + selectedLayout.sortField);
             ds = new ReportGeneratorDataSource(movies, getReportTitle(), selectedLayout.sortField, progressBar, FileUtil.getImageURL("/images/movie.png"), false);
             
             final JasperPrint print = JasperFillManager.fillReport(new File(reportsDir, selectedLayout.filename).getAbsolutePath(), parms, ds);
@@ -566,6 +568,7 @@ public class DialogReportGenerator extends JFrame implements ActionListener, Win
                 		String bufferText = FileUtil.readFileToStringBuffer(filename).toString();
                         description = getCustomPropertyValue(bufferText, "xmm.description");
                         sortField = getCustomPropertyValue(bufferText, "xmm.sortfield");
+                        System.out.println("sortField:" + sortField);
                         String s = getCustomPropertyValue(bufferText, "xmm.episodes");
                         episodes = s != null ? s.equalsIgnoreCase("true") : false;
                     }
@@ -620,7 +623,7 @@ public class DialogReportGenerator extends JFrame implements ActionListener, Win
         // print it
         if (!movies.isEmpty()) {
             try {
-                HashMap<String, String> parms = new HashMap<String, String>();
+                Map<String, Object> parms = new HashMap<String, Object>();
                 parms.put("logo", FileUtil.getImageURL("/images/filmFolder.png").toString());
                 ReportGeneratorDataSource ds = new ReportGeneratorDataSource(movies, null, "none", null, FileUtil.getImageURL("/images/movie.png"), false);
                 JasperPrint print = JasperFillManager.fillReport(reportsDir + "movie_details.jasper", parms, ds);
