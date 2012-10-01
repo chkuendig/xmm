@@ -91,21 +91,28 @@ public class DialogTableImport extends DialogTableData {
 					int columnCount = table.getModel().getColumnCount();
 					
 					TableColumn newColumn = columnModel.getColumn(currentColumn);
-					boolean titleFound = false;
+					boolean titleSet = false;
+					boolean imdbSet = false;
 					
 					for (int i = 0; i < columnCount; i++ ) {
 						newColumn = columnModel.getColumn(i);
-						
-						if (newColumn.getHeaderValue() != null && newColumn.getHeaderValue() instanceof FieldModel && ((FieldModel) newColumn.getHeaderValue()).table.equals("General Info") && "Title".equals(newColumn.getHeaderValue().toString()))
-							titleFound = true;
+
+						if (newColumn.getHeaderValue() != null && 
+								newColumn.getHeaderValue() instanceof FieldModel && 
+								((FieldModel) newColumn.getHeaderValue()).table.equals("General Info") && 
+								"Title".equals(newColumn.getHeaderValue().toString()))
+							titleSet = true;
+						if (newColumn.getHeaderValue() != null && 
+								newColumn.getHeaderValue() instanceof FieldModel && 
+								((FieldModel) newColumn.getHeaderValue()).table.equals("General Info") && 
+								"Imdb".equals(newColumn.getHeaderValue().toString()))
+							imdbSet = true;
 					}
-					
-					if (!titleFound) {
-						DialogAlert alert = new DialogAlert(dialogImportTable, "Title column missing", "Title column must be specified");
+					if (!titleSet && !imdbSet) {
+						DialogAlert alert = new DialogAlert(dialogImportTable, "Title and IMDb column missing", "A Title or IMDb ID column must be specified");
 						GUIUtil.show(alert, true);
 						return;
-					}
-										
+					}			
 					dispose();
 				}
 			});
