@@ -19,10 +19,12 @@ import net.sf.xmm.moviemanager.gui.DialogAlert;
 import net.sf.xmm.moviemanager.gui.DialogIMDB;
 import net.sf.xmm.moviemanager.gui.DialogIMDbMultiAdd;
 import net.sf.xmm.moviemanager.gui.DialogAddMultipleMovies.Files;
+import net.sf.xmm.moviemanager.imdblib.IMDb;
 import net.sf.xmm.moviemanager.imdblib.IMDbLib;
 import net.sf.xmm.moviemanager.models.ModelEntry;
 import net.sf.xmm.moviemanager.models.ModelFileImportSettings;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings;
+import net.sf.xmm.moviemanager.models.ModelMovie;
 import net.sf.xmm.moviemanager.models.ModelMovieInfo;
 import net.sf.xmm.moviemanager.models.ModelImportExportSettings.ImdbImportOption;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
@@ -55,59 +57,112 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 	ModelMovieInfo movieInfoModel = null;
 
 	ArrayList<String> moviesToAdd;
-
-	ArrayList <DialogAddMultipleMovies.Files> fileList = null;
+	IMDb imdb;
+	
+	//ArrayList<DialogAddMultipleMovies.Files> fileList = null;
+	
+	ArrayList<MultiAddMovie> workingList = null;
+	
+	class MultiAddMovie {
+		DialogAddMultipleMovies.Files files;
+		ModelMovie model = new ModelMovie();
+		ArrayList<ModelIMDbSearchHit> hits;
+		int chosenIMDbHit = -1;
+		boolean hasIMDbInfo = false;
+		String searchString;
+	}
+	
 	
 	MovieManagerCommandImportMoviesByFile importProcess = this;
 	
 	public int getMovieListSize() throws Exception {
-		return fileList.size();
+		return workingList.size();
 	}
 		
 	public void retrieveMovieList() throws Exception {
-		fileList = fileSettings.fileList;
+		
+		//fileList = fileSettings.fileList;
 		movieInfoModel = new ModelMovieInfo(false, true);
 		movieInfoModel.setSaveCover(true);
-	}
-	
-	boolean isAlreadyInDatabase(int i) {
-
-		// Check if file is in database
-		if (MovieManager.getConfig().getMultiAddFilterOutDuplicates() || 
-				MovieManager.getConfig().getMultiAddFilterOutDuplicatesByAbsolutePath()) {
-			DialogAddMultipleMovies.Files fileNode = (DialogAddMultipleMovies.Files) fileList.get(i);
-			ArrayList<Files> files = fileNode.getFiles();
-
-			for (int u = 0; u < files.size(); u++) {
-
-				File file = files.get(u).getFile();
-				
-				if (MovieManager.getConfig().getMultiAddFilterOutDuplicatesByAbsolutePath()) {
-					if (existingMediaFiles.containsKey(file.getAbsolutePath())) {
-						return true;
-					}
-				}
-				else if (MovieManager.getConfig().getMultiAddFilterOutDuplicates()) {
-					if (existingMediaFileNames.containsKey(file.getName())) {
-						return true;
-					}
-				}
-			}		
+		workingList = new ArrayList<MultiAddMovie>();
+		
+		for (int i = 0; i < fileSettings.fileList.size(); i++) {
+			MultiAddMovie tmp = new MultiAddMovie();
+			tmp.files = fileSettings.fileList.get(i);
+			workingList.add(tmp);
 		}
 		
-		return false;
+		// Initiate IMDb search
+		startIMDbSearch();
 	}
 	
-	
-	public String getTitle(final int i) throws Exception {
-
-		// Reset cancelled status
-		resetStatus();
+	void startIMDbSearch() {
+		Thread t = new Thread() {
+			public void run() {
+				for (int i = 0; i < workingList.size(); i++) {
+					if (isAborted()) {
+						break;
+					}
+					String searchString = performTitleModifications(workingList.get(i));
+					performIMDbSearch(workingList.get(i), searchString);
+				}
+			}			
+		};
+		t.start();
+	}
 		
-		if (isAlreadyInDatabase(i)) {
-			setCancelled(true);
-						
-			ArrayList<Files> f = fileList.get(i).getFiles();
+	/**
+	 * Gets the IMDB info for movies (multiAdd)
+	 **/
+	public ImportExportReturn performIMDbSearch(MultiAddMovie multiAddMovie, String searchString) {
+	
+		ImportExportReturn ret = ImportExportReturn.success;
+				
+		/* Checks the movie title... */
+		log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
+
+		try {
+
+			int hitCount = -1;
+
+			// If "Select FirstHit" is selected and IMDB Id was found in an nfo/txt file
+			if (fileSettings.multiAddSelectOption == ImdbImportOption.selectFirst && multiAddMovie.model.getUrlKey() != null) {
+				DialogIMDB.getIMDbInfo(multiAddMovie.model, multiAddMovie.model.getUrlKey());
+				multiAddMovie.hasIMDbInfo = true;
+			}
+			else {
+				if (imdb == null)
+					imdb = IMDbLib.newIMDb(MovieManager.getConfig().getHttpSettings());
+				
+				final ArrayList<ModelIMDbSearchHit> hits = imdb.getSimpleMatches(searchString);
+				multiAddMovie.hits = hits;
+				
+				/*Number of movie hits*/
+				hitCount = hits.size();
+
+				if ((hitCount > 0 && fileSettings.multiAddSelectOption == ImdbImportOption.selectFirst) || 
+						hitCount == 1 && fileSettings.multiAddSelectOption == ImdbImportOption.selectIfOnlyOneHit) {
+
+					DialogIMDB.getIMDbInfo(multiAddMovie.model, hits.get(0).getUrlID());
+					multiAddMovie.hasIMDbInfo = true;
+					
+					// Insert prefix in Title to show that these movies maybe got wrong imdb infos
+					if (MovieManager.getConfig().getMultiAddPrefixMovieTitle() && hitCount > 1 && 
+							fileSettings.multiAddSelectOption == ImdbImportOption.selectFirst && (multiAddMovie.model.getUrlKey() == null))
+						multiAddMovie.model.setTitle("_verify_ " + multiAddMovie.model.getTitle()); //$NON-NLS-1$
+				}				
+			}
+		} catch (Exception e) {
+			log.debug("Exception:" + e.getMessage(), e);
+		}
+		return ret;
+	}
+	
+	public String performTitleModifications(MultiAddMovie model) {
+
+		if (isAlreadyInDatabase(model.files)) {
+			
+			ArrayList<Files> f = model.files.getFiles();
 			String [] fString = new String[f.size()];
 			
 			for (int y = 0; y < f.size(); y++)
@@ -123,7 +178,7 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 		String path = null; // Path of the file 
 		String imdbId = null;
 
-		DialogAddMultipleMovies.Files fileNode = (DialogAddMultipleMovies.Files) fileList.get(i);
+		DialogAddMultipleMovies.Files fileNode = (DialogAddMultipleMovies.Files) model.files;
 		ArrayList<Files> files = fileNode.getFiles();
 
 		tempFile = new File[files.size()];
@@ -226,26 +281,138 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 			searchString = StringUtil.performExcludeIntegers(searchString);
 		}
 		
-		if (fileSettings.enableSearchNfoForImdb)
+		if (fileSettings.enableSearchNfoForImdb) {
 			imdbId = searchNfoForImdb(path);
+			model.model.setUrlKey(imdbId);
+		}
 				
 		//removes dots, double spaces, underscore...
 		searchString = StringUtil.removeVarious(searchString);
+		model.searchString = searchString;
+		model.model.setDate(year);
+		model.model.setTitle(searchTitle);
+		return searchString;
+	}
+			
+	
+	boolean isAlreadyInDatabase(Files files) {
+
+		// Check if file is in database
+		if (MovieManager.getConfig().getMultiAddFilterOutDuplicates() || 
+				MovieManager.getConfig().getMultiAddFilterOutDuplicatesByAbsolutePath()) {
+			ArrayList<Files> fileList = files.getFiles();
+
+			for (int u = 0; u < fileList.size(); u++) {
+
+				File file = fileList.get(u).getFile();
 				
-		ImportExportReturn ret = executeCommandGetIMDBInfoMultiMovies(imdbId, searchString, searchTitle, year, fileList.get(i), fileSettings.multiAddSelectOption, fileSettings.addToThisList);
+				if (MovieManager.getConfig().getMultiAddFilterOutDuplicatesByAbsolutePath()) {
+					if (existingMediaFiles.containsKey(file.getAbsolutePath())) {
+						return true;
+					}
+				}
+				else if (MovieManager.getConfig().getMultiAddFilterOutDuplicates()) {
+					if (existingMediaFileNames.containsKey(file.getName())) {
+						return true;
+					}
+				}
+			}		
+		}
+		
+		return false;
+	}
+	
+	
+	public String getTitle(final int i) throws Exception {
+
+		
+		// Reset canceled status
+		resetStatus();
+		
+		MultiAddMovie model = workingList.get(i);
+
+		System.err.println("getTitle("+i+"):" + model.files);
+		System.err.println("getIMDbInfo:" + model.searchString);
+		System.err.println("hasIMDbInfo:" + model.hasIMDbInfo);
+		
+		// Already has IMDb info
+		if (model.hasIMDbInfo)
+			return model.files.getName();
+			
+		
+		// Search not yet performed
+		while (model.hits == null) {
+			System.err.println("No search hits, waiting");
+			Thread.sleep(500);
+		}
+				
+		ImportExportReturn ret = getIMDbInfo(model, model.searchString, workingList.get(i).files, 
+																	  fileSettings.addToThisList);
+		System.err.println("ret:" + ret);
 		
 		if (ret == ImportExportReturn.success) {
 			String title = movieInfoModel.model.getTitle();
 			String [] fileLoc = movieInfoModel.model.getAdditionalInfo().getFileLocationAsArray();
+			System.err.println("fileLoc:" + fileLoc);
 			return getTitleWithMediaFiles(title, fileLoc);
 		}
 			
-		return fileList.get(i).getName();
+		return workingList.get(i).files.getName();
 	}
+	
+	
+	/**
+	 * Gets the IMDB info for movies (multiAdd)
+	 **/
+	
+	public ImportExportReturn getIMDbInfo(final MultiAddMovie multiAddModel, final String searchString,	final Files files, 
+			final String addToThisList) {
+		
+		ImportExportReturn ret = ImportExportReturn.success;
+		
+		// Checks the movie title... 
+		log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
+		
+		try {
+			if (multiAddModel.searchString == null || multiAddModel.searchString.equals("")) { //$NON-NLS-1$
+				System.err.println("EMPTY SEARCHSTRING:" + files.toString());
+				GUIUtil.invokeAndWait(new Runnable() {
+					public void run() {
+						DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("DialogMovieInfo.alert.title.alert"), Localizer.get("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
+						GUIUtil.showAndWait(alert, true);
+					}
+				});
+				return ret;
+			}
+			
+			int hitCount = -1;
+			final ArrayList<ModelIMDbSearchHit> hits = multiAddModel.hits;
 
+			GUIUtil.invokeAndWait(new Runnable() {
+				public void run() {
+					DialogIMDbMultiAdd dialogIMDB = new DialogIMDbMultiAdd(fileSettings.getParent(), 
+							multiAddModel.model, multiAddModel.searchString, 
+							multiAddModel.model.getDate(), multiAddModel.model.getTitle(), 
+							files, multiAddModel.model.getUrlKey(), multiAddModel.hits, imdb);
+					GUIUtil.showAndWait(dialogIMDB, true);
+
+					if (dialogIMDB.getCanceled()) {
+						setCancelled(true);
+					}
+
+					if (dialogIMDB.getAborted()) {
+						setAborted(true);
+					}
+				}
+			});
+		} catch (Exception e) {
+			log.debug("Exception:" + e.getMessage(), e);
+		}
+		return ret;
+	}
+	
 	
 	String getTitleWithMediaFiles(String title, String [] files) {
-		
 		for (int u = 0; u < files.length; u++) {
 			title += SysUtil.getLineSeparator() + "      " +  files[u];
 		}
@@ -294,85 +461,7 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 		return ret;
 	}
 
-	
-	
-	/**
-	 * Gets the IMDB info for movies (multiAdd)
-	 **/
-	public ImportExportReturn executeCommandGetIMDBInfoMultiMovies(final String imdbId, final String searchString, 
-			final String filename, final String year, final Files files, final ImdbImportOption multiAddSelectOption, final String addToThisList) {
-
-		ImportExportReturn ret = ImportExportReturn.success;
 		
-		/* Checks the movie title... */
-		log.debug("executeCommandGetIMDBInfoMultiMovies"); //$NON-NLS-1$
-		
-		try {
-
-			if (!searchString.equals("")) { //$NON-NLS-1$
-
-				int hitCount = -1;
-
-				if (multiAddSelectOption == ImdbImportOption.selectFirst && imdbId != null) {
-					DialogIMDB.getIMDbInfo(movieInfoModel.model, imdbId);
-
-					//list.addElement(hit);
-					//hitCount = 1;
-				}
-				else {
-					// Only pull list from imdb if not "Select FirstHit" is selected and no IMDB Id was found in an nfo/txt file
-					final ArrayList<ModelIMDbSearchHit> hits = IMDbLib.newIMDb(MovieManager.getConfig().getHttpSettings()).getSimpleMatches(searchString);
-
-					/*Number of movie hits*/
-					hitCount = hits.size();
-	
-					if ((hitCount > 0 && multiAddSelectOption == ImdbImportOption.selectFirst) || 
-							hitCount == 1 && multiAddSelectOption == ImdbImportOption.selectIfOnlyOneHit) {
-						
-						DialogIMDB.getIMDbInfo(movieInfoModel.model, hits.get(0).getUrlID());
-
-						// Insert prefix in Title to show that these movies maybe got wrong imdb infos
-						if (MovieManager.getConfig().getMultiAddPrefixMovieTitle() && hitCount > 1 && 
-								multiAddSelectOption == ImdbImportOption.selectFirst && (imdbId == null))
-							movieInfoModel.model.setTitle("_verify_ " + movieInfoModel.model.getTitle()); //$NON-NLS-1$
-					}
-					else {
-						
-						GUIUtil.invokeAndWait(new Runnable() {
-							public void run() {
-								DialogIMDbMultiAdd dialogIMDB = new DialogIMDbMultiAdd(fileSettings.getParent(), 
-										movieInfoModel.model, searchString, 
-										year, filename, files, imdbId);
-								GUIUtil.showAndWait(dialogIMDB, true);
-																
-								if (dialogIMDB.getCanceled()) {
-									setCancelled(true);
-								}
-
-								if (dialogIMDB.getAborted()) {
-									setAborted(true);
-								}
-							}
-						});
-					}
-				}
-			} else {
-				GUIUtil.invokeAndWait(new Runnable() {
-					public void run() {
-						DialogAlert alert = new DialogAlert(MovieManager.getDialog(), Localizer.get("DialogMovieInfo.alert.title.alert"), Localizer.get("DialogMovieInfo.alert.message.please-specify-movie-title")); //$NON-NLS-1$ //$NON-NLS-2$
-						GUIUtil.showAndWait(alert, true);
-					}
-				});
-			}
-		} catch (Exception e) {
-			log.debug("Exception:" + e.getMessage(), e);
-		}
-		
-		return ret;
-	}
-	
-	
-	
 	public String searchNfoForImdb(String _path) {
 		try {
 			if (_path != null && !_path.equals("")) {
