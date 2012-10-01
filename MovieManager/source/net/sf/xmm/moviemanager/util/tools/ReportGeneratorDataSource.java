@@ -57,9 +57,11 @@ public class ReportGeneratorDataSource implements JRDataSource {
         this.progressBar = progressBar;
         this.defaultCoverImageURL = defaultCoverImageURL;
         this.testmode = testmode;
-        this.mySQL = MovieManager.getIt().getDatabase().isMySQL();
         this.coversFolder = MovieManager.getConfig().getCoversPath();
 
+        if (MovieManager.getIt().getDatabase() != null)
+        	this.mySQL = MovieManager.getIt().getDatabase().isMySQL();
+                
         if (reportTitle != null)
         	this.reportTitle = reportTitle;
         	
@@ -93,12 +95,14 @@ public class ReportGeneratorDataSource implements JRDataSource {
                         
             int key = entry.getKey();
             if (key >= 0) {
-                if (entry instanceof ModelMovie) {
-                    entry = MovieManager.getIt().getDatabase().getMovie(key);
-                }
-                else {
-                    entry = MovieManager.getIt().getDatabase().getEpisode(key);
-                }
+            	if (!entry.getHasGeneralInfoData() || !entry.getHasAdditionalInfoData()) {
+	            	if (entry instanceof ModelMovie) {	
+	                    entry = MovieManager.getIt().getDatabase().getMovie(key);
+	                }
+	                else {
+	                    entry = MovieManager.getIt().getDatabase().getEpisode(key);
+	                }
+	            }
                 if (progressBar != null) {
                 	 SwingUtilities.invokeLater(new Runnable() {
                      	public void run() {
@@ -369,7 +373,7 @@ public class ReportGeneratorDataSource implements JRDataSource {
         		}
 
         		// Extra info
-        		else {
+        		else if (MovieManager.getIt().getDatabase() != null) {
         			ArrayList<String> extra = MovieManager.getIt().getDatabase().getExtraInfoFieldNames(false);
         			if (extra != null) {
         				for (int i = 0; i < extra.size(); i++) {
