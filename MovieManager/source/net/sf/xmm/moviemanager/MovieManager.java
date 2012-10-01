@@ -61,7 +61,7 @@ public class MovieManager {
     /**
      * Reference to the only instance of MovieManager.
      **/
-    static MovieManager movieManager;
+    public static MovieManager movieManager;
     
     /**
      * Reference to the only instance of DialogMovieManager.
@@ -95,7 +95,7 @@ public class MovieManager {
     /**
      * Constructor.
      **/
-    private MovieManager() {}
+    public MovieManager() {}
     
     /* Applet feature is not finished */
     MovieManager(Object applet) {

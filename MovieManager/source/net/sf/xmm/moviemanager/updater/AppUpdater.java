@@ -44,6 +44,7 @@ public class AppUpdater implements UpdatedApplication {
         	log.debug("Current Movie manager version:" + version + " (Release "+ release +")");
         	
         	// IMDb lib is newer
+        	// Need to report the latest version number to jupidator
         	if (release < IMDbLib.getRelease()) {
         		release = IMDbLib.getRelease();
         		log.debug("IMDb Lib is newest; Version " + IMDbLib.getVersion() + " (Release "+ release +")");
@@ -60,7 +61,7 @@ public class AppUpdater implements UpdatedApplication {
         	        	
         	log.debug("Loading updater config from " + ap.getUpdaterConfigFile());
         	
-        	updater = new Updater("http://xmm.sourceforge.net/updates/update.xml", ap, this);
+        	updater = new Updater(MovieManager.getConfig().sysSettings.getUpdateURL(), ap, this);
         	        	
         } catch (UpdaterException ex) {
         	log.error("UpdaterException:" + ex.getMessage(), ex);

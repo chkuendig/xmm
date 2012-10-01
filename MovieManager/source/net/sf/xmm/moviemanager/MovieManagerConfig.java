@@ -64,14 +64,16 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		/**
 		 * The current version of the program.
 		 **/
-		private static final String _version = "2.9.1.3"; //$NON-NLS-1$
+		private static final String _version = "2.9.2.0"; //$NON-NLS-1$
 		
 		// Increase with one for each release. Used for jupidator update library
-		private static final int release = 7;
+		// This value must never be the same as the release variable in IMDbLib.java
+		private static final int release = 13;
 
 		String appTitle = " MeD's Movie Manager v" + getVersion().trim();
 		String lookAndFeelTitle = "Look & Feel";
-
+		String updateURL = "http://xmm.sourceforge.net/updates/update.xml";
+		
 		/**
 		 * Returns the version.
 		 *
@@ -92,8 +94,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	    public void setLookAndFeelTitle(String lookAndFeelTitle) {
 	    	this.lookAndFeelTitle = lookAndFeelTitle;
 	    }
-	    
-	      
+	    	      
 	    public String getAppTitle() {
 	    	return appTitle;
 	    }
@@ -102,6 +103,14 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 	    	appTitle = t;
 	    }
 		
+	    public String getUpdateURL() {
+	    	return updateURL;
+	    }
+	    
+	    public void setUpdateURL(String u) {
+	    	if (u != null)
+	    		updateURL = u;
+	    }
 	}
 	
 	public final SystemSettings sysSettings = new SystemSettings();
@@ -2404,6 +2413,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			htmlTemplateHandler.setHTMLTemplateStyleName(getStringValue("HTMLTemplateStyleName:", config));
 			setLocale(getStringValue("locale:", config, getLocale()));
 			setFilterCategory(getStringValue("filterOption:", config, getFilterCategory()));
+			setIncludeAkaTitlesInFilter(getBooleanValue("filterAkaOption:", config, getIncludeAkaTitlesInFilter()));
 			setSortOption(getStringValue("sortOption:", config, getSortOption()));
 			setFilterSeen(getIntValue("filterSeen:", config, getFilterSeen()));
 			setRatingOption(getIntValue("ratingOption:", config, getRatingOption()));
@@ -2479,7 +2489,9 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 			setIMDbAuthenticationEnabled(getBooleanValue("IMDbAuthenticationEnabled:", config, getIMDbAuthenticationEnabled()));
 			setIMDbAuthenticationUser(getStringValue("IMDbAuthenticationUser:", config));
 			setIMDbAuthenticationPassword(getStringValue("IMDbAuthenticationPassword:", config));
-							
+			
+			sysSettings.setUpdateURL(getStringValue("updateURL:", config));
+			
 			value = (String) config.get("lastFileDir:");
 
 			if (value != null) {
@@ -2929,6 +2941,7 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 
 		 // Search options
 		 appendToConfig("filterOption:", getFilterCategory(), settings);
+		 appendToConfig("filterAkaOption:", getIncludeAkaTitlesInFilter(), settings);
 		 appendToConfig("sortOption:", getSortOption(), settings);
 		 appendToConfig("filterSeen:", getFilterSeen(), settings);
 		 appendToConfig("ratingOption:", getRatingOption(), settings);
@@ -2975,6 +2988,8 @@ public class MovieManagerConfig implements NewDatabaseLoadedEventListener {
 		 appendToConfig("proxyPort:", getProxyPort(), settings);
 		 appendToConfig("proxyUser:", getProxyUser(), settings);
 		 appendToConfig("proxyPassword:", getProxyPassword(), settings);
+		 
+		 appendToConfig("updateURL:", sysSettings.getUpdateURL(), settings);
 		 
 		 // IMDb settings
 		 appendToConfig("IMDbAuthenticationEnabled:", getIMDbAuthenticationEnabled(), settings);
