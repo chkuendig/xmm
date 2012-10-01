@@ -277,12 +277,8 @@ public abstract class DialogTableData extends JDialog {
 		});
 	}
 
-
-
 	public JPopupMenu makeTablePopupMenu() {
-
 		JPopupMenu popupMenu = new JPopupMenu();
-
 		JMenuItem deleteRow = new JMenuItem("Delete row");
 		deleteRow.addMouseListener(tablePopupListener);
 		deleteRow.setActionCommand("Delete");
@@ -292,20 +288,14 @@ public abstract class DialogTableData extends JDialog {
 		originalColumnTitles.addMouseListener(tablePopupListener);
 		originalColumnTitles.setActionCommand("OriginalColumnTitles");
 		popupMenu.add(originalColumnTitles);
-
 		return popupMenu;
 	}
-
-
-	
 
 	public ModelImportExportSettings getSettings() {
 		return new ModelImportExportSettings();
 	}
 
-
 	public class FieldModel {
-
 		String table;
 		String field;
 		String value;
@@ -351,6 +341,9 @@ public abstract class DialogTableData extends JDialog {
 				// Should be an integer
 				if (!value.equals("") && field.equalsIgnoreCase("Imdb")) {
 					try {
+						if (value.startsWith("tt"))
+							value = value.substring(2, value.length());
+						
 						Integer.parseInt(value);
 					} catch (NumberFormatException e) {
 						log.warn("Value:" + value + " is not a valid imdb id.\nValue ignored");
