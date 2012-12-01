@@ -38,6 +38,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.StatusLine;
+import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
@@ -95,6 +96,8 @@ public class HttpUtil {
 			setup();
 		
 		String [] hiddenValues = fetchHiddenFormValues();
+		if (hiddenValues == null)
+			return false;
 		return performIMDbLogin(hiddenValues);
 	}
 	
@@ -109,6 +112,7 @@ public class HttpUtil {
 
     		if (data == null) {
     			log.warn("Failed to retrieve data from :" + loginURL);
+    			log.warn("Status:" + result.getStatusCode() + " :" + result.getStatusMessage());
     			return null;
     		}
     		
@@ -146,7 +150,6 @@ public class HttpUtil {
 
 				postMethod.setRequestBody(postData);
 				int statusCode = client.executeMethod(postMethod);
-				System.out.println("statusCode:" + statusCode);
 				
 				 if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_MOVED_TEMPORARILY) 
 					 imdbAuthenticationSetUp = true;
@@ -182,20 +185,26 @@ public class HttpUtil {
 		}
 	}
 
-	public class HTTPResult {
-		
+	public static class HTTPResult {
+
 		URL url;
+		URI newUrl;
 		StringBuffer data = null;
 		StatusLine statusLine = null;
 		
-		HTTPResult(URL url, StringBuffer data, StatusLine statusLine) {
+		HTTPResult(URL url, URI newUrl, StringBuffer data, StatusLine statusLine) {
 			this.url = url;
+			this.newUrl = newUrl;
 			this.data = data;
 			this.statusLine = statusLine;
 		}
 		
 		public URL getUrl() {
 			return url;
+		}
+		
+		public URI getNewURI() {
+			return newUrl;
 		}
 		
 		public StringBuffer getData() {
@@ -211,64 +220,6 @@ public class HttpUtil {
 		}
 	}
 	
-	/*
-	public HTTPResult readData1(URL url) throws Exception {
-		
-		if (!isSetup())
-			setup();
-		
-		GetMethod method = new GetMethod(url.toString());
-		int statusCode = client.executeMethod(method);
-		
-		if (statusCode != HttpStatus.SC_OK) {
-			log.debug("HTTP StatusCode not HttpStatus.SC_OK:(" + statusCode + "):" + method.getStatusLine());
-		}
-		
-		BufferedInputStream stream = new BufferedInputStream(method.getResponseBodyAsStream());
-
-		StringBuffer data = new StringBuffer();
-		
-		// Saves the page data in a string buffer... 
-		int buffer;
-
-		while ((buffer = stream.read()) != -1) {
-			data.append((char) buffer);
-		}
-		
-		stream.close();
-		
-		return new HTTPResult(url, statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
-	}
-	
-
-	public HTTPResult readData2(URL url) throws Exception {
-
-		if (!isSetup())
-			setup();
-
-		GetMethod method = new GetMethod(url.toString());
-		int statusCode = client.executeMethod(method);
-
-		if (statusCode != HttpStatus.SC_OK) {
-			log.debug("HTTP StatusCode not HttpStatus.SC_OK:(" + statusCode + "):" + method.getStatusLine());
-		}
-
-		java.io.BufferedReader stream = new java.io.BufferedReader(new java.io.InputStreamReader(method.getResponseBodyAsStream(), "ISO-8859-1"));
-
-		StringBuffer data = new StringBuffer();
-
-		// Saves the page data in a string buffer... 
-		int buffer;
-
-		while ((buffer = stream.read()) != -1) {
-			data.append((char) buffer);
-		}
-
-		stream.close();
-
-		return new HTTPResult(url, statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
-	}
-*/
 	
 	public HTTPResult readData(URL url) throws TimeoutException, Exception {
 
@@ -290,7 +241,7 @@ public class HttpUtil {
 		//java.io.BufferedReader stream = new java.io.BufferedReader(new java.io.InputStreamReader(method.getResponseBodyAsStream(), "ISO-8859-1"));
 
 		StringBuffer data = new StringBuffer();
-
+		
 		// Saves the page data in a string buffer... 
 		String chrSet = method.getResponseCharSet();
 		InputStream input = method.getResponseBodyAsStream();
@@ -306,7 +257,7 @@ public class HttpUtil {
 		temp.close();
 		data.append(new String(buff, chrSet));
 
-		return new HTTPResult(url, statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
+		return new HTTPResult(url, method.getURI(), statusCode == HttpStatus.SC_OK ? data : null, method.getStatusLine());
 	}
 	
 	public byte [] readDataToByteArray(URL url) throws Exception {
@@ -347,7 +298,6 @@ public class HttpUtil {
 		} finally {
 			method.releaseConnection();
 		}
-
 		return data;
 	}
 

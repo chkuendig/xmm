@@ -1,81 +1,130 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <updatelist application="MeD's Movie Manager"
-			baseurl="http://downloads.sourceforge.net/project/xmm/Updates/" 
-			icon="icon.png">
+	    baseurl="http://downloads.sourceforge.net/project/xmm/Updates/"
+	    icon="icon.png">
 
-    <architect tag="any" os="" arch="">
-        <launcher exec="${JAVABIN}">
-            <argument value="-jar"/>
-            <argument value="${APPHOME}/MovieManager.jar"/>
-        </launcher>
-    </architect>
-    
-    <architect tag="win32" os="Windows" arch="x86">
-        <launcher exec="${APPHOME}\MovieManager.exe"/>
-    </architect>
+  <architect tag="any" os="" arch="">
+    <launcher exec="${JAVABIN}">
+      <argument value="-jar"/>
+      <argument value="${APPHOME}/MovieManager.jar"/>
+    </launcher>
+  </architect>
 
-    <architect tag="linux" os="Linux" arch="x86">
-        <launcher exec="${JAVABIN}">
-            <argument value="-jar"/>
-            <argument value="${APPHOME}/MovieManager.jar"/>
-        </launcher>
-    </architect>
-	
-	<version release="8" minrelease="5" version="20.06.2010" name="IMDb Lib">
-      <description>
-		&lt;ul&gt;
-		&lt;li&gt;IMDb scraper was broken.&lt;/li&gt;
-		&lt;/ul&gt;
-	  </description>
-      
-	  <arch name="all" gui="true">
-        <file name="IMDb.jar" sourcedir="IMDbLib/20.06.2010/" destdir="${APPHOME}/lib" size="61606" compress="none" />
-      </arch>
-	</version>
+  <architect tag="win32" os="Windows" arch="x86">
+    <launcher exec="${APPHOME}\MovieManager.exe"/>
+  </architect>
 
+  <architect tag="linux" os="Linux" arch="x86">
+    <launcher exec="${JAVABIN}">
+      <argument value="-jar"/>
+      <argument value="${APPHOME}/MovieManager.jar"/>
+    </launcher>
+  </architect>
 
-	<version release="6" minrelease="5" version="10.03.2010" name="IMDb Lib">
-      <description>
-		&lt;ul&gt;
-		&lt;li&gt;Retrieving movie info from IMDb would hang.&lt;/li&gt;
-		&lt;/ul&gt;
-	  </description>
-      
-	  <arch name="all" gui="true">
-        <file name="IMDb.jar" sourcedir="IMDbLib/10.03.2010/" destdir="${APPHOME}/lib" size="36162" compress="none" />
-      </arch>
-	</version>
+  <version release="13" minrelease="5" version="30.11.2012" name="IMDb Lib">
+    <description>
+      &lt;ul&gt;
+      &lt;li&gt;Changes to IMDb.com caused IMDb scraper to fail searching for titles.&lt;/li&gt;
+      &lt;/ul&gt;
+    </description>
+    <arch name="all" gui="true">
+      <file name="IMDb.jar" sourcedir="IMDbLib/30.11.2012/" destdir="${APPHOME}/lib" size="41567" compress="none" />
+    </arch>
+  </version>
 
+  <version release="12" minrelease="5" version="22.09.2012" name="IMDb Lib">
+    <description>
+      &lt;ul&gt;
+      &lt;li&gt;IMDb scraper wouldn't always retrieve all the seasons of a series.&lt;/li&gt;
+      &lt;li&gt;IMDb authentication was broken.&lt;/li&gt;
+      &lt;/ul&gt;
+    </description>
+    <arch name="all" gui="true">
+      <file name="IMDb.jar" sourcedir="IMDbLib/22.09.2012/" destdir="${APPHOME}/lib" size="43997" compress="none" />
+    </arch>
+  </version>
 
-	<version release="5" minrelease="5" version="2.9.1.2" name="MovieManager">
-      <description>
-		&lt;ul&gt;
-		&lt;li&gt;Personal rating was sometimes shown as -1.0 if it hadn't been set.&lt;/li&gt;
-		&lt;li&gt;Some strange behaviour with the lists on startup was fixed.&lt;/li&gt;
-		&lt;li&gt;Export and Import would fail when using Substance Look &amp; Feel.&lt;/li&gt;
-		&lt;li&gt;Report Generator did not function properly.&lt;/li&gt;
-		&lt;/ul&gt;
-	  </description>
-    
-	  <arch name="all" gui="true"/>
+  <version release="11" minrelease="5" version="04.03.2012" name="IMDb Lib">
+    <description>
+      &lt;ul&gt;
+      &lt;li&gt;IMDb scraper would not retrieve episode info.&lt;/li&gt;
+      &lt;/ul&gt;
+    </description>
+    <arch name="all" gui="true">
+      <file name="IMDb.jar" sourcedir="IMDbLib/04.03.2012/" destdir="${APPHOME}/lib" size="63575" compress="none" />
+    </arch>
+  </version>
 
-	</version>
+  <version release="10" minrelease="5" version="24.10.2010" name="IMDb Lib">
+    <description>
+      &lt;ul&gt;
+      &lt;li&gt;IMDb episode search was broken.&lt;/li&gt;
+      &lt;/ul&gt;
+    </description>
+    <arch name="all" gui="true">
+      <file name="IMDb.jar" sourcedir="IMDbLib/24.10.2010/" destdir="${APPHOME}/lib" size="63202" compress="none" />
+    </arch>
+  </version>
 
+  <version release="9" minrelease="5" version="14.10.2010" name="IMDb Lib">
+    <description>
+      &lt;ul&gt;
+      &lt;li&gt;IMDb scraper was broken again.&lt;/li&gt;
+      &lt;/ul&gt;
+    </description>
+    <arch name="all" gui="true">
+      <file name="IMDb.jar" sourcedir="IMDbLib/14.10.2010/" destdir="${APPHOME}/lib" size="63049" compress="none" />
+    </arch>
+  </version>
 
-	<version release="3" minrelease="3" version="2.9.1" name="MovieManager">
-        <description>
-		  	&lt;ul&gt;
-			&lt;li&gt;Added personal rating field.&lt;/li&gt;
-			&lt;li&gt;Added new Look &amp; Feel (NimROD).&lt;/li&gt;
-			&lt;li&gt;Fixed bug in additional info fields.&lt;/li&gt;
-			&lt;/ul&gt;
-		</description>
+  <version release="8" minrelease="5" version="20.06.2010" name="IMDb Lib">
+    <description>
+      &lt;ul&gt;
+      &lt;li&gt;IMDb scraper was broken.&lt;/li&gt;
+      &lt;/ul&gt;
+    </description>
+    <arch name="all" gui="true">
+      <file name="IMDb.jar" sourcedir="IMDbLib/20.06.2010/" destdir="${APPHOME}/lib" size="61606" compress="none" />
+    </arch>
+  </version>
 
-		<arch name="all" gui="true"/>
-    </version>
+  <version release="6" minrelease="5" version="10.03.2010" name="IMDb Lib">
+    <description>
+      &lt;ul&gt;
+      &lt;li&gt;Retrieving movie info from IMDb would hang.&lt;/li&gt;
+      &lt;/ul&gt;
+    </description>
+    <arch name="all" gui="true">
+      <file name="IMDb.jar" sourcedir="IMDbLib/10.03.2010/" destdir="${APPHOME}/lib" size="36162" compress="none" />
+    </arch>
+  </version>
 
-    <version release="1" version="2.9.0" name="MovieManager">
-        <description>Initial release using jupidator update library</description>
-    </version>
-    
+  <version release="5" minrelease="5" version="2.9.1.2" name="MovieManager">
+    <description>
+      &lt;ul&gt;
+      &lt;li&gt;Personal rating was sometimes shown as -1.0 if it hadn't been set.&lt;/li&gt;
+      &lt;li&gt;Some strange behaviour with the lists on startup was fixed.&lt;/li&gt;
+      &lt;li&gt;Export and Import would fail when using Substance Look &amp; Feel.&lt;/li&gt;
+      &lt;li&gt;Report Generator did not function properly.&lt;/li&gt;
+      &lt;/ul&gt;
+    </description>
+    <arch name="all" gui="true"/>
+  </version>
+
+  <version release="3" minrelease="3" version="2.9.1" name="MovieManager">
+    <description>
+      &lt;ul&gt;
+      &lt;li&gt;Added personal rating field.&lt;/li&gt;
+      &lt;li&gt;Added new Look &amp; Feel (NimROD).&lt;/li&gt;
+      &lt;li&gt;Fixed bug in additional info fields.&lt;/li&gt;
+      &lt;/ul&gt;
+    </description>
+
+    <arch name="all" gui="true"/>
+  </version>
+
+  <version release="1" version="2.9.0" name="MovieManager">
+    <description>Initial release using jupidator update library</description>
+  </version>
+
 </updatelist>

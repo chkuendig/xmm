@@ -45,6 +45,8 @@ public class ModelIMDbSearchHit {
 	
 	private String hitCategory = null;
 	
+	private boolean isSeries = false;
+	
 	/**
 	 * Aka
 	 */
@@ -73,6 +75,48 @@ public class ModelIMDbSearchHit {
 	// A model that may be used to store the data retrieved from a search on this specific search hit 
 	private ModelIMDbEntry model;
 	
+	public ModelIMDbSearchHit(String urlID, String title) {
+		this.urlID = urlID; 
+		this.title = title;
+	}
+
+	public ModelIMDbSearchHit(String urlID, String title, String date, String aka, String hitCategory, boolean isSeries) {
+		this(urlID, title);
+		this.date = date;
+		this.aka = aka;
+		this.hitCategory = hitCategory;
+		this.isSeries = isSeries;
+	}
+
+	public ModelIMDbSearchHit(String urlID, String title, int seasonNumber) {
+		this(urlID, title);
+		this.seasonNumber = seasonNumber;
+	}
+
+	public ModelIMDbSearchHit(String urlID, String title, String searchTitle, int seasonNumber, int streamNumber) {
+		this(urlID, title, seasonNumber);
+		this.searchTitle = searchTitle;
+		this.streamNumber = streamNumber;
+	}
+
+	public ModelIMDbSearchHit(String key, String title, String date) {
+		this(key, title, date, null);
+	}
+		
+	public ModelIMDbSearchHit(String key, String title, String date, String aka) {
+		this(key, title, date, aka, null, false);
+	}
+	
+	
+	/**
+	 * Used for message to user like "Connection time out and "no hits"
+	 * @param title
+	 */
+	public ModelIMDbSearchHit(String title) {
+		this(null, title);
+	}
+	
+	
 	public void setDataModel(ModelIMDbEntry model) {
 		this.model = model;
 	}
@@ -80,61 +124,8 @@ public class ModelIMDbSearchHit {
 	public ModelIMDbEntry getDataModel() {
 		return model;
 	}
-	
-	/**
-	 * Used for message to user like "Connection time out and "no hits"
-	 * @param title
-	 */
-	public ModelIMDbSearchHit(String title) {
-		this(null, title, null, null);
-	}
-	
-	public ModelIMDbSearchHit(String key, String title, String date) {
-		this(key, title, date, null, null);
-	}
 		
-	public ModelIMDbSearchHit(String key, String title, String date, String aka) {
-		this(key, title, date, aka, null);
-	}
-
 	
-	public ModelIMDbSearchHit(String key, String title, String date, String aka, String hitCategory) {
-		urlID = key; 
-		this.title = title;
-		this.date = date;
-		this.aka = aka;
-		this.hitCategory = hitCategory;
-	}
-
-	
-	/**
-	 * The constructor.
-	 **/
-	public ModelIMDbSearchHit(String urlID, String title) {
-		this.urlID = urlID; 
-		this.title = title;
-	}
-
-	/**
-	 * The constructor.
-	 **/
-	public ModelIMDbSearchHit(String showKey, String title, int seasonNumber) {
-		this.urlID = showKey; 
-		this.title = title;
-		this.seasonNumber = seasonNumber;
-	}
-
-	/**
-	 * The constructor.
-	 **/
-	public ModelIMDbSearchHit(String showKey, String title, String searchTitle, int seasonNumber, int streamNumber) {
-		this.urlID = showKey; 
-		this.title = title;
-		this.searchTitle = searchTitle;
-		this.seasonNumber = seasonNumber;
-		this.streamNumber = streamNumber;
-	}
-
 	/**
 	 * Gets the key.
 	 **/
@@ -165,6 +156,9 @@ public class ModelIMDbSearchHit {
 		return hitCategory;
 	}
 	
+	public boolean getIsSeries() {
+		return isSeries;
+	}
 		
 	/**
 	 * Gets the title.

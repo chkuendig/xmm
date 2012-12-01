@@ -66,7 +66,7 @@ public class IMDbScraper implements IMDb {
     	return isLoggedIn;
     }
     
-    public final String [] movieHitCategory = {"Popular Titles", "Titles (Exact Matches)", "Titles (Partial Matches)", "Titles (Approx Matches)"};
+    public final String [] movieHitCategory = {"Titles"};
 	
     public IMDbScraper() throws Exception {
     	this(null, null, null);		
@@ -222,7 +222,7 @@ public class IMDbScraper implements IMDb {
 		boolean isSeries = false;
 		isLoggedIn = false;
 		
-		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
+		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb.html", data);
 			
 		try {
 			/* Processes the data... */
@@ -791,11 +791,9 @@ public class IMDbScraper implements IMDb {
 					hits.add(new ModelIMDbSearchHit(key, title, modelSeason.getSeasonNumber()));
 				}
 			}
-
 		} catch (Exception e) {
 			log.error("Exception:", e);
-		}
-	
+		}	
 		return hits;
 	}
     
@@ -854,15 +852,13 @@ public class IMDbScraper implements IMDb {
 	public ArrayList<ModelIMDbSearchHit> getSeriesMatches(String title) {
 
 		ArrayList<ModelIMDbSearchHit> all = null;
-				
+		
 		try {
 			all = getSimpleMatches(title);
 			
 			for (int i = 0; i < all.size(); i++) {
-
 				ModelIMDbSearchHit imdb = all.get(i);
-
-				if (!imdb.getTitle().startsWith("\"")) {
+				if (!imdb.getIsSeries()) {
 					all.remove(i);
 					i--;
 				}
@@ -884,7 +880,8 @@ public class IMDbScraper implements IMDb {
 		//System.out.println("US-ASCII:" + java.net.URLEncoder.encode(title, "US-ASCII"));
 		//System.out.println("ISO-8859-1:" + java.net.URLEncoder.encode(title, "ISO-8859-1"));
 				
-		return getMatches("http://akas.imdb.com/find?s=tt&q="+ java.net.URLEncoder.encode(title, "ISO-8859-1"));
+		//return getMatches("http://akas.imdb.com/find?s=tt&q="+ java.net.URLEncoder.encode(title, "ISO-8859-1"));
+		return getMatches("http://akas.imdb.com/find?q="+ java.net.URLEncoder.encode(title, "ISO-8859-1"));
 	}
 
 	public HTTPResult getLastHTTPResult() {
@@ -894,20 +891,20 @@ public class IMDbScraper implements IMDb {
     private ArrayList<ModelIMDbSearchHit> getMatches(String strUrl) throws UnknownHostException {
 
     	try {
-    		    		
     		URL url = new URL(strUrl);
 
-    		log.debug("getMatches:" + url);
+    		//log.debug("getMatches:" + url);
     		
     		lastHTTPResult = httpUtil.readData(url);
 			StringBuffer data = lastHTTPResult.getData();
 
+    		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb1.html", data);
+			
     		if (data == null) {
     			log.warn("Failed to retrieve data from :" + url);
     			return new ArrayList<ModelIMDbSearchHit>();
     		}
-
-    		return getMatches(data);
+    		return getMatches(lastHTTPResult);
     	} catch (UnknownHostException u) {
     		throw u;
     	} catch (Exception e) {
@@ -916,23 +913,24 @@ public class IMDbScraper implements IMDb {
     	return null;
     }
 
-    public ArrayList<ModelIMDbSearchHit> getMatches(StringBuffer data) {
+    public ArrayList<ModelIMDbSearchHit> getMatches(HTTPResult httpResult) {
 
     	ArrayList<ModelIMDbSearchHit> listModel = new ArrayList<ModelIMDbSearchHit>();
 
     	try {
-
-    		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
-
     		int start = 0;
 			String key = "";
 			String movieTitle = "", year = null, aka = "";
 			int titleStart, titleEnd;
 			int movieCount = 0;
 			
-			/* If there's only one movie for that title it goes directly to that site...  */
-			if (!data.substring(data.indexOf("<title>")+7, data.indexOf("<title>")+11).equals("IMDb")) {
-			
+			StringBuffer data = httpResult.getData();						
+
+    		net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
+    		
+			/* If there's only one movie for that title it redirects to the title page...  */
+			if (httpResult.getNewURI().toString().indexOf("imdb.com/title") != -1) {
+								
 				/* Gets the title... */
 				titleStart = data.indexOf("<title>", start)+7;
 				titleEnd = data.indexOf("</title>", titleStart);
@@ -960,7 +958,7 @@ public class IMDbScraper implements IMDb {
 				
 				return listModel;
 			}
-				
+			
 			// Insert newline before each href, as dot in regex will not match newline
 			int index = 0;
 			while ((index = data.indexOf("<a href", index)) != -1) {
@@ -968,7 +966,7 @@ public class IMDbScraper implements IMDb {
 				index += 2;
 			}
 			
-			int [] movieHitCategoryIndex = new int[4];
+			int [] movieHitCategoryIndex = new int[movieHitCategory.length];
 			boolean empty = true;
 			
 			int startIndex = -1;
@@ -986,29 +984,31 @@ public class IMDbScraper implements IMDb {
 					}
 				}
 			}
-			
-			// NO results, returning empty list
-			if (empty) {
-				return listModel;
-			}
-			
+						
 			// <a href="/title/tt0496424/" onclick="(new Image()).src='/rg/find-title-1/title_popular/images/b.gif?link=/title/tt0496424/';">&#34;30 Rock&#34;</a> (2006) <small>(TV series)</small>     <div style="font-size: small">&#160;&#45;&#160;Season 3, Episode 11: 
 			// <a href="/title/tt0074853/">The Man in the Iron Mask</a> (1977) (TV)</td></tr>
 			// <a href="/title/tt0120744/">The Man in the Iron Mask</a> (1998/I)</td></tr>
 			// <a href="/title/tt0103064/">Terminator 2: Judgment Day</a> (1991)<br>&#160;aka <em>"Terminator 2 - Le jugement dernier"</em> - France<br>&#160;aka <em>"T2 - Terminator 2: Judgment Day"</em></td></tr>
 			
 			// <a href="/title/tt0822832/" onclick="(new Image()).src='/rg/find-title-1/title_popular/images/b.gif?link=/title/tt0822832/';">Marley &#x26; Me</a> (2008)     </td></tr></table> 
-			
+						
+
+			//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/imdb-search.html", data);
 			
 			// should match strings like the above
 			
-			Pattern p = Pattern.compile("<a\\shref=\"/title/tt(\\d{5,})/\".*?>(.+?)</a>.+?\\((\\d+(/I*)?)\\).*?(;aka\\s<em>.+?</em>)*?(?:</td></tr>|\\n)"); // last group matches series that do not end with </td></tr>
+			Pattern p = Pattern.compile("<a\\shref=\"/title/tt(\\d{5,})/" + // imdb id (group 1)
+					".*?>(.+?)" +  // Title (group 2)
+					"</a>.+?\\((\\d+(?:/I*)?)\\)" + // Year (group 3) including optional I for multiple movies with the same title released the same year 
+					"\\s*(?:\\((.+?)\\))?.*?" + // Optional category, e.g. (TV Series) (group 5)
+					"(;aka\\s<em>.+?</em>)*?(?:</td>\\s*</tr>|\\n)"); // last group matches series that do not end with </td></tr>
 			Matcher m = p.matcher(data);
 			
 			while (m.find()) {
-			
+							
+				boolean isSeries = false;
 				//int gCount = m.groupCount();
-				
+								
 				key = m.group(1);
 				String title = m.group(2);
 				year = m.group(3);
@@ -1018,9 +1018,12 @@ public class IMDbScraper implements IMDb {
 				if (title.equals(""))
 					continue;
 				
-				//Video game
-				if (m.group(0).indexOf("VG") != -1) {
+				if ("Video Game".equals(m.group(4))) {
 					continue;	
+				}
+
+				if ("TV Series".equals(m.group(4))) {
+					isSeries = true;
 				}
 				
 				// Aka
@@ -1031,13 +1034,11 @@ public class IMDbScraper implements IMDb {
 				String category = null;
 				
 				for (int i = 0; i < movieHitCategoryIndex.length; i++) {
-					
 					if (movieHitCategoryIndex[i] != -1 && matchIndex > movieHitCategoryIndex[i])
 						category = movieHitCategory[i];
 				}
 				
-				listModel.add(new ModelIMDbSearchHit(key, title, year, aka, category));
-				
+				listModel.add(new ModelIMDbSearchHit(key, title, year, aka, category, isSeries));
 				movieCount++;
 			}
 		} catch (Exception e) {
@@ -1499,16 +1500,13 @@ public class IMDbScraper implements IMDb {
     	// Disable method for now
     	if (true)
     		return false;
-    	
-    	URL url;
 
     	byte [] coverData = null;
     	
     	try {
-    		url = new URL("http://akas.imdb.com/media/" + dataModel.bigCoverUrlId);
     		
-    		//System.out.println("url:" + url);
-    		
+    		URL url = new URL("http://akas.imdb.com/media/" + dataModel.bigCoverUrlId);
+    		    		
     		HTTPResult res = httpUtil.readData(url);
     		StringBuffer data = res.getData();
 
@@ -1517,8 +1515,6 @@ public class IMDbScraper implements IMDb {
     		if (imgIndex != -1) {
 
     			String tmp = data.substring(imgIndex, data.indexOf(">", imgIndex));
-
-    			//System.out.println("tmp:" + tmp);
     			
     			//src="http://ia.media-imdb.com/images/M/MV5BMTI4ODg5MjkwMl5BMl5BanBnXkFtZTcwNTkzMjYyMQ@@._V1._SX307_SY400_.jpg">
 

@@ -26,14 +26,19 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import net.sf.xmm.moviemanager.http.HttpUtil.HTTPResult;
 import net.sf.xmm.moviemanager.imdblib.IMDbScraper;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbEntry;
-import net.sf.xmm.moviemanager.models.imdb.ModelIMDbListHit;
 import net.sf.xmm.moviemanager.models.imdb.ModelIMDbSearchHit;
+import net.sf.xmm.moviemanager.util.FileUtil;
 
+import org.apache.commons.httpclient.URI;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,17 +47,17 @@ import org.junit.Test;
 public class IMDBTest  {
 
 	boolean setup = false;
+	IMDbScraper imdb;
 	
 	@Before
-	public void setUp() throws Exception
-	{
+	public void setUp() throws Exception {
 		if (setup)
 			return;
 		
 		setup =  true;
 	
 		BasicConfigurator.configure();
-				
+		
 		try {
     		/* Disable HTTPClient logging output */
     		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -60,64 +65,82 @@ public class IMDBTest  {
     	} catch (java.security.AccessControlException s) {    
     		s.printStackTrace();
     	}
+
+		imdb = new IMDbScraper();
+	}
+
+
+	@Test
+	public void getSimpleMatchesTest() throws Exception {
+		String input = "La fille sur le";
+		ArrayList<ModelIMDbSearchHit> matches = imdb.getSimpleMatches(input);
+		
+		assertEquals("The number of results does not match the expected for input " + input, 11, matches.size());
+		assertEquals("The expected IMDb ID did not match", "0144201", matches.get(0).getUrlID());
+		
+//		for (ModelIMDbSearchHit m : matches) {
+//			System.out.println("Title:" + m.getTitle() + " ID:" + m.getUrlID());
+//		}
+	}
+	
+	@Test
+	public void getSimpleMatchesTitleWithAmpersandTest() throws Exception {
+		String input = "Marly & Me";
+		ArrayList<ModelIMDbSearchHit> matches = imdb.getSimpleMatches(input);
+		
+		assertEquals("The number of results does not match the expected for input " + input, 18, matches.size());
+		assertEquals("The expected IMDb ID did not match", "0822832", matches.get(0).getUrlID());
+		
+		//for (ModelIMDbSearchHit m : matches) {
+		//	System.out.println("Title:" + m.getTitle() + " ID:" + m.getUrlID());
+		//}
 	}
 
 	
 	@Test
-	public void getSimpleMatchesTest() throws Exception {
-		
-		IMDbScraper imdb = new IMDbScraper();
-
-		String input = "La fille sur le pon";
-
-		ArrayList<ModelIMDbSearchHit> matches = null;
-		matches = imdb.getSimpleMatches(input);
-		
-		assertTrue("The number of results does not match the expected for input " + input, matches.size() ==  20);
-
-
-		input = "Marly & Me";
-		matches = imdb.getSimpleMatches(input);
-		
-		assertTrue("The number of results does not match the expected for input " + input, matches.size() ==  20);
-
-
-		//for (int i = 0; i < matches.size(); i++)
-			//System.out.println("matches.get("+i+"):" + matches.get(i));	
-
+	public void getSimpleMatchesStraigtToTitleTest() throws Exception {
 		// Special case with only one hit, where one is directly referred to the movie page
-		
-		input = "Ofelas";
+		String input = "La fille sur le pont";
 
-		try {
-			matches = imdb.getSimpleMatches(input);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		assertTrue("The number of results does not match the expected for input " + input, matches.size() ==  1);
+		ArrayList<ModelIMDbSearchHit> matches = imdb.getSimpleMatches(input);
+		assertEquals("The number of results does not match the expected for input " + input, 1, matches.size());
+		assertEquals("The expected IMDb ID did not match", "0144201", matches.get(0).getUrlID());
 	}
 
-
-
+	
 	@Test
 	public void seriesSimpleMatchesTest() throws Exception {
-
-		IMDbScraper imdb = new IMDbScraper();
-
 		String input = "Buffy the Vampire Slayer";
 
 		ArrayList<ModelIMDbSearchHit> matches = null;
 		matches = imdb.getSimpleMatches(input);
 		
-		/*
-		for (int i = 0; i < matches.size(); i++)
-			System.out.println("matches.get("+i+"):" + matches.get(i));
-		*/
-		
-		assertEquals("The number of results does not match the expected for input " + input, 13, matches.size());
-		
+//		for (int i = 0; i < matches.size(); i++)
+//			System.out.println("matches.get("+i+"):" + matches.get(i));
+			
+		assertEquals("The number of results does not match the expected for input " + input, 5, matches.size());
 	}
 	
+	@Test
+	public void getSeriesMatchesTest() throws Exception {
+		String input = "Buffy the Vampire Slayer";
+
+		ArrayList<ModelIMDbSearchHit> matches = null;
+		matches = imdb.getSeriesMatches(input);
+		assertEquals("The number of results does not match the expected for input " + input, 1, matches.size());
+		
+		input = "Nikita";
+		matches = imdb.getSeriesMatches(input);
+		assertEquals("The number of results does not match the expected for input " + input, 3, matches.size());
+		
+		input = "The Simpsons";
+		matches = imdb.getSeriesMatches(input);
+		assertEquals("The number of results does not match the expected for input " + input, 1, matches.size());
+
+//		for (int i = 0; i < matches.size(); i++)
+//			System.out.println("matches.get("+i+"):" + matches.get(i));
+	}
+		
 	
 	@Test
 	public void getMatchesTest() throws Exception {
@@ -140,8 +163,6 @@ public class IMDBTest  {
 		 
 		 */
 
-		IMDbScraper imdb = new IMDbScraper();
-
 		StringBuffer testData = new StringBuffer();
 
 		testData.append("<title>IMDb Search</title>");
@@ -150,14 +171,11 @@ public class IMDBTest  {
 		
 		testData.append("<a href=\"/title/tt0496424/\" onclick=\"(new Image()).src='/rg/find-title-1/title_popular/images/b.gif?link=/title/tt0496424/';\">&#34;30 Rock&#34;</a> (2006) <small>(TV series)</small>     <div style=\"font-size: small\">&#160;&#45;&#160;Season 3, Episode 11: ");
 		testData.append("<a href=\"/title/tt0074853/\">The Man in the Iron Mask</a> (1977) (TV)</td></tr>");
-		
-		testData.append(imdb.movieHitCategory[1]);
-		
+				
 		// Troublesome because two movies with the same name was created that year (1998/I)
 		testData.append("<a href=\"/title/tt0120744/\">The Man in the Iron Mask</a> (1998/I)</td></tr>");
 		testData.append("<a href=\"/title/tt0103064/\">Terminator 2: Judgment Day</a> (1991)<br>&#160;aka <em>\"Terminator 2 - Le jugement dernier\"</em> - France<br>&#160;aka <em>\"T2 - Terminator 2: Judgment Day\"</em></td></tr>");
 	
-		testData.append(imdb.movieHitCategory[2]);
 		
 		// "Marley & Me" - troublesome because if &
 		testData.append("<a href=\"/title/tt0822832/\" onclick=\"(new Image()).src='/rg/find-title-1/title_popular/images/b.gif?link=/title/tt0822832/';\">Marley &#x26; Me</a> (2008)     </td></tr></table>");
@@ -166,16 +184,20 @@ public class IMDBTest  {
 		testData.append("<a href=\"/title/tt0960144/\" onclick=\"(new Image()).src='/rg/find-title-1/title_popular/images/b.gif?link=/title/tt0960144/';\">You Don&#x27;t Mess with the Zohan</a> (2008)     </td></tr></table>");
 		
 		// Should NOT match because of (VG) which means Video Game
-		testData.append("<a href=\"/title/tt0311669/\" onclick=\"(new Image()).src='/rg/find-title-2/title_exact/images/b.gif?link=/title/tt0311669/';\">Predator</a> (1989) (VG)     </td></tr></table>");
+		testData.append("<a href=\"/title/tt0311669/\" onclick=\"(new Image()).src='/rg/find-title-2/title_exact/images/b.gif?link=/title/tt0311669/';\">Predator</a> (1989) (Video Game)   </td></tr></table>");
 		
-		ArrayList<ModelIMDbSearchHit> matches = imdb.getMatches(testData);
-		assertEquals("The number of results does not match the expected", matches.size(), 6);
+		HTTPResult result = new HTTPResult(new URL("http://"), new URI("http://"), testData, null);
+		ArrayList<ModelIMDbSearchHit> matches = imdb.getMatches(result);
+		assertEquals("The number of results does not match the expected", 6, matches.size());
 		
+		
+//		for (int i = 0; i < matches.size(); i++)
+//			System.out.println("matches.get("+i+"):" + matches.get(i));
+
+	
 		/*
-		for (int i = 0; i < matches.size(); i++)
-			System.out.println("matches.get("+i+"):" + matches.get(i));
-*/
-						
+		  
+		 
 		// "30 Rock" (2006) 
 		matches = imdb.getSimpleMatches("30 Rock");
 		assertTrue("Movie search result did not include the expected title", hasUrlKey(matches, "0496424"));
@@ -202,7 +224,9 @@ public class IMDBTest  {
 
 		// Predator (1989) (VG) (Should NOT match because of (VG) which means Video Game)
 		matches = imdb.getSimpleMatches("Predator");
-		assertFalse("Movie search result did not include the expected title", hasUrlKey(matches, "0311669"));
+		assertFalse("Movie search result included a title which it shouldn't", hasUrlKey(matches, "0311669"));
+		
+		*/
 				
 	}
 	
@@ -217,27 +241,21 @@ public class IMDBTest  {
 	@Test
 	public void getSeasonsTest() throws Exception {
 
-		IMDbScraper imdb = new IMDbScraper();
-
 		String urlKey = "0118276"; //Buffy the Vampire Slayer (TV Series 1997–2003)
-		
 		ModelIMDbSearchHit seriesHit = new ModelIMDbSearchHit(urlKey, "Buffy");
 		ArrayList<ModelIMDbSearchHit> matches = imdb.getSeasons(seriesHit);
-			
-		/*
-		for (int i = 0; i < matches.size(); i++)
-			System.out.println("matches.get("+i+"):" + matches.get(i));
-		 */		
-		
-		assertTrue("The number of results does not match the expected", matches.size() ==  7);
-		
+		assertEquals("The number of results does not match the expected", 7, matches.size());
+				
+		urlKey = "0096697"; //The Simpsons
+		seriesHit = new ModelIMDbSearchHit(urlKey, "Simpsons");
+		matches = imdb.getSeasons(seriesHit);
+		assertEquals("The number of results does not match the expected", 25, matches.size());
 	}
+	
 	
 	@Test
 	public void dataRetrievalTest() throws Exception {
-		
-		IMDbScraper imdb = new IMDbScraper();
-				
+						
 		// Terminator 2
 		StringBuffer data = imdb.getURLData("0103064").getData();
 		
@@ -251,7 +269,7 @@ public class IMDBTest  {
 		String expectedCountry = "USA, France";
 		String expectedLanguage = "English, Spanish";
 		String expectedPlot = "Nearly 10 years have passed since Sarah Connor was targeted for termination by a cyborg from the future. Now her son, John, the future leader of the resistance, is the target for a newer, more deadly terminator. Once again, the resistance has managed to send a protector back to attempt to save John and his mother Sarah.";
-		String expectedCast = "Arnold Schwarzenegger (The Terminator), Linda Hamilton (Sarah Connor), Edward Furlong (John Connor), Robert Patrick (T-1000), Earl Boen (Dr. Silberman), Joe Morton (Miles Dyson), S. Epatha Merkerson (Tarissa Dyson), Castulo Guerra (Enrique Salceda), Danny Cooksey (Tim), Jenette Goldstein (Janelle Voight), Xander Berkeley (Todd Voight), Leslie Hamilton Gearren (Twin Sarah), Ken Gibbel (Douglas), Robert Winley (Cigar Biker), Peter Schrum (Lloyd (as Pete Schrum)), Shane Wilder (Trucker), Michael Edwards (Old John Connor), Jared Lounsbery (Kid), Casey Chavez (Kid), Ennalls Berl (Bryant), Don Lake (Mossberg), Richard Vidan (Weatherby), Tom McDonald (Cop), Jim Palmer (Jock), Gerard G. Williams (Jock), Gwenda Deacon (Night Nurse), Don Stanton (Lewis the Guard), Dan Stanton (Lewis as T-1000), Colin Patrick Lynch (Attendant), Noel Evangelisti (Hospital Guard), Nikki Cox (Girl), Lisa Brinegar (Girl), DeVaughn Nixon (Danny Dyson (as De Vaughn Nixon)), Tony Simotes (Vault Guard), Diane Rodriguez (Jolanda Salceda), Dalton Abbott (Infant John Connor), Ron Young (Pool Cue Biker), Charles Robert Brown (Tattoo Biker), Abdul Salaam El Razzac (Gibbons), Mike Muscat (Moshier), Dean Norris (SWAT Team Leader), Charles A. Tamburro (Police Chopper Pilot (as Charles Tamburro)), J. Rob Jordan (Pickup Truck Driver), Terrence Evans (Tanker Truck Driver), Denney Pierce (Burly Attendant), Mark Christopher Lawrence (Burly Attendant), Pat Kouri (SWAT Leader), Van Ling (Cyberdyne Tech), Michael Albanese (SWAT Officer (uncredited)), Ed Arneson (SWAT Officer (uncredited)), Bret A. Arnold (Future Coda Man (uncredited)), Debra Casey (Mohawk Girl at Biker Bar (uncredited)), Jim Dahl (SWAT Officer (uncredited)), Takao Komine (Tourist Shot by T-1000 (uncredited)), Joel Kramer (Male Nurse (uncredited)), Anne Merrem (Psychiatric (uncredited)), Scott Shaw (Cyberdyne Tech (uncredited)), Steven Stear (SWAT Officer (uncredited)), Randy Walker (SWAT Officer (uncredited)), William Wisher Jr. (Galleria Photographer / Cop (uncredited))";
+		String expectedCast = "Arnold Schwarzenegger (The Terminator), Linda Hamilton (Sarah Connor), Edward Furlong (John Connor), Robert Patrick (T-1000), Earl Boen (Dr. Silberman), Joe Morton (Miles Dyson), S. Epatha Merkerson (Tarissa Dyson), Castulo Guerra (Enrique Salceda), Danny Cooksey (Tim), Jenette Goldstein (Janelle Voight), Xander Berkeley (Todd Voight), Leslie Hamilton Gearren (Twin Sarah), Ken Gibbel (Douglas), Robert Winley (Cigar Biker), Peter Schrum (Lloyd (as Pete Schrum)), Shane Wilder (Trucker), Michael Edwards (Old John Connor), Jared Lounsbery (Kid), Casey Chavez (Kid), Ennalls Berl (Bryant), Don Lake (Mossberg), Richard Vidan (Weatherby), Tom McDonald (Cop), Jim Palmer (Jock), Gerard G. Williams (Jock), Gwenda Deacon (Night Nurse), Don Stanton (Lewis the Guard), Dan Stanton (Lewis as T-1000), Colin Patrick Lynch (Attendant), Noel Evangelisti (Hospital Guard), Nikki Cox (Girl), Lisa Brinegar (Girl), DeVaughn Nixon (Danny Dyson (as De Vaughn Nixon)), Tony Simotes (Vault Guard), Diane Rodriguez (Jolanda Salceda), Dalton Abbott (Infant John Connor), Ron Young (Pool Cue Biker), Charles Robert Brown (Tattoo Biker), Abdul Salaam El Razzac (Gibbons), Mike Muscat (Moshier), Dean Norris (SWAT Team Leader), Charles A. Tamburro (Police Chopper Pilot (as Charles Tamburro)), J. Rob Jordan (Pickup Truck Driver), Terrence Evans (Tanker Truck Driver), Denney Pierce (Burly Attendant), Mark Christopher Lawrence (Burly Attendant), Pat Kouri (SWAT Leader), Van Ling (Cyberdyne Tech), Michael Albanese (SWAT Officer (uncredited)), Ed Arneson (SWAT Officer (uncredited)), Bret A. Arnold (Future Coda Man (uncredited)), Debra Casey (Mohawk Girl at Biker Bar (uncredited)), Jim Dahl (SWAT Officer (uncredited)), Takao Komine (Tourist Shot by T-1000 (uncredited)), Joel Kramer (Male Nurse (uncredited)), Anne Merrem (Psychiatric (uncredited)), Scott Shaw (Cyberdyne Tech (uncredited)), Steven Stear (SWAT Officer (uncredited)), Misty Jo Walker (Sarah's Granddaughter (scenes deleted) (uncredited)), Randy Walker (SWAT Officer (uncredited)), William Wisher Jr. (Galleria Photographer / Cop (uncredited))";
 		String expectedWebRuntime = "137 min, USA:152 min (special edition), USA:154 min (extended special edition)";
 		String expectedWebSoundMix = "70 mm 6-Track (analog 70 mm prints), CDS (digital 35 mm and 70 mm prints), Dolby SR (analog 35 mm prints)";
 		String expectedAwards = "Won 4 Oscars. Another 20 wins & 19 nominations";
@@ -265,10 +283,13 @@ public class IMDBTest  {
 		"\"T2: Ultimate Edition\" - USA (video box title)\n" + 
 		"\"Terminator 2 - Le jugement dernier\" - France\n" + 
 		"\"Terminator 2: el juicio final\" - Argentina, Peru, Spain\n" + 
+		"\"Терминатор 2: Страшният съд\" - Bulgaria (Bulgarian title)\n" + 
 		"\"Терминатор 2: Судный день\" - Russia\n" + 
-		"\"Exolothreftis 2 - Mera krisis\" - Greece (transliterated ISO-LATIN-1 title)\n" + 
+		"\"Exolothreftis 2: Mera krisis\" - Greece (imdb display title)\n" + 
 		"\"Exterminador Implacável 2: O Dia do Julgamento\" - Portugal\n" + 
+		"\"Ke Huy Diet 2: Ngay Phan Xet\" - Vietnam (imdb display title)\n" + 
 		"\"O Exterminador do Futuro 2: O Julgamento Final\" - Brazil\n" + 
+		"\"Tarminetara 2: Pralaya ka dina\" - India (Hindi title) (dubbed version)\n" + 
 		"\"Terminátor 2. - Az ítélet napja\" - Hungary\n" + 
 		"\"Terminátor 2: Den zúctování\" - Czechoslovakia (Czech title)\n" + 
 		"\"Terminátor 2: Den zúctovania\" - Czechoslovakia (Slovak title)\n" +
@@ -322,9 +343,7 @@ public class IMDBTest  {
 	
 	@Test
 	public void dataRetrievalSeriesTest() throws Exception {
-		
-		IMDbScraper imdb = new IMDbScraper();
-		
+				
 		// Buffy
 		StringBuffer data = imdb.getURLData("0118276").getData();
 		
@@ -339,17 +358,17 @@ public class IMDBTest  {
 		String expectedGenre = "Action, Drama, Fantasy";
 		String expectedCountry = "USA";
 		String expectedLanguage = "English";
-		String expectedPlot = "At the young age of 15, Buffy was chosen to hunt vampires, demons, and the forces of darkness. After the ordeal at Hemery High Buffy Summers wound up at Sunnydale High. Joined with Willow Rosenberg and Alexander \"Xander\" Harris, and her watcher Giles, Buffy fights the challenges of High School and saves the world...a lot.";
+		String expectedPlot = "At the young age of 15, Buffy Summers was chosen to hunt vampires, demons, and the forces of darkness. Joined by friends Willow and Xander and her watcher Giles, Buffy fights the challenges of High School and saves the world...a lot.";
 		String expectedCast = "Sarah Michelle Gellar (Buffy Summers /, (145 episodes, 1996-2003)), Nicholas Brendon (Xander Harris (145 episodes, 1996-2003)), Alyson Hannigan (Willow Rosenberg (144 episodes, 1997-2003)), Anthony Head (Rupert Giles (123 episodes, 1996-2003)), James Marsters (Spike (97 episodes, 1997-2003)), Emma Caulfield (Anya (85 episodes, 1998-2003)), Michelle Trachtenberg (Dawn Summers (66 episodes, 2000-2003))";
 		String expectedWebRuntime = "44 min (144 episodes)";
 		String expectedWebSoundMix = "Dolby";
-		String expectedAwards = "Nominated for Golden Globe. Another 37 wins & 99 nominations";
+		String expectedAwards = "Nominated for Golden Globe. Another 42 wins & 98 nominations";
 		String expectedMpaa = "";
 		String expectedAka = 
 			"\"BtVS\" - USA (promotional abbreviation)\n" +
 			"\"Buffy\" - USA (short title)\n" +
 			"\"Buffy, the Vampire Slayer: The Series\" - USA (long title)\n" +
-			"\"Buffy, la cazavampiros\" - Argentina, Mexico, Spain, Venezuela\n" +
+			"\"Buffy, la cazavampiros\" - Argentina, Mexico, Venezuela\n" +
 			"\"Бъфи - убийцата на вампири\" - Bulgaria (Bulgarian title)\n" +
 			"\"Bafi, ubica vampira\" - Serbia\n" +
 			"\"Buffy - Im Bann der Dämonen\" - Germany\n" +
@@ -362,12 +381,15 @@ public class IMDBTest  {
 			"\"Buffy vampyrdödaren\" - Sweden\n" +
 			"\"Buffy, Caçadora de Vampiros\" - Portugal\n" +
 			"\"Buffy, a vámpírok réme\" - Hungary\n" +
+			"\"Buffy, cazavampiros\" - Spain (imdb display title)\n" +
 			"\"Buffy, l'ammazzavampiri\" - Italy\n" +
 			"\"Buffy, vampyyrintappaja\" - Finland\n" +
 			"\"Buffy: A Caça-Vampiros\" - Brazil (imdb display title)\n" +
 			"\"Buffy: Postrach wampirów\" - Poland (imdb display title)\n" +
 			"\"Nightfall\" - Japan (English title)";	
 	
+		
+		
 		String expectedCertification = "UK:12 (some episodes), UK:15 (some episodes), Australia:PG (some episodes), Portugal:M/12, New Zealand:M, USA:TV-14, Australia:M, Israel:PG, Singapore:M18 (DVD rating) (season 6) (season 7), Singapore:PG (season 1 to 5), USA:TV-14 (some episodes), USA:TV-PG (some episodes)";
 		String expectedColor = "Color";
 				
@@ -396,9 +418,7 @@ public class IMDBTest  {
 	
 	@Test
 	public void getEpisodesTest() throws Exception {
-	
-		IMDbScraper imdb = new IMDbScraper();
-		
+			
 		// Grey's Anatomy, season 1
 		ModelIMDbSearchHit hit = new ModelIMDbSearchHit("0413573", null, 1);
 				
@@ -407,14 +427,12 @@ public class IMDBTest  {
 		
 		ArrayList<ModelIMDbSearchHit> hits = imdb.getEpisodes(hit, episodesStream);
 		
-		assertEquals(hits.size(), 9);
+		assertEquals(9, hits.size());
 	}
 	
 	
 	@Test
 	public void dataRetrievalEpisodeTest() throws Exception {
-		
-		IMDbScraper imdb = new IMDbScraper();
 		
 		// Seinfeld - The Cadillac (Season 7, Episode 14)
 		StringBuffer data = imdb.getURLData("0697667").getData();
@@ -465,9 +483,7 @@ public class IMDBTest  {
 	
 	@Test
 	public void dataRetrievalMultipleDirectorsTest() throws Exception {
-		
-		IMDbScraper imdb = new IMDbScraper();
-		
+				
 		// The Ladykillers
 		StringBuffer data = imdb.getURLData("0335245").getData();
 		
@@ -484,9 +500,7 @@ public class IMDBTest  {
 	
 	@Test
 	public void dataRetrievalTVSeriesTest() throws Exception {
-		
-		IMDbScraper imdb = new IMDbScraper();		
-		
+				
 		StringBuffer data = imdb.getURLData("0370053").getData();
 		
 		ModelIMDbEntry series = imdb.grabInfo("0370053", data);
@@ -497,7 +511,7 @@ public class IMDBTest  {
 		String expectedDate = "2003";
 		String expectedDirector = "";
 		String expectedWriter = "";
-		String expectedGenre = "Documentary, Short, History";
+		String expectedGenre = "Documentary, History";
 		String expectedCountry = "UK";
 		String expectedLanguage = "English";
 		String expectedPlot = "The story of human evolution is told through the stories of representative members of the various species leading up to modern homo sapiens. It is ongoing climate changes that force human ancestors to develop, one by one, the unique characteristics of the modern humans. Though earlier species were superbly successful in their environments they were unsustainable when the environment changes.";
@@ -536,20 +550,18 @@ public class IMDBTest  {
 		assertEquals(expectedColor, series.getColour());		
 		
 		assertNotNull("No cover available!", series.getCoverData());
-		
 	}
 	
 	
 	@Test
 	public void authenticatedPersonVoteTest() throws Exception {
 		
-		String userName = "";
-		String password = "";
+		String [] auth = getLocallyStoredIMDbUser();
 		
 		HttpSettings settings = new HttpSettings();
 		settings.setIMDbAuthenticationEnabled(true);
-		settings.setIMDbAuthenticationUser(userName);
-		settings.setIMDbAuthenticationPassword(password);
+		settings.setIMDbAuthenticationUser(auth[0]);
+		settings.setIMDbAuthenticationPassword(auth[1]);
 		
 		IMDbScraper imdb = new IMDbScraper(settings);
 		
@@ -558,48 +570,49 @@ public class IMDBTest  {
 		
 		StringBuffer data = imdb.getURLData(urlID).getData();
 		ModelIMDbEntry movie = imdb.grabInfo(urlID, data);
+				
+		assertTrue("Failed to log in to IMDb", imdb.isLoggedIn());
 	}
 	
-	//@Test
+	@Test
 	public void authenticatedTest() throws Exception {
-		
-		String userName = "";
-		String password = "";
+				
+		String [] auth = getLocallyStoredIMDbUser();
 		
 		HttpSettings settings = new HttpSettings();
 		settings.setIMDbAuthenticationEnabled(true);
-		settings.setIMDbAuthenticationUser(userName);
-		settings.setIMDbAuthenticationPassword(password);
+		settings.setIMDbAuthenticationUser(auth[0]);
+		settings.setIMDbAuthenticationPassword(auth[1]);
 		
 		IMDbScraper imdb = new IMDbScraper(settings);
-		
-		//http://www.imdb.com/mymovies/list?votehistory
-		
-		HTTPResult result = imdb.getVoteHistory();
-	
-		String urlID = "0093773";
+		String urlID = "0093773"; // Predator
 		
 		StringBuffer data = imdb.getURLData(urlID).getData();
-		//ModelIMDbEntry model = imdb.grabInfo(urlID, data);		
+		ModelIMDbEntry movie = imdb.grabInfo(urlID, data);
 		
-		ArrayList<ModelIMDbListHit> hits = imdb.getVotedMovies();
-				
-		/*
-		for (ModelIMDbListHit hit : hits) {
-			System.err.println(hit);
-		}
-		*/
-		//ArrayList<ModelIMDbSearchHit> hits = imdb.parseList(result.getData());
-		
-		
-		
-		//String imdb.getPersonalVote(urlID);
-		
-		//net.sf.xmm.moviemanager.util.FileUtil.writeToFile("HTML-debug/votehistory.html", result.getData());
-	
-		//http://www.imdb.com/title/tt0875034/vote?v=6;k=7UE2s2Mrm.4oT0CLp7.ojwas13Wlr-QjVa9UEAYMQCQWrNd0Fa-k81X.5OBmD8RANqzAM.Uv52NV79RQNjuAQHas11P2.KdTU_
-		//http://www.imdb.com/title/tt0093773/vote?v=6;k=YVEc2cVFCmaakIjYv-3ASwas13Wl36RTVa.U8GYMQCQWrNd0Fb-081X.5OB2D8RANqzAM.Uv52NV79RQNjuAQHas11P2.KdTU_
+		assertTrue("Failed to log in to IMDb", imdb.isLoggedIn());
 	}
 	
-	
+	public String [] getLocallyStoredIMDbUser() {
+		/*
+		 The File should contain two lines:
+		 User:<IMDbUsername>
+		 Pass:<password>
+		 */
+		ArrayList<String> content;
+		try {
+			content = FileUtil.readFileToArrayList(new File("LocalIMDbAuth.txt"));
+			String user = content.get(0);
+			String pass = content.get(1);
+			user = user.substring(user.indexOf(":") +1, user.length());
+			pass = pass.substring(pass.indexOf(":") +1, pass.length());
+			return new String[] {user, pass};
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			System.err.println("This test requires a local file (in the project root) containing a IMDb username and password!");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
