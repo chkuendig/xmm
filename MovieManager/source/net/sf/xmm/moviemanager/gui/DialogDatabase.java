@@ -490,7 +490,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 	/* Returns the path for each database type */
 	static protected String getPath() {
 
-		String type = getType();
+		String type = getDBType();
 
 		if (type.equals("MSAccess")) //$NON-NLS-1$
 			return accessFilePath.getText();
@@ -504,7 +504,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
 
 	/*Returns the string in the path textfield*/
-	static protected String getType() {
+	static protected String getDBType() {
 
 		String type = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
 
@@ -556,7 +556,7 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
 	protected void executeConfirm() {
 
-		String databaseType = getType();
+		String databaseType = getDBType();
 
 		if (databaseType.equals("MySQL")) { //$NON-NLS-1$
 
@@ -668,12 +668,12 @@ public class DialogDatabase extends JDialog implements ActionListener {
 
     static protected Database connectToDatabase(Window parent, String path) throws Exception {
 
-    	if (getType().equals("MySQL")) //$NON-NLS-1$
+    	if (getDBType().equals("MySQL")) //$NON-NLS-1$
     		updateProgress(progressBar, Localizer.get("DialogDatabase.progress.connecting-to-database")); //$NON-NLS-1$
     	else
     		updateProgress(progressBar, Localizer.get("DialogDatabase.progress.creating-database-connection")); //$NON-NLS-1$
 
-    	String databaseType = getType();
+    	String databaseType = getDBType();
     	Database database = null;
 
     	if (path == null || "".equals(path)) //$NON-NLS-1$
