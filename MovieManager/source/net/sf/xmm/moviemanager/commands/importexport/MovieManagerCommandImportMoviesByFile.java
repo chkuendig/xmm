@@ -126,9 +126,10 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 			int hitCount = -1;
 
 			// If "Select FirstHit" is selected and IMDB Id was found in an nfo/txt file
-			if (fileSettings.multiAddSelectOption == ImdbImportOption.selectFirst && multiAddMovie.model.getUrlKey() != null) {
+			if (fileSettings.multiAddSelectOption == ImdbImportOption.selectFirst && !multiAddMovie.model.getUrlKey().equals("")) {
 				DialogIMDB.getIMDbInfo(multiAddMovie.model, multiAddMovie.model.getUrlKey());
 				multiAddMovie.hasIMDbInfo = true;
+				multiAddMovie.hits = new ArrayList<>();
 			}
 			else {
 				if (imdb == null)
@@ -148,7 +149,7 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 					
 					// Insert prefix in Title to show that these movies maybe got wrong imdb infos
 					if (MovieManager.getConfig().getMultiAddPrefixMovieTitle() && hitCount > 1 && 
-							fileSettings.multiAddSelectOption == ImdbImportOption.selectFirst && (multiAddMovie.model.getUrlKey() == null))
+							fileSettings.multiAddSelectOption == ImdbImportOption.selectFirst && (!multiAddMovie.model.getUrlKey().equals("")))
 						multiAddMovie.model.setTitle("_verify_ " + multiAddMovie.model.getTitle()); //$NON-NLS-1$
 				}				
 			}
@@ -178,7 +179,7 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 		String path = null; // Path of the file 
 		String imdbId = null;
 
-		DialogAddMultipleMovies.Files fileNode = (DialogAddMultipleMovies.Files) model.files;
+		DialogAddMultipleMovies.Files fileNode = model.files;
 		ArrayList<Files> files = fileNode.getFiles();
 
 		tempFile = new File[files.size()];
@@ -233,10 +234,12 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 
 		String year = null;
 				
-		String [] extensions = new String[] {"avi", "mkv", "mpg", "mpeg", "mpe", "divx", "mp4", "ogm", "ogv", "ogg", "flv", "rm", "swf", "vob", "wmv", "asf"};
-				
-		// Remove file extension
-		searchString = StringUtil.removeExtension(searchString, extensions);
+		
+		if (!fileSettings.enableUseFolderName) {
+			// Remove file extension only if not using folder name
+			String [] extensions = new String[] {"avi", "mkv", "mpg", "mpeg", "mpe", "divx", "mp4", "ogm", "ogv", "ogg", "flv", "rm", "swf", "vob", "wmv", "asf"};
+			searchString = StringUtil.removeExtension(searchString, extensions);
+		}
 		
 		if (fileSettings.enableExludeYear) {
 			String [] year2 = new String[1];
@@ -258,8 +261,7 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 			String info = MovieManager.getConfig().getMultiAddExcludeUserDefinedString();
 
 			if (!info.equals("")) {
-				Pattern p = Pattern.compile("[,]");
-				String[] excludeStrings = p.split(info);
+				String[] excludeStrings = info.split("\\,");
 				searchString = StringUtil.performExcludeUserdefinedInfo(searchString, excludeStrings);
 			}
 		}
@@ -267,8 +269,7 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 			String info = MovieManager.getConfig().getMultiAddExcludeUserDefinedString();
 
 			if (!info.equals("")) {
-				Pattern p = Pattern.compile("[,]");
-				String[] excludeStrings = p.split(info);
+				String[] excludeStrings = info.split("\\,");
 				searchString = StringUtil.performExcludeStrings(searchString, excludeStrings);
 			}
 		}
@@ -324,8 +325,6 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 	
 	
 	public String getTitle(final int i) throws Exception {
-
-		
 		// Reset canceled status
 		resetStatus();
 		
@@ -338,19 +337,25 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 		// Already has IMDb info
 		if (model.hasIMDbInfo)
 			return model.files.getName();
-			
 		
 		// Search not yet performed
 		while (model.hits == null) {
 			System.err.println("No search hits, waiting");
 			Thread.sleep(500);
 		}
-				
-		ImportExportReturn ret = getIMDbInfo(model, model.searchString, workingList.get(i).files, 
-																	  fileSettings.addToThisList);
+
+		// Was the search sucessfull? 
+		if (model.hasIMDbInfo) {
+			movieInfoModel.model = workingList.get(i).model;
+			return model.files.getName();
+		}
+
+		ImportExportReturn ret = getIMDbInfo(model, model.searchString, workingList.get(i).files, fileSettings.addToThisList);
+
 		System.err.println("ret:" + ret);
 		
 		if (ret == ImportExportReturn.success) {
+			movieInfoModel.model = workingList.get(i).model;
 			String title = movieInfoModel.model.getTitle();
 			String [] fileLoc = movieInfoModel.model.getAdditionalInfo().getFileLocationAsArray();
 			System.err.println("fileLoc:" + fileLoc);
@@ -385,9 +390,6 @@ public class MovieManagerCommandImportMoviesByFile extends MovieManagerCommandIm
 				return ret;
 			}
 			
-			int hitCount = -1;
-			final ArrayList<ModelIMDbSearchHit> hits = multiAddModel.hits;
-
 			GUIUtil.invokeAndWait(new Runnable() {
 				public void run() {
 					DialogIMDbMultiAdd dialogIMDB = new DialogIMDbMultiAdd(fileSettings.getParent(), 

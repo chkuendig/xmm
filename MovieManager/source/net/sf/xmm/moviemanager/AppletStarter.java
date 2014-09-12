@@ -34,7 +34,7 @@ public class AppletStarter extends JApplet {
     
     /** Initializes Applet by adding MovieManager's content pane. */
     public void init() {
-        setSize(400,300);
+        setSize(500,500);
         
         Logger root = Logger.getRootLogger();
         //root.setLevel(Level.OFF);

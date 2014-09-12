@@ -22,14 +22,7 @@ package net.sf.xmm.moviemanager.commands;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JDialog;
 
@@ -121,63 +114,10 @@ public class MovieManagerCommandAddMultipleMoviesByFile extends MovieManagerComm
 		
 		return importSettings;
 	}
-
-	
-	public String searchNfoForImdb(String _path) {
-		try {
-			if (_path != null && !_path.equals("")) {
-				String tmp;
-				BufferedReader br;
-				File path = new File(_path);
-				File files[] = path.listFiles();
-				
-				for (int i = 0; i < files.length; i++) {
-					// Cycle through all entries in the directory
-					String filename = files[i].getName().toLowerCase();
-					if (files[i].isFile() && files[i].length() < 40000 && (filename.endsWith(".txt") || filename.endsWith(".nfo") || filename.endsWith(".url"))) {
-						// Only process files < 40000 Bytes with with .txt or .nfo suffix and no directories
-												
-						br = new BufferedReader(new FileReader(files[i]));
-						tmp = br.readLine();
-						while (tmp != null) {
-							if (tmp.contains("imdb.com/title/tt") || tmp.contains("imdb.de/title/tt")) {
-								// If File contains an imdb url than get it out
-								if (tmp.contains("imdb.com/title/tt"))
-									tmp = tmp.substring(tmp.indexOf("imdb.com/title/tt") + 17);
-								else
-									tmp = tmp.substring(tmp.indexOf("imdb.de/title/tt") + 16);
-
-								// Search for a 6 to 8 digits long number (normally 7 digits is used in the url)
-								Pattern p = Pattern.compile("[\\d]{6,8}");
-								Matcher m = p.matcher(tmp);
-
-								if (m.find()) {
-									br.close();
-									return m.group();
-								}
-							}
-							tmp = br.readLine();
-						}
-						br.close();
-					}
-				}
-			}
-		}
-		catch (FileNotFoundException e) {
-			log.debug("No nfo/txt file found for parsing");
-		}
-		catch (IOException e) {
-			log.debug("I/O error while processing nfo/txt files");
-		}
-
-		return null;
-	}
-	
 	
 	public void actionPerformed(ActionEvent event) {
 		log.debug("ActionPerformed: "+ event.getActionCommand());
 		execute();
 	}
-	
 }
 
