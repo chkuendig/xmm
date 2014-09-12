@@ -32,10 +32,10 @@
 	<classpathentry kind="lib" path="MovieManager/lib/nimrodlf-1.1a.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/TableLayout.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/useful.jar"/>
-	<classpathentry kind="lib" path="MovieManager/lib/balloontip-1.0.jar"/>
+	<classpathentry kind="lib" path="MovieManager/lib/balloontip-1.2.4.1.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/jupidator-3.0.1.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/xerces.jar"/>
 	<classpathentry kind="lib" path="MovieManager/lib/drivers/mysql-connector-java-5.1.11-bin.jar"/>
-	<classpathentry kind="output" path="MovieManager"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
